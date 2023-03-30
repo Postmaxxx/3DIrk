@@ -1,0 +1,50 @@
+@use "sass:map";
+@use "./variables" as *;
+@use "./fonts" as *;
+
+* {
+    font-family: Nunito;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+/*
+html,body, h1,h2,h3,h4,h5,h6,p,span,div,nav,ul,li {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+*/
+body {
+    width: 100%;
+    background-color: $bg;
+}
+
+h1 {
+    font-size: 3rem;
+}
+
+h2 {
+    font-size: 2rem;
+}
+
+ul {
+    list-style-type: none;
+} 
+
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+
+.container {
+    border: 1px solid yellow;
+    width: 100%;
+    max-width: $lg;
+    margin-left: auto;
+    margin-right: auto;
+    height: 100%;
+}

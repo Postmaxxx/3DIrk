@@ -1,0 +1,37 @@
+section.portfolio {
+    
+    .portfolio__hero {
+        text-align: center;
+        margin-top: 60px;
+
+        .hero__descr {
+            display: flex;
+            align-items: center;
+            padding-top: 40px;
+
+            & > img {
+                max-width: 45%;
+                border-radius: 15px;
+            }
+
+            & .hero__descr__text {
+                max-width: 50%;
+                margin-left: clamp(40px, 5%, 80px);
+
+                & ul {
+                    text-align: left;
+                    list-style-type: disc;
+                }
+            }
+
+        }
+    }
+
+    & .portfolio__gallery {
+        margin-top: 80px;
+        width: 100%;
+        border: 1px solid red;
+    }
+
+
+}

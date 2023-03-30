@@ -1,0 +1,259 @@
+@use '/src/assets/css/variables' as *;
+
+.nav_desktop {
+    //border: 1px solid red;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+
+    @include respond-to(sm) {
+        display: none;
+    }
+
+
+    & .nav__container {
+        //border: 2px solid green;
+        overflow: hidden;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        transform: translateX(calc(100% - 70px)); 
+        transition: $transition_nav;
+        background-image: url('../../assets/img/nav_line_down.png');
+        background-size: 10px;
+        background-repeat: repeat-x;
+        
+        & > ul {
+            height: 100%;
+            margin-right: 90px;
+            //border: 1px solid blue;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.8rem;
+            font-weight: 600;
+            //padding-left: 10px;
+            //padding-right: 10px;
+
+            @include respond-to(md) {
+                gap: 1.2rem;
+            }
+    
+    
+            & > li {
+                font-size: 1.4rem;
+                position: relative;
+                //border-top: 2px solid #333;
+
+                /*&::before {
+                    position: absolute;
+                    content: "";
+                    background-color: #000;*/
+                    /*width: 3px;
+                    height: 30px;
+                    left: 50%;
+                    top: -100%;*/
+                    /*width: 1px;
+                    height: 40px;
+                    left: 0%;
+                    bottom: 50%;
+                }*/
+                /*&::before {
+                    position: absolute;
+                    content: "";
+                    background-color: #333;
+                    width: 2px;
+                    height: 30px;
+                    left: 50%;
+                    top: -100%;
+                }*/
+
+                @include respond-to(md) {
+                    font-size: 1rem;
+                }
+
+                & > a {
+                    position: relative;
+                    //padding-left: 5px;
+                    //padding-right: 5px;
+                    transition: 1s;
+                    color: #333;
+                    text-transform: uppercase;
+                    transition: $transition_nav_menu;
+                    display: block;
+                    
+                   /* &::before  { //&::after
+                        content: '';
+                        width: 8px;
+                        height: 10px;
+                        position: absolute;
+                        top: 50%;
+                        transform: translate(0, -50%);
+                        border-radius: 5px;
+                    }
+                    
+                    &::before {
+                        left: 0;
+                        border-left: 2px solid #000;
+                    }*/
+                    
+                    /*&::after { 
+                        border-right: 2px solid #000;
+                        right: 0;                    
+                    }   */
+
+
+
+                    &:hover {
+                        color: #DDD;
+                        //transform: translateY(12px);
+                    }
+
+                    &.selected {
+                        color: #DDD;
+                    }
+                }
+            }
+    
+    
+    
+
+        }
+
+
+        
+    }
+    
+            & .nav__switcher {
+                position: absolute;
+                right: 0;
+                height: 90%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                & .text-hider {
+                    position: absolute;
+                    width: 100%;
+                    height: 70%;
+                    background-color: $blue_light_1;
+                }
+                
+                & > label {
+                    z-index: 200;
+                    height: 100%;
+                    margin-left: 20px;
+                    margin-bottom: 5px;
+                    cursor: pointer;
+                    position: relative;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    
+                    & > input {
+                        visibility: hidden;
+                        position: absolute;
+                    }
+                    
+                    & > img {
+                        height: 100%;
+                        transform: rotate(13deg);
+                        transition: $transition_nav;
+                    }
+
+
+                    & .nav__sign {
+                        height: 50px;
+                        position: absolute;
+                   
+                        span {
+                            margin: 0 auto;
+                            position: relative;
+                            top: 50%;
+                            transform: translateY(-50%);
+                        
+                            transition-duration: 0s;
+                            transition-delay: 0.5s;
+                        
+                            &:before,
+                            &:after {
+                                position: absolute;
+                                content: '';
+                                transition-property: margin, transform;
+                                transition-duration: 0.5s;
+                                transition-delay: 0.5s, 0s;
+                            }
+                        
+                            &:before { margin-top: -10px; }
+                            &:after { margin-top: 10px; }
+
+                        }
+                    
+                        span,
+                        span:before,
+                        span:after {
+                            width: 30px;
+                            height: 3px;
+                            background-color: #000;
+                            display: block;
+                            //transition-delay: 0s, 0.5s;
+                            border-radius: 2px;
+                        }
+                    }
+
+
+                }
+    }
+
+
+
+
+    &.opened {
+        .band {
+            left: 0;
+        }
+        
+        & .nav__container {
+            width: auto; 
+            transform: translateX(0);
+
+
+        } 
+
+        & .nav__switcher > label {
+            
+            & .nav__sign {
+                & span {
+                    transition-delay: 0.5s;
+                    background-color: rgba(0,0,0,0);
+
+                    &:before {
+                        margin-top: 0;
+                        transform: rotate(45deg);
+                        transition-delay: 0s, 0.5s;
+                    }
+                
+                    &:after {
+                        margin-top: 0;
+                        transform: rotate(-45deg);
+                        transition-delay: 0s, 0.5s;
+                    }
+                }
+
+            
+            }
+            
+            & > img {
+                transform: rotate(-840deg);
+            }
+            
+        }
+        
+        
+    }
+
+
+}

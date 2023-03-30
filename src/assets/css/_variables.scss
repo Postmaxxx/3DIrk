@@ -1,0 +1,35 @@
+$xl: 1600px;
+$lg: 1241px;
+$md: 992px;
+$sm: 768px;
+$xs: 480px;
+
+$black: #000;
+$white: #FFF;
+
+
+$blue_light_1: #3D89B4;
+$bg: #F4EDDD;
+
+$transition_nav: 1s ease-in-out;
+$transition_nav_menu: .5s ease-in-out;
+
+
+
+@mixin  respond-to($width) {
+    @if $width == xs { 
+        @media (max-width: $xs) { @content } 
+    };
+    @if $width == sm { 
+        @media (max-width: $sm) { @content } 
+    };
+    @if $width == md { 
+        @media (max-width: $md) { @content } 
+    };
+    @if $width == lg { 
+        @media (max-width: $lg) { @content } 
+    };
+    @if $width == xl { 
+        @media (max-width: $xl) { @content } 
+    }
+}

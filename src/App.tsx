@@ -1,26 +1,35 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Routes, Route, BrowserRouter } from "react-router-dom";
+import { Suspense, lazy, useState, useEffect } from "react";
+import Preloader from "./components/Preloader/Preloader"; 
+import "./assets/css/_base.scss";
 
-function App() {
+const LazyThemeSwitcher = lazy(() => import("./components/ThemeSwitcher/ThemeSwitcher"));
+const LazyLangSwitcher = lazy(() => import("./components/LangSwitcher/LangSwitcher"));
+const LazyHeader = lazy(() => import('./partials/Header/Header'));
+const LazyHomePage = lazy(() => import("./pages/Home/Home"));
+const LazyOrderPage = lazy(() => import("./pages/Order/Order"));
+const LazyPortfolioPage = lazy(() => import("./pages/Portfolio/Portfolio"));
+
+const LazyDBMaintainPage= lazy(() => import("./pages/Admin/DBMaintain"));
+
+
+
+const App= () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+		<LazyThemeSwitcher />
+		<LazyLangSwitcher />
+		<LazyHeader />
+		<Routes>
+			<Route index element={<Suspense fallback={<Preloader />}><LazyHomePage /></Suspense>} />
+			<Route path="/order" element={<Suspense fallback={<Preloader />}><LazyOrderPage /></Suspense>} />
+			<Route path="/portfolio" element={<Suspense fallback={<Preloader />}><LazyPortfolioPage /></Suspense>} />
+			<Route path="/admin/dbmaintain" element={<Suspense fallback={<Preloader />}><LazyDBMaintainPage /></Suspense>} />
+		</Routes>
+    </BrowserRouter>
   );
-}
+} 
 
-export default App;
+
+
+export default App
