@@ -10,7 +10,7 @@ const LazyHomePage = lazy(() => import("./pages/Home/Home"));
 const LazyOrderPage = lazy(() => import("./pages/Order/Order"));
 const LazyPortfolioPage = lazy(() => import("./pages/Portfolio/Portfolio"));
 
-const LazyDBMaintainPage= lazy(() => import("./pages/Admin/DBMaintain"));
+const LazyPortfoliosEditPage= lazy(() => import("./pages/Admin/Portfolios/PortfoliosEdit"));
 
 
 
@@ -24,7 +24,7 @@ const App= () => {
 			<Route index element={<Suspense fallback={<Preloader />}><LazyHomePage /></Suspense>} />
 			<Route path="/order" element={<Suspense fallback={<Preloader />}><LazyOrderPage /></Suspense>} />
 			<Route path="/portfolio" element={<Suspense fallback={<Preloader />}><LazyPortfolioPage /></Suspense>} />
-			<Route path="/admin/dbmaintain" element={<Suspense fallback={<Preloader />}><LazyDBMaintainPage /></Suspense>} />
+			<Route path="/admin/portfolios_edit" element={<Suspense fallback={<Preloader />}><LazyPortfoliosEditPage /></Suspense>} />
 		</Routes>
     </BrowserRouter>
   );

@@ -69,28 +69,57 @@ export interface IDispatch {
 
 
 
-
-
-export interface IPortfolioFeature {
-        feature: string
-        value: string
+export interface IFeature {
+    id?: string
+	name: string
+	value: string
 }
 
-export interface IPortfolio {
-    imgPath: string
-    features: Array<IPortfolioFeature>
+export interface IFeatures {
+	En: Array<IFeature>
+	Ru: Array<IFeature>
+}
+
+export interface IPortfolioImage {
+    path: string
+    descr: string
+    id?: string
+}
+
+export interface IColorID {
+    id?: string
+    colorId: string
+}
+
+export interface IPortfolioData {
+    changed: boolean
+    id: string
+	images: Array<IPortfolioImage>
+	descr: string
+    colors: Array<IColorID>
+	features: IFeatures
 }
 
 
+export type TProtfolioStateStatus = '' | 'editing' | 'adding'
 
-export type TStatus = 'idle' | 'success' | 'loading' | 'error'
+export interface IProtfolioState {
+	id: string,
+	index: number
+	status: TProtfolioStateStatus 
+	editingLang: TLang
+	editingFeatureIndex: number
+	portfolioData: IPortfolioData
+}
+
+export type TPortfoliosStatus = 'idle' | 'success' | 'loading' | 'error'
 
 export interface IState extends Store {
     theme: TTheme
     lang: TLang
     portfolios: {
-        status: TStatus
-        list: Array<IPortfolio>
+        status: TPortfoliosStatus
+        list: Array<IPortfolioData>
     }
     nav: {
         mobOpened: boolean,
@@ -101,20 +130,3 @@ export interface IState extends Store {
 
 
 //------------------------------
-export interface IFeature {
-	name: string
-	value: string
-}
-
-export interface IFeatures {
-	En: Array<IFeature>
-	Ru: Array<IFeature>
-	colors: Array<string>
-}
-
-export interface IPortfolioData {
-	id: string
-	filename: string
-	filedescr: string
-	features: IFeatures
-}

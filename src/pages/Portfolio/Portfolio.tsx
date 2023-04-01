@@ -17,7 +17,7 @@ interface IProps {
 const Portfolio:React.FC<IProps> = (props) => {
 
     useEffect(() => {
-        props.setState.setPortfolios()
+        //props.setState.getPortfolios()
     }, [])
 
 

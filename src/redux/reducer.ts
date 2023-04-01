@@ -28,7 +28,7 @@ const reducer = (state:IState = initialState, action: IAction<any>): IState => {
                 ...state, theme: newTheme
             }
 
-        case actions.SET_PORTFOLIOS: 
+        case actions.LOAD_PORTFOLIOS: 
             return {
                 ...state, 
 				portfolios: {
@@ -53,7 +53,7 @@ const reducer = (state:IState = initialState, action: IAction<any>): IState => {
 				}
             }
 		case actions.SET_PORTFOLIOS_STATUS_ERROR: 
-			console.log('Error while receiving portfolios data: ', action.payload);
+			alert('Error while receiving portfolios data: '+ action.payload);
             return {
                 ...state, 
 				portfolios: {
@@ -67,7 +67,6 @@ const reducer = (state:IState = initialState, action: IAction<any>): IState => {
 					portfolios: {
 						...state.portfolios,
 						status: "success",
-						list: [...action.payload]
 					}
 				}
 
