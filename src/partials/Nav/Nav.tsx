@@ -1,13 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { IPage, IState, TLang } from "src/interfaces";
 import "./nav.scss"
 import navLogo from "../../assets/img/nav_logo.png"
 import { connect } from "react-redux";
-import * as actions from "../../redux/actions";
-import { bindActionCreators } from "redux";
-import { Dispatch } from "redux";
-import { collectionNav } from '../../firebase';
+
 
 
 
@@ -25,7 +22,7 @@ const pages: Array<IPage> = [
     {
         nameRu: "Материалы",
         nameEn: "Fabric",
-        path: "/materials"
+        path: "/fiber"
     },
     {
         nameRu: "Портфолио",
@@ -50,8 +47,6 @@ const Nav:React.FC<IProps> = (props) => {
         setOpened(!opened)
     }
   
-    //console.log(collectionNav);
-
     return (
         <nav className={opened ? "nav_desktop opened" : "nav_desktop"}>
             <div className="nav__container">
@@ -86,9 +81,9 @@ const Nav:React.FC<IProps> = (props) => {
 const mapStateToProps = (state: IState) => ({
     lang: state.lang
 })
-
+/*
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
     setState: bindActionCreators(actions, dispatch)
 })
-
+*/
 export default connect(mapStateToProps)(Nav)

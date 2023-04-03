@@ -23,10 +23,15 @@ body {
 
 h1 {
     font-size: 3rem;
+    text-align: center;
 }
 
 h2 {
     font-size: 2rem;
+}
+
+h3 {
+    font-size: 1.5rem;
 }
 
 ul {
@@ -39,6 +44,12 @@ a {
     color: black;
 }
 
+p {
+    font-size: 1.2rem;
+    text-indent: 3rem;
+
+}
+
 
 .container {
     border: 1px solid yellow;
@@ -47,4 +58,14 @@ a {
     margin-left: auto;
     margin-right: auto;
     height: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+    color: $text_basic;
+}
+
+.container_page {
+    width: 100%;
+    min-height: calc(100vh - 80px - 40px);
+    padding-top: 50px;
+    padding-bottom: 50px;
 }

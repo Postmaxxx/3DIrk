@@ -79,7 +79,7 @@
                     //padding-left: 5px;
                     //padding-right: 5px;
                     transition: 1s;
-                    color: #333;
+                    color: $nav;
                     text-transform: uppercase;
                     transition: $transition_nav_menu;
                     display: block;
@@ -107,12 +107,12 @@
 
 
                     &:hover {
-                        color: #DDD;
+                        color: $nav_selected;
                         //transform: translateY(12px);
                     }
 
                     &.selected {
-                        color: #DDD;
+                        color: $nav_selected;
                     }
                 }
             }

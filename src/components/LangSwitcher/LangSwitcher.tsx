@@ -15,7 +15,6 @@ const LangSwitcher:React.FC<IProps> = (props) => {
 
     const handleChange= () => {
         props.lang === 'En' ? props.setState.setLangRu() : props.setState.setLangEn();
-        
     }
 
 

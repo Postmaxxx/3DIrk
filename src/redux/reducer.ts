@@ -1,7 +1,7 @@
 import initialState from "./initialState"
-import { IState, IAction } from "src/interfaces"
+import { IState, IAction, IDataLoading } from "src/interfaces"
 import * as actions from './actionsList'
-import Portfolio from "src/pages/Portfolio/Portfolio"
+import { log } from "console"
 
 
 const reducer = (state:IState = initialState, action: IAction<any>): IState => {
@@ -36,7 +36,7 @@ const reducer = (state:IState = initialState, action: IAction<any>): IState => {
 					list: [...action.payload]
 				}
             }
-		case actions.SET_PORTFOLIOS_STATUS_IDLE: 
+		/*case actions.SET_PORTFOLIOS_STATUS_IDLE: 
             return {
                 ...state, 
 				portfolios: {
@@ -70,6 +70,34 @@ const reducer = (state:IState = initialState, action: IAction<any>): IState => {
 					}
 				}
 
+*/
+
+
+
+        case actions.SET_LOAD_DATA_STATUS_FIBERS:
+            const pl = action.payload as IDataLoading
+            return {
+                ...state, 
+                fibers: {
+                    ...state.fibers,
+                    dataLoading: {
+                        status: pl.status,
+                        lang: pl.lang,
+                        message: pl.message,
+                    }
+                }
+            }    
+
+
+
+        case actions.SET_DATA_FIBERS:
+            return {
+                ...state, 
+                fibers: {
+                    ...state.fibers,
+                    list: [...action.payload]
+                }
+            }    
 
 
         default: return {...state}

@@ -1,0 +1,23 @@
+@use '/src/assets/css/variables' as *;
+
+
+.fiber {
+    width: 100%;
+
+	& .fibers__container {
+		margin-top: 30px;
+
+		& .fiber__item {
+			margin-top: 100px;
+
+            &:first-child {
+                margin-top: 0;
+            }
+
+			&:last-child > .fiber__descr__container::after {
+				display: none;
+			}
+		}
+	}
+    
+}

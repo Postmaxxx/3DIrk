@@ -1,0 +1,50 @@
+@use '/src/assets/css/variables' as *;
+
+.fiber__item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+
+    //border: 1px solid red;
+
+    & > .fiber__img__container {
+        min-height: 200px;
+        //border: 2px solid blue;
+        min-width: 250px;
+        margin-right: 5%;
+
+
+        & > img {
+            height: 100%;
+            width:  100%;
+            object-fit: contain;
+        }
+    }
+
+    & > .fiber__descr__container {
+        position: relative;
+       // border: 2px solid yellow;
+       
+       &::after {
+            position: absolute;
+            content: '';
+            width: 10%;
+            border-bottom: 2px solid $blue_light_1;
+            bottom: -50px;
+            left: 50%;
+            transform: translate(-50%, 0);
+        }
+        
+        & h3 {
+            text-align: center;
+        }
+
+        & p {
+            font-size: 1.2rem;
+            margin-top: .5rem;
+        }
+
+    }
+}

@@ -7,7 +7,15 @@ initialState = {
     theme: 'light',
     lang: 'Ru',
     portfolios: {
-        status: 'idle',
+        //status: 'idle',
+        list: []
+    },
+    fibers: {
+        dataLoading: {
+            status: 'idle',
+            lang: 'En',
+            message: '',
+        },
         list: []
     },
     nav: {

@@ -112,15 +112,18 @@ export interface IProtfolioState {
 	portfolioData: IPortfolioData
 }
 
-export type TPortfoliosStatus = 'idle' | 'success' | 'loading' | 'error'
 
 export interface IState extends Store {
     theme: TTheme
     lang: TLang
+    //dataLoading: IDataLoading
     portfolios: {
-        status: TPortfoliosStatus
         list: Array<IPortfolioData>
     }
+    fibers:{
+        dataLoading: IDataLoading
+        list: Array<IFiber>
+    } 
     nav: {
         mobOpened: boolean,
         desktopOpened: boolean
@@ -130,3 +133,41 @@ export interface IState extends Store {
 
 
 //------------------------------
+export interface IImg {
+    path: string
+    url?: string
+    alt: string
+}
+
+export type TLoadDataStatus = 'idle' | 'success' | 'loading' | 'error'
+
+export interface IDataLoading {
+    status: TLoadDataStatus
+    //dataName: TCollectionNames
+    lang: TLang
+    message: string
+}
+
+
+export type TCollectionNames = 'fibers' | 'techs' | 'nodata'
+
+export interface IFiber {
+    img: Array<IImg>
+    header: string
+    text: Array<string>
+    proscons: {
+        pros: Array<string>
+        cons: Array<string>
+    }
+}
+
+export interface ISetData {
+    dataName: TCollectionNames
+    value: any
+}
+
+/*
+export interface IFibers {
+    En: Array<IFiber>
+    Ru: Array<IFiber>
+}*/

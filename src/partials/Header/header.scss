@@ -6,6 +6,7 @@ header {
     background-color: $blue_light_1;
     position: sticky;
     top: 0;
+    z-index: 5000;
     
     & .header__content {
         display: flex;
@@ -13,9 +14,10 @@ header {
         justify-content: space-between;
         height: 100%;
 
+
         & .logo-link {
             height: 100%;
-            margin-left: 20px;
+            //margin-left: 20px;
             display: flex;
             align-items: center;
     

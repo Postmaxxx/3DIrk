@@ -1,16 +1,16 @@
 import './portfoliosEdit.scss'
-import { IFeature, IPortfolioData, IProtfolioState, IState, TLang, TPortfoliosStatus } from "src/interfaces";
+import { IFeature, IPortfolioData, IProtfolioState, IState, TLang } from "src/interfaces";
 import * as actions from "../../../redux/actions";
 import { bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
-/*import img1 from '../../../assets/img/portfolio/1.png'
+import img1 from '../../../assets/img/portfolio/1.png'
 import img2 from '../../../assets/img/portfolio/2.jpeg'
 import img3 from '../../../assets/img/portfolio/3.jpeg'
 import img4 from '../../../assets/img/portfolio/4.jpeg'
 import img6 from '../../../assets/img/portfolio/5.png'
-import img5 from '../../../assets/img/portfolio/6.png'*/
+import img5 from '../../../assets/img/portfolio/6.png'
 import ListFeatures from './ListFeatures/ListFeatures';
 import EditFeatures from './EditFeatures/EditFeatures';
 import ListImages from './ListImages/ListImages';
@@ -18,14 +18,15 @@ import ListImages from './ListImages/ListImages';
 
 interface IProps {
     lang: TLang
-	status: TPortfoliosStatus,
+	//status: TPortfoliosStatus,
 	portfoliosList: Array<IPortfolioData>
     setState: typeof actions
 }
 
-/*
+
 const localState: Array<IPortfolioData> = [
 	{
+		changed: false,
 		id: '1',
 		images: [
 			{
@@ -67,6 +68,7 @@ const localState: Array<IPortfolioData> = [
 		}
 	},
 	{
+		changed: false,
 		id: '2',
 		images: [
 			{
@@ -88,10 +90,6 @@ const localState: Array<IPortfolioData> = [
 			{
 				path: img6,
 				descr: 'Model 43 5'
-			},
-			{
-				path: img1,
-				descr: 'Model 43 1'
 			},
 		],
 		descr: 'Model 43',
@@ -136,6 +134,7 @@ const localState: Array<IPortfolioData> = [
 		}
 	},
 	{
+		changed: false,
 		id: '3',
 		images: [
 			{
@@ -178,7 +177,7 @@ const localState: Array<IPortfolioData> = [
 	},
 
 ]
-*/
+
 
 
 const PortfoliosEdit:React.FC<IProps> = (props) => {
@@ -252,8 +251,11 @@ const PortfoliosEdit:React.FC<IProps> = (props) => {
 	}
 
 	const saveDB = () => {
-		console.log(props.portfoliosList);
-		//props.setState.savePortfolios()
+		//console.log(props.portfoliosList);
+		const portfoliosToSave = props.portfoliosList.filter(portfolio => portfolio.changed)
+		if (portfoliosToSave.length) {
+			props.setState.savePortfolios(portfoliosToSave)
+		}
 	}
 
 
@@ -297,7 +299,7 @@ const PortfoliosEdit:React.FC<IProps> = (props) => {
 
 const mapStateToProps = (state: IState) => ({
     lang: state.lang,
-	status: state.portfolios.status,
+	//status: state.portfolios.status,
 	portfoliosList: state.portfolios.list
   })
   
