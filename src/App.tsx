@@ -1,9 +1,9 @@
 import { Routes, Route, BrowserRouter } from "react-router-dom";
-import { Suspense, lazy, useState, useEffect } from "react";
+import { Suspense, lazy } from "react";
 import Preloader from "./components/Preloader/Preloader"; 
 import "./assets/css/_base.scss";
 import * as actions from "./redux/actions";
-import { bindActionCreators } from "redux";
+import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { IState, TLang } from "./interfaces";
@@ -30,10 +30,6 @@ interface IProps {
 
 const App:React.FC<IProps> = (props) => {
 
-	useEffect(() => {
-		props.setState.loadDataFibers({lang: 'En'})
-	},[])
-
   return (
     <BrowserRouter>
 		<LazyThemeSwitcher />
@@ -57,7 +53,7 @@ const mapStateToProps = (state: IState) => ({
     lang: state.lang,
   })
   
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => ({
     setState: bindActionCreators(actions, dispatch)
 })
     

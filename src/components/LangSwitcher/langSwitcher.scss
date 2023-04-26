@@ -1,7 +1,10 @@
 .lang-switcher {
-    position: absolute;
+    position: fixed;
     top: 0px;
     left: 0;
+    z-index: 5100;
+    cursor: pointer;
     border: 2px solid red;
-    z-index: 5000;
+
+
 }

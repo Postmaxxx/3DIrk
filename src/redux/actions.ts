@@ -1,4 +1,4 @@
-import { IColorID, IDataLoading, IFiber, TCollectionNames, TLoadDataStatus } from './../interfaces';
+import { IColorID, IDataLoading, IFiber, IMaxSlide, TCollectionNames, TLoadDataStatus } from './../interfaces';
 import * as actions from './actionsList'
 import { IAction, IActionCreator, IDispatch, IFeatures, IPortfolioData, IPortfolioImage, TLang } from 'src/interfaces'
 
@@ -42,7 +42,7 @@ export const setThemeLight = <T>(): IAction<T> => ({
 })
 
 export const setThemeDark = <T>(): IAction<T> => ({
-    type: actions.SET_THEME_LIGHT,
+    type: actions.SET_THEME_DARK,
 })
 
 export const setThemeToggle = <T>(): IAction<T> => ({
@@ -118,7 +118,7 @@ export const setData = <T extends any>(payload: T):IAction<T> => ({
 */
 
 
-//----------------------------------------------------------------------------
+//----------------------------------------- fiber -----------------------------------
 export const setLoadDataStatusFibers = <T extends IDataLoading>(payload: T):IAction<T> => ({
     type: actions.SET_LOAD_DATA_STATUS_FIBERS,
     payload: payload
@@ -145,60 +145,83 @@ export const loadDataFibers = ({lang}: {lang: TLang}) => {
                 throw new Error(`No data in field "data" for: fibers -> ${lang}`)
             }
             const data = JSON.parse(dataProp) as Array<IFiber>
-
+            //console.log(2);
+            
+            
             await Promise.all(
                 data.map(fiber => {
-                    return new Promise((res,rej) => {
-                        fiber.img.map(async img => {
-                            img.url = await getDownloadURL(ref(storage, `fibers/${img.path}`))
-                            res('ok')
-                        })
+                    return new Promise(async (res,rej) => {
+                        Promise.all(
+                            fiber.imgs.map(async img => {
+                                return new Promise((res,rej) => {
+                                    getDownloadURL(ref(storage, `fibers/${img.path}`)).then(data => img.url = data).then(() => res('ok'))
+                                })
+                            })
+                        ).then(() => res('ok'))
                     })
                 })
             )
-            console.log('loaded', data)
+
+            console.log('loaded fibers', data)
             dispatch(setLoadDataStatusFibers({status: 'success', lang, message: `Data fibers -> ${lang} loaded successfully`}))
             dispatch(setDataFibers(data))
         } catch (e) {
             console.error(`ERROR while connectin to Firebase using collectionName=fibers, lang=${lang} ${e}`);
             dispatch(setLoadDataStatusFibers({status: 'error', lang, message: `ERROR while connectin to Firebase using collectionName=fibers, lang=${lang}: ${e}`}))
         }
-
-
-        //dispatch(setLoadDataStatusFibers({status: 'idle', lang, message: `Last loaded data: collectionName=fibers, lang=${lang}`}))
     }
 }
 
-/*
-export const loadData = ({collectionName, lang}: {collectionName: TCollectionNames, lang: TLang}) => {
+//======================================================================================
+
+//----------------------------------------- slidermax -----------------------------------
+export const setLoadDataStatusSliderMax = <T extends IDataLoading>(payload: T):IAction<T> => ({
+    type: actions.SET_LOAD_DATA_STATUS_SLIDERMAX,
+    payload: payload
+});
+
+export const setDataSliderMax = <T extends Array<IMaxSlide>>(payload: T):IAction<T> => ({
+    type: actions.SET_DATA_SLIDERMAX,
+    payload: payload
+});
+
+
+export const loadDataSliderMax = ({lang}: {lang: TLang}) => {
     return async function(dispatch: IDispatch) {
-        dispatch(setLoadDataStatus({status: 'loading', dataName: collectionName, lang, message: `Loading ${collectionName} -> ${lang}`}))
+        dispatch(setLoadDataStatusSliderMax({status: 'loading', lang, message: `Loading sliderMax -> ${lang}`}))
         try {
-            const collectionOfData = collection(db, collectionName);
+            const collectionOfData = collection(db, 'slidermax');
             const dataRef = doc(collectionOfData, lang);
             const docData = await getDoc(dataRef)
             if (!docData.exists()) {
-                throw new Error(`Language not found in collection ${collectionName}: ${lang}`)
+                throw new Error(`Language not found in collection sliderMax: ${lang}`)
             }
             const rawData = docData.data()
             const dataProp = rawData.data
             if (!dataProp) {
-                throw new Error(`No data in field "data" for: ${collectionName} -> ${lang}`)
+                throw new Error(`No data in field "data" for: sliderMax -> ${lang}`)
             }
-            const data = JSON.parse(dataProp)
-            console.log('loaded', data)
-            dispatch(setLoadDataStatus({status: 'success', dataName: collectionName, lang, message: `Data ${collectionName} -> ${lang} loaded successfully`}))
-            //dispatch(setData({dataName: collectionName, value: ...data}))
+            const data = JSON.parse(dataProp) as Array<IMaxSlide>
+
+            await Promise.all(
+                data.map(slide => {
+                    return new Promise(async (res,rej) => {
+                        getDownloadURL(ref(storage, `slidermax/${slide.path}`)).then(data => slide.url = data).then(() => res('ok'))
+                    })
+                })
+            )
+
+            console.log('loaded SLIDERMAX', data)
+            dispatch(setLoadDataStatusSliderMax({status: 'success', lang, message: `Data sliderMax -> ${lang} loaded successfully`}))
+            dispatch(setDataSliderMax(data))
         } catch (e) {
-            console.error(`ERROR while connectin to Firebase using collectionName=${collectionName}, lang=${lang} ${e}`);
-            dispatch(setLoadDataStatus({status: 'error', dataName: collectionName, lang, message: `ERROR while connectin to Firebase using collectionName=${collectionName}, lang=${lang}: ${e}`}))
+            console.error(`ERROR while connectin to Firebase using collectionName=sliderMax, lang=${lang} ${e}`);
+            dispatch(setLoadDataStatusSliderMax({status: 'error', lang, message: `ERROR while connectin to Firebase using collectionName=sliderMax, lang=${lang}: ${e}`}))
         }
-        dispatch(setLoadDataStatus({status: 'idle', dataName: collectionName, lang, message: `Last loaded data: collectionName=${collectionName}, lang=${lang}`}))
     }
-}*/
+}
+
 //======================================================================================
-
-
 
 
 

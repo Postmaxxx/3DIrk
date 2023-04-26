@@ -3,7 +3,7 @@
 header {
     width: 100%;
     height: 80px;
-    background-color: $blue_light_1;
+    background-color: var(--main);
     position: sticky;
     top: 0;
     z-index: 5000;
@@ -17,7 +17,6 @@ header {
 
         & .logo-link {
             height: 100%;
-            //margin-left: 20px;
             display: flex;
             align-items: center;
     

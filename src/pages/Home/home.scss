@@ -14,10 +14,16 @@
         }
     }
 
-    & .splider {
+    & .slider__container {
         margin-top: 50px;
         height: 400px;
+        border: 2px solid red;
+        position: relative;
+
+        & .slidermax {
+        }
     }
+
 
     & h2 {
         margin-top: 50px;

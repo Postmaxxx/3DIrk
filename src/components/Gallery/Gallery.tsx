@@ -1,6 +1,6 @@
 import { IGalleryItem, IState, TLang } from "src/interfaces";
 import * as actions from "../../redux/actions";
-import { bindActionCreators } from "redux";
+import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import './gallery.scss'
@@ -44,7 +44,7 @@ const mapStateToProps = (state: IState) => ({
     lang: state.lang,
   })
   
-  const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
+  const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => ({
     setState: bindActionCreators(actions, dispatch)
   })
   

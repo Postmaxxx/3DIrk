@@ -2,7 +2,7 @@ import './portfolio.scss'
 import portfolioHeroImg from '../../assets/img/portfolio_hero.jpg'
 import { IState, TLang, TTheme } from "src/interfaces";
 import * as actions from "../../redux/actions";
-import { bindActionCreators } from "redux";
+import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import Gallery from 'src/components/Gallery/Gallery';
@@ -67,7 +67,7 @@ const mapStateToProps = (state: IState) => ({
     lang: state.lang,
   })
   
-  const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
+  const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => ({
     setState: bindActionCreators(actions, dispatch)
   })
   

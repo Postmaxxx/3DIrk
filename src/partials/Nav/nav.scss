@@ -107,12 +107,12 @@
 
 
                     &:hover {
-                        color: $nav_selected;
+                        color: var(--text_contrast);
                         //transform: translateY(12px);
                     }
 
                     &.selected {
-                        color: $nav_selected;
+                        color: var(--text_contrast);
                     }
                 }
             }

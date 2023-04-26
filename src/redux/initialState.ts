@@ -10,6 +10,14 @@ initialState = {
         //status: 'idle',
         list: []
     },
+    sliderMax: {
+        dataLoading: {
+            status: 'idle',
+            lang: 'En',
+            message: '',
+        },
+        list: []
+    },
     fibers: {
         dataLoading: {
             status: 'idle',

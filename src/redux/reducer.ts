@@ -1,7 +1,6 @@
 import initialState from "./initialState"
 import { IState, IAction, IDataLoading } from "src/interfaces"
 import * as actions from './actionsList'
-import { log } from "console"
 
 
 const reducer = (state:IState = initialState, action: IAction<any>): IState => {
@@ -73,17 +72,16 @@ const reducer = (state:IState = initialState, action: IAction<any>): IState => {
 */
 
 
-
         case actions.SET_LOAD_DATA_STATUS_FIBERS:
-            const pl = action.payload as IDataLoading
+            const sf = action.payload as IDataLoading
             return {
                 ...state, 
                 fibers: {
                     ...state.fibers,
                     dataLoading: {
-                        status: pl.status,
-                        lang: pl.lang,
-                        message: pl.message,
+                        status: sf.status,
+                        lang: sf.lang,
+                        message: sf.message,
                     }
                 }
             }    
@@ -98,6 +96,33 @@ const reducer = (state:IState = initialState, action: IAction<any>): IState => {
                     list: [...action.payload]
                 }
             }    
+
+
+        case actions.SET_LOAD_DATA_STATUS_SLIDERMAX:
+            const ss = action.payload as IDataLoading
+            return {
+                ...state, 
+                sliderMax: {
+                    ...state.sliderMax,
+                    dataLoading: {
+                        status: ss.status,
+                        lang: ss.lang,
+                        message: ss.message,
+                    }
+                }
+            }    
+
+
+
+        case actions.SET_DATA_SLIDERMAX:
+            return {
+                ...state, 
+                sliderMax: {
+                    ...state.sliderMax,
+                    list: [...action.payload]
+                }
+            }    
+
 
 
         default: return {...state}

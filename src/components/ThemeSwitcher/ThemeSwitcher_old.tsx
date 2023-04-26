@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
 import { IState, TLang, TTheme } from "src/interfaces";
 import * as actions from "../../redux/actions";
-import { bindActionCreators } from "redux";
+import { AnyAction, bindActionCreators } from "redux";
 import "./themeSwitcher.scss"
 import { Dispatch } from "redux";
 
@@ -42,7 +42,7 @@ const mapStateToProps = (state: IState) => ({
     theme: state.theme
 })
 
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => ({
     setState: bindActionCreators(actions, dispatch)
 })
 

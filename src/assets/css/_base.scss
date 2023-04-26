@@ -7,6 +7,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    color: var(--text)
 }
 /*
 html,body, h1,h2,h3,h4,h5,h6,p,span,div,nav,ul,li {
@@ -18,7 +19,7 @@ html,body, h1,h2,h3,h4,h5,h6,p,span,div,nav,ul,li {
 */
 body {
     width: 100%;
-    background-color: $bg;
+    background-color: var(--bg);
 }
 
 h1 {

@@ -27,3 +27,75 @@ const TechItem = (props: IProps) => {
 }
 
 export default TechItem
+
+/*
+            <div className='fiber__splide__container'>
+                <div className="splide" ref={_splideFabric} aria-label="The carousel">
+                    <div className="splide__track">
+                        <ul className="splide__list">
+                            {fiber.imgs.map((img) => {
+                                return (
+                                    <li className="splide__slide" key={img.url}>
+                                        <div className="splide__slide-container">
+                                            <img src={img.url} alt={img.alt}  />
+                                        </div>
+                                    </li>
+                                );
+                            })
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+*/
+
+/*
+	const fabricSplide = useRef<Splide>();
+	const containerSize = useRef<IContainerSize>();
+	const _splideFabric = useRef<any>();
+
+
+    const optionsMain: any = {
+		lazyLoad: false,
+		updateOnMove: true,
+		perPage: 1,
+		fixedWidth: "100%",
+		perMove: 1,
+		pagination: true,
+		arrows: true,
+		drag: true,
+		speed: 500,
+		autoplay: true,
+		interval: 5000,
+		pauseOnHover: true,
+		rewind: true,
+		breakpoints: {
+			768: {
+				wheel: false,
+			}, 
+		},
+	};
+
+
+	useEffect(() => {
+		containerSize.current = {
+			width:  _splideFabric.current.offsetWidth,
+			height:  _splideFabric.current.offsetHeight,
+		};
+		fabricSplide.current = new Splide(_splideFabric.current, optionsMain);
+		fabricSplide.current.mount();		
+		return () => {
+		};
+	}, []);
+
+*/
+
+/*
+interface IContainerSize {
+	width: number
+	height: number
+}*/
+/*
+import Splide from "@splidejs/splide";
+import { useRef, useState, useEffect } from 'react'
+*/

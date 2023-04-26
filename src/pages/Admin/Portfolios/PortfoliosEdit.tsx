@@ -1,7 +1,7 @@
 import './portfoliosEdit.scss'
 import { IFeature, IPortfolioData, IProtfolioState, IState, TLang } from "src/interfaces";
 import * as actions from "../../../redux/actions";
-import { bindActionCreators } from "redux";
+import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
@@ -303,7 +303,7 @@ const mapStateToProps = (state: IState) => ({
 	portfoliosList: state.portfolios.list
   })
   
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => ({
     setState: bindActionCreators(actions, dispatch)
 })
     

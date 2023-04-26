@@ -120,6 +120,10 @@ export interface IState extends Store {
     portfolios: {
         list: Array<IPortfolioData>
     }
+    sliderMax:{
+        dataLoading: IDataLoading
+        list: Array<IMaxSlide>
+    } 
     fibers:{
         dataLoading: IDataLoading
         list: Array<IFiber>
@@ -135,7 +139,7 @@ export interface IState extends Store {
 //------------------------------
 export interface IImg {
     path: string
-    url?: string
+    url: string
     alt: string
 }
 
@@ -143,7 +147,6 @@ export type TLoadDataStatus = 'idle' | 'success' | 'loading' | 'error'
 
 export interface IDataLoading {
     status: TLoadDataStatus
-    //dataName: TCollectionNames
     lang: TLang
     message: string
 }
@@ -152,13 +155,20 @@ export interface IDataLoading {
 export type TCollectionNames = 'fibers' | 'techs' | 'nodata'
 
 export interface IFiber {
-    img: Array<IImg>
+    imgs: Array<IImg>
     header: string
     text: Array<string>
     proscons: {
         pros: Array<string>
         cons: Array<string>
     }
+}
+
+export interface IMaxSlide {
+    path: string
+    alt: string
+    url?: string
+    descr: string
 }
 
 export interface ISetData {

@@ -6,6 +6,11 @@ $xs: 480px;
 
 $black: #000;
 $white: #FFF;
+$theme-sw-blue: rgb(22, 100, 216);
+$theme-sw-sun: gold;
+$theme-sw-moon: #f7f7f7;;
+
+
 
 $text_basic: #333;
 $text_selected: #EEE;
@@ -18,6 +23,19 @@ $nav_selected: #EEE;
 $transition_nav: 1s ease-in-out;
 $transition_nav_menu: .5s ease-in-out;
 
+
+body {
+    --main: #409BCE;
+    --bg: #EBEBEB;
+    --text: #1F2833;
+    --text_contrast: #F3F3F3;
+ }
+ body.dark {
+    --main: #286181;
+    --bg: #1F2833;
+    --text: #EBEBEB;
+    --text_contrast: #1F2833;
+ }
 
 
 @mixin  respond-to($width) {

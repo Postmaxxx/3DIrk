@@ -1,11 +1,9 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { IPage, IState, TLang } from "src/interfaces";
 import "./nav.scss"
 import navLogo from "../../assets/img/nav_logo.png"
 import { connect } from "react-redux";
-
-
 
 
 const pages: Array<IPage> = [
@@ -40,12 +38,28 @@ interface IProps {
     lang: TLang
 }
 
+
 const Nav:React.FC<IProps> = (props) => {
     const [opened, setOpened] = useState(true)
+    const scrollTimeout = useRef<any>()
 
     const navToggle = () => {
         setOpened(!opened)
     }
+
+    const handleScroll =() => {
+        scrollTimeout.current && clearTimeout(scrollTimeout.current)
+        scrollTimeout.current = setTimeout(()=> {
+            setOpened(window.scrollY < 400)
+        }, 250)
+    }
+
+    useEffect(() => {
+        window.addEventListener("scroll", handleScroll);
+        return(() => {
+            window.removeEventListener("scroll", handleScroll);
+        })
+    },[])
   
     return (
         <nav className={opened ? "nav_desktop opened" : "nav_desktop"}>
@@ -82,7 +96,7 @@ const mapStateToProps = (state: IState) => ({
     lang: state.lang
 })
 /*
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => ({
     setState: bindActionCreators(actions, dispatch)
 })
 */
