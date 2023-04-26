@@ -9,7 +9,21 @@ import { IDataLoading, IMaxSlide, IState, TLang } from "../../interfaces";
 import Preloader from 'src/components/Preloader/Preloader';
 
 
+const mockHome = [
+    {
+        text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quo tempore atque et nostrum qui vitae! Dolor necessitatibus ipsum consectetur optio.'
+    },
+    {
+        text: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Necessitatibus, eveniet odit veritatis totam exercitationem id perspiciatis dolores, ipsum quos reprehenderit, consectetur facere harum rerum libero tempore incidunt modi! Placeat cumque quidem velit porro amet quam possimus dolorum eaque exercitationem quod!'
+    },
+    {
+        text: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Necessitatibus, eveniet odit veritatis totam exercitationem id perspiciatis dolores, ipsum quos reprehenderit, consectetur facere harum rerum libero tempore incidunt modi! Placeat cumque quidem velit porro amet quam possimus dolorum eaque exercitationem quod!'
+    },
+    {
+        text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quo tempore atque et nostrum qui vitae! Dolor necessitatibus ipsum consectetur optio.'
+    }
 
+]
 
 interface IProps {
     lang: TLang
@@ -35,16 +49,15 @@ const Home:React.FC<IProps> = (props): JSX.Element => {
         <div className="container_page">
             <div className="container">
                 <div className='page_home'>
-                    <h1>Header</h1>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quo tempore atque et nostrum qui vitae! Dolor necessitatibus ipsum consectetur optio.</p>
-                    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Necessitatibus, eveniet odit veritatis totam exercitationem id perspiciatis dolores, ipsum quos reprehenderit, consectetur facere harum rerum libero tempore incidunt modi! Placeat cumque quidem velit porro amet quam possimus dolorum eaque exercitationem quod!</p>
-                    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Necessitatibus, eveniet odit veritatis totam exercitationem id perspiciatis dolores, ipsum quos reprehenderit, consectetur facere harum rerum libero tempore incidunt modi! Placeat cumque quidem velit porro amet quam possimus dolorum eaque exercitationem quod!</p>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quo tempore atque et nostrum qui vitae! Dolor necessitatibus ipsum consectetur optio.</p>
+                    <h1>{props.lang === 'En' ? 'Header' : 'Заголовок'}</h1>
+                    {mockHome.map((text, i) => (
+                        <p key={i}>{text.text}</p>
+                    ))}
                     <div className="slider__container">
                         <SpliderMax />
                     </div>
-                    <h2>Last news</h2>
-                    <NewsBlock />
+                    <h2>{props.lang === 'En' ? 'Last news' : 'Последние новости'}</h2>
+                        <NewsBlock {...{lang: props.lang}}/>
                 </div>
             </div>
         </div>

@@ -2,8 +2,36 @@
 
 .news-block {
     width: 100%;
-    border: 1px solid red;
-    padding-top: 40px;
+    //border: 1px solid red;
+    padding-top: 20px;
     padding-bottom: 40px;
-    
+    display: flex;
+    align-items: stretch;    
+    justify-content: center;
+    flex-wrap: wrap;
+
+    & .show-more-news {
+        margin-top: 30px;
+        align-self: flex-start;
+        padding: 8px 50px;
+        border-radius: 10px;
+        background-color: var(--main);
+        //font-family: 'LexendDeca';
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        
+        & span {
+            color: var(--text);
+            font-weight: 700;
+            font-size: 18px;
+            margin: 0 30px;
+        }
+
+        & svg {
+            fill: var(--text);
+            height: 20px;
+        }
+    }
 }
