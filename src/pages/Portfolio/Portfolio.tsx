@@ -25,13 +25,13 @@ const Portfolio:React.FC<IProps> = (props) => {
         <section className="portfolio">
             <div className="container">
                 <div className="portfolio__hero">
-                    <h1>{props.lang === 'Ru' ? "Галерея наших работ" : "Our portfolio"}</h1>
+                    <h1>{props.lang === 'ru' ? "Галерея наших работ" : "Our portfolio"}</h1>
                     <div className="hero__descr">
                         <img src={portfolioHeroImg} alt="Portfolio Hero Image" />
                         <div className="hero__descr__text">
-                            <h2>{props.lang === 'Ru' ? "Подзаголовок" : "Subheader"}</h2>
+                            <h2>{props.lang === 'ru' ? "Подзаголовок" : "Subheader"}</h2>
                             <ul>
-                                {props.lang === 'Ru' ? <>
+                                {props.lang === 'ru' ? <>
                                     <li>АВПВА ва пва ваып рвыап ваыпрва опрвап авып варпл двыап ва олвып лвапрвлаыопр выаплдравылыпв пвыа плывап ывалпрывадп апы варп ылвапры лвадпрыв апрываплравыпл </li>
                                     <li>АВПВА ва пва ваып рвыап ваыпрва опрвап авып варпл</li>
                                     <li>АВПВА ва пва ваып рвыап ваыпрва опрвап авып варпл</li>

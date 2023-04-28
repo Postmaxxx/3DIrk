@@ -7,11 +7,11 @@ const reducer = (state:IState = initialState, action: IAction<any>): IState => {
     switch (action.type) {
         case actions.SET_LANG_EN: 
             return {
-                ...state, lang: 'En'
+                ...state, lang: 'en'
             }
         case actions.SET_LANG_RU: 
             return {
-                ...state, lang: 'Ru'
+                ...state, lang: 'ru'
             }
         case actions.SET_THEME_LIGHT: 
             return {
@@ -76,12 +76,14 @@ const reducer = (state:IState = initialState, action: IAction<any>): IState => {
             const sf = action.payload as IDataLoading
             return {
                 ...state, 
-                fibers: {
-                    ...state.fibers,
-                    dataLoading: {
-                        status: sf.status,
-                        lang: sf.lang,
-                        message: sf.message,
+                components: {
+                    ...state.components,
+                    fibersBlock: {
+                        ...state.components.fibersBlock,
+                        dataLoading: {
+                            status: sf.status,
+                            message: sf.message,
+                        }
                     }
                 }
             }    
@@ -91,9 +93,12 @@ const reducer = (state:IState = initialState, action: IAction<any>): IState => {
         case actions.SET_DATA_FIBERS:
             return {
                 ...state, 
-                fibers: {
-                    ...state.fibers,
-                    list: [...action.payload]
+                components: {
+                    ...state.components,
+                    fibersBlock: {
+                        ...state.components.fibersBlock,
+                        fibersList: [...action.payload]
+                    }
                 }
             }    
 
@@ -106,7 +111,6 @@ const reducer = (state:IState = initialState, action: IAction<any>): IState => {
                     ...state.sliderMax,
                     dataLoading: {
                         status: ss.status,
-                        lang: ss.lang,
                         message: ss.message,
                     }
                 }

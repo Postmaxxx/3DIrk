@@ -3,7 +3,9 @@
 .page_home {
     
     & h1 {
-        font-family: Arial, Helvetica, sans-serif;
+        //font-family: Arial, Helvetica, sans-serif;
+        color: var(--main_vv);
+
         //text-align: center;
     }
 
@@ -27,8 +29,10 @@
 
     & h2 {
         margin-top: 80px;
-        font-family: Arial, Helvetica, sans-serif;
+        //font-family: Arial, Helvetica, sans-serif;
         text-align: center;
+        color: var(--main_vv);
+
     }
 
     & .news {

@@ -1,6 +1,6 @@
 import { IColorID, IDataLoading, IFiber, IMaxSlide, TCollectionNames, TLoadDataStatus } from './../interfaces';
 import * as actions from './actionsList'
-import { IAction, IActionCreator, IDispatch, IFeatures, IPortfolioData, IPortfolioImage, TLang } from 'src/interfaces'
+import { IAction, IActionCreator, IDispatch, TFeatures, IPortfolioData, IPortfolioImage, TLang } from 'src/interfaces'
 
 import { firebaseConfig } from 'src/config'
 import { FirebaseApp, initializeApp } from 'firebase/app'
@@ -118,6 +118,9 @@ export const setData = <T extends any>(payload: T):IAction<T> => ({
 */
 
 
+
+
+
 //----------------------------------------- fiber -----------------------------------
 export const setLoadDataStatusFibers = <T extends IDataLoading>(payload: T):IAction<T> => ({
     type: actions.SET_LOAD_DATA_STATUS_FIBERS,
@@ -129,7 +132,7 @@ export const setDataFibers = <T extends Array<IFiber>>(payload: T):IAction<T> =>
     payload: payload
 });
 
-export const loadDataFibers = ({lang}: {lang: TLang}) => {
+export const loadDataFibers2 = ({lang}: {lang: TLang}) => {
     return async function(dispatch: IDispatch) {
         dispatch(setLoadDataStatusFibers({status: 'loading', lang, message: `Loading fibers -> ${lang}`}))
         try {
@@ -172,7 +175,32 @@ export const loadDataFibers = ({lang}: {lang: TLang}) => {
     }
 }
 
+
+
+export const loadDataFibers = () => {
+    return async function(dispatch: IDispatch) {
+        dispatch(setLoadDataStatusFibers({status: 'success', message: `Data fibers loaded successfully`}))
+    }
+}
+
 //======================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //----------------------------------------- slidermax -----------------------------------
 export const setLoadDataStatusSliderMax = <T extends IDataLoading>(payload: T):IAction<T> => ({
@@ -273,8 +301,8 @@ export const getPortfolios = () => {
             
                     //features
                     const getFeatures = new Promise(async (res, rej) => {
-                        currentPortfolio.features = {} as IFeatures
-                        const languages: TLang[] = ['En', 'Ru']
+                        currentPortfolio.features = {} as TFeatures
+                        const languages: TLang[] = ['en', 'ru']
                         
                         const allLanguages = languages.map(lang => {
                             return new Promise(async (res,rej) => {
@@ -359,7 +387,7 @@ export const savePortfolios = (payload: Array<IPortfolioData>) => {
                 imagesList.forEach(image => deleteDoc(image.ref))
 
 
-                const langs = ['En', 'Ru'] as TLang[]
+                const langs = ['en', 'ru'] as TLang[]
                 langs.forEach(async lang => {
                     const collectionFeaturesRef = collection(collectionPortfoliosRef, doc.id, `${lang}`);
                     const featuresList = await getDocs(collectionFeaturesRef)

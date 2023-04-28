@@ -4,6 +4,7 @@
 .news {
     width: 100%;
     border: 1px solid var(--main);
+    transition: border $transition_theme;
     border-radius: 5px;
     padding-bottom: 20px;
     max-width: 22%;
@@ -17,6 +18,10 @@
     padding-left: 10px;
     margin-left: 15px;
     margin-right: 15px;
+
+    &:hover {
+        border-color: 1px solid var(--main_vv);
+    }
 
     & > img {
        width: auto;
@@ -61,10 +66,11 @@
     & > button {
         align-self: flex-start;
         margin-top: auto;   
-        padding: 8px 20px;
+        padding: 8px 60px 8px 20px;
         border-radius: 10px;
-        color: var(--text);
+        color: $bg;//;
         background-color: var(--main);
+        transition: background-color $transition_theme;
         //font-family: 'LexendDeca';
         font-size: 18px;
         font-weight: 700;
@@ -72,12 +78,25 @@
         cursor: pointer;
         display: flex;
         align-items: center;
+        position: relative;
+
 
         & > svg  {
             max-height: 80%;
-            margin-left: 20px;
-            fill: var(--text);
+            right: 0;
+            margin-right: 25px;
+            fill: $bg;
+            position: absolute;
+            transition: margin .2s;
         }
+
+        &:hover {
+            & > svg {
+                margin-right: 15px;
+            }
+        }
+        
+
     }
 
 

@@ -1,15 +1,21 @@
+import { TLang, TLangTextArr } from 'src/interfaces'
 import './proscons.scss'
 
+interface IProps {  
+    pros: TLangTextArr
+    cons: TLangTextArr
+    lang: TLang
+}
 
-const Proscons = ({proscons}: {proscons: {pros: string[], cons: string[]}}) => {
+const Proscons = ({pros, cons, lang} : IProps) => {
     
     return (
         <div className="proscons">
             <ul className='pros'>
-                {proscons.pros.map((pro,i) => <li key={i}>{pro}</li> )}
+                {pros[lang].map((item,i) => <li key={i}>{item.part}</li> )}
             </ul>
             <ul className='cons'>
-                {proscons.cons.map((con,i) => <li key={i}>{con}</li> )}
+                {cons[lang].map((item,i) => <li key={i}>{item.part}</li> )}
             </ul>
 
         </div>

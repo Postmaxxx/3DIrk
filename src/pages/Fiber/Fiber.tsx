@@ -4,35 +4,33 @@ import * as actions from "../../redux/actions";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import { IFiber, IDataLoading, IState, TLang } from "../../interfaces";
+import { IDataLoading, IState, TLang, IFibersBlock } from "../../interfaces";
 import { useEffect } from 'react';
 import "@splidejs/react-splide/css";    
 import Preloader from 'src/components/Preloader/Preloader';
 
 interface IProps {
     lang: TLang
-    fibers: {
-        dataLoading: IDataLoading
-        list: Array<IFiber>
-    }
+    fibersBlock: IFibersBlock
     setState: typeof actions
 }
 
-const Fiber:React.FC<IProps> = (props) => {
+const Fiber:React.FC<IProps> = ({lang, fibersBlock, setState} : IProps) => {
 
     useEffect(() => {
-        props.setState.loadDataFibers({lang: props.lang})
-    }, [props.lang])
+        //setState.loadDataFibers2({lang: lang})
+        setState.loadDataFibers()
+    }, [lang])
 
 
     return (
         <div className="container_page">
             <div className="container">
                 <div className="fiber">
-                    <h1>{props.lang === 'En' ? 'Materials using for 3D printing' : 'Материалы, используемые в печати'}</h1>
-                    {props.fibers.dataLoading.status === 'success' ? (
+                    <h1>{fibersBlock.header[lang]}</h1>
+                    {fibersBlock.dataLoading.status === 'success' ? (
                         <div className="fibers__container">
-                            {props.fibers.list.map((fiber) => <FiberItem {...{fiber}} key={fiber.header}/>)}
+                            {fibersBlock.fibersList.map((fiber, i) => <FiberItem {...{fiber}} lang={lang} key={i}/>)}
                         </div>
                     ):
                     (
@@ -46,7 +44,7 @@ const Fiber:React.FC<IProps> = (props) => {
 
 const mapStateToProps = (state: IState) => ({
     lang: state.lang,
-    fibers: state.fibers,
+    fibersBlock: state.components.fibersBlock,
 })
   
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => ({

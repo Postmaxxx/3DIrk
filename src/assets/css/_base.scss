@@ -23,15 +23,23 @@ body {
     transition: background-color $transition-theme;
 }
 
+#root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
 h1 {
     font-size: 3rem;
     text-align: center;
     transition: color $transition_theme;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 h2 {
     font-size: 2rem;
     transition: color $transition_theme;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 h3 {
@@ -80,7 +88,7 @@ p {
 
 .container_page {
     width: 100%;
-    min-height: calc(100vh - 80px - 40px);
+    flex-grow: 1;
     padding-top: 50px;
     padding-bottom: 50px;
 }

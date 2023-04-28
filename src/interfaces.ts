@@ -4,11 +4,13 @@ import { Store } from 'redux'
 
 
 //---------------------------NAV---------------------------------
-export interface IPage {
+/*export interface IPage {
     nameRu: string
     nameEn: string
     path: string
 }
+*/
+
 
 export interface INav {
     opened: boolean
@@ -51,7 +53,7 @@ export interface IGalleryItem {
 
 //----------------------------------------------------------------------
 export type TTheme = 'dark' | 'light'
-export type TLang = 'En' | 'Ru'
+export type TLang = 'en' | 'ru'
 
 export interface IAction<T> {
     type: string;
@@ -75,10 +77,13 @@ export interface IFeature {
 	value: string
 }
 
-export interface IFeatures {
-	En: Array<IFeature>
-	Ru: Array<IFeature>
+export type TFeatures = {
+	[key in TLang]: Array<IFeature>
 }
+
+
+
+
 
 export interface IPortfolioImage {
     path: string
@@ -97,7 +102,7 @@ export interface IPortfolioData {
 	images: Array<IPortfolioImage>
 	descr: string
     colors: Array<IColorID>
-	features: IFeatures
+	features: TFeatures
 }
 
 
@@ -113,41 +118,19 @@ export interface IProtfolioState {
 }
 
 
-export interface IState extends Store {
-    theme: TTheme
-    lang: TLang
-    //dataLoading: IDataLoading
-    portfolios: {
-        list: Array<IPortfolioData>
-    }
-    sliderMax:{
-        dataLoading: IDataLoading
-        list: Array<IMaxSlide>
-    } 
-    fibers:{
-        dataLoading: IDataLoading
-        list: Array<IFiber>
-    } 
-    nav: {
-        mobOpened: boolean,
-        desktopOpened: boolean
-    }
-}
-
 
 
 //------------------------------
 export interface IImg {
     path: string
     url: string
-    alt: string
+    alt: TLangText
 }
 
 export type TLoadDataStatus = 'idle' | 'success' | 'loading' | 'error'
 
 export interface IDataLoading {
     status: TLoadDataStatus
-    lang: TLang
     message: string
 }
 
@@ -155,13 +138,13 @@ export interface IDataLoading {
 export type TCollectionNames = 'fibers' | 'techs' | 'nodata'
 
 export interface IFiber {
-    imgs: Array<IImg>
-    header: string
-    text: Array<string>
+    header: TLangText
+    text: TLangTextArr
     proscons: {
-        pros: Array<string>
-        cons: Array<string>
+        pros: TLangTextArr
+        cons: TLangTextArr
     }
+    imgs: Array<IImg>
 }
 
 export interface IMaxSlide {
@@ -176,8 +159,120 @@ export interface ISetData {
     value: any
 }
 
-/*
-export interface IFibers {
-    En: Array<IFiber>
-    Ru: Array<IFiber>
-}*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+export type TTextMultiLines = Array<{part: string}>
+
+export type TLangText = {
+    [key in TLang]: string
+}
+
+export type TLangTextArr = {
+    [key in TLang]: TTextMultiLines
+}
+
+export interface IPage {
+    name: TLangText,
+    path: string
+}
+
+export interface INews {
+    header: TLangText
+    date: Date
+    short: TLangText
+    text: TLangTextArr
+    imgs: Array<IImg>
+}
+
+
+export interface INewsBlock {
+    header: TLangText,
+    text: TLangTextArr
+    news: Array<INews>
+}
+
+export interface IHeroBlock {
+    header: TLangText,
+    text: TLangTextArr
+}
+
+export interface IFibersBlock {
+    dataLoading: IDataLoading
+    header: TLangText
+    fibersList: Array<IFiber>
+}
+
+export interface IOrderBlock {
+    header: TLangText
+    subheader: TLangText
+    name: {
+        label: TLangText,
+        data: string
+    },
+    phone: {
+        label: TLangText,
+        data: string
+    },
+    email: {
+        label: TLangText,
+        data: string
+    },
+    message: {
+        label: TLangText,
+        data: string
+    },
+    files: {
+        label: TLangText,
+        listLabel: TLangText
+        link: TLangText
+        linkRest: TLangText
+        filesList: Array<any>
+    },
+    qrcode: string,
+    text: TLangTextArr
+}
+
+export interface IState extends Store {
+    theme: TTheme
+    lang: TLang
+    pagesList: Array<IPage>
+    components: {
+        heroBlock: IHeroBlock
+        newsBlock: INewsBlock
+        fibersBlock: IFibersBlock
+        orderBlock: IOrderBlock
+
+        portfolios: {
+            list: Array<IPortfolioData>
+        }
+        nav: {
+            mobOpened: boolean,
+            desktopOpened: boolean
+        }
+    }
+
+
+
+    portfolios: {
+        list: Array<IPortfolioData>
+    }
+    sliderMax:{
+        dataLoading: IDataLoading
+        list: Array<IMaxSlide>
+    } 
+    nav: {
+        mobOpened: boolean,
+        desktopOpened: boolean
+    }
+}

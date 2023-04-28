@@ -20,7 +20,7 @@ const Footer:React.FC<IProps> = (props):JSX.Element => {
                 <div className="footer__content">
                     <span className='footer__copyright'>PrintIrk © 2023</span>
                     <div className="footer__social">
-                        <span>{props.lang === 'En' ? "We are in socials" : "Мы в соцсетях"}: </span>
+                        <span>{props.lang === 'en' ? "We are in socials" : "Мы в соцсетях"}: </span>
                         <div className="social_links">
                             <a href="#">
                                 <img src={iconTelegram} alt="Our Telegram" title="Join us in Telegram"/>

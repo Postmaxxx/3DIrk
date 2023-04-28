@@ -19,7 +19,7 @@ const LazyFiberPage = lazy(() => import("./pages/Fiber/Fiber"));
 const LazyTechPage = lazy(() => import("./pages/Tech/Tech"));
 const LazyPortfolioPage = lazy(() => import("./pages/Portfolio/Portfolio"));
 
-const LazyPortfoliosEditPage= lazy(() => import("./pages/Admin/Portfolios/PortfoliosEdit"));
+//const LazyPortfoliosEditPage= lazy(() => import("./pages/Admin/Portfolios/PortfoliosEdit"));
 
 
 interface IProps {
@@ -41,7 +41,6 @@ const App:React.FC<IProps> = (props) => {
 			<Route path="/portfolio" element={<Suspense fallback={<Preloader />}><LazyPortfolioPage /></Suspense>} />
 			<Route path="/fiber" element={<Suspense fallback={<Preloader />}><LazyFiberPage /></Suspense>} />
 			<Route path="/tech" element={<Suspense fallback={<Preloader />}><LazyTechPage /></Suspense>} />
-			<Route path="/admin/portfolios_edit" element={<Suspense fallback={<Preloader />}><LazyPortfoliosEditPage /></Suspense>} />
 		</Routes>
 		<LazyFooter />
     </BrowserRouter>
@@ -58,3 +57,7 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => ({
 })
     
 export default connect(mapStateToProps, mapDispatchToProps)(App)
+
+/*
+			<Route path="/admin/portfolios_edit" element={<Suspense fallback={<Preloader />}><LazyPortfoliosEditPage /></Suspense>} />
+*/

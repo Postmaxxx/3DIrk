@@ -6,40 +6,13 @@ import navLogo from "../../assets/img/nav_logo.png"
 import { connect } from "react-redux";
 
 
-const pages: Array<IPage> = [
-    {
-        nameRu: "Главная",
-        nameEn: "Home",
-        path: "/"
-    },
-    {
-        nameRu: "Технологии",
-        nameEn: "Technologies",
-        path: "/tech"
-    },
-    {
-        nameRu: "Материалы",
-        nameEn: "Fabric",
-        path: "/fiber"
-    },
-    {
-        nameRu: "Портфолио",
-        nameEn: "Portfolio",
-        path: "/portfolio"
-    },
-    {
-        nameRu: "Заказать",
-        nameEn: "Order",
-        path: "/order"
-    },
-]
-
 interface IProps {
     lang: TLang
+    pagesList: Array<IPage>
 }
 
 
-const Nav:React.FC<IProps> = (props) => {
+const Nav:React.FC<IProps> = ({lang, pagesList}: IProps) => {
     const [opened, setOpened] = useState(true)
     const scrollTimeout = useRef<any>()
 
@@ -47,30 +20,30 @@ const Nav:React.FC<IProps> = (props) => {
         setOpened(!opened)
     }
 
-    const handleScroll =() => {
+    /*const handleScroll =() => {
         scrollTimeout.current && clearTimeout(scrollTimeout.current)
         scrollTimeout.current = setTimeout(()=> {
             setOpened(window.scrollY < 400)
         }, 250)
-    }
+    }*/
 
     useEffect(() => {
-        window.addEventListener("scroll", handleScroll);
+        /*window.addEventListener("scroll", handleScroll);
         return(() => {
             window.removeEventListener("scroll", handleScroll);
-        })
+        })*/
     },[])
   
     return (
         <nav className={opened ? "nav_desktop opened" : "nav_desktop"}>
             <div className="nav__container">
                 <ul>
-                    {pages.map((page: IPage) => {
+                    {pagesList.map((page: IPage) => {
                         return (
                             <li key={page.path}>
                                 <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
                                     to={page.path}>
-                                    {props.lang === 'Ru' ? page.nameRu : page.nameEn}
+                                    {page.name[lang]}
                                 </NavLink>
                             </li>
                         )
@@ -93,7 +66,8 @@ const Nav:React.FC<IProps> = (props) => {
 }
 
 const mapStateToProps = (state: IState) => ({
-    lang: state.lang
+    lang: state.lang, 
+    pagesList: state.pagesList
 })
 /*
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => ({

@@ -14,23 +14,23 @@ interface IProps {
 const LangSwitcher:React.FC<IProps> = (props): JSX.Element => {
 
     const handleChangeLang= () => {
-        if (props.lang === 'En') {
-            window.localStorage.setItem('language', 'Ru')
+        if (props.lang === 'en') {
+            window.localStorage.setItem('language', 'ru')
             props.setState.setLangRu()
         } else {
-            window.localStorage.setItem('language', 'En')
+            window.localStorage.setItem('language', 'en')
             props.setState.setLangEn();
         }
     }
 
     useEffect(() => {
-        (window.localStorage.getItem('language') as TLang) === 'En' ? props.setState.setLangEn() : props.setState.setLangRu()
+        (window.localStorage.getItem('language') as TLang) === 'en' ? props.setState.setLangEn() : props.setState.setLangRu()
     }, [])
 
 
     return (
         <div className="lang-switcher" onClick={handleChangeLang}>
-            <span>{props.lang === 'En' ? 'En' : 'Ru'}</span>
+            <span>{props.lang === 'en' ? 'en' : 'ru'}</span>
         </div>
         )
 }

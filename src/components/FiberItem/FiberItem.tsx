@@ -1,4 +1,4 @@
-import { IFiber } from 'src/interfaces'
+import { IFiber, TLang } from 'src/interfaces'
 import Proscons from '../Proscons/Proscons'
 import './fiber-item.scss'
 import Splide from "@splidejs/splide";
@@ -38,7 +38,13 @@ interface IModal {
 	path: string;
 }
 
-const FiberItem = ({fiber}: {fiber: IFiber}) => {
+
+interface IProps {
+	fiber: IFiber,
+	lang: TLang
+}
+
+const FiberItem = ({fiber, lang}: IProps) => {
 
     const fabricSplide = useRef<Splide>();
 	const containerSize = useRef<IContainerSize>();
@@ -74,7 +80,7 @@ const FiberItem = ({fiber}: {fiber: IFiber}) => {
 		if ((e.target as HTMLImageElement).tagName === 'IMG') {
 			const id = Number(((e.target as HTMLImageElement).id));
 			//console.log(fiber.imgs[id].url);
-			setModal(prev => ({...prev, visible: true, path: fiber.imgs[id].url, descr: fiber.imgs[id].alt}))
+			setModal(prev => ({...prev, visible: true, path: fiber.imgs[id].url, descr: fiber.imgs[id].alt[lang]}))
 		}
 		
 	}
@@ -109,7 +115,7 @@ const FiberItem = ({fiber}: {fiber: IFiber}) => {
                                 return (
                                     <li className="splide__slide" key={img.path} data-path={img.path}>
                                         <div className="splide__slide-container">
-                                            <img src={img.url} alt={img.alt} id={String(i)} />
+                                            <img src={img.url} alt={img.alt[lang]} id={String(i)} />
                                         </div>
                                     </li>
                                 );
@@ -120,9 +126,9 @@ const FiberItem = ({fiber}: {fiber: IFiber}) => {
                 </div>
             </div>
             <div className="fiber__descr__container">
-                <h3>{fiber.header}</h3>
-                {fiber.text.map((textItem, i) => <p key={i}>{textItem}</p>)}
-                <Proscons proscons={fiber.proscons}/>
+                <h3>{fiber.header[lang]}</h3>
+                {fiber.text[lang].map((textItem, i) => <p key={i}>{textItem.part}</p>)}
+                <Proscons {...fiber.proscons} lang={lang}/>
             </div>
 				<Modal {...{visible: modal.visible, close: closeModal}}>
 					<ModalImage props={{path: modal.path, descr: modal.descr}}/>

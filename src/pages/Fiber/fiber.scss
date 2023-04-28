@@ -4,8 +4,13 @@
 .fiber {
     width: 100%;
 
+	& > h1 {
+		color: var(--main_vv);
+	}
+
 	& .fibers__container {
 		margin-top: 30px;
+		padding-bottom: 50px;
 
 		& .fiber__item {
 			margin-top: 150px;

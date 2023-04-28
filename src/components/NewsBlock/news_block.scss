@@ -21,16 +21,17 @@
         cursor: pointer;
         display: flex;
         align-items: center;
+        transition: background-color $transition_theme;
         
         & span {
-            color: var(--text);
+            color: $bg;//var(--text);
             font-weight: 700;
             font-size: 18px;
             margin: 0 30px;
         }
 
         & svg {
-            fill: var(--text);
+            fill: $bg;//var(--text);
             height: 20px;
         }
     }
