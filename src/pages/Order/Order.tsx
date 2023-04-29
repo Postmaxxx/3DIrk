@@ -6,6 +6,8 @@ import './order.scss'
 import { IState, TLang, TLangText, TLangTextArr } from "src/interfaces";
 import imgSide from '../../assets/img/order_1.jpg'
 import { useState, useEffect, useRef } from 'react'
+import iconFileQuestion from '../../assets/img/icon_file_question.svg'
+import iconFilesClear from '../../assets/img/icon_clear.svg'
 
 interface IProps {
     lang: TLang
@@ -41,11 +43,15 @@ interface IProps {
 const Order = ({lang, header, subheader, name, phone, email,message, files, qrcode, text}: IProps) => {
     
     const _dropArea = useRef<HTMLDivElement>(null)
-    const [filesList, setFilesList] = useState<FileList>()
+    const [filesList, setFilesList] = useState<FileList[]>()
     const _name = useRef<HTMLInputElement>(null)
     const _email = useRef<HTMLInputElement>(null)
     const _phone = useRef<HTMLInputElement>(null)
+    const _files = useRef<HTMLInputElement>(null)
     const _message = useRef<HTMLTextAreaElement>(null)
+    const _filesGallery = useRef<HTMLDivElement>(null)
+    const _filesCleaner = useRef<HTMLDivElement>(null)
+    
 
     const preventDefaults = (e: any) => {
         e.preventDefault()
@@ -73,35 +79,105 @@ const Order = ({lang, header, subheader, name, phone, email,message, files, qrco
         e.target.parentElement.classList.remove('error')
     }
 
-
-
     
     const dragDrop = (e: any) => {
         preventDefaults(e)
         _dropArea.current?.classList.remove('active')
-        setFilesList(e.dataTransfer?.files);
+       // setFilesList(e.dataTransfer?.files);
+        setFilesList((prev: Array<FileList> | undefined) => {
+            if (prev) return [...prev, e.dataTransfer?.files as FileList]
+            return [e.dataTransfer?.files as FileList]
+        })
     }
+    
+    const onSelect = () => {
+        _dropArea.current?.classList.remove('active')
+        setFilesList((prev: Array<FileList> | undefined) => {
+            if (prev) return [...prev, _files.current?.files as FileList]
+            return [_files.current?.files as FileList]
+        })
+    }
+
+    const clearAttachedFiles = () => {
+        setFilesList([]);
+    }
+
+
+    const previewFiles = (filesToPreview: FileList[] | undefined) => {
+        (_filesGallery.current as HTMLDivElement).innerHTML = '';
+        const imageTypes: string[] = ['jpg', 'jpeg', 'bmp', 'svg', 'png', 'tiff', 'webp'];
+        if (!filesToPreview) return
+        filesToPreview.forEach(fileToPreviewItem => {
+            ([...fileToPreviewItem]).forEach((file: File) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file)
+                reader.onloadend = function() {
+                    let _containerObj: HTMLDivElement = document.createElement('div')
+                    let _containerImg: HTMLDivElement = document.createElement('div')
+                    let _descr: HTMLSpanElement = document.createElement('span')
+                    let _img: HTMLImageElement = document.createElement('img')
+                    _descr.innerText = file.name;
+                    _filesGallery.current?.appendChild(_containerObj)
+                    _containerImg.appendChild(_img)
+                    _containerObj.appendChild(_containerImg)
+                    _containerObj.appendChild(_descr)
+                    
+                    _img.src = (imageTypes.includes(file.name.split('.').pop() || '')) ? reader.result as string : iconFileQuestion;
+                }
+            })
+        })
+    }
+
 
     const hasErrors = (): boolean => {
-        if (!_name.current?.checkValidity()) {
-            _name.current?.parentElement?.classList.add('error')
-            return true
-        }
-        if (!_email.current?.checkValidity()) {
-            _name.current?.parentElement?.classList.add('error')
-            return true
-        }
-        if (!_phone.current?.checkValidity()) {
-            _name.current?.parentElement?.classList.add('error')
-            return true
-        }
-        if (!_message.current?.checkValidity()) {
-            _name.current?.parentElement?.classList.add('error')
-            return true
-        }
-        return false
+        const feildsToCheck: Array<React.RefObject<HTMLInputElement | HTMLTextAreaElement>> = [_name,_email,_phone,_message]
+        let isWrong: boolean = false
+        feildsToCheck.forEach(field => {
+            if (!field.current?.checkValidity()) {
+                field.current?.parentElement?.classList.add('error')
+                isWrong = true
+            }
+        })
+        return isWrong
     }
 
+
+    const sendMessage = ({apiToken, chatId, text}: {apiToken: string, chatId: string, text: string}) => {
+        const urlMessage:string = `https://api.telegram.org/bot${apiToken}/sendMessage?chat_id=${chatId}&text=${text}`;
+        fetch(urlMessage)
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error(`HTTP error! Status: ${res.status}`);
+                }
+                return res.json();
+            })
+            .then(data => console.log('Message sent succesfully: ', data))
+            .catch(err => console.log('Error while sending a message: ', err.message));
+    }
+
+
+
+
+    const sendFiles = ({apiToken, chatId, filesArr}: {apiToken: string, chatId: string, filesArr: FileList[] | undefined}) => {
+        const urlDocument= `https://api.telegram.org/bot${apiToken}/sendDocument`;
+        filesArr?.forEach((filesItem) => {
+            ([...filesItem as FileList]).forEach((file: any) => {
+                const formData: FormData = new FormData();
+                formData.append('chat_id', chatId);
+                formData.append('document', file, file.name);
+                const options = {method: 'POST', body: formData};
+                fetch(urlDocument, options)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.json();
+                })
+                .then(data => console.log('File sent successfully:', file.name))
+                .catch(error => console.error(`Error sending file:, ${file.name}, error: ${error.message}`));
+            })    
+        })
+    }
 
     const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
         preventDefaults(e)
@@ -110,51 +186,21 @@ const Order = ({lang, header, subheader, name, phone, email,message, files, qrco
         const chatId: string = process.env.REACT_APP_CHT_ID || '';
         //const chatLink: string = process.env.REACT_APP_CHT_LINK || '';
         const name:string = _name.current?.value || '';
+        const phone:string = _phone.current?.value || '';
+        const email:string = _email.current?.value || '';
+        const message:string = _message.current?.value || '';
+        if (hasErrors()) return
+        const text: string = `Date: ${currentDate.toISOString().slice(0,10)}%0ATime: ${currentDate.toISOString().slice(11, 19)}%0AName: ${name}%0AEmail: ${email}%0APhone: ${phone}%0A%0AMessage: ${message}` ;
 
-        //if (hasErrors()) return
-
-
-        const message: string = '111'// (document.querySelector("#contact_message") as HTMLInputElement).value;
-        const text: string = `Date: ${currentDate.toISOString().slice(0,10)} %0ATime: ${currentDate.toISOString().slice(11, 19)} %0AName: ${name}%0AEmail: %0ATopic:%0A%0AMessage: ${message}` ;
-        const urlMessage:string = `https://api.telegram.org/bot${apiToken}/sendMessage?chat_id=${chatId}&text=${text}`;
-        fetch(urlMessage)
-            .then(() => (console.log('OK')))
-            .catch(e => console.log('error', e.message))
-
-
-
-        const urlDocument= `https://api.telegram.org/bot${apiToken}/sendDocument`;
-        
-        ([...filesList as FileList] as []).forEach((file:any) => {
-            const formData = new FormData();
-            formData.append('chat_id', chatId);
-            formData.append('document', file, `filename.rrr`);
-            console.log(file);
-            
-            const options = {
-                method: 'POST',
-                body: formData,
-            };
-
-            fetch(urlDocument, options)
-            .then(response => {
-              if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-              }
-              return response.json();
-            })
-            .then(data => {
-              console.log('File sent successfully:', data);
-            })
-            .catch(error => {
-              console.error('Error sending file:', error);
-            });
-
-        })    
-
-
-
+        sendMessage({apiToken, chatId, text})
+        sendFiles({apiToken, chatId, filesArr: filesList})
     }
+
+
+
+    useEffect(() => {
+        previewFiles(filesList)
+    }, [filesList])
 
 
     useEffect(() => {
@@ -187,19 +233,19 @@ const Order = ({lang, header, subheader, name, phone, email,message, files, qrco
                                     <label htmlFor="name">
                                         {name.label[lang]}
                                     </label>
-                                    <input id="name" type="text" required min={3} max={25} onChange={clearError} ref={_name}/>
+                                    <input id="name" type="text" required min={2} max={25} onChange={clearError} ref={_name}/>
                                 </div>
                                 <div className="input-block">
                                     <label htmlFor="phone">
                                         {phone.label[lang]}
                                     </label>
-                                    <input id="phone" type="tel" min={6} max={20} ref={_phone}/>
+                                    <input id="phone" type="tel" min={6} max={25} ref={_phone} onChange={clearError}/>
                                 </div>
                                 <div className="input-block">
                                     <label htmlFor="email">
                                         {email.label[lang]}
                                     </label>
-                                    <input id="email" type="email" required ref={_email}/>
+                                    <input id="email" type="email" required ref={_email} onChange={clearError}/>
                                 </div>
 
 
@@ -221,7 +267,11 @@ const Order = ({lang, header, subheader, name, phone, email,message, files, qrco
                                                 {' '+ files.linkRest[lang]}
                                             </span>
                                         </div>
-                                        <input id="files" type="file" multiple onChange={dragDrop} />
+                                        <input id="files" type="file" multiple onChange={onSelect} ref={_files}/>
+                                        <div className="preview-gallery" ref={_filesGallery}></div>
+                                        <div className="drop-area__cleaner" ref={_filesCleaner} onClick={clearAttachedFiles}>
+                                            <img src={iconFilesClear} alt={lang === 'en' ? "Clear list" : 'Очистить список'} />
+                                        </div>
                                     </div>
                                 </div>
 
@@ -233,7 +283,7 @@ const Order = ({lang, header, subheader, name, phone, email,message, files, qrco
                                     <label htmlFor="message">
                                         {message.label[lang]}
                                     </label>
-                                    <textarea id="message" required minLength={20} ref={_message}/>
+                                    <textarea id="message" required minLength={10} maxLength={1000} ref={_message} onChange={clearError}/>
                                 </div>
                             </div>
                             <button type="submit" onClick={onSubmit}>{lang === 'en' ? 'Send' : "Отправить"}</button>

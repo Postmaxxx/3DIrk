@@ -604,27 +604,27 @@ initialState = {
             },
             message: {
                 label: {
-                    en: 'Information about the order*',
-                    ru: 'Информация о заказе*'
+                    en: 'Information about the order (at least 10 symbols)*',
+                    ru: 'Информация о заказе (минимум 10 символов)*'
                 },
                 data: ''
             },
             files: {
                 label: {
-                    en: 'Attach file',
-                    ru: 'Прикрепить файл'
+                    en: 'Attach files',
+                    ru: 'Прикрепить файлы'
                 }, 
                 listLabel: {
                     en: 'Attached files',
                     ru: 'Прикрепленные файлы'
                 },
                 link: {
-                    en: 'Select a file',
-                    ru: 'Выберите файл'
+                    en: 'Add files',
+                    ru: 'Выберите файлы'
                 },
                 linkRest: {
                     en: 'or drag it here',
-                    ru: 'или перетащите его сюда'
+                    ru: 'для добавления или перетащите их сюда'
                 },
                 filesList: [
                 ]
