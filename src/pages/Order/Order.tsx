@@ -275,10 +275,14 @@ const Order = ({lang, header, subheader, name, phone, email,message, files, qrco
                                             </label>
                                             <input id="email" type="email" required ref={_email} onChange={clearError}/>
                                         </div>
-
-
-
-
+                                        <div className="input-block message-block">
+                                            <label htmlFor="message">
+                                                {message.label[lang]}
+                                            </label>
+                                            <textarea id="message" required minLength={10} maxLength={1000} ref={_message} onChange={clearError}/>
+                                        </div>
+                                    </div>
+                                    <div className="files-block">
                                         <div className="input-block files">
                                             <label htmlFor="files">{files.label[lang]}</label>
                                             <div className="drop-area" ref={_dropArea}>
@@ -296,20 +300,6 @@ const Order = ({lang, header, subheader, name, phone, email,message, files, qrco
                                                 </div>
                                             </div>
                                         </div>
-
-
-
-
-
-                                        <div className="input-block">
-                                            <label htmlFor="message">
-                                                {message.label[lang]}
-                                            </label>
-                                            <textarea id="message" required minLength={10} maxLength={1000} ref={_message} onChange={clearError}/>
-                                        </div>
-                                    </div>
-                                    <div className="data-block">
-                                        
                                     </div>
 
                                 </div>
