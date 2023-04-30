@@ -2,6 +2,7 @@ import ReactDOM from 'react-dom/client';
 import { Suspense, lazy } from "react";
 import { Provider } from 'react-redux';
 import store from './redux/store';
+import Preloader from './components/Preloader/Preloader';
 
 
 
@@ -17,7 +18,7 @@ const root = ReactDOM.createRoot(
 
 root.render(
 	<Provider store={store}>
-		<Suspense fallback={<div>OLNOAD</div>}>
+		<Suspense fallback={<Preloader />}>
 			<LazyApp />
 		</Suspense>
 	</Provider>

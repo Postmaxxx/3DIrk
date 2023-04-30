@@ -19,7 +19,6 @@ const LazyFiberPage = lazy(() => import("./pages/Fiber/Fiber"));
 const LazyTechPage = lazy(() => import("./pages/Tech/Tech"));
 const LazyPortfolioPage = lazy(() => import("./pages/Portfolio/Portfolio"));
 
-//const LazyPortfoliosEditPage= lazy(() => import("./pages/Admin/Portfolios/PortfoliosEdit"));
 
 
 interface IProps {
@@ -30,9 +29,10 @@ interface IProps {
 
 const App:React.FC<IProps> = (props) => {
 
+	
   return (
     <BrowserRouter>
-		<LazyThemeSwitcher />
+		<Suspense fallback={<Preloader />}><LazyThemeSwitcher /></Suspense>
 		<LazyLangSwitcher />
 		<LazyHeader />
 		<Routes>

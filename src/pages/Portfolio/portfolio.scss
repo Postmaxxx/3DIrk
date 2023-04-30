@@ -1,6 +1,10 @@
+@use '/src/assets/css/variables' as *;
+
 section.portfolio {
-    
-    .portfolio__hero {
+    background-color: var(--bg);
+    transition: background-color $transition-theme;
+
+    & .portfolio__hero {
         text-align: center;
         margin-top: 60px;
 

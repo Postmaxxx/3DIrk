@@ -1,228 +1,267 @@
 @use '/src/assets/css/variables' as *;
 
-.page_order {
+section.order {
+    background-color: var(--bg);
+    transition: background-color $transition-theme;
 
-    
-    & h1 {
-        color: var(--main_vv);
-        text-align: center;
-    }
-
-    .order__block {
-        display: flex;
-        margin-top: 30px;
-
-        & > img {
-            box-shadow: 10px 10px 10px var(--main_vv);
-            z-index: 100;
-            width: 50%;
+    & .page_order {
+      
+        & h1 {
+            color: var(--main_vv);
+            text-align: center;
         }
-
-        .order__container {
-            width: 50%;
-            padding: 30px 30px;
-            padding-left: 50px;
-            margin: 40px 0;
-            background-color: var(--main);
-
-            & > h2 {
-                //text-align: center;
-                color: var(--text);
-                font-family: Nunito;
-            }
-
-            & .inputs-block {
-
-                
-                & .input-block {
-                    width: 100%;
-                    margin-top: 15px;
-                    
-                    & label {
-                        display: block;
-                        font-size: 16px;
-                        transition: color $transition_theme;
-                        font-weight: 700;
-                    }
-
-                    & input {
-                        margin-top: 3px;
-                        font-size: 20px;
-                        color: black;
-                        font-weight: 600;
-                        padding: 5px 10px;
-                        width: 100%;
-                        border-radius: 4px;
-                        border: none;
-                        transition: background-color $transition-theme;
-                    }
-
-                    & textarea {
-                        margin-top: 3px;
-                        font-size: 20px;
-                        color: black;
-                        font-weight: 600;
-                        padding: 5px 10px;
-                        width: 100%;
-                        border-radius: 4px;
-                        border: none;
-                        resize: vertical;
-                        height: 8rem;
-                        transition: background-color $transition-theme;
-                    }
-
-                    &.files {
-                        & input[type="file"] {
-                            display: none;
-                        }
-
-
-                        & .drop-area {
-                            position: relative;
-                            margin-top: 5px;
-                            width: 100%;
-                            display: flex;
-                            flex-direction: column;
-                            align-items: center;
-                            padding-bottom: 20px;
-                            padding-top: 30px;
-                            border-radius: 4px;
-                            background-color: var(--main_vv);
-                            transition: background-color $transition_theme;
-
-                            & > svg {
-                                fill: $light;
-                                transform: scale(1.3);
-                                margin-bottom: 10px;
-                            }
-
-                            & > .link__container {
-                                display: flex;
-                                justify-content: center;
-                                align-items: center;
-
-                                @include respond-to(md) {
-                                    flex-direction: column;
-                                }
-
-                                & label:first-child {
-                                    display: inline;
-                                    text-decoration: underline;
-                                    cursor: pointer;
-                                    color: $light;
-                                }
     
-                                & span {
-                                    color: $light;
-                                    margin-left: .5rem;
-                                    @include respond-to(sm) {
-                                        display: none;
-                                    }
-                                }
+        .order__block {
+            display: flex;
+            margin-top: 30px;
+            justify-content: center;
+            
+            & > .img__container {
+                height: 100%;
+                width: 50%;
+    
+                & > img {
+                    width: 50%;
+                    box-shadow: 10px 10px 10px var(--main_vv);
+                    z-index: 100;
+                }
+            }
+    
+    
+            .order__container {
+                width: 70%;
+                padding: 30px 30px;
+                //padding-left: 50px;
+                margin: 40px 0;
+                border-radius: 10px;
+                background-color: var(--main);
+                transition: background-color $transition_theme;
+                box-shadow: 5px 4px 6px 2px rgba(#000, 0.25);
+
+                @include respond-to(md) {
+                    width: 85%;
+                }
+    
+                @include respond-to(sm) {
+                    width: 100%;
+                    margin-top: 0px;
+                }
+    
+                & > h2 {
+                        text-align: center;
+                    color: var(--text);
+                    font-family: Nunito;
+                }
+    
+                & > .data-block {
+                    width: 100%;
+                    display: flex;
+                    align-items: stretch;
+
+                    & .inputs-block {
+                        width: 60%;
+
+                        & .input-block {
+                            width: 100%;
+                            margin-top: 15px;
+                            
+                            @include respond-to(sm) {
+                                margin-top: 25px;
                             }
-
-                            & > .preview-gallery {
-                                display: flex;
-                                flex-wrap: wrap;
-                                padding: 0 20px;
-                                gap: 20px;
-                                margin-top: 20px;
-                                //border: 1px solid red;
-                                justify-content: center;
-                                max-height: 500px;
-                                overflow-y: auto;
-
-                                & > div {
+        
+        
+                            & label {
+                                display: block;
+                                font-size: 16px;
+                                transition: color $transition_theme;
+                                font-weight: 700;
+                            }
+        
+                            & input {
+                                margin-top: 3px;
+                                font-size: 20px;
+                                color: black;
+                                font-weight: 600;
+                                padding: 5px 10px;
+                                width: 100%;
+                                border-radius: 4px;
+                                border: none;
+                                background-color: var(--inputs-bg);
+                                transition: background-color $transition-theme;
+                            }
+        
+                            & textarea {
+                                margin-top: 3px;
+                                font-size: 20px;
+                                color: black;
+                                font-weight: 600;
+                                padding: 5px 10px;
+                                width: 100%;
+                                border-radius: 4px;
+                                border: none;
+                                resize: vertical;
+                                height: 8rem;
+                                background-color: var(--inputs-bg);
+                                transition: background-color $transition-theme;
+                            }
+        
+                            &.files {
+                                & input[type="file"] {
+                                    display: none;
+                                }
+        
+        
+                                & .drop-area {
+                                    position: relative;
+                                    margin-top: 5px;
+                                    width: 100%;
                                     display: flex;
                                     flex-direction: column;
                                     align-items: center;
-                                    width: 100px;
-                                    
-                                    & > div {
-                                        height: 50px;
-                                        width: 100%;
+                                    padding-bottom: 20px;
+                                    padding-top: 30px;
+                                    border-radius: 4px;
+                                    background-color: var(--main_vv);
+                                    transition: background-color $transition_theme;
+        
+                                    & > svg {
+                                        fill: $light;
+                                        transform: scale(1.3);
+                                        margin-bottom: 10px;
+                                    }
+        
+                                    & > .link__container {
+                                        display: flex;
+                                        justify-content: center;
+                                        align-items: center;
+        
+                                        @include respond-to(md) {
+                                            flex-direction: column;
+                                        }
+        
+                                        & label:first-child {
+                                            display: inline;
+                                            text-decoration: underline;
+                                            cursor: pointer;
+                                            color: $light;
+                                        }
+            
+                                        & span {
+                                            color: $light;
+                                            margin-left: .5rem;
+                                            @include respond-to(sm) {
+                                                display: none;
+                                            }
+                                        }
+                                    }
+        
+                                    & > .preview-gallery {
+                                        display: flex;
+                                        flex-wrap: wrap;
+                                        padding: 0 20px;
+                                        gap: 20px;
+                                        margin-top: 20px;
+                                        //border: 1px solid red;
+                                        justify-content: center;
+                                        max-height: 500px;
+                                        overflow-y: auto;
+        
+                                        & > div {
+                                            display: flex;
+                                            flex-direction: column;
+                                            align-items: center;
+                                            width: 100px;
+                                            
+                                            & > div {
+                                                height: 100px;
+                                                width: 100%;
+                                                
+                                                & > img {
+                                                    width: 100%;
+                                                    height: 100%;
+                                                    object-fit: cover;
+                                                }
+        
+                                            }
+        
+                                            & > span {
+                                                margin-top: 10px;
+                                                font-size: 14px;
+                                                text-align: center;
+                                                color: $light;
+                                            }
+                                        }
+        
+                                    }
+        
+                                    & > .drop-area__cleaner {
+                                        position: absolute;
+                                        right: 15px;
+                                        top: 15px;
+                                        height: 20px;
+                                        width: 20px;
+                                        cursor: pointer;
                                         
                                         & > img {
-                                            width: 100%;
-                                            height: 100%;
-                                            object-fit: contain;
+                                            fill: white;
                                         }
-
                                     }
-
-                                    & > span {
-                                        margin-top: 10px;
-                                        font-size: 14px;
-                                        text-align: center;
-                                        color: $light;
+        
+                                    &.active {
+                                        border: 2px dotted $light;
+                                        box-shadow: 0px 0px 20px $light;
                                     }
-                                }
-
-                            }
-
-                            & > .drop-area__cleaner {
-                                position: absolute;
-                                right: 15px;
-                                top: 15px;
-                                height: 20px;
-                                width: 20px;
-                                cursor: pointer;
-                                
-                                & > img {
-                                    fill: white;
+            
                                 }
                             }
-
-                            &.active {
-                                border: 2px dotted $light;
-                                box-shadow: 0px 0px 20px $light;
+        
+        
+        
+        
+        
+                            &.error {
+                                & > label {
+                                    color: $color_danger;
+                                }
+        
+                                & > input, textarea {
+                                    background-color: $color_danger;
+                                }
                             }
+                            
+        
+                        }
+        
+                        
+                    }
+                }
+
     
-                        }
+                & > button {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    //background-color: $light;
+                    background-color: var(--inputs-bg);
+                    font-size: 18px;
+                    letter-spacing: 0.1rem;
+                    padding: 12px 10%;
+                    border: none;
+                    border-radius: 4px;
+                    margin-top: 20px;
+                    color: $dark;
+                    font-weight: 700;
+                    cursor: pointer;
+                    text-transform: uppercase;
+    
+                    &:hover {
+                        box-shadow: 0px 0px 20px var(--main_vv);
                     }
-
-
-
-
-
-                    &.error {
-                        & > label {
-                            color: $color_danger;
-                        }
-
-                        & > input, textarea {
-                            background-color: $color_danger;
-                        }
-                    }
-                    
-
-                }
-
-                
-            }
-
-            & > button {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background-color: $light;
-                font-size: 18px;
-                letter-spacing: 0.1rem;
-                padding: 12px 10%;
-                border: none;
-                border-radius: 4px;
-                margin-top: 20px;
-                color: $dark;
-                font-weight: 700;
-                cursor: pointer;
-                text-transform: uppercase;
-
-                &:hover {
-                    box-shadow: 0px 0px 15px var(--main_vv);
                 }
             }
+    
         }
-
     }
-}
+
+}    
 

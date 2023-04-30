@@ -1,41 +1,46 @@
 @use '/src/assets/css/variables' as *;
 
-.page_home {
-    
-    & h1 {
-        //font-family: Arial, Helvetica, sans-serif;
-        color: var(--main_vv);
+section.home {
+    background-color: var(--bg);
+    transition: background-color $transition-theme;
 
-        //text-align: center;
-    }
+    & .page_home {
+        
+        & h1 {
+            //font-family: Arial, Helvetica, sans-serif;
+            color: var(--main_vv);
+
+            //text-align: center;
+        }
 
 
-    & > p {
-        &:first-of-type {
+        & > p {
+            &:first-of-type {
+                margin-top: 30px;
+            }
+        }
+
+        & .slider__container {
+            margin-top: 50px;
+            height: 400px;
+            border: 2px solid red;
+            position: relative;
+
+            & .slidermax {
+            }
+        }
+
+
+        & h2 {
+            margin-top: 80px;
+            //font-family: Arial, Helvetica, sans-serif;
+            text-align: center;
+            color: var(--main_vv);
+
+        }
+
+        & .news {
             margin-top: 30px;
         }
-    }
-
-    & .slider__container {
-        margin-top: 50px;
-        height: 400px;
-        border: 2px solid red;
-        position: relative;
-
-        & .slidermax {
-        }
-    }
-
-
-    & h2 {
-        margin-top: 80px;
-        //font-family: Arial, Helvetica, sans-serif;
-        text-align: center;
-        color: var(--main_vv);
-
-    }
-
-    & .news {
-        margin-top: 30px;
     }
 }

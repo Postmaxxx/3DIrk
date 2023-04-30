@@ -47,21 +47,23 @@ interface IProps {
                         */
 const Home:React.FC<IProps> = ({lang, sliderMax, heroBlock} : IProps): JSX.Element => {
     return (
-        <div className="container_page">
-            <div className="container">
-                <div className='page_home'>
-                    <h1>{lang === 'en' ? 'Header' : 'Заголовок'}</h1>
-                    {heroBlock.text[lang].map((item, i) => (
-                        <p key={i}>{item.part}</p>
-                    ))}
-                    <div className="slider__container">
-                        <SpliderMax />
+        <section className='home'>
+            <div className="container_page">
+                <div className="container">
+                    <div className='page_home'>
+                        <h1>{lang === 'en' ? 'Header' : 'Заголовок'}</h1>
+                        {heroBlock.text[lang].map((item, i) => (
+                            <p key={i}>{item.part}</p>
+                        ))}
+                        <div className="slider__container">
+                            <SpliderMax />
+                        </div>
+                        <h2>{lang === 'en' ? 'Last news' : 'Последние новости'}</h2>
+                            <NewsBlock />
                     </div>
-                    <h2>{lang === 'en' ? 'Last news' : 'Последние новости'}</h2>
-                        <NewsBlock />
                 </div>
             </div>
-        </div>
+        </section>
     )
 }
 

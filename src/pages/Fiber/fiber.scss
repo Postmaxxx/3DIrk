@@ -1,28 +1,32 @@
 @use '/src/assets/css/variables' as *;
 
-
-.fiber {
-    width: 100%;
-
-	& > h1 {
-		color: var(--main_vv);
-	}
-
-	& .fibers__container {
-		margin-top: 30px;
-		padding-bottom: 50px;
-
-		& .fiber__item {
-			margin-top: 150px;
-
-            &:first-child {
-                margin-top: 0;
-            }
-
-			&:last-child > .fiber__descr__container::after {
-				display: none;
+section.fiber {
+    background-color: var(--bg);
+    transition: background-color $transition-theme;
+	
+	& .fiber {
+		width: 100%;
+	
+		& > h1 {
+			color: var(--main_vv);
+		}
+	
+		& .fibers__container {
+			margin-top: 30px;
+			padding-bottom: 50px;
+	
+			& .fiber__item {
+				margin-top: 150px;
+	
+				&:first-child {
+					margin-top: 0;
+				}
+	
+				&:last-child > .fiber__descr__container::after {
+					display: none;
+				}
 			}
 		}
+		
 	}
-    
 }

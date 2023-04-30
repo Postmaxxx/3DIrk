@@ -579,7 +579,7 @@ initialState = {
             },
             subheader: {
                 en: 'Make an order',
-                ru: 'Оставить заявку'
+                ru: 'Отправить заявку'
             },
             name: {
                 label: {

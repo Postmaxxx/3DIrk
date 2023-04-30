@@ -24,21 +24,23 @@ const Fiber:React.FC<IProps> = ({lang, fibersBlock, setState} : IProps) => {
 
 
     return (
-        <div className="container_page">
-            <div className="container">
-                <div className="fiber">
-                    <h1>{fibersBlock.header[lang]}</h1>
-                    {fibersBlock.dataLoading.status === 'success' ? (
-                        <div className="fibers__container">
-                            {fibersBlock.fibersList.map((fiber, i) => <FiberItem {...{fiber}} lang={lang} key={i}/>)}
-                        </div>
-                    ):
-                    (
-                        <Preloader />
-                    )}
+        <section className="fiber">
+            <div className="container_page">
+                <div className="container">
+                    <div className="fiber">
+                        <h1>{fibersBlock.header[lang]}</h1>
+                        {fibersBlock.dataLoading.status === 'success' ? (
+                            <div className="fibers__container">
+                                {fibersBlock.fibersList.map((fiber, i) => <FiberItem {...{fiber}} lang={lang} key={i}/>)}
+                            </div>
+                        ):
+                        (
+                            <Preloader />
+                        )}
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
     )
 }
 

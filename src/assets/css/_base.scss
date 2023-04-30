@@ -19,8 +19,7 @@ html,body, h1,h2,h3,h4,h5,h6,p,span,div,nav,ul,li {
 */
 body {
     width: 100%;
-    background-color: var(--bg);
-    transition: background-color $transition-theme;
+
 }
 
 #root {
@@ -73,9 +72,17 @@ p {
     transition: color $transition_theme;
 }
 
+.container_page {
+    width: 100%;
+    flex-grow: 1;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    //background-image: url('../img/portfolio_bg.jpg');
+
+}
 
 .container {
-    border: 1px solid yellow;
+    //border: 1px solid yellow;
     width: 100%;
     max-width: $lg;
     margin-left: auto;
@@ -84,11 +91,4 @@ p {
     padding-left: 20px;
     padding-right: 20px;
     color: var(--text);
-}
-
-.container_page {
-    width: 100%;
-    flex-grow: 1;
-    padding-top: 50px;
-    padding-bottom: 50px;
 }
