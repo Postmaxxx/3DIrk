@@ -68,9 +68,9 @@
         margin-top: auto;   
         padding: 8px 60px 8px 20px;
         border-radius: 10px;
-        color: $bg;//;
+        color: var(--text);//;
         background-color: var(--main);
-        transition: background-color $transition_theme;
+        transition: background-color $transition_theme, color $transition_theme;
         //font-family: 'LexendDeca';
         font-size: 18px;
         font-weight: 700;
@@ -85,7 +85,7 @@
             max-height: 80%;
             right: 0;
             margin-right: 25px;
-            fill: $bg;
+            fill: var(--text);
             position: absolute;
             transition: margin .2s;
         }

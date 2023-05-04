@@ -3,7 +3,8 @@
 section.portfolio {
     background-color: var(--bg);
     transition: background-color $transition-theme;
-
+    flex-grow: 1;
+    
     & .portfolio__hero {
         text-align: center;
         margin-top: 60px;

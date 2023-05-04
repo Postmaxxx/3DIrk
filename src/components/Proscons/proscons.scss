@@ -1,13 +1,24 @@
+@use '/src/assets/css/variables' as *;
+
+
 .proscons {
-    margin-top: 20px;
+    margin-top: 50px;
     width: 100%;
     display: flex;
     align-items: flex-start;
-    justify-content: space-evenly;
+    justify-content: space-between;
+
+    @include respond-to(xs) {
+        flex-direction: column  ;
+    }
 
     & > ul {
-        width: 40%;
+        width: 45%;
         font-size: 1.2rem;
+
+        @include respond-to(xs) {
+            width: 100%;
+        }
     }
 
     & .pros, & .cons {
@@ -36,11 +47,19 @@
     }
     
     
-    & .cons li::before {
-        background-image: url('../../assets/img/mark_con.png');
-        background-size: 80% 80%;
-        background-position: center center;
-        background-repeat: no-repeat;
+    & .cons {
 
+        @include respond-to(xs) {
+            margin-top: 20px;
+        }
+
+        li::before {
+            background-image: url('../../assets/img/mark_con.png');
+            background-size: 80% 80%;
+            background-position: center center;
+            background-repeat: no-repeat;
+        }
     }
+    
 }
+

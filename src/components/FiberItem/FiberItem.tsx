@@ -27,7 +27,8 @@ interface IOptions {
 	pauseOnHover: boolean
 	breakpoints: {
 		[key: number]: {
-			wheel: boolean
+			wheel?: boolean
+			perPage?: number
 		}
 	}
 }
@@ -72,6 +73,10 @@ const FiberItem = ({fiber, lang}: IProps) => {
 		breakpoints: {
 			768: {
 				wheel: false,
+				perPage: 2,
+			}, 
+			480: {
+				perPage: 1,
 			}, 
 		},
 	};
@@ -126,9 +131,12 @@ const FiberItem = ({fiber, lang}: IProps) => {
                 </div>
             </div>
             <div className="fiber__descr__container">
-                <h3>{fiber.header[lang]}</h3>
-                {fiber.text[lang].map((textItem, i) => <p key={i}>{textItem.part}</p>)}
-                <Proscons {...fiber.proscons} lang={lang}/>
+				<div className="block_text">
+					<h3>{fiber.header[lang]}</h3>
+					{fiber.text[lang].map((textItem, i) => <p key={i}>{textItem.part}</p>)}
+						<Proscons {...fiber.proscons} lang={lang}/>
+
+				</div>
             </div>
 				<Modal {...{visible: modal.visible, close: closeModal}}>
 					<ModalImage props={{path: modal.path, descr: modal.descr}}/>

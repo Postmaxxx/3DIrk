@@ -10,6 +10,10 @@
     justify-content: center;
     flex-wrap: wrap;
 
+    & >  .break-new-line {
+        width: 100%;
+    }
+
     & .show-more-news {
         margin-top: 30px;
         align-self: flex-start;
@@ -24,15 +28,16 @@
         transition: background-color $transition_theme;
         
         & span {
-            color: $bg;//var(--text);
+            color: var(--text);
             font-weight: 700;
             font-size: 18px;
             margin: 0 30px;
         }
 
         & svg {
-            fill: $bg;//var(--text);
+            fill: var(--text);
             height: 20px;
         }
+
     }
 }

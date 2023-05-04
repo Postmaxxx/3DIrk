@@ -49,18 +49,27 @@ export const setThemeToggle = <T>(): IAction<T> => ({
     type: actions.SET_THEME_TOGGLE,
 })
 
-export const setNavOpen = <T>():IAction<T> => ({
-    type: actions.SET_NAV_OPEN,
+export const setNavOpenMob = <T>():IAction<T> => ({
+    type: actions.SET_NAV_OPEN_MOB,
 });
 
-export const setNavClose = <T>():IAction<T> => ({
-    type: actions.SET_NAV_CLOSE,
+export const setNavCloseMob = <T>():IAction<T> => ({
+    type: actions.SET_NAV_CLOSE_MOB,
 });
 
-export const setNavToggle = <T>():IAction<T> => ({
-    type: actions.SET_NAV_OPEN,
+export const setNavToggleMob = <T>():IAction<T> => ({
+    type: actions.SET_NAV_OPEN_MOB,
+});
+export const setNavOpenDt = <T>():IAction<T> => ({
+    type: actions.SET_NAV_OPEN_DT,
 });
 
+export const setNavCloseDt = <T>():IAction<T> => ({
+    type: actions.SET_NAV_CLOSE_DT,
+});
+
+export const setNavToggleDt = <T>():IAction<T> => ({
+    type: actions.SET_NAV_OPEN_DT});
 
 
 

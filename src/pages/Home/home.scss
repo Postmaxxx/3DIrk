@@ -3,7 +3,8 @@
 section.home {
     background-color: var(--bg);
     transition: background-color $transition-theme;
-
+    flex-grow: 1;
+    
     & .page_home {
         
         & h1 {
@@ -13,12 +14,15 @@ section.home {
             //text-align: center;
         }
 
+        & > .block_text {
 
-        & > p {
-            &:first-of-type {
-                margin-top: 30px;
+            & > p {
+                &:first-of-type {
+                    //margin-top: 30px;
+                }
             }
         }
+
 
         & .slider__container {
             margin-top: 50px;

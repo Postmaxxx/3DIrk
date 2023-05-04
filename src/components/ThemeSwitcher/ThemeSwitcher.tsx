@@ -5,6 +5,7 @@ import { AnyAction, Dispatch, bindActionCreators } from "redux";
 import cloud from "./theme_day__cloud.svg";
 import star from "./theme_nigth__star.svg";
 import "./themeSwitcher.scss";
+import { IState } from "src/interfaces";
 
 type EmptyVoid = () => void
 type TTheme = 'dark' | 'light'
@@ -26,11 +27,13 @@ interface IStar {
 
 interface IThemeSwitcher {
     theme: TTheme
+	mobOpened: boolean
+	desktopOpened: boolean
 	setState: typeof actions
 }
 
 
-interface IState {
+interface IStateSwitcher {
 	_themeSwitcherContainer: HTMLDivElement
 	_themeSwitcher: HTMLElement,
 	_themeSwitcherInput: HTMLElement,
@@ -61,7 +64,7 @@ const ThemeSwitcher: React.FC<IThemeSwitcher> = (props): JSX.Element => {
 
 	const dayLightSwitcher = (switcherProps: any) => {
 
-		const state__default: Partial<IState>  = {
+		const state__default: Partial<IStateSwitcher>  = {
 			width: 70,
 			height: 40,
 			circleSize: 14,
@@ -101,7 +104,7 @@ const ThemeSwitcher: React.FC<IThemeSwitcher> = (props): JSX.Element => {
 		};
 		
 		
-		const state: Partial<IState> = {
+		const state: Partial<IStateSwitcher> = {
 			_themeSwitcherContainer: _themeSwitcherCont.current as HTMLDivElement,
 			_themeSwitcher: undefined,
 			_themeSwitcherInput: undefined,
@@ -446,7 +449,7 @@ const ThemeSwitcher: React.FC<IThemeSwitcher> = (props): JSX.Element => {
 
 	useEffect((): void => {
 		localStorage.getItem("theme") as TTheme === 'dark' ? props.setState.setThemeDark() : props.setState.setThemeLight()
-		const themeProps: Partial<IState> = { 
+		const themeProps: Partial<IStateSwitcher> = { 
 			themeSwitcherContainer: _themeSwitcherCont.current as HTMLDivElement, 
 			star: star,
 			cloud: cloud, 
@@ -464,13 +467,15 @@ const ThemeSwitcher: React.FC<IThemeSwitcher> = (props): JSX.Element => {
 	},[]);
 	
 	return (
-		<div className='theme-switcher__container' ref={_themeSwitcherCont}></div>
+		<div className={props.mobOpened ? 'theme-switcher__container' : 'theme-switcher__container hide'} ref={_themeSwitcherCont}></div>
 	);
 };
 
 
 const mapStateToProps = (state: IState) => ({
-    theme: state.theme
+    theme: state.theme,
+	mobOpened: state.nav.mobOpened,
+	desktopOpened: state.nav.desktopOpened
   })
   
   

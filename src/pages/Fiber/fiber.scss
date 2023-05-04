@@ -3,6 +3,7 @@
 section.fiber {
     background-color: var(--bg);
     transition: background-color $transition-theme;
+	flex-grow: 1;
 	
 	& .fiber {
 		width: 100%;

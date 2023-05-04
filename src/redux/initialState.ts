@@ -24,13 +24,13 @@ initialState = {
             },
             path: "/"
         },
-        {
+        /*{
             name: {
                 ru: "Технологии",
                 en: 'Technologies'
             },
             path: "/tech"
-        },
+        },*/
         {
             name: {
                 ru: "Материалы",
@@ -620,7 +620,7 @@ initialState = {
                 },
                 link: {
                     en: 'Add files',
-                    ru: 'Выберите файлы'
+                    ru: 'Выберете файлы'
                 },
                 linkRest: {
                     en: 'or drag it here',

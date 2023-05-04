@@ -26,6 +26,38 @@ const reducer = (state:IState = initialState, action: IAction<any>): IState => {
             return {
                 ...state, theme: newTheme
             }
+        case actions.SET_NAV_OPEN_MOB: 
+            return {
+                ...state, 
+                nav: {
+                    ...state.nav,
+                    mobOpened: true
+                }
+            }
+        case actions.SET_NAV_CLOSE_MOB: 
+            return {
+                ...state, 
+                nav: {
+                    ...state.nav,
+                    mobOpened: false
+                }
+            }
+        case actions.SET_NAV_OPEN_DT: 
+            return {
+                ...state, 
+                nav: {
+                    ...state.nav,
+                    desktopOpened: true
+                }
+            }
+        case actions.SET_NAV_CLOSE_DT: 
+            return {
+                ...state, 
+                nav: {
+                    ...state.nav,
+                    desktopOpened: false
+                }
+            }
 
         case actions.LOAD_PORTFOLIOS: 
             return {

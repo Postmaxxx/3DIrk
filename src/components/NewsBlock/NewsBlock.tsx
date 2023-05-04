@@ -1,11 +1,11 @@
 import './news_block.scss'
-import { useState, useEffect, useRef, Fragment } from 'react'
+import { useState,  Fragment } from 'react'
 import * as actions from "../../redux/actions";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import News from '../News/News'
-import { INews, INewsBlock, IState, TLang } from 'src/interfaces'
+import { INewsBlock, IState, TLang } from 'src/interfaces'
 
 interface IProps {
     lang: TLang,
@@ -26,6 +26,7 @@ const NewsBlock = ({lang, newsBlock} : IProps) => {
                     {i < newsDisplayed && <News news={news} lang={lang}/>}
                 </Fragment>
             ))}
+            <div className="break-new-line"></div>
             {newsBlock.news.length > newsDisplayed && (
                 <button className='show-more-news' onClick={showMoreNews}>
                     <svg width="16" height="25" viewBox="0 0 16 25" xmlns="http://www.w3.org/2000/svg">

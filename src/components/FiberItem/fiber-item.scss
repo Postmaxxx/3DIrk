@@ -48,6 +48,7 @@
     & > .fiber__descr__container {
         position: relative;
        // border: 2px solid yellow;
+       padding-top: 70px;
        
        &::after {
             position: absolute;
@@ -57,17 +58,21 @@
             bottom: -75px;
             left: 50%;
             transform: translate(-50%, 0);
+
+            @include respond-to(sm) {
+                width: 30%;
+            }
         }
 
         & h3 {
-            margin-top: 30px;
+            //margin-top: 30px;
             text-align: center;
             color: var(--main_vv);
         }
 
         & p {
             font-size: 1.2rem;
-            margin-top: .5rem;
+            //margin-top: .5rem;
         }
 
     }

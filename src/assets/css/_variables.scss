@@ -6,9 +6,6 @@ $xs: 480px;
 
 $black: #000;
 $white: #FFF;
-$theme-sw-blue: rgb(22, 100, 216);
-$theme-sw-sun: gold;
-$theme-sw-moon: #f7f7f7;;
 $color_danger: #ffa0a0;
 
 
@@ -20,27 +17,38 @@ $bg: #F4EDDD;
 $nav: #333;
 $nav_selected: #EEE;
 
-$transition_nav: 1s ease-in-out;
+$transition_nav: .5s ease-in-out;
 $transition_nav_menu: .5s ease-in-out;
 $transition-theme: 1s;
 $light: #EBEBEB;
 $dark: #286181;
 
+$header_height: 80px;
+$nav_height: 550px;
+
 body {
-    --main: #409BCE;
-    --main_vv: #286181;
+    --main: rgb(100, 181, 245);
+    --main_vv: rgb(7, 113, 184);
     --bg: #EBEBEB;
     --text: #1F2833;
+    --text_vv: #EBEBEB;
     --text_contrast: #F3F3F3;
     --inputs-bg: #EBEBEB;
+    --lang-selector: #EBEBEB;
+    --lang-text: #286181;
+    --lang-text_add: #286181;
  }
  body.dark {
-    --main: #286181;
-    --main_vv: #409BCE;
+    --main: rgb(7, 113, 184);//rgb(13, 96, 173);
+    --main_vv: rgb(100, 181, 245);
     --bg: #1F2833;
     --text: #EBEBEB;
+    --text_vv: #1F2833;
     --text_contrast: #1F2833;
     --inputs-bg: #d6e3e6;
+    --lang-selector: #EBEBEB;
+    --lang-text: #286181;
+    --lang-text_add: #EBEBEB;
  }
 
 

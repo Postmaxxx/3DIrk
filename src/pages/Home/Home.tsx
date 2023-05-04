@@ -8,23 +8,7 @@ import { connect } from "react-redux";
 import { IDataLoading, IHeroBlock, IMaxSlide, IState, TLang } from "../../interfaces";
 import Preloader from 'src/components/Preloader/Preloader';
 
-/*
-const mockHome = [
-    {
-        text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quo tempore atque et nostrum qui vitae! Dolor necessitatibus ipsum consectetur optio.'
-    },
-    {
-        text: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Necessitatibus, eveniet odit veritatis totam exercitationem id perspiciatis dolores, ipsum quos reprehenderit, consectetur facere harum rerum libero tempore incidunt modi! Placeat cumque quidem velit porro amet quam possimus dolorum eaque exercitationem quod!'
-    },
-    {
-        text: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Necessitatibus, eveniet odit veritatis totam exercitationem id perspiciatis dolores, ipsum quos reprehenderit, consectetur facere harum rerum libero tempore incidunt modi! Placeat cumque quidem velit porro amet quam possimus dolorum eaque exercitationem quod!'
-    },
-    {
-        text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quo tempore atque et nostrum qui vitae! Dolor necessitatibus ipsum consectetur optio.'
-    }
 
-]
-*/
 interface IProps {
     lang: TLang
     sliderMax: {
@@ -52,9 +36,11 @@ const Home:React.FC<IProps> = ({lang, sliderMax, heroBlock} : IProps): JSX.Eleme
                 <div className="container">
                     <div className='page_home'>
                         <h1>{lang === 'en' ? 'Header' : 'Заголовок'}</h1>
-                        {heroBlock.text[lang].map((item, i) => (
-                            <p key={i}>{item.part}</p>
-                        ))}
+                        <div className="block_text">
+                            {heroBlock.text[lang].map((item, i) => (
+                                <p key={i}>{item.part}</p>
+                            ))}
+                        </div>
                         <div className="slider__container">
                             <SpliderMax />
                         </div>

@@ -7,10 +7,12 @@ export const SET_THEME_TOGGLE = 'SET_THEME_TOGGLE'
 export const SET_LANG_EN = 'SET_LANG_EN'
 export const SET_LANG_RU = 'SET_LANG_RU'
 
-export const SET_NAV_OPEN = 'SET_NAV_OPEN'
-export const SET_NAV_CLOSE = 'SET_NAV_CLOSE'
-export const SET_NAV_TOGGLE = 'SET_NAV_TOGGLE'
-
+export const SET_NAV_OPEN_MOB= 'SET_NAV_OPEN_MOB'
+export const SET_NAV_CLOSE_MOB = 'SET_NAV_CLOSE_MOB'
+export const SET_NAV_TOGGLE_MOB = 'SET_NAV_TOGGLE_MOB'
+export const SET_NAV_OPEN_DT = 'SET_NAV_OPEN_DT'
+export const SET_NAV_CLOSE_DT = 'SET_NAV_CLOSE_DT'
+export const SET_NAV_TOGGLE_DT = 'SET_NAV_TOGGLE_DT'
 
 export const LOAD_PORTFOLIOS = 'LOAD_PORTFOLIOS'
 export const SAVE_PORTFOLIOS = 'SAVE_PORTFOLIOS'

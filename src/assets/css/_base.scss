@@ -70,12 +70,17 @@ p {
     font-size: 1.2rem;
     text-indent: 3rem;
     transition: color $transition_theme;
+    margin-top: 20px;
+
+    &:first-of-type {
+        margin-top: 40px;
+    }
 }
 
 .container_page {
     width: 100%;
     flex-grow: 1;
-    padding-top: 50px;
+    padding-top: 100px;
     padding-bottom: 50px;
     //background-image: url('../img/portfolio_bg.jpg');
 
@@ -91,4 +96,19 @@ p {
     padding-left: 20px;
     padding-right: 20px;
     color: var(--text);
+}
+
+
+.block_text {
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+
+    @include respond-to(sm) {
+        width: 90%;
+    }
+
+    @include respond-to(xs) {
+        width: 100%;
+    }
 }

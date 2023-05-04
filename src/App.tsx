@@ -1,4 +1,4 @@
-import { Routes, Route, BrowserRouter } from "react-router-dom";
+import { Routes, Route, BrowserRouter, HashRouter } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import Preloader from "./components/Preloader/Preloader"; 
 import "./assets/css/_base.scss";
@@ -31,10 +31,10 @@ const App:React.FC<IProps> = (props) => {
 
 	
   return (
-    <BrowserRouter>
+    <>
 		<Suspense fallback={<Preloader />}><LazyThemeSwitcher /></Suspense>
-		<LazyLangSwitcher />
-		<LazyHeader />
+		<Suspense fallback={<Preloader />}><LazyLangSwitcher /></Suspense>
+		<Suspense fallback={<Preloader />}><LazyHeader /></Suspense>
 		<Routes>
 			<Route index element={<Suspense fallback={<Preloader />}><LazyHomePage /></Suspense>} />
 			<Route path="/order" element={<Suspense fallback={<Preloader />}><LazyOrderPage /></Suspense>} />
@@ -43,7 +43,7 @@ const App:React.FC<IProps> = (props) => {
 			<Route path="/tech" element={<Suspense fallback={<Preloader />}><LazyTechPage /></Suspense>} />
 		</Routes>
 		<LazyFooter />
-    </BrowserRouter>
+	</>
   );
 } 
 
