@@ -1,14 +1,14 @@
 @use '/src/assets/css/variables' as *;
 
 
-.modal__image-container {
+.message_image__container {
     width: 90%;
     height: 85%;
     display: flex;
     align-items: center;
     flex-direction: column;
 
-    & > .img-wrapper {
+    & > .img__wrapper {
         //flex-grow: 1;
         height: calc(100% - 40px);
         width: 100%;
@@ -20,7 +20,7 @@
         }
     }
 
-    & .descr-container {
+    & .descr__container {
         height: 40px;
         display: flex;
         align-items:flex-end;

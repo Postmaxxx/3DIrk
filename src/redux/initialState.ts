@@ -620,7 +620,7 @@ initialState = {
                 },
                 link: {
                     en: 'Add files',
-                    ru: 'Выберете файлы'
+                    ru: 'Выберите файлы'
                 },
                 linkRest: {
                     en: 'or drag it here',

@@ -1,0 +1,43 @@
+@use '/src/assets/css/variables' as *;
+
+
+.message_info__container{
+    padding: 40px;
+    padding-top: 30px;
+    z-index: 6000;
+    background-color: var(--main);
+    border-radius: 15px;
+    margin: 30px;
+
+    & .text-block {
+        border-radius: 10px;
+        margin-top: 30px;
+        padding: 20px;
+        background-color: var(--inputs-bg);
+
+        & > p {
+            color: $dark;
+            text-indent: 0rem;
+            margin-top: 0;
+            font-weight: 600;
+        }
+    }
+
+    & > button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--inputs-bg);
+        font-size: 18px;
+        letter-spacing: 0.1rem;
+        padding: 12px 10%;
+        border: none;
+        border-radius: 4px;
+        margin-top: 40px;
+        color: #286181;
+        font-weight: 700;
+        cursor: pointer;
+        text-transform: uppercase;
+        margin-left: auto;
+    }
+}

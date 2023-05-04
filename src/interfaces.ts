@@ -167,7 +167,9 @@ export interface ISetData {
 
 
 
-
+export interface IModal {
+	visible: boolean
+}
 
 
 

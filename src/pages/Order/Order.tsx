@@ -3,11 +3,13 @@ import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import './order.scss'
-import { IState, TLang, TLangText, TLangTextArr } from "src/interfaces";
+import { IModal, IState, TLang, TLangText, TLangTextArr } from "src/interfaces";
 import imgSide from '../../assets/img/order_1.jpg'
 import { useState, useEffect, useRef } from 'react'
 import iconFileQuestion from '../../assets/img/icon_file_question.svg'
 import iconFilesClear from '../../assets/img/icon_clear.svg'
+import Modal from "src/components/Modal/Modal";
+import MessageInfo from "src/components/MessageInfo/MessageInfo";
 
 interface IProps {
     lang: TLang
@@ -51,8 +53,17 @@ const Order = ({lang, header, subheader, name, phone, email,message, files, qrco
     const _message = useRef<HTMLTextAreaElement>(null)
     const _filesGallery = useRef<HTMLDivElement>(null)
     const _filesCleaner = useRef<HTMLDivElement>(null)
+	const [modal, setModal] = useState<IModal>({visible: false})
+
     let dragCounter: number = 0
 
+
+    const closeModal = () => {
+		setModal({visible: false})
+        clearForm();
+	}
+
+    
     const preventDefaults = (e: DragEvent | React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
         e.stopPropagation()
@@ -221,7 +232,7 @@ const Order = ({lang, header, subheader, name, phone, email,message, files, qrco
         const text: string = `Date: ${currentDate.toISOString().slice(0,10)}%0ATime: ${currentDate.toISOString().slice(11, 19)}%0AName: ${name}%0AEmail: ${email}%0APhone: ${phone}%0A%0AMessage: ${message}` ;
 
         if (sendMessage({apiToken, chatId, text}) && sendFiles({apiToken, chatId, sendFilesArr: filesArr})) {
-            clearForm();
+            setModal({visible: true});
         }
     }
 
@@ -314,6 +325,14 @@ const Order = ({lang, header, subheader, name, phone, email,message, files, qrco
                     </div>
                 </div>
             </div>
+            <Modal {...{visible: modal.visible, close: closeModal}}>
+					<MessageInfo {...{
+                        header: lang === 'en' ? 'Success' : 'Отправлено', 
+                        text: lang === 'en' ?  [`Your message ${filesArr.length > 0 ? "and files have" : "has"} been sent`] : [`Ваше сообщение ${filesArr.length > 0 ? "и вложения были успешно отправлены" : "было успешно отправлено"}`], 
+                        buttonText: lang === 'en' ? 'Close' : "Закрыть", 
+                        buttonAction: closeModal
+                    }}/>
+			</Modal> 
         </section>
     )
 }

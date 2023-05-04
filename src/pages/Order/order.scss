@@ -206,11 +206,13 @@ section.order {
                                         text-decoration: underline;
                                         cursor: pointer;
                                         color: $light;
+                                        font-size: 18px;
                                     }
             
                                     & span {
                                         color: $light;
                                         text-align: center;
+                                        font-size: 16px;
                                         //margin-left: .5rem;
                                         @include respond-to(sm) {
                                             display: none;

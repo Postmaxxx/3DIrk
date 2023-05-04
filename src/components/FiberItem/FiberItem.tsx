@@ -1,10 +1,10 @@
-import { IFiber, TLang } from 'src/interfaces'
+import { IFiber, IModal, TLang } from 'src/interfaces'
 import Proscons from '../Proscons/Proscons'
 import './fiber-item.scss'
 import Splide from "@splidejs/splide";
 import { useRef, useState, useEffect, MouseEventHandler, MouseEvent } from 'react'
 import Modal from '../Modal/Modal';
-import ModalImage from '../ModalImage/ModalImage';
+import ModalImage from '../MessageImage/MessageImage';
 
 interface IContainerSize {
 	width: number
@@ -33,11 +33,7 @@ interface IOptions {
 	}
 }
 
-interface IModal {
-	visible: boolean
-	descr: string
-	path: string;
-}
+
 
 
 interface IProps {
@@ -45,12 +41,20 @@ interface IProps {
 	lang: TLang
 }
 
+interface modalImg {
+	descr: string 
+	path: string
+}
+
+
+
 const FiberItem = ({fiber, lang}: IProps) => {
 
     const fabricSplide = useRef<Splide>();
 	const containerSize = useRef<IContainerSize>();
 	const _splideFabric = useRef<any>();
-	const [modal, setModal] = useState<IModal>({visible: false, descr: '', path: ''})
+	const [modal, setModal] = useState<IModal>({visible: false})
+	const [modalImg, setModalImg] = useState<modalImg>({descr: '', path: ''})
 
 
     const options: IOptions = {
@@ -85,13 +89,14 @@ const FiberItem = ({fiber, lang}: IProps) => {
 		if ((e.target as HTMLImageElement).tagName === 'IMG') {
 			const id = Number(((e.target as HTMLImageElement).id));
 			//console.log(fiber.imgs[id].url);
-			setModal(prev => ({...prev, visible: true, path: fiber.imgs[id].url, descr: fiber.imgs[id].alt[lang]}))
+			setModal({visible: true})
+			setModalImg({path: fiber.imgs[id].url, descr: fiber.imgs[id].alt[lang]})
 		}
 		
 	}
 
 	const closeModal = () => {
-		setModal(prev => ({...prev, visible: false}))
+		setModal({visible: false})
 	}
 
 
@@ -139,7 +144,7 @@ const FiberItem = ({fiber, lang}: IProps) => {
 				</div>
             </div>
 				<Modal {...{visible: modal.visible, close: closeModal}}>
-					<ModalImage props={{path: modal.path, descr: modal.descr}}/>
+					<ModalImage props={{path: modalImg.path, descr: modalImg.descr}}/>
 				</Modal> 
         </div>
     )

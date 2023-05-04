@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import "./modalImage.scss"
+import "./message_image.scss"
 import Preloader from '../Preloader/Preloader'
 
 interface IProps {
@@ -31,11 +31,11 @@ const ModalImage = ({props}: {props: IProps}) => {
 
     
     return (
-        <div className="modal__image-container">
-            <div className="img-wrapper" ref={_container}>
+        <div className="message_image__container">
+            <div className="img__wrapper" ref={_container}>
                 {!loaded && <Preloader />}
             </div>
-            <div className="descr-container">
+            <div className="descr__container">
                 <span>{props.descr}</span>
             </div>
         </div>
