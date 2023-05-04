@@ -170,7 +170,7 @@ const Order = ({lang, header, subheader, name, phone, email,message, files, qrco
 
 
 
-    const sendFiles = ({apiToken, chatId, sendFilesArr}: {apiToken: string, chatId: string, sendFilesArr: File[]}) => {
+    const sendFiles = ({apiToken, chatId, sendFilesArr}: {apiToken: string, chatId: string, sendFilesArr: File[]}): boolean => {
         const urlDocument= `https://api.telegram.org/bot${apiToken}/sendDocument`;
         let success: boolean = true
         sendFilesArr.forEach((file: File) => {
@@ -198,6 +198,14 @@ const Order = ({lang, header, subheader, name, phone, email,message, files, qrco
         return success
     }
 
+    const clearForm = () => {
+        if (_message.current) {
+            _message.current.value = ''
+        }
+        setFilesArr([]);
+    }
+
+
     const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
         preventDefaults(e)
         const currentDate: Date = new Date();
@@ -212,14 +220,10 @@ const Order = ({lang, header, subheader, name, phone, email,message, files, qrco
         
         const text: string = `Date: ${currentDate.toISOString().slice(0,10)}%0ATime: ${currentDate.toISOString().slice(11, 19)}%0AName: ${name}%0AEmail: ${email}%0APhone: ${phone}%0A%0AMessage: ${message}` ;
 
-        sendMessage({apiToken, chatId, text})
-        sendFiles({apiToken, chatId, sendFilesArr: filesArr})
+        if (sendMessage({apiToken, chatId, text}) && sendFiles({apiToken, chatId, sendFilesArr: filesArr})) {
+            clearForm();
+        }
     }
-
-
-
-    
-
 
 
 

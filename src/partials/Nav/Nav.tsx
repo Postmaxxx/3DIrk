@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { IPage, IState, TLang } from "src/interfaces";
 import "./nav.scss"
@@ -20,6 +20,7 @@ interface IProps {
 
 const Nav:React.FC<IProps> = ({lang, pagesList, setState, mobOpened, desktopOpened}: IProps) => {
     const scrollTimeout = useRef<any>()
+    const _blur = useRef<HTMLDivElement>(null)
 
     const navToggle = () => {
         desktopOpened ? setState.setNavCloseDt() : setState.setNavOpenDt()
@@ -46,6 +47,9 @@ const Nav:React.FC<IProps> = ({lang, pagesList, setState, mobOpened, desktopOpen
 
 
   
+    useEffect(() => {
+
+    },[])
 
 
     return (
@@ -55,14 +59,12 @@ const Nav:React.FC<IProps> = ({lang, pagesList, setState, mobOpened, desktopOpen
                     <ul>
                         {pagesList.map((page: IPage) => {
                             return (
-                                <>
-                                    <li key={page.path}>
-                                        <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
-                                            to={page.path}>
-                                            {page.name[lang]}
-                                        </NavLink>
-                                    </li>
-                                </>
+                                <li key={page.path}>
+                                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
+                                        to={page.path}>
+                                        {page.name[lang]}
+                                    </NavLink>
+                                </li>
                             )
                         })
                         }
@@ -92,24 +94,24 @@ const Nav:React.FC<IProps> = ({lang, pagesList, setState, mobOpened, desktopOpen
                         </div>
                     </label>
                 </div>
+                <div className="blur" ref={_blur}></div>
                 <div className="nav__container">
                     <ul>
                         {pagesList.map((page: IPage) => {
                             return (
-                                <>
-                                    <li key={page.path}>
+                                <Fragment key={page.path}>
+                                    <li>
                                         <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} onClick={navToggleMobile}
                                             to={page.path}>
                                             {page.name[lang]}
                                         </NavLink>
                                     </li>
                                     <div className="line"></div>
-                                </>
+                                </Fragment>
                             )
                         })
                         }
                     </ul>
-                    <div className="right-line"></div>
                 </div>
                 <div className="nav__container_right"></div>
             </nav>
