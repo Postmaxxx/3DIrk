@@ -254,10 +254,7 @@ export interface IState extends Store {
         newsBlock: INewsBlock
         fibersBlock: IFibersBlock
         orderBlock: IOrderBlock
-
-        portfolios: {
-            list: Array<IPortfolioData>
-        }
+        portfolios: IPortfolios
         nav: {
             mobOpened: boolean,
             desktopOpened: boolean
@@ -276,7 +273,7 @@ export interface IState extends Store {
         desktopOpened: boolean
     }
 
-    portfolios: IPortfolios
+    
 }
 
 
@@ -307,6 +304,11 @@ export type ProjectItemListItem = {
 export interface IPortfolios {
     selectedPortfolio: number
     selectedImage: number
+    header: TLangText
+    subheader: TLangText
+    text: TLangTextArr
+    headerSplider: TLangText
+    img: IImg
     list: Array<ProjectItemListItem>
 }
 

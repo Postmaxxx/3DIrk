@@ -61,7 +61,9 @@ const Nav:React.FC<IProps> = ({lang, pagesList, setState, mobOpened, desktopOpen
                             return (
                                 <li key={page.path}>
                                     <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
-                                        to={page.path}>
+                                        to={page.path}
+                                        data-text={page.name[lang]}
+                                        >
                                         {page.name[lang]}
                                     </NavLink>
                                 </li>

@@ -4,6 +4,10 @@
 .splider_portfolio__modal {
     max-width: 80%;
     height: 80%;
+
+    @include respond-to(sm) {
+        max-width: 90%;
+    }
 }
 
 

@@ -134,9 +134,9 @@ const PortfolioSplider: React.FC<IPortfolioSplider> = ({list, selectedPortfolio,
 
 const mapStateToProps = (state: IState)  => {
 	return {
-		list: state.portfolios.list,
-		selectedPortfolio: state.portfolios.selectedPortfolio,
-		selectedImage: state.portfolios.selectedImage,
+		list: state.components.portfolios.list,
+		selectedPortfolio: state.components.portfolios.selectedPortfolio,
+		selectedImage: state.components.portfolios.selectedImage,
 	};
 };
 

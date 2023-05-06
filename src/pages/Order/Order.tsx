@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import './order.scss'
 import { IModal, IState, TLang, TLangText, TLangTextArr } from "src/interfaces";
 import imgSide from '../../assets/img/order_1.jpg'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, KeyboardEventHandler } from 'react'
 import iconFileQuestion from '../../assets/img/icon_file_question.svg'
 import iconFilesClear from '../../assets/img/icon_clear.svg'
 import Modal from "src/components/Modal/Modal";
@@ -259,6 +259,15 @@ const Order = ({lang, header, subheader, name, phone, email,message, files, qrco
 
     })
 
+
+
+    const focusNext = ({e, target}: {e: KeyboardEvent, target: HTMLInputElement | HTMLTextAreaElement | null}) => {
+        if (e.key === 'Enter') {
+            e.preventDefault()
+            target?.focus();
+        }
+    }
+
     return (
         <section className="order">
             <div className='container_page'>
@@ -276,25 +285,25 @@ const Order = ({lang, header, subheader, name, phone, email,message, files, qrco
                                             <label htmlFor="name">
                                                 {name.label[lang]}
                                             </label>
-                                            <input id="name" type="text" required min={2} max={25} onChange={clearError} ref={_name}/>
+                                            <input className="input-element" id="name" type="text" required min={2} max={25} ref={_name} onChange={clearError} onKeyDown={(e:any) => focusNext({e, target: _phone.current})}/>
                                         </div>
                                         <div className="input-block">
                                             <label htmlFor="phone">
                                                 {phone.label[lang]}
                                             </label>
-                                            <input id="phone" type="tel" min={6} max={25} ref={_phone} onChange={clearError}/>
+                                            <input className="input-element" id="phone" type="tel" min={6} max={25} ref={_phone} onChange={clearError} onKeyDown={(e:any) => focusNext({e, target: _email.current})}/>
                                         </div>
                                         <div className="input-block">
                                             <label htmlFor="email">
                                                 {email.label[lang]}
                                             </label>
-                                            <input id="email" type="email" required ref={_email} onChange={clearError}/>
+                                            <input className="input-element" id="email" type="email" required ref={_email} onChange={clearError} onKeyDown={(e:any) => focusNext({e, target: _message.current})}/>
                                         </div>
                                         <div className="input-block message-block">
                                             <label htmlFor="message">
                                                 {message.label[lang]}
                                             </label>
-                                            <textarea id="message" required minLength={10} maxLength={1000} ref={_message} onChange={clearError}/>
+                                            <textarea className="input-element" id="message" required minLength={10} maxLength={1000} ref={_message} onChange={clearError}/>
                                         </div>
                                     </div>
                                     <div className="files-block">

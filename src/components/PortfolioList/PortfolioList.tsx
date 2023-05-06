@@ -45,8 +45,8 @@ const PortfolioList: React.FC<IList> = ({list, selectedPortfolio, lang, setState
 const mapStateToProps = (state: IState) => {
 	return {
 		lang: state.lang,
-		list: state.portfolios.list,
-		selectedPortfolio: state.portfolios.selectedPortfolio,
+		list: state.components.portfolios.list,
+		selectedPortfolio: state.components.portfolios.selectedPortfolio,
 	};
 };
 

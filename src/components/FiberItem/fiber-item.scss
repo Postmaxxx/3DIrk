@@ -10,9 +10,17 @@
     //border: 1px solid red;
 
     & > .fiber__splide__container {
-        height: 25  0px;
+        height: 300px;
         width: 100%;
         //border: 2px solid green;
+
+        @include respond-to(md) {
+            height: 250px;
+        }
+
+        @include respond-to(sm) {
+            height: 230px;
+        }
 
         & .splide {
             height: 100%;
@@ -37,6 +45,37 @@
                                 width: 100%;
                                 object-fit: cover;
                             }
+                        }
+                    }
+                }
+            }
+
+            & > .splide__arrows {
+                & > .splide__arrow {
+                    transition: $transition_fast;
+                    & > svg {
+                        fill: var(--main);
+                    }
+
+                    &:hover {
+                        opacity: .8;
+                        background-color: var(--main);
+                        & > svg {
+                            fill: var(--dark);
+                        }
+                    }
+
+                    &--next:hover {
+                        translate: 5px;
+                        & > svg {
+                            margin-left: 8px;
+                        }
+                    }
+
+                    &--prev:hover {
+                        translate: -5px;
+                        & > svg {
+                            margin-right: 8px;
                         }
                     }
                 }

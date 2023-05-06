@@ -1,4 +1,4 @@
-@use "sass:map";
+//@use "sass:map";
 @use "/src/assets/css/variables" as *;
 //@import '../../../assets/css/base.scss';
 
@@ -8,12 +8,39 @@
     margin-right: 50px;
     border-right: 1px solid var(--main_vv);
     padding-right: 30px;
+    height: 100%;
+    position: relative;
+
+    @include respond-to(sm) {
+        border-right: none;
+        border-top: 2px solid var(--main_vv);
+        padding-right: 0;
+        margin-right: 0;
+        margin-bottom: 50px;
+        padding-bottom: 30px;   
+        padding-top: 50px;
+
+        &::after {
+            content: '';
+            width: 30%;
+            height: 1px;
+            background-color: var(--main_vv);
+            position: absolute;
+            bottom: 0px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    }
     
     & .list {
         width: 100%;
         display: inline-block;
         padding: 5px 0px;
         overflow-y: auto;
+
+        @include respond-to(sm) {
+            max-height: 400px;
+        }
     
         & > ul {
             list-style-type: none;

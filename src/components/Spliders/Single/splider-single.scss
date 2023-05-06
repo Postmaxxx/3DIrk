@@ -7,12 +7,16 @@
 
     
     & > .splider_single {
-        max-height: 100%;
         width: 100%;
         margin-top: 20px;
         margin-bottom: 10px;
         flex-grow: 1;
-    
+        max-height: 90%;
+
+        @include respond-to(sm) {
+            height: 50vw;
+        }
+
         & * {
             transition: none;
         }
@@ -67,7 +71,8 @@
                         height: 100%;
                         
                         & > img {
-                            cursor: zoom-in;
+                            //cursor: zoom-in;
+                            cursor: pointer;
                             height: 100%;
                             width: 100%;
                             object-fit: contain;
@@ -77,6 +82,11 @@
             }
         }
         & .splide__pagination {
+
+            @include respond-to(xs) {
+                display: none;
+            }
+
             & .splide__pagination__page  {
                 background-color: rgba(var(--main_vv_RGB), 0.8);
                 margin: 7px;

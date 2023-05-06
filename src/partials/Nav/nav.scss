@@ -52,24 +52,83 @@
 
                 & > a {
                     position: relative;
-                    //padding-left: 5px;
-                    //padding-right: 5px;
-                    transition: 1s;
                     color: var(--text);
-                    transition: color $transition-theme;
                     text-transform: uppercase;
                     transition: $transition_nav_menu;
                     display: block;
                     font-weight: 700;
+
+                    /*&::before {
+                        content: attr(data-text);
+                        position: absolute;
+                        top: 0%;
+                        left: 0;
+                        color: var(--text_contrast);
+                        overflow: hidden;
+                        width: 100%;
+                        height: 0;
+                        transition: $transition_nav_menu;
+                    }*/
+
+                    &::before {
+                        content: '';
+                        bottom: 0;
+                        left: 90%;
+                        width: 0%;
+                        height: 3px;
+                        background-color: var(--main);
+                        position: absolute;
+                        transition: $transition_nav;
+                        border-radius: 2px;
+                    }
+
+                    
+                    &::after {
+                        content: '';
+                        bottom: 0;
+                        right: 90%;
+                        width: 0%;
+                        height: 3px;
+                        background-color: var(--main);
+                        position: absolute;
+                        transition: $transition_nav;
+                        border-radius: 2px;
+                        
+                    }
+
+              
                     
                     &:hover {
-                        color: var(--text_contrast);
-                        transition: color $transition-theme;
+                        //color: var(--text_contrast);
+                        &::before {
+                            //transition: color $transition-theme;
+                               /* height: 100%;
+                                top: 0;*/
+                            left: 0%;
+                            width: 50%;
+                            background-color: var(--text_contrast);
+
+                        }
+
+                        &::after {
+                            //transition: color $transition-theme;
+                               /* height: 100%;
+                                top: 0;*/
+                            background-color: var(--text_contrast);
+                            right: 0%;
+                            width: 50%;
+                        }
+
+
                     }
 
                     &.selected {
                         color: var(--text_contrast);
-                        transition: color $transition-theme;
+
+                        &::before {
+                            width: 100%;
+                            left: 0;
+                        }
                     }
                 }
             }
@@ -356,12 +415,10 @@
                     text-transform: uppercase;
                     transition: $transition_nav_menu;
                     display: block;
-
-
+                    
                     &:hover {
                         color: var(--text_contrast);
                         transition: color $transition-theme;
-
                         //transform: translateY(12px);
                     }
 

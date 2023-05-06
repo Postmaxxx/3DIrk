@@ -150,9 +150,9 @@ const SpliderPreview: React.FC<ISpliderPreview> = ({selectedPortfolio, selectedI
 
 const mapStateToProps = (state: IState)  => {
 	return {
-		selectedPortfolio: state.portfolios.selectedPortfolio,
-		selectedImage: state.portfolios.selectedImage,
-		list: state.portfolios.list
+		selectedPortfolio: state.components.portfolios.selectedPortfolio,
+		selectedImage: state.components.portfolios.selectedImage,
+		list: state.components.portfolios.list
 	};
 };
 

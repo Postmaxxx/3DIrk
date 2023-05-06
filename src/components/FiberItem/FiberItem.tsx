@@ -38,8 +38,6 @@ const FiberItem = ({fiber, lang}: IProps) => {
         gap: '5%',
 		lazyLoad: false,
 		updateOnMove: true,
-		//perPage: 2,
-		//fixedWidth: "100%",
 		perMove: 1,
 		pagination: true,
 		arrows: true,
@@ -48,7 +46,6 @@ const FiberItem = ({fiber, lang}: IProps) => {
 		autoplay: true,
 		interval: 5000,
 		pauseOnHover: true,
-		//rewind: true,
 		breakpoints: {
 			768: {
 				wheel: false,

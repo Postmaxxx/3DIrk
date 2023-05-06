@@ -62,26 +62,36 @@ const reducer = (state:IState = initialState, action: IAction<any>): IState => {
         case actions.LOAD_PORTFOLIOS: 
             return {
                 ...state, 
-				portfolios: {
-					...state.portfolios,
-					list: [...action.payload]
-				}
+                components: {
+                    ...state.components,
+                    portfolios: {
+                        ...state.components.portfolios,
+                        list: [...action.payload]
+                    }
+                }
+
             }
         case actions.SET_SELECTED_PORTFOLIO: 
             return {
                 ...state, 
-				portfolios: {
-					...state.portfolios,
-					selectedPortfolio: action.payload
-				}
+                components: {
+                    ...state.components,
+                    portfolios: {
+                        ...state.components.portfolios,
+                        selectedPortfolio: action.payload
+                    }
+                }
             }
         case actions.SET_SELECTED_PORTFOLIO_IMAGE: 
             return {
                 ...state, 
-				portfolios: {
-					...state.portfolios,
-					selectedImage: action.payload
-				}
+                components: {
+                    ...state.components,
+                    portfolios: {
+                        ...state.components.portfolios,
+                        selectedImage: action.payload
+                    }
+                }
             }
 		/*case actions.SET_PORTFOLIOS_STATUS_IDLE: 
             return {
