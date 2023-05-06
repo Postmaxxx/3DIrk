@@ -266,9 +266,7 @@ export interface IState extends Store {
 
 
 
-    portfolios: {
-        list: Array<IPortfolioData>
-    }
+
     sliderMax:{
         dataLoading: IDataLoading
         list: Array<IMaxSlide>
@@ -277,4 +275,66 @@ export interface IState extends Store {
         mobOpened: boolean,
         desktopOpened: boolean
     }
+
+    portfolios: IPortfolios
+}
+
+
+
+
+
+
+export type ProjectItemImageItem = {
+    width: number
+    height: number
+    image: string 
+}
+
+
+type ProjectItemImagesImage = {
+    descr: string
+    link: string
+    images: Array<ProjectItemImageItem>
+}
+
+export type ProjectItemListItem = {
+    name: string
+    descr: string
+    link: string
+    images: Array<ProjectItemImagesImage>
+}
+
+export interface IPortfolios {
+    selectedPortfolio: number
+    selectedImage: number
+    list: Array<ProjectItemListItem>
+}
+
+
+export interface ISpliderOptions {
+	type   : string
+	perPage: number
+	gap: string | number
+	lazyLoad: boolean
+	updateOnMove: boolean
+	perMove: number
+	pagination: boolean
+	arrows: boolean
+	drag: boolean
+	speed: number
+	autoplay: boolean
+    wheel: boolean
+    wheelSleep: number
+	interval: number
+	pauseOnHover: boolean
+    fixedWidth: string
+    focus: number | "center"
+    rewind: boolean
+	isNavigation: boolean
+	breakpoints: {
+		[key: number]: {
+			wheel?: boolean
+			perPage?: number
+		}
+	}
 }

@@ -319,13 +319,13 @@ const Order = ({lang, header, subheader, name, phone, email,message, files, qrco
 
                                 </div>
 
-                                <button type="submit" onClick={onSubmit}>{lang === 'en' ? 'Send' : "Отправить"}</button>
+                                <button type="submit" className="button_order" onClick={onSubmit}>{lang === 'en' ? 'Send' : "Отправить"}</button>
                             </form>
                         </div>
                     </div>
                 </div>
             </div>
-            <Modal {...{visible: modal.visible, close: closeModal}}>
+            <Modal {...{visible: modal.visible, close: closeModal, escExit: true}}>
 					<MessageInfo {...{
                         header: lang === 'en' ? 'Success' : 'Отправлено', 
                         text: lang === 'en' ?  [`Your message ${filesArr.length > 0 ? "and files have" : "has"} been sent`] : [`Ваше сообщение ${filesArr.length > 0 ? "и вложения были успешно отправлены" : "было успешно отправлено"}`], 

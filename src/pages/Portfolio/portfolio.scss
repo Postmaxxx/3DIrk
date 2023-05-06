@@ -32,12 +32,27 @@ section.portfolio {
         }
     }
 
-    & .portfolio__gallery {
-        margin-top: 80px;
-        margin-bottom: 80px;
-        width: 100%;
-        border: 1px solid red;
+    .splider_portfolio__main {
+        height: 600px;
+        margin-top: 100px;
+        margin-bottom: 100px;
+        display: flex;
+        align-items: stretch;
+    
+        @include respond-to(lg) {
+            min-height: 376px;
+        }
+    
+        @include respond-to(md) {
+            min-height: 320px;
+        }
+    
+        @include respond-to(sm) {
+            min-height: 400px;
+        }
     }
+
+
 
 
 }

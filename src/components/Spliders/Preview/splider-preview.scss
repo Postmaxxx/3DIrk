@@ -1,0 +1,179 @@
+@use "/src/assets/css/variables" as *;
+
+
+.splider_portfolio__modal {
+    max-width: 80%;
+    height: 80%;
+}
+
+
+.splider_preview {
+    margin-left: auto;
+    margin-right: auto;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    width: 100%;
+    
+    & #modalMain {
+        min-width: 100%;
+        height: calc(100% - 120px);
+
+        & .splide__arrows { 
+            width: 100%;
+            height: 100%;
+            position: absolute;
+
+            @include respond-to(sm) {
+                display: none;
+            }
+
+            & .splide__arrow {
+                background-color: transparent;
+                transition: $transition_base;
+                //height: 100%;
+                border-radius: 0;
+                -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+                bottom: 5px;
+                top: auto;
+
+                &:disabled {
+                    width: 0;
+                }
+                
+                & > svg {
+                    width: 50px;
+                    height: auto;
+                    fill: var(--main);//map.get($dark, "arrow_splide");
+                    transition: $transition_base;
+                }
+
+                &:hover {
+                    & svg {
+                        fill: var(--main_vv);//map.get($dark, "nav_selected");
+                    }
+                }
+
+                &--prev:hover {
+                    & svg {
+                        translate: -10px;
+                    }
+                }
+
+                &--next:hover {
+                    & svg {
+                        translate: 10px;
+                    }
+                }
+            }
+        }
+
+
+        & .splide__track {
+            height: 100%;
+
+            & .splide__slide {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                & img {
+                    /*max-height: 100%;
+                    width: 100%;
+                    object-fit: contain; */
+                    max-width: 100%;
+                    max-height: 100%;
+                    object-fit: contain;
+                }
+            }
+        }
+        
+
+    }
+
+
+    & #modalThumbs {
+        align-self: flex-end;
+        width: 100%;
+
+       
+        & .splide__arrows { 
+            width: 100%;
+            height: 100%;
+            position: absolute;
+
+            @include respond-to(sm) {
+                display: none;
+            }
+
+            & .splide__arrow {
+                background-color: transparent;
+                transition: $transition_base;
+                //height: 100%;
+                border-radius: 0;
+                -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+                //bottom: 5px;
+                //top: auto;
+
+                &:disabled {
+                    width: 0;
+                }
+                
+                & > svg {
+                    width: 50px;
+                    height: auto;
+                    fill: var(--main);//map.get($dark, "arrow_splide");
+                    transition: $transition_base;
+                }
+
+                &:hover {
+                    & svg {
+                        fill: var(--main_vv);//map.get($dark, "nav_selected");
+                    }
+                }
+
+                &--prev:hover {
+                    & svg {
+                        translate: -10px;
+                    }
+                }
+
+                &--next:hover {
+                    & svg {
+                        translate: 10px;
+                    }
+                }
+            }
+        }
+       
+        & .splide__slide {
+            //opacity: 0.4;
+            filter: brightness(0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            max-height: 100px;
+            min-width: 50px;
+
+            &.is-active {
+                //opacity: 1;
+                filter: brightness(1);
+                border: none;
+            }
+
+            & img {
+                /*max-height: 100%;
+                width: 100%;
+                object-fit: contain; */
+                max-width: 100%;
+                max-height: 100%;
+                object-fit: cover;
+            }
+        }
+        
+
+    }
+
+}
+

@@ -1,4 +1,4 @@
-import { IFiber, IModal, TLang } from 'src/interfaces'
+import { IFiber, IModal, ISpliderOptions, TLang } from 'src/interfaces'
 import Proscons from '../Proscons/Proscons'
 import './fiber-item.scss'
 import Splide from "@splidejs/splide";
@@ -10,31 +10,6 @@ interface IContainerSize {
 	width: number
 	height: number
 }
-
-interface IOptions {
-	type   : string
-	perPage: number
-	gap: string
-	lazyLoad: boolean
-	updateOnMove: boolean
-	perMove: number
-	pagination: boolean
-	arrows: boolean
-	drag: boolean
-	speed: number
-	autoplay: boolean
-	interval: number
-	pauseOnHover: boolean
-	breakpoints: {
-		[key: number]: {
-			wheel?: boolean
-			perPage?: number
-		}
-	}
-}
-
-
-
 
 interface IProps {
 	fiber: IFiber,
@@ -57,7 +32,7 @@ const FiberItem = ({fiber, lang}: IProps) => {
 	const [modalImg, setModalImg] = useState<modalImg>({descr: '', path: ''})
 
 
-    const options: IOptions = {
+    const options: Partial<ISpliderOptions> = {
         type   : 'loop',
         perPage: 3,
         gap: '5%',
@@ -143,9 +118,9 @@ const FiberItem = ({fiber, lang}: IProps) => {
 
 				</div>
             </div>
-				<Modal {...{visible: modal.visible, close: closeModal}}>
-					<ModalImage props={{path: modalImg.path, descr: modalImg.descr}}/>
-				</Modal> 
+			<Modal {...{visible: modal.visible, close: closeModal, escExit: true}}>
+				<ModalImage props={{path: modalImg.path, descr: modalImg.descr}}/>
+			</Modal> 
         </div>
     )
 }

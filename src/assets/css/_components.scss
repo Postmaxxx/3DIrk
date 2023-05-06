@@ -1,0 +1,60 @@
+@use "./variables" as *;
+
+
+
+.button_news {
+    align-self: flex-start;
+    padding: 8px 60px 8px 20px;
+    border-radius: 10px;
+    color: var(--text);//;
+    background-color: var(--main);
+    transition: background-color $transition_theme, color $transition_theme;
+    //font-family: 'LexendDeca';
+    font-size: 18px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    position: relative;
+
+    & > svg  {
+        max-height: 80%;
+        right: 0;
+        margin-right: 25px;
+        fill: var(--text);
+        position: absolute;
+        transition: margin .2s;
+    }
+
+    &:hover {
+        & > svg {
+            margin-right: 15px;
+        }
+    }
+    
+}
+
+
+
+.button_order {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--inputs-bg);
+    font-size: 18px;
+    letter-spacing: 0.1rem;
+    padding: 12px 10%;
+    border: none;
+    border-radius: 4px;
+    color: $dark;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: box-shadow $transition_fast;
+
+
+    &:hover {
+        box-shadow: 0px 0px 20px var(--main_vv);
+    }
+}

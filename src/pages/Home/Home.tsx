@@ -1,5 +1,5 @@
 import NewsBlock from 'src/components/NewsBlock/NewsBlock';
-import SpliderMax from 'src/components/Splider/CarouselMax';
+import SpliderMax from 'src/components/CarouselMax/CarouselMax';
 import './home.scss'
 import * as actions from "../../redux/actions";
 import { AnyAction, bindActionCreators } from "redux";

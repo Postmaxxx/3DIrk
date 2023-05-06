@@ -26,6 +26,17 @@ const storage = getStorage();
 const collectionPortfoliosRef = collection(db, 'portfolios');
 //const collectionFibersRef = collection(db, 'fibers');
 
+export const setSelectedPortfolio = <T extends number>(payload: T): IAction<T> => ({
+	type: actions.SET_SELECTED_PORTFOLIO,
+	payload: payload
+});
+
+export const setSelectedPortfolioImage = <T extends number>(payload: T): IAction<T> => ({
+	type: actions.SET_SELECTED_PORTFOLIO_IMAGE,
+	payload: payload
+});
+
+
 
 
 export const setLangEn = <T>(): IAction<T> => ({
@@ -79,6 +90,8 @@ export const setPortfoliosStatusError = <T extends string>(payload: T):IAction<T
     type: actions.SET_PORTFOLIOS_STATUS_ERROR,
     payload: payload
 });
+
+
 
 export const setPortfoliosStatusLoading = <T>():IAction<T> => ({
     type: actions.SET_PORTFOLIOS_STATUS_LOADING,
@@ -619,3 +632,5 @@ addDoc(colRef, {
     }
 }
     
+
+

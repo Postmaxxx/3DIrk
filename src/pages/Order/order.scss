@@ -286,21 +286,7 @@ section.order {
 
     
                 & > button {
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    //background-color: $light;
-                    background-color: var(--inputs-bg);
-                    font-size: 18px;
-                    letter-spacing: 0.1rem;
-                    padding: 12px 10%;
-                    border: none;
-                    border-radius: 4px;
                     margin-top: 40px;
-                    color: $dark;
-                    font-weight: 700;
-                    cursor: pointer;
-                    text-transform: uppercase;
 
                     @include respond-to(sm) {
                         margin-top: 30px;
@@ -309,10 +295,7 @@ section.order {
                     @include respond-to(xs) {
                         width: 100%;
                     }
-    
-                    &:hover {
-                        box-shadow: 0px 0px 20px var(--main_vv);
-                    }
+
                 }
             }
     

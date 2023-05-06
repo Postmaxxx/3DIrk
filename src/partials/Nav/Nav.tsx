@@ -19,7 +19,7 @@ interface IProps {
 
 
 const Nav:React.FC<IProps> = ({lang, pagesList, setState, mobOpened, desktopOpened}: IProps) => {
-    const scrollTimeout = useRef<any>()
+    //const scrollTimeout = useRef<any>()
     const _blur = useRef<HTMLDivElement>(null)
 
     const navToggle = () => {
