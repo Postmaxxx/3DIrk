@@ -195,8 +195,6 @@ import west_4_small from "../assets/img/portfolio/west/4_small.jpg";
 
 
 
-
-
 let initialState = {} as IState
 const currentDate: Date = new Date;
 const portfolioPath = '';

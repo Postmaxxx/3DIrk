@@ -12,14 +12,10 @@ import { Store } from 'redux'
 */
 
 
-export interface INav {
-    opened: boolean
-    mobOpened: boolean
-    pages: Array<IPage>
-}
+
 
 //-----------------------Colors--------------------
-
+/*
 export interface IPrintColor {
     id: number,
     propRu: string
@@ -27,10 +23,10 @@ export interface IPrintColor {
     value: string
     k: number
 }
-
+*/
 
 //-------------------------Gallery------------------
-
+/*
 export interface IGalleryItemDescr {
     prop: string
     value: string
@@ -48,28 +44,14 @@ export interface IGalleryItem {
     }
 }
 
-
+*/
 
 
 //----------------------------------------------------------------------
-export type TTheme = 'dark' | 'light'
-export type TLang = 'en' | 'ru'
-
-export interface IAction<T> {
-    type: string;
-    payload?: T; 
-}
-
-export interface IActionCreator<T> {
-    (payload?: T): IAction<T>
-}
-
-export interface IDispatch {
-    <T extends AnyAction>(action: T): T
-}
 
 
 
+/*
 
 export interface IFeature {
     id?: string
@@ -118,9 +100,11 @@ export interface IProtfolioState {
 }
 
 
-
+*/
 
 //------------------------------
+
+/*
 export interface IImg {
     path: string
     url: string
@@ -137,22 +121,7 @@ export interface IDataLoading {
 
 export type TCollectionNames = 'fibers' | 'techs' | 'nodata'
 
-export interface IFiber {
-    header: TLangText
-    text: TLangTextArr
-    proscons: {
-        pros: TLangTextArr
-        cons: TLangTextArr
-    }
-    imgs: Array<IImg>
-}
 
-export interface IMaxSlide {
-    path: string
-    alt: string
-    url?: string
-    descr: string
-}
 
 export interface ISetData {
     dataName: TCollectionNames
@@ -161,89 +130,6 @@ export interface ISetData {
 
 
 
-
-
-
-
-
-
-export interface IModal {
-	visible: boolean
-}
-
-
-
-
-export type TTextMultiLines = Array<{part: string}>
-
-export type TLangText = {
-    [key in TLang]: string
-}
-
-export type TLangTextArr = {
-    [key in TLang]: TTextMultiLines
-}
-
-export interface IPage {
-    name: TLangText,
-    path: string
-}
-
-export interface INews {
-    header: TLangText
-    date: Date
-    short: TLangText
-    text: TLangTextArr
-    imgs: Array<IImg>
-}
-
-
-export interface INewsBlock {
-    header: TLangText,
-    text: TLangTextArr
-    news: Array<INews>
-}
-
-export interface IHeroBlock {
-    header: TLangText,
-    text: TLangTextArr
-}
-
-export interface IFibersBlock {
-    dataLoading: IDataLoading
-    header: TLangText
-    fibersList: Array<IFiber>
-}
-
-export interface IOrderBlock {
-    header: TLangText
-    subheader: TLangText
-    name: {
-        label: TLangText,
-        data: string
-    },
-    phone: {
-        label: TLangText,
-        data: string
-    },
-    email: {
-        label: TLangText,
-        data: string
-    },
-    message: {
-        label: TLangText,
-        data: string
-    },
-    files: {
-        label: TLangText,
-        listLabel: TLangText
-        link: TLangText
-        linkRest: TLangText
-        filesList: Array<any>
-    },
-    qrcode: string,
-    text: TLangTextArr
-}
 
 export interface IState extends Store {
     theme: TTheme
@@ -313,6 +199,89 @@ export interface IPortfolios {
 }
 
 
+
+*/
+//================================================================================
+export type TTheme = 'dark' | 'light'
+export type TLang = 'en' | 'ru'
+export type TLoadDataStatus = 'idle' | 'success' | 'loading' | 'error'
+export type TSendDataStatus = 'idle' | 'success' | 'sending' | 'error'
+export type TId = number
+
+//---------------------------------------redux
+export interface IAction<T> {
+    type: string;
+    payload?: T; 
+}
+
+export interface IActionCreator<T> {
+    (payload?: T): IAction<T>
+}
+
+export interface IDispatch {
+    <T extends AnyAction>(action: T): T
+}
+
+
+//---------------------------------------------data load
+export interface IDataLoading {
+    status: TLoadDataStatus
+    message: string
+}
+
+
+//---------------------------------------------data send
+export interface IDataSending {
+    status: TSendDataStatus
+    message: string
+}
+
+
+//---------------------------------------------lang
+export type TTextMultiLines = Array<{part: string}>
+
+
+export type TLangText = {
+    [key in TLang]: string
+}
+
+export type TLangTextArr = {
+    [key in TLang]: TTextMultiLines
+}
+
+
+
+// ---------------------------------------------nav
+export interface IPage {
+    name: TLangText,
+    path: string
+}
+
+export interface INav {
+    mobOpened: boolean,
+    desktopOpened: boolean
+    //pages: IPage[]
+}
+
+
+//-------------------------------------------img
+export interface IImg {
+    url: string
+    name: TLangText
+}
+
+
+
+
+//=============================================BLOCKS
+
+//------------------------------------------ modal
+export interface IModal {
+	visible: boolean
+}
+
+
+//-------------------------------------------splider
 export interface ISpliderOptions {
 	type   : string
 	perPage: number
@@ -334,12 +303,259 @@ export interface ISpliderOptions {
     rewind: boolean
 	isNavigation: boolean
 	breakpoints: {
-		[key: number]: {
-			wheel?: boolean
-			perPage?: number
-		}
+		[key: number]: Partial<{
+            type   : string
+            perPage: number
+            gap: string | number
+            lazyLoad: boolean
+            updateOnMove: boolean
+            perMove: number
+            pagination: boolean
+            arrows: boolean
+            drag: boolean
+            speed: number
+            autoplay: boolean
+            wheel: boolean
+            wheelSleep: number
+            interval: number
+            pauseOnHover: boolean
+            fixedWidth: string
+            focus: number | "center"
+            rewind: boolean
+            isNavigation: boolean
+		}>
 	}
 }
 
-//================================================================================
+//-------------------------------------------- block Order
+/*export interface IOrderInput {
+    //label: TLangText,
+    data: string
+}
+
+export interface IOrderBlock {
+    header: TLangText
+    subheader: TLangText
+    name: IOrderInput
+    phone: IOrderInput
+    email: IOrderInput
+    message: IOrderInput
+    files: {
+        /*label: TLangText,
+        listLabel: TLangText
+        link: TLangText
+        linkRest: TLangText*/
+      /*  filesList: Array<any>
+    },
+    qrcode: string,
+    text: TLangTextArr
+}
+*/
+
+
+
+
+//------------------------------------block SliderMax
+/*export interface ISliderMaxBlock {
+    path: string
+    alt: string
+    url?: string
+    descr: string
+}*/
+
+//----------------------------------- block hero
+
+export interface IHeroBlock {
+    header: TLangText,
+    text: TLangTextArr
+}
+
+//----------------------------------- block news
+export interface INewsBlock {
+    header: TLangText
+    text: TLangTextArr
+}
+
+
+//----------------------------------- block fibers
+
+export interface IFibersBlock {
+    header: TLangText
+    text: TLangTextArr
+}
+
+//----------------------------------- block Catalog
+export interface ICatalogBlock {
+    header: TLangText
+    subheader: TLangText
+    text: TLangTextArr
+    img: IImg
+    headerGallery: TLangText
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//==========================================Fibers State
+export interface IProsCons {
+    pros: TLangTextArr
+    cons: TLangTextArr
+}
+
+export interface IFiber {
+    id: TId
+    header: TLangText
+    text: TLangTextArr
+    proscons: IProsCons
+    imgs: Array<IImg>
+}
+
+export interface IFiberState {
+    dataLoading: IDataLoading
+    fibersList: Array<IFiber>
+}
+
+
+
+
+
+//============================================== category state
+
+export interface ISize {
+    name: TLangText
+    value: TLangText
+}
+
+export type IFeatureValue = TLangText | TId[]
+
+export type TFeaturesType = "value" | "color" | "fiber"
+
+export interface IFeature {
+    name: TLangText
+    type: TId
+    values: IFeatureValue[]
+}
+
+export interface IProduct {
+    id: TId
+    price: TLangText
+    name: TLangText
+    text: TLangTextArr
+    photos: IImg[]
+    features: IFeature[]
+}
+
+export interface ICategoryState {
+    selectedProduct: number
+    selectedProductImage: number
+    dataLoading: IDataLoading
+    id: TId
+    products: IProduct[]
+}
+
+
+//================================================news state
+export interface INewsItem {
+    header: TLangText
+    date: Date
+    short: TLangText
+    text: TLangTextArr
+    imgs: Array<IImg>
+}
+
+export interface INewsState {
+    dataLoading: IDataLoading
+    news: INewsItem[]
+}
+
+
+
+
+
+//============================================== base state
+
+export interface IBaseState {
+    theme: TTheme
+    lang: TLang
+    mobOpened: boolean,
+    desktopOpened: boolean
+}
+
+
+
+//==================================================colors state
+export interface IColorValue {
+    r: number
+    g: number
+    b: number
+}
+
+export interface IColors {
+    id: TId
+    name: TLangText
+    value: IColorValue
+}
+
+export interface IColorsState {
+    dataLoading: IDataLoading
+    colors: IColors[]
+}
+
+
+//============================================== order state
+
+export interface IOrderState {
+    dataSending: IDataSending
+    name: string
+    phone: string
+    email: string
+    message: string
+    files: Array<any>
+}
+
+
+//============================================== full state
+export interface IFullState {
+    base: IBaseState
+    news: INewsState
+    /*category: ICategoryState
+    fibers: IFiberState
+    colors: IColorsState
+    order: IOrderState*/
+}
+
 

@@ -1,4 +1,4 @@
-import initialState from "./initialState"
+/*import initialState from "./initialState"
 import { IState, IAction, IDataLoading } from "src/interfaces"
 import * as actions from './actionsList'
 
@@ -128,7 +128,7 @@ const reducer = (state:IState = initialState, action: IAction<any>): IState => {
 				}
 
 */
-
+/*
 
         case actions.SET_LOAD_DATA_STATUS_FIBERS:
             const sf = action.payload as IDataLoading
@@ -191,4 +191,5 @@ const reducer = (state:IState = initialState, action: IAction<any>): IState => {
     }
 }
 
-export default reducer
+export default reducer*/
+

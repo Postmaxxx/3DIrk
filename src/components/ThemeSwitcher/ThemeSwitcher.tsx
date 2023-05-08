@@ -1,11 +1,14 @@
 import { useEffect, useRef } from "react";
 import { connect } from "react-redux";
-import * as actions from "../../redux/actions";
+import * as actions from "../../redux/actions/base";
 import { AnyAction, Dispatch, bindActionCreators } from "redux";
 import cloud from "./theme_day__cloud.svg";
 import star from "./theme_nigth__star.svg";
 import "./themeSwitcher.scss";
-import { IState } from "src/interfaces";
+import { setThemeDark, setThemeLight, setThemeToggle }  from "../../redux/actions/base"
+import { IBaseState, IFullState } from "src/interfaces";
+
+const actionsBase = {setThemeDark, setThemeLight, setThemeToggle}
 
 type EmptyVoid = () => void
 type TTheme = 'dark' | 'light'
@@ -26,10 +29,12 @@ interface IStar {
 }
 
 interface IThemeSwitcher {
-    theme: TTheme
-	mobOpened: boolean
-	desktopOpened: boolean
-	setState: typeof actions
+	state: {
+		base: IBaseState
+	}
+	setState: {
+		base: typeof actionsBase
+	}
 }
 
 
@@ -58,11 +63,13 @@ interface IStateSwitcher {
 
 
 
-const ThemeSwitcher: React.FC<IThemeSwitcher> = (props): JSX.Element => {
+const ThemeSwitcher: React.FC<IThemeSwitcher> = ({state, setState}): JSX.Element => {
+	console.log({state, setState});
+	
 
 	const _themeSwitcherCont = useRef<HTMLDivElement>(null);
 
-	const dayLightSwitcher = (switcherProps: any) => {
+	const dayLightSwitcher = (switcherProps: Partial<IStateSwitcher>) => {
 
 		const state__default: Partial<IStateSwitcher>  = {
 			width: 70,
@@ -139,13 +146,13 @@ const ThemeSwitcher: React.FC<IThemeSwitcher> = (props): JSX.Element => {
 			state.saveState && localStorage.setItem(state.saveState, state.theme as TTheme);
 			state.isChanging = true;
 			if (newTheme === "light") {
-				props.setState.setThemeLight();
+				setState.base.setThemeLight();
 				state.nodeForTheme?.classList.remove("dark");
 				classSwitcher("", "theme_light_1", 0)
 					.then(() => classSwitcher("theme_light_1", "theme_light_2", (state.duration || 1)/ 4))
 					.then(() => {classSwitcher("theme_light_2", "theme_light", 30); state.isChanging = false;});
 			} else {
-				props.setState.setThemeDark();
+				setState.base.setThemeDark();
 				state.nodeForTheme?.classList.add("dark");
 				classSwitcher("theme_light", "theme_light_back_1", 0)
 					.then(() => classSwitcher("theme_light_back_1", "theme_light_back_2", (state.duration || 1) / 4))
@@ -448,7 +455,7 @@ const ThemeSwitcher: React.FC<IThemeSwitcher> = (props): JSX.Element => {
 	
 
 	useEffect((): void => {
-		localStorage.getItem("theme") as TTheme === 'dark' ? props.setState.setThemeDark() : props.setState.setThemeLight()
+		localStorage.getItem("theme") as TTheme === 'dark' ? setState.base.setThemeDark() : setState.base.setThemeLight()
 		const themeProps: Partial<IStateSwitcher> = { 
 			themeSwitcherContainer: _themeSwitcherCont.current as HTMLDivElement, 
 			star: star,
@@ -467,20 +474,23 @@ const ThemeSwitcher: React.FC<IThemeSwitcher> = (props): JSX.Element => {
 	},[]);
 	
 	return (
-		<div className={props.mobOpened ? 'theme-switcher__container' : 'theme-switcher__container hide'} ref={_themeSwitcherCont}></div>
+		<div className={state.base.mobOpened ? 'theme-switcher__container' : 'theme-switcher__container hide'} ref={_themeSwitcherCont}></div>
 	);
 };
 
 
-const mapStateToProps = (state: IState) => ({
-    theme: state.theme,
-	mobOpened: state.nav.mobOpened,
-	desktopOpened: state.nav.desktopOpened
+const mapStateToProps = (state: IFullState) => ({
+	state: {
+		base: state.base,
+	}
   })
   
   
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => ({
-    setState: bindActionCreators(actions, dispatch)
+    setState: {
+		base: bindActionCreators(actionsBase, dispatch)
+	}
+	
 })
   
   
