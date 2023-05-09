@@ -487,10 +487,6 @@ export interface IFibersState {
 
 //============================================== category state
 
-export interface ISize {
-    name: TLangText
-    value: TLangText
-}
 
 export interface IFeature {
     name: TLangText
@@ -502,14 +498,14 @@ export interface IProduct {
     price: TLangText
     name: TLangText
     text: TLangTextArr
-    photos: IImg[]
+    imgs: IImg[]
     fibers: IFiber[]
     features: IFeature[]
-    sizes: ISize[]
+    mods: TLangTextArr
 }
 
 export interface ICategory {
-    dataLoading: IDataLoading
+    dataLoading: IDataLoading//for load products in selected category
     products: IProduct[]
     selectedProduct: TId
     selectedProductImage: number
@@ -520,7 +516,7 @@ export interface ICategoriesList {
     id: TId
 }
 
-export interface ICategoriesState {
+export interface ICatalogState {
     dataLoading: IDataLoading //for load categoriesList
     categoriesList: ICategoriesList[]
     categories: ICategory[]
@@ -575,7 +571,7 @@ export interface IFullState {
     base: IBaseState
     news: INewsState
     fibers: IFibersState
-    catalog: ICategoriesState
+    catalog: ICatalogState
     order: IOrderState
 }
 
