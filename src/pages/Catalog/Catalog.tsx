@@ -1,5 +1,5 @@
-import './portfolio.scss'
-import { IFullState, IModal, TLang, TLangText } from "src/interfaces";
+import './catalog.scss'
+import { IFullState, IModal, TLang } from "src/interfaces";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
@@ -8,14 +8,12 @@ import SpliderSingle from 'src/components/Spliders/Single/SpliderSingle';
 import "@splidejs/react-splide/css"; 
 import Modal from 'src/components/Modal/Modal';
 import SpliderPreview from 'src/components/Spliders/Preview/SpliderPreview';
-import PortfolioList from 'src/components/PortfolioList/PortfolioList';
-import CatalogIntro from 'src/components/PortfolioIntro/CatalogIntro';
+import CategoriesList from 'src/components/CategoriesList/CategoriesList';
+import CatalogIntro from 'src/components/CatalogIntro/CatalogIntro';
 
+import { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategoriey, setSelectedCategory, setSelectedImage, setSelectedProduct, loadCategoriesList }  from "../../redux/actions/catalog"
 
-
-import { setName, setEmail, setPhone, setMessage, clearFiles, clearForm, addFiles, sendOrder, setSendDataStatus }  from "../../redux/actions/order"
-
-const actionsList = { setName, setEmail, setPhone, setMessage, clearFiles, clearForm, addFiles, sendOrder, setSendDataStatus  }
+const actionsList = { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategoriey, setSelectedCategory, setSelectedImage, setSelectedProduct, loadCategoriesList  }
 
 interface IPropsState {
     lang: TLang,
@@ -23,7 +21,7 @@ interface IPropsState {
 
 interface IPropsActions {
     setState: {
-        order: typeof actionsList
+        catalog: typeof actionsList
     }
 }
 
@@ -55,9 +53,34 @@ const Catalog:React.FC<IProps> = ({lang, setState}): JSX.Element => {
 
 
     return (
-        <section className="portfolio">
+        <section className="catalog">
             <div className="container">
                 <CatalogIntro />
+                <div className="splider_catalog__main">
+                    <CategoriesList />
+                    <SpliderSingle />
+                </div>
+            </div>
+        </section>
+    )
+}
+
+
+const mapStateToProps = (state: IFullState): IPropsState => ({
+    lang: state.base.lang,
+})
+
+
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
+    setState: {
+		catalog: bindActionCreators(actionsList, dispatch)
+	}
+})
+  
+  
+  
+export default connect(mapStateToProps, mapDispatchToProps)(Catalog)
+/*
                 <div className="splider_portfolio__main">
                     <PortfolioList />
                     <SpliderSingle onPortfolioClicked={onPortfolioClicked}/>
@@ -67,27 +90,8 @@ const Catalog:React.FC<IProps> = ({lang, setState}): JSX.Element => {
                         <SpliderPreview />
                     </div>
                 </Modal> 
-            </div>
-        </section>
-    )
-}
+*/
 
-
-const mapStateToProps = (state: IFullState): IPropsState => ({
-    lang: state.base.lang,
-    order: state.order,
-})
-
-
-const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
-    setState: {
-		order: bindActionCreators(actionsList, dispatch)
-	}
-})
-  
-  
-  
-export default connect(mapStateToProps, mapDispatchToProps)(Catalog)
 
 /*
 

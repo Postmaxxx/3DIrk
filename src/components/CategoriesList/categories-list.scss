@@ -2,7 +2,7 @@
 @use "/src/assets/css/variables" as *;
 //@import '../../../assets/css/base.scss';
 
-.portfolio-list__container {
+.categories-list__container {
     display: flex;
     align-items: center;
     margin-right: 50px;
@@ -10,6 +10,7 @@
     padding-right: 30px;
     height: 100%;
     position: relative;
+    min-width: 200px;
 
     @include respond-to(sm) {
         border-right: none;
@@ -37,6 +38,12 @@
         display: inline-block;
         padding: 5px 0px;
         overflow-y: auto;
+        position: relative;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
 
         @include respond-to(sm) {
             max-height: 400px;

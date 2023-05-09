@@ -486,6 +486,11 @@ export interface IFibersState {
 
 
 //============================================== category state
+export interface mockCategory {
+    id: TId,
+    name: TLangText
+    products: IProduct[]
+}
 
 
 export interface IFeature {
@@ -499,28 +504,34 @@ export interface IProduct {
     name: TLangText
     text: TLangTextArr
     imgs: IImg[]
-    fibers: IFiber[]
+    fibers: TId[]
     features: IFeature[]
     mods: TLangTextArr
 }
 
 export interface ICategory {
+    id: TId
+    name: TLangText
     dataLoading: IDataLoading//for load products in selected category
     products: IProduct[]
-    selectedProduct: TId
-    selectedProductImage: number
+}
+
+export interface ICategories {
+    [key: string] : ICategory
 }
 
 export interface ICategoriesList {
-    name: TLangText[],
+    name: TLangText,
     id: TId
 }
 
 export interface ICatalogState {
-    dataLoading: IDataLoading //for load categoriesList
+    categoriesListLoading: IDataLoading //for load categoriesList
     categoriesList: ICategoriesList[]
-    categories: ICategory[]
+    categories: ICategories
     selectedCategory: TId
+    selectedProduct: TId
+    selectedProductImage: number
 }
 
 

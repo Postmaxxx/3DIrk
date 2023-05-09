@@ -1,6 +1,6 @@
 import { ICatalogBlock, IOrderBlock } from './../../interfaces';
 import { IFibersBlock, IHeroBlock, INewsBlock, IPage } from "src/interfaces";
-import imageOrder1 from 'src/assets/img/order/1.jpg'
+import imageOrder1 from 'src/assets/img/order/1.png'
 import catalogPhoto1 from 'src/assets/img/catalog/1.png'
 
 

@@ -1,9 +1,9 @@
-import { INews, TLang } from "src/interfaces";
+import { INewsItem, TLang } from "src/interfaces";
 import './news.scss'
 
 
 
-const News = ({news, lang}: {news: INews, lang: TLang}) => {
+const News = ({news, lang}: {news: INewsItem, lang: TLang}) => {
     return (
         <div className="news">
             <img src={news.imgs[0].url} alt={news.header[lang]} />

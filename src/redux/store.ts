@@ -4,6 +4,7 @@ import reducerBase from "./reducers/base";
 import reducerNews from "./reducers/news";
 import reducerFibers from './reducers/fibers';
 import reducerOrder from './reducers/order';
+import reducerCatalog from './reducers/catalog';
 
 
 const rootReducer = combineReducers({
@@ -11,6 +12,7 @@ const rootReducer = combineReducers({
     news: reducerNews,
     fibers: reducerFibers,
     order: reducerOrder,
+    catalog: reducerCatalog
 });
 
 

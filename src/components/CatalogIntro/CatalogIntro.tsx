@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
 import React from "react";
 import { IFullState, TLang } from "src/interfaces";
-import './portfolio-intro.scss'
+import './catalog-intro.scss'
 import { catalogBlock } from "src/assets/js/data";
 
 
@@ -14,7 +14,7 @@ interface IPropsState {
 
 const CatalogIntro:React.FC<IPropsState> = ({lang}): JSX.Element => {
     return (
-        <div className="portfolio-intro">
+        <div className="catalog-intro">
             <h1>{catalogBlock.header[lang]}</h1>
             <div className="descr">
                 <img src={catalogBlock.img.url} alt={catalogBlock.img.name[lang]} />

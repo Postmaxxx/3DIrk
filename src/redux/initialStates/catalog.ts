@@ -1,13 +1,15 @@
 import { ICatalogState } from "src/interfaces"
 
 const initialCatalog = {
-    dataLoading: {
+    categoriesListLoading: {
         status: 'idle',
         message: ""
     },
     categoriesList: [],
-    categories: [],
-    selectedCategory: ''
+    categories: {},
+    selectedCategory: '',
+    selectedProduct: '',
+    selectedProductImage: 0
 } satisfies ICatalogState
 
 export default initialCatalog

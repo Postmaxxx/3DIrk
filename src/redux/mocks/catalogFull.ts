@@ -3,16 +3,17 @@ import p1photo2 from 'src/assets/img/catalog/c1/p1/2.jpg'
 import p1photo3 from 'src/assets/img/catalog/c1/p1/3.jpg'
 import p1photo4 from 'src/assets/img/catalog/c1/p1/4.jpg'
 
-import p4photo1 from 'src/assets/img/catalog/c1/p2/1.jpg'
-import p4photo2 from 'src/assets/img/catalog/c1/p2/2.jpg'
-import p4photo3 from 'src/assets/img/catalog/c1/p2/3.jpg'
-import p4photo4 from 'src/assets/img/catalog/c1/p2/4.jpg'
-import p4photo5 from 'src/assets/img/catalog/c1/p2/5.jpg'
+import p4photo1 from 'src/assets/img/catalog/c1/p4/1.jpg'
+import p4photo2 from 'src/assets/img/catalog/c1/p4/2.jpg'
+import p4photo3 from 'src/assets/img/catalog/c1/p4/3.jpg'
+import p4photo4 from 'src/assets/img/catalog/c1/p4/4.jpg'
+import p4photo5 from 'src/assets/img/catalog/c1/p4/5.jpg'
 
 import p2photo1 from 'src/assets/img/catalog/c2/p2/1.jpg'
 import p2photo2 from 'src/assets/img/catalog/c2/p2/2.jpg'
 import p2photo3 from 'src/assets/img/catalog/c2/p2/3.jpg'
 import p2photo4 from 'src/assets/img/catalog/c2/p2/4.jpg'
+import { mockCategory } from 'src/interfaces'
 
 
 const catalogFull = [
@@ -397,7 +398,7 @@ const catalogFull = [
             },
         ]
     }
-]
+] satisfies mockCategory[]
 
 
 

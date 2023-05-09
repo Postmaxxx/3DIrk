@@ -1,6 +1,5 @@
 import './splider-single.scss'
-import { ISpliderOptions, IState, ProjectItemListItem} from "src/interfaces";
-import * as actions from "../../../redux/actions";
+import { ICategories, ICategoriesList, IDataLoading, IFullState, ISpliderOptions, TId, TLang,} from "src/interfaces";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
@@ -10,7 +9,26 @@ import ImgWithPreloader from "src/assets/js/ImgWithPreloader";
 import { findBestSuitedImg } from "src/assets/js/findBestSuitedImg";
 import InfoPortfolio from 'src/components/InfoPortfolio/InfoPortfolio';
 import InfoSlide from 'src/components/InfoSlide/InfoSlide';
+import { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategoriey, setSelectedCategory, setSelectedImage, setSelectedProduct, loadCategoriesList }  from "src/redux/actions/catalog"
 
+const actionsList = { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategoriey, setSelectedCategory, setSelectedImage, setSelectedProduct, loadCategoriesList  }
+
+interface IPropsState {
+    list: ICategoriesList[]
+	selectedCategory: TId
+	selectedProduct: TId
+	lang: TLang
+	loading: IDataLoading
+	categories: ICategories
+}
+
+interface IPropsActions {
+    setState: {
+        catalog: typeof actionsList
+    }
+}
+
+interface IProps extends IPropsState, IPropsActions {}
 
 interface IContainerSize {
 	width: number
@@ -25,7 +43,7 @@ interface IPortfolioSplider {
     setState: typeof actions
 }
 
-const PortfolioSplider: React.FC<IPortfolioSplider> = ({list, selectedPortfolio, selectedImage, setState, onPortfolioClicked}): JSX.Element => {
+const PortfolioSplider: React.FC<IProps> = ({list, selectedPortfolio, selectedImage, setState, onPortfolioClicked}): JSX.Element => {
 	
 	const containerSize = useRef<IContainerSize>({width: 0, height: 0});
 	const portfolioSplide = useRef<Splide>();
@@ -132,17 +150,23 @@ const PortfolioSplider: React.FC<IPortfolioSplider> = ({list, selectedPortfolio,
 };
 
 
-const mapStateToProps = (state: IState)  => {
-	return {
-		list: state.components.portfolios.list,
-		selectedPortfolio: state.components.portfolios.selectedPortfolio,
-		selectedImage: state.components.portfolios.selectedImage,
-	};
-};
+
+const mapStateToProps = (state: IFullState): IPropsState => ({
+    lang: state.base.lang,
+	loading: state.catalog.categories[state.catalog.selectedCategory].dataLoading,
+	list: state.catalog.categoriesList,
+	selectedCategory: state.catalog.selectedCategory,
+	categories: state.catalog.categories,
+	selectedProduct: state.catalog.selectedProduct
+})
 
 
-const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => ({
-	setState: bindActionCreators(actions, dispatch),
-});
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
+    setState: {
+		catalog: bindActionCreators(actionsList, dispatch)
+	}
+})
+  
+  
 
 export default connect(mapStateToProps, mapDispatchToProps)(PortfolioSplider);
