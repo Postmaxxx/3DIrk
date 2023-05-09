@@ -1,33 +1,43 @@
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef } from "react";
 import { NavLink } from "react-router-dom";
-import { IPage, IState, TLang } from "src/interfaces";
+import { IFullState, IPage, TLang } from "src/interfaces";
 import "./nav.scss"
 import navLogo from "../../assets/img/nav_logo.png"
 import { connect } from "react-redux";
-import * as actions from "../../redux/actions";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
+import { pagesList } from "src/assets/js/data";
+import { setNavCloseDt, setNavCloseMob, setNavOpenDt, setNavOpenMob }  from "../../redux/actions/base"
 
 
-interface IProps {
+const actionsList = {setNavCloseDt, setNavCloseMob, setNavOpenDt, setNavOpenMob }
+
+interface IPropsState {
     lang: TLang
-    pagesList: Array<IPage>
     mobOpened: boolean
     desktopOpened: boolean
-    setState: typeof actions
 }
 
+interface IPropsActions {
+    setState: {
+        base: typeof actionsList
+    }
+}
 
-const Nav:React.FC<IProps> = ({lang, pagesList, setState, mobOpened, desktopOpened}: IProps) => {
+interface IProps extends IPropsState, IPropsActions {}
+
+
+const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened}): JSX.Element => {
     //const scrollTimeout = useRef<any>()
     const _blur = useRef<HTMLDivElement>(null)
+    
 
     const navToggle = () => {
-        desktopOpened ? setState.setNavCloseDt() : setState.setNavOpenDt()
+        desktopOpened ? setState.base.setNavCloseDt() : setState.base.setNavOpenDt()
     }
 
     const navToggleMobile = () => {
-        mobOpened ? setState.setNavCloseMob() : setState.setNavOpenMob()
+        mobOpened ? setState.base.setNavCloseMob() : setState.base.setNavOpenMob()
     }
 
 
@@ -121,15 +131,19 @@ const Nav:React.FC<IProps> = ({lang, pagesList, setState, mobOpened, desktopOpen
     )
 }
 
-const mapStateToProps = (state: IState) => ({
-    lang: state.lang, 
-    mobOpened: state.nav.mobOpened,
-	desktopOpened: state.nav.desktopOpened,
-    pagesList: state.pagesList
-})
 
-const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => ({
-    setState: bindActionCreators(actions, dispatch)
+const mapStateToProps = (state: IFullState): IPropsState => ({
+	lang: state.base.lang,
+    mobOpened: state.base.mobOpened,
+    desktopOpened: state.base.desktopOpened
 })
+  
+  
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
+    setState: {
+		base: bindActionCreators(actionsList, dispatch)
+	}
+})
+  
 
 export default connect(mapStateToProps, mapDispatchToProps)(Nav)

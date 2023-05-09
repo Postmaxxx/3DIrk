@@ -5,6 +5,7 @@ import Splide from "@splidejs/splide";
 import { useRef, useState, useEffect, MouseEventHandler, MouseEvent } from 'react'
 import Modal from '../Modal/Modal';
 import ModalImage from '../MessageImage/MessageImage';
+import { fibersBlock } from 'src/assets/js/data';
 
 interface IContainerSize {
 	width: number
@@ -60,9 +61,8 @@ const FiberItem = ({fiber, lang}: IProps) => {
 	const handleImgClick = (e: MouseEvent<HTMLDivElement>) => {
 		if ((e.target as HTMLImageElement).tagName === 'IMG') {
 			const id = Number(((e.target as HTMLImageElement).id));
-			//console.log(fiber.imgs[id].url);
 			setModal({visible: true})
-			setModalImg({path: fiber.imgs[id].url, descr: fiber.imgs[id].alt[lang]})
+			setModalImg({path: fiber.imgs[id].url, descr: fiber.imgs[id].name[lang]})
 		}
 		
 	}
@@ -95,9 +95,9 @@ const FiberItem = ({fiber, lang}: IProps) => {
                         <ul className="splide__list">
                             {fiber.imgs.map((img, i) => {
                                 return (
-                                    <li className="splide__slide" key={img.path} data-path={img.path}>
+                                    <li className="splide__slide" key={i} data-path={img.url}>
                                         <div className="splide__slide-container">
-                                            <img src={img.url} alt={img.alt[lang]} id={String(i)} />
+                                            <img src={img.url} alt={img.name[lang]} id={String(i)} />
                                         </div>
                                     </li>
                                 );
@@ -111,8 +111,27 @@ const FiberItem = ({fiber, lang}: IProps) => {
 				<div className="block_text">
 					<h3>{fiber.header[lang]}</h3>
 					{fiber.text[lang].map((textItem, i) => <p key={i}>{textItem.part}</p>)}
-						<Proscons {...fiber.proscons} lang={lang}/>
-
+					<div className="features__container">
+						<h3>{fibersBlock.features[lang]}</h3>
+						{fiber.features.map((feature, i) => (
+							<div className="feature">
+								<div className="feature__name">
+									<span>{feature.name[lang]}</span>
+									<span className='gap'></span>
+								</div>
+								<div className="feature__value">
+									<span>{feature.value[lang]}</span>
+								</div>
+							</div>
+						))}
+					</div>
+					<div className="colors__container">
+						<h3>{fibersBlock.colors[lang]}</h3>
+						{fiber.colors.map((color, i) => (
+							<div key={i} className={`color ${color.value === 'mixed' ? "mixed" : ""}`} style={{backgroundColor: `#${color.value}`}} title={color.name[lang]}></div>
+						))}
+					</div>
+					<Proscons {...fiber.proscons} lang={lang}/>
 				</div>
             </div>
 			<Modal {...{visible: modal.visible, close: closeModal, escExit: true}}>

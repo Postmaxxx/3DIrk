@@ -6,9 +6,8 @@ import portfolio_3 from "../img/portfolio/3.jpeg"
 import portfolio_4 from "../img/portfolio/4.jpeg"
 import portfolio_5 from "../img/portfolio/5.png"
 import portfolio_6 from "../img/portfolio/6.png"
-import { IGalleryItem } from "src/interfaces"
 
-export const galleryItems: IGalleryItem[] = [
+export const galleryItems = [
     {
         id: 0,
         path: portfolio_1,

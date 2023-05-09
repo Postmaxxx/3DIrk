@@ -1,6 +1,5 @@
-import { IPrintColor } from "src/interfaces"
 
-export const printColors:IPrintColor[] = [
+export const printColors = [
     {
         id: 0,
         propRu: "Белый",

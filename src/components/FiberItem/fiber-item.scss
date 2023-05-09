@@ -103,16 +103,92 @@
             }
         }
 
-        & h3 {
-            //margin-top: 30px;
-            text-align: center;
-            color: var(--main_vv);
+        & > .block_text {
+
+            & h3 {
+                //margin-top: 30px;
+                text-align: center;
+                color: var(--main_vv);
+            }
+
+            & > .features__container {
+                margin-top: 40px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+
+
+                & .feature {
+                    margin-top: 5px;
+                    display: flex;
+                    width: 600px;
+                    //justify-content: space-between;
+                    align-items: flex-end;
+                    
+                    &:nth-of-type(1) {
+                        margin-top: 30px;
+                    }
+
+                    & span {
+                        font-size: 20px;
+                    }
+
+                    & .feature__name {
+                        width: 70%;
+                        display: flex;
+                        align-items: flex-end;
+
+
+
+                        & .gap {
+                           flex-grow: 1;
+                           border-bottom: 1px dotted var(--text);
+                        }
+                    }
+
+                }
+
+            }
+
+
+            & > .colors__container {
+                margin-top: 40px;
+                width: 100%;
+                display: flex;
+                align-items: center;
+
+
+                & > .color {
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 50%;
+                    margin-left: 15px;
+
+                    &.mixed {
+                        background: conic-gradient(
+                            hsl(360 100% 50%),
+                            hsl(315 100% 50%),
+                            hsl(270 100% 50%),
+                            hsl(225 100% 50%),
+                            hsl(180 100% 50%),
+                            hsl(135 100% 50%),
+                            hsl(90 100% 50%),
+                            hsl(45 100% 50%),
+                            hsl(0 100% 50%)
+                          );
+                    }
+                }
+    
+    
+            }
+
+
+            & p {
+                font-size: 1.2rem;
+                //margin-top: .5rem;
+            }
         }
 
-        & p {
-            font-size: 1.2rem;
-            //margin-top: .5rem;
-        }
 
     }
 }

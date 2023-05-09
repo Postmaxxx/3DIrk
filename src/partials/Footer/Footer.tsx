@@ -4,14 +4,17 @@ import iconWhatsapp from "../../assets/img/logo_whatsapp.svg"
 import iconTelegram from "../../assets/img/logo_telegram.svg"
 import iconYoutube from "../../assets/img/logo_youtube.svg"
 import { connect } from 'react-redux'
-import * as actions from "../../redux/actions";
-import { AnyAction, bindActionCreators } from "redux";
-import { Dispatch } from "redux";
-import { IState, TLang } from 'src/interfaces'
+import { IFullState, TLang } from 'src/interfaces'
 
-interface IProps {
+
+interface IPropsState {
     lang: TLang
 }
+
+interface IPropsActions {
+}
+
+interface IProps extends IPropsState, IPropsActions {}
 
 const Footer:React.FC<IProps> = (props):JSX.Element => {
     return (
@@ -43,13 +46,12 @@ const Footer:React.FC<IProps> = (props):JSX.Element => {
     )
 }
 
-const mapStateToProps = (state: IState) => ({
-    lang: state.lang,
-  })
-  
-const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => ({
-    setState: bindActionCreators(actions, dispatch)
+
+const mapStateToProps = (state: IFullState): IPropsState => ({
+	lang: state.base.lang,
 })
   
+
   
-export default connect(mapStateToProps, mapDispatchToProps)(Footer)
+  
+export default connect(mapStateToProps)(Footer)

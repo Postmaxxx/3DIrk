@@ -1,51 +1,37 @@
-import * as actions from "../../redux/actions";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import './order.scss'
-import { IModal, IState, TLang, TLangText, TLangTextArr } from "src/interfaces";
-import imgSide from '../../assets/img/order_1.jpg'
+import { IFullState, IModal, IOrderState, TLang, TLangText, TLangTextArr } from "src/interfaces";
 import { useState, useEffect, useRef, KeyboardEventHandler } from 'react'
 import iconFileQuestion from '../../assets/img/icon_file_question.svg'
 import iconFilesClear from '../../assets/img/icon_clear.svg'
 import Modal from "src/components/Modal/Modal";
 import MessageInfo from "src/components/MessageInfo/MessageInfo";
+import { orderBlock } from "src/assets/js/data";
+import { setName, setEmail, setPhone, setMessage, clearFiles, clearForm, addFiles, sendOrder, setSendDataStatus }  from "../../redux/actions/order"
 
-interface IProps {
-    lang: TLang
-    header: TLangText
-    subheader: TLangText
-    name: {
-        label: TLangText,
-        data: string
-    },
-    phone: {
-        label: TLangText,
-        data: string
-    },
-    email: {
-        label: TLangText,
-        data: string
-    },
-    message: {
-        label: TLangText,
-        data: string
-    },
-    files: {
-        label: TLangText,
-        listLabel: TLangText
-        link: TLangText
-        linkRest: TLangText
-        filesList: Array<string>
-    },
-    qrcode: string,
-    text: TLangTextArr
+const actionsList = { setName, setEmail, setPhone, setMessage, clearFiles, clearForm, addFiles, sendOrder, setSendDataStatus  }
+
+interface IPropsState {
+    lang: TLang,
+    order: IOrderState
 }
 
-const Order = ({lang, header, subheader, name, phone, email,message, files, qrcode, text}: IProps) => {
-    
+interface IPropsActions {
+    setState: {
+        order: typeof actionsList
+    }
+}
+
+interface IProps extends IPropsState, IPropsActions {}
+
+
+
+
+const Order:React.FC<IProps> = ({lang, order, setState}): JSX.Element => {
+
     const _dropArea = useRef<HTMLDivElement>(null)
-    const [filesArr, setFilesArr] = useState<Array<File>>([])
     const _name = useRef<HTMLInputElement>(null)
     const _email = useRef<HTMLInputElement>(null)
     const _phone = useRef<HTMLInputElement>(null)
@@ -57,10 +43,14 @@ const Order = ({lang, header, subheader, name, phone, email,message, files, qrco
 
     let dragCounter: number = 0
 
-
     const closeModal = () => {
 		setModal({visible: false})
-        clearForm();
+        if (order.dataSending.status === 'success') {
+            setState.order.clearFiles();
+            setState.order.clearForm();
+        }
+        
+        setState.order.setSendDataStatus({status: 'idle', message: ''})
 	}
 
     
@@ -98,25 +88,21 @@ const Order = ({lang, header, subheader, name, phone, email,message, files, qrco
     const dragDrop = (e: DragEvent) => {
         preventDefaults(e)
         _dropArea.current?.classList.remove('active')
-        setFilesArr((prev) => {
-            return [...prev, ...(e.dataTransfer?.files as FileList)]
-        })
+        setState.order.addFiles([...(e.dataTransfer?.files as FileList)])
     }
     
-    const onSelect = () => {
+    const onSelectFiles = () => {
         _dropArea.current?.classList.remove('active')
-        setFilesArr((prev) => {
-           return [...prev, ...(_files.current?.files as FileList)]
-        })
-
+        setState.order.addFiles([...(_files.current?.files as FileList)])
     }
 
     const clearAttachedFiles = () => {
-        setFilesArr([]);
+        setState.order.clearFiles()
     }
 
 
     const previewFiles = (arrayOfFiles: File[]) => {
+        
         (_filesGallery.current as HTMLDivElement).innerHTML = '';
         const imageTypes: string[] = ['jpg', 'jpeg', 'bmp', 'svg', 'png', 'tiff', 'webp'];
 
@@ -157,90 +143,31 @@ const Order = ({lang, header, subheader, name, phone, email,message, files, qrco
     }
 
 
-    const sendMessage = ({apiToken, chatId, text}: {apiToken: string, chatId: string, text: string}): boolean => {
-        const urlMessage:string = `https://api.telegram.org/bot${apiToken}/sendMessage?chat_id=${chatId}&text=${text}`;
-        let success: boolean = true
-        fetch(urlMessage)
-            .then(res => {
-                if (!res.ok) {
-                    success = false
-                    throw new Error(`HTTP error! Status: ${res.status}`);
-                }
-                return res.json();
-            })
-            .then(data => {
-                console.log('Message sent succesfully: ', data)
-            })
-            .catch(err => {
-                success = false
-                alert(`Error while sending a message: ${err.message}`)
-            });
-        return success
-    }
-
-
-
-
-    const sendFiles = ({apiToken, chatId, sendFilesArr}: {apiToken: string, chatId: string, sendFilesArr: File[]}): boolean => {
-        const urlDocument= `https://api.telegram.org/bot${apiToken}/sendDocument`;
-        let success: boolean = true
-        sendFilesArr.forEach((file: File) => {
-            const formData: FormData = new FormData();
-            formData.append('chat_id', chatId);
-            formData.append('document', file, file.name);
-            const options = {method: 'POST', body: formData};
-            fetch(urlDocument, options)
-                .then(response => {
-                    if (!response.ok) {
-                    success = false
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-                    return response.json();
-            })
-            .then(data => console.log('File has been sent successfully:', file.name))
-            .catch(error => {
-                success = false
-                console.error(`Error while sending a file:, ${file.name}, error: ${error.message}`)
-            });
-        })
-        if (!success) {
-            alert(`Error while sending files, try again later`)
-        }
-        return success
-    }
-
-    const clearForm = () => {
-        if (_message.current) {
-            _message.current.value = ''
-        }
-        setFilesArr([]);
-    }
 
 
     const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
         preventDefaults(e)
         const currentDate: Date = new Date();
-        const apiToken: string = process.env.REACT_APP_TG_TOK || '';
-        const chatId: string = process.env.REACT_APP_CHT_ID || '';
-        //const chatLink: string = process.env.REACT_APP_CHT_LINK || '';
-        const name:string = _name.current?.value || '';
-        const phone:string = _phone.current?.value || '';
-        const email:string = _email.current?.value || '';
-        const message:string = _message.current?.value || '';
+        const name:string =  order.name;
+        const phone:string = order.phone;
+        const email:string = order.email;
+        const message:string = order.message;
         if (checkErrors()) return
         
         const text: string = `Date: ${currentDate.toISOString().slice(0,10)}%0ATime: ${currentDate.toISOString().slice(11, 19)}%0AName: ${name}%0AEmail: ${email}%0APhone: ${phone}%0A%0AMessage: ${message}` ;
 
-        if (sendMessage({apiToken, chatId, text}) && sendFiles({apiToken, chatId, sendFilesArr: filesArr})) {
-            setModal({visible: true});
-        }
+        setState.order.sendOrder({lang, text, sendFilesArr: order.files})
     }
 
-
+    useEffect(() => {
+        if (order.dataSending.status !== 'idle') {
+            setModal({visible: true})
+        }
+    }, [order.dataSending.status])
 
     useEffect(() => {
-        previewFiles(filesArr)
-    }, [filesArr])
+        previewFiles(order.files)
+    }, [order.files])
 
 
     useEffect(() => {
@@ -268,56 +195,112 @@ const Order = ({lang, header, subheader, name, phone, email,message, files, qrco
         }
     }
 
+
+    const onChangeText: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (e) => {
+        switch (e.target.id) {
+            case "name":
+                setState.order.setName(e.target.value)
+                break;
+            case "phone":
+                setState.order.setPhone(e.target.value)
+                break;
+            case "email":
+                setState.order.setEmail(e.target.value)
+                break;
+            case "message":
+                setState.order.setMessage(e.target.value)
+                break;
+            default:
+                break;
+        }
+        clearError(e)
+    }
+
     return (
         <section className="order">
             <div className='container_page'>
                 <div className="container">
                     <div className="page_order">
-                        <h1>{header[lang]}</h1>
+                        <h1>{orderBlock.header[lang]}</h1>
                         <div className="order__block">
 
                             <form className="order__container">
-                                <h2>{subheader[lang]}</h2>
+                                <h2>{orderBlock.subheader[lang]}</h2>
                                 <div className="data-block">
 
                                     <div className="inputs-block">
                                         <div className="input-block">
                                             <label htmlFor="name">
-                                                {name.label[lang]}
+                                                {orderBlock.name.label[lang]}
                                             </label>
-                                            <input className="input-element" id="name" type="text" required min={2} max={25} ref={_name} onChange={clearError} onKeyDown={(e:any) => focusNext({e, target: _phone.current})}/>
+                                            <input 
+                                                className="input-element" 
+                                                id="name" 
+                                                type="text" 
+                                                required 
+                                                min={2} 
+                                                max={25} 
+                                                ref={_name} 
+                                                value={order.name}
+                                                onChange={onChangeText} 
+                                                onKeyDown={(e:any) => focusNext({e, target: _phone.current})}/>
                                         </div>
                                         <div className="input-block">
                                             <label htmlFor="phone">
-                                                {phone.label[lang]}
+                                                {orderBlock.phone.label[lang]}
                                             </label>
-                                            <input className="input-element" id="phone" type="tel" min={6} max={25} ref={_phone} onChange={clearError} onKeyDown={(e:any) => focusNext({e, target: _email.current})}/>
+                                            <input 
+                                                className="input-element" 
+                                                id="phone"
+                                                type="tel" 
+                                                min={6} 
+                                                max={25} 
+                                                ref={_phone} 
+                                                value={order.phone}
+                                                onChange={onChangeText} 
+                                                onKeyDown={(e:any) => focusNext({e, target: _email.current})}/>
                                         </div>
                                         <div className="input-block">
                                             <label htmlFor="email">
-                                                {email.label[lang]}
+                                                {orderBlock.email.label[lang]}
                                             </label>
-                                            <input className="input-element" id="email" type="email" required ref={_email} onChange={clearError} onKeyDown={(e:any) => focusNext({e, target: _message.current})}/>
+                                            <input 
+                                                className="input-element" 
+                                                id="email" 
+                                                type="email" 
+                                                required 
+                                                value={order.email}
+                                                ref={_email} 
+                                                onChange={onChangeText} 
+                                                onKeyDown={(e:any) => focusNext({e, target: _message.current})}/>
                                         </div>
                                         <div className="input-block message-block">
                                             <label htmlFor="message">
-                                                {message.label[lang]}
+                                                {orderBlock.message.label[lang]}
                                             </label>
-                                            <textarea className="input-element" id="message" required minLength={10} maxLength={1000} ref={_message} onChange={clearError}/>
+                                            <textarea 
+                                                className="input-element" 
+                                                id="message" 
+                                                required 
+                                                minLength={10} 
+                                                maxLength={1000} 
+                                                ref={_message} 
+                                                value={order.message}
+                                                onChange={onChangeText}/>
                                         </div>
                                     </div>
                                     <div className="files-block">
                                         <div className="input-block files">
-                                            <label htmlFor="files">{files.label[lang]}</label>
+                                            <label htmlFor="files">{orderBlock.files.label[lang]}</label>
                                             <div className="drop-area" ref={_dropArea}>
                                                 <svg width="16" height="25" viewBox="0 0 16 25" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M7.31719 23.7322C7.71856 24.1116 8.35148 24.0937 8.73084 23.6924L14.9129 17.1516C15.2923 16.7502 15.2745 16.1173 14.8731 15.7379C14.4717 15.3586 13.8388 15.3764 13.4594 15.7778L7.96424 21.5918L2.15022 16.0966C1.74885 15.7172 1.11593 15.7351 0.73657 16.1365C0.357206 16.5378 0.375048 17.1707 0.776422 17.5501L7.31719 23.7322ZM6.36655 0.404461L7.00449 23.0336L9.00369 22.9773L8.36576 0.348102L6.36655 0.404461Z"/>
                                                 </svg>
                                                 <div className="link__container">
-                                                    <label htmlFor="files">{files.link[lang]}</label> 
-                                                    <span>{' ' + files.linkRest[lang]}</span>
+                                                    <label htmlFor="files">{orderBlock.files.link[lang]}</label> 
+                                                    <span>{' ' + orderBlock.files.linkRest[lang]}</span>
                                                 </div>
-                                                <input id="files" type="file" multiple onChange={onSelect} ref={_files}/>
+                                                <input id="files" type="file" multiple onChange={onSelectFiles} ref={_files}/>
                                                 <div className="preview-gallery" ref={_filesGallery}></div>
                                                 <div className="drop-area__cleaner" ref={_filesCleaner} onClick={clearAttachedFiles} aria-label={lang === 'en' ? "Clear list" : 'Очистить список'} title={lang === 'en' ? "Clear list" : 'Очистить список'}>
                                                     <img src={iconFilesClear} alt={lang === 'en' ? "Clear" : 'Очистить'} />
@@ -336,8 +319,9 @@ const Order = ({lang, header, subheader, name, phone, email,message, files, qrco
             </div>
             <Modal {...{visible: modal.visible, close: closeModal, escExit: true}}>
 					<MessageInfo {...{
-                        header: lang === 'en' ? 'Success' : 'Отправлено', 
-                        text: lang === 'en' ?  [`Your message ${filesArr.length > 0 ? "and files have" : "has"} been sent`] : [`Ваше сообщение ${filesArr.length > 0 ? "и вложения были успешно отправлены" : "было успешно отправлено"}`], 
+                        status: order.dataSending.status,
+                        header: order.dataSending.status === 'success' ? lang === 'en' ? "Success" : "Отправлено" : lang === 'en' ? "Error" : "Ошибка",
+                        text: [order.dataSending.message], 
                         buttonText: lang === 'en' ? 'Close' : "Закрыть", 
                         buttonAction: closeModal
                     }}/>
@@ -349,22 +333,18 @@ const Order = ({lang, header, subheader, name, phone, email,message, files, qrco
 
 
 
-const mapStateToProps = (state: IState) => ({
-    lang: state.lang,
-    header: state.components.orderBlock.header,
-    subheader: state.components.orderBlock.subheader,
-    name: state.components.orderBlock.name,
-    email: state.components.orderBlock.email,
-    phone: state.components.orderBlock.phone,
-    message: state.components.orderBlock.message,
-    files: state.components.orderBlock.files,
-    qrcode: state.components.orderBlock.qrcode,
-    text: state.components.orderBlock.text,
+
+const mapStateToProps = (state: IFullState): IPropsState => ({
+    lang: state.base.lang,
+    order: state.order,
+})
+
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
+    setState: {
+		order: bindActionCreators(actionsList, dispatch)
+	}
 })
   
-const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => ({
-    setState: bindActionCreators(actions, dispatch)
-})
     
 export default connect(mapStateToProps, mapDispatchToProps)(Order)
 /*

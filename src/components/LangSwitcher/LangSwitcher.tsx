@@ -1,40 +1,52 @@
 import "./langSwitcher.scss"
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { connect } from "react-redux";
-import { IState, TLang, TTheme } from "src/interfaces";
-import * as actions from "../../redux/actions";
+import { IFullState, TLang, TTheme } from "src/interfaces";
+import { setLangEn, setLangRu }  from "../../redux/actions/base"
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 
-interface IProps {
+
+const actionsList = {setLangEn, setLangRu}
+
+
+interface IPropsState {
     lang: TLang
 	mobOpened: boolean
-    setState: typeof actions
 }
 
-const LangSwitcher:React.FC<IProps> = (props): JSX.Element => {
+interface IPropsActions {
+	setState: {
+		base: typeof actionsList
+	}
+}
+
+interface IProps extends IPropsState, IPropsActions {}
+
+
+const LangSwitcher:React.FC<IProps> = ({lang, mobOpened, setState}): JSX.Element => {
 
     const handleChangeLang = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (props.lang === 'en') {
+        if (lang === 'en') {
             window.localStorage.setItem('language', 'ru')
-            props.setState.setLangRu()
+            setState.base.setLangRu()
             e.currentTarget.classList.add('ru')
             e.currentTarget.classList.remove('en')
         } else {
             window.localStorage.setItem('language', 'en')
-            props.setState.setLangEn();
+            setState.base.setLangEn();
             e.currentTarget.classList.add('en')
             e.currentTarget.classList.remove('ru')
         }
     }
 
     useEffect(() => {
-        (window.localStorage.getItem('language') as TLang) === 'en' ? props.setState.setLangEn() : props.setState.setLangRu()
+        (window.localStorage.getItem('language') as TLang) === 'en' ? setState.base.setLangEn() : setState.base.setLangRu()
     }, [])
 
 
     return (
-        <div className={`lang-switcher ${props.lang} ${props.mobOpened || "hide"}`} onClick={handleChangeLang}>
+        <div className={`lang-switcher ${lang} ${mobOpened || "hide"}`} onClick={handleChangeLang}>
             <div className="lang-switcher__text lang_ru" data-lang='ru'>RU</div>
             <div className="lang-switcher__text lang_en" data-lang='en'>EN</div>
         </div>
@@ -44,20 +56,19 @@ const LangSwitcher:React.FC<IProps> = (props): JSX.Element => {
 
 
 
-const mapStateToProps = (state: IState) => ({
-    lang: state.lang,
-	mobOpened: state.nav.mobOpened,
-  })
+
+const mapStateToProps = (state: IFullState): IPropsState => ({
+	lang: state.base.lang,
+    mobOpened: state.base.mobOpened
+})
   
-  const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => ({
-    setState: bindActionCreators(actions, dispatch)
-  })
+  
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
+    setState: {
+		base: bindActionCreators(actionsList, dispatch)
+	}
+	
+})
   
   
   export default connect(mapStateToProps, mapDispatchToProps)(LangSwitcher)
-
-  /*
-              <div className="lang-selector selector_ru"></div>
-            <div className="lang-selector selector_en"></div>
-
-            */

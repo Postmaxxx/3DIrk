@@ -1,23 +1,20 @@
 import NewsBlock from 'src/components/NewsBlock/NewsBlock';
 import SpliderMax from 'src/components/CarouselMax/CarouselMax';
 import './home.scss'
-import * as actions from "../../redux/actions";
-import { AnyAction, bindActionCreators } from "redux";
-import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import { IDataLoading, IHeroBlock, IMaxSlide, IState, TLang } from "../../interfaces";
-import Preloader from 'src/components/Preloader/Preloader';
+import { IFullState, TLang } from "../../interfaces";
+import { heroBlock } from 'src/assets/js/data';
 
 
-interface IProps {
+
+interface IPropsState {
     lang: TLang
-    sliderMax: {
-        dataLoading: IDataLoading
-        list: Array<IMaxSlide>
-    }
-    heroBlock: IHeroBlock
-    setState: typeof actions
 }
+
+interface IPropsActions {
+}
+
+interface IProps extends IPropsState, IPropsActions {}
 
 /*
 
@@ -29,7 +26,7 @@ interface IProps {
                             <Preloader />
                         )}
                         */
-const Home:React.FC<IProps> = ({lang, sliderMax, heroBlock} : IProps): JSX.Element => {
+const Home:React.FC<IProps> = ({lang} : IProps): JSX.Element => {
     return (
         <section className='home'>
             <div className="container_page">
@@ -42,10 +39,9 @@ const Home:React.FC<IProps> = ({lang, sliderMax, heroBlock} : IProps): JSX.Eleme
                             ))}
                         </div>
                         <div className="slider__container">
-                            <SpliderMax />
+                            {/*<SpliderMax />*/}
                         </div>
-                        <h2>{lang === 'en' ? 'Last news' : 'Последние новости'}</h2>
-                            <NewsBlock />
+                        <NewsBlock />
                     </div>
                 </div>
             </div>
@@ -56,14 +52,8 @@ const Home:React.FC<IProps> = ({lang, sliderMax, heroBlock} : IProps): JSX.Eleme
 
 
 
-const mapStateToProps = (state: IState) => ({
-    lang: state.lang,
-    sliderMax: state.sliderMax,
-    heroBlock: state.components.heroBlock
-  })
-  
-const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => ({
-    setState: bindActionCreators(actions, dispatch)
+const mapStateToProps = (state: IFullState):IPropsState => ({
+    lang: state.base.lang,
 })
-    
-export default connect(mapStateToProps, mapDispatchToProps)(Home)
+  
+export default connect(mapStateToProps)(Home)

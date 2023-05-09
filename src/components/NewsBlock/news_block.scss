@@ -9,6 +9,8 @@
     align-items: stretch;    
     justify-content: center;
     flex-wrap: wrap;
+    position: relative;
+    min-height: 300px;
 
     & >  .break-new-line {
         width: 100%;

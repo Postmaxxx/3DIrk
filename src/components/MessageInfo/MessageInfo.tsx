@@ -5,13 +5,14 @@ import "./message_info.scss"
 
 
 interface IProps {
+    status: string
     header: string
     text: string[]
     buttonText: string
     buttonAction: () => void
 }
 
-const MessageInfo = ({header, text, buttonText, buttonAction}: IProps) => {
+const MessageInfo = ({status, header, text, buttonText, buttonAction}: IProps) => {
 
     useEffect(() => {
 
@@ -19,7 +20,7 @@ const MessageInfo = ({header, text, buttonText, buttonAction}: IProps) => {
 
     
     return (
-        <div className="message_info__container">
+        <div className={`message_info__container ${status}`}>
             <h3>{header}</h3>
             <div className="text-block">
                 {text.map((currentText,index) => {

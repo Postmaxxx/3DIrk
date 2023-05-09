@@ -206,7 +206,7 @@ export type TTheme = 'dark' | 'light'
 export type TLang = 'en' | 'ru'
 export type TLoadDataStatus = 'idle' | 'success' | 'loading' | 'error'
 export type TSendDataStatus = 'idle' | 'success' | 'sending' | 'error'
-export type TId = number
+export type TId = string
 
 //---------------------------------------redux
 export interface IAction<T> {
@@ -382,6 +382,8 @@ export interface INewsBlock {
 export interface IFibersBlock {
     header: TLangText
     text: TLangTextArr
+    colors: TLangText
+    features: TLangText
 }
 
 //----------------------------------- block Catalog
@@ -394,6 +396,27 @@ export interface ICatalogBlock {
 }
 
 
+//----------------------------------- block order
+export interface IOrderInput {
+    label: TLangText,
+}
+
+export interface IOrderBlock {
+    header: TLangText
+    subheader: TLangText
+    name: IOrderInput
+    phone: IOrderInput
+    email: IOrderInput
+    message: IOrderInput
+    files: {
+        label: TLangText,
+        listLabel: TLangText
+        link: TLangText
+        linkRest: TLangText
+    },
+    qrcode: string,
+    text: TLangTextArr
+}
 
 
 
@@ -436,16 +459,25 @@ export interface IProsCons {
     cons: TLangTextArr
 }
 
+
+
+export interface IColors {
+    name: TLangText
+    value: string
+}
+
 export interface IFiber {
     id: TId
     header: TLangText
     text: TLangTextArr
     proscons: IProsCons
-    imgs: Array<IImg>
+    colors: IColors[] 
+    imgs: IImg[]
+    features: IFeature[]
 }
 
-export interface IFiberState {
-    dataLoading: IDataLoading
+export interface IFibersState {
+    dataLoading: IDataSending
     fibersList: Array<IFiber>
 }
 
@@ -460,14 +492,9 @@ export interface ISize {
     value: TLangText
 }
 
-export type IFeatureValue = TLangText | TId[]
-
-export type TFeaturesType = "value" | "color" | "fiber"
-
 export interface IFeature {
     name: TLangText
-    type: TId
-    values: IFeatureValue[]
+    value: TLangText
 }
 
 export interface IProduct {
@@ -476,15 +503,28 @@ export interface IProduct {
     name: TLangText
     text: TLangTextArr
     photos: IImg[]
+    fibers: IFiber[]
     features: IFeature[]
+    sizes: ISize[]
 }
 
-export interface ICategoryState {
-    selectedProduct: number
-    selectedProductImage: number
+export interface ICategory {
     dataLoading: IDataLoading
-    id: TId
     products: IProduct[]
+    selectedProduct: TId
+    selectedProductImage: number
+}
+
+export interface ICategoriesList {
+    name: TLangText[],
+    id: TId
+}
+
+export interface ICategoriesState {
+    dataLoading: IDataLoading //for load categoriesList
+    categoriesList: ICategoriesList[]
+    categories: ICategory[]
+    selectedCategory: TId
 }
 
 
@@ -499,7 +539,7 @@ export interface INewsItem {
 
 export interface INewsState {
     dataLoading: IDataLoading
-    news: INewsItem[]
+    newsList: INewsItem[]
 }
 
 
@@ -517,24 +557,6 @@ export interface IBaseState {
 
 
 
-//==================================================colors state
-export interface IColorValue {
-    r: number
-    g: number
-    b: number
-}
-
-export interface IColors {
-    id: TId
-    name: TLangText
-    value: IColorValue
-}
-
-export interface IColorsState {
-    dataLoading: IDataLoading
-    colors: IColors[]
-}
-
 
 //============================================== order state
 
@@ -544,7 +566,7 @@ export interface IOrderState {
     phone: string
     email: string
     message: string
-    files: Array<any>
+    files: File[]
 }
 
 
@@ -552,10 +574,9 @@ export interface IOrderState {
 export interface IFullState {
     base: IBaseState
     news: INewsState
-    /*category: ICategoryState
-    fibers: IFiberState
-    colors: IColorsState
-    order: IOrderState*/
+    fibers: IFibersState
+    catalog: ICategoriesState
+    order: IOrderState
 }
 
 

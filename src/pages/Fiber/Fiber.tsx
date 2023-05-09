@@ -1,26 +1,37 @@
 import './fiber.scss'
 import FiberItem from 'src/components/FiberItem/FiberItem';
-import * as actions from "../../redux/actions";
-import { AnyAction, bindActionCreators } from "redux";
-import { Dispatch } from "redux";
+import { AnyAction, bindActionCreators, Dispatch } from "redux";
 import { connect } from "react-redux";
-import { IDataLoading, IState, TLang, IFibersBlock } from "../../interfaces";
+import { TLang, IFullState, IFibersState } from "../../interfaces";
 import { useEffect } from 'react';
 import "@splidejs/react-splide/css";    
 import Preloader from 'src/components/Preloader/Preloader';
+import { loadFibers }  from "../../redux/actions/fibers"
+import { fibersBlock } from 'src/assets/js/data';
 
-interface IProps {
-    lang: TLang
-    fibersBlock: IFibersBlock
-    setState: typeof actions
+const actionsList = { loadFibers }
+
+interface IPropsState {
+    lang: TLang,
+    fibers: IFibersState
 }
 
-const Fiber:React.FC<IProps> = ({lang, fibersBlock, setState} : IProps) => {
+interface IPropsActions {
+    setState: {
+        fibers: typeof actionsList
+    }
+}
 
+interface IProps extends IPropsState, IPropsActions {}
+
+const Fiber:React.FC<IProps> = ({lang, fibers, setState}):JSX.Element => {
+    console.log(fibers);
+    
     useEffect(() => {
-        //setState.loadDataFibers2({lang: lang})
-        setState.loadDataFibers()
-    }, [lang])
+        if (fibers.dataLoading.status !== 'success') {
+            setState.fibers.loadFibers()
+        }
+    }, [])
 
 
     return (
@@ -29,14 +40,14 @@ const Fiber:React.FC<IProps> = ({lang, fibersBlock, setState} : IProps) => {
                 <div className="container">
                     <div className="fiber">
                         <h1>{fibersBlock.header[lang]}</h1>
-                        {fibersBlock.dataLoading.status === 'success' ? (
+                        {fibers.dataLoading.status === 'success' ? (
                             <div className="fibers__container">
-                                {fibersBlock.fibersList.map((fiber, i) => <FiberItem {...{fiber}} lang={lang} key={i}/>)}
+                                {fibers.fibersList.map((fiber, i) => <FiberItem {...{fiber}} lang={lang} key={i}/>)}
                             </div>
-                        ):
-                        (
+                        )
+                        :
                             <Preloader />
-                        )}
+                        }
                     </div>
                 </div>
             </div>
@@ -44,13 +55,16 @@ const Fiber:React.FC<IProps> = ({lang, fibersBlock, setState} : IProps) => {
     )
 }
 
-const mapStateToProps = (state: IState) => ({
-    lang: state.lang,
-    fibersBlock: state.components.fibersBlock,
+
+const mapStateToProps = (state: IFullState): IPropsState  => ({
+    lang: state.base.lang,
+    fibers: state.fibers,
 })
-  
-const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => ({
-    setState: bindActionCreators(actions, dispatch)
+
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
+    setState: {
+		fibers: bindActionCreators(actionsList, dispatch)
+	}
 })
     
 export default connect(mapStateToProps, mapDispatchToProps)(Fiber)

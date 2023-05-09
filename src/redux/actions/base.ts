@@ -2,7 +2,6 @@ import { IAction } from "src/interfaces"
 import { actionsListBase } from './actionsList'
 
 
-
 export const setLangEn = <T>(): IAction<T> => ({
     type: actionsListBase.SET_LANG_EN,
 })

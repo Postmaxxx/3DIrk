@@ -257,7 +257,8 @@ section.order {
                                             text-align: center;
                                             color: $light;
                                             //word-break: break-all;
-                                            hyphens:auto
+                                            //hyphens:auto
+                                            word-break: break-all;
                                         }
                                     }
         

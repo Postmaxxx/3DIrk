@@ -1,6 +1,6 @@
 @use '/src/assets/css/variables' as *;
 
-section.portfolio {
+section.catalog {
     background-color: var(--bg);
     transition: background-color $transition-theme;
     flex-grow: 1;
@@ -20,7 +20,7 @@ section.portfolio {
             }
         }
     
-        .splider_portfolio__main {
+        .splider_catalog__main {
             height: 600px;
             margin-top: 50px;
             margin-bottom: 100px;

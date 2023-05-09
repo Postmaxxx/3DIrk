@@ -5,7 +5,7 @@ const initialNews = {
         status: 'idle',
         message: ""
     },
-    news: []
+    newsList: []
 } satisfies INewsState
 
 export default initialNews
