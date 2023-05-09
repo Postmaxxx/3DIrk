@@ -375,7 +375,7 @@ const catalogFull = [
                             ru: 'с 10 лет'
                         },
                     },
-                ],
+                ], 
                 mods: {
                     en: [
                         {
