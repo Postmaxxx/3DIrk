@@ -1,52 +1,84 @@
-import { IGalleryItem, IState, TLang } from "src/interfaces";
-import * as actions from "../../redux/actions";
+import './gallery.scss'
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import './gallery.scss'
-import { galleryItems } from "src/assets/data/portfolios";
-import { useEffect, useState } from "react";
+import Preloader from 'src/components/Preloader/Preloader';
+import { IFibersState, IFullState, IProduct, TLang } from "src/interfaces";
+import { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedImage, setSelectedProduct, loadCategoriesList, loadCategory }  from "src/redux/actions/catalog"
+import { useEffect } from 'react';
+import { catalogBlock } from "src/assets/js/data";
 
-interface IProps {
-    lang: TLang
-    setState: typeof actions
+
+const actionsListCatalog = { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedImage, setSelectedProduct, loadCategoriesList, loadCategory  }
+
+interface IPropsReceived {
+    products: IProduct[]
 }
 
-const Gallery:React.FC<IProps> = (props) => {
-    
-    const [portfolioItems, setportfolioItems] = useState<Array<IGalleryItem>>([...galleryItems])
-    const [pageNumber, setPageNumber] = useState<number>(0)
-    const itemsPerPage = 9;
+interface IPropsState {
+	lang: TLang
+}
 
-    const list = <>
-        {portfolioItems.map((item, index) => {
-            if ((index >= itemsPerPage * pageNumber) && (index < itemsPerPage * (pageNumber + 1))) {
-                return <div key={item.id}>
-                    <img src={item.path} alt="rtrt" />
-                </div>
-            }
-        })}
-    </>
-    
+interface IPropsActions {
+    setState: {
+        catalog: typeof actionsListCatalog
+    }
+}
+
+interface IProps extends IPropsState, IPropsActions, IPropsReceived {}
+
+
+const Gallery: React.FC<IProps> = ({lang, products, setState}):JSX.Element => {
+
+    const onClicked = (e: IProduct["id"]) => {
+                
+    }
+
+
+
 
 
     return (
-        <div className="gallery">
-            {list}
+        <div className="gallery__container">
+            {products.map((product):JSX.Element => {
+                return (
+                    <div className='gallery__item' key={product.id} onClick={() => onClicked(product.id)} >
+                        <div className="img__container">
+                            <img src={product.imgs[0].url} alt={product.imgs[0].name[lang]} />
+                        </div>
+                        <div className="descr__container">
+                            <span className='name'>{product.name[lang]}</span>
+                            <span className='price'>{catalogBlock.priceGallery[lang]}: {product.price[lang]}</span>
+                        </div>
+                    </div>
+                )
+            })
+            }
         </div>
     )
 }
 
 
+const mapStateToProps = (state: IFullState): IPropsState => ({
+    lang: state.base.lang
+})
 
 
-const mapStateToProps = (state: IState) => ({
-    lang: state.lang,
-  })
-  
-  const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => ({
-    setState: bindActionCreators(actions, dispatch)
-  })
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
+    setState: {
+		catalog: bindActionCreators(actionsListCatalog, dispatch),
+	}
+})
   
   
-  export default connect(mapStateToProps, mapDispatchToProps)(Gallery)
+
+export default connect(mapStateToProps, mapDispatchToProps)(Gallery);
+
+/*
+                            <div className='colors__container'>
+                                <span>Colors:</span>
+                                {product.colors?.map((color, i) => (
+                                <div key={i} className={`color ${color.value === 'mixed' ? "mixed" : ""}`} style={{backgroundColor: `#${color.value}`}} title={color.name[lang]}></div>
+                            ))}
+                            </div>
+                            */

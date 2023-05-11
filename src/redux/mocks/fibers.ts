@@ -33,6 +33,20 @@ const mockFibers = [
             },
             {
                 name: {
+                    ru: 'Желтый',
+                    en: 'Yellow'
+                },
+                value: 'FFFF00'
+            },
+            {
+                name: {
+                    ru: 'Фиолетовый',
+                    en: 'Violet'
+                },
+                value: 'FF00FF'
+            },
+            {
+                name: {
                     ru: 'Разноцветный',
                     en: 'Mixed'
                 },

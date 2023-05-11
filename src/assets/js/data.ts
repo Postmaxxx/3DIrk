@@ -247,13 +247,17 @@ export const catalogBlock = {
     img: {
         url: catalogPhoto1,
         name: {
-            ru: 'Фото катклог',
+            ru: 'Фото каталога',
             en: 'Catalog image'
         }
     },
     headerGallery: {
         en: 'Наш каталог',
         ru: 'Catalog'	
+    },
+    priceGallery: {
+        en: 'Price',
+        ru: 'Цена'
     }
 } satisfies ICatalogBlock
 

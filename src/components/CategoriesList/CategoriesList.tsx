@@ -1,18 +1,18 @@
 import "./categories-list.scss";
-import { ICategoriesList, IDataLoading, IFullState, TId, TLang } from "src/interfaces";
+import { ICategoriesListItem, IDataLoading, IFullState, TId, TLang } from "src/interfaces";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 
-import { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategoriey, setSelectedCategory, setSelectedImage, setSelectedProduct, loadCategoriesList }  from "../../redux/actions/catalog"
+import { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedImage, setSelectedProduct, loadCategoriesList }  from "../../redux/actions/catalog"
 import Preloader from "../Preloader/Preloader";
 
-const actionsList = { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategoriey, setSelectedCategory, setSelectedImage, setSelectedProduct, loadCategoriesList  }
+const actionsList = { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedImage, setSelectedProduct, loadCategoriesList  }
 
 
 interface IPropsState {
-    list: ICategoriesList[]
+    list: ICategoriesListItem[]
 	selectedCategory: TId
 	lang: TLang
 	loading: IDataLoading
@@ -36,15 +36,17 @@ const CatalogList: React.FC<IProps> = ({list, selectedCategory, loading, lang, s
 	useEffect(() => {
 		if (loading.status !== 'success') {
 			setState.catalog.loadCategoriesList()
+		} else {
+			setState.catalog.setSelectedCategory(list[0]?.id)
 		}
-	}, [])
+	}, [loading.status])
 
 	return(
 		<div className="categories-list__container">
 			<div className="list">
 				{loading.status === 'success' ? 
 				<ul>
-					{list.map((category: ICategoriesList, index: number): JSX.Element => {
+					{list.map((category: ICategoriesListItem, index: number): JSX.Element => {
 						return (
 							<li 
 								key={category.id} 

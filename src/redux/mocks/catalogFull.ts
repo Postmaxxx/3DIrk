@@ -397,6 +397,1455 @@ const catalogFull = [
                 }
             },
         ]
+    },
+    {
+        id: 'c3',
+        name: {
+            en: 'Test',
+            ru: 'Тест'
+        },
+        products: [
+            {
+                id: 'p11',
+                name: {
+                    en: 'Airplane 1',
+                    ru: 'Самолет 1'
+                },
+                price: {
+                    en: 'from 900rub to 1500rub',
+                    ru: 'От 900р до 1500р'
+                },
+                text: {
+                    en: [
+                        {
+                            part: 'All about product number 2'
+                        },
+                        {
+                            part: 'fgh Lorem ipsum, dolor sit amet consectetur adipisicing elit. Necessitatibus, eveniet odit veritatis totam exercitationem id perspiciatis dolores, ipsum'
+                        },
+                    ],
+                    ru: [
+                        {
+                            part: 'Вся информация о продукте номер 2'
+                        },
+                        {
+                            part: 'ВАП вап ывап в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра авпрва пдрваыплопдорва лопвапрвыалод рпвлап а'
+                        },
+                    ]
+                },
+                imgs: [
+                    {
+                        url: p2photo1,
+                        name: {
+                            ru: 'Товар 2 фото 1',
+                            en: 'Product 2 photo 1'
+                        }
+                    },
+                    {
+                        url: p2photo2,
+                        name: {
+                            ru: 'Товар 2 фото 2',
+                            en: 'Product 2 photo 2'
+                        }
+                    },
+                    {
+                        url: p2photo3,
+                        name: {
+                            ru: 'Товар 2 фото 3',
+                            en: 'Product 2 photo 3' 
+                        }
+                    },
+                    {
+                        url: p2photo4,
+                        name: {
+                            ru: 'Товар 2 фото 4',
+                            en: 'Product 2 photo 4'
+                        }
+                    },
+                ],
+                fibers: ["f1","f3"],
+                features: [
+                    {
+                        name: {
+                            en: 'Weight',
+                            ru: 'Вес'
+                        },
+                        value: {
+                            en: 'less than 100gr',
+                            ru: 'менее 100гр.'
+                        },
+                    },
+                    {
+                        name: {
+                            en: 'package contents',
+                            ru: 'Комплектация'
+                        },
+                        value: {
+                            en: 'No batteries',
+                            ru: 'Без батареек'
+                        },
+                    },
+                    {
+                        name: {
+                            en: 'Min items to order',
+                            ru: 'Минимальная партия для заказа'
+                        },
+                        value: {
+                            en: '2 item',
+                            ru: '2 шт.'
+                        },
+                    },
+                    {
+                        name: {
+                            en: 'Allowed for children',
+                            ru: 'Разрешено для детей'
+                        },
+                        value: {
+                            en: 'older than 10yo',
+                            ru: 'с 10 лет'
+                        },
+                    },
+                ], 
+                mods: {
+                    en: [
+                        {
+                            part: 'with motor'
+                        },
+                        {
+                            part: 'without motor'
+                        },
+                    ],
+                    ru: [
+                        {
+                            part: 'С моторчиком'
+                        },
+                        {
+                            part: 'Без моторчика'
+                        },
+                    ]
+                }
+            },
+            {
+                id: 'p12',
+                name: {
+                    en: 'Airplane 2',
+                    ru: 'Самолет 2'
+                },
+                price: {
+                    en: 'from 900rub to 1500rub',
+                    ru: 'От 900р до 1500р'
+                },
+                text: {
+                    en: [
+                        {
+                            part: 'All about product number 2'
+                        },
+                        {
+                            part: 'fgh Lorem ipsum, dolor sit amet consectetur adipisicing elit. Necessitatibus, eveniet odit veritatis totam exercitationem id perspiciatis dolores, ipsum'
+                        },
+                    ],
+                    ru: [
+                        {
+                            part: 'Вся информация о продукте номер 2'
+                        },
+                        {
+                            part: 'ВАП вап ывап в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра авпрва пдрваыплопдорва лопвапрвыалод рпвлап а'
+                        },
+                    ]
+                },
+                imgs: [
+                    {
+                        url: p2photo1,
+                        name: {
+                            ru: 'Товар 2 фото 1',
+                            en: 'Product 2 photo 1'
+                        }
+                    },
+                    {
+                        url: p2photo2,
+                        name: {
+                            ru: 'Товар 2 фото 2',
+                            en: 'Product 2 photo 2'
+                        }
+                    },
+                    {
+                        url: p2photo3,
+                        name: {
+                            ru: 'Товар 2 фото 3',
+                            en: 'Product 2 photo 3' 
+                        }
+                    },
+                    {
+                        url: p2photo4,
+                        name: {
+                            ru: 'Товар 2 фото 4',
+                            en: 'Product 2 photo 4'
+                        }
+                    },
+                ],
+                fibers: ["f1","f3"],
+                features: [
+                    {
+                        name: {
+                            en: 'Weight',
+                            ru: 'Вес'
+                        },
+                        value: {
+                            en: 'less than 100gr',
+                            ru: 'менее 100гр.'
+                        },
+                    },
+                    {
+                        name: {
+                            en: 'package contents',
+                            ru: 'Комплектация'
+                        },
+                        value: {
+                            en: 'No batteries',
+                            ru: 'Без батареек'
+                        },
+                    },
+                    {
+                        name: {
+                            en: 'Min items to order',
+                            ru: 'Минимальная партия для заказа'
+                        },
+                        value: {
+                            en: '2 item',
+                            ru: '2 шт.'
+                        },
+                    },
+                    {
+                        name: {
+                            en: 'Allowed for children',
+                            ru: 'Разрешено для детей'
+                        },
+                        value: {
+                            en: 'older than 10yo',
+                            ru: 'с 10 лет'
+                        },
+                    },
+                ], 
+                mods: {
+                    en: [
+                        {
+                            part: 'with motor'
+                        },
+                        {
+                            part: 'without motor'
+                        },
+                    ],
+                    ru: [
+                        {
+                            part: 'С моторчиком'
+                        },
+                        {
+                            part: 'Без моторчика'
+                        },
+                    ]
+                }
+            },
+            {
+                id: 'p13',
+                name: {
+                    en: 'Airplane 3',
+                    ru: 'Самолет 3'
+                },
+                price: {
+                    en: 'from 900rub to 1500rub',
+                    ru: 'От 900р до 1500р'
+                },
+                text: {
+                    en: [
+                        {
+                            part: 'All about product number 2'
+                        },
+                        {
+                            part: 'fgh Lorem ipsum, dolor sit amet consectetur adipisicing elit. Necessitatibus, eveniet odit veritatis totam exercitationem id perspiciatis dolores, ipsum'
+                        },
+                    ],
+                    ru: [
+                        {
+                            part: 'Вся информация о продукте номер 2'
+                        },
+                        {
+                            part: 'ВАП вап ывап в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра авпрва пдрваыплопдорва лопвапрвыалод рпвлап а'
+                        },
+                    ]
+                },
+                imgs: [
+                    {
+                        url: p2photo1,
+                        name: {
+                            ru: 'Товар 2 фото 1',
+                            en: 'Product 2 photo 1'
+                        }
+                    },
+                    {
+                        url: p2photo2,
+                        name: {
+                            ru: 'Товар 2 фото 2',
+                            en: 'Product 2 photo 2'
+                        }
+                    },
+                    {
+                        url: p2photo3,
+                        name: {
+                            ru: 'Товар 2 фото 3',
+                            en: 'Product 2 photo 3' 
+                        }
+                    },
+                    {
+                        url: p2photo4,
+                        name: {
+                            ru: 'Товар 2 фото 4',
+                            en: 'Product 2 photo 4'
+                        }
+                    },
+                ],
+                fibers: ["f1","f3"],
+                features: [
+                    {
+                        name: {
+                            en: 'Weight',
+                            ru: 'Вес'
+                        },
+                        value: {
+                            en: 'less than 100gr',
+                            ru: 'менее 100гр.'
+                        },
+                    },
+                    {
+                        name: {
+                            en: 'package contents',
+                            ru: 'Комплектация'
+                        },
+                        value: {
+                            en: 'No batteries',
+                            ru: 'Без батареек'
+                        },
+                    },
+                    {
+                        name: {
+                            en: 'Min items to order',
+                            ru: 'Минимальная партия для заказа'
+                        },
+                        value: {
+                            en: '2 item',
+                            ru: '2 шт.'
+                        },
+                    },
+                    {
+                        name: {
+                            en: 'Allowed for children',
+                            ru: 'Разрешено для детей'
+                        },
+                        value: {
+                            en: 'older than 10yo',
+                            ru: 'с 10 лет'
+                        },
+                    },
+                ], 
+                mods: {
+                    en: [
+                        {
+                            part: 'with motor'
+                        },
+                        {
+                            part: 'without motor'
+                        },
+                    ],
+                    ru: [
+                        {
+                            part: 'С моторчиком'
+                        },
+                        {
+                            part: 'Без моторчика'
+                        },
+                    ]
+                }
+            },
+            {
+                id: 'p14',
+                name: {
+                    en: 'Airplane 4',
+                    ru: 'Самолет 4'
+                },
+                price: {
+                    en: 'from 900rub to 1500rub',
+                    ru: 'От 900р до 1500р'
+                },
+                text: {
+                    en: [
+                        {
+                            part: 'All about product number 2'
+                        },
+                        {
+                            part: 'fgh Lorem ipsum, dolor sit amet consectetur adipisicing elit. Necessitatibus, eveniet odit veritatis totam exercitationem id perspiciatis dolores, ipsum'
+                        },
+                    ],
+                    ru: [
+                        {
+                            part: 'Вся информация о продукте номер 2'
+                        },
+                        {
+                            part: 'ВАП вап ывап в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра авпрва пдрваыплопдорва лопвапрвыалод рпвлап а'
+                        },
+                    ]
+                },
+                imgs: [
+                    {
+                        url: p2photo1,
+                        name: {
+                            ru: 'Товар 2 фото 1',
+                            en: 'Product 2 photo 1'
+                        }
+                    },
+                    {
+                        url: p2photo2,
+                        name: {
+                            ru: 'Товар 2 фото 2',
+                            en: 'Product 2 photo 2'
+                        }
+                    },
+                    {
+                        url: p2photo3,
+                        name: {
+                            ru: 'Товар 2 фото 3',
+                            en: 'Product 2 photo 3' 
+                        }
+                    },
+                    {
+                        url: p2photo4,
+                        name: {
+                            ru: 'Товар 2 фото 4',
+                            en: 'Product 2 photo 4'
+                        }
+                    },
+                ],
+                fibers: ["f1","f3"],
+                features: [
+                    {
+                        name: {
+                            en: 'Weight',
+                            ru: 'Вес'
+                        },
+                        value: {
+                            en: 'less than 100gr',
+                            ru: 'менее 100гр.'
+                        },
+                    },
+                    {
+                        name: {
+                            en: 'package contents',
+                            ru: 'Комплектация'
+                        },
+                        value: {
+                            en: 'No batteries',
+                            ru: 'Без батареек'
+                        },
+                    },
+                    {
+                        name: {
+                            en: 'Min items to order',
+                            ru: 'Минимальная партия для заказа'
+                        },
+                        value: {
+                            en: '2 item',
+                            ru: '2 шт.'
+                        },
+                    },
+                    {
+                        name: {
+                            en: 'Allowed for children',
+                            ru: 'Разрешено для детей'
+                        },
+                        value: {
+                            en: 'older than 10yo',
+                            ru: 'с 10 лет'
+                        },
+                    },
+                ], 
+                mods: {
+                    en: [
+                        {
+                            part: 'with motor'
+                        },
+                        {
+                            part: 'without motor'
+                        },
+                    ],
+                    ru: [
+                        {
+                            part: 'С моторчиком'
+                        },
+                        {
+                            part: 'Без моторчика'
+                        },
+                    ]
+                }
+            },
+            {
+                id: 'p15',
+                name: {
+                    en: 'Airplane 5',
+                    ru: 'Самолет 5'
+                },
+                price: {
+                    en: 'from 900rub to 1500rub',
+                    ru: 'От 900р до 1500р'
+                },
+                text: {
+                    en: [
+                        {
+                            part: 'All about product number 2'
+                        },
+                        {
+                            part: 'fgh Lorem ipsum, dolor sit amet consectetur adipisicing elit. Necessitatibus, eveniet odit veritatis totam exercitationem id perspiciatis dolores, ipsum'
+                        },
+                    ],
+                    ru: [
+                        {
+                            part: 'Вся информация о продукте номер 2'
+                        },
+                        {
+                            part: 'ВАП вап ывап в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра авпрва пдрваыплопдорва лопвапрвыалод рпвлап а'
+                        },
+                    ]
+                },
+                imgs: [
+                    {
+                        url: p2photo1,
+                        name: {
+                            ru: 'Товар 2 фото 1',
+                            en: 'Product 2 photo 1'
+                        }
+                    },
+                    {
+                        url: p2photo2,
+                        name: {
+                            ru: 'Товар 2 фото 2',
+                            en: 'Product 2 photo 2'
+                        }
+                    },
+                    {
+                        url: p2photo3,
+                        name: {
+                            ru: 'Товар 2 фото 3',
+                            en: 'Product 2 photo 3' 
+                        }
+                    },
+                    {
+                        url: p2photo4,
+                        name: {
+                            ru: 'Товар 2 фото 4',
+                            en: 'Product 2 photo 4'
+                        }
+                    },
+                ],
+                fibers: ["f1","f3"],
+                features: [
+                    {
+                        name: {
+                            en: 'Weight',
+                            ru: 'Вес'
+                        },
+                        value: {
+                            en: 'less than 100gr',
+                            ru: 'менее 100гр.'
+                        },
+                    },
+                    {
+                        name: {
+                            en: 'package contents',
+                            ru: 'Комплектация'
+                        },
+                        value: {
+                            en: 'No batteries',
+                            ru: 'Без батареек'
+                        },
+                    },
+                    {
+                        name: {
+                            en: 'Min items to order',
+                            ru: 'Минимальная партия для заказа'
+                        },
+                        value: {
+                            en: '2 item',
+                            ru: '2 шт.'
+                        },
+                    },
+                    {
+                        name: {
+                            en: 'Allowed for children',
+                            ru: 'Разрешено для детей'
+                        },
+                        value: {
+                            en: 'older than 10yo',
+                            ru: 'с 10 лет'
+                        },
+                    },
+                ], 
+                mods: {
+                    en: [
+                        {
+                            part: 'with motor'
+                        },
+                        {
+                            part: 'without motor'
+                        },
+                    ],
+                    ru: [
+                        {
+                            part: 'С моторчиком'
+                        },
+                        {
+                            part: 'Без моторчика'
+                        },
+                    ]
+                }
+            },
+            {
+                id: 'p16',
+                name: {
+                    en: 'Airplane 6',
+                    ru: 'Самолет 6'
+                },
+                price: {
+                    en: 'from 900rub to 1500rub',
+                    ru: 'От 900р до 1500р'
+                },
+                text: {
+                    en: [
+                        {
+                            part: 'All about product number 2'
+                        },
+                        {
+                            part: 'fgh Lorem ipsum, dolor sit amet consectetur adipisicing elit. Necessitatibus, eveniet odit veritatis totam exercitationem id perspiciatis dolores, ipsum'
+                        },
+                    ],
+                    ru: [
+                        {
+                            part: 'Вся информация о продукте номер 2'
+                        },
+                        {
+                            part: 'ВАП вап ывап в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра авпрва пдрваыплопдорва лопвапрвыалод рпвлап а'
+                        },
+                    ]
+                },
+                imgs: [
+                    {
+                        url: p2photo1,
+                        name: {
+                            ru: 'Товар 2 фото 1',
+                            en: 'Product 2 photo 1'
+                        }
+                    },
+                    {
+                        url: p2photo2,
+                        name: {
+                            ru: 'Товар 2 фото 2',
+                            en: 'Product 2 photo 2'
+                        }
+                    },
+                    {
+                        url: p2photo3,
+                        name: {
+                            ru: 'Товар 2 фото 3',
+                            en: 'Product 2 photo 3' 
+                        }
+                    },
+                    {
+                        url: p2photo4,
+                        name: {
+                            ru: 'Товар 2 фото 4',
+                            en: 'Product 2 photo 4'
+                        }
+                    },
+                ],
+                fibers: ["f1","f3"],
+                features: [
+                    {
+                        name: {
+                            en: 'Weight',
+                            ru: 'Вес'
+                        },
+                        value: {
+                            en: 'less than 100gr',
+                            ru: 'менее 100гр.'
+                        },
+                    },
+                    {
+                        name: {
+                            en: 'package contents',
+                            ru: 'Комплектация'
+                        },
+                        value: {
+                            en: 'No batteries',
+                            ru: 'Без батареек'
+                        },
+                    },
+                    {
+                        name: {
+                            en: 'Min items to order',
+                            ru: 'Минимальная партия для заказа'
+                        },
+                        value: {
+                            en: '2 item',
+                            ru: '2 шт.'
+                        },
+                    },
+                    {
+                        name: {
+                            en: 'Allowed for children',
+                            ru: 'Разрешено для детей'
+                        },
+                        value: {
+                            en: 'older than 10yo',
+                            ru: 'с 10 лет'
+                        },
+                    },
+                ], 
+                mods: {
+                    en: [
+                        {
+                            part: 'with motor'
+                        },
+                        {
+                            part: 'without motor'
+                        },
+                    ],
+                    ru: [
+                        {
+                            part: 'С моторчиком'
+                        },
+                        {
+                            part: 'Без моторчика'
+                        },
+                    ]
+                }
+            },
+            {
+                id: 'p17',
+                name: {
+                    en: 'Airplane 7',
+                    ru: 'Самолет 7'
+                },
+                price: {
+                    en: 'from 900rub to 1500rub',
+                    ru: 'От 900р до 1500р'
+                },
+                text: {
+                    en: [
+                        {
+                            part: 'All about product number 2'
+                        },
+                        {
+                            part: 'fgh Lorem ipsum, dolor sit amet consectetur adipisicing elit. Necessitatibus, eveniet odit veritatis totam exercitationem id perspiciatis dolores, ipsum'
+                        },
+                    ],
+                    ru: [
+                        {
+                            part: 'Вся информация о продукте номер 2'
+                        },
+                        {
+                            part: 'ВАП вап ывап в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра авпрва пдрваыплопдорва лопвапрвыалод рпвлап а'
+                        },
+                    ]
+                },
+                imgs: [
+                    {
+                        url: p2photo1,
+                        name: {
+                            ru: 'Товар 2 фото 1',
+                            en: 'Product 2 photo 1'
+                        }
+                    },
+                    {
+                        url: p2photo2,
+                        name: {
+                            ru: 'Товар 2 фото 2',
+                            en: 'Product 2 photo 2'
+                        }
+                    },
+                    {
+                        url: p2photo3,
+                        name: {
+                            ru: 'Товар 2 фото 3',
+                            en: 'Product 2 photo 3' 
+                        }
+                    },
+                    {
+                        url: p2photo4,
+                        name: {
+                            ru: 'Товар 2 фото 4',
+                            en: 'Product 2 photo 4'
+                        }
+                    },
+                ],
+                fibers: ["f1","f3"],
+                features: [
+                    {
+                        name: {
+                            en: 'Weight',
+                            ru: 'Вес'
+                        },
+                        value: {
+                            en: 'less than 100gr',
+                            ru: 'менее 100гр.'
+                        },
+                    },
+                    {
+                        name: {
+                            en: 'package contents',
+                            ru: 'Комплектация'
+                        },
+                        value: {
+                            en: 'No batteries',
+                            ru: 'Без батареек'
+                        },
+                    },
+                    {
+                        name: {
+                            en: 'Min items to order',
+                            ru: 'Минимальная партия для заказа'
+                        },
+                        value: {
+                            en: '2 item',
+                            ru: '2 шт.'
+                        },
+                    },
+                    {
+                        name: {
+                            en: 'Allowed for children',
+                            ru: 'Разрешено для детей'
+                        },
+                        value: {
+                            en: 'older than 10yo',
+                            ru: 'с 10 лет'
+                        },
+                    },
+                ], 
+                mods: {
+                    en: [
+                        {
+                            part: 'with motor'
+                        },
+                        {
+                            part: 'without motor'
+                        },
+                    ],
+                    ru: [
+                        {
+                            part: 'С моторчиком'
+                        },
+                        {
+                            part: 'Без моторчика'
+                        },
+                    ]
+                }
+            },
+            {
+                id: 'p18',
+                name: {
+                    en: 'Airplane 8',
+                    ru: 'Самолет 8'
+                },
+                price: {
+                    en: 'from 900rub to 1500rub',
+                    ru: 'От 900р до 1500р'
+                },
+                text: {
+                    en: [
+                        {
+                            part: 'All about product number 2'
+                        },
+                        {
+                            part: 'fgh Lorem ipsum, dolor sit amet consectetur adipisicing elit. Necessitatibus, eveniet odit veritatis totam exercitationem id perspiciatis dolores, ipsum'
+                        },
+                    ],
+                    ru: [
+                        {
+                            part: 'Вся информация о продукте номер 2'
+                        },
+                        {
+                            part: 'ВАП вап ывап в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра авпрва пдрваыплопдорва лопвапрвыалод рпвлап а'
+                        },
+                    ]
+                },
+                imgs: [
+                    {
+                        url: p2photo1,
+                        name: {
+                            ru: 'Товар 2 фото 1',
+                            en: 'Product 2 photo 1'
+                        }
+                    },
+                    {
+                        url: p2photo2,
+                        name: {
+                            ru: 'Товар 2 фото 2',
+                            en: 'Product 2 photo 2'
+                        }
+                    },
+                    {
+                        url: p2photo3,
+                        name: {
+                            ru: 'Товар 2 фото 3',
+                            en: 'Product 2 photo 3' 
+                        }
+                    },
+                    {
+                        url: p2photo4,
+                        name: {
+                            ru: 'Товар 2 фото 4',
+                            en: 'Product 2 photo 4'
+                        }
+                    },
+                ],
+                fibers: ["f1","f3"],
+                features: [
+                    {
+                        name: {
+                            en: 'Weight',
+                            ru: 'Вес'
+                        },
+                        value: {
+                            en: 'less than 100gr',
+                            ru: 'менее 100гр.'
+                        },
+                    },
+                    {
+                        name: {
+                            en: 'package contents',
+                            ru: 'Комплектация'
+                        },
+                        value: {
+                            en: 'No batteries',
+                            ru: 'Без батареек'
+                        },
+                    },
+                    {
+                        name: {
+                            en: 'Min items to order',
+                            ru: 'Минимальная партия для заказа'
+                        },
+                        value: {
+                            en: '2 item',
+                            ru: '2 шт.'
+                        },
+                    },
+                    {
+                        name: {
+                            en: 'Allowed for children',
+                            ru: 'Разрешено для детей'
+                        },
+                        value: {
+                            en: 'older than 10yo',
+                            ru: 'с 10 лет'
+                        },
+                    },
+                ], 
+                mods: {
+                    en: [
+                        {
+                            part: 'with motor'
+                        },
+                        {
+                            part: 'without motor'
+                        },
+                    ],
+                    ru: [
+                        {
+                            part: 'С моторчиком'
+                        },
+                        {
+                            part: 'Без моторчика'
+                        },
+                    ]
+                }
+            },
+            {
+                id: 'p19',
+                name: {
+                    en: 'Airplane 9',
+                    ru: 'Самолет 9'
+                },
+                price: {
+                    en: 'from 900rub to 1500rub',
+                    ru: 'От 900р до 1500р'
+                },
+                text: {
+                    en: [
+                        {
+                            part: 'All about product number 2'
+                        },
+                        {
+                            part: 'fgh Lorem ipsum, dolor sit amet consectetur adipisicing elit. Necessitatibus, eveniet odit veritatis totam exercitationem id perspiciatis dolores, ipsum'
+                        },
+                    ],
+                    ru: [
+                        {
+                            part: 'Вся информация о продукте номер 2'
+                        },
+                        {
+                            part: 'ВАП вап ывап в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра авпрва пдрваыплопдорва лопвапрвыалод рпвлап а'
+                        },
+                    ]
+                },
+                imgs: [
+                    {
+                        url: p2photo1,
+                        name: {
+                            ru: 'Товар 2 фото 1',
+                            en: 'Product 2 photo 1'
+                        }
+                    },
+                    {
+                        url: p2photo2,
+                        name: {
+                            ru: 'Товар 2 фото 2',
+                            en: 'Product 2 photo 2'
+                        }
+                    },
+                    {
+                        url: p2photo3,
+                        name: {
+                            ru: 'Товар 2 фото 3',
+                            en: 'Product 2 photo 3' 
+                        }
+                    },
+                    {
+                        url: p2photo4,
+                        name: {
+                            ru: 'Товар 2 фото 4',
+                            en: 'Product 2 photo 4'
+                        }
+                    },
+                ],
+                fibers: ["f1","f3"],
+                features: [
+                    {
+                        name: {
+                            en: 'Weight',
+                            ru: 'Вес'
+                        },
+                        value: {
+                            en: 'less than 100gr',
+                            ru: 'менее 100гр.'
+                        },
+                    },
+                    {
+                        name: {
+                            en: 'package contents',
+                            ru: 'Комплектация'
+                        },
+                        value: {
+                            en: 'No batteries',
+                            ru: 'Без батареек'
+                        },
+                    },
+                    {
+                        name: {
+                            en: 'Min items to order',
+                            ru: 'Минимальная партия для заказа'
+                        },
+                        value: {
+                            en: '2 item',
+                            ru: '2 шт.'
+                        },
+                    },
+                    {
+                        name: {
+                            en: 'Allowed for children',
+                            ru: 'Разрешено для детей'
+                        },
+                        value: {
+                            en: 'older than 10yo',
+                            ru: 'с 10 лет'
+                        },
+                    },
+                ], 
+                mods: {
+                    en: [
+                        {
+                            part: 'with motor'
+                        },
+                        {
+                            part: 'without motor'
+                        },
+                    ],
+                    ru: [
+                        {
+                            part: 'С моторчиком'
+                        },
+                        {
+                            part: 'Без моторчика'
+                        },
+                    ]
+                }
+            },
+            {
+                id: 'p20',
+                name: {
+                    en: 'Airplane 10',
+                    ru: 'Самолет 10'
+                },
+                price: {
+                    en: 'from 900rub to 1500rub',
+                    ru: 'От 900р до 1500р'
+                },
+                text: {
+                    en: [
+                        {
+                            part: 'All about product number 2'
+                        },
+                        {
+                            part: 'fgh Lorem ipsum, dolor sit amet consectetur adipisicing elit. Necessitatibus, eveniet odit veritatis totam exercitationem id perspiciatis dolores, ipsum'
+                        },
+                    ],
+                    ru: [
+                        {
+                            part: 'Вся информация о продукте номер 2'
+                        },
+                        {
+                            part: 'ВАП вап ывап в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра авпрва пдрваыплопдорва лопвапрвыалод рпвлап а'
+                        },
+                    ]
+                },
+                imgs: [
+                    {
+                        url: p2photo1,
+                        name: {
+                            ru: 'Товар 2 фото 1',
+                            en: 'Product 2 photo 1'
+                        }
+                    },
+                    {
+                        url: p2photo2,
+                        name: {
+                            ru: 'Товар 2 фото 2',
+                            en: 'Product 2 photo 2'
+                        }
+                    },
+                    {
+                        url: p2photo3,
+                        name: {
+                            ru: 'Товар 2 фото 3',
+                            en: 'Product 2 photo 3' 
+                        }
+                    },
+                    {
+                        url: p2photo4,
+                        name: {
+                            ru: 'Товар 2 фото 4',
+                            en: 'Product 2 photo 4'
+                        }
+                    },
+                ],
+                fibers: ["f1","f3"],
+                features: [
+                    {
+                        name: {
+                            en: 'Weight',
+                            ru: 'Вес'
+                        },
+                        value: {
+                            en: 'less than 100gr',
+                            ru: 'менее 100гр.'
+                        },
+                    },
+                    {
+                        name: {
+                            en: 'package contents',
+                            ru: 'Комплектация'
+                        },
+                        value: {
+                            en: 'No batteries',
+                            ru: 'Без батареек'
+                        },
+                    },
+                    {
+                        name: {
+                            en: 'Min items to order',
+                            ru: 'Минимальная партия для заказа'
+                        },
+                        value: {
+                            en: '2 item',
+                            ru: '2 шт.'
+                        },
+                    },
+                    {
+                        name: {
+                            en: 'Allowed for children',
+                            ru: 'Разрешено для детей'
+                        },
+                        value: {
+                            en: 'older than 10yo',
+                            ru: 'с 10 лет'
+                        },
+                    },
+                ], 
+                mods: {
+                    en: [
+                        {
+                            part: 'with motor'
+                        },
+                        {
+                            part: 'without motor'
+                        },
+                    ],
+                    ru: [
+                        {
+                            part: 'С моторчиком'
+                        },
+                        {
+                            part: 'Без моторчика'
+                        },
+                    ]
+                }
+            },
+            {
+                id: 'p21',
+                name: {
+                    en: 'Airplane 11',
+                    ru: 'Самолет 11'
+                },
+                price: {
+                    en: 'from 900rub to 1500rub',
+                    ru: 'От 900р до 1500р'
+                },
+                text: {
+                    en: [
+                        {
+                            part: 'All about product number 2'
+                        },
+                        {
+                            part: 'fgh Lorem ipsum, dolor sit amet consectetur adipisicing elit. Necessitatibus, eveniet odit veritatis totam exercitationem id perspiciatis dolores, ipsum'
+                        },
+                    ],
+                    ru: [
+                        {
+                            part: 'Вся информация о продукте номер 2'
+                        },
+                        {
+                            part: 'ВАП вап ывап в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра авпрва пдрваыплопдорва лопвапрвыалод рпвлап а'
+                        },
+                    ]
+                },
+                imgs: [
+                    {
+                        url: p2photo1,
+                        name: {
+                            ru: 'Товар 2 фото 1',
+                            en: 'Product 2 photo 1'
+                        }
+                    },
+                    {
+                        url: p2photo2,
+                        name: {
+                            ru: 'Товар 2 фото 2',
+                            en: 'Product 2 photo 2'
+                        }
+                    },
+                    {
+                        url: p2photo3,
+                        name: {
+                            ru: 'Товар 2 фото 3',
+                            en: 'Product 2 photo 3' 
+                        }
+                    },
+                    {
+                        url: p2photo4,
+                        name: {
+                            ru: 'Товар 2 фото 4',
+                            en: 'Product 2 photo 4'
+                        }
+                    },
+                ],
+                fibers: ["f1","f3"],
+                features: [
+                    {
+                        name: {
+                            en: 'Weight',
+                            ru: 'Вес'
+                        },
+                        value: {
+                            en: 'less than 100gr',
+                            ru: 'менее 100гр.'
+                        },
+                    },
+                    {
+                        name: {
+                            en: 'package contents',
+                            ru: 'Комплектация'
+                        },
+                        value: {
+                            en: 'No batteries',
+                            ru: 'Без батареек'
+                        },
+                    },
+                    {
+                        name: {
+                            en: 'Min items to order',
+                            ru: 'Минимальная партия для заказа'
+                        },
+                        value: {
+                            en: '2 item',
+                            ru: '2 шт.'
+                        },
+                    },
+                    {
+                        name: {
+                            en: 'Allowed for children',
+                            ru: 'Разрешено для детей'
+                        },
+                        value: {
+                            en: 'older than 10yo',
+                            ru: 'с 10 лет'
+                        },
+                    },
+                ], 
+                mods: {
+                    en: [
+                        {
+                            part: 'with motor'
+                        },
+                        {
+                            part: 'without motor'
+                        },
+                    ],
+                    ru: [
+                        {
+                            part: 'С моторчиком'
+                        },
+                        {
+                            part: 'Без моторчика'
+                        },
+                    ]
+                }
+            },
+            {
+                id: 'p22',
+                name: {
+                    en: 'Airplane 12',
+                    ru: 'Самолет 12'
+                },
+                price: {
+                    en: 'from 900rub to 1500rub',
+                    ru: 'От 900р до 1500р'
+                },
+                text: {
+                    en: [
+                        {
+                            part: 'All about product number 2'
+                        },
+                        {
+                            part: 'fgh Lorem ipsum, dolor sit amet consectetur adipisicing elit. Necessitatibus, eveniet odit veritatis totam exercitationem id perspiciatis dolores, ipsum'
+                        },
+                    ],
+                    ru: [
+                        {
+                            part: 'Вся информация о продукте номер 2'
+                        },
+                        {
+                            part: 'ВАП вап ывап в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра авпрва пдрваыплопдорва лопвапрвыалод рпвлап а'
+                        },
+                    ]
+                },
+                imgs: [
+                    {
+                        url: p2photo1,
+                        name: {
+                            ru: 'Товар 2 фото 1',
+                            en: 'Product 2 photo 1'
+                        }
+                    },
+                    {
+                        url: p2photo2,
+                        name: {
+                            ru: 'Товар 2 фото 2',
+                            en: 'Product 2 photo 2'
+                        }
+                    },
+                    {
+                        url: p2photo3,
+                        name: {
+                            ru: 'Товар 2 фото 3',
+                            en: 'Product 2 photo 3' 
+                        }
+                    },
+                    {
+                        url: p2photo4,
+                        name: {
+                            ru: 'Товар 2 фото 4',
+                            en: 'Product 2 photo 4'
+                        }
+                    },
+                ],
+                fibers: ["f1","f3"],
+                features: [
+                    {
+                        name: {
+                            en: 'Weight',
+                            ru: 'Вес'
+                        },
+                        value: {
+                            en: 'less than 100gr',
+                            ru: 'менее 100гр.'
+                        },
+                    },
+                    {
+                        name: {
+                            en: 'package contents',
+                            ru: 'Комплектация'
+                        },
+                        value: {
+                            en: 'No batteries',
+                            ru: 'Без батареек'
+                        },
+                    },
+                    {
+                        name: {
+                            en: 'Min items to order',
+                            ru: 'Минимальная партия для заказа'
+                        },
+                        value: {
+                            en: '2 item',
+                            ru: '2 шт.'
+                        },
+                    },
+                    {
+                        name: {
+                            en: 'Allowed for children',
+                            ru: 'Разрешено для детей'
+                        },
+                        value: {
+                            en: 'older than 10yo',
+                            ru: 'с 10 лет'
+                        },
+                    },
+                ], 
+                mods: {
+                    en: [
+                        {
+                            part: 'with motor'
+                        },
+                        {
+                            part: 'without motor'
+                        },
+                    ],
+                    ru: [
+                        {
+                            part: 'С моторчиком'
+                        },
+                        {
+                            part: 'Без моторчика'
+                        },
+                    ]
+                }
+            },
+        ]
     }
 ] satisfies mockCategory[]
 

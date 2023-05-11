@@ -1,3 +1,5 @@
+import { ICatalogState } from './../../interfaces';
+
 export const actionsListBase = {
     SET_THEME_DARK: 'SET_THEME_DARK',
     SET_THEME_LIGHT: 'SET_THEME_LIGHT',

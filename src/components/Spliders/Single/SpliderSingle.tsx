@@ -1,5 +1,5 @@
 import './splider-single.scss'
-import { ICategories, ICategoriesList, IDataLoading, IFullState, ISpliderOptions, TId, TLang,} from "src/interfaces";
+import { ICategories, ICategoriesListItem, IDataLoading, IFullState, IProduct, ISpliderOptions, TId, TLang,} from "src/interfaces";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
@@ -9,16 +9,18 @@ import ImgWithPreloader from "src/assets/js/ImgWithPreloader";
 import { findBestSuitedImg } from "src/assets/js/findBestSuitedImg";
 import InfoPortfolio from 'src/components/InfoPortfolio/InfoPortfolio';
 import InfoSlide from 'src/components/InfoSlide/InfoSlide';
-import { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategoriey, setSelectedCategory, setSelectedImage, setSelectedProduct, loadCategoriesList }  from "src/redux/actions/catalog"
+import { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedImage, setSelectedProduct, loadCategoriesList, loadCategory }  from "src/redux/actions/catalog"
+import Preloader from 'src/components/Preloader/Preloader';
+import Gallery from 'src/components/Gallery/Gallery';
 
-const actionsList = { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategoriey, setSelectedCategory, setSelectedImage, setSelectedProduct, loadCategoriesList  }
+const actionsList = { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedImage, setSelectedProduct, loadCategoriesList, loadCategory  }
 
 interface IPropsState {
-    list: ICategoriesList[]
+    categoriesList: ICategoriesListItem[]
 	selectedCategory: TId
 	selectedProduct: TId
 	lang: TLang
-	loading: IDataLoading
+	loadingProducts: IDataLoading
 	categories: ICategories
 }
 
@@ -35,20 +37,16 @@ interface IContainerSize {
 	height: number
 }
 
-interface IPortfolioSplider {
-	list: Array<ProjectItemListItem>
-	selectedPortfolio: number
-	selectedImage: number
-	onPortfolioClicked: () => void
-    setState: typeof actions
-}
 
-const PortfolioSplider: React.FC<IProps> = ({list, selectedPortfolio, selectedImage, setState, onPortfolioClicked}): JSX.Element => {
+const PortfolioSplider: React.FC<IProps> = ({lang, selectedCategory, selectedProduct, setState, loadingProducts, categories}): JSX.Element => {
 	
 	const containerSize = useRef<IContainerSize>({width: 0, height: 0});
 	const portfolioSplide = useRef<Splide>();
 	const _splideMain = useRef<HTMLDivElement>(null);
-	const [firstRender, setFirstRender] = useState<boolean>(true);
+	const [newRender, addRender] = useState<number>(0);
+	const [productSlides, setProductSlides] = useState<IProduct[][]>([[]])
+	const [page, setPage] = useState<number>(0)
+	const productsPerSlide = 6;
 
 	const optionsMain: Partial<ISpliderOptions> = {
 		lazyLoad: false,
@@ -58,11 +56,11 @@ const PortfolioSplider: React.FC<IProps> = ({list, selectedPortfolio, selectedIm
 		perMove: 1,
 		pagination: true,
 		arrows: true,
-		drag: true,
+		drag: false,
 		speed: 500,
-		wheel: true,
+		wheel: false,
 		wheelSleep: 300,
-		interval: 15000,
+		interval: 0,
 		pauseOnHover: true,
 		breakpoints: {
 			768: {
@@ -71,90 +69,120 @@ const PortfolioSplider: React.FC<IProps> = ({list, selectedPortfolio, selectedIm
 		},
 	};
 
-    
-	const changeCurrentImage = (selectedImage: number) => {
-		setState.setSelectedPortfolioImage(selectedImage);
-	};
 
-
-	const goToImage = (imageToGo: number) => {
-		if (!portfolioSplide.current) return
-		portfolioSplide.current.go(imageToGo);
-	};
-
-	const additionalRender = () => {
-		setFirstRender(false);
-	};
-
-	const onClick = () => {
-		onPortfolioClicked()
-	}
 
 	useEffect(() => {
-        if (!_splideMain.current) return
-		containerSize.current = {
-			width:  _splideMain.current.offsetWidth,
-			height:  _splideMain.current.offsetHeight,
-		};
-		portfolioSplide.current = new Splide(_splideMain.current, optionsMain);
-		portfolioSplide.current.mount();	
+		if (selectedCategory && !categories[selectedCategory]) {
+			setState.catalog.loadCategory(selectedCategory)
+		}
+	},[selectedCategory]);
+
+
+	
+	useEffect(() => {
+		if (categories[selectedCategory]?.dataLoading?.status === 'success') {
+			const result: IProduct[][] = []
+			for (let i = 0; i < categories[selectedCategory].products.length; i += productsPerSlide) {
+				result.push(categories[selectedCategory].products.slice(i, i + productsPerSlide))
+			}
+			setProductSlides(result)
+		}
+	},[categories[selectedCategory]?.dataLoading?.status, selectedCategory]);
+
+
+	
+
+
+	
+
+	useEffect(() => {
+		if (!_splideMain.current) return
+			containerSize.current = {
+				width:  _splideMain.current.offsetWidth,
+				height:  _splideMain.current.offsetHeight,
+			};
+			portfolioSplide.current = new Splide(_splideMain.current, optionsMain);
+
+			portfolioSplide.current.on( 'pagination:updated', function (data, prev, upd) {
+				data.list.classList.add( 'splide__pagination--custom' );
+				data.items.forEach((item, i) => {
+					if (i === 0 || i === data.items.length-1 || (i <= upd.page + 1 && i >= upd.page - 1)) {
+						item.button.classList.remove('no-display')
+					} else {
+						item.button.classList.add('no-display')
+					}
+					if ((i === upd.page+2 && upd.page+2 < data.items.length-1) || (i === upd.page-2 && upd.page-2 > 0)) {
+						item.button.textContent = ' ... ';	
+						item.button.classList.remove('no-display')
+					} else {
+						item.button.textContent = String(item.page + 1);					
+					}
+				} );
+			});
+
+			portfolioSplide.current.on("active", () => {
+				setPage(portfolioSplide.current?.index as number)
+			});
+			portfolioSplide.current.mount();
+				
+			//const _slides: NodeList = _splideMain.current.querySelectorAll(".splide__slide-container");
+			//_slides.forEach(cont => cont.addEventListener("click", onClick));
+			//changeCurrentImage(portfolioSplide.current.index);
 			
-		portfolioSplide.current.on("active", () => {changeCurrentImage(portfolioSplide.current?.index as number);});
-			
-		const _slides: NodeList = _splideMain.current.querySelectorAll(".splide__slide-container");
-		_slides.forEach(cont => cont.addEventListener("click", onClick));
-		changeCurrentImage(portfolioSplide.current.index);
 		return () => {
-			
-			_slides.forEach(cont => cont.removeEventListener("click", onClick));
+			//_slides.forEach(cont => cont.removeEventListener("click", onClick));
 			portfolioSplide.current?.destroy();
 		};
-	}, [selectedPortfolio]);
+	}, [productSlides])
 
 
-	useEffect(() => {
-		goToImage(selectedImage);
-	}, [selectedImage]);
-	
 
-	useEffect(() => {
-		additionalRender();
-	},[]);
-
-
-	
 
 	return (
 		<div className="splider_single__container">
-            <InfoPortfolio text={list[selectedPortfolio].descr}/>
-			<div className="splide splider_single" ref={_splideMain} aria-label="The carousel with thumbnails. Click the image to expand.">
+            {/*<InfoPortfolio text={list[selectedPortfolio].descr}/>*/}
+			<div className="splide splider_single" ref={_splideMain} aria-label="">
 				<div className="splide__track">
 					<ul className="splide__list">
-						{list[selectedPortfolio].images.map((slide, index: number) => {
-							return (
-								<li className="splide__slide" key={selectedPortfolio * 1000 + index}>
-									<div className="splide__slide-container">
-										{<ImgWithPreloader link={findBestSuitedImg({images: slide.images, width: containerSize.current?.width, height: containerSize.current?.height}).image} alt={slide.descr}/>}
-									</div>
-								</li>
-							);
-						})
+						{loadingProducts?.status === 'success' ? 
+							productSlides.map((products, i): JSX.Element => {
+								return (
+									<li className="splide__slide" key={i}>
+										<Gallery products={products}/>
+									</li>
+								)
+							})
+							
+						:
+							<Preloader />
 						}
 					</ul>
 				</div>
 			</div>
-            <InfoSlide {...{text: list[selectedPortfolio].images[selectedImage].descr, link: list[selectedPortfolio].images[selectedImage].link}}/>
+            {/*<InfoSlide {...{text: list[selectedPortfolio].images[selectedImage].descr, link: list[selectedPortfolio].images[selectedImage].link}}/>*/}
 		</div>
 	)
 
 };
 
+/*
+categories[selectedCategory]?.products.map((product, index: number) => {
+							return (
+								<li className="splide__slide" key={product.id}>
+									<div className="prosucts__container">
+										gffg
+										{<ImgWithPreloader link={findBestSuitedImg({images: slide.images, width: containerSize.current?.width, height: containerSize.current?.height}).image} alt={slide.descr}/>}
+									</div>
+								</li>
+								);
+								})
+								*/
 
 
 const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
-	loading: state.catalog.categories[state.catalog.selectedCategory].dataLoading,
-	list: state.catalog.categoriesList,
+	loadingProducts: state.catalog.categories[state.catalog.selectedCategory]?.dataLoading,
+	categoriesList: state.catalog.categoriesList,
 	selectedCategory: state.catalog.selectedCategory,
 	categories: state.catalog.categories,
 	selectedProduct: state.catalog.selectedProduct

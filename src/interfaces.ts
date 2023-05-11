@@ -393,6 +393,7 @@ export interface ICatalogBlock {
     text: TLangTextArr
     img: IImg
     headerGallery: TLangText
+    priceGallery: TLangText
 }
 
 
@@ -489,7 +490,7 @@ export interface IFibersState {
 export interface mockCategory {
     id: TId,
     name: TLangText
-    products: IProduct[]
+    products: Omit<IProduct, "colors">[]
 }
 
 
@@ -505,6 +506,7 @@ export interface IProduct {
     text: TLangTextArr
     imgs: IImg[]
     fibers: TId[]
+    colors: IColors[]
     features: IFeature[]
     mods: TLangTextArr
 }
@@ -516,22 +518,31 @@ export interface ICategory {
     products: IProduct[]
 }
 
+
 export interface ICategories {
     [key: string] : ICategory
 }
 
-export interface ICategoriesList {
+export interface ICategoriesListItem {
     name: TLangText,
     id: TId
 }
 
 export interface ICatalogState {
     categoriesListLoading: IDataLoading //for load categoriesList
-    categoriesList: ICategoriesList[]
+    categoriesList: ICategoriesListItem[]
     categories: ICategories
     selectedCategory: TId
     selectedProduct: TId
     selectedProductImage: number
+}
+
+
+
+export interface ICategoryReceived {
+    id: TId
+    name: TLangText
+    products: Omit<IProduct, "colors">[]
 }
 
 
