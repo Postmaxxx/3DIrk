@@ -5,10 +5,10 @@ import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 
-import { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedImage, setSelectedProduct, loadCategoriesList }  from "../../redux/actions/catalog"
+import { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedProduct, loadCategoriesList }  from "../../redux/actions/catalog"
 import Preloader from "../Preloader/Preloader";
 
-const actionsList = { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedImage, setSelectedProduct, loadCategoriesList  }
+const actionsList = { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedProduct, loadCategoriesList  }
 
 
 interface IPropsState {

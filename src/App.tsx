@@ -15,7 +15,7 @@ const LazyProduct = lazy(() => import("./pages/Product/Product"));
 
 
 const App:React.FC = () => {
-
+	
 	return (
 		<BrowserRouter>
 			<Suspense fallback={<Preloader />}><LazyThemeSwitcher /></Suspense>

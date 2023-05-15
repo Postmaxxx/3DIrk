@@ -9,11 +9,11 @@ import ImgWithPreloader from "src/assets/js/ImgWithPreloader";
 import { findBestSuitedImg } from "src/assets/js/findBestSuitedImg";
 import InfoPortfolio from 'src/components/InfoPortfolio/InfoPortfolio';
 import InfoSlide from 'src/components/InfoSlide/InfoSlide';
-import { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedImage, setSelectedProduct, loadCategoriesList, loadCategory, setPage, setCategory } from "src/redux/actions/catalog"
+import { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedProduct, loadCategoriesList, loadCategory, setPage, setCategory } from "src/redux/actions/catalog"
 import Preloader from 'src/components/Preloader/Preloader';
 import Gallery from 'src/components/Gallery/Gallery';
 
-const actionsList = { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedImage, setSelectedProduct, loadCategoriesList, loadCategory, setPage, setCategory  }
+const actionsList = { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedProduct, loadCategoriesList, loadCategory, setPage, setCategory  }
 
 interface IPropsState {
     categoriesList: ICategoriesListItem[]
@@ -40,7 +40,7 @@ interface IContainerSize {
 
 const SpliderSingle: React.FC<IProps> = ({lang, selectedCategory, selectedProduct, setState, loadingProducts, categories}): JSX.Element => {
 	
-	const containerSize = useRef<IContainerSize>({width: 0, height: 0});
+	//const containerSize = useRef<IContainerSize>({width: 0, height: 0});
 	const spliderSingle = useRef<Splide>();
 	const _splideMain = useRef<HTMLDivElement>(null);
 	//const [newRender, addRender] = useState<number>(0);
@@ -94,10 +94,10 @@ const SpliderSingle: React.FC<IProps> = ({lang, selectedCategory, selectedProduc
 	
 	useEffect(() => {
 		if (!_splideMain.current) return
-		containerSize.current = {
+		/*containerSize.current = {
 			width:  _splideMain.current.offsetWidth,
 			height:  _splideMain.current.offsetHeight,
-		};
+		};*/
 		spliderSingle.current = new Splide(_splideMain.current, optionsMain);
 		
 		spliderSingle.current.on( 'pagination:updated', function (data, prev, upd) {

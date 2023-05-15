@@ -2,6 +2,7 @@ import { IAction, IProductState, ICategoriesListItem, ICategory, ICategoryReceiv
 import mockFibers from '../mocks/fibers'
 import catalogFull from "../mocks/catalogFull";
 import { actionsListProduct } from './actionsList'
+import mockProducts from "../mocks/catalogFull";
 
 
 export const setLoadDataStatusProduct = <T extends IProductState["dataLoading"]>(payload: T):IAction<T> => ({
@@ -10,10 +11,16 @@ export const setLoadDataStatusProduct = <T extends IProductState["dataLoading"]>
 });
 
 
-export const setProduct = <T extends Omit<IProductState, "dataLoading">>(payload: T):IAction<T> => ({
+export const setProduct = <T extends Omit<IProductState, "dataLoading" | "selectedImage">>(payload: T):IAction<T> => ({
     type: actionsListProduct.SET_DATA_PRODUCT,
     payload
 });
+
+export const setSelectedImage = <T extends IProductState["selectedImage"]>(payload: T):IAction<T> => ({
+    type: actionsListProduct.SET_SELECTED_IMAGE,
+    payload
+});
+
 
 
 export const loadProduct = (id: IProduct["id"]) => {
@@ -22,26 +29,16 @@ export const loadProduct = (id: IProduct["id"]) => {
         try {
             new Promise((res, rej) => {
                 setTimeout(() => {
-                    let product = {} as Omit<IProductState, "dataLoading">
-                    Object.keys(catalogFull).forEach(catalog => {
-                        
-                    })
-
-                    const categoriesList: ICategoriesListItem[] = mockCatalog.map(category => {
-                        return {
-                            name: category.name,
-                            id: category.id
-                        }
-                    })
-                    if (categoriesList) {
-                        console.log('list loaded');
-                        res(categoriesList)
+                    const product = mockProducts.find(product => product.id === id)
+                    if (product) {
+                        console.log(`product ${id} loaded`);
+                        res(product)
                     } else (
-                        rej({mesasage: `CategoriesList not found`})
+                        rej({mesasage: `product ${id} not found`})
                     )
                 }, 1000)
             }).then((data) => {
-                dispatch(setProduct(data as ICategoriesListItem[]))
+                dispatch(setProduct(data as IProduct))
                 dispatch(setLoadDataStatusProduct({status: 'success', message: `Product id=${id} loaded`}))
             }).catch(err => {
                 dispatch(setLoadDataStatusProduct({status: 'error', message: `ERROR while loading product id=${id}: ${err}`}))

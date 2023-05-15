@@ -1,4 +1,4 @@
-import { IAction, ICatalogState, ICategory, IProduct } from "src/interfaces"
+import { IAction, ICatalogState, ICategory } from "src/interfaces"
 import initialCatalogState from '../initialStates/catalog'
 import { actionsListCatalog } from '../actions/actionsList'
 
@@ -31,13 +31,6 @@ const reducerCatalog = (state: ICatalogState = initialCatalogState, action: IAct
                 ...state, 
                 selectedProduct: selectedProduct
             }
-        case actionsListCatalog.SET_SELECTED_IMAGE: 
-            const selectedProductImage = action.payload as ICatalogState["selectedProductImage"]
-            return {
-                ...state, 
-                selectedProductImage: selectedProductImage
-            }
-
         case actionsListCatalog.SET_LOAD_DATA_STATUS_CATEGORY: 
             const dataLoadingCategory = action.payload as Pick<ICategory, "dataLoading" | "id">
             return {

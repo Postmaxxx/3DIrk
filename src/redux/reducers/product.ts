@@ -15,6 +15,12 @@ const reducerOrder = (state:IProductState = initialProductState, action: IAction
                 ...state, 
                 ...action.payload
             }
+        case actionsListProduct.SET_SELECTED_IMAGE: 
+            const selectedImage = action.payload as IProductState["selectedImage"]
+            return {
+                ...state, 
+                selectedImage: selectedImage
+            }
 
         default: return {...state}
     }

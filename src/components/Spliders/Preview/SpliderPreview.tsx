@@ -1,26 +1,35 @@
-import * as actions from "src/redux/actions";
 import { AnyAction, Dispatch, bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { useEffect, useMemo, useRef, } from "react";
 import "@splidejs/react-splide/css";
 import "./splider-preview.scss";
-import { ISpliderOptions, ProjectItemListItem} from "src/interfaces";
+import { IFullState, IImg, IProductState, ISpliderOptions, TLang } from "src/interfaces";
 import Splide from "@splidejs/splide";
 import ImgWithPreloader from "src/assets/js/ImgWithPreloader";
-import { IState } from "src/interfaces";
+import { loadProduct, setSelectedImage } from "src/redux/actions/product"
+const actionsList = { loadProduct, setSelectedImage }
 
 
-
-
-
-interface ISpliderPreview {
-	selectedPortfolio: number
-	selectedImage: number
-	list: Array<ProjectItemListItem>
-    setState: typeof actions
+interface IPropsState {
+	lang: TLang,
+	product: IProductState
 }
 
-const SpliderPreview: React.FC<ISpliderPreview> = ({selectedPortfolio, selectedImage, list, setState}): JSX.Element => {
+interface IPropsActions {
+    setState: {
+        product: typeof actionsList
+    }
+}
+
+interface IProps extends IPropsState, IPropsActions {}
+
+interface IContainerSize {
+	width: number
+	height: number
+}
+
+
+const SpliderPreview: React.FC<IProps> = ({ lang, product, setState}): JSX.Element => {
 	const _splideMain = useRef<HTMLDivElement>(null);
 	const _splideThumbs = useRef<HTMLDivElement>(null);
 	const splideMain = useRef<Splide>();
@@ -28,27 +37,34 @@ const SpliderPreview: React.FC<ISpliderPreview> = ({selectedPortfolio, selectedI
 		
 	const optionsThumbs: Partial<ISpliderOptions> = {
 		lazyLoad	: false,
-		perPage		: 12,
+		perPage		: 5,
 		gap        	: 10,
 		rewind     	: false,
 		pagination 	: false,
 		isNavigation: true,
 		focus		: "center",
+		//trimSpace: true,
+		direction   : 'ttb',
+		wheel       : true,
+		releaseWheel: true,
+		height: '80%',
 		breakpoints	: {
 			1600: {
-				perPage: 10
+				perPage: 4
 			}, 
 			1241: {
-				perPage: 8
+				perPage: 4
 			}, 
 			992: {
-				perPage: 7
+				perPage: 4
 			}, 
 			768: {
-				perPage: 5
+				perPage: 5	,
+				direction   : 'ltr',
+				height: 'auto',
 			}, 
 			480: {
-				perPage: 4
+				perPage: 3
 			}, 
 		},
 	};
@@ -60,7 +76,7 @@ const SpliderPreview: React.FC<ISpliderPreview> = ({selectedPortfolio, selectedI
 		rewind    : false,
 		pagination: false,
 		speed: 500,
-		wheel: true,
+		wheel: false,
 		wheelSleep: 300,
 		breakpoints	: {
 			768: {
@@ -93,46 +109,32 @@ const SpliderPreview: React.FC<ISpliderPreview> = ({selectedPortfolio, selectedI
 		return () => {
 			splideThumb.current?.destroy();
 			splideMain.current?.destroy();
-            setState.setSelectedPortfolioImage(splideMain.current?.index || 0)
+            setState.product.setSelectedImage(splideMain.current?.index || 0)
 		};
 		
 	}, []);
 
 	
 	useEffect(() => {
-		showSlide(selectedImage);
+		showSlide(product.selectedImage);
 		document.addEventListener("keyup", modalKeyListener);
-		document.querySelector("body")?.classList.add("noscroll");
+		//document.querySelector("body")?.classList.add("noscroll");
 		return (() => {
 			document.removeEventListener("keyup", modalKeyListener);
 		});
-	}, [selectedImage]);
+	}, [product.selectedImage]);
 
 
 
 	return (
         <div className="splider_preview">
-			<div id="modalMain" className="splide" ref={_splideMain}>
-				<div className="splide__track">
-					<ul className="splide__list">
-						{list[selectedPortfolio].images.map((slide) => {
-							return (
-								<li className="splide__slide" key={slide.images[0].image}>
-									<ImgWithPreloader link={slide.images[slide.images.length - 1].image} alt={slide.descr} />
-								</li>
-							);
-						})
-						}
-					</ul>
-				</div>
-			</div>
 			<div id="modalThumbs" className="splide" ref={_splideThumbs}>
 				<div className="splide__track">
 					<ul className="splide__list">
-						{list[selectedPortfolio].images.map((slide) => {
+						{product.imgs.map((slide) => {
 							return (
-								<li className="splide__slide" key={slide.images[0].image}>
-									<ImgWithPreloader link={slide.images[0].image} alt={slide.descr} />
+								<li className="splide__slide" key={slide.url}>
+									<ImgWithPreloader src={slide.url} alt={slide.name[lang]} />
 								</li>
 							);
 		
@@ -142,23 +144,41 @@ const SpliderPreview: React.FC<ISpliderPreview> = ({selectedPortfolio, selectedI
 					</ul>
 				</div>
 			</div>
+			<div id="modalMain" className="splide" ref={_splideMain}>
+				<div className="splide__track">
+					<ul className="splide__list">
+						{product.imgs.map((slide) => {
+							return (
+								<li className="splide__slide" key={slide.url}>
+									<ImgWithPreloader src={slide.url} alt={slide.name[lang]} />
+								</li>
+							);
+						})
+						}
+					</ul>
+				</div>
+			</div>
+
         </div>
 	);
 };
 
 
 
-const mapStateToProps = (state: IState)  => {
+const mapStateToProps = (state: IFullState): IPropsState  => {
 	return {
-		selectedPortfolio: state.components.portfolios.selectedPortfolio,
-		selectedImage: state.components.portfolios.selectedImage,
-		list: state.components.portfolios.list
+		product: state.product,
+		lang: state.base.lang
 	};
 };
 
 
-const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => ({
-	setState: bindActionCreators(actions, dispatch),
-});
+
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
+    setState: {
+		product: bindActionCreators(actionsList, dispatch)
+	}
+})
+  
 
 export default connect(mapStateToProps, mapDispatchToProps)(SpliderPreview);

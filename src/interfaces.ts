@@ -302,6 +302,9 @@ export interface ISpliderOptions {
     focus: number | "center"
     rewind: boolean
 	isNavigation: boolean
+    direction: "ltr" | "rtl" | "ttb" | undefined
+    height: string
+    releaseWheel: boolean
 	breakpoints: {
 		[key: number]: Partial<{
             type   : string
@@ -323,6 +326,8 @@ export interface ISpliderOptions {
             focus: number | "center"
             rewind: boolean
             isNavigation: boolean
+            direction: "ltr" | "rtl" | "ttb" | undefined
+            height: string
 		}>
 	}
 }
@@ -487,11 +492,11 @@ export interface IFibersState {
 
 
 //============================================== category state
-export interface mockCategory {
+/*export interface mockCategory {
     id: TId,
     name: TLangText
     products: Omit<IProduct, "colors">[]
-}
+}*/
 
 
 export interface IFeature {
@@ -505,11 +510,18 @@ export interface IProduct {
     name: TLangText
     text: TLangTextArr
     imgs: IImg[]
-    fibers: TId[]
+    fibers: IFiber["id"][]
     colors: IColors[]
     features: IFeature[]
     mods: TLangTextArr
 }
+
+/*export interface IProductShort {
+    id: TId
+    price: TLangText
+    name: TLangText
+    img: IImg
+}*/
 
 
 export interface ICategory {
@@ -517,6 +529,7 @@ export interface ICategory {
     name: TLangText
     dataLoading: IDataLoading//for load products in selected category
     products: IProduct[]
+    //products: IProductShort[]
     page: number
 }
 
@@ -527,22 +540,21 @@ export interface ICategories {
 
 export interface ICategoriesListItem {
     name: TLangText,
-    id: TId
+    id: ICategory["id"]
 }
 
 export interface ICatalogState {
     categoriesListLoading: IDataLoading //for load categoriesList
     categoriesList: ICategoriesListItem[]
     categories: ICategories
-    selectedCategory: TId
-    selectedProduct: TId
-    selectedProductImage: number
+    selectedCategory: ICategory["id"]
+    selectedProduct: IProduct["id"]
 }
 
 
 
 export interface ICategoryReceived {
-    id: TId
+    id: ICategory["id"]
     name: TLangText
     products: Omit<IProduct, "colors">[]
 }
@@ -593,6 +605,7 @@ export interface IOrderState {
 
 export interface IProductState extends IProduct {
     dataLoading: IDataLoading
+    selectedImage: number
 }
 
 
@@ -606,4 +619,16 @@ export interface IFullState {
     product: IProductState
 }
 
+//////////////////////////////////////////////////////////////////////////////////////  BackEnd
 
+export interface IProductBE {
+    categoryId: ICategory["id"]
+    id: IProduct["id"]
+    price: TLangText
+    name: TLangText
+    text: TLangTextArr
+    imgs: IImg[]
+    fibers: IFiber["id"][]
+    features: IFeature[]
+    mods: TLangTextArr
+}

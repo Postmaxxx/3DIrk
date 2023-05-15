@@ -8,8 +8,7 @@ const initialCatalog = {
     categoriesList: [],
     categories: {},
     selectedCategory: '',
-    selectedProduct: '',
-    selectedProductImage: 0
+    selectedProduct: ''
 } satisfies ICatalogState
 
 export default initialCatalog

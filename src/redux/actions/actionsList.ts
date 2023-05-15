@@ -46,7 +46,6 @@ export const actionsListCatalog = {
     
     SET_SELECTED_CATEGORY: 'SET_SELECTED_CATEGORY',
     SET_SELECTED_PRODUCT: 'SET_SELECTED_PRODUCT',
-    SET_SELECTED_IMAGE: 'SET_SELECTED_IMAGE',
     
     SET_PAGE: 'SET_PAGE',
 }
@@ -55,5 +54,6 @@ export const actionsListCatalog = {
 export const actionsListProduct = {
     SET_LOAD_DATA_STATUS_PRODUCT: 'SET_LOAD_DATA_STATUS_PRODUCT',
     SET_DATA_PRODUCT: 'SET_DATA_PRODUCT',
+    SET_SELECTED_IMAGE: 'SET_SELECTED_IMAGE',
 }
 

@@ -11,9 +11,9 @@ import SpliderPreview from 'src/components/Spliders/Preview/SpliderPreview';
 import CategoriesList from 'src/components/CategoriesList/CategoriesList';
 import CatalogIntro from 'src/components/CatalogIntro/CatalogIntro';
 
-import { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedImage, setSelectedProduct, loadCategoriesList }  from "../../redux/actions/catalog"
+import { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedProduct, loadCategoriesList }  from "../../redux/actions/catalog"
 
-const actionsList = { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedImage, setSelectedProduct, loadCategoriesList  }
+const actionsList = { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedProduct, loadCategoriesList  }
 
 interface IPropsState {
     lang: TLang,

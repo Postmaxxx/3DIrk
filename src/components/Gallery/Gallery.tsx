@@ -4,14 +4,16 @@ import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import Preloader from 'src/components/Preloader/Preloader';
 import { IFibersState, IFullState, IProduct, TLang } from "src/interfaces";
-import { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedImage, setSelectedProduct, loadCategoriesList, loadCategory }  from "src/redux/actions/catalog"
 import { useEffect } from 'react';
 import { catalogBlock } from "src/assets/js/data";
 import ImgWithPreloader from 'src/assets/js/ImgWithPreloader';
 import { NavLink } from 'react-router-dom';
 import { pagesList } from "src/assets/js/data";
+import { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedProduct, loadCategoriesList, loadCategory }  from "src/redux/actions/catalog"
+import { setProduct, setLoadDataStatusProduct, setSelectedImage }  from "src/redux/actions/product"
 
-const actionsListCatalog = { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedImage, setSelectedProduct, loadCategoriesList, loadCategory  }
+const actionsListCatalog = { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedProduct, loadCategoriesList, loadCategory  }
+const actionsListProduct = { setProduct, setLoadDataStatusProduct,setSelectedImage  }
 
 interface IPropsReceived {
     products: IProduct[]
@@ -23,7 +25,8 @@ interface IPropsState {
 
 interface IPropsActions {
     setState: {
-        catalog: typeof actionsListCatalog
+        catalog: typeof actionsListCatalog,
+        product: typeof actionsListProduct
     }
 }
 
@@ -32,12 +35,12 @@ interface IProps extends IPropsState, IPropsActions, IPropsReceived {}
 
 const Gallery: React.FC<IProps> = ({lang, products, setState}):JSX.Element => {
 
-    const onClicked = (e: IProduct["id"]) => {
-                
+    const onClicked = (productId: IProduct["id"]) => {
+        setState.catalog.setSelectedProduct(productId)
+        setState.product.setSelectedImage(0)
+        setState.product.setLoadDataStatusProduct({status: 'success', message: ''})
+        setState.product.setProduct(products.find(product => product.id === productId) as IProduct)
     }
-
-
-
 
 
     return (
@@ -46,9 +49,10 @@ const Gallery: React.FC<IProps> = ({lang, products, setState}):JSX.Element => {
                 return (
                     <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
                         to={product.id}
-                        key={product.id} 
+                        key={product.id}
+                        onClick={() => onClicked(product.id)}
                         >
-                        <div className='gallery__item' onClick={() => onClicked(product.id)} >
+                        <div className='gallery__item' >
                             <div className="img__container">
                                 <ImgWithPreloader src={product.imgs[0].url} alt={product.imgs[0].name[lang]}/>
                             </div>
@@ -74,6 +78,7 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
     setState: {
 		catalog: bindActionCreators(actionsListCatalog, dispatch),
+		product: bindActionCreators(actionsListProduct, dispatch),
 	}
 })
   
