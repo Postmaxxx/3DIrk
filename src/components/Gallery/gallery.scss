@@ -15,10 +15,11 @@
         cursor: pointer;
         border: 1px solid var(--main_vv);
         border-radius: 5px;
-
+        
         & > .img__container {
             width: 100%;
             height: 50%;
+            position: relative;
             
             & > img {
                 height: 100%;

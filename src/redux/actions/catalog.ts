@@ -4,7 +4,6 @@ import mockFibers from '../mocks/fibers'
 import { actionsListCatalog } from './actionsList'
 
 
-
 export const setLoadDataStatusCategoriesList = <T extends ICatalogState["categoriesListLoading"]>(payload: T):IAction<T> => ({
     type: actionsListCatalog.SET_LOAD_DATA_STATUS_CATEGORIES_LIST,
     payload
@@ -53,8 +52,8 @@ export const loadCategoriesList = () => {
                     )
                 }, 1000)
             }).then((data) => {
-                dispatch(setLoadDataStatusCategoriesList({status: 'success', message: `Categories list loaded`}))
                 dispatch(setCategoriesList(data as ICategoriesListItem[]))
+                dispatch(setLoadDataStatusCategoriesList({status: 'success', message: `Categories list loaded`}))
             }).catch(err => {
                 dispatch(setLoadDataStatusCategoriesList({status: 'error', message: `ERROR while loading categories list: ${err}`}))
             })
@@ -99,10 +98,9 @@ export const loadCategory = (id: ICategory["id"]) => {
                     }, 1000)
                 })
                 
-                dispatch(setLoadDataStatusCategory({ dataLoading: {status: 'success', message: `Loaded category id: ${id}`}, id: id}))
-
+                
                 //create array of unique colors
-                const productsWithColors = receivedData.products.map(product => {
+                const productsWithColors = await receivedData.products.map(product => {
                     const currentColors: IColors[] = [] 
                     product.fibers.forEach(fiber => {
                         mockFibers.find(item => item.id === fiber)?.colors.forEach(color => {
@@ -111,22 +109,20 @@ export const loadCategory = (id: ICategory["id"]) => {
                             }
                         })
                     })
-                    
                     return {
                         ...product,
                         colors: currentColors
                     }
                 })
-
+                
                 const data: Omit<ICategory, "dataLoading"> = {
                     ...receivedData,
-                    products: productsWithColors
-                }
-
-
-
-
+                    products: productsWithColors,
+                    page: 0,
+                }              
                 dispatch(setCategory(data))
+                dispatch(setLoadDataStatusCategory({ dataLoading: {status: 'success', message: `Loaded category id: ${id}`}, id: id}))
+
             } catch(err) {
                 dispatch(setLoadDataStatusCategory({ dataLoading: {status: 'error', message: `ERROR while loading category id=${id}: error:${err}`}, id: id}))
             }
@@ -135,3 +131,11 @@ export const loadCategory = (id: ICategory["id"]) => {
         }
     }
 }
+
+
+
+
+export const setPage = <T extends ICategory["page"]>(payload: T):IAction<T> => ({
+    type: actionsListCatalog.SET_PAGE,
+    payload
+});

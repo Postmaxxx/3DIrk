@@ -1,4 +1,4 @@
-import { IAction, ICatalogState, ICategory, INewsState } from "src/interfaces"
+import { IAction, ICatalogState, ICategory, IProduct } from "src/interfaces"
 import initialCatalogState from '../initialStates/catalog'
 import { actionsListCatalog } from '../actions/actionsList'
 
@@ -56,11 +56,24 @@ const reducerCatalog = (state: ICatalogState = initialCatalogState, action: IAct
                 ...state, 
                 categories: {
                     ...state.categories,
-                    [state.selectedCategory]: {
-                        ...state.categories[state.selectedCategory],
+                    [dataCategory.id]: {
+                        ...state.categories[dataCategory.id],
                         id: dataCategory.id,
                         name: dataCategory.name,
-                        products: dataCategory.products
+                        products: dataCategory.products,
+                        page: dataCategory.page
+                    }
+                }
+            }
+        case actionsListCatalog.SET_PAGE: 
+            const selectedPage = action.payload as ICategory["page"]
+            return {
+                ...state, 
+                categories: {
+                    ...state.categories,
+                    [state.selectedCategory]: {
+                        ...state.categories[state.selectedCategory],
+                        page: selectedPage
                     }
                 }
             }

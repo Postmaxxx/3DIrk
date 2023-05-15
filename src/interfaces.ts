@@ -511,16 +511,18 @@ export interface IProduct {
     mods: TLangTextArr
 }
 
+
 export interface ICategory {
     id: TId
     name: TLangText
     dataLoading: IDataLoading//for load products in selected category
     products: IProduct[]
+    page: number
 }
 
 
 export interface ICategories {
-    [key: string] : ICategory
+    [key: string]: ICategory
 }
 
 export interface ICategoriesListItem {
@@ -588,6 +590,12 @@ export interface IOrderState {
 }
 
 
+
+export interface IProductState extends IProduct {
+    dataLoading: IDataLoading
+}
+
+
 //============================================== full state
 export interface IFullState {
     base: IBaseState
@@ -595,6 +603,7 @@ export interface IFullState {
     fibers: IFibersState
     catalog: ICatalogState
     order: IOrderState
+    product: IProductState
 }
 
 

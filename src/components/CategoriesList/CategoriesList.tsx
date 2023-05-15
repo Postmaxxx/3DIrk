@@ -37,7 +37,7 @@ const CatalogList: React.FC<IProps> = ({list, selectedCategory, loading, lang, s
 		if (loading.status !== 'success') {
 			setState.catalog.loadCategoriesList()
 		} else {
-			setState.catalog.setSelectedCategory(list[0]?.id)
+			!selectedCategory && setState.catalog.setSelectedCategory(list[0]?.id)
 		}
 	}, [loading.status])
 

@@ -2,21 +2,24 @@ import { useEffect, useRef, useState } from "react";
 import Preloader from "../../components/Preloader/Preloader";
 
 interface IProps {
-	link: string
+	src: string
 	alt: string
 }
 
 
-const ImgWithPreloader = ({link, alt}: IProps) => {
+const ImgWithPreloader: React.FC<IProps> = ({src, alt}: IProps):JSX.Element => {
 
 	const [loaded, setLoaded] = useState(false);
 	const img = useRef<HTMLImageElement>(null);
 
+	const hasLoaded = () => {
+		setLoaded(true)
+	}
 
 	return (
 		<>
 			{loaded || <Preloader />}
-			<img ref={img} src={link} alt={alt} onLoad={() => setLoaded(true)} style={{display: loaded ? "block" : "none"}} />
+			<img ref={img} src={src} alt={alt} onLoad={hasLoaded} style={{display: loaded ? "block" : "none"}} />
 		</>
 	);
 };

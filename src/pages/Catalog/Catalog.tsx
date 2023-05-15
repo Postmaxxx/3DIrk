@@ -54,11 +54,13 @@ const Catalog:React.FC<IProps> = ({lang, setState}): JSX.Element => {
 
     return (
         <section className="catalog">
-            <div className="container">
-                <CatalogIntro />
-                <div className="splider_catalog__main">
-                    <CategoriesList />
-                    <SpliderSingle />
+            <div className="container_page">
+                <div className="container">
+                    <CatalogIntro />
+                    <div className="splider_catalog__main">
+                        <CategoriesList />
+                        <SpliderSingle />
+                    </div>
                 </div>
             </div>
         </section>

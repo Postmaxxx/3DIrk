@@ -7,7 +7,9 @@ import { IFibersState, IFullState, IProduct, TLang } from "src/interfaces";
 import { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedImage, setSelectedProduct, loadCategoriesList, loadCategory }  from "src/redux/actions/catalog"
 import { useEffect } from 'react';
 import { catalogBlock } from "src/assets/js/data";
-
+import ImgWithPreloader from 'src/assets/js/ImgWithPreloader';
+import { NavLink } from 'react-router-dom';
+import { pagesList } from "src/assets/js/data";
 
 const actionsListCatalog = { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedImage, setSelectedProduct, loadCategoriesList, loadCategory  }
 
@@ -42,15 +44,20 @@ const Gallery: React.FC<IProps> = ({lang, products, setState}):JSX.Element => {
         <div className="gallery__container">
             {products.map((product):JSX.Element => {
                 return (
-                    <div className='gallery__item' key={product.id} onClick={() => onClicked(product.id)} >
-                        <div className="img__container">
-                            <img src={product.imgs[0].url} alt={product.imgs[0].name[lang]} />
+                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
+                        to={product.id}
+                        key={product.id} 
+                        >
+                        <div className='gallery__item' onClick={() => onClicked(product.id)} >
+                            <div className="img__container">
+                                <ImgWithPreloader src={product.imgs[0].url} alt={product.imgs[0].name[lang]}/>
+                            </div>
+                            <div className="descr__container">
+                                <span className='name'>{product.name[lang]}</span>
+                                <span className='price'>{catalogBlock.priceGallery[lang]}: {product.price[lang]}</span>
+                            </div>
                         </div>
-                        <div className="descr__container">
-                            <span className='name'>{product.name[lang]}</span>
-                            <span className='price'>{catalogBlock.priceGallery[lang]}: {product.price[lang]}</span>
-                        </div>
-                    </div>
+                    </NavLink>
                 )
             })
             }

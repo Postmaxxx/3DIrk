@@ -38,17 +38,20 @@ h1 {
     text-align: center;
     transition: color $transition_theme;
     font-family: Arial, Helvetica, sans-serif;
+    color: var(--main_vv);
 }
 
 h2 {
     font-size: 2rem;
     transition: color $transition_theme;
     font-family: Arial, Helvetica, sans-serif;
+    color: var(--main_vv);
 }
 
 h3 {
     font-size: 1.5rem;
     transition: color $transition_theme;
+    color: var(--main_vv);
 }
 
 span {
@@ -122,3 +125,7 @@ p {
     display: none !important;
 }
 
+
+section {
+    flex-grow: 1;
+}

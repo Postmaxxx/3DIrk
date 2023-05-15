@@ -13,7 +13,7 @@ interface IContainerSize {
 }
 
 interface IProps {
-	fiber: IFiber,
+	fiber: IFiber
 	lang: TLang
 }
 
@@ -25,6 +25,7 @@ interface modalImg {
 
 
 const FiberItem = ({fiber, lang}: IProps) => {
+	
 
     const fabricSplide = useRef<Splide>();
 	const containerSize = useRef<IContainerSize>();
@@ -114,7 +115,7 @@ const FiberItem = ({fiber, lang}: IProps) => {
 					<div className="features__container">
 						<h3>{fibersBlock.features[lang]}</h3>
 						{fiber.features.map((feature, i) => (
-							<div className="feature">
+							<div className="feature" key={i}>
 								<div className="feature__name">
 									<span>{feature.name[lang]}</span>
 									<span className='gap'></span>

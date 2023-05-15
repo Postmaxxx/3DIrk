@@ -5,7 +5,7 @@ section.catalog {
     transition: background-color $transition-theme;
     flex-grow: 1;
 
-    & > .container {
+    & .container {
 
     
         & > h2 {

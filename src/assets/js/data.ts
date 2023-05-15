@@ -261,3 +261,13 @@ export const catalogBlock = {
     }
 } satisfies ICatalogBlock
 
+
+
+
+export const catalogProductDetails = {
+    header: {
+        en: 'Our portfolio',
+        ru: 'Галерея наших работ'
+    },
+} 
+
