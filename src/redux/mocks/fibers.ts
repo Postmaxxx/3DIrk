@@ -9,51 +9,8 @@ import fiberImage6 from 'src/assets/img/fibers/6.png'
 const mockFibers = [
     {
         id: 'f1',
-        colors: [
-            {
-                name: {
-                    ru: 'Красный',
-                    en: 'Red'
-                },
-                value: 'FF0000'
-            },
-            {
-                name: {
-                    ru: 'Зеленый',
-                    en: 'Green'
-                },
-                value: '00FF00'
-            },
-            {
-                name: {
-                    ru: 'Синий',
-                    en: 'Blue'
-                },
-                value: '0000FF'
-            },
-            {
-                name: {
-                    ru: 'Желтый',
-                    en: 'Yellow'
-                },
-                value: 'FFFF00'
-            },
-            {
-                name: {
-                    ru: 'Фиолетовый',
-                    en: 'Violet'
-                },
-                value: 'FF00FF'
-            },
-            {
-                name: {
-                    ru: 'Разноцветный',
-                    en: 'Mixed'
-                },
-                value: 'mixed'
-            }
-        ],
-        header: {
+        colors: ["c1", "c2", "c3", "c4"],
+        name: {
             ru: 'Пластик 1',
             en: 'Plastic 1'
         },
@@ -198,23 +155,8 @@ const mockFibers = [
     },
     {
         id: 'f2',
-        colors: [
-            {
-                name: {
-                    ru: 'Зеленый',
-                    en: 'Green'
-                },
-                value: '00FF00'
-            },
-            {
-                name: {
-                    ru: 'Разноцветный',
-                    en: 'Mixed'
-                },
-                value: 'mixed'
-            }
-        ],
-        header: {
+        colors: ["c1", "c2", "c3", "c4", "c5", "c6", "c7"],
+        name: {
             ru: 'ABS Пластик 21',
             en: 'ABS 21'
         },
@@ -345,23 +287,8 @@ const mockFibers = [
     },
     {
         id: 'f3',
-        colors: [
-            {
-                name: {
-                    ru: 'Белый',
-                    en: 'White'
-                },
-                value: 'FFFFFF'
-            },
-            {
-                name: {
-                    ru: 'Разноцветный',
-                    en: 'Mixed'
-                },
-                value: 'mixed'
-            }
-        ],
-        header: {
+        colors: ["c6", "c7"],
+        name: {
             ru: 'ABS Пластик 3',
             en: 'ABS 3'
         },

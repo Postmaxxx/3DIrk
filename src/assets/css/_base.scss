@@ -59,6 +59,18 @@ span {
     color: var(--text);
 }
 
+label {
+    transition: color $transition_theme;
+    color: var(--text);
+}
+
+select {
+    background-color: var(--text_contrast);
+    color: var(--text);
+    transition: color $transition_theme, background-color $transition_theme;
+    cursor: pointer;
+}
+
 ul {
     list-style-type: none;
 

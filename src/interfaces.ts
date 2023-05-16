@@ -1,3 +1,4 @@
+import { printColors } from './assets/data/colors';
 import { ReactNode } from "react";
 import { AnyAction, ActionCreatorsMapObject } from "redux";
 import { Store } from 'redux'
@@ -467,17 +468,18 @@ export interface IProsCons {
 
 
 
-export interface IColors {
+export interface IColor {
+    id: TId
     name: TLangText
     value: string
 }
 
 export interface IFiber {
     id: TId
-    header: TLangText
+    name: TLangText
     text: TLangTextArr
     proscons: IProsCons
-    colors: IColors[] 
+    colors: IColor["id"][] 
     imgs: IImg[]
     features: IFeature[]
 }
@@ -511,7 +513,6 @@ export interface IProduct {
     text: TLangTextArr
     imgs: IImg[]
     fibers: IFiber["id"][]
-    colors: IColors[]
     features: IFeature[]
     mods: TLangTextArr
 }
@@ -553,11 +554,7 @@ export interface ICatalogState {
 
 
 
-export interface ICategoryReceived {
-    id: ICategory["id"]
-    name: TLangText
-    products: Omit<IProduct, "colors">[]
-}
+
 
 
 //================================================news state
@@ -609,6 +606,13 @@ export interface IProductState extends IProduct {
 }
 
 
+export interface IColorsState {
+    dataLoading: IDataLoading
+    colors: IColor[]
+}
+
+
+
 //============================================== full state
 export interface IFullState {
     base: IBaseState
@@ -617,9 +621,16 @@ export interface IFullState {
     catalog: ICatalogState
     order: IOrderState
     product: IProductState
+    colors:  IColorsState
 }
 
 //////////////////////////////////////////////////////////////////////////////////////  BackEnd
+
+export interface ICategoryReceived {
+    id: ICategory["id"]
+    name: TLangText
+    products: IProduct[]
+}
 
 export interface IProductBE {
     categoryId: ICategory["id"]

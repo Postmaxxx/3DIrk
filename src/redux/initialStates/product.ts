@@ -21,7 +21,6 @@ const initialProduct = {
     },
     imgs: [],
     fibers: [],
-    colors: [],
     features: [],
     mods: {
         en: [],

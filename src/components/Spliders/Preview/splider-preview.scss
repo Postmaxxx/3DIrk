@@ -12,36 +12,25 @@
 
 */
 .splider_preview {
-    height: 100%;
+    //height: 100%;
     display: flex;
+    flex-direction: column;
     align-items: flex-start;
     justify-content: space-between;
     width: 100%;
     border: 1px solid red;
 
-    @include respond-to(sm) {
-        flex-direction: column-reverse;
-    }
+
     
     & #modalMain {
-        width: 80%;
+        width: 100%;
         height: calc(100%);
         position: relative;
-        max-height: 300px;
+        height: 80%;
+        cursor: zoom-in;
 
-        &::before {
-            content: '';
-            position: absolute;
-            left: -3%;
-            height: 50%;
-            width: 2px;
-            background-color: var(--main_vv);
-            top: 50%;
-            transform: translate(-50%, -50%);
-
-            @include respond-to(sm) {
-                display: none;
-            }
+        &:hover .splide__track .splide__slide img {
+            scale: 1.2;
         }
 
         @include respond-to(sm) {
@@ -115,6 +104,7 @@
                     width: 100%;
                     height: 100%;
                     object-fit: cover;
+                    transition: scale $transition_fast;
                 }
             }
         }
@@ -124,14 +114,15 @@
 
 
     & #modalThumbs {
-        width: 15%;
+        width: 100%;
         height: 100%;
         //padding-top: 5%;
         //overflow-y: hidden;
         //max-height: 100%;
         position: relative;
         display: flex;
-        align-items: center;
+        align-items: flex-start;
+        margin-top: 50px;
 
         @include respond-to(sm) {
             margin-top: 50px;
@@ -141,16 +132,30 @@
        
         & .splide__arrows { 
             width: 100%;
-            height: 100%;
+            //height: auto;
             position: absolute;
-            top:0;
+            top:-25px;
 
-            @include respond-to(sm) {
+            &::before {
+                content: '';
+                position: absolute;
+                left: 50%;
+                width: 20%;
+                height: 1px;
+                background-color: var(--main_vv);
+                transform: translate(-50%, -50%);
+    
+                @include respond-to(sm) {
+                    //display: none;
+                }
+            }
+
+            /*@include respond-to(sm) {
                 //display: none;
                 height: auto;
 
                 top: -25px;
-            }
+            }*/
 
             & .splide__arrow {
                 background-color: transparent;
@@ -180,19 +185,20 @@
 
                 &--prev:hover {
                     & svg {
-                        translate: 0px -10px;
+                        translate: -10px 0px;
                     }
                 }
 
                 &--next:hover {
                     & svg {
-                        translate: 0px 10px;
+                        translate: 10px 0px;
                     }
                 }
             }
         }
 
         .splide__track {
+            cursor: grab;
 
             & .splide__slide {
                 //opacity: 0.4;
@@ -200,10 +206,8 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                max-height: 100px;
-                min-width: 100px;
-                min-width: auto;
-                min-height: auto;
+                height: auto !important;
+
     
                 &.is-active {
                     //opacity: 1;
@@ -213,13 +217,13 @@
                 }
     
                 & img {
-                    /*max-height: 100%;
+                    height: 100%;
                     width: 100%;
-                    object-fit: contain; */
-                    width: 100%;
+                    object-fit: cover; 
+                    /*width: 100%;
                     height: 100%;
                     object-fit: cover;
-                    object-position: 50% 50%;
+                    object-position: 50% 50%;*/
                 }
             }
         }

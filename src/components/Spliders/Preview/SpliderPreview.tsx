@@ -1,12 +1,14 @@
 import { AnyAction, Dispatch, bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { useEffect, useMemo, useRef, } from "react";
+import { useEffect, useMemo, useRef, useState, } from "react";
 import "@splidejs/react-splide/css";
 import "./splider-preview.scss";
-import { IFullState, IImg, IProductState, ISpliderOptions, TLang } from "src/interfaces";
+import { IFullState, IImg, IModal, IProduct, IProductState, ISpliderOptions, TLang } from "src/interfaces";
 import Splide from "@splidejs/splide";
 import ImgWithPreloader from "src/assets/js/ImgWithPreloader";
 import { loadProduct, setSelectedImage } from "src/redux/actions/product"
+import Modal from "src/components/Modal/Modal";
+import ModalImage from "src/components/MessageImage/MessageImage";
 const actionsList = { loadProduct, setSelectedImage }
 
 
@@ -34,34 +36,36 @@ const SpliderPreview: React.FC<IProps> = ({ lang, product, setState}): JSX.Eleme
 	const _splideThumbs = useRef<HTMLDivElement>(null);
 	const splideMain = useRef<Splide>();
 	const splideThumb = useRef<Splide>();
+	const [modal, setModal] = useState<IModal>({visible: false})
 		
 	const optionsThumbs: Partial<ISpliderOptions> = {
 		lazyLoad	: false,
 		perPage		: 5,
-		gap        	: 10,
+		gap        	: '5%',
 		rewind     	: false,
 		pagination 	: false,
 		isNavigation: true,
 		focus		: "center",
 		//trimSpace: true,
-		direction   : 'ttb',
+		direction   : 'ltr',
 		wheel       : true,
 		releaseWheel: true,
-		height: '80%',
+		height: '100%',
 		breakpoints	: {
 			1600: {
-				perPage: 4
+				perPage: 5
 			}, 
 			1241: {
-				perPage: 4
+				perPage: 5
 			}, 
 			992: {
 				perPage: 4
 			}, 
 			768: {
-				perPage: 5	,
+				perPage: 3	,
 				direction   : 'ltr',
 				height: 'auto',
+				gap: '5%'
 			}, 
 			480: {
 				perPage: 3
@@ -96,7 +100,14 @@ const SpliderPreview: React.FC<IProps> = ({ lang, product, setState}): JSX.Eleme
 		e.keyCode === 39 && showSlide(">");
 	}
 
+	const onImageClick = (slide: IImg) => {
+		setModal({visible: true})
+	}
 
+
+	const closeModal = () => {
+		setModal({visible: false})
+	}
 
 	useEffect(() => {
         if (!_splideThumbs.current || !_splideMain.current) return
@@ -109,7 +120,7 @@ const SpliderPreview: React.FC<IProps> = ({ lang, product, setState}): JSX.Eleme
 		return () => {
 			splideThumb.current?.destroy();
 			splideMain.current?.destroy();
-            setState.product.setSelectedImage(splideMain.current?.index || 0)
+            //setState.product.setSelectedImage(splideMain.current?.index || 0)
 		};
 		
 	}, []);
@@ -126,38 +137,39 @@ const SpliderPreview: React.FC<IProps> = ({ lang, product, setState}): JSX.Eleme
 
 
 
+
 	return (
         <div className="splider_preview">
+			<div id="modalMain" className="splide" ref={_splideMain}>
+				<div className="splide__track">
+					<ul className="splide__list">
+						{product.imgs.map((slide,i) => {
+							return (
+								<li className="splide__slide" key={i} onClick={() => onImageClick(slide)}>
+									<ImgWithPreloader src={slide.url} alt={slide.name[lang]} />
+								</li>
+							);
+						})}
+					</ul>
+				</div>
+			</div>
 			<div id="modalThumbs" className="splide" ref={_splideThumbs}>
 				<div className="splide__track">
 					<ul className="splide__list">
-						{product.imgs.map((slide) => {
+						{product.imgs.map((slide,i ) => {
 							return (
-								<li className="splide__slide" key={slide.url}>
+								<li className="splide__slide" key={i}>
 									<ImgWithPreloader src={slide.url} alt={slide.name[lang]} />
 								</li>
 							);
 		
-						})
-
-						}
+						})}
 					</ul>
 				</div>
 			</div>
-			<div id="modalMain" className="splide" ref={_splideMain}>
-				<div className="splide__track">
-					<ul className="splide__list">
-						{product.imgs.map((slide) => {
-							return (
-								<li className="splide__slide" key={slide.url}>
-									<ImgWithPreloader src={slide.url} alt={slide.name[lang]} />
-								</li>
-							);
-						})
-						}
-					</ul>
-				</div>
-			</div>
+			<Modal {...{visible: modal.visible, close: closeModal, escExit: true}}>
+				<ModalImage props={{path: product.imgs[splideMain.current?.index || 0].url, descr: product.imgs[splideMain.current?.index || 0].name[lang]}}/>
+			</Modal> 
 
         </div>
 	);

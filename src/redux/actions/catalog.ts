@@ -1,4 +1,4 @@
-import { IAction, ICatalogState, ICategoriesListItem, ICategory, ICategoryReceived, IColors, IDispatch, IProduct, TLangText } from "src/interfaces"
+import { IAction, ICatalogState, ICategoriesListItem, ICategory, IDispatch, IProduct, TLangText } from "src/interfaces"
 import mockProducts from '../mocks/catalogFull'
 import mockFibers from '../mocks/fibers'
 import { actionsListCatalog } from './actionsList'
@@ -87,7 +87,7 @@ export const loadCategory = (id: ICategory["id"]) => {
             
             
             //create array of unique colors
-            const productsWithColors = await receivedProducts.map(product => {
+            /*const productsWithColors = await receivedProducts.map(product => {
                 const currentColors: IColors[] = [] 
                 product.fibers.forEach(fiber => {
                     mockFibers.find(item => item.id === fiber)?.colors.forEach(color => {
@@ -100,12 +100,12 @@ export const loadCategory = (id: ICategory["id"]) => {
                     ...product,
                     colors: currentColors
                 }
-            })
+            })*/
             const categoryName: TLangText = mockCategoriesList.find(category => category.id === id)?.name || {en: 'Other', ru: 'Другое'}
             const data: Omit<ICategory, "dataLoading"> = {
                 id,
                 name: categoryName,
-                products: productsWithColors,
+                products: receivedProducts,
                 page: 0,
             }              
             dispatch(setCategory(data))

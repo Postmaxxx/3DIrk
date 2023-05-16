@@ -23,7 +23,7 @@ export const loadFibers = () => {
             const data: IFiber[] = await new Promise((res, rej) => {
                 setTimeout(() => {
                     res(mockFibers)
-                    console.log('loaded');
+                    console.log('fibers loaded');
                 }, 2000)
             })
 

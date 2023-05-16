@@ -59,6 +59,7 @@ const Gallery: React.FC<IProps> = ({lang, products, setState}):JSX.Element => {
                             <div className="descr__container">
                                 <span className='name'>{product.name[lang]}</span>
                                 <span className='price'>{catalogBlock.priceGallery[lang]}: {product.price[lang]}</span>
+
                             </div>
                         </div>
                     </NavLink>

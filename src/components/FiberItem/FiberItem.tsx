@@ -1,4 +1,4 @@
-import { IFiber, IModal, ISpliderOptions, TLang } from 'src/interfaces'
+import { IColor, IFiber, IModal, ISpliderOptions, TLang } from 'src/interfaces'
 import Proscons from '../Proscons/Proscons'
 import './fiber-item.scss'
 import Splide from "@splidejs/splide";
@@ -15,6 +15,7 @@ interface IContainerSize {
 interface IProps {
 	fiber: IFiber
 	lang: TLang
+	colors: IColor[]
 }
 
 interface modalImg {
@@ -24,7 +25,7 @@ interface modalImg {
 
 
 
-const FiberItem = ({fiber, lang}: IProps) => {
+const FiberItem = ({fiber, lang, colors}: IProps) => {
 	
 
     const fabricSplide = useRef<Splide>();
@@ -32,7 +33,6 @@ const FiberItem = ({fiber, lang}: IProps) => {
 	const _splideFabric = useRef<any>();
 	const [modal, setModal] = useState<IModal>({visible: false})
 	const [modalImg, setModalImg] = useState<modalImg>({descr: '', path: ''})
-
 
     const options: Partial<ISpliderOptions> = {
         type   : 'loop',
@@ -65,7 +65,6 @@ const FiberItem = ({fiber, lang}: IProps) => {
 			setModal({visible: true})
 			setModalImg({path: fiber.imgs[id].url, descr: fiber.imgs[id].name[lang]})
 		}
-		
 	}
 
 	const closeModal = () => {
@@ -110,7 +109,7 @@ const FiberItem = ({fiber, lang}: IProps) => {
             </div>
             <div className="fiber__descr__container">
 				<div className="block_text">
-					<h3>{fiber.header[lang]}</h3>
+					<h3>{fiber.name[lang]}</h3>
 					{fiber.text[lang].map((textItem, i) => <p key={i}>{textItem.part}</p>)}
 					<div className="features__container">
 						<h3>{fibersBlock.features[lang]}</h3>
@@ -128,9 +127,13 @@ const FiberItem = ({fiber, lang}: IProps) => {
 					</div>
 					<div className="colors__container">
 						<h3>{fibersBlock.colors[lang]}</h3>
-						{fiber.colors.map((color, i) => (
-							<div key={i} className={`color ${color.value === 'mixed' ? "mixed" : ""}`} style={{backgroundColor: `#${color.value}`}} title={color.name[lang]}></div>
-						))}
+						{fiber.colors.map((color, i) => {
+							const colorData: IColor | undefined = colors.find(colorItem => colorItem.id === color)
+							if (colorData) {
+								return <div key={i} className={`color ${colorData.value === 'mixed' ? "mixed" : ""}`} style={{backgroundColor: `#${colorData.value}`}} title={colorData.name[lang]}></div>
+							}
+						})}
+					
 					</div>
 					<Proscons {...fiber.proscons} lang={lang}/>
 				</div>

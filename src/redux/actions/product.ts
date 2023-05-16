@@ -1,4 +1,4 @@
-import { IAction, IProductState, ICategoriesListItem, ICategory, ICategoryReceived, IColors, IDispatch, IProduct } from "src/interfaces"
+import { IAction, IProductState, ICategoriesListItem, ICategory, ICategoryReceived, IDispatch, IProduct } from "src/interfaces"
 import mockFibers from '../mocks/fibers'
 import catalogFull from "../mocks/catalogFull";
 import { actionsListProduct } from './actionsList'

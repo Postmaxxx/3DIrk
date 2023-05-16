@@ -2,36 +2,48 @@ import './fiber.scss'
 import FiberItem from 'src/components/FiberItem/FiberItem';
 import { AnyAction, bindActionCreators, Dispatch } from "redux";
 import { connect } from "react-redux";
-import { TLang, IFullState, IFibersState } from "../../interfaces";
-import { useEffect } from 'react';
+import { TLang, IFullState, IFibersState, IColorsState, IColor } from "../../interfaces";
+import { useEffect, useState } from 'react';
 import "@splidejs/react-splide/css";    
 import Preloader from 'src/components/Preloader/Preloader';
 import { loadFibers }  from "../../redux/actions/fibers"
+import { loadColors }  from "../../redux/actions/colors"
 import { fibersBlock } from 'src/assets/js/data';
 
-const actionsList = { loadFibers }
+const actionsListFibers = { loadFibers }
+const actionsListColors = { loadColors }
 
 interface IPropsState {
     lang: TLang,
     fibers: IFibersState
+    colors: IColorsState
 }
 
 interface IPropsActions {
     setState: {
-        fibers: typeof actionsList
+        fibers: typeof actionsListFibers
+        colors: typeof actionsListColors
     }
 }
 
 interface IProps extends IPropsState, IPropsActions {}
 
-const Fiber:React.FC<IProps> = ({lang, fibers, setState}):JSX.Element => {
-    console.log(fibers);
-    
+const Fiber:React.FC<IProps> = ({lang, fibers, colors, setState}):JSX.Element => {
+    const [loaded, setLoaded] = useState<boolean>(false)
+
     useEffect(() => {
         if (fibers.dataLoading.status !== 'success') {
             setState.fibers.loadFibers()
+            setLoaded(false)
         }
-    }, [])
+        if (colors.dataLoading.status !== 'success') {
+            setState.colors.loadColors()
+            setLoaded(false)
+        }
+        if (colors.dataLoading.status === 'success' && fibers.dataLoading.status === 'success') {
+            setLoaded(true)
+        }
+    }, [colors.dataLoading?.status, fibers.dataLoading?.status])
 
 
     return (
@@ -40,9 +52,10 @@ const Fiber:React.FC<IProps> = ({lang, fibers, setState}):JSX.Element => {
                 <div className="container">
                     <div className="fiber">
                         <h1>{fibersBlock.header[lang]}</h1>
-                        {fibers.dataLoading.status === 'success' ? (
+                        {loaded  ? (
                             <div className="fibers__container">
-                                {fibers.fibersList.map((fiber, i) => <FiberItem {...{fiber}} lang={lang} key={i}/>)}
+                                {fibers.fibersList.map((fiber, i) => {
+                                    return <FiberItem {...{fiber}} lang={lang} colors={colors.colors} key={i}/>})}
                             </div>
                         )
                         :
@@ -59,11 +72,13 @@ const Fiber:React.FC<IProps> = ({lang, fibers, setState}):JSX.Element => {
 const mapStateToProps = (state: IFullState): IPropsState  => ({
     lang: state.base.lang,
     fibers: state.fibers,
+    colors: state.colors
 })
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
     setState: {
-		fibers: bindActionCreators(actionsList, dispatch)
+		fibers: bindActionCreators(actionsListFibers, dispatch),
+		colors: bindActionCreators(actionsListColors, dispatch)
 	}
 })
     

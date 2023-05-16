@@ -57,3 +57,9 @@ export const actionsListProduct = {
     SET_SELECTED_IMAGE: 'SET_SELECTED_IMAGE',
 }
 
+
+export const actionsListColors = {
+    SET_LOAD_DATA_STATUS_COLORS: 'SET_LOAD_DATA_STATUS_COLORS',
+    SET_DATA_COLORS: 'SET_DATA_COLORS',
+}
+
