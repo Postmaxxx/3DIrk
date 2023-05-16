@@ -22,7 +22,7 @@ section.catalog {
     
         .splider_catalog__main {
             height: 750px;
-            margin-top: 50px;
+            margin-top: 150px;
             margin-bottom: 50px;
             display: flex;
             align-items: stretch;
@@ -31,7 +31,7 @@ section.catalog {
         
        
             @include respond-to(md) {
-                height: 500px;
+                height: 650px;
             }
         
             @include respond-to(sm) {

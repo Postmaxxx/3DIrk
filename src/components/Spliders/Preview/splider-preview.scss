@@ -18,7 +18,6 @@
     align-items: flex-start;
     justify-content: space-between;
     width: 100%;
-    border: 1px solid red;
 
 
     
@@ -30,7 +29,7 @@
         cursor: zoom-in;
 
         &:hover .splide__track .splide__slide img {
-            scale: 1.2;
+            scale: 1.1;
         }
 
         @include respond-to(sm) {
@@ -202,7 +201,7 @@
 
             & .splide__slide {
                 //opacity: 0.4;
-                filter: brightness(1);
+                filter: brightness(.7);
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -213,7 +212,8 @@
                     //opacity: 1;
                     filter: brightness(1);
                     border: none;
-                    border: 1px solid var(--main_vv);
+                    border: 3px solid var(--main_vv);
+                    border-radius: 5px;
                 }
     
                 & img {

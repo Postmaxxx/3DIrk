@@ -10,7 +10,7 @@ import SpliderPreview from "src/components/Spliders/Preview/SpliderPreview";
 import { loadProduct } from "src/redux/actions/product"
 import { loadFibers } from "src/redux/actions/fibers"
 import { loadColors } from "src/redux/actions/colors"
-
+import { catalogProductDetails } from "src/assets/js/data";
 
 
 const actionsListProduct = { loadProduct }
@@ -46,6 +46,19 @@ const Product: React.FC<IProps> = ({lang, selectedProduct, setState, product, co
     const [fibersDetailed, setFibersDetailed] = useState<IFiber[]>([])
     const [selectedFiber, setSelectedFiber] = useState<IFiber["id"]>('')
     const [selectedColor, setSelectedColor] = useState<IColor["id"]>('')
+
+
+    
+    const onChangeFiber: React.ChangeEventHandler<HTMLSelectElement> = (e) => {
+        setSelectedFiber(e.target.value)
+        setSelectedColor('')
+    }
+
+    const onChangeColor = (colorId: IColor["id"]) => {
+        setSelectedColor(colorId)
+    }
+
+
 
     useEffect(() => {
         if (productId !== selectedProduct && productId) {
@@ -85,23 +98,6 @@ const Product: React.FC<IProps> = ({lang, selectedProduct, setState, product, co
     },[fibers.dataLoading.status, colors.dataLoading.status, product.dataLoading.status])
     
 
-
-
-
-
-
-    
-
-    const onChangeFiber: React.ChangeEventHandler<HTMLSelectElement> = (e) => {
-        setSelectedFiber(e.target.value)
-        setSelectedColor('')
-    }
-
-    const onChangeColor = (colorId: IColor["id"]) => {
-        setSelectedColor(colorId)
-    }
-
-
     return (
         <section className="product-details">
             <div className="container_page">
@@ -113,43 +109,47 @@ const Product: React.FC<IProps> = ({lang, selectedProduct, setState, product, co
                                 <SpliderPreview />
                             </div>
                             <div className="details__descr">
-                                    <h2>Features:</h2>
+                                    <h2>{catalogProductDetails.featuresHeader[lang]}:</h2>
                                     <div className="features__container">
                                         <div className="feature">
-                                            <span>Description: </span>
+                                            <span>{catalogProductDetails.descr[lang]}: </span>
                                             {product.text[lang].map((text, i) => <p key={i}>{text.part}</p>)}
                                         </div>
                                         {product.features.map((feature, i) => {
                                             return (
                                                 <div className="feature" key={i}>
                                                     <span>{feature.name[lang]}: </span>
-                                                    <span>{feature.name[lang]}: </span>
+                                                    <span>{feature.value[lang]}</span>
                                                 </div>
                                             )
                                         })}
+                                        {product.mods[lang].length > 0 ? 
+                                            <div className="feature">
+                                                <label>{catalogProductDetails.type[lang]}: 
+                                                    <select>
+                                                        {product.mods[lang].map((mod, i) => <option key={i} value={mod.part}>{mod.part}</option>)}
+                                                    </select>
+                                                </label>
+                                            </div>
+                                            :
+                                            null
+                                        }
                                         <div className="feature">
-                                            <label>Type: 
-                                                <select>
-                                                    {product.mods[lang].map((mod, i) => <option key={i} value={mod.part}>{mod.part}</option>)}
-                                                </select>
-                                            </label>
-                                        </div>
-                                        <div className="feature">
-                                            <label>Fiber: 
+                                            <label>{catalogProductDetails.fiber[lang]}: 
                                                 <select onChange={onChangeFiber}>
                                                     {fibersDetailed.map((fiber, i) => <option key={i} value={fiber.id}>{fiber.name[lang]}</option>)}
                                                 </select>
                                             </label>
                                         </div>
                                         <div className="colors__container">
-                                            <span>Available colors: </span>
+                                            <span>{catalogProductDetails.colors[lang]}: </span>
                                             {colors.colors.map((color, i) => {
                                                 const colorAvailable = fibers.fibersList.find(fiber => fiber.id === selectedFiber)?.colors.find(colorId => colorId === color.id)
                                                 return <div key={i} onClick={colorAvailable ? () => onChangeColor(color.id) : undefined} className={`color ${color.value === 'mixed' && "mixed"} ${!colorAvailable && "disabled"} ${selectedColor === color.id && "selected"}`} style={{backgroundColor: `#${color.value}`}} title={color.name[lang]}></div>
                                             })}
                                         </div>
                                         <div className="feature">
-                                            <span>Price: </span>
+                                            <span>{catalogProductDetails.price[lang]}: </span>
                                             <span>{product.price[lang]}</span>
                                         </div>
                                         

@@ -32,11 +32,11 @@ const Fiber:React.FC<IProps> = ({lang, fibers, colors, setState}):JSX.Element =>
     const [loaded, setLoaded] = useState<boolean>(false)
 
     useEffect(() => {
-        if (fibers.dataLoading.status !== 'success') {
+        if (fibers.dataLoading.status === 'idle') {
             setState.fibers.loadFibers()
             setLoaded(false)
         }
-        if (colors.dataLoading.status !== 'success') {
+        if (colors.dataLoading.status === 'idle') {
             setState.colors.loadColors()
             setLoaded(false)
         }

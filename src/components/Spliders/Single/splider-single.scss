@@ -15,7 +15,8 @@
         max-height: 90%;
 
         @include respond-to(sm) {
-            height: 50vw;
+            //height: 50vw;
+            max-height: none;
         }
 
         & * {

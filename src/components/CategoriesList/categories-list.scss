@@ -5,7 +5,7 @@
 .categories-list__container {
     display: flex;
     align-items: center;
-    margin-right: 50px;
+    margin-right: 4%;
     border-right: 1px solid var(--main_vv);
     padding-right: 30px;
     height: 100%;
@@ -47,6 +47,10 @@
 
         @include respond-to(sm) {
             max-height: 400px;
+            overflow-y: auto;
+            width: 70%;
+            margin-left: auto;
+            margin-right: auto;
         }
     
         & > ul {
@@ -70,6 +74,8 @@
                     text-align: center;
                     margin-left: auto;
                     margin-right: auto;
+                    margin-top: 10px;
+                    font-size: 24px;
                 }
     
                 &:hover {

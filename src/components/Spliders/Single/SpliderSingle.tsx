@@ -45,7 +45,7 @@ const SpliderSingle: React.FC<IProps> = ({lang, selectedCategory, selectedProduc
 	const _splideMain = useRef<HTMLDivElement>(null);
 	//const [newRender, addRender] = useState<number>(0);
 	const [productSlides, setProductSlides] = useState<IProduct[][]>([[]])
-	const productsPerSlide = 6;
+	const [productsPerSlide, setProductsPerSlide] = useState<number>(6)
 
 	const optionsMain: Partial<ISpliderOptions> = {
 		lazyLoad: false,
@@ -98,6 +98,15 @@ const SpliderSingle: React.FC<IProps> = ({lang, selectedCategory, selectedProduc
 			width:  _splideMain.current.offsetWidth,
 			height:  _splideMain.current.offsetHeight,
 		};*/
+		
+		if (_splideMain.current.offsetWidth < 993) {
+			setProductsPerSlide(4)
+		}
+		if (_splideMain.current.offsetWidth < 769) {
+			setProductsPerSlide(4)
+		}
+		
+		
 		spliderSingle.current = new Splide(_splideMain.current, optionsMain);
 		
 		spliderSingle.current.on( 'pagination:updated', function (data, prev, upd) {

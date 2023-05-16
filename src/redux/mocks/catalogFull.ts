@@ -1950,8 +1950,8 @@ const mockProducts = [
             },
             {
                 name: {
-                    en: 'Совместимость с родными колесами',
-                    ru: 'Compatible with original wheels'
+                    ru: 'Совместимость с родными колесами',
+                    en: 'Compatible with original wheels'
                 },
                 value: {
                     en: 'Full',

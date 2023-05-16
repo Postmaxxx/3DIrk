@@ -485,7 +485,7 @@ export interface IFiber {
 }
 
 export interface IFibersState {
-    dataLoading: IDataSending
+    dataLoading: IDataLoading
     fibersList: Array<IFiber>
 }
 

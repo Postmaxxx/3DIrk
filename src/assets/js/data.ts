@@ -207,8 +207,8 @@ export const orderBlock = {
 
 export const catalogBlock = {
     header: {
-        en: 'Our portfolio',
-        ru: 'Галерея наших работ'
+        en: 'Our catalog',
+        ru: 'Наш каталог'
     },
     subheader: {
         en: 'Subheader',
@@ -265,9 +265,29 @@ export const catalogBlock = {
 
 
 export const catalogProductDetails = {
-    header: {
-        en: 'Our portfolio',
-        ru: 'Галерея наших работ'
+    featuresHeader: {
+        en: "Features",
+        ru: "Характеристики"
+    },
+    descr: {
+        en: 'Description',
+        ru: 'Описание'
+    },
+    type: {
+        en: 'Version',
+        ru: 'Версия'
+    },
+    fiber: {
+        en: 'Fiber',
+        ru: 'Материал'
+    },
+    colors: {
+        en: 'Available colors',
+        ru: 'Доступные цвета'
+    },
+    price: {
+        en: 'Price',
+        ru: 'Цена'
     },
 } 
 

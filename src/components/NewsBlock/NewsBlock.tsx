@@ -31,7 +31,7 @@ const NewsBlock:React.FC<IProps>  = ({lang, news, setState}): JSX.Element => {
     }
 
     useEffect(()=> {
-        if (news.dataLoading.status !== 'success') {
+        if (news.dataLoading.status === 'idle') {
             setState.news.loadNews()
         }
     },[])

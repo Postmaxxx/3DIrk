@@ -1,55 +1,47 @@
 import './catalog.scss'
-import { IFullState, IModal, TLang } from "src/interfaces";
+import { IDataLoading, IFullState, TLang } from "src/interfaces";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import SpliderSingle from 'src/components/Spliders/Single/SpliderSingle';
 import "@splidejs/react-splide/css"; 
-import Modal from 'src/components/Modal/Modal';
-import SpliderPreview from 'src/components/Spliders/Preview/SpliderPreview';
+
 import CategoriesList from 'src/components/CategoriesList/CategoriesList';
 import CatalogIntro from 'src/components/CatalogIntro/CatalogIntro';
 
-import { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedProduct, loadCategoriesList }  from "../../redux/actions/catalog"
+import { loadColors }  from "../../redux/actions/colors"
+import { loadFibers }  from "../../redux/actions/fibers"
 
-const actionsList = { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedProduct, loadCategoriesList  }
+const actionsListColors = { loadColors }
+const actionsListFibers = { loadFibers }
 
 interface IPropsState {
-    lang: TLang,
+    colorsLoading: IDataLoading
+    fibersLoading: IDataLoading
 }
 
 interface IPropsActions {
     setState: {
-        catalog: typeof actionsList
+        colors: typeof actionsListColors,
+        fibers: typeof actionsListFibers,
     }
 }
 
 interface IProps extends IPropsState, IPropsActions {}
 
 
-const Catalog:React.FC<IProps> = ({lang, setState}): JSX.Element => {
-	const [modal, setModal] = useState<IModal>({visible: false})
-
-    const showSplideModal = () => {
-        setModal({visible: true});
-    };
-
-    const closeModal = () => {
-        setModal({visible: false});
-    }
-
-
-	const onPortfolioClicked = () => {
-		showSplideModal()
-    }
-    
+const Catalog:React.FC<IProps> = ({colorsLoading, fibersLoading, setState}): JSX.Element => {
 
     useEffect(() => {
-        if (!modal.visible) {
-            document.querySelector("body")?.classList.remove("noscroll");
+        if (colorsLoading.status === 'idle') {
+            setState.colors.loadColors()
         }
-    }, [modal.visible])
+        if (fibersLoading.status === 'idle') {
+            setState.fibers.loadFibers()
+        }
+    }, [])
+   
 
 
     return (
@@ -69,43 +61,16 @@ const Catalog:React.FC<IProps> = ({lang, setState}): JSX.Element => {
 
 
 const mapStateToProps = (state: IFullState): IPropsState => ({
-    lang: state.base.lang,
+    colorsLoading: state.colors.dataLoading,
+    fibersLoading: state.fibers.dataLoading
 })
 
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
     setState: {
-		catalog: bindActionCreators(actionsList, dispatch)
+		colors: bindActionCreators(actionsListColors, dispatch),
+		fibers: bindActionCreators(actionsListFibers, dispatch),
 	}
 })
   
-  
-  
 export default connect(mapStateToProps, mapDispatchToProps)(Catalog)
-/*
-                <div className="splider_portfolio__main">
-                    <PortfolioList />
-                    <SpliderSingle onPortfolioClicked={onPortfolioClicked}/>
-                </div>
-                <Modal {...{visible: modal.visible, close: closeModal, escExit: true}}>
-                    <div className="splider_portfolio__modal">
-                        <SpliderPreview />
-                    </div>
-                </Modal> 
-*/
-
-
-/*
-
-                <PortfolioIntro />
-                <h2>{headerSplider[lang]}</h2>
-                <div className="splider_portfolio__main">
-                    <PortfolioList />
-                    <SpliderSingle onPortfolioClicked={onPortfolioClicked}/>
-                </div>
-                <Modal {...{visible: modal.visible, close: closeModal, escExit: true}}>
-                    <div className="splider_portfolio__modal">
-                        <SpliderPreview />
-                    </div>
-                </Modal> 
-*/

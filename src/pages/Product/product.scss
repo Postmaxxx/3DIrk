@@ -7,7 +7,6 @@ section.product-details {
 
     .details__block {
         display: flex;
-        border: 1px solid green;
         margin-top: 50px;
 
         @include respond-to(sm) {
@@ -17,7 +16,6 @@ section.product-details {
         .details__splider {
             width: 40%;
             aspect-ratio: 1.7;
-            border: 3px solid blue;
     
             @include respond-to(md) {
                 width: 100%;
@@ -31,7 +29,6 @@ section.product-details {
 
 
     .details__descr {
-        border: 1px solid blue;
         max-width: 60%;
         padding: 20px 20px 30px 5%;
 
@@ -48,10 +45,9 @@ section.product-details {
         .features__container {
             display: flex;
             flex-direction: column;
-            border: 1px solid red;
             
             & > .feature {
-                margin-top: 10px;
+                margin-top: 15px;
                 & > span, label {
                     font-size: 18px;
                     
@@ -69,7 +65,7 @@ section.product-details {
                 }
 
                 & select {
-                    height: 30px;
+                    //height: 30px;
                     margin-left: 10px;
                     font-size: 18px;
                     font-weight: 700;
@@ -86,6 +82,7 @@ section.product-details {
                 width: 100%;
                 display: flex;
                 align-items: center;
+                flex-wrap: wrap;
 
                 & > span {
                     font-size: 18px;
@@ -100,6 +97,7 @@ section.product-details {
                     margin-left: 15px;
                     position: relative;
                     cursor: pointer;
+                    margin-top: 5px;
 
                     &:not(.disabled):not(.selected) {
 

@@ -6,23 +6,52 @@
     width: 100%;
     display: flex;
     flex-wrap: wrap;
+    gap: 5%;
+    
+    @include respond-to(md) {
+        gap: 10%;
+    }
+    
+
 
     & > a {
-        width: 25%;
-        height: 45%;
-        margin: 0px 4%;
+        width: 29.5%;
+        height: 47%;
+        display: block;
+        //margin: 0px 4%;
+        //margin-bottom: 40px;
         cursor: pointer;
         border: 1px solid var(--main_vv);
         border-radius: 5px;
+
+        @include respond-to(md) {
+            width: 45%;
+            height: 45%;
+        }
+
+        @include respond-to(sm) {
+            //height: 80%;
+            margin-bottom: 20px;
+            height: auto;
+        }
 
         & .gallery__item {
             width: 100%;
             height: 100%;
             
+            @include respond-to(sm) {
+                height: auto;
+            }
+
             & > .img__container {
                 width: 100%;
                 height: 50%;
                 position: relative;
+
+                @include respond-to(md) {
+                    height: 60%;
+                }
+
                 
                 & > img {
                     height: 100%;
@@ -41,6 +70,21 @@
                     font-weight: 700;
                     text-align: left;
                     width: 100%;
+
+                    @include respond-to(md) {
+                        font-size: 18px;
+                    }
+                }
+
+                & .price {
+                    display: inline-block;
+                    font-size: 20px;
+                    color: var(--lang-text_add);
+                    margin-top: 10px;
+
+                    @include respond-to(md) {
+                        font-size: 16px;
+                    }
                 }
     
                 & > .colors__container {
@@ -81,12 +125,7 @@
         
                 }
     
-                & .price {
-                    display: inline-block;
-                    font-size: 20px;
-                    color: var(--lang-text_add);
-                    margin-top: 10px;
-                }
+
             }
     
         }
