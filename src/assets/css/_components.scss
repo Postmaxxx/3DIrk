@@ -8,7 +8,7 @@
     border-radius: 10px;
     color: var(--text);//;
     background-color: var(--main);
-    transition: background-color $transition_theme, color $transition_theme;
+    transition: background-color $transition_theme, color $transition_theme, box-shadow $transition_fast;
     //font-family: 'LexendDeca';
     font-size: 18px;
     font-weight: 700;
@@ -17,6 +17,7 @@
     display: flex;
     align-items: center;
     position: relative;
+    border-radius: 5px;
 
     & > svg  {
         max-height: 80%;
@@ -31,6 +32,7 @@
         & > svg {
             margin-right: 15px;
         }
+        box-shadow: 0px 0px 15px 0px var(--main);;
     }
     
 }
@@ -55,6 +57,6 @@
 
 
     &:hover {
-        box-shadow: 0px 0px 20px var(--main_vv);
+        box-shadow: 0px 0px 20px var(--main_vv)
     }
 }

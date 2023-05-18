@@ -454,6 +454,13 @@ export interface IOrderBlock {
 
 
 
+//----------------------------------- color
+
+export interface IColor {
+    id: TId
+    name: TLangText
+    value: string
+}
 
 
 
@@ -467,12 +474,6 @@ export interface IProsCons {
 }
 
 
-
-export interface IColor {
-    id: TId
-    name: TLangText
-    value: string
-}
 
 export interface IFiber {
     id: TId
@@ -599,18 +600,36 @@ export interface IOrderState {
 }
 
 
+//============================================== Product state
 
 export interface IProductState extends IProduct {
     dataLoading: IDataLoading
     selectedImage: number
 }
 
+//============================================== Colors state
 
 export interface IColorsState {
     dataLoading: IDataLoading
     colors: IColor[]
 }
 
+//============================================== Cart state
+export interface ICartItem {
+    id: IProduct["id"]
+    amount: number
+    fiber: IFiber["id"]
+    color: IColor["id"]
+    type: string
+}
+
+
+export interface ICartState {
+    dataLoading: IDataLoading
+    dataSending: IDataSending
+    items: ICartItem[]
+    newItems: number
+}
 
 
 //============================================== full state
@@ -622,6 +641,7 @@ export interface IFullState {
     order: IOrderState
     product: IProductState
     colors:  IColorsState
+    cart: ICartState
 }
 
 //////////////////////////////////////////////////////////////////////////////////////  BackEnd

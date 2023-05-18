@@ -63,3 +63,12 @@ export const actionsListColors = {
     SET_DATA_COLORS: 'SET_DATA_COLORS',
 }
 
+export const actionsListCart = {
+    SET_LOAD_DATA_STATUS_CART: 'SET_LOAD_DATA_STATUS_CART', //
+    SET_SEND_DATA_STATUS_CART: 'SET_SEND_DATA_STATUS_CART', //
+    ADD_ITEM: 'ADD_ITEM', //
+    CLEAR_CART: 'CLEAR_CART',//
+    REMOVE_ITEM: 'REMOVE_ITEM',
+    CHANGE_ITEM: 'CHANGE_ITEM', //
+    SET_CART: 'SET_CART' //
+}

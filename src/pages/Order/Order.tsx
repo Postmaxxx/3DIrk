@@ -49,7 +49,6 @@ const Order:React.FC<IProps> = ({lang, order, setState}): JSX.Element => {
             setState.order.clearFiles();
             setState.order.clearForm();
         }
-        
         setState.order.setSendDataStatus({status: 'idle', message: ''})
 	}
 
