@@ -8,6 +8,9 @@
     display: flex;
     margin-top: 30px;
     align-items: center;
+    @include respond-to(md) {
+        flex-wrap: wrap;
+    }
 
     & > span:first-of-type {
         font-size: 22px;
@@ -25,6 +28,7 @@
         background-color: var(--text_contrast);
         color: var(--text);
         transition: color 1s, background-color 1s;
+        border-radius: 5px;
     }
 
     &  .amount-changer {
@@ -50,7 +54,20 @@
 
     & .button_news {
         justify-content: center;
-        padding: 8px 40px;
+        padding: 10px 40px;
+
+        @include respond-to(md) {
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        @include respond-to(sm) {
+            width: 65%;
+        }
+
+        @include respond-to(xs) {
+            width: 100%;
+        }
     }
     
 

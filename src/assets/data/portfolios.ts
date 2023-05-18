@@ -1,4 +1,3 @@
-import { printColors } from "./colors"
 
 import portfolio_1 from "../img/portfolio/1.png"
 import portfolio_2 from "../img/portfolio/2.jpeg"

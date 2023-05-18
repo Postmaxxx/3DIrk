@@ -10,6 +10,7 @@ import Modal from "src/components/Modal/Modal";
 import MessageInfo from "src/components/MessageInfo/MessageInfo";
 import { orderBlock } from "src/assets/js/data";
 import { setName, setEmail, setPhone, setMessage, clearFiles, clearForm, addFiles, sendOrder, setSendDataStatus }  from "../../redux/actions/order"
+import CartContent from "src/components/CartContent/CartContent";
 
 const actionsList = { setName, setEmail, setPhone, setMessage, clearFiles, clearForm, addFiles, sendOrder, setSendDataStatus  }
 
@@ -308,6 +309,11 @@ const Order:React.FC<IProps> = ({lang, order, setState}): JSX.Element => {
                                         </div>
                                     </div>
 
+                                </div>
+
+                                <div className="cart-content__container">
+                                    <h3>{lang === 'en' ? 'Your cart' : 'Ваша корзина'}</h3>
+                                    <CartContent />
                                 </div>
 
                                 <button type="submit" className="button_order" onClick={onSubmit}>{lang === 'en' ? 'Send' : "Отправить"}</button>

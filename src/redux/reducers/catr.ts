@@ -33,10 +33,11 @@ const reducerCart  = (state: ICartState = initialCartState, action: IAction<unkn
 
         case actionsListCart.ADD_ITEM: 
             const newItem = action.payload as ICartItem
-            const checklist: (keyof ICartItem)[] = ['id', 'color', 'fiber', 'type']
+            const checklist: (keyof ICartItem)[] = ['color', 'fiber', 'type']
             let itemExist: boolean = false;
             const newItems: ICartItem[] = state.items.map(item => {
-                const itemTheSame: boolean = checklist.reduce((acc, checkItem) => newItem[checkItem] === item[checkItem] ? acc : false, true)
+                let itemTheSame: boolean = checklist.reduce((acc, checkItem) => newItem[checkItem] === item[checkItem] ? acc : false, true)
+                if (newItem.product.id !== item.product.id) {itemTheSame = false}
                 if (!itemTheSame) return item
                 itemExist = true
                 return {...item, amount: item.amount + newItem.amount }
@@ -51,14 +52,14 @@ const reducerCart  = (state: ICartState = initialCartState, action: IAction<unkn
             const itemToChange = action.payload as ICartItem
             return {
                 ...state, 
-                items: state.items.map(item => itemToChange.id === item.id ? itemToChange : item)
+                items: state.items.map(item => itemToChange.product.id === item.product.id ? itemToChange : item)
             } 
 
         case actionsListCart.REMOVE_ITEM:
             const itemId = action.payload as IProduct["id"]
             return {
                 ...state, 
-                items: state.items.filter(item => itemId !== item.id)
+                items: state.items.filter(item => itemId !== item.product.id)
             } 
 
         default: return state

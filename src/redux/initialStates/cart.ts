@@ -10,7 +10,7 @@ const cartState = {
         message: ""
     },
     items: [],
-    newItems: 0
+    //newItems: 0
 } satisfies ICartState
 
 export default cartState

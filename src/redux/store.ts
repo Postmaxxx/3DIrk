@@ -7,6 +7,7 @@ import reducerOrder from './reducers/order';
 import reducerCatalog from './reducers/catalog';
 import reducerProduct from './reducers/product';
 import reducerColors from './reducers/colors';
+import reducerCart from './reducers/catr';
 
 
 const rootReducer = combineReducers({
@@ -16,7 +17,8 @@ const rootReducer = combineReducers({
     order: reducerOrder,
     catalog: reducerCatalog,
     product: reducerProduct,
-    colors: reducerColors
+    colors: reducerColors,
+    cart: reducerCart
 });
 
 

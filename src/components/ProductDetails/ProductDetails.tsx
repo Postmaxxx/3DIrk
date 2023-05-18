@@ -1,4 +1,4 @@
-import { ICategories, IColor, IColorsState, IFiber, IFibersState, IFullState, IProductState, TId, TLang } from 'src/interfaces'
+import { ICartState, ICategories, IColor, IColorsState, IFiber, IFibersState, IFullState, IModal, IProductState, TId, TLang, TLangTextArr } from 'src/interfaces'
 import './product-details.scss'
 import { useRef, useEffect, useState, useMemo } from "react";
 import { AnyAction, bindActionCreators } from "redux";
@@ -9,12 +9,15 @@ import { loadFibers } from "src/redux/actions/fibers"
 import { loadColors } from "src/redux/actions/colors"
 import { catalogProductDetails } from "src/assets/js/data";
 import AddToCart from '../AddToCart/AddToCart';
+import Modal from '../Modal/Modal';
+import MessageInfo from '../MessageInfo/MessageInfo';
+//import { addItem } from "src/redux/actions/cart"
 
 
 const actionsListProduct = { loadProduct }
 const actionsListColors = { loadColors }
 const actionsListFibers = { loadFibers }
-
+//const actionsListCart = { addItem }
 
 interface IPropsState {
 	selectedCategory: TId
@@ -24,6 +27,7 @@ interface IPropsState {
     product: IProductState
     colors: IColorsState
     fibers: IFibersState
+    //cart: ICartState
 }
 
 interface IPropsActions {
@@ -31,10 +35,21 @@ interface IPropsActions {
         product: typeof actionsListProduct,
         colors: typeof actionsListColors,
         fibers: typeof actionsListFibers,
+        //cart: typeof actionsListCart
     }
 }
 
 interface IProps extends IPropsState, IPropsActions {}
+
+interface IMessageCart {
+    //color: string
+    //type: string
+    header: string
+    status: string
+    //fiber: string
+    //amount: number
+    text: string[]
+}
 
 
 const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors, fibers }): JSX.Element => {
@@ -42,6 +57,9 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors, fibe
     const [fibersDetailed, setFibersDetailed] = useState<IFiber[]>([])
     const [selectedFiber, setSelectedFiber] = useState<IFiber["id"]>('')
     const [selectedColor, setSelectedColor] = useState<IColor["id"]>('')
+    const [amount, setAmount] = useState<number>(1)
+	/*const [modal, setModal] = useState<IModal>({visible: false})
+    const [message, setMessage] = useState<IMessageCart>({header: '', status: '', text: []})*/
     const _type = useRef<HTMLSelectElement>(null)
 
     
@@ -60,11 +78,64 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors, fibe
             setFibersDetailed(product.fibers.map((productFiber) => {
                 return fibers.fibersList.find(fiberItem => fiberItem.id === productFiber)
             }).filter(fiber => fiber?.id !== undefined) as IFiber[])
-            setSelectedFiber(product.fibers[0]) 
         }
 
         
     },[fibers.dataLoading.status, colors.dataLoading.status, product.dataLoading.status])
+
+
+
+    /*const closeModal = () => {
+		setModal({visible: false})
+	}
+
+
+    const setNewAmount: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+        const value = Number(e.target.value)
+        if (value) {
+            setAmount(value)
+        }
+        if (e.target.value === '') {
+            setAmount(1)
+        }
+    }
+
+    const changeAmount = (newAmount: number) => {
+        newAmount >0 && setAmount(newAmount)
+    }
+
+
+    const addToCart = () => {
+        const errorsList: string[] = []
+        !selectedColor && errorsList.push(lang === 'en' ? 'Please choose the color' : 'Пожалуйста, выберите цвет')
+        !selectedFiber && errorsList.push(lang === 'en' ? 'Please choose the fiber' : 'Пожалуйста, выберите материал')
+        product.mods[lang].length > 0 && !_type.current?.value && errorsList.push(lang === 'en' ? 'Please, choose the type' : 'Пожалуйста, выберите версию')
+
+        if (!selectedColor || !selectedFiber || (product.mods[lang].length > 0 && !_type.current?.value)) {
+            setMessage({
+                status: 'error',
+                header: lang === 'en' ? 'Error' : 'Ошибка',
+                text: errorsList
+            })
+            
+            
+        } else {
+            const fiberName = fibersDetailed.find(fiber => fiber.id === selectedFiber)
+            const colorName = colors.colors.find(color => selectedColor === color.id)
+            const type = _type.current?.value
+            const name = product.name
+            console.log(cart);
+            
+            setMessage({
+                status: 'success',
+                header: name[lang],
+                text: lang === 'en' ? [`A new item has been added to your Cart. You now have ${cart.newItems + amount} items in your Cart`, ] : [`Новый товар успешно добавлен в Вашу корзину. Сейчас у Вас ${cart.newItems + amount} товаров в корзине`, ]
+            })
+            setAmount(1)
+        }
+        setModal({visible: true})
+
+    }*/
 
 
     return (
@@ -116,7 +187,23 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors, fibe
                 </div>
                 
             </div>
-            <AddToCart id={product.id} type={_type.current?.value || '-'} fiber={selectedFiber} color={selectedColor} lang={lang}/>
+            {/*<div className="cart-adder">
+                <span>Amount: </span>
+                <button className='amount-changer' title='Decrease amount' onClick={() => changeAmount(amount - 1)}>–</button>
+                <input type="text" value={amount} onChange={setNewAmount}/>
+                <button className='amount-changer' title='Increase amount' onClick={() => changeAmount(amount + 1)}>+</button>
+                <button className='button_news' title='Add to cart' onClick={addToCart}>Add to cart</button>
+            </div>
+            <Modal {...{visible: modal.visible, close: closeModal, escExit: true}}>
+                <MessageInfo {...{  
+                    status: message.status,
+                    header: message.header,
+                    text: message.text, 
+                    buttonText: lang === 'en' ? 'Close' : "Закрыть", 
+                    buttonAction: closeModal
+                }}/>
+            </Modal> */}
+            <AddToCart product={product} type={product.mods[lang].length > 0 ? _type.current?.value || '' : '-'} fiber={selectedFiber} color={selectedColor}/>
         </div>
     )
 }
@@ -131,7 +218,8 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
 	selectedProduct: state.catalog.selectedProduct,
     product: state.product,
     colors: state.colors,
-    fibers: state.fibers
+    fibers: state.fibers,
+    //cart: state.cart
 })
 
 
@@ -140,6 +228,7 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
         product: bindActionCreators(actionsListProduct, dispatch),
         colors: bindActionCreators(actionsListColors, dispatch),
         fibers: bindActionCreators(actionsListFibers, dispatch),
+        //cart: bindActionCreators(actionsListCart, dispatch),
 	}
 })
   

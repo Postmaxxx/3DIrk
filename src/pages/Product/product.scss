@@ -8,7 +8,7 @@ section.product-details {
     .details__block {
         display: flex;
         margin-top: 50px;
-        border: 1px solid red;
+        //border: 1px solid red;
 
         @include respond-to(sm) {
             flex-direction: column;

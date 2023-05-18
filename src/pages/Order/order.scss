@@ -299,6 +299,32 @@ section.order {
                 }
 
     
+
+                .cart-content__container {
+                    width: 100%;
+                    border: 1px solid red;
+                    margin-top: 40px;
+
+                    & h3 {
+                        text-align: center;
+                        color: var(--text);
+                        margin-bottom: 30px;
+                    }
+                }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 & > button {
                     margin-top: 40px;
 
@@ -311,6 +337,10 @@ section.order {
                     }
 
                 }
+
+
+
+
             }
     
         }

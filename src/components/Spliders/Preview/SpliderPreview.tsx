@@ -90,15 +90,15 @@ const SpliderPreview: React.FC<IProps> = ({ lang, product, setState}): JSX.Eleme
 	};
 
 
-    const showSlide = (slideToGo: number | string) => {
+    /*const showSlide = (slideToGo: number | string) => {
 		splideThumb.current?.go(slideToGo);
-	};
+	};*/
 
 
-	function modalKeyListener (e: KeyboardEvent) {
+	/*function modalKeyListener (e: KeyboardEvent) {
 		e.keyCode === 37 && showSlide("<");
 		e.keyCode === 39 && showSlide(">");
-	}
+	}*/
 
 	const onImageClick = (slide: IImg) => {
 		setModal({visible: true})
@@ -126,14 +126,14 @@ const SpliderPreview: React.FC<IProps> = ({ lang, product, setState}): JSX.Eleme
 	}, []);
 
 	
-	useEffect(() => {
+	/*useEffect(() => {
 		showSlide(product.selectedImage);
 		document.addEventListener("keyup", modalKeyListener);
 		//document.querySelector("body")?.classList.add("noscroll");
 		return (() => {
 			document.removeEventListener("keyup", modalKeyListener);
 		});
-	}, [product.selectedImage]);
+	}, [product.selectedImage]);*/
 
 
 

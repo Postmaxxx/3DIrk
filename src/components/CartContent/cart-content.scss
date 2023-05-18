@@ -1,0 +1,24 @@
+@use '/src/assets/css/variables' as *;
+
+
+.cart-content {
+    width: 100%;
+
+    
+    & .cart__item {
+        display: flex;
+        align-items: center;
+
+
+        & > .img__cont {
+            width: 100px;
+            height: 100px;
+
+            & > img {
+                height: 100%;
+                width: 100%;
+                object-fit: cover;
+            }
+        }
+    }
+}

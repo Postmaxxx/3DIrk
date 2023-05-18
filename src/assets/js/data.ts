@@ -7,29 +7,29 @@ import catalogPhoto1 from 'src/assets/img/catalog/1.png'
 export const pagesList = [
     {
         name: {
-            ru: "Главная",
-            en: 'Home'
+            ru: "главная",
+            en: 'home'
         },
         path: "/"
     },
     {
         name: {
-            ru: "Материалы",
-            en: 'Fibers'
+            ru: "материалы",
+            en: 'fibers'
         },
         path: "/fiber"
     },
     {
         name: {
-            ru: "Каталог",
-            en: 'Catalog'
+            ru: "каталог",
+            en: 'catalog'
         },
         path: "/catalog"
     },
     {
         name: {
-            ru: "Заказать",
-            en: 'Order'
+            ru: "заказать",
+            en: 'order'
         },
         path: "/order"
     },

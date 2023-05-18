@@ -8,6 +8,7 @@ import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { pagesList } from "src/assets/js/data";
 import { setNavCloseDt, setNavCloseMob, setNavOpenDt, setNavOpenMob }  from "../../redux/actions/base"
+import CartInformer from "src/components/CartInformer/CartInformer";
 
 
 const actionsList = {setNavCloseDt, setNavCloseMob, setNavOpenDt, setNavOpenMob }
@@ -73,8 +74,9 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened}): JSX.E
                                     <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
                                         to={page.path}
                                         data-text={page.name[lang]}
-                                        >
+                                    >
                                         {page.name[lang]}
+                                        {page.name.en === 'order' ? <div className="cart-informer__container"><CartInformer /></div> : null}
                                     </NavLink>
                                 </li>
                             )

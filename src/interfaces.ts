@@ -1,4 +1,3 @@
-import { printColors } from './assets/data/colors';
 import { ReactNode } from "react";
 import { AnyAction, ActionCreatorsMapObject } from "redux";
 import { Store } from 'redux'
@@ -604,7 +603,7 @@ export interface IOrderState {
 
 export interface IProductState extends IProduct {
     dataLoading: IDataLoading
-    selectedImage: number
+   // selectedImage: number
 }
 
 //============================================== Colors state
@@ -616,7 +615,7 @@ export interface IColorsState {
 
 //============================================== Cart state
 export interface ICartItem {
-    id: IProduct["id"]
+    product: IProduct
     amount: number
     fiber: IFiber["id"]
     color: IColor["id"]
@@ -628,7 +627,7 @@ export interface ICartState {
     dataLoading: IDataLoading
     dataSending: IDataSending
     items: ICartItem[]
-    newItems: number
+    //newItems: number
 }
 
 
