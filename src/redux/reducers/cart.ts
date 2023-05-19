@@ -52,10 +52,11 @@ const reducerCart  = (state: ICartState = initialCartState, action: IAction<unkn
             } 
 
         case actionsListCart.CHANGE_ITEM:
-            const itemToChange = action.payload as ICartItem
+            const itemToChange = action.payload as ICartItem;
+            const changedItems = state.items.map(item => itemToChange.id === item.id ? itemToChange : item)
             return {
                 ...state, 
-                items: state.items.map(item => itemToChange.product.id === item.product.id ? itemToChange : item)
+                items: changedItems
             } 
 
         case actionsListCart.REMOVE_ITEM:

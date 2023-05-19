@@ -54,8 +54,9 @@ const CartContent: React.FC<IProps> = ({lang, cart, colors, fibers, setState}): 
     }
     
     useEffect(() => {
-        if (cart.dataLoading.status !== 'loading')
-        setState.cart.saveCart(cart.items)
+        if (cart.dataLoading.status !== 'loading'){
+            setState.cart.saveCart(cart.items)
+        }
     }, [cart.items])
 
 
@@ -100,43 +101,48 @@ const CartContent: React.FC<IProps> = ({lang, cart, colors, fibers, setState}): 
                                 <div className="img__cont">
                                     <img src={item.product.imgs[0].url} alt={item.product.imgs[0].name[lang]} />
                                 </div>
-                                <div className="item__block">
-                                    <span>{lang === 'en' ? 'Product' : 'Наименование'}:</span>
-                                    <NavLink className="name-link" to={`../catalog/${item.product.id}`} onClick={() => onProductClick(item.product)}><span aria-label={lang === 'en' ? "Go to product page" : 'Перейти на страницу продукта'}>{item.product.name[lang]}{item.type ? ` (${item.type})` : ''}</span></NavLink>
-                                </div>
-                                <div className="item__block">
-                                    <span>{lang === 'en' ? 'Fiber' : 'Материал'}:</span>
-                                    <span className="fiber">{fiber}</span>
-                                </div>
-                                <div className="breaker_2sm"></div>
-                                <div className="item__block">
-                                    <span>{lang === 'en' ? 'Color' : 'Цвет'}:</span>
-                                    <div className="color__container">
-                                        {colors.colors
-                                            .filter(color => color.id === item.color)
-                                            .map(color => 
-                                                <div 
-                                                    key={i} 
-                                                    className={`color ${color.value === 'mixed' ? "color_mixed" : ''}`} 
-                                                    style={{backgroundColor: `#${color.value}`}} 
-                                                    title={color.name[lang]}>
-                                                </div>)}
+                                <div className="item-descr__container">
+                                    <div className="item__block">
+                                        <span>{lang === 'en' ? 'Product' : 'Наименование'}:</span>
+                                        <NavLink className="name-link" to={`../catalog/${item.product.id}`} onClick={() => onProductClick(item.product)}><span aria-label={lang === 'en' ? "Go to product page" : 'Перейти на страницу продукта'}>{item.product.name[lang]}</span></NavLink>
+                                    </div>
+                                    {item.type ? 
+                                        <div className="item__block">
+                                            <span>{lang === 'en' ? 'Type' : 'Модификация'}:</span>
+                                            <span className="fiber">{item.type}</span>
+                                        </div>
+                                    : 
+                                    null}
+                                    <div className="item__block">
+                                        <span>{lang === 'en' ? 'Fiber' : 'Материал'}:</span>
+                                        <span className="fiber">{fiber}</span>
+                                    </div>
+                                    <div className="breaker_2sm"></div>
+                                    <div className="item__block">
+                                        <span>{lang === 'en' ? 'Color' : 'Цвет'}:</span>
+                                        <div className="color__container">
+                                            {colors.colors
+                                                .filter(color => color.id === item.color)
+                                                .map(color => 
+                                                    <div 
+                                                        key={i} 
+                                                        className={`color ${color.value === 'mixed' ? "color_mixed" : ''}`} 
+                                                        style={{backgroundColor: `#${color.value}`}} 
+                                                        title={color.name[lang]}>
+                                                    </div>)}
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="item__block">
-                                    <span style={{alignSelf: 'center'}}>{lang === 'en' ? 'Amount' : 'Кол-во'}:</span>
-                                    <div className="amount__container">
-                                        <button className='amount-changer' aria-label='Decrease amount' onClick={(e) => {e.preventDefault(); changeAmount(item, item.amount > 2 ?  item.amount - 1 : 1)}}>–</button>
-                                        <input type="text" value={item.amount} onChange={(e) => {e.preventDefault(); changeAmount(item, Number(e.target.value))}} aria-label={lang === 'en' ? "Enter amount" : 'Введите количество'}/>
-                                        <button className='amount-changer' aria-label='Increase amount' onClick={(e) => {e.preventDefault(); changeAmount(item, item.amount + 1)}}>+</button>
-                                    </div>
-                                </div>
-                                <div className="item__block">
-                                    <span style={{color: "transparent"}}>.</span>
+                                <div className="item__amount-delete">
                                     <div className="delete__container">
                                         <div className="delete__wrapper">
                                             <Delete<ICartItem> onDelete={onDelete} onCancel={onCancel} onConfirm={onConfirm} idInstance={item} showConfirmation={showConfirmation} lang={lang}/>
                                         </div>
+                                    </div>
+                                    <div className="amount__container">
+                                        <button className='amount-changer' aria-label='Decrease amount' onClick={(e) => {e.preventDefault(); changeAmount(item, item.amount > 2 ?  item.amount - 1 : 1)}}>–</button>
+                                        <input type="text" value={item.amount} onChange={(e) => {e.preventDefault(); changeAmount(item, Number(e.target.value))}} aria-label={lang === 'en' ? "Enter amount" : 'Введите количество'}/>
+                                        <button className='amount-changer' aria-label='Increase amount' onClick={(e) => {e.preventDefault(); changeAmount(item, item.amount + 1)}}>+</button>
                                     </div>
                                 </div>
                             </div>
