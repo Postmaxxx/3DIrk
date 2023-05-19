@@ -29,6 +29,7 @@ const reducerCart  = (state: ICartState = initialCartState, action: IAction<unkn
             return {
                 ...state, 
                 items: action.payload as ICartItem[]
+                
             }
 
         case actionsListCart.ADD_ITEM: 
@@ -37,6 +38,8 @@ const reducerCart  = (state: ICartState = initialCartState, action: IAction<unkn
             let itemExist: boolean = false;
             const newItems: ICartItem[] = state.items.map(item => {
                 let itemTheSame: boolean = checklist.reduce((acc, checkItem) => newItem[checkItem] === item[checkItem] ? acc : false, true)
+                console.log('itemTheSame', itemTheSame);
+                
                 if (newItem.product.id !== item.product.id) {itemTheSame = false}
                 if (!itemTheSame) return item
                 itemExist = true
@@ -56,10 +59,10 @@ const reducerCart  = (state: ICartState = initialCartState, action: IAction<unkn
             } 
 
         case actionsListCart.REMOVE_ITEM:
-            const itemId = action.payload as IProduct["id"]
+            const itemId = action.payload as ICartItem
             return {
                 ...state, 
-                items: state.items.filter(item => itemId !== item.product.id)
+                items: state.items.filter(item => itemId !== item)
             } 
 
         default: return state

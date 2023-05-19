@@ -615,7 +615,16 @@ export interface IColorsState {
 
 //============================================== Cart state
 export interface ICartItem {
+    id: string
     product: IProduct
+    amount: number
+    fiber: IFiber["id"]
+    color: IColor["id"]
+    type: string
+}
+
+export interface ICartItemSave { //format for saving cart
+    product: IProduct["id"]
     amount: number
     fiber: IFiber["id"]
     color: IColor["id"]
@@ -638,7 +647,7 @@ export interface IFullState {
     fibers: IFibersState
     catalog: ICatalogState
     order: IOrderState
-    product: IProductState
+    product: IProductState //current product
     colors:  IColorsState
     cart: ICartState
 }

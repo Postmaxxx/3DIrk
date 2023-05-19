@@ -96,15 +96,9 @@ const SpliderSingle: React.FC<IProps> = ({lang, selectedCategory, selectedProduc
 	
 	useEffect(() => {
 		if (!_splideMain.current) return
-		console.log(_splideMain.current.offsetWidth);
-		/*containerSize.current = {
-			width:  _splideMain.current.offsetWidth,
-			height:  _splideMain.current.offsetHeight,
-		};*/
 
 		if (document.body.offsetWidth < 993) {
 			setProductsPerSlide(4)
-			
 		}
 		
 		

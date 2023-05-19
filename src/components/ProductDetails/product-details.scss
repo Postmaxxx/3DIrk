@@ -89,7 +89,7 @@
                 }
                 
 
-                &.mixed {
+                /*&.mixed {
                     background: conic-gradient(
                         hsl(360 100% 50%),
                         hsl(315 100% 50%),
@@ -101,7 +101,7 @@
                         hsl(45 100% 50%),
                         hsl(0 100% 50%)
                       );
-                }
+                }*/
 
                 &.selected::before {
                     content: '';

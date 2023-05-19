@@ -158,7 +158,7 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors, fibe
                     <div className="feature">
                         <label>{catalogProductDetails.type[lang]}: 
                             <select ref={_type}>
-                                <option key={-1} disabled selected hidden value={''}>Select type</option>
+                                <option key={-1} disabled selected hidden value={''}>{lang === 'en' ? 'Select type' : 'Выберите тип'}</option>
                                 {product.mods[lang].map((mod, i) => <option key={i} value={mod.part}>{mod.part}</option>)}
                             </select>
                         </label>
@@ -169,7 +169,7 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors, fibe
                 <div className="feature">
                     <label>{catalogProductDetails.fiber[lang]}: 
                         <select onChange={onChangeFiber}>
-                            <option key={-1} disabled hidden selected value={''}>Select fiber</option>
+                            <option key={-1} disabled hidden selected value={''}>{lang === 'en' ? 'Select fiber' : 'Выберите материал'}</option>
                             {fibersDetailed.map((fiber, i) => <option key={i} value={fiber.id}>{fiber.name[lang]}</option>)}
                         </select>
                     </label>
@@ -178,7 +178,7 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors, fibe
                     <span>{catalogProductDetails.colors[lang]}: </span>
                     {colors.colors.map((color, i) => {
                         const colorAvailable = fibers.fibersList.find(fiber => fiber.id === selectedFiber)?.colors.find(colorId => colorId === color.id)
-                        return <div key={i} onClick={colorAvailable ? () => onChangeColor(color.id) : undefined} className={`color ${color.value === 'mixed' && "mixed"} ${!colorAvailable && "disabled"} ${selectedColor === color.id && "selected"}`} style={{backgroundColor: `#${color.value}`}} title={color.name[lang]}></div>
+                        return <div key={i} onClick={colorAvailable ? () => onChangeColor(color.id) : undefined} className={`color ${color.value === 'mixed' ? "color_mixed" : ''} ${!colorAvailable && "disabled"} ${selectedColor === color.id && "selected"}`} style={{backgroundColor: `#${color.value}`}} title={color.name[lang]}></div>
                     })}
                 </div>
                 <div className="feature">

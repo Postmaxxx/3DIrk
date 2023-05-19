@@ -1,6 +1,6 @@
-import { IAction, ICartItem, ICartState, IDispatch, IProduct } from 'src/interfaces';
+import { IAction, ICartItem, ICartItemSave, ICartState, IDispatch, IProduct } from 'src/interfaces';
 import { actionsListCart } from './actionsList'
-
+import mockProducts from '../mocks/catalogFull';
 
 export const setLoadDataStatusCart = <T extends ICartState["dataLoading"]>(payload: T):IAction<T> => ({
     type: actionsListCart.SET_LOAD_DATA_STATUS_CART,
@@ -33,7 +33,7 @@ export const clearCart = <T>():IAction<T> => ({
     type: actionsListCart.CLEAR_CART
 });
 
-export const removeItem = <T extends IProduct["id"]>(payload: T):IAction<T> => ({
+export const removeItem = <T extends ICartItem>(payload: T):IAction<T> => ({
     type: actionsListCart.REMOVE_ITEM,
     payload
 });
@@ -42,10 +42,21 @@ export const removeItem = <T extends IProduct["id"]>(payload: T):IAction<T> => (
 export const loadCart = () => {
     return async function(dispatch: IDispatch) {
         dispatch(setLoadDataStatusCart({status: 'loading', message: `Loading cart`}))
-
-        const receivedData = localStorage.getItem('cart')
+        const receivedData: string = await new Promise((res, rej) => {
+            setTimeout(()=> {res(localStorage.getItem('cart') as string)}, 1000)
+        })
         if (receivedData) {
-            setCart(JSON.parse(receivedData))
+            console.log('raw cart loaded');
+            const loadedRawItems: ICartItemSave[] = JSON.parse(receivedData) || []
+
+            const filledItems: ICartItem[] = loadedRawItems
+                .map(item => {
+                    const productFull: IProduct | undefined = mockProducts.find(product => product.id === item.product)
+                    return productFull ? {...item, product: productFull } : undefined
+                }).filter((item): item is ICartItem => item !== undefined)
+            console.log('cart converted');
+                
+            dispatch(setCart(filledItems))
             dispatch(setLoadDataStatusCart({status: 'success', message: `Cart is loaded`}))
         } else {
             clearCart()
@@ -56,9 +67,19 @@ export const loadCart = () => {
 
 
 export const saveCart = (items: ICartItem[]) => {
+    console.log(items);
+    
     return async function(dispatch: IDispatch) {
         dispatch(setSendDataStatusCart({status: 'sending', message: `Saving cart`}))
-        localStorage.setItem('cart', JSON.stringify(items))
+        const dataToSave = items.map(item => {
+            return {
+                ...item,
+                product: item.product.id
+            }
+        })
+        console.log(dataToSave);
+        
+        localStorage.setItem('cart', JSON.stringify(dataToSave))
         dispatch(setSendDataStatusCart({status: 'success', message: `Cart is saved`}))
     }
 }

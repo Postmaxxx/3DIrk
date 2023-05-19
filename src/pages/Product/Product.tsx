@@ -5,14 +5,13 @@ import Preloader from 'src/components/Preloader/Preloader';
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import { ICatalogState, ICategories, IColor, IColorsState, IFiber, IFibersState, IFullState, IProductState, TId, TLang } from "src/interfaces";
+import { ICategories, IColorsState, IFibersState, IFullState, IProductState, TId, TLang } from "src/interfaces";
 import SpliderPreview from "src/components/Spliders/Preview/SpliderPreview";
 import { loadProduct } from "src/redux/actions/product"
 import { loadFibers } from "src/redux/actions/fibers"
 import { loadColors } from "src/redux/actions/colors"
-import { catalogProductDetails } from "src/assets/js/data";
 import ProductDetails from "src/components/ProductDetails/ProductDetails";
-import AddToCart from "src/components/AddToCart/AddToCart";
+
 
 
 const actionsListProduct = { loadProduct }
@@ -22,7 +21,7 @@ const actionsListFibers = { loadFibers }
 
 interface IPropsState {
 	selectedCategory: TId
-	selectedProduct: TId
+	//selectedProduct: TId
 	lang: TLang
 	categories: ICategories
     product: IProductState
@@ -41,13 +40,14 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 
-const Product: React.FC<IProps> = ({lang, selectedProduct, setState, product, colors, fibers }): JSX.Element => {
-    const productId = useParams().productId
+const Product: React.FC<IProps> = ({lang, setState, product, colors, fibers }): JSX.Element => {
+    const paramProductId = useParams().productId || ''
     const [loaded, setLoaded] = useState<boolean>(false)
-
+    
     useEffect(() => {
-        if (productId !== selectedProduct && productId) {
-            setState.product.loadProduct(productId)
+        if (paramProductId !== product.id) {
+            setState.product.loadProduct(paramProductId)
+            console.log(222);
             setLoaded(false)
         }
     }, [])
@@ -75,7 +75,7 @@ const Product: React.FC<IProps> = ({lang, selectedProduct, setState, product, co
             setLoaded(true)
         }
 
-        
+
     },[fibers.dataLoading.status, colors.dataLoading.status, product.dataLoading.status])
     
 
@@ -107,7 +107,7 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
 	selectedCategory: state.catalog.selectedCategory,
 	categories: state.catalog.categories,
-	selectedProduct: state.catalog.selectedProduct,
+	//selectedProduct: state.catalog.selectedProduct,
     product: state.product,
     colors: state.colors,
     fibers: state.fibers

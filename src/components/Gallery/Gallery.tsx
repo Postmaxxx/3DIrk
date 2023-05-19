@@ -10,10 +10,10 @@ import ImgWithPreloader from 'src/assets/js/ImgWithPreloader';
 import { NavLink } from 'react-router-dom';
 import { pagesList } from "src/assets/js/data";
 import { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedProduct, loadCategoriesList, loadCategory }  from "src/redux/actions/catalog"
-import { setProduct, setLoadDataStatusProduct, setSelectedImage }  from "src/redux/actions/product"
+import { setProduct, setLoadDataStatusProduct }  from "src/redux/actions/product"
 
 const actionsListCatalog = { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedProduct, loadCategoriesList, loadCategory  }
-const actionsListProduct = { setProduct, setLoadDataStatusProduct,setSelectedImage  }
+const actionsListProduct = { setProduct, setLoadDataStatusProduct  }
 
 interface IPropsReceived {
     products: IProduct[]
@@ -35,11 +35,10 @@ interface IProps extends IPropsState, IPropsActions, IPropsReceived {}
 
 const Gallery: React.FC<IProps> = ({lang, products, setState}):JSX.Element => {
 
-    const onClicked = (productId: IProduct["id"]) => {
-        setState.catalog.setSelectedProduct(productId)
-        setState.product.setSelectedImage(0)
+    const onClicked = (product: IProduct) => {
+        //setState.catalog.setSelectedProduct(product.id)
         setState.product.setLoadDataStatusProduct({status: 'success', message: ''})
-        setState.product.setProduct(products.find(product => product.id === productId) as IProduct)
+        setState.product.setProduct(product)
     }
 
 
@@ -50,7 +49,7 @@ const Gallery: React.FC<IProps> = ({lang, products, setState}):JSX.Element => {
                     <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
                         to={product.id}
                         key={product.id}
-                        onClick={() => onClicked(product.id)}
+                        onClick={() => onClicked(product)}
                         >
                         <div className='gallery__item' >
                             <div className="img__container">

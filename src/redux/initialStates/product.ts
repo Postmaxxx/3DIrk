@@ -1,8 +1,7 @@
 import { IProductState } from "src/interfaces"
 
 const initialProduct = {
-    selectedImage: 0,
-    dataLoading: {
+        dataLoading: {
         status: 'idle',
         message: ""
     },

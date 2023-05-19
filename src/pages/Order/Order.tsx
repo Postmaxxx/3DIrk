@@ -11,6 +11,7 @@ import MessageInfo from "src/components/MessageInfo/MessageInfo";
 import { orderBlock } from "src/assets/js/data";
 import { setName, setEmail, setPhone, setMessage, clearFiles, clearForm, addFiles, sendOrder, setSendDataStatus }  from "../../redux/actions/order"
 import CartContent from "src/components/CartContent/CartContent";
+import Delete from "src/components/Delete/Delete";
 
 const actionsList = { setName, setEmail, setPhone, setMessage, clearFiles, clearForm, addFiles, sendOrder, setSendDataStatus  }
 
@@ -39,10 +40,12 @@ const Order:React.FC<IProps> = ({lang, order, setState}): JSX.Element => {
     const _files = useRef<HTMLInputElement>(null)
     const _message = useRef<HTMLTextAreaElement>(null)
     const _filesGallery = useRef<HTMLDivElement>(null)
-    const _filesCleaner = useRef<HTMLDivElement>(null)
+    //const _filesCleaner = useRef<HTMLDivElement>(null)
 	const [modal, setModal] = useState<IModal>({visible: false})
 
     let dragCounter: number = 0
+
+    const [confirmation, setConfirmation] = useState<boolean>(false)
 
     const closeModal = () => {
 		setModal({visible: false})
@@ -216,6 +219,25 @@ const Order:React.FC<IProps> = ({lang, order, setState}): JSX.Element => {
         clearError(e)
     }
 
+
+    
+    const onCancel = () => {
+        setConfirmation(false);
+    }
+
+    const onConfirm = () => {
+        clearAttachedFiles()
+        setConfirmation(false)
+    }
+
+    const onDelete = () => {
+        setConfirmation(true)
+    }
+
+    const showConfirmation = (): boolean => {
+        return confirmation
+    }
+
     return (
         <section className="order">
             <div className='container_page'>
@@ -302,9 +324,10 @@ const Order:React.FC<IProps> = ({lang, order, setState}): JSX.Element => {
                                                 </div>
                                                 <input id="files" type="file" multiple onChange={onSelectFiles} ref={_files}/>
                                                 <div className="preview-gallery" ref={_filesGallery}></div>
-                                                <div className="drop-area__cleaner" ref={_filesCleaner} onClick={clearAttachedFiles} aria-label={lang === 'en' ? "Clear list" : 'Очистить список'} title={lang === 'en' ? "Clear list" : 'Очистить список'}>
-                                                    <img src={iconFilesClear} alt={lang === 'en' ? "Clear" : 'Очистить'} />
+                                                <div className="button_delete__container">
+                                                    <Delete<String> onDelete={onDelete} onCancel={onCancel} onConfirm={onConfirm} idInstance="cartCleaner" showConfirmation={showConfirmation} lang={lang}/>
                                                 </div>
+                                                
                                             </div>
                                         </div>
                                     </div>
@@ -316,7 +339,7 @@ const Order:React.FC<IProps> = ({lang, order, setState}): JSX.Element => {
                                     <CartContent />
                                 </div>
 
-                                <button type="submit" className="button_order" onClick={onSubmit}>{lang === 'en' ? 'Send' : "Отправить"}</button>
+                                <button type="submit" className="button_order" onClick={onSubmit}>{lang === 'en' ? 'Order' : "Отправить"}</button>
                             </form>
                         </div>
                     </div>

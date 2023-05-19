@@ -11,16 +11,16 @@ export const setLoadDataStatusProduct = <T extends IProductState["dataLoading"]>
 });
 
 
-export const setProduct = <T extends Omit<IProductState, "dataLoading" | "selectedImage">>(payload: T):IAction<T> => ({
+export const setProduct = <T extends Omit<IProductState, "dataLoading">>(payload: T):IAction<T> => ({
     type: actionsListProduct.SET_DATA_PRODUCT,
     payload
 });
-
+/*
 export const setSelectedImage = <T extends IProductState["selectedImage"]>(payload: T):IAction<T> => ({
     type: actionsListProduct.SET_SELECTED_IMAGE,
     payload
 });
-
+*/
 
 
 export const loadProduct = (id: IProduct["id"]) => {

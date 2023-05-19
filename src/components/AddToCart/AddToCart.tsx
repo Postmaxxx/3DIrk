@@ -1,4 +1,4 @@
-import { ICartState, IColor, IFiber, IFullState, IModal, IProduct, TLang } from 'src/interfaces';
+import { ICartItem, ICartState, IColor, IFiber, IFullState, IModal, IProduct, TLang } from 'src/interfaces';
 import './add-to-cart.scss'
 import { useRef, useEffect, useState, useMemo } from "react";
 import { addItem, saveCart } from "src/redux/actions/cart"
@@ -7,6 +7,7 @@ import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import Modal from "src/components/Modal/Modal";
 import MessageInfo from '../MessageInfo/MessageInfo';
+var uniqid = require('uniqid');
 
 
 const actionsListCart = { addItem, saveCart }
@@ -66,7 +67,7 @@ const AddToCart: React.FC<IProps> = ({product, type, fiber, color, lang, cart, s
             setAmount(value)
         }
         if (e.target.value === '') {
-            setAmount(1)
+            setAmount(0)
         }
     }
 
@@ -78,25 +79,25 @@ const AddToCart: React.FC<IProps> = ({product, type, fiber, color, lang, cart, s
         const errorsList: string[] = []
         !color && errorsList.push(lang === 'en' ? 'Please choose the color' : 'Пожалуйста, выберите цвет')
         !fiber && errorsList.push(lang === 'en' ? 'Please choose the fiber' : 'Пожалуйста, выберите материал')
-        !type && errorsList.push(lang === 'en' ? 'Please, choose the type' : 'Пожалуйста, выберите версию')
+        !type && errorsList.push(lang === 'en' ? 'Please choose the type' : 'Пожалуйста, выберите версию')
+        !amount && errorsList.push(lang === 'en' ? 'Please set the amount' : 'Пожалуйста, укажите количество')
 
-        if (!color || !fiber || !type) {
+        if (!color || !fiber || !type || !amount) {
             setMessage({
                 status: 'error',
                 header: lang === 'en' ? 'Error' : 'Ошибка',
                 text: errorsList
             })
-            
-            
         } else {
-            const itemsInCart = cart.items.reduce((total, item) => total + item.amount, 0) + amount
+            const amountItemsInCart = cart.items.reduce((total, item) => total + item.amount, 0) + amount
             setMessage({
                 status: 'success',
                 header: lang === 'en' ? 'Added' : 'Добавлено',
-                text: lang === 'en' ? [`This item has been added to your сart. You now have ${itemsInCart} item${itemsInCart > 1 ? 's' : ''} in your сart`, ] : [`Этот товар был успешно добавлен в Вашу корзину. Сейчас у Вас товаров в корзине: ${itemsInCart}`, ]
+                text: lang === 'en' ? [`This item has been added to your сart. You now have ${amountItemsInCart} item${amountItemsInCart > 1 ? 's' : ''} in your сart`, ] : [`Этот товар был успешно добавлен в Вашу корзину. Сейчас у Вас товаров в корзине: ${amountItemsInCart}`, ]
             })
-            setState.cart.addItem({product, fiber, color, amount, type})
-            setState.cart.saveCart([...cart.items, {product, fiber, color, amount, type}]);
+            const newItem: ICartItem = {product, fiber, color, amount, type, id: uniqid()}
+            setState.cart.addItem(newItem)
+            setState.cart.saveCart([...cart.items, newItem]);
             setAmount(1)
         }
         setModal({visible: true})

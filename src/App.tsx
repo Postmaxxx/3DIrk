@@ -2,6 +2,14 @@ import { Routes, Route, BrowserRouter } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import Preloader from "./components/Preloader/Preloader"; 
 import "./assets/css/_base.scss";
+import { IDataLoading, IFullState, IOrderState, TLang } from "./interfaces";
+import { AnyAction, bindActionCreators } from "redux";
+import { Dispatch } from "redux";
+import { connect } from "react-redux";
+import { loadFibers } from "src/redux/actions/fibers"
+import { loadColors } from "src/redux/actions/colors"
+import { loadCart }  from "src/redux/actions/cart"
+import { useState, useEffect, useRef, KeyboardEventHandler } from 'react'
 
 const LazyThemeSwitcher = lazy(() => import("./components/ThemeSwitcher/ThemeSwitcher"));
 const LazyLangSwitcher = lazy(() => import("./components/LangSwitcher/LangSwitcher"));
@@ -14,7 +22,37 @@ const LazyCatalogPage = lazy(() => import("./pages/Catalog/Catalog"));
 const LazyProduct = lazy(() => import("./pages/Product/Product"));
 
 
-const App:React.FC = () => {
+const actionsCartList = { loadCart }
+const actionsListColors = { loadColors }
+const actionsListFibers = { loadFibers }
+
+
+interface IPropsState {
+    lang: TLang
+	cartLoad: IDataLoading
+	colorsLoad: IDataLoading
+	fibersLoad: IDataLoading
+}
+
+interface IPropsActions {
+    setState: {
+        cart: typeof actionsCartList,
+        colors: typeof actionsListColors,
+        fibers: typeof actionsListFibers,
+    }
+}
+
+interface IProps extends IPropsState, IPropsActions {}
+
+
+
+
+const App:React.FC<IProps> = ({lang, cartLoad, colorsLoad, fibersLoad, setState}):JSX.Element => {
+	
+	cartLoad.status === 'idle' && setState.cart.loadCart()
+	colorsLoad.status === 'idle' && setState.colors.loadColors()
+	fibersLoad.status === 'idle' && setState.fibers.loadFibers()
+	
 	
 	return (
 		<BrowserRouter>
@@ -40,5 +78,23 @@ const App:React.FC = () => {
 
 
 
+const mapStateToProps = (state: IFullState): IPropsState => ({
+    lang: state.base.lang,
+	cartLoad: state.cart.dataLoading,
+	colorsLoad: state.colors.dataLoading,
+	fibersLoad: state.fibers.dataLoading,
+
+})
+
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
+    setState: {
+		cart: bindActionCreators(actionsCartList, dispatch),
+        colors: bindActionCreators(actionsListColors, dispatch),
+        fibers: bindActionCreators(actionsListFibers, dispatch),
+	}
+})
+  
+  
     
-export default App
+export default connect(mapStateToProps, mapDispatchToProps)(App)
+

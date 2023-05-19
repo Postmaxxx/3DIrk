@@ -14,12 +14,18 @@ interface IPropsState {
 
 
 const CartInformer: React.FC<IPropsState> = ({lang, cart}): JSX.Element => {
+    
     const itemsInCart = cart.items.reduce((total, item) => total + item.amount, 0)
-
     return (
-        <div className="cart-informer">
-            <span>{itemsInCart > 0 ? `+${itemsInCart}` : null}</span>
-        </div>
+        <>
+            {cart.dataLoading.status === 'success' ? 
+                <div className="cart-informer">
+                    <span>{itemsInCart > 0 ? `+${itemsInCart}` : null}</span>
+                </div>
+                :
+                null
+            }
+        </>
         
     )
 

@@ -6,10 +6,10 @@ import "./splider-preview.scss";
 import { IFullState, IImg, IModal, IProduct, IProductState, ISpliderOptions, TLang } from "src/interfaces";
 import Splide from "@splidejs/splide";
 import ImgWithPreloader from "src/assets/js/ImgWithPreloader";
-import { loadProduct, setSelectedImage } from "src/redux/actions/product"
+import { loadProduct } from "src/redux/actions/product"
 import Modal from "src/components/Modal/Modal";
 import ModalImage from "src/components/MessageImage/MessageImage";
-const actionsList = { loadProduct, setSelectedImage }
+const actionsList = { loadProduct }
 
 
 interface IPropsState {
