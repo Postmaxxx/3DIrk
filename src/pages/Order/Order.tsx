@@ -12,10 +12,12 @@ import CartContent from "src/components/CartContent/CartContent";
 import AddFiles, { IAddFilesFunctions } from "src/components/AddFiles/AddFiles";
 import { loadFibers } from "src/redux/actions/fibers"
 import { loadColors } from "src/redux/actions/colors"
+import { clearCart } from "src/redux/actions/cart"
 
 const actionsListOrder = { setName, setEmail, setPhone, setMessage, clearFiles, clearForm, addFiles, sendOrder, setSendDataStatus  }
 const actionsListColors = { loadColors }
 const actionsListFibers = { loadFibers }
+const actionsListCart = { clearCart }
 
 
 interface IPropsState {
@@ -31,6 +33,7 @@ interface IPropsActions {
         order: typeof actionsListOrder
         colors: typeof actionsListColors,
         fibers: typeof actionsListFibers,
+        cart: typeof actionsListCart,
     }
 }
 
@@ -65,6 +68,7 @@ const Order:React.FC<IProps> = ({lang, order, cart, colors, fibers, setState}): 
             setState.order.clearFiles();
             setState.order.clearForm();
             addFilesRef.current?.clearAttachedFiles()
+            setState.cart.clearCart()
         }
         setState.order.setSendDataStatus({status: 'idle', message: ''})
 	}
@@ -109,18 +113,38 @@ const Order:React.FC<IProps> = ({lang, order, cart, colors, fibers, setState}): 
             return
         }
         
-        const text: string = `Date: ${currentDate.toISOString().slice(0,10)}%0ATime: ${currentDate.toISOString().slice(11, 19)}%0AName: ${name}%0AEmail: ${email}%0APhone: ${phone}%0A%0AMessage: ${message}` ;
+       // console.log(cart.items);
 
-        const cartText = cart.items.reduce((text: string, item: ICartItem, i: number) => {
-            return `${i}) ${item.product.name.ru} (${item.type}), 
-                материал: ${fibers.fibersList.find(fiberItem => fiberItem.id === item.fiber)?.name.ru},
-                цвет: ${colors.colors.find(color => color.id === item.color)?.name.ru},
-                количество: ${item.amount}
-                
-                `
+        const textCart = cart.items.reduce((text: string, item: ICartItem, i: number) => {
+            
+            return text + `${i+1}) ${item.product.name[lang]}
+${lang === 'en' ? 'Options' : 'Версия'}: ${item.type} 
+${lang === 'en' ? 'Fiber' : 'Материал'}: ${fibers.fibersList.find(fiberItem => fiberItem.id === item.fiber)?.name[lang]}
+${lang === 'en' ? 'Color' : 'Цвет'}: ${colors.colors.find(color => color.id === item.color)?.name[lang]}
+${lang === 'en' ? 'Amount' : 'Количество'}: ${item.amount}\n\n`
         }, '')
 
-        setState.order.sendOrder({lang, text, sendFilesArr: order.files})
+        const textOrder: string = `
+${lang === 'en' ? 'Date' : 'Дата'}: ${currentDate.toISOString().slice(0,10)}
+${lang === 'en' ? 'Time' : 'Время'}: ${currentDate.toISOString().slice(11, 19)}
+${lang === 'en' ? 'Name' : 'Имя'}: ${name}
+${lang === 'en' ? 'Email' : 'Почта'}: ${email}
+${lang === 'en' ? 'Phone' : 'Телефон'}: ${phone}
+${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
+
+        const text = `${lang === 'en' ? 'New order' : 'Новый заказ'}:${textOrder}\n\n\n ${lang === 'en' ? 'Cart content' : 'Содержимое корзины'}: \n${textCart}${order.files.length > 0 ? (lang==='en' ? '\n\n\nAttached files:' : '\n\n\nПрикрепленные файлы:') : ''}`
+        
+        setState.order.sendOrder({lang, text, filesArr: order.files, cart, informer})
+    }
+
+
+    const informer = (message: TLangText) => {
+        setMessage({
+            status: '',
+            header: lang === 'en' ? "Sending order..." : "Отправка заказа...",
+            text: [message[lang]],
+        })
+        setModal({visible: true})
     }
 
 
@@ -268,7 +292,7 @@ const Order:React.FC<IProps> = ({lang, order, cart, colors, fibers, setState}): 
 
                                 <button 
                                     type="submit" 
-                                    disabled={cart.dataLoading.status !== 'success' && fibers.dataLoading.status !== 'success' && colors.dataLoading.status !== 'success'} 
+                                    disabled={cart.dataLoading.status !== 'success' && fibers.dataLoading.status !== 'success' && colors.dataLoading.status !== 'success' && order.dataSending.status !== 'sending'} 
                                     className="button_order" 
                                     onClick={onSubmit}>
                                         {lang === 'en' ? 'Order' : "Отправить"}
@@ -308,6 +332,7 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
 		order: bindActionCreators(actionsListOrder, dispatch),
 		colors: bindActionCreators(actionsListColors, dispatch),
 		fibers: bindActionCreators(actionsListFibers, dispatch),
+		cart: bindActionCreators(actionsListCart, dispatch),
 	}
 })
   

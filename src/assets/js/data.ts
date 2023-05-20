@@ -3,7 +3,7 @@ import { IFibersBlock, IHeroBlock, INewsBlock, IPage } from "src/interfaces";
 import imageOrder1 from 'src/assets/img/order/1.png'
 import catalogPhoto1 from 'src/assets/img/catalog/1.png'
 
-
+/*
 export const pagesList = [
     {
         name: {
@@ -34,10 +34,10 @@ export const pagesList = [
         path: "/order"
     },
 ] satisfies IPage[]
+*/
 
 
-
-
+/*
 export const heroBlock = {
     header: {
         ru: 'Заголовок',
@@ -74,10 +74,10 @@ export const heroBlock = {
         ]
     }
 } satisfies IHeroBlock
+*/
 
 
-
-
+/*
 export const newsBlock = { //NewsList
     header: {
         ru: 'Последние новости',
@@ -97,10 +97,10 @@ export const newsBlock = { //NewsList
     }
 }  satisfies INewsBlock
 
+*/
 
 
-
-
+/*
 
 export const fibersBlock = {
     header: {
@@ -129,7 +129,7 @@ export const fibersBlock = {
     }
 } satisfies IFibersBlock
 
-
+*/
 
 
 

@@ -28,6 +28,8 @@
             width: 100%;
             aspect-ratio: 1;
             align-self: center;
+            border-radius: 5px;
+            overflow: hidden;
             //flex-shrink: 0;
 
             /*@include respond-to(sm) {
@@ -154,13 +156,13 @@
                 }
                 
                 & .delete__wrapper {
-                    width: 20px;
-                    height: 20px;
+                    width: 22px;
+                    height: 22px;
                     position: relative;
 
                     @include respond-to(sm) {
-                        width: 16px;
-                        height: 16px;
+                        width: 19px;
+                        height: 19px;
                     }
 
                 }

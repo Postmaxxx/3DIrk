@@ -1959,24 +1959,16 @@ const mockProducts = [
                 },
             },
         ],
-        mods: {
-            en: [
-                {
-                    part: '10*10*10mm'
-                },
-                {
-                    part: '20*20*20mm'
-                },
-            ],
-            ru: [
-                {
-                    part: '10*10*10мм'
-                },
-                {
-                    part: '20*20*20мм'
-                },
-            ]
-        }
+        mods: [
+            {
+                en:  '10*10*10mm',
+                ru: '10*10*10мм'
+            },
+            {
+                en:  '20*20*20mm',
+                ru: '20*20*20мм'
+            },
+        ]
     },
     {
         categoryId: 'c1',
@@ -2077,30 +2069,20 @@ const mockProducts = [
                 },
             },
         ],
-        mods: {
-            en: [
-                {
-                    part: 'for Audi'
-                },
-                {
-                    part: 'for Mitsubishi'
-                },
-                {
-                    part: 'for BMW'
-                },
-            ],
-            ru: [
-                {
-                    part: 'для Audi'
-                },
-                {
-                    part: 'для Mitsubishi'
-                },
-                {
-                    part: 'для BMW'
-                },
-            ]
-        }
+        mods: [
+            {
+                en:  'for Audi',
+                ru: 'для Audi'
+            },
+            {
+                en:  'for Mitsubishi',
+                ru: 'для Mitsubishi'
+            },
+            {
+                en:  'for BMW',
+                ru: 'для BMW'
+            },
+        ]
     },
     {
         categoryId: 'c2',
@@ -2232,24 +2214,17 @@ const mockProducts = [
                 },
             },
         ], 
-        mods: {
-            en: [
-                {
-                    part: 'with motor'
-                },
-                {
-                    part: 'without motor'
-                },
-            ],
-            ru: [
-                {
-                    part: 'С моторчиком'
-                },
-                {
-                    part: 'Без моторчика'
-                },
-            ]
-        }
+        mods: [
+            {
+                en:  'with motor',
+                ru: 'С моторчиком'
+            },
+            {
+                en:  'without motor',
+                ru: 'Без моторчика'
+            },
+
+        ]
     },
     {
         categoryId: 'c3',
@@ -2353,24 +2328,7 @@ const mockProducts = [
                 },
             },
         ], 
-        mods: {
-            en: [
-                {
-                    part: 'with motor'
-                },
-                {
-                    part: 'without motor'
-                },
-            ],
-            ru: [
-                {
-                    part: 'С моторчиком'
-                },
-                {
-                    part: 'Без моторчика'
-                },
-            ]
-        }
+        mods: []
     },
     {
         categoryId: 'c3',
@@ -2474,24 +2432,7 @@ const mockProducts = [
                 },
             },
         ], 
-        mods: {
-            en: [
-                {
-                    part: 'with motor'
-                },
-                {
-                    part: 'without motor'
-                },
-            ],
-            ru: [
-                {
-                    part: 'С моторчиком'
-                },
-                {
-                    part: 'Без моторчика'
-                },
-            ]
-        }
+        mods: []
     },
     {
         categoryId: 'c3',
@@ -2595,24 +2536,7 @@ const mockProducts = [
                 },
             },
         ], 
-        mods: {
-            en: [
-                {
-                    part: 'with motor'
-                },
-                {
-                    part: 'without motor'
-                },
-            ],
-            ru: [
-                {
-                    part: 'С моторчиком'
-                },
-                {
-                    part: 'Без моторчика'
-                },
-            ]
-        }
+        mods: []
     },
     {
         categoryId: 'c3',
@@ -2716,24 +2640,7 @@ const mockProducts = [
                 },
             },
         ], 
-        mods: {
-            en: [
-                {
-                    part: 'with motor'
-                },
-                {
-                    part: 'without motor'
-                },
-            ],
-            ru: [
-                {
-                    part: 'С моторчиком'
-                },
-                {
-                    part: 'Без моторчика'
-                },
-            ]
-        }
+        mods: []
     },
     {
         categoryId: 'c3',
@@ -2837,24 +2744,7 @@ const mockProducts = [
                 },
             },
         ], 
-        mods: {
-            en: [
-                {
-                    part: 'with motor'
-                },
-                {
-                    part: 'without motor'
-                },
-            ],
-            ru: [
-                {
-                    part: 'С моторчиком'
-                },
-                {
-                    part: 'Без моторчика'
-                },
-            ]
-        }
+        mods: []
     },
     {
         categoryId: 'c3',
@@ -2958,24 +2848,7 @@ const mockProducts = [
                 },
             },
         ], 
-        mods: {
-            en: [
-                {
-                    part: 'with motor'
-                },
-                {
-                    part: 'without motor'
-                },
-            ],
-            ru: [
-                {
-                    part: 'С моторчиком'
-                },
-                {
-                    part: 'Без моторчика'
-                },
-            ]
-        }
+        mods: []
     },
     {
         categoryId: 'c3',
@@ -3079,24 +2952,7 @@ const mockProducts = [
                 },
             },
         ], 
-        mods: {
-            en: [
-                {
-                    part: 'with motor'
-                },
-                {
-                    part: 'without motor'
-                },
-            ],
-            ru: [
-                {
-                    part: 'С моторчиком'
-                },
-                {
-                    part: 'Без моторчика'
-                },
-            ]
-        }
+        mods: []
     },
     {
         categoryId: 'c3',
@@ -3200,24 +3056,7 @@ const mockProducts = [
                 },
             },
         ], 
-        mods: {
-            en: [
-                {
-                    part: 'with motor'
-                },
-                {
-                    part: 'without motor'
-                },
-            ],
-            ru: [
-                {
-                    part: 'С моторчиком'
-                },
-                {
-                    part: 'Без моторчика'
-                },
-            ]
-        }
+        mods: []
     },
     {
         categoryId: 'c3',
@@ -3321,24 +3160,7 @@ const mockProducts = [
                 },
             },
         ], 
-        mods: {
-            en: [
-                {
-                    part: 'with motor'
-                },
-                {
-                    part: 'without motor'
-                },
-            ],
-            ru: [
-                {
-                    part: 'С моторчиком'
-                },
-                {
-                    part: 'Без моторчика'
-                },
-            ]
-        }
+        mods: []
     },
     {
         categoryId: 'c3',
@@ -3442,24 +3264,7 @@ const mockProducts = [
                 },
             },
         ], 
-        mods: {
-            en: [
-                {
-                    part: 'with motor'
-                },
-                {
-                    part: 'without motor'
-                },
-            ],
-            ru: [
-                {
-                    part: 'С моторчиком'
-                },
-                {
-                    part: 'Без моторчика'
-                },
-            ]
-        }
+        mods: []
     },
     {
         categoryId: 'c3',
@@ -3563,24 +3368,7 @@ const mockProducts = [
                 },
             },
         ], 
-        mods: {
-            en: [
-                {
-                    part: 'with motor'
-                },
-                {
-                    part: 'without motor'
-                },
-            ],
-            ru: [
-                {
-                    part: 'С моторчиком'
-                },
-                {
-                    part: 'Без моторчика'
-                },
-            ]
-        }
+        mods: []
     },
     {
         categoryId: 'c3',
@@ -3684,24 +3472,7 @@ const mockProducts = [
                 },
             },
         ], 
-        mods: {
-            en: [
-                {
-                    part: 'with motor'
-                },
-                {
-                    part: 'without motor'
-                },
-            ],
-            ru: [
-                {
-                    part: 'С моторчиком'
-                },
-                {
-                    part: 'Без моторчика'
-                },
-            ]
-        }
+        mods: []
     },
 ] satisfies IProductBE[]
 

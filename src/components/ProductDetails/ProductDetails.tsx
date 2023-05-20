@@ -84,7 +84,7 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors, fibe
 
         
     },[fibers.dataLoading.status, colors.dataLoading.status, product.dataLoading.status])
-
+        
 
     return (
         <div className="details__descr">
@@ -102,12 +102,12 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors, fibe
                         </div>
                     )
                 })}
-                {product.mods[lang].length > 0 ? 
+                {product.mods.length > 0 ? 
                     <div className="feature">
                         <label>{catalogProductDetails.type[lang]}: 
-                            <select ref={_type}>
-                                <option key={-1} disabled selected hidden value={''}>{lang === 'en' ? 'Select type' : 'Выберите тип'}</option>
-                                {product.mods[lang].map((mod, i) => <option key={i} value={mod.part}>{mod.part}</option>)}
+                            <select ref={_type} defaultValue={'-1'}>
+                                <option key={-1} value={'-1'} disabled hidden>{lang === 'en' ? 'Select type' : 'Выберите тип'}</option>
+                                {product.mods.map((mod, i) => <option key={i} value={i}>{mod[lang]}</option>)}
                             </select>
                         </label>
                     </div>
@@ -116,8 +116,8 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors, fibe
                 }
                 <div className="feature">
                     <label>{catalogProductDetails.fiber[lang]}: 
-                        <select onChange={onChangeFiber}>
-                            <option key={-1} disabled hidden selected value={''}>{lang === 'en' ? 'Select fiber' : 'Выберите материал'}</option>
+                        <select onChange={onChangeFiber} defaultValue={''}>
+                            <option key={-1} disabled hidden value={''}>{lang === 'en' ? 'Select fiber' : 'Выберите материал'}</option>
                             {fibersDetailed.map((fiber, i) => <option key={i} value={fiber.id}>{fiber.name[lang]}</option>)}
                         </select>
                     </label>
@@ -137,7 +137,7 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors, fibe
             </div>
             <AddToCart 
                 product={product} 
-                type={product.mods[lang].length > 0 ? _type.current?.value || '' : '-'} 
+                type={product.mods.length > 0 ? product.mods[Number(_type.current?.value)] : {en: '-', ru: '-'}} 
                 fiber={selectedFiber} 
                 color={selectedColor}
                 />

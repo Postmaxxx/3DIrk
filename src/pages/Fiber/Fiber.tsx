@@ -8,7 +8,6 @@ import "@splidejs/react-splide/css";
 import Preloader from 'src/components/Preloader/Preloader';
 import { loadFibers }  from "../../redux/actions/fibers"
 import { loadColors }  from "../../redux/actions/colors"
-import { fibersBlock } from 'src/assets/js/data';
 
 const actionsListFibers = { loadFibers }
 const actionsListColors = { loadColors }
@@ -51,7 +50,7 @@ const Fiber:React.FC<IProps> = ({lang, fibers, colors, setState}):JSX.Element =>
             <div className="container_page">
                 <div className="container">
                     <div className="fiber">
-                        <h1>{fibersBlock.header[lang]}</h1>
+                        <h1>{lang === 'en' ? 'Materials using for 3D printing' : 'Материалы, используемые в печати'}</h1>
                         {loaded  ? (
                             <div className="fibers__container">
                                 {fibers.fibersList.map((fiber, i) => {

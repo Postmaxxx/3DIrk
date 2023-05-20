@@ -3,7 +3,6 @@ import { useState, useEffect, Fragment } from 'react'
 import { connect } from "react-redux";
 import News from '../News/News'
 import { IFullState, INewsState, TLang } from 'src/interfaces'
-import { newsBlock } from 'src/assets/js/data';
 import { AnyAction, Dispatch, bindActionCreators } from 'redux';
 import Preloader from '../Preloader/Preloader';
 import { loadNews }  from "../../redux/actions/news"
@@ -38,7 +37,7 @@ const NewsBlock:React.FC<IProps>  = ({lang, news, setState}): JSX.Element => {
 
     return (
         <>
-            <h2>{newsBlock.header[lang]}</h2>
+            <h2>{lang === 'en' ? 'Recent news' : 'Последние новости'}</h2>
             <div className="news-block">
                 {news.dataLoading.status === 'success' ? 
                 <>

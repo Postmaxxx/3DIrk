@@ -59,7 +59,7 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, saveFiles}, ref)
         setFiles(prev => [...prev, ...(e.dataTransfer?.files as FileList)])
     }
     
-    const onSelectFiles = () => {
+    const onSelectFiles = () => {       
         _dropArea.current?.classList.remove('active')
         setFiles(prev => [...prev, ...(_files.current?.files as FileList)])
     }
@@ -73,8 +73,8 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, saveFiles}, ref)
         
         (_filesGallery.current as HTMLDivElement).innerHTML = '';
         const imageTypes: string[] = ['jpg', 'jpeg', 'bmp', 'svg', 'png', 'tiff', 'webp'];
-
-        arrayOfFiles.reduce((acc: Promise<string>, currentFile: File) => {
+        arrayOfFiles.reduce(async (acc: Promise<string>, currentFile: File) => {
+            await acc
             return new Promise<string>((res) => {
                 acc.then(() => {
                     const reader =  new FileReader();

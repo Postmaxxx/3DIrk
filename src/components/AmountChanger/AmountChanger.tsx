@@ -16,7 +16,7 @@ const AmountChanger = <T,>({idInstance, onChange, initialAmount, lang}: IProps<T
     const changeAmount = (newAmount: number) => {
         const amountToSet = newAmount >= 0 ? newAmount : 0
         setAmount(amountToSet)
-        onChange(idInstance, amount)
+        onChange(idInstance, amountToSet)
     }
 
     return (

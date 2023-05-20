@@ -6,7 +6,6 @@ import navLogo from "../../assets/img/nav_logo.png"
 import { connect } from "react-redux";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
-import { pagesList } from "src/assets/js/data";
 import { setNavCloseDt, setNavCloseMob, setNavOpenDt, setNavOpenMob }  from "../../redux/actions/base"
 import CartInformer from "src/components/CartInformer/CartInformer";
 
@@ -27,6 +26,36 @@ interface IPropsActions {
 
 interface IProps extends IPropsState, IPropsActions {}
 
+const pagesList = [
+    {
+        name: {
+            ru: "главная",
+            en: 'home'
+        },
+        path: "/"
+    },
+    {
+        name: {
+            ru: "материалы",
+            en: 'fibers'
+        },
+        path: "/fiber"
+    },
+    {
+        name: {
+            ru: "каталог",
+            en: 'catalog'
+        },
+        path: "/catalog"
+    },
+    {
+        name: {
+            ru: "заказать",
+            en: 'order'
+        },
+        path: "/order"
+    },
+] satisfies IPage[]
 
 const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened}): JSX.Element => {
     //const scrollTimeout = useRef<any>()

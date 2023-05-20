@@ -21,10 +21,7 @@ const initialProduct = {
     imgs: [],
     fibers: [],
     features: [],
-    mods: {
-        en: [],
-        ru: []
-    }
+    mods: []
 } satisfies IProductState
 
 export default initialProduct

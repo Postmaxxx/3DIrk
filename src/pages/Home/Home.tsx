@@ -3,8 +3,6 @@ import SpliderMax from 'src/components/CarouselMax/CarouselMax';
 import './home.scss'
 import { connect } from "react-redux";
 import { IFullState, TLang } from "../../interfaces";
-import { heroBlock } from 'src/assets/js/data';
-import ModalController from 'src/components/Modal/modalController';
 
 interface IPropsState {
     lang: TLang
@@ -25,6 +23,7 @@ interface IProps extends IPropsState, IPropsActions {}
                             <Preloader />
                         )}
                         */
+
 const Home:React.FC<IProps> = ({lang} : IProps): JSX.Element => {
     return (
         <section className='home'>
@@ -33,9 +32,22 @@ const Home:React.FC<IProps> = ({lang} : IProps): JSX.Element => {
                     <div className='page_home'>
                         <h1>{lang === 'en' ? 'Header' : 'Заголовок'}</h1>
                         <div className="block_text">
-                            {heroBlock.text[lang].map((item, i) => (
-                                <p key={i}>{item.part}</p>
-                            ))}
+                            {lang === 'en' ? 
+                            <>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quo tempore atque et nostrum qui vitae! Dolor necessitatibus ipsum consectetur optio.</p>
+                                <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Necessitatibus, eveniet odit veritatis totam exercitationem id perspiciatis dolores, ipsum quos reprehenderit, consectetur facere harum rerum libero tempore incidunt modi! Placeat cumque quidem velit porro amet quam possimus dolorum eaque exercitationem quod!</p>
+                                <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Necessitatibus, eveniet odit veritatis totam exercitationem id perspiciatis dolores, ipsum quos reprehenderit, consectetur facere harum rerum libero tempore incidunt modi! Placeat cumque quidem velit porro amet quam possimus dolorum eaque exercitationem quod!</p>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quo tempore atque et nostrum qui vitae! Dolor necessitatibus ipsum consectetur optio.</p>
+                            </>
+                            :
+                            <>
+                                <p>ВАП в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра</p>
+                                <p>ВАП в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра</p>
+                                <p>ВАП в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра</p>
+                                <p>ВАП в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра</p>
+                            </>    
+                            }
+
                         </div>
                         <div className="slider__container">
                             {/*<SpliderMax />*/}

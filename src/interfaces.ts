@@ -516,7 +516,7 @@ export interface IProduct {
     imgs: IImg[]
     fibers: IFiber["id"][]
     features: IFeature[]
-    mods: TLangTextArr
+    mods: TLangText[]
 }
 
 /*export interface IProductShort {
@@ -622,15 +622,15 @@ export interface ICartItem {
     amount: number
     fiber: IFiber["id"]
     color: IColor["id"]
-    type: string
+    type: TLangText
 }
 
-export interface ICartItemSave { //format for saving cart
+export interface ICartItemSave { //format for saving cart, BE
     product: IProduct["id"]
     amount: number
     fiber: IFiber["id"]
     color: IColor["id"]
-    type: string
+    type: TLangText
 }
 
 
@@ -638,7 +638,6 @@ export interface ICartState {
     dataLoading: IDataLoading
     dataSending: IDataSending
     items: ICartItem[]
-    //newItems: number
 }
 
 
@@ -671,5 +670,5 @@ export interface IProductBE {
     imgs: IImg[]
     fibers: IFiber["id"][]
     features: IFeature[]
-    mods: TLangTextArr
+    mods: TLangText[]
 }

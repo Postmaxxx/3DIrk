@@ -68,8 +68,12 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 80px;
+            width: 95px;
             overflow: hidden;
+            padding: 5px;
+            background-color: var(--main);
+            transition: background-color $transition-theme;
+            border-radius: 5px;
 
             & > div {
                 height: 100px;
@@ -77,6 +81,9 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                border: 2px solid var(--main_vv);
+                transition: border $transition-theme;
+                border-radius: 5px;
 
 
                 

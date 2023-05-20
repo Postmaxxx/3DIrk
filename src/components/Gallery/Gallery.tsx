@@ -8,7 +8,6 @@ import { useEffect } from 'react';
 import { catalogBlock } from "src/assets/js/data";
 import ImgWithPreloader from 'src/assets/js/ImgWithPreloader';
 import { NavLink } from 'react-router-dom';
-import { pagesList } from "src/assets/js/data";
 import { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedProduct, loadCategoriesList, loadCategory }  from "src/redux/actions/catalog"
 import { setProduct, setLoadDataStatusProduct }  from "src/redux/actions/product"
 

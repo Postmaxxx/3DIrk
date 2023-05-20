@@ -94,7 +94,7 @@ const CartContent: React.FC<IProps> = ({lang, cart, colors, fibers, setState}): 
                                         {item.type ? 
                                             <div className="item__block">
                                                 <span>{lang === 'en' ? 'Type' : 'Модификация'}:</span>
-                                                <span className="fiber">{item.type}</span>
+                                                <span className="fiber">{item.type[lang]}</span>
                                             </div>
                                         : 
                                         null}
