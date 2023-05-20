@@ -38,8 +38,6 @@ const reducerCart  = (state: ICartState = initialCartState, action: IAction<unkn
             let itemExist: boolean = false;
             const newItems: ICartItem[] = state.items.map(item => {
                 let itemTheSame: boolean = checklist.reduce((acc, checkItem) => newItem[checkItem] === item[checkItem] ? acc : false, true)
-                console.log('itemTheSame', itemTheSame);
-                
                 if (newItem.product.id !== item.product.id) {itemTheSame = false}
                 if (!itemTheSame) return item
                 itemExist = true

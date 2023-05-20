@@ -67,8 +67,6 @@ export const loadCart = () => {
 
 
 export const saveCart = (items: ICartItem[]) => {
-    console.log(items);
-    
     return async function(dispatch: IDispatch) {
         dispatch(setSendDataStatusCart({status: 'sending', message: `Saving cart`}))
         const dataToSave = items.map(item => {
@@ -77,8 +75,6 @@ export const saveCart = (items: ICartItem[]) => {
                 product: item.product.id
             }
         })
-        console.log(dataToSave);
-        
         localStorage.setItem('cart', JSON.stringify(dataToSave))
         dispatch(setSendDataStatusCart({status: 'success', message: `Cart is saved`}))
     }
