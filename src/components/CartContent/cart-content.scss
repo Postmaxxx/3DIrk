@@ -7,24 +7,39 @@
     min-height: 30px;
     
     & .cart__item {
-        display: flex;
-        align-items: stretch;
-        justify-content: flex-start;
+        display: grid;
+        grid-template-columns: 120px 1fr auto;
+        grid-template-rows: auto;
+        //align-items: stretch;
+        //justify-content: flex-start;
         border-bottom: 1px solid var(--main_vv);
-        padding: 20px 0px 20px 10px;
-        width: 100%;
+        padding: 20px 0px;
+        //width: 100%;
         
-        @include respond-to(md) {
-            flex-wrap: wrap;
-            justify-content: space-between;
+        @include respond-to(xs) {
+            /*flex-wrap: wrap;
+            justify-content: space-between;*/
+            grid-template-columns: 90px 1fr;
+            grid-template-rows: auto auto;
         }
 
 
         & > .img__cont {
-            width: 120px;
-            height: 120px;
+            width: 100%;
+            aspect-ratio: 1;
             align-self: center;
-            flex-shrink: 0;
+            //flex-shrink: 0;
+
+            /*@include respond-to(sm) {
+                width: 90px;
+                height: 90px;
+            }
+
+
+            @include respond-to(xs) {
+                width: 60px;
+                height: 80px;
+            }*/
 
             & > img {
                 height: 100%;
@@ -33,48 +48,85 @@
             }
         }
 
-        .item-descr__container {
-            display: flex;
-            flex-direction: column;
-            margin-left: 20px;
-            justify-content: space-between;
+
+        & .item__product-link {
+            display: block;
             margin-right: auto;
-            padding-right: 30px;
+            display: flex;
+            align-items: stretch;
 
-            & .item__block {
+            & .item-descr__container {
                 display: flex;
-                flex-direction: row;
-                align-items: center;
+                flex-direction: column;
+                margin-left: 20px;
+                justify-content: space-between;
+                padding-right: 30px;
 
-                & span {
-                    font-size: 20px;
-                }
-                            
-                & > span:first-of-type {
-                    font-size: 20px;
-                    text-align: center;
-                    align-self: flex-start;
-                    text-align: center;
-                    margin-right: 10px;
+                @include respond-to(sm) {
+                    padding-right: 0;
+                    margin-left: 15px;
                 }
 
-                & .color__container {
-                    margin-left: auto;
-                    margin-right: auto;
+                @include respond-to(xs) {
+                    margin-left: 10px;
+                    flex-shrink: 2;
+                }
+    
+                & .item__block {
                     display: flex;
-                    flex-grow: 1;
+                    flex-direction: row;
                     align-items: center;
     
-                    & .color {
-                        width: 20px;
-                        height: 20px;
-                        border-radius: 50%;
-                    }
-                }
-                
-            }
+                    & span {
+                        font-size: 20px;
 
+                        @include respond-to(sm) {
+                            font-size: 16px;
+                        }
+                        @include respond-to(xs) {
+                            font-size: 14px;
+                        }
+                    }
+                                
+                    & > span:first-of-type {
+                        //font-size: 20px;
+                        text-align: center;
+                        align-self: flex-start;
+                        text-align: center;
+                        margin-right: 10px;
+                    }
+    
+                    & .colors__container {
+                        margin-left: auto;
+                        margin-right: auto;
+                        display: flex;
+                        flex-grow: 1;
+                        align-items: center;
+        
+                        & .color {
+                            width: 20px;
+                            height: 20px;
+                            border-radius: 50%;
+                            border: 1px solid var(--text);
+
+                            @include respond-to(sm) {
+                                width: 16px;
+                                height: 16px;
+                            }
+
+                            
+                            @include respond-to(xs) {
+                                width: 13px;
+                                height: 13px;
+                            }
+                        }
+                    }
+                    
+                }
+    
+            }
         }
+
         
         .item__amount-delete {
             //border: 1px solid red;
@@ -83,18 +135,43 @@
             justify-content: center;
             align-items: flex-end;
 
+            @include respond-to(xs) {
+                margin-top: 10px;
+                grid-column-start: 1;
+                grid-column-end: 3;
+                flex-direction: row-reverse;
+                justify-content: space-between;
+                align-items: center ;
+            }
+
             & .delete__container {
                 display: flex;
                 align-items: center;
                 margin-bottom: auto;
+
+                @include respond-to(xs) {
+                    margin-bottom: 0;
+                }
                 
                 & .delete__wrapper {
                     width: 20px;
                     height: 20px;
                     position: relative;
+
+                    @include respond-to(sm) {
+                        width: 16px;
+                        height: 16px;
+                    }
+
                 }
             }
 
+            & .amount__container {
+                display: flex;
+                align-items: center;
+                margin-bottom: auto;
+            }
+/*
             & .amount__container {
                 display: flex;
                 align-items: center;
@@ -135,7 +212,7 @@
             
                 }
             }
-
+*/
         }
 
 
@@ -172,7 +249,7 @@
                 align-items: center;
             }
 
-            & .color__container {
+            & .colors__container {
                 margin-left: auto;
                 margin-right: auto;
                 display: flex;
@@ -329,15 +406,6 @@
         }*/
 
 
-
-        .breaker_md {
-            display: none;
-            height: 1px;
-            @include respond-to(md) {
-                display: block;
-                flex-basis: 100%;
-            }
-        }
 
         
         .breaker_sm {

@@ -4,8 +4,7 @@ import './home.scss'
 import { connect } from "react-redux";
 import { IFullState, TLang } from "../../interfaces";
 import { heroBlock } from 'src/assets/js/data';
-
-
+import ModalController from 'src/components/Modal/modalController';
 
 interface IPropsState {
     lang: TLang

@@ -64,6 +64,7 @@
                 position: relative;
                 cursor: pointer;
                 margin-top: 5px;
+                border: 1px solid var(--text);
 
                 &:not(.disabled):not(.selected) {
 

@@ -1,4 +1,4 @@
-import { ICartItem, ICartState, IColor, IFiber, IFullState, IModal, IProduct, TLang } from 'src/interfaces';
+import { ICartItem, ICartState, IColor, IFiber, IFullState, IModal, IProduct, TLang, TLangText } from 'src/interfaces';
 import './add-to-cart.scss'
 import { useRef, useEffect, useState, useMemo } from "react";
 import { addItem, saveCart } from "src/redux/actions/cart"
@@ -7,14 +7,11 @@ import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import Modal from "src/components/Modal/Modal";
 import MessageInfo from '../MessageInfo/MessageInfo';
+import AmountChanger from '../AmountChanger/AmountChanger';
 var uniqid = require('uniqid');
 
 
 const actionsListCart = { addItem, saveCart }
-
-
-
-
 
 
 interface IPropsState {
@@ -61,20 +58,6 @@ const AddToCart: React.FC<IProps> = ({product, type, fiber, color, lang, cart, s
 		setModal({visible: false})
 	}
     
-    const setNewAmount: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-        const value = Number(e.target.value)
-        if (value) {
-            setAmount(value)
-        }
-        if (e.target.value === '') {
-            setAmount(0)
-        }
-    }
-
-    const changeAmount = (newAmount: number) => {
-        newAmount >0 && setAmount(newAmount)
-    }
-
     const addToCart = () => {
         const errorsList: string[] = []
         !color && errorsList.push(lang === 'en' ? 'Please choose the color' : 'Пожалуйста, выберите цвет')
@@ -95,7 +78,14 @@ const AddToCart: React.FC<IProps> = ({product, type, fiber, color, lang, cart, s
                 header: lang === 'en' ? 'Added' : 'Добавлено',
                 text: lang === 'en' ? [`This item has been added to your сart. You now have ${amountItemsInCart} item${amountItemsInCart > 1 ? 's' : ''} in your сart`, ] : [`Этот товар был успешно добавлен в Вашу корзину. Сейчас у Вас товаров в корзине: ${amountItemsInCart}`, ]
             })
-            const newItem: ICartItem = {product, fiber, color, amount, type, id: uniqid()}
+            const newItem: ICartItem = {
+                product, 
+                fiber, 
+                color, 
+                amount, 
+                type, 
+                id: uniqid()
+            }
             setState.cart.addItem(newItem)
             setState.cart.saveCart([...cart.items, newItem]);
             setAmount(1)
@@ -104,13 +94,18 @@ const AddToCart: React.FC<IProps> = ({product, type, fiber, color, lang, cart, s
 
     }
 
+
+    const onAmountChange = (item: IProduct['id'], amount: number) => {
+        setAmount(amount)
+    }
+
     return (
         <>
             <div className="cart-adder">
                 <span>{lang === 'en' ? 'Amount' : 'Количество'}: </span>
-                <button className='amount-changer' title='Decrease amount' onClick={() => changeAmount(amount - 1)}>–</button>
-                <input type="text" value={amount} onChange={setNewAmount}/>
-                <button className='amount-changer' title='Increase amount' onClick={() => changeAmount(amount + 1)}>+</button>
+                <div className="amount-changer__container">
+                    <AmountChanger<IProduct['id']> idInstance={product.id} initialAmount={amount} lang={lang} onChange={onAmountChange} />
+                </div>
                 <button className='button_news' title='Add to cart' onClick={addToCart}>{lang === 'en' ? 'Add to cart' : 'Добавить в корзину'}</button>
             </div>
             <Modal {...{visible: modal.visible, close: closeModal, escExit: true}}>

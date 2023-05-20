@@ -17,7 +17,7 @@
         font-weight: 700;
     }
 
-    & input {
+    /*& input {
         font-size: 24px;
         padding-right: 5px;
         font-weight: 700;
@@ -50,6 +50,14 @@
             margin-right: 20px;
         }
 
+    }*/
+
+    & .amount-changer__container {
+            margin-left: 20px;
+            margin-right: 20px;
+        & input {
+            font-size: 24px;
+        }
     }
 
     & .button_news {
@@ -63,6 +71,9 @@
 
         @include respond-to(sm) {
             width: 65%;
+            margin-top: 30px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         @include respond-to(xs) {

@@ -13,7 +13,6 @@ section.order {
     
         .order__block {
             display: flex;
-            //margin-top: 30px;
             justify-content: center;
             
             & > .img__container {
@@ -43,6 +42,7 @@ section.order {
                 }
     
                 @include respond-to(sm) {
+                    padding: 50px 20px;
                     width: 100%;
                 }
 
@@ -188,13 +188,17 @@ section.order {
 
                 & > button {
                     margin-top: 40px;
-
+                    
                     @include respond-to(sm) {
                         margin-top: 30px;
                     }
 
                     @include respond-to(xs) {
                         width: 100%;
+                    }
+
+                    &:disabled {
+                        opacity: 0.3;
                     }
 
                 }

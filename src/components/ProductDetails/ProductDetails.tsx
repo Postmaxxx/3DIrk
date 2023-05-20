@@ -1,4 +1,4 @@
-import { ICartState, ICategories, IColor, IColorsState, IFiber, IFibersState, IFullState, IModal, IProductState, TId, TLang, TLangTextArr } from 'src/interfaces'
+import { ICartState, ICategories, IColor, IColorsState, IFiber, IFibersState, IFullState, IModal, IProductState, TId, TLang, TLangText, TLangTextArr } from 'src/interfaces'
 import './product-details.scss'
 import { useRef, useEffect, useState, useMemo } from "react";
 import { AnyAction, bindActionCreators } from "redux";
@@ -57,6 +57,8 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors, fibe
     const [fibersDetailed, setFibersDetailed] = useState<IFiber[]>([])
     const [selectedFiber, setSelectedFiber] = useState<IFiber["id"]>('')
     const [selectedColor, setSelectedColor] = useState<IColor["id"]>('')
+    const [selectedColorName, setSelectedColorName] = useState<TLangText>()
+    const [selectedFiberName, setSelectedFiberName] = useState<TLangText>()
     const [amount, setAmount] = useState<number>(1)
 	/*const [modal, setModal] = useState<IModal>({visible: false})
     const [message, setMessage] = useState<IMessageCart>({header: '', status: '', text: []})*/
@@ -82,60 +84,6 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors, fibe
 
         
     },[fibers.dataLoading.status, colors.dataLoading.status, product.dataLoading.status])
-
-
-
-    /*const closeModal = () => {
-		setModal({visible: false})
-	}
-
-
-    const setNewAmount: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-        const value = Number(e.target.value)
-        if (value) {
-            setAmount(value)
-        }
-        if (e.target.value === '') {
-            setAmount(1)
-        }
-    }
-
-    const changeAmount = (newAmount: number) => {
-        newAmount >0 && setAmount(newAmount)
-    }
-
-
-    const addToCart = () => {
-        const errorsList: string[] = []
-        !selectedColor && errorsList.push(lang === 'en' ? 'Please choose the color' : 'Пожалуйста, выберите цвет')
-        !selectedFiber && errorsList.push(lang === 'en' ? 'Please choose the fiber' : 'Пожалуйста, выберите материал')
-        product.mods[lang].length > 0 && !_type.current?.value && errorsList.push(lang === 'en' ? 'Please, choose the type' : 'Пожалуйста, выберите версию')
-
-        if (!selectedColor || !selectedFiber || (product.mods[lang].length > 0 && !_type.current?.value)) {
-            setMessage({
-                status: 'error',
-                header: lang === 'en' ? 'Error' : 'Ошибка',
-                text: errorsList
-            })
-            
-            
-        } else {
-            const fiberName = fibersDetailed.find(fiber => fiber.id === selectedFiber)
-            const colorName = colors.colors.find(color => selectedColor === color.id)
-            const type = _type.current?.value
-            const name = product.name
-            console.log(cart);
-            
-            setMessage({
-                status: 'success',
-                header: name[lang],
-                text: lang === 'en' ? [`A new item has been added to your Cart. You now have ${cart.newItems + amount} items in your Cart`, ] : [`Новый товар успешно добавлен в Вашу корзину. Сейчас у Вас ${cart.newItems + amount} товаров в корзине`, ]
-            })
-            setAmount(1)
-        }
-        setModal({visible: true})
-
-    }*/
 
 
     return (
@@ -187,23 +135,12 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors, fibe
                 </div>
                 
             </div>
-            {/*<div className="cart-adder">
-                <span>Amount: </span>
-                <button className='amount-changer' title='Decrease amount' onClick={() => changeAmount(amount - 1)}>–</button>
-                <input type="text" value={amount} onChange={setNewAmount}/>
-                <button className='amount-changer' title='Increase amount' onClick={() => changeAmount(amount + 1)}>+</button>
-                <button className='button_news' title='Add to cart' onClick={addToCart}>Add to cart</button>
-            </div>
-            <Modal {...{visible: modal.visible, close: closeModal, escExit: true}}>
-                <MessageInfo {...{  
-                    status: message.status,
-                    header: message.header,
-                    text: message.text, 
-                    buttonText: lang === 'en' ? 'Close' : "Закрыть", 
-                    buttonAction: closeModal
-                }}/>
-            </Modal> */}
-            <AddToCart product={product} type={product.mods[lang].length > 0 ? _type.current?.value || '' : '-'} fiber={selectedFiber} color={selectedColor}/>
+            <AddToCart 
+                product={product} 
+                type={product.mods[lang].length > 0 ? _type.current?.value || '' : '-'} 
+                fiber={selectedFiber} 
+                color={selectedColor}
+                />
         </div>
     )
 }

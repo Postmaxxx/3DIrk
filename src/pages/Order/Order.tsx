@@ -2,7 +2,7 @@ import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import './order.scss'
-import { IFullState, IModal, IOrderState, TLang, TLangText, TLangTextArr } from "src/interfaces";
+import { ICartItem, ICartState, IColorsState, IFibersState, IFullState, IModal, IOrderState, TLang, TLangText, TLangTextArr } from "src/interfaces";
 import { useState, useEffect, useRef, KeyboardEventHandler } from 'react'
 import Modal from "src/components/Modal/Modal";
 import MessageInfo from "src/components/MessageInfo/MessageInfo";
@@ -10,26 +10,45 @@ import { orderBlock } from "src/assets/js/data";
 import { setName, setEmail, setPhone, setMessage, clearFiles, clearForm, addFiles, sendOrder, setSendDataStatus }  from "../../redux/actions/order"
 import CartContent from "src/components/CartContent/CartContent";
 import AddFiles, { IAddFilesFunctions } from "src/components/AddFiles/AddFiles";
+import { loadFibers } from "src/redux/actions/fibers"
+import { loadColors } from "src/redux/actions/colors"
 
-const actionsList = { setName, setEmail, setPhone, setMessage, clearFiles, clearForm, addFiles, sendOrder, setSendDataStatus  }
+const actionsListOrder = { setName, setEmail, setPhone, setMessage, clearFiles, clearForm, addFiles, sendOrder, setSendDataStatus  }
+const actionsListColors = { loadColors }
+const actionsListFibers = { loadFibers }
+
 
 interface IPropsState {
     lang: TLang,
     order: IOrderState
+    cart: ICartState
+    colors: IColorsState
+    fibers: IFibersState
 }
 
 interface IPropsActions {
     setState: {
-        order: typeof actionsList
+        order: typeof actionsListOrder
+        colors: typeof actionsListColors,
+        fibers: typeof actionsListFibers,
     }
 }
 
 interface IProps extends IPropsState, IPropsActions {}
 
 
+interface IMessage {
+    status: string
+    header: string
+    text: string[]
+}
 
+interface ICheckErrorItem {
+    ref: React.RefObject<HTMLInputElement | HTMLTextAreaElement>
+    name: TLangText
+}
 
-const Order:React.FC<IProps> = ({lang, order, setState}): JSX.Element => {
+const Order:React.FC<IProps> = ({lang, order, cart, colors, fibers, setState}): JSX.Element => {
 
     const _name = useRef<HTMLInputElement>(null)
     const _email = useRef<HTMLInputElement>(null)
@@ -37,7 +56,7 @@ const Order:React.FC<IProps> = ({lang, order, setState}): JSX.Element => {
     const _message = useRef<HTMLTextAreaElement>(null)
 	const [modal, setModal] = useState<IModal>({visible: false})
     const addFilesRef = useRef<IAddFilesFunctions>(null)
-
+    const [message, setMessage] = useState<IMessage>({status: '', header: '', text: []})
 
 
     const closeModal = () => {
@@ -52,11 +71,18 @@ const Order:React.FC<IProps> = ({lang, order, setState}): JSX.Element => {
 
 
     const checkErrors = (): boolean => {
-        const feildsToCheck: Array<React.RefObject<HTMLInputElement | HTMLTextAreaElement>> = [_name,_email,_phone,_message]
+        const feildsToCheck: Array<ICheckErrorItem> = [
+            {ref: _name, name: {en: 'name', ru: 'имя'}},
+            {ref: _email, name: {en: 'email', ru: 'почта'}},
+            {ref: _phone, name: {en: 'phone', ru: 'телефон'}},
+            {ref: _message, name: {en: 'message', ru: 'сообщение'}},
+        ]
         let isWrong: boolean = false
+        setMessage(prev => ({status: 'error', header: lang === 'en' ? 'Errors found' : 'Обнаружены ошибки', text: []}))
         feildsToCheck.forEach(field => {
-            if (!field.current?.checkValidity()) {
-                field.current?.parentElement?.classList.add('error')
+            if (!field.ref.current?.checkValidity()) {
+                setMessage(prev => ({...prev, text: prev.text.concat(lang === 'en' ? `Field "${field.name[lang]}" is incorrect` : `Поле "${field.name[lang]}" заполнено неверно`)}))
+                field.ref.current?.parentElement?.classList.add('error')
                 isWrong = true
             }
         })
@@ -78,15 +104,33 @@ const Order:React.FC<IProps> = ({lang, order, setState}): JSX.Element => {
         const phone:string = order.phone;
         const email:string = order.email;
         const message:string = order.message;
-        if (checkErrors()) return
+        if (checkErrors()) {
+            setModal({visible: true})
+            return
+        }
         
         const text: string = `Date: ${currentDate.toISOString().slice(0,10)}%0ATime: ${currentDate.toISOString().slice(11, 19)}%0AName: ${name}%0AEmail: ${email}%0APhone: ${phone}%0A%0AMessage: ${message}` ;
+
+        const cartText = cart.items.reduce((text: string, item: ICartItem, i: number) => {
+            return `${i}) ${item.product.name.ru} (${item.type}), 
+                материал: ${fibers.fibersList.find(fiberItem => fiberItem.id === item.fiber)?.name.ru},
+                цвет: ${colors.colors.find(color => color.id === item.color)?.name.ru},
+                количество: ${item.amount}
+                
+                `
+        }, '')
 
         setState.order.sendOrder({lang, text, sendFilesArr: order.files})
     }
 
+
     useEffect(() => {
-        if (order.dataSending.status !== 'idle') {
+        if (order.dataSending.status === 'success' || order.dataSending.status === 'error') {
+            setMessage({
+                status: order.dataSending.status,
+                header: order.dataSending.status === 'success' ? lang === 'en' ? "Success" : "Отправлено" : lang === 'en' ? "Error" : "Ошибка",
+                text: [order.dataSending.message],
+            })
             setModal({visible: true})
         }
     }, [order.dataSending.status])
@@ -222,20 +266,26 @@ const Order:React.FC<IProps> = ({lang, order, setState}): JSX.Element => {
                                     <CartContent />
                                 </div>
 
-                                <button type="submit" className="button_order" onClick={onSubmit}>{lang === 'en' ? 'Order' : "Отправить"}</button>
+                                <button 
+                                    type="submit" 
+                                    disabled={cart.dataLoading.status !== 'success' && fibers.dataLoading.status !== 'success' && colors.dataLoading.status !== 'success'} 
+                                    className="button_order" 
+                                    onClick={onSubmit}>
+                                        {lang === 'en' ? 'Order' : "Отправить"}
+                                    </button>
                             </form>
                         </div>
                     </div>
                 </div>
             </div>
             <Modal {...{visible: modal.visible, close: closeModal, escExit: true}}>
-					<MessageInfo {...{
-                        status: order.dataSending.status,
-                        header: order.dataSending.status === 'success' ? lang === 'en' ? "Success" : "Отправлено" : lang === 'en' ? "Error" : "Ошибка",
-                        text: [order.dataSending.message], 
-                        buttonText: lang === 'en' ? 'Close' : "Закрыть", 
-                        buttonAction: closeModal
-                    }}/>
+				<MessageInfo {...{
+                    status: message.status,
+                    header: message.header,
+                    text: message.text, 
+                    buttonText: lang === 'en' ? 'Close' : "Закрыть", 
+                    buttonAction: closeModal
+                }}/>
 			</Modal> 
         </section>
     )
@@ -248,11 +298,16 @@ const Order:React.FC<IProps> = ({lang, order, setState}): JSX.Element => {
 const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
     order: state.order,
+    cart: state.cart,
+    colors: state.colors,
+    fibers: state.fibers,
 })
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
     setState: {
-		order: bindActionCreators(actionsList, dispatch)
+		order: bindActionCreators(actionsListOrder, dispatch),
+		colors: bindActionCreators(actionsListColors, dispatch),
+		fibers: bindActionCreators(actionsListFibers, dispatch),
 	}
 })
   

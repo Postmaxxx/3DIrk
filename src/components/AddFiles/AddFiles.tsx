@@ -25,7 +25,6 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, saveFiles}, ref)
     const _filesGallery = useRef<HTMLDivElement>(null)
     let dragCounter: number = 0
     const [files, setFiles] = useState<File[]>([])
-    const [confirmation, setConfirmation] = useState<boolean>(false)
 
     
     
@@ -123,25 +122,10 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, saveFiles}, ref)
     }, [files])
 
 
-        
-    const onCancel = () => {
-        setConfirmation(false);
-    }
 
-    const onConfirm = () => {
+    const remove = (idInstance: string) => {
         clearFiles()
-        setConfirmation(false)
     }
-
-    const onDelete = () => {
-        setConfirmation(true)
-    }
-
-    const showConfirmation = (): boolean => {
-        return confirmation
-    }
-
-    
 
 
     return (
@@ -156,7 +140,7 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, saveFiles}, ref)
             <input id="files" type="file" multiple onChange={onSelectFiles} ref={_files}/>
             <div className="preview-gallery" ref={_filesGallery}></div>
             <div className="clear-files">
-                <Delete<String> onDelete={onDelete} onCancel={onCancel} onConfirm={onConfirm} idInstance="cartCleaner" showConfirmation={showConfirmation} lang={lang}/>
+                <Delete<string> remove={remove} idInstance="cartCleaner" lang={lang}/>
             </div>
         </div>
     );
