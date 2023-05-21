@@ -26,7 +26,7 @@ interface IProps extends IPropsState, IPropsActions {}
 
 const Home:React.FC<IProps> = ({lang} : IProps): JSX.Element => {
     return (
-        <section className='home'>
+        <div className='page page_home'>
             <div className="container_page">
                 <div className="container">
                     <div className='page_home'>
@@ -56,7 +56,7 @@ const Home:React.FC<IProps> = ({lang} : IProps): JSX.Element => {
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
     )
 }
 

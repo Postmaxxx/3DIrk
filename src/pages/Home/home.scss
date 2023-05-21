@@ -1,6 +1,6 @@
 @use '/src/assets/css/variables' as *;
 
-section.home {
+.page_home {
     background-color: var(--bg);
     transition: background-color $transition-theme;
     flex-grow: 1;

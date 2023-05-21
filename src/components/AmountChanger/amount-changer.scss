@@ -15,7 +15,7 @@
         border: 1px solid var(--main_vv);
         background-color: var(--text_contrast);
         color: var(--text);
-        transition: color 1s, background-color 1s;
+        transition: color 1s, background-color $transition_theme, border $transition_theme;
         border-radius: 5px;
         height: 30px;
 
@@ -34,9 +34,8 @@
         line-height: 30px;
         font-weight: 800;
         cursor: pointer;
-        transition: color 1s, background-color 1s;
+        transition: color 1s, background-color 1s, opacity $transition_fast;
         opacity: 1;
-        transition: opacity $transition_fast;
 
         @include respond-to(sm) {
             line-height: 25px;

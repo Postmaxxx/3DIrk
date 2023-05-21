@@ -5,9 +5,9 @@ import News from '../News/News'
 import { IFullState, INewsState, TLang } from 'src/interfaces'
 import { AnyAction, Dispatch, bindActionCreators } from 'redux';
 import Preloader from '../Preloaders/Preloader';
-import { loadNews }  from "../../redux/actions/news"
+import { loadAllNews }  from "../../redux/actions/news"
 
-const actionsList = { loadNews }
+const actionsList = { loadAllNews }
 
 interface IPropsState {
     lang: TLang,
@@ -31,7 +31,7 @@ const NewsBlock:React.FC<IProps>  = ({lang, news, setState}): JSX.Element => {
 
     useEffect(()=> {
         if (news.dataLoading.status === 'idle') {
-            setState.news.loadNews()
+            setState.news.loadAllNews()
         }
     },[])
 
@@ -41,9 +41,9 @@ const NewsBlock:React.FC<IProps>  = ({lang, news, setState}): JSX.Element => {
             <div className="news-block">
                 {news.dataLoading.status === 'success' ? 
                 <>
-                    {news.newsList.map((news, i) => (
+                    {news.newsList.map((newsPiece, i) => (
                         <Fragment key={i}>
-                            {i < newsDisplayed && <News news={news} lang={lang}/>}
+                            {i < newsDisplayed && <News newsPiece={newsPiece} lang={lang}/>}
                         </Fragment>
                     ))}
                     <div className="break-new-line"></div>

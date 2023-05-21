@@ -44,7 +44,7 @@ const Gallery: React.FC<IProps> = ({lang, products, setState}):JSX.Element => {
         <div className="gallery__container">
             {products.map((product):JSX.Element => {
                 return (
-                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
+                    <NavLink
                         to={product.id}
                         key={product.id}
                         onClick={() => onClicked(product)}

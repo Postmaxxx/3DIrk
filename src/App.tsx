@@ -20,6 +20,7 @@ const LazyFiberPage = lazy(() => import("./pages/Fiber/Fiber"));
 const LazyOrderPage = lazy(() => import("./pages/Order/Order"));
 const LazyCatalogPage = lazy(() => import("./pages/Catalog/Catalog"));
 const LazyProduct = lazy(() => import("./pages/Product/Product"));
+const LazyNewsDetails = lazy(() => import("./pages/NewsDetails/NewsDetails"));
 
 
 const actionsCartList = { loadCart }
@@ -68,6 +69,7 @@ const App:React.FC<IProps> = ({lang, cartLoad, colorsLoad, fibersLoad, setState}
 					<Route index element={<Suspense fallback={<Preloader />}><LazyCatalogPage /></Suspense>} />
 					<Route path=":productId" element={<Suspense fallback={<Preloader />}><LazyProduct /></Suspense>} />
 				</Route>
+				<Route path="news/:newsId" element={<Suspense fallback={<Preloader />}><LazyNewsDetails /></Suspense>} />
 			</Routes>
 
 			<LazyFooter />

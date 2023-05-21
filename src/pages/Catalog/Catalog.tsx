@@ -45,7 +45,7 @@ const Catalog:React.FC<IProps> = ({colorsLoading, fibersLoading, setState}): JSX
 
 
     return (
-        <section className="catalog">
+        <div className="page page_catalog">
             <div className="container_page">
                 <div className="container">
                     <CatalogIntro />
@@ -55,7 +55,7 @@ const Catalog:React.FC<IProps> = ({colorsLoading, fibersLoading, setState}): JSX
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
     )
 }
 

@@ -561,6 +561,7 @@ export interface ICatalogState {
 
 //================================================news state
 export interface INewsItem {
+    id: TId
     header: TLangText
     date: Date
     short: TLangText

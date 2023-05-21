@@ -203,7 +203,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
 
 
     return (
-        <section className="order">
+        <div className="page_order">
             <div className='container_page'>
                 <div className="container">
                     <div className="page_order">
@@ -310,7 +310,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
                     buttonAction: closeModal
                 }}/>
 			</Modal> 
-        </section>
+        </div>
     )
 }
 

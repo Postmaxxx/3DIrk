@@ -46,7 +46,7 @@ const Fiber:React.FC<IProps> = ({lang, fibers, colors, setState}):JSX.Element =>
 
 
     return (
-        <section className="fiber">
+        <div className="page page_fiber">
             <div className="container_page">
                 <div className="container">
                     <div className="fiber">
@@ -63,7 +63,7 @@ const Fiber:React.FC<IProps> = ({lang, fibers, colors, setState}):JSX.Element =>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
     )
 }
 

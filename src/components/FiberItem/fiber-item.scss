@@ -93,6 +93,7 @@
             content: '';
             width: 40%;
             border-bottom: 1px solid var(--main_vv);
+            transition: border $transition_theme;
             bottom: -100px;
             left: 50%;
             transform: translate(-50%, 0);
@@ -193,6 +194,7 @@
                         margin-left: 15px;
                         margin-top: 10px;
                         border: 1px solid var(--text);
+                        transition: border $transition_theme;
                     }
         
         

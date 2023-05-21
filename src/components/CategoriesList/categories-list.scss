@@ -7,6 +7,7 @@
     align-items: center;
     margin-right: 4%;
     border-right: 1px solid var(--main_vv);
+    transition: border $transition_theme;
     padding-right: 30px;
     height: 100%;
     position: relative;
@@ -15,6 +16,7 @@
     @include respond-to(sm) {
         border-right: none;
         border-top: 2px solid var(--main_vv);
+        transition: border $transition_theme;
         padding-right: 0;
         margin-right: 0;
         margin-bottom: 50px;
@@ -26,6 +28,8 @@
             width: 30%;
             height: 1px;
             background-color: var(--main_vv);
+            transition: background-color $transition_theme;
+
             position: absolute;
             bottom: 0px;
             left: 50%;

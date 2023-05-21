@@ -21,10 +21,14 @@
 
     @include respond-to(xs) {
         max-width: none;
+        //margin-left: 0px;
+        //margin-right: 0px;
     }
 
     &:hover {
         border-color: 1px solid var(--main_vv);
+        transition: border $transition_fast;
+
     }
 
     & > img {
@@ -42,17 +46,24 @@
         h3 {
             align-self: flex-start;
             color: var(--main_vv);
-            font-size: 24px;
+            //font-size: 24px;
             //font-family: 'LexendDeca';
             font-weight: 700;
         }
 
         span {
-            font-size: 14px;
+            font-size: 16px;
             //font-family: 'LexendDeca';
             font-weight: 600;
             white-space: nowrap;
             //align-self: flex-start;
+            @include respond-to(sm) {
+                font-size: 24px;
+            }
+        
+            @include respond-to(xs) {
+                font-size: 12px;
+            }
         }
 
 
@@ -61,7 +72,7 @@
     p {
         margin-top: 20px;
         text-indent: 0;
-        font-size: 17px;
+        //font-size: 17px;
         font-weight: 500;
         //font-family: 'LexendDeca';
         margin-bottom: 20px;

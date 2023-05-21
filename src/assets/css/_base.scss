@@ -39,6 +39,14 @@ h1 {
     transition: color $transition_theme;
     font-family: Arial, Helvetica, sans-serif;
     color: var(--main_vv);
+
+    @include respond-to(sm) {
+        font-size: 32px;
+    }
+
+    @include respond-to(xs) {
+        font-size: 28px;
+    }
 }
 
 h2 {
@@ -46,12 +54,29 @@ h2 {
     transition: color $transition_theme;
     font-family: Arial, Helvetica, sans-serif;
     color: var(--main_vv);
+
+    
+    @include respond-to(sm) {
+        font-size: 26px;
+    }
+
+    @include respond-to(xs) {
+        font-size: 22px;
+    }
 }
 
 h3 {
     font-size: 1.5rem;
     transition: color $transition_theme;
     color: var(--main_vv);
+
+    @include respond-to(sm) {
+        font-size: 22px;
+    }
+
+    @include respond-to(xs) {
+        font-size: 20px;
+    }
 }
 
 span {
@@ -141,11 +166,11 @@ p {
     display: none !important;
 }
 
-
+/*
 section {
     flex-grow: 1;
 }
-
+*/
 
 .color_mixed {
     background: conic-gradient(
@@ -159,4 +184,10 @@ section {
         hsl(45 100% 50%),
         hsl(0 100% 50%)
       );
+}
+
+.page {
+    background-color: var(--bg);
+    transition: background-color 1s;
+    flex-grow: 1;
 }

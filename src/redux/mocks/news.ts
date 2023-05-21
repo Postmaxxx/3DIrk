@@ -7,6 +7,7 @@ const currentDate: Date = new Date;
 
 const mockNews: INewsItem[] = [
     {
+        id: 'n1',
         header: {
             ru: 'Новость 1',
             en: 'News 1'
@@ -52,6 +53,7 @@ const mockNews: INewsItem[] = [
         ],
     },
     {
+        id: 'n2',
         header: {
             ru: 'Новость 2',
             en: 'News 2'
@@ -97,6 +99,7 @@ const mockNews: INewsItem[] = [
         ],
     },
     {
+        id: 'n3',
         header: {
             ru: 'Новость 3',
             en: 'News 3'
@@ -142,6 +145,7 @@ const mockNews: INewsItem[] = [
         ],
     },
     {
+        id: 'n4',
         header: {
             ru: 'Новость 4',
             en: 'News 4'
@@ -180,6 +184,7 @@ const mockNews: INewsItem[] = [
         ],
     },
     {
+        id: 'n5',
         header: {
             ru: 'Новость 5',
             en: 'News 5'

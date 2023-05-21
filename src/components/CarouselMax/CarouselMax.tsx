@@ -44,7 +44,7 @@ const options: IOptions = {
     deltaSize: 0,
     carouselWidth: 0,
     gap: 80,
-    speed: 4
+    speed: 6
 }
 
 const SliderMax = () => {
@@ -56,23 +56,26 @@ const SliderMax = () => {
     const [state, setState] = useState<IOptions>({...options})
     const [ribbonDx, setRibbonDx] = useState<number>(0)
     const [firstRender, setFirstRender] = useState<boolean>(true)
+    const [isAutoMoving, setIsAutoMoving] = useState<number>(1)
 
-    const mouseMove= (e: any) => {
-        console.log(e);
-        if (e.buttons === 1) {
-        }
-        
-    }
 
     const mouseDown =(e: Event) => {
-        console.log('add el');
+        //console.log('add el');
         //_carouselRef.current?.addEventListener('mousemove', mouseMove)
     }
 
     const mouseUp =(e: Event) => {
-        console.log('remove el');
+        //console.log('remove el');
         //_carouselRef.current?.removeEventListener('mousemove', mouseMove)
     }
+
+
+    const mouseMove= (e: any) => {
+        if (e.buttons === 1) {
+            setIsAutoMoving(0)
+        }
+    }
+    
 
 
 
@@ -112,13 +115,17 @@ const SliderMax = () => {
                 return newDx
             })
         }
-        const step = - state.speed * state.imageContainerWidth/2000
-        const ribbonMoveInterval = setInterval(() => changeRibbonDx(step), 10)
+
+
+
+
+        const step = -state.speed * state.imageContainerWidth/10000;
+        const ribbonMoveInterval = setInterval(() => changeRibbonDx(step), 1)
 
         _carouselRef.current.addEventListener('mousedown', mouseDown)
         _carouselRef.current.addEventListener('mouseup', mouseUp)
         _carouselRef.current.addEventListener('mouseleave', mouseUp)
-        _carouselRef.current.addEventListener('mouseover', mouseMove)
+        _carouselRef.current.addEventListener('mousemove', mouseMove)
 
         return (()=> {
             clearInterval(ribbonMoveInterval)
@@ -138,7 +145,7 @@ const SliderMax = () => {
                         <div className="img-wrapper" key={index} style={{width: `${state.imageContainerWidth}px`, paddingLeft: state.paddings, paddingRight: state.paddings}}>
                             <div className="img__outer-container" style={{width: `${state.imageContainerWidth - state.gap}px`}}>
                                 <div className="img__inner-container" style={{width: `${state.imageWidth}px`, left: `${dx}px`}}>
-                                    <img src={image} alt="" />
+                                    <img draggable='false' src={image} alt="" />
                                 </div>
                             </div>
                         </div>

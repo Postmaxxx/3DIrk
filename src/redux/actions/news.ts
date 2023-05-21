@@ -16,14 +16,14 @@ export const setDataNews = <T extends Array<INewsItem>>(payload: T):IAction<T> =
 });
 
 
-export const loadNews = () => {
+export const loadAllNews = () => {
     return async function(dispatch: IDispatch) {
         dispatch(setLoadDataStatusNews({status: 'loading', message: `Loading news`}))
         try {
             const data: INewsItem[] = await new Promise((res, rej) => {
                 setTimeout(() => {
                     res(mockNews)
-                }, 2000)
+                }, 1000)
             })
             dispatch(setLoadDataStatusNews({status: 'success', message: `News loaded`}))
             dispatch(setDataNews(data))

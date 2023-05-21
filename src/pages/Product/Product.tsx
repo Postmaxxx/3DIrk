@@ -80,7 +80,7 @@ const Product: React.FC<IProps> = ({lang, setState, product, colors, fibers }): 
     
 
     return (
-        <section className="product-details">
+        <div className="page page_product-details">
             <div className="container_page">
                 <div className="container">
                     <h1>{product.name[lang]}</h1>
@@ -97,7 +97,7 @@ const Product: React.FC<IProps> = ({lang, setState, product, colors, fibers }): 
                         <Preloader />}
                 </div>
             </div>
-        </section>
+        </div>
     )
 }
 
