@@ -17,12 +17,20 @@
     opacity: 0;
 
     & > .closer {
+        background-color: transparent;
+        border: none;
         position: absolute;
         right: 30px;
         top: 30px;
         width: 30px;
         height: 30px;
         cursor: pointer;
+        stroke: #979797;
+        transition: $transition_fast;
+
+        &:hover {
+            stroke: var(--main)
+        }
     }
 
     & .content {

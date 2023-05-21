@@ -34,7 +34,7 @@ body {
 }
 
 h1 {
-    font-size: 3rem;
+    font-size: 2.5rem;
     text-align: center;
     transition: color $transition_theme;
     font-family: Arial, Helvetica, sans-serif;
@@ -87,10 +87,14 @@ a {
 }
 
 p {
-    font-size: 1.2rem;
+    font-size: 18px;
     text-indent: 3rem;
     transition: color $transition_theme;
     margin-top: 20px;
+
+    @include respond-to(xs) {
+        font-size: 16px;
+    }
 
     &:first-of-type {
         margin-top: 40px;

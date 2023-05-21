@@ -25,11 +25,20 @@ section.home {
         & .slider__container {
             margin-top: 50px;
             height: 400px;
-            border: 2px solid red;
             position: relative;
 
-            & .slidermax {
+            @include respond-to(md) {
+                height: 320px;
             }
+
+            @include respond-to(sm) {
+                height: 250px;
+            }
+
+            @include respond-to(xs) {
+                height: 170px;
+            }
+
         }
 
 

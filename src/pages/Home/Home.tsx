@@ -50,7 +50,7 @@ const Home:React.FC<IProps> = ({lang} : IProps): JSX.Element => {
 
                         </div>
                         <div className="slider__container">
-                            {/*<SpliderMax />*/}
+                            <SpliderMax />
                         </div>
                         <NewsBlock />
                     </div>

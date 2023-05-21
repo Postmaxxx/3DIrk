@@ -1,7 +1,7 @@
 import "./product.scss"
 import { useRef, useEffect, useState, useMemo } from "react";
 import { useNavigate, useParams  } from "react-router-dom"
-import Preloader from 'src/components/Preloader/Preloader';
+import Preloader from 'src/components/Preloaders/Preloader';
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";

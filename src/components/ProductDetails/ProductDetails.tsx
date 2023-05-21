@@ -7,7 +7,6 @@ import { connect } from "react-redux";
 import { loadProduct } from "src/redux/actions/product"
 import { loadFibers } from "src/redux/actions/fibers"
 import { loadColors } from "src/redux/actions/colors"
-import { catalogProductDetails } from "src/assets/js/data";
 import AddToCart from '../AddToCart/AddToCart';
 import Modal from '../Modal/Modal';
 import MessageInfo from '../MessageInfo/MessageInfo';
@@ -57,11 +56,6 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors, fibe
     const [fibersDetailed, setFibersDetailed] = useState<IFiber[]>([])
     const [selectedFiber, setSelectedFiber] = useState<IFiber["id"]>('')
     const [selectedColor, setSelectedColor] = useState<IColor["id"]>('')
-    const [selectedColorName, setSelectedColorName] = useState<TLangText>()
-    const [selectedFiberName, setSelectedFiberName] = useState<TLangText>()
-    const [amount, setAmount] = useState<number>(1)
-	/*const [modal, setModal] = useState<IModal>({visible: false})
-    const [message, setMessage] = useState<IMessageCart>({header: '', status: '', text: []})*/
     const _type = useRef<HTMLSelectElement>(null)
 
     
@@ -88,10 +82,10 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors, fibe
 
     return (
         <div className="details__descr">
-            <h2>{catalogProductDetails.featuresHeader[lang]}:</h2>
+            <h2>{lang === 'en' ? 'Features' : 'Характеристики'}:</h2>
             <div className="features__container">
                 <div className="feature">
-                    <span>{catalogProductDetails.descr[lang]}: </span>
+                    <span>{lang === 'en' ? 'Description' : 'Описание'}: </span>
                     {product.text[lang].map((text, i) => <p key={i}>{text.part}</p>)}
                 </div>
                 {product.features.map((feature, i) => {
@@ -104,7 +98,7 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors, fibe
                 })}
                 {product.mods.length > 0 ? 
                     <div className="feature">
-                        <label>{catalogProductDetails.type[lang]}: 
+                        <label>{lang === 'en' ? 'Version' : 'Версия'}: 
                             <select ref={_type} defaultValue={'-1'}>
                                 <option key={-1} value={'-1'} disabled hidden>{lang === 'en' ? 'Select type' : 'Выберите тип'}</option>
                                 {product.mods.map((mod, i) => <option key={i} value={i}>{mod[lang]}</option>)}
@@ -115,7 +109,7 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors, fibe
                     null
                 }
                 <div className="feature">
-                    <label>{catalogProductDetails.fiber[lang]}: 
+                    <label>{lang === 'en' ? 'Fiber' : 'Материал'}: 
                         <select onChange={onChangeFiber} defaultValue={''}>
                             <option key={-1} disabled hidden value={''}>{lang === 'en' ? 'Select fiber' : 'Выберите материал'}</option>
                             {fibersDetailed.map((fiber, i) => <option key={i} value={fiber.id}>{fiber.name[lang]}</option>)}
@@ -123,14 +117,14 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors, fibe
                     </label>
                 </div>
                 <div className="colors__container">
-                    <span>{catalogProductDetails.colors[lang]}: </span>
+                    <span>{lang === 'en' ? 'Available colors' : 'Доступные цвета'}: </span>
                     {colors.colors.map((color, i) => {
                         const colorAvailable = fibers.fibersList.find(fiber => fiber.id === selectedFiber)?.colors.find(colorId => colorId === color.id)
                         return <div key={i} onClick={colorAvailable ? () => onChangeColor(color.id) : undefined} className={`color ${color.value === 'mixed' ? "color_mixed" : ''} ${!colorAvailable && "disabled"} ${selectedColor === color.id && "selected"}`} style={{backgroundColor: `#${color.value}`}} title={color.name[lang]}></div>
                     })}
                 </div>
                 <div className="feature">
-                    <span>{catalogProductDetails.price[lang]}: </span>
+                    <span>{lang === 'en' ? 'Price' : 'Цена'}: </span>
                     <span>{product.price[lang]}</span>
                 </div>
                 

@@ -12,6 +12,10 @@
     position: relative;
     min-height: 300px;
 
+    @include respond-to(xs) {
+        width: 100%;
+    }
+
     & >  .break-new-line {
         width: 100%;
     }

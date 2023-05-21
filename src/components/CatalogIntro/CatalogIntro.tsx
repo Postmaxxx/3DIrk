@@ -2,7 +2,9 @@ import { connect } from "react-redux";
 import React from "react";
 import { IFullState, TLang } from "src/interfaces";
 import './catalog-intro.scss'
-import { catalogBlock } from "src/assets/js/data";
+import catalogPhoto1 from 'src/assets/img/catalog/1.png'
+import ImgWithPreloader from "src/assets/js/ImgWithPreloader";
+
 
 
 
@@ -15,15 +17,26 @@ interface IPropsState {
 const CatalogIntro:React.FC<IPropsState> = ({lang}): JSX.Element => {
     return (
         <div className="catalog-intro">
-            <h1>{catalogBlock.header[lang]}</h1>
+            <h1>{lang === 'en' ? 'Our catalog' : 'Наш каталог'}</h1>
             <div className="descr">
-                <img src={catalogBlock.img.url} alt={catalogBlock.img.name[lang]} />
+                <div className="img__container">
+                    <ImgWithPreloader src={catalogPhoto1} alt={lang === 'en' ? 'Catalog image' : 'Фото каталога'}/>
+
+                </div>
                 <div className="descr__text">
-                    <h2>{catalogBlock.subheader[lang]}</h2>
+                    <h2>{lang === 'en' ? 'Subheader' : 'Подзаголовок'}</h2>
                     <ul>
-                            {catalogBlock.text[lang].map((textItem, i) => {
-                                return <li key={i}>{textItem.part}</li>
-                            })}
+                    {lang === 'en' ? 
+                        <>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quo tempore atque et nostrum qui vitae! Dolor necessitatibus ipsum consectetur optio.</p>
+                            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Necessitatibus, eveniet odit veritatis totam exercitationem id perspiciatis dolores, ipsum quos reprehenderit, consectetur facere harum rerum libero tempore incidunt modi! Placeat cumque quidem velit porro amet quam possimus dolorum eaque exercitationem quod!</p>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quo tempore atque et nostrum qui vitae! Dolor necessitatibus ipsum consectetur optio.</p>
+                        </>
+                        :
+                        <>
+                            <p>ВАП в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра</p>
+                            <p>ВАП в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра</p>
+                        </> }
                     </ul>
                 </div>
             </div>

@@ -10,7 +10,7 @@ interface IProps {
 const Proscons = ({pros, cons, lang} : IProps) => {
     
     return (
-        <div className="proscons">
+        <div className="proscons__container">
             <ul className='pros'>
                 {pros[lang].map((item,i) => <li key={i}>{item.part}</li> )}
             </ul>

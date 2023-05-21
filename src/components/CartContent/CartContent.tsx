@@ -9,9 +9,10 @@ import { loadFibers } from "src/redux/actions/fibers"
 import { loadColors } from "src/redux/actions/colors"
 import { NavLink } from "react-router-dom";
 import Delete from "../Delete/Delete";
-import Preloader from "../Preloader/Preloader";
+import Preloader from "../Preloaders/Preloader";
 import { setProduct, setLoadDataStatusProduct }  from "src/redux/actions/product"
 import AmountChanger from "../AmountChanger/AmountChanger";
+import PreloaderW from "../Preloaders/PreloaderW";
 
 
 const actionsCartList = { changeItem, saveCart, removeItem }
@@ -81,14 +82,16 @@ const CartContent: React.FC<IProps> = ({lang, cart, colors, fibers, setState}): 
                         const fiber = fibers.fibersList.find(fiberItem => fiberItem.id === item.fiber)?.name[lang]
                         return(
                             <div className="cart__item" key={item.id}>
-                                <div className="img__cont">
-                                    <img src={item.product.imgs[0].url} alt={item.product.imgs[0].name[lang]} />
-                                </div>
+                                <NavLink className="item__product-link_img" to={`../catalog/${item.product.id}`} onClick={() => onProductClick(item.product)} aria-label={lang === 'en' ? 'Go to product' : 'Перейти к товару'}>
+                                    <div className="img__cont">
+                                        <img src={item.product.imgs[0].url} alt={item.product.imgs[0].name[lang]} />
+                                    </div>
+                                </NavLink>
 
-                                <NavLink className="item__product-link" to={`../catalog/${item.product.id}`} onClick={() => onProductClick(item.product)}>
+
+                                <NavLink className="item__product-link" to={`../catalog/${item.product.id}`} onClick={() => onProductClick(item.product)} aria-label={lang === 'en' ? 'Go to product' : 'Перейти к товару'} >
                                     <div className="item-descr__container">
                                         <div className="item__block">
-                                            {/*<span>{lang === 'en' ? 'Product' : 'Наименование'}:</span>*/}
                                             <span aria-label={lang === 'en' ? "Go to product page" : 'Перейти на страницу продукта'}>{item.product.name[lang]}</span>
                                         </div>
                                         {item.type ? 
@@ -125,11 +128,6 @@ const CartContent: React.FC<IProps> = ({lang, cart, colors, fibers, setState}): 
                                             <Delete<ICartItem> remove={deleteItem} idInstance={item} lang={lang}/>
                                         </div>
                                     </div>
-                                    {/*<div className="amount__container">
-                                        <button className='amount-changer' aria-label='Decrease amount' onClick={(e) => {e.preventDefault(); changeAmount(item, item.amount > 2 ?  item.amount - 1 : 1)}}>–</button>
-                                        <input type="text" value={item.amount} onChange={(e) => {e.preventDefault(); changeAmount(item, Number(e.target.value))}} aria-label={lang === 'en' ? "Enter amount" : 'Введите количество'}/>
-                                        <button className='amount-changer' aria-label='Increase amount' onClick={(e) => {e.preventDefault(); changeAmount(item, item.amount + 1)}}>+</button>
-                                                    </div>*/}
                                     <div className="amount__container">
                                         <AmountChanger<ICartItem> idInstance={item} initialAmount={item.amount} lang={lang} onChange={onAmountChange} />
                                     </div>
@@ -139,10 +137,10 @@ const CartContent: React.FC<IProps> = ({lang, cart, colors, fibers, setState}): 
                     })} 
                 </>
                 : 
-                <h3>{lang === 'en' ? 'Your cart is empty' : 'Ваша корзина пуста'}</h3>
+                <h3 className="cart_empty__text">{lang === 'en' ? 'Your cart is empty' : 'Ваша корзина пуста'}</h3>
             :
-                <Preloader />
-            } 
+            <PreloaderW />
+        } 
         </div>
     )
 

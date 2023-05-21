@@ -19,6 +19,10 @@
     margin-left: 15px;
     margin-right: 15px;
 
+    @include respond-to(xs) {
+        max-width: none;
+    }
+
     &:hover {
         border-color: 1px solid var(--main_vv);
     }

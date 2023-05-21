@@ -7,12 +7,10 @@
     flex-direction: column;
 
 
-    //border: 1px solid red;
-
     & > .fiber__splide__container {
         height: 300px;
         width: 100%;
-        //border: 2px solid green;
+        margin-top: 40px;
 
         @include respond-to(md) {
             height: 250px;
@@ -28,7 +26,6 @@
             & .splide__track {
                 height: 100%;
     
-                //border: 2px solid red;
                 & > ul {
                     
                     &  > li {
@@ -38,6 +35,8 @@
         
                         & .splide__slide-container {
                             height: 100%;
+                            border-radius: 5px;
+                            overflow: hidden;
                             
                             & > img {
                                 cursor: zoom-in;
@@ -87,14 +86,14 @@
     & > .fiber__descr__container {
         position: relative;
        // border: 2px solid yellow;
-       padding-top: 70px;
+       padding-top: 40px;
        
        &::after {
             position: absolute;
             content: '';
-            width: 10%;
-            border-bottom: 2px solid var(--main_vv);
-            bottom: -75px;
+            width: 40%;
+            border-bottom: 1px solid var(--main_vv);
+            bottom: -100px;
             left: 50%;
             transform: translate(-50%, 0);
 
@@ -106,90 +105,109 @@
         & > .block_text {
 
             & h3 {
-                //margin-top: 30px;
                 text-align: center;
                 color: var(--main_vv);
             }
 
             & > .features__container {
-                margin-top: 40px;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-
-
-                & .feature {
-                    margin-top: 5px;
-                    display: flex;
-                    width: 600px;
-                    //justify-content: space-between;
-                    align-items: flex-end;
-                    
-                    &:nth-of-type(1) {
-                        margin-top: 30px;
-                    }
-
-                    & span {
-                        font-size: 20px;
-                    }
-
-                    & .feature__name {
-                        width: 70%;
-                        display: flex;
-                        align-items: flex-end;
-
-
-
-                        & .gap {
-                           flex-grow: 1;
-                           border-bottom: 1px dotted var(--text);
-                        }
-                    }
-
-                }
-
-            }
-
-
-            & > .colors__container {
-                margin-top: 40px;
+                margin-top: 70px;
                 width: 100%;
-                display: flex;
-                align-items: center;
-                flex-wrap: wrap;
+                margin-left: auto;
+                margin-right: auto;
+                
+                
+                & .features {
+                    width: 100%;
+                    display: grid;
+                    grid-template-columns: 1fr auto;
+                    width: 80%;
+                    margin-left: auto;
+                    margin-right: auto;
+                    margin-top: 30px;
+                    column-gap: 15%;
 
-
-                & > .color {
-                    width: 20px;
-                    height: 20px;
-                    border-radius: 50%;
-                    margin-left: 15px;
-                    margin-top: 10px;
-                    border: 1px solid var(--text_vv);
+                    @include respond-to(md) {
+                        grid-template-columns: auto;
+                        margin-left: auto;
+                        margin-right: auto;
+                        width: fit-content;
+                    }
                     
-                    /*&.mixed {
-                        background: conic-gradient(
-                            hsl(360 100% 50%),
-                            hsl(315 100% 50%),
-                            hsl(270 100% 50%),
-                            hsl(225 100% 50%),
-                            hsl(180 100% 50%),
-                            hsl(135 100% 50%),
-                            hsl(90 100% 50%),
-                            hsl(45 100% 50%),
-                            hsl(0 100% 50%)
-                          );
-                    }*/
+                    & .feature {
+                        margin-top: 10px;
+                        position: relative;
+    
+                        & span {
+                            font-size: 18px;
+
+                            @include respond-to(xs) {
+                                font-size: 16px;
+                            }
+                        }
+    
+                        & .feature__value {
+                            font-weight: 800;
+                        }
+
+                        /*@include respond-to(md) {
+                            &::after {
+                                content: '';
+                                position: absolute;
+                                left: 50%;
+                                bottom: -10px;
+                                width: 30%;
+                                height: 1px;
+                                background-color: var(--main_vv);
+                                transform: translate(-50%, -50%);
+                            }
+                        }*/
+    
+                    }
                 }
+
+
+
+            }
+
+            & > .colors {
+                margin-top: 70px;
+
+                & > .colors__container {
+                    margin-top: 10px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    max-width: 70%;
+                    margin-left: auto;
+                    margin-right: auto;
+                    flex-wrap: wrap;
+                    
+                    @include respond-to(sm) {
+                        max-width: 100%;
+                    }
     
-    
+                    & > .color {
+                        width: 20px;
+                        height: 20px;
+                        border-radius: 50%;
+                        margin-left: 15px;
+                        margin-top: 10px;
+                        border: 1px solid var(--text);
+                    }
+        
+        
+                }
+            }
+
+            & .proscons {
+                margin-top: 70px;
+                h3 {
+                    margin-bottom: 15px;
+                }
             }
 
 
-            & p {
-                font-size: 1.2rem;
-                //margin-top: .5rem;
-            }
+
         }
 
 

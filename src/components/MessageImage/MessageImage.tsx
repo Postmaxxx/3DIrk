@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import "./message_image.scss"
-import Preloader from '../Preloader/Preloader'
+import Preloader from '../Preloaders/Preloader'
 
 interface IProps {
     path: string

@@ -26,6 +26,7 @@ interface IOptions {
     parallaxRatio: number
     imageWidth: number
     gap: number
+    speed: number
 }
 
 const initialImages = [image1, image2, image3, image4, image5, image6]
@@ -42,7 +43,8 @@ const options: IOptions = {
     ribbonDx: 0,
     deltaSize: 0,
     carouselWidth: 0,
-    gap: 80
+    gap: 80,
+    speed: 4
 }
 
 const SliderMax = () => {
@@ -53,26 +55,37 @@ const SliderMax = () => {
     const [images, setImages] = useState<string[]>([...initialImages])
     const [state, setState] = useState<IOptions>({...options})
     const [ribbonDx, setRibbonDx] = useState<number>(0)
+    const [firstRender, setFirstRender] = useState<boolean>(true)
 
-
-    const mouseMove =(e: Event) => {
-        //console.log(e);
+    const mouseMove= (e: any) => {
+        console.log(e);
+        if (e.buttons === 1) {
+        }
+        
     }
 
     const mouseDown =(e: Event) => {
-        _carouselRef.current?.addEventListener('mousemove', mouseMove)
+        console.log('add el');
+        //_carouselRef.current?.addEventListener('mousemove', mouseMove)
     }
 
     const mouseUp =(e: Event) => {
-        console.log(22222);
-        _carouselRef.current?.removeEventListener('mousemove', mouseMove)
+        console.log('remove el');
+        //_carouselRef.current?.removeEventListener('mousemove', mouseMove)
     }
 
 
 
     useEffect (() => {
         if (!_carouselRef.current) return;
+
+        const carouselContainerWidth = _carouselRef.current.clientWidth
+        setState(prev => ({...prev, imageContainerWidth: carouselContainerWidth/2, gap: carouselContainerWidth / 15}))
         
+        if (firstRender) {
+            setFirstRender(false)
+            return
+        }
         const innerContainerWidth = state.imageContainerWidth
         
         const imagesPerContainer = Math.ceil(_carouselRef.current.offsetWidth / state.imageContainerWidth);
@@ -96,21 +109,22 @@ const SliderMax = () => {
                 if (newDx > 0) {
                     newDx -= initialImages.length * state.imageContainerWidth 
                 }
-
                 return newDx
             })
         }
-
-        const ribbonMoveInterval = setInterval(() => changeRibbonDx(-1), 10)
+        const step = - state.speed * state.imageContainerWidth/2000
+        const ribbonMoveInterval = setInterval(() => changeRibbonDx(step), 10)
 
         _carouselRef.current.addEventListener('mousedown', mouseDown)
         _carouselRef.current.addEventListener('mouseup', mouseUp)
+        _carouselRef.current.addEventListener('mouseleave', mouseUp)
+        _carouselRef.current.addEventListener('mouseover', mouseMove)
 
         return (()=> {
             clearInterval(ribbonMoveInterval)
             _carouselRef.current?.removeEventListener('click', mouseDown)
         })
-    },[])
+    },[firstRender])
 
 
 

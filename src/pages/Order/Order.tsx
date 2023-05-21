@@ -6,7 +6,6 @@ import { ICartItem, ICartState, IColorsState, IFibersState, IFullState, IModal, 
 import { useState, useEffect, useRef, KeyboardEventHandler } from 'react'
 import Modal from "src/components/Modal/Modal";
 import MessageInfo from "src/components/MessageInfo/MessageInfo";
-import { orderBlock } from "src/assets/js/data";
 import { setName, setEmail, setPhone, setMessage, clearFiles, clearForm, addFiles, sendOrder, setSendDataStatus }  from "../../redux/actions/order"
 import CartContent from "src/components/CartContent/CartContent";
 import AddFiles, { IAddFilesFunctions } from "src/components/AddFiles/AddFiles";
@@ -76,10 +75,10 @@ const Order:React.FC<IProps> = ({lang, order, cart, colors, fibers, setState}): 
 
     const checkErrors = (): boolean => {
         const feildsToCheck: Array<ICheckErrorItem> = [
-            {ref: _name, name: {en: 'name', ru: 'имя'}},
-            {ref: _email, name: {en: 'email', ru: 'почта'}},
-            {ref: _phone, name: {en: 'phone', ru: 'телефон'}},
-            {ref: _message, name: {en: 'message', ru: 'сообщение'}},
+            {ref: _name, name: {en: 'Your name', ru: 'Ваше имя'}},
+            {ref: _email, name: {en: 'Your email', ru: 'Ваша почта'}},
+            {ref: _phone, name: {en: 'Your phone', ru: 'Ваш телефон'}},
+            {ref: _message, name: {en: 'Information about the order', ru: 'Информация о заказе'}},
         ]
         let isWrong: boolean = false
         setMessage(prev => ({status: 'error', header: lang === 'en' ? 'Errors found' : 'Обнаружены ошибки', text: []}))
@@ -208,17 +207,17 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
             <div className='container_page'>
                 <div className="container">
                     <div className="page_order">
-                        <h1>{orderBlock.header[lang]}</h1>
+                        <h1>{lang === 'en' ? 'Order 3D printing' : 'Заказать 3D печать'}</h1>
                         <div className="order__block">
 
                             <form className="order__container">
-                                <h2>{orderBlock.subheader[lang]}</h2>
+                                <h2>{lang === 'en' ? 'Make an order' : 'Отправить заявку'}</h2>
                                 <div className="data-block">
 
                                     <div className="inputs-block">
                                         <div className="input-block">
                                             <label htmlFor="name">
-                                                {orderBlock.name.label[lang]}
+                                                {lang === 'en' ? 'Your name*' : 'Ваше имя*'}
                                             </label>
                                             <input 
                                                 className="input-element" 
@@ -234,7 +233,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
                                         </div>
                                         <div className="input-block">
                                             <label htmlFor="phone">
-                                                {orderBlock.phone.label[lang]}
+                                                {lang === 'en' ? 'Your phone' : 'Ваш телефон'}
                                             </label>
                                             <input 
                                                 className="input-element" 
@@ -249,7 +248,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
                                         </div>
                                         <div className="input-block">
                                             <label htmlFor="email">
-                                                {orderBlock.email.label[lang]}
+                                                {lang === 'en' ? 'Your email*' : 'Ваше почта*'}
                                             </label>
                                             <input 
                                                 className="input-element" 
@@ -263,7 +262,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
                                         </div>
                                         <div className="input-block message-block">
                                             <label htmlFor="message">
-                                                {orderBlock.message.label[lang]}
+                                                {lang === 'en' ? 'Information about the order (at least 10 symbols)*' : 'Информация о заказе (минимум 10 символов)*'}
                                             </label>
                                             <textarea 
                                                 className="input-element" 
@@ -278,7 +277,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
                                     </div>
                                     <div className="files-block">
                                         <div className="input-block files">
-                                            <label htmlFor="files">{orderBlock.files.label[lang]}</label>
+                                            <label htmlFor="files">{lang === 'en' ? 'Attach files' : 'Прикрепить файлы'}</label>
                                             <AddFiles saveFiles={saveFiles} lang={lang} ref={addFilesRef}/>
                                         </div>
                                     </div>

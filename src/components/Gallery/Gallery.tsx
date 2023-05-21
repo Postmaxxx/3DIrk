@@ -2,10 +2,9 @@ import './gallery.scss'
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import Preloader from 'src/components/Preloader/Preloader';
+import Preloader from 'src/components/Preloaders/Preloader';
 import { IFibersState, IFullState, IProduct, TLang } from "src/interfaces";
 import { useEffect } from 'react';
-import { catalogBlock } from "src/assets/js/data";
 import ImgWithPreloader from 'src/assets/js/ImgWithPreloader';
 import { NavLink } from 'react-router-dom';
 import { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedProduct, loadCategoriesList, loadCategory }  from "src/redux/actions/catalog"
@@ -56,7 +55,7 @@ const Gallery: React.FC<IProps> = ({lang, products, setState}):JSX.Element => {
                             </div>
                             <div className="descr__container">
                                 <span className='name'>{product.name[lang]}</span>
-                                <span className='price'>{catalogBlock.priceGallery[lang]}: {product.price[lang]}</span>
+                                <span className='price'>{lang === 'en' ? 'Price' : 'Цена'}: {product.price[lang]}</span>
 
                             </div>
                         </div>

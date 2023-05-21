@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import { TLang, IFullState, IFibersState, IColorsState, IColor } from "../../interfaces";
 import { useEffect, useState } from 'react';
 import "@splidejs/react-splide/css";    
-import Preloader from 'src/components/Preloader/Preloader';
+import Preloader from 'src/components/Preloaders/Preloader';
 import { loadFibers }  from "../../redux/actions/fibers"
 import { loadColors }  from "../../redux/actions/colors"
 

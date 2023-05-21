@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 
 import { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedProduct, loadCategoriesList }  from "../../redux/actions/catalog"
-import Preloader from "../Preloader/Preloader";
+import Preloader from "../Preloaders/Preloader";
 
 const actionsList = { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedProduct, loadCategoriesList  }
 

@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import News from '../News/News'
 import { IFullState, INewsState, TLang } from 'src/interfaces'
 import { AnyAction, Dispatch, bindActionCreators } from 'redux';
-import Preloader from '../Preloader/Preloader';
+import Preloader from '../Preloaders/Preloader';
 import { loadNews }  from "../../redux/actions/news"
 
 const actionsList = { loadNews }

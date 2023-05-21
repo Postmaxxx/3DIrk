@@ -5,7 +5,6 @@ import Splide from "@splidejs/splide";
 import { useRef, useState, useEffect, MouseEventHandler, MouseEvent } from 'react'
 import Modal from '../Modal/Modal';
 import ModalImage from '../MessageImage/MessageImage';
-import { fibersBlock } from 'src/assets/js/data';
 
 interface IContainerSize {
 	width: number
@@ -89,6 +88,7 @@ const FiberItem = ({fiber, lang, colors}: IProps) => {
 
     return (
         <div className="fiber__item">
+			<h2>{fiber.name[lang]}</h2>
             <div className='fiber__splide__container' onClick={(e) => handleImgClick(e)}>
                 <div className="splide" ref={_splideFabric} aria-label="The carousel">
                     <div className="splide__track">
@@ -109,33 +109,33 @@ const FiberItem = ({fiber, lang, colors}: IProps) => {
             </div>
             <div className="fiber__descr__container">
 				<div className="block_text">
-					<h3>{fiber.name[lang]}</h3>
 					{fiber.text[lang].map((textItem, i) => <p key={i}>{textItem.part}</p>)}
 					<div className="features__container">
-						<h3>{fibersBlock.features[lang]}</h3>
-						{fiber.features.map((feature, i) => (
-							<div className="feature" key={i}>
-								<div className="feature__name">
-									<span>{feature.name[lang]}</span>
-									<span className='gap'></span>
+						<h3>{lang === 'en' ? 'Features' : 'Характеристики'}</h3>
+						<div className="features">
+							{fiber.features.map((feature, i) => (
+								<div className="feature" key={i}>
+									<span>{feature.name[lang]}: </span>
+									<span className='feature__value'>{feature.value[lang]}</span>
 								</div>
-								<div className="feature__value">
-									<span>{feature.value[lang]}</span>
-								</div>
-							</div>
-						))}
+							))}
+						</div>
 					</div>
-					<div className="colors__container">
-						<h3>{fibersBlock.colors[lang]}</h3>
-						{fiber.colors.map((color, i) => {
-							const colorData: IColor | undefined = colors.find(colorItem => colorItem.id === color)
-							if (colorData) {
-								return <div key={i} className={`color ${colorData.value === 'mixed' ? "color_mixed" : ""}`} style={{backgroundColor: `#${colorData.value}`}} title={colorData.name[lang]}></div>
-							}
-						})}
-					
+					<div className="colors">
+						<h3>{lang === 'en' ? 'Available colors' : 'Доступные цвета'}</h3>
+						<div className="colors__container">
+							{fiber.colors.map((color, i) => {
+								const colorData: IColor | undefined = colors.find(colorItem => colorItem.id === color)
+								if (colorData) {
+									return <div key={i} className={`color ${colorData.value === 'mixed' ? "color_mixed" : ""}`} style={{backgroundColor: `#${colorData.value}`}} title={colorData.name[lang]}></div>
+								}
+							})}
+						</div>
 					</div>
-					<Proscons {...fiber.proscons} lang={lang}/>
+					<div className="proscons">
+						<h3>{lang === 'en' ? 'Best for' : 'Применение'}</h3>
+						<Proscons {...fiber.proscons} lang={lang}/>
+					</div>
 				</div>
             </div>
 			<Modal {...{visible: modal.visible, close: closeModal, escExit: true}}>

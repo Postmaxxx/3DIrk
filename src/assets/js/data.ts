@@ -134,7 +134,7 @@ export const fibersBlock = {
 
 
 
-
+/*
 export const orderBlock = {
     header: {
         en: 'Order 3D printing',
@@ -202,9 +202,9 @@ export const orderBlock = {
     }
 } satisfies IOrderBlock
 
+*/
 
-
-
+/*
 export const catalogBlock = {
     header: {
         en: 'Our catalog',
@@ -260,10 +260,10 @@ export const catalogBlock = {
         ru: 'Цена'
     }
 } satisfies ICatalogBlock
+*/
 
 
-
-
+/*
 export const catalogProductDetails = {
     featuresHeader: {
         en: "Features",
@@ -291,3 +291,4 @@ export const catalogProductDetails = {
     },
 } 
 
+*/

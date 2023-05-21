@@ -50,7 +50,7 @@
 
     &.error {
         & > h3 {
-            color: $color_error;
+            color: var(--error);
         }
     }
 }

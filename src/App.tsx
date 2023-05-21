@@ -1,6 +1,6 @@
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import { Suspense, lazy } from "react";
-import Preloader from "./components/Preloader/Preloader"; 
+import Preloader from "./components/Preloaders/Preloader"; 
 import "./assets/css/_base.scss";
 import { IDataLoading, IFullState, IOrderState, TLang } from "./interfaces";
 import { AnyAction, bindActionCreators } from "redux";

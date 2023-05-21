@@ -1,6 +1,7 @@
 import './preloader.scss'
 
-const Preloader = () => {
+
+const Preloader:React.FC= ():JSX.Element => {
     return (
         <div className='preloader'></div>
     )

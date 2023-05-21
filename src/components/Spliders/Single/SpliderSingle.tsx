@@ -10,7 +10,7 @@ import { findBestSuitedImg } from "src/assets/js/findBestSuitedImg";
 import InfoPortfolio from 'src/components/InfoPortfolio/InfoPortfolio';
 import InfoSlide from 'src/components/InfoSlide/InfoSlide';
 import { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedProduct, loadCategoriesList, loadCategory, setPage, setCategory } from "src/redux/actions/catalog"
-import Preloader from 'src/components/Preloader/Preloader';
+import Preloader from 'src/components/Preloaders/Preloader';
 import Gallery from 'src/components/Gallery/Gallery';
 
 const actionsList = { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedProduct, loadCategoriesList, loadCategory, setPage, setCategory  }
