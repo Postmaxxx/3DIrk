@@ -44,6 +44,8 @@ const Catalog:React.FC<IProps> = ({colorsLoading, fibersLoading, setState}): JSX
    
 
 
+    
+
     return (
         <div className="page page_catalog">
             <div className="container_page">

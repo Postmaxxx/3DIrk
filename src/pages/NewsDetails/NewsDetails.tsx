@@ -8,6 +8,7 @@ import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { useRef, useEffect, useState, useMemo } from "react";
 import mockNews from 'src/redux/mocks/news';
+import SpliderCommon from 'src/components/Spliders/Common/SpliderCommon';
 
 const actionsListNews = { loadAllNews }
 
@@ -72,20 +73,14 @@ const NewsDetails: React.FC<IProps> = ({lang, news }): JSX.Element => {
                             {newsPiece ? 
                                 <>
                                     <h1>{newsPiece.header[lang]}</h1>
+                                    <span className='date'>{String(newsPiece.date.toISOString().slice(0, 10))}</span>
                                     <div className="news__details">
                                         <>
                                             {newsPiece.text[lang].map((text, i) => {
                                                 return <p key={i}>{text.part}</p>
                                             })}
                                             <div className="images__container">
-                                                {newsPiece.imgs.map(img => {
-                                                    return (
-                                                        <div className="img-block">
-                                                            <img key={img.url} src={img.url} alt={img.name[lang]}></img>
-                                                            <span>{img.name[lang]}</span>
-                                                        </div>
-                                                    )
-                                                })}
+                                                <SpliderCommon images={newsPiece.imgs} lang={lang} imagesPerSlide={2}/>
                                             </div>
                                         </>
                                     </div>

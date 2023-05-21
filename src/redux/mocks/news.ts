@@ -2,6 +2,7 @@ import { INewsItem } from 'src/interfaces';
 import newsImage1 from 'src/assets/img/news/1.png'
 import newsImage2 from 'src/assets/img/news/2.jpeg'
 import newsImage3 from 'src/assets/img/news/3.jpeg'
+import newsImage4 from 'src/assets/img/news/4.jpeg'
 
 const currentDate: Date = new Date;
 
@@ -48,6 +49,20 @@ const mockNews: INewsItem[] = [
                 name: {
                     ru: 'Изображение 2',
                     en: 'Image 2'
+                }
+            },
+            {
+                url: newsImage3,
+                name: {
+                    ru: 'Изображение 3',
+                    en: 'Image 3'
+                }
+            },
+            {
+                url: newsImage4,
+                name: {
+                    ru: 'Изображение 4',
+                    en: 'Image 4'
                 }
             },
         ],

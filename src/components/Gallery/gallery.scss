@@ -35,10 +35,13 @@
             margin-bottom: 20px;
             height: auto;
         }
+        
+
 
         & .gallery__item {
             width: 100%;
             height: 100%;
+
             
             @include respond-to(sm) {
                 height: auto;
@@ -132,6 +135,13 @@
             }
     
         }
+
+
+        &:hover {
+            border-color: 1px solid var(--main_vv);
+            transition: border $transition_fast !important;
+        }
+
     }
 
 }

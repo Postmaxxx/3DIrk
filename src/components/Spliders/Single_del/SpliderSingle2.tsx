@@ -1,4 +1,4 @@
-import './splider-single.scss'
+import './splider-single2.scss'
 import { ICategories, ICategoriesListItem, IDataLoading, IFullState, IProduct, ISpliderOptions, TId, TLang,} from "src/interfaces";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
@@ -29,7 +29,7 @@ interface IPropsActions {
 
 interface IProps extends IPropsState, IPropsActions {}
 
-const SpliderSingle: React.FC<IProps> = ({lang, selectedCategory, setState, loadingProducts, categories}): JSX.Element => {
+const SpliderSingle2: React.FC<IProps> = ({lang, selectedCategory, setState, loadingProducts, categories}): JSX.Element => {
 	
 	const spliderSingle = useRef<Splide>();
 	const _splideMain = useRef<HTMLDivElement>(null);
@@ -151,18 +151,6 @@ const SpliderSingle: React.FC<IProps> = ({lang, selectedCategory, setState, load
 
 };
 
-/*
-categories[selectedCategory]?.products.map((product, index: number) => {
-							return (
-								<li className="splide__slide" key={product.id}>
-									<div className="prosucts__container">
-										{<ImgWithPreloader link={findBestSuitedImg({images: slide.images, width: containerSize.current?.width, height: containerSize.current?.height}).image} alt={slide.descr}/>}
-									</div>
-								</li>
-								);
-								})
-								*/
-
 
 const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
@@ -182,4 +170,4 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
   
   
 
-export default connect(mapStateToProps, mapDispatchToProps)(SpliderSingle);
+export default connect(mapStateToProps, mapDispatchToProps)(SpliderSingle2);

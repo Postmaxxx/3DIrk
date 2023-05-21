@@ -3,22 +3,49 @@
 
 .page_news-details {
 
+    & .date {
+        display: block;
+        font-size: 18px;
+        text-align: center;
+        margin-top: 10px;
+
+        @include respond-to(sm) {
+            font-size: 16px;
+        }
+
+        @include respond-to(xs) {
+            font-size: 14px;
+        }
+    }
     
     .news__details {
         width: 100%;
         margin-top: 50px;
+        
+        & .images__container {
+            margin-top: 50px;
+            height: 400px;
+            width: 100%;
+
+            @include respond-to(md) {
+                height: 350px;
+            }
+
+            @include respond-to(sm) {
+                height: 30vw;
+            }
+
+            @include respond-to(xs) {
+                height: 60vw;
+            }
+        }
 
         
     }
     
     
-    
-    
-    
-    
-    
     button.button_back {
-        margin-top: 30px;
+        margin-top: 50px;
         margin-left: auto;
         margin-right: auto;
     }

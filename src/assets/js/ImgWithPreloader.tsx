@@ -8,7 +8,7 @@ interface IProps {
 }
 
 
-const ImgWithPreloader: React.FC<IProps> = ({src, alt,id}: IProps):JSX.Element => {
+const ImgWithPreloader: React.FC<IProps> = ({src, alt, id}: IProps):JSX.Element => {
 
 	const [loaded, setLoaded] = useState(false);
 	const img = useRef<HTMLImageElement>(null);
