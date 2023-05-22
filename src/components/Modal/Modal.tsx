@@ -44,7 +44,7 @@ const Modal: React.FC<IProps> = ({visible, escExit, close, children}) => {
     ) 
     :
     <div className="modal-window_absence">
-        Node for Modal not found
+        Node for Modal Windows was not found
     </div>
 
 }

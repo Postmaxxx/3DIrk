@@ -7,86 +7,34 @@
     flex-direction: column;
 
 
-    & > .fiber__splide__container {
+    & > .fiber__splider__container {
         height: 300px;
         width: 100%;
         margin-top: 40px;
 
         @include respond-to(md) {
-            height: 250px;
-        }
-
-        @include respond-to(sm) {
             height: 230px;
         }
 
-        & .splide {
-            height: 100%;
-            
-            & .splide__track {
-                height: 100%;
-    
-                & > ul {
-                    
-                    &  > li {
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-        
-                        & .splide__slide-container {
-                            height: 100%;
-                            border-radius: 5px;
-                            overflow: hidden;
-                            
-                            & > img {
-                                cursor: zoom-in;
-                                height: 100%;
-                                width: 100%;
-                                object-fit: cover;
-                            }
-                        }
-                    }
-                }
-            }
 
-            & > .splide__arrows {
-                & > .splide__arrow {
-                    transition: $transition_fast;
-                    & > svg {
-                        fill: var(--main);
-                    }
-
-                    &:hover {
-                        opacity: .8;
-                        background-color: var(--main);
-                        & > svg {
-                            fill: var(--dark);
-                        }
-                    }
-
-                    &--next:hover {
-                        translate: 5px;
-                        & > svg {
-                            margin-left: 8px;
-                        }
-                    }
-
-                    &--prev:hover {
-                        translate: -5px;
-                        & > svg {
-                            margin-right: 8px;
-                        }
-                    }
-                }
-            }
+        @include respond-to(sm) {
+            height: 30vw;
         }
-        
+
+        @include respond-to(xs) {
+            height: 60vw;
+        }
+
     }
 
     & > .fiber__descr__container {
         position: relative;
-       // border: 2px solid yellow;
-       padding-top: 40px;
+        // border: 2px solid yellow;
+        padding-top: 60px;
+
+        @include respond-to(sm) {
+            padding-top: 40px;
+        }
        
        &::after {
             position: absolute;
@@ -132,6 +80,10 @@
                         margin-left: auto;
                         margin-right: auto;
                         width: fit-content;
+                    }
+
+                    @include respond-to(sm) {
+                        margin-top: 10px;
                     }
                     
                     & .feature {
@@ -205,6 +157,10 @@
                 margin-top: 70px;
                 h3 {
                     margin-bottom: 15px;
+                                        
+                    @include respond-to(xs) {
+                        margin-bottom: 10px;
+                    }
                 }
             }
 

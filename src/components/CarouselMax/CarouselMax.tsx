@@ -6,6 +6,7 @@ import image4 from '../../assets/img/portfolio/4.jpeg'
 import image5 from '../../assets/img/portfolio/5.png'
 import image6 from '../../assets/img/portfolio/6.png'
 import { useEffect,useRef, useState } from 'react';
+import ImgWithPreloader from 'src/assets/js/ImgWithPreloader'
 
 
 interface ICarouselSize {
@@ -145,7 +146,7 @@ const SliderMax = () => {
                         <div className="img-wrapper" key={index} style={{width: `${state.imageContainerWidth}px`, paddingLeft: state.paddings, paddingRight: state.paddings}}>
                             <div className="img__outer-container" style={{width: `${state.imageContainerWidth - state.gap}px`}}>
                                 <div className="img__inner-container" style={{width: `${state.imageWidth}px`, left: `${dx}px`}}>
-                                    <img draggable='false' src={image} alt="" />
+                                    <ImgWithPreloader src={image} alt="" />
                                 </div>
                             </div>
                         </div>

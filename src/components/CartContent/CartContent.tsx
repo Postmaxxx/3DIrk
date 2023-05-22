@@ -13,6 +13,7 @@ import Preloader from "../Preloaders/Preloader";
 import { setProduct, setLoadDataStatusProduct }  from "src/redux/actions/product"
 import AmountChanger from "../AmountChanger/AmountChanger";
 import PreloaderW from "../Preloaders/PreloaderW";
+import ImgWithPreloader from "src/assets/js/ImgWithPreloader";
 
 
 const actionsCartList = { changeItem, saveCart, removeItem }
@@ -83,8 +84,8 @@ const CartContent: React.FC<IProps> = ({lang, cart, colors, fibers, setState}): 
                         return(
                             <div className="cart__item" key={item.id}>
                                 <NavLink className="item__product-link_img" to={`../catalog/${item.product.id}`} onClick={() => onProductClick(item.product)} aria-label={lang === 'en' ? 'Go to product' : 'Перейти к товару'}>
-                                    <div className="img__cont">
-                                        <img src={item.product.imgs[0].url} alt={item.product.imgs[0].name[lang]} />
+                                    <div className="img__container">
+                                        <ImgWithPreloader src={item.product.imgs[0].url} alt={item.product.imgs[0].name[lang]}/>
                                     </div>
                                 </NavLink>
 

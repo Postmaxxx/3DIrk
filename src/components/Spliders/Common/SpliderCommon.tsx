@@ -37,10 +37,10 @@ const SpliderCommon: React.FC<IProps> = ({lang, images, imagesPerSlide=1}): JSX.
 	const [modalImg, setModalImg] = useState<modalImg>({descr: '', path: ''})
 
     const options: Partial<ISpliderOptions> = {
-        type   : 'loop',
+        //type   : 'loop',
         perPage: imagesPerSlide,
         gap: '5%',
-		lazyLoad: false,
+		lazyLoad: true,
 		updateOnMove: true,
 		perMove: 1,
 		pagination: true,
@@ -99,7 +99,7 @@ const SpliderCommon: React.FC<IProps> = ({lang, images, imagesPerSlide=1}): JSX.
                             return (
                                 <li className="splide__slide" key={i} data-path={img.url}>
                                     <div className="splide__slide-container">
-                                        <img src={img.url} alt={img.name[lang]} id={String(i)} />
+										<ImgWithPreloader src={img.url} alt={img.name[lang]} id={String(i)}/>
                                     </div>
                                 </li>
                             );

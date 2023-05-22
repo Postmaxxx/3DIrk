@@ -1,6 +1,7 @@
 import { INewsItem, TLang } from "src/interfaces";
 import './news.scss'
 import { NavLink } from "react-router-dom";
+import ImgWithPreloader from "src/assets/js/ImgWithPreloader";
 
 
 interface IProps {
@@ -11,7 +12,9 @@ interface IProps {
 const News:React.FC<IProps> = ({newsPiece, lang}):JSX.Element => {
     return (
         <div className="news">
-            <img src={newsPiece.imgs[0].url} alt={newsPiece.header[lang]} />
+            <div className="img__container">
+                <ImgWithPreloader src={newsPiece.imgs[0].url} alt={newsPiece.header[lang]} />
+            </div>
             <div>
                 <span>{String(newsPiece.date.toISOString().slice(0, 10))}</span>
                 <h3>{newsPiece.header[lang]}</h3>

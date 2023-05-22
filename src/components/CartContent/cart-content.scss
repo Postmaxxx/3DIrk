@@ -26,12 +26,15 @@
         & .item__product-link_img {
             cursor: pointer;
             align-self: center;
-            & > .img__cont {
+
+
+            & > .img__container {
                 width: 100%;
                 aspect-ratio: 1;
                 align-self: center;
                 border-radius: 5px;
                 overflow: hidden;
+                position: relative;
                 //flex-shrink: 0;
     
                 /*@include respond-to(sm) {
@@ -44,12 +47,13 @@
                     width: 60px;
                     height: 80px;
                 }*/
-    
+
                 & > img {
-                    height: 100%;
                     width: 100%;
+                    height: 100%;
                     object-fit: cover;
                 }
+ 
             }
         }
 
