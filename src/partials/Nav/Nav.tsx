@@ -39,7 +39,7 @@ const pagesList = [
             ru: "материалы",
             en: 'fibers'
         },
-        path: "/fiber"
+        path: "/fibers"
     },
     {
         name: {

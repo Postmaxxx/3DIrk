@@ -12,7 +12,7 @@ interface IProps {
 
 const FiberItem = ({fiber, lang, colors}: IProps) => {
     return (
-        <div className="fiber__item">
+        <div className="fiber__item" data-fiberid={fiber.id}>
 			<h2>{fiber.name[lang]}</h2>
             <div className='fiber__splider__container'>
 				<SpliderCommon images={fiber.imgs} lang={lang} imagesPerSlide={3}/>

@@ -1,4 +1,4 @@
-import './fiber.scss'
+import './fibers.scss'
 import FiberItem from 'src/components/FiberItem/FiberItem';
 import { AnyAction, bindActionCreators, Dispatch } from "redux";
 import { connect } from "react-redux";
@@ -8,6 +8,7 @@ import "@splidejs/react-splide/css";
 import Preloader from 'src/components/Preloaders/Preloader';
 import { loadFibers }  from "../../redux/actions/fibers"
 import { loadColors }  from "../../redux/actions/colors"
+import { useParams } from 'react-router-dom';
 
 const actionsListFibers = { loadFibers }
 const actionsListColors = { loadColors }
@@ -27,7 +28,10 @@ interface IPropsActions {
 
 interface IProps extends IPropsState, IPropsActions {}
 
-const Fiber:React.FC<IProps> = ({lang, fibers, colors, setState}):JSX.Element => {
+const Fibers:React.FC<IProps> = ({lang, fibers, colors, setState}):JSX.Element => {
+    const paramFiberId = useParams().fiberId || ''    
+    
+
     const [loaded, setLoaded] = useState<boolean>(false)
 
     useEffect(() => {
@@ -41,8 +45,18 @@ const Fiber:React.FC<IProps> = ({lang, fibers, colors, setState}):JSX.Element =>
         }
         if (colors.dataLoading.status === 'success' && fibers.dataLoading.status === 'success') {
             setLoaded(true)
+
         }
     }, [colors.dataLoading?.status, fibers.dataLoading?.status])
+
+    useEffect(() => {
+        if (!loaded || !paramFiberId) return
+        const fiberToScroll = Array.from(document.querySelectorAll('[data-fiberid]')).find((_fiber) => (_fiber as HTMLElement).dataset.fiberid === paramFiberId)
+        if (!fiberToScroll) return
+        const offset = 100;
+        const targetScrollPosition = fiberToScroll.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({ top: targetScrollPosition, behavior: 'smooth' });
+    }, [loaded])
 
 
     return (
@@ -81,4 +95,4 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
 	}
 })
     
-export default connect(mapStateToProps, mapDispatchToProps)(Fiber)
+export default connect(mapStateToProps, mapDispatchToProps)(Fibers)

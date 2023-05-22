@@ -16,7 +16,7 @@ const LazyLangSwitcher = lazy(() => import("./components/LangSwitcher/LangSwitch
 const LazyHeader = lazy(() => import('./partials/Header/Header'));
 const LazyFooter = lazy(() => import('./partials/Footer/Footer'));
 const LazyHomePage = lazy(() => import("./pages/Home/Home"));
-const LazyFiberPage = lazy(() => import("./pages/Fiber/Fiber"));
+const LazyFibersPage = lazy(() => import("./pages/Fibers/Fibers"));
 const LazyOrderPage = lazy(() => import("./pages/Order/Order"));
 const LazyCatalogPage = lazy(() => import("./pages/Catalog/Catalog"));
 const LazyProduct = lazy(() => import("./pages/Product/Product"));
@@ -63,7 +63,12 @@ const App:React.FC<IProps> = ({lang, cartLoad, colorsLoad, fibersLoad, setState}
 			
 			<Routes>
 				<Route index path="/" element={<Suspense fallback={<Preloader />}><LazyHomePage /></Suspense>} />
-				<Route path="/fiber" element={<Suspense fallback={<Preloader />}><LazyFiberPage /></Suspense>} />
+				
+				<Route path="/fibers">
+					<Route index element={<Suspense fallback={<Preloader />}><LazyFibersPage /></Suspense>} />
+					<Route path=":fiberId" element={<Suspense fallback={<Preloader />}><LazyFibersPage /></Suspense>} />
+				</Route>
+				
 				<Route path="/order" element={<Suspense fallback={<Preloader />}><LazyOrderPage /></Suspense>} />
 				<Route path="/catalog">
 					<Route index element={<Suspense fallback={<Preloader />}><LazyCatalogPage /></Suspense>} />

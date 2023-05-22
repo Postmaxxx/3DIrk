@@ -1,6 +1,26 @@
 @use "./variables" as *;
 
+.button_blue {
+    align-self: flex-start;
+    padding: 8px 50px;
+    border-radius: 10px;
+    color: var(--text);
+    background-color: var(--main);
+    transition: background-color $transition_theme, color $transition_theme, box-shadow $transition_fast;
+    //font-family: 'LexendDeca';
+    font-size: 18px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    position: relative;
+    border-radius: 5px; 
 
+    &:hover {
+        box-shadow: 0px 0px 15px 0px var(--main);;
+    }
+}
 
 .button_news {
     align-self: flex-start;
@@ -19,10 +39,6 @@
     position: relative;
     border-radius: 5px;
 
-    @include respond-to(xs) {
-        //margin-left: auto;
-        //margin-right: auto;
-    }
 
     & > svg  {
         max-height: 80%;
@@ -69,20 +85,8 @@
 
 
 .button_back {
-    align-self: flex-start;
     padding: 8px 20px 8px 60px;
-    border-radius: 10px;
-    color: var(--text);
-    background-color: var(--main);
-    transition: background-color $transition_theme, color $transition_theme, box-shadow $transition_fast;
-    font-size: 18px;
-    font-weight: 700;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    position: relative;
-    border-radius: 5px;
+
 
     & > svg  {
         max-height: 80%;
@@ -98,6 +102,5 @@
         & > svg {
             margin-left: 15px;
         }
-        box-shadow: 0px 0px 15px 0px var(--main);;
     }
 }
