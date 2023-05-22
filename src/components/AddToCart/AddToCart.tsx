@@ -53,6 +53,7 @@ const AddToCart: React.FC<IProps> = ({product, type, fiber, color, lang, cart, s
     const [amount, setAmount] = useState<number>(1)
 	const [modal, setModal] = useState<IModal>({visible: false})
     const [message, setMessage] = useState<IMessageCart>({header: '', status: '', text: []})
+    const [amountChangerReset, setAmountChangerReset] = useState<{amount: number}>({amount: 1})
 
     const closeModal = () => {
 		setModal({visible: false})
@@ -72,12 +73,6 @@ const AddToCart: React.FC<IProps> = ({product, type, fiber, color, lang, cart, s
                 text: errorsList
             })
         } else {
-            const amountItemsInCart = cart.items.reduce((total, item) => total + item.amount, 0) + amount
-            setMessage({
-                status: 'success',
-                header: lang === 'en' ? 'Added' : 'Добавлено',
-                text: lang === 'en' ? [`This item has been added to your сart. You now have ${amountItemsInCart} item${amountItemsInCart > 1 ? 's' : ''} in your сart`, ] : [`Этот товар был успешно добавлен в Вашу корзину. Сейчас у Вас товаров в корзине: ${amountItemsInCart}`, ]
-            })
             const newItem: ICartItem = {
                 product, 
                 fiber, 
@@ -88,7 +83,14 @@ const AddToCart: React.FC<IProps> = ({product, type, fiber, color, lang, cart, s
             }
             setState.cart.addItem(newItem)
             setState.cart.saveCart([...cart.items, newItem]);
-            setAmount(1)
+            //setAmount(1)
+            setAmountChangerReset({amount: 1})
+            const amountItemsInCart = cart.items.reduce((total, item) => total + item.amount, 0) + amount
+            setMessage({
+                status: 'success',
+                header: lang === 'en' ? 'Added' : 'Добавлено',
+                text: lang === 'en' ? [`This item has been added to your сart.`, `You now have ${amountItemsInCart} item${amountItemsInCart > 1 ? 's' : ''} in your сart`, ] : [`Этот товар был успешно добавлен в Вашу корзину.`, `Сейчас у Вас товаров в корзине: ${amountItemsInCart}`, ]
+            })
         }
         setModal({visible: true})
 
@@ -104,7 +106,7 @@ const AddToCart: React.FC<IProps> = ({product, type, fiber, color, lang, cart, s
             <div className="cart-adder">
                 <span>{lang === 'en' ? 'Amount' : 'Количество'}: </span>
                 <div className="amount-changer__container">
-                    <AmountChanger<IProduct['id']> idInstance={product.id} initialAmount={amount} lang={lang} onChange={onAmountChange} />
+                    <AmountChanger<IProduct['id']> idInstance={product.id} initialAmount={amount} reset={amountChangerReset} lang={lang} onChange={onAmountChange} />
                 </div>
                 <button className='button_news' title='Add to cart' onClick={addToCart}>{lang === 'en' ? 'Add to cart' : 'Добавить в корзину'}</button>
             </div>

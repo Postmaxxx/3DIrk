@@ -61,7 +61,7 @@ const CartContent: React.FC<IProps> = ({lang, cart, colors, fibers, setState}): 
 
     useEffect(() => {
         if (colors.dataLoading.status === 'success' && fibers.dataLoading.status === 'success' &&  cart.dataLoading.status === 'success') {
-            setCartReady(true)            
+            setCartReady(true)
         }
     }, [colors.dataLoading.status, fibers.dataLoading.status, cart.dataLoading.status])
 
@@ -72,6 +72,8 @@ const CartContent: React.FC<IProps> = ({lang, cart, colors, fibers, setState}): 
 
     const onAmountChange = (item: ICartItem, amount: number) => {
         setState.cart.changeItem({...item, amount})
+        console.log(cart);
+        
     }
 
     return (

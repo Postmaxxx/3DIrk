@@ -1,4 +1,4 @@
-import { Routes, Route, BrowserRouter } from "react-router-dom";
+import { Routes, Route, BrowserRouter, HashRouter } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import Preloader from "./components/Preloaders/Preloader"; 
 import "./assets/css/_base.scss";
@@ -56,7 +56,7 @@ const App:React.FC<IProps> = ({lang, cartLoad, colorsLoad, fibersLoad, setState}
 	
 	
 	return (
-		<BrowserRouter>
+		<HashRouter>
 			<Suspense fallback={<Preloader />}><LazyThemeSwitcher /></Suspense>
 			<Suspense fallback={<Preloader />}><LazyLangSwitcher /></Suspense>
 			<Suspense fallback={<Preloader />}><LazyHeader /></Suspense>
@@ -73,7 +73,7 @@ const App:React.FC<IProps> = ({lang, cartLoad, colorsLoad, fibersLoad, setState}
 			</Routes>
 
 			<LazyFooter />
-		</BrowserRouter>
+		</HashRouter>
 
   );
 } 

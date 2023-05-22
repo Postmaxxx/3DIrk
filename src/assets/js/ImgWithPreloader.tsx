@@ -13,9 +13,7 @@ const ImgWithPreloader: React.FC<IProps> = ({src, alt, id}: IProps):JSX.Element 
 	const [loaded, setLoaded] = useState(false);
 	const img = useRef<HTMLImageElement>(null);
 
-	console.log('loaded');
 	const hasLoaded = () => {
-		
 		setLoaded(true)
 	}
 

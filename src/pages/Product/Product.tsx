@@ -47,7 +47,6 @@ const Product: React.FC<IProps> = ({lang, setState, product, colors, fibers }): 
     useEffect(() => {
         if (paramProductId !== product.id) {
             setState.product.loadProduct(paramProductId)
-            console.log(222);
             setLoaded(false)
         }
     }, [])

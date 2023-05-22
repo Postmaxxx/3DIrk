@@ -40,15 +40,6 @@ interface IPropsActions {
 
 interface IProps extends IPropsState, IPropsActions {}
 
-interface IMessageCart {
-    //color: string
-    //type: string
-    header: string
-    status: string
-    //fiber: string
-    //amount: number
-    text: string[]
-}
 
 
 const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors, fibers }): JSX.Element => {
@@ -79,6 +70,7 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors, fibe
         
     },[fibers.dataLoading.status, colors.dataLoading.status, product.dataLoading.status])
         
+    console.log('changer');
 
     return (
         <div className="details__descr">
