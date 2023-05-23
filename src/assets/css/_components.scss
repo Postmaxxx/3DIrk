@@ -104,3 +104,32 @@
         }
     }
 }
+
+
+.card {
+    width: 100%;
+    border: 1px solid var(--main);
+    transition: border $transition_theme;
+    border-radius: 5px;
+    padding-bottom: 20px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    //background-color: rgba(#286181, 0.1);
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 10px;
+    padding-bottom: 20px;
+
+    @include respond-to(xs) {
+        max-width: none;
+        //margin-left: 0px;
+        //margin-right: 0px;
+    }
+
+    &:hover {
+        border-color: 1px solid var(--main_vv);
+        transition: border $transition_fast;
+    }
+}

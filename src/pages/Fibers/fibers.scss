@@ -4,35 +4,45 @@
     background-color: var(--bg);
     transition: background-color $transition-theme;
 	flex-grow: 1;
+	padding-bottom: 100px;
 	
-	& .fiber {
-		width: 100%;
-	
-			& > .block_text {
-				//margin-top: 20px;
 
-				& > p > b {
-					font-weight: 900;
-				}
-			}
-	
-	
-		& .fibers__container {
-			//margin-top: 30px;
-			padding-bottom: 50px;
-	
-			& .fiber__item {
-				margin-top: 200px;
-	
-				&:first-child {
-					margin-top: 100px;
-				}
-	
-				&:last-child > .fiber__descr__container::after {
-					display: none;
-				}
+		& > .block_text {
+			//margin-top: 20px;
+
+			& > p > b {
+				font-weight: 900;
 			}
 		}
-		
+
+
+	& .fibers__container {
+		width: 100%;
+		margin-top: 70px;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: stretch;
+
+		& > a {
+			width: 25%;
+			margin-bottom: 1%;
+			padding: 20px;
+
+			@include respond-to(md) {
+				width: 33%;
+			}
+
+			@include respond-to(sm) {
+				width: 50%;
+			}
+			
+			@include respond-to(xs) {
+				padding: 0px;
+				margin-bottom: 50px;
+				width: 100%;
+			}
+		}
 	}
+		
+	
 }

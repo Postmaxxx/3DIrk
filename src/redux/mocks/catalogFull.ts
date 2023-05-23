@@ -75,7 +75,7 @@ const mockProducts = [
                 }
             },
         ],
-        fibers: ["f1","f2","f3"],
+        fibers: ["f_PLA"],
         features: [
             {
                 name: {

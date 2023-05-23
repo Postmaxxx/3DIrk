@@ -13,7 +13,7 @@ interface IProps {
 
 const FiberItem = ({fiber, lang, colors}: IProps) => {
     return (
-        <div className="fiber__item" data-fiberid={fiber.id}>
+        <div className="fiber__item">
 			<h2>{fiber.name[lang]}</h2>
             <div className='fiber__splider__container'>
 				<SpliderCommon images={fiber.imgs} lang={lang} imagesPerSlide={3}/>
@@ -23,12 +23,6 @@ const FiberItem = ({fiber, lang, colors}: IProps) => {
 					{fiber.text[lang].map((textItem, i) => <p key={i}>{textItem.part}</p>)}
 					<div className="features__container">
 						<h3>{lang === 'en' ? 'Features' : 'Характеристики'}</h3>
-							{/*fiber.features.map((feature, i) => (
-								<div className="feature" key={i}>
-									<span>{feature.name[lang]}: </span>
-									<span className='feature__value'>{feature.value[lang]}</span>
-								</div>
-							))*/}
 							<ProsconsFeature {...fiber.features} lang={lang}/>
 					</div>
 					<div className="colors">

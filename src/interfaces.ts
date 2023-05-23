@@ -290,6 +290,10 @@ export interface IFiber {
     colors: IColor["id"][] 
     imgs: IImg[]
     features: IFeatures
+    short: {
+        name: TLangText
+        descr: TLangText
+    }
 }
 
 export interface IFibersState {

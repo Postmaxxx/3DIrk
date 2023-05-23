@@ -16,6 +16,16 @@ const mockFibers = [
             ru: 'PLA (полилактид)',
             en: 'PLA (polyactid)'
         },
+        short: {
+            name: {
+                ru: 'PLA',
+                en: 'PLA'
+            },
+            descr: {
+                en: 'PLA is the go-to material for most users due to its ease-of-use, dimensional accuracy, and low cost.',
+                ru: 'PLA распостраненный материал для печати благодаря низкой цене и хорошим характеристикам'
+            }
+        },
         text: {
             en: [
                 {
@@ -225,6 +235,16 @@ const mockFibers = [
             ru: 'PETg (полиэтилентерефталат, модифицированный гликолем)',
             en: 'PETg (Polyethylene, terephthalate modified with glycol)'
         },
+        short: {
+            name: {
+                ru: 'PETg',
+                en: 'PETg'
+            },
+            descr: {
+                en: 'PETG filament is known for their ease of printability, smooth surface finish, and water resistance.',
+                ru: 'PETG filament is known for their ease of printability, smooth surface finish, and water resistance.'
+            }
+        },
         text: {
             en: [
                 {
@@ -412,6 +432,16 @@ const mockFibers = [
         name: {
             ru: 'ABS (Акрилонитрил бутадиен стирол)',
             en: 'ABS (Acrylonitrile Butadiene Styrene)'
+        },
+        short: {
+            name: {
+                ru: 'ABS',
+                en: 'ABS'
+            },
+            descr: {
+                en: 'ABS is a low-cost material, great for printing tough and durable parts that can withstand high temperatures.',
+                ru: 'ABS is a low-cost material, great for printing tough and durable parts that can withstand high temperatures.'
+            }
         },
         text: {
             en: [
@@ -609,6 +639,16 @@ const mockFibers = [
             ru: 'ASA (акрилонитрил стирол акрилат)',
             en: 'ASA (Acrylonitrile Styrene Acrylate)'
         },
+        short: {
+            name: {
+                ru: 'ASA',
+                en: 'ASA'
+            },
+            descr: {
+                en: 'ASA is a common alternative to ABS and is great for outdoor applications due to its high UV, temperature, and impact resistance.',
+                ru: 'ASA is a common alternative to ABS and is great for outdoor applications due to its high UV, temperature, and impact resistance.'
+            }
+        },
         text: {
             en: [
                 {
@@ -798,6 +838,16 @@ const mockFibers = [
         name: {
             ru: 'PA (полиамид/нейлон)',
             en: 'PA (Polyamide/Nylon)'
+        },
+        short: {
+            name: {
+                ru: 'PA',
+                en: 'PA'
+            },
+            descr: {
+                en: 'PA bla.... is a common alternative to ABS and is great for outdoor applications due to its high UV, temperature, and impact resistance.',
+                ru: 'PA bla....  is a common alternative to ABS and is great for outdoor applications due to its high UV, temperature, and impact resistance.'
+            }
         },
         text: {
             en: [
@@ -999,6 +1049,16 @@ const mockFibers = [
     name: {
         ru: 'Композиты на основе ABS',
         en: 'Composites based on ABS'
+    },
+    short: {
+        name: {
+            ru: 'Композиты + ABS',
+            en: 'Composites + ABS'
+        },
+        descr: {
+            en: 'bla.... is a common alternative to ABS and is great for outdoor applications due to its high UV, temperature, and impact resistance.',
+            ru: 'bla....  is a common alternative to ABS and is great for outdoor applications due to its high UV, temperature, and impact resistance.'
+        }
     },
     text: {
         en: [
@@ -1221,6 +1281,16 @@ const mockFibers = [
         name: {
             ru: 'Композиты на основе нейлона',
             en: 'Composites based on nylon'
+        },
+        short: {
+            name: {
+                ru: 'Композиты + нейлон',
+                en: 'Composites + nylon'
+            },
+            descr: {
+                en: 'bla.... is a common alternative to ABS and is great for outdoor applications due to its high UV, temperature, and impact resistance.',
+                ru: 'bla....  is a common alternative to ABS and is great for outdoor applications due to its high UV, temperature, and impact resistance.'
+            }
         },
         text: {
             en: [
@@ -1448,6 +1518,16 @@ const mockFibers = [
             ru: 'PC (поликарбонат)',
             en: 'PC (Polycarbonate)'
         },
+        short: {
+            name: {
+                ru: 'PC',
+                en: 'PC'
+            },
+            descr: {
+                en: 'Polycarbonate is known for its strength and durability. It has very high heat and impact resistance making it an ideal choice for tough environments.',
+                ru: 'Polycarbonate is known for its strength and durability. It has very high heat and impact resistance making it an ideal choice for tough environments.'
+            }
+        },
         text: {
             en: [
                 {
@@ -1663,6 +1743,16 @@ const mockFibers = [
             ru: 'PP (полипропилен)',
             en: 'PP (polypropylene)'
         },
+        short: {
+            name: {
+                ru: 'PP',
+                en: 'PP'
+            },
+            descr: {
+                en: 'Polypropylene is great for high-cycle, low strength applications due to its fatigue resistance, semi-flexible, and lightweight characteristics.',
+                ru: 'Polypropylene is great for high-cycle, low strength applications due to its fatigue resistance, semi-flexible, and lightweight characteristics.'
+            }
+        },
         text: {
             en: [
                 {
@@ -1870,6 +1960,16 @@ const mockFibers = [
         name: {
             ru: 'SEBS (стирол этилен бутадиен стирол)',
             en: 'SEBS (Styrene Ethylene Butadiene Styrene)'
+        },
+        short: {
+            name: {
+                ru: 'SEBS',
+                en: 'SEBS'
+            },
+            descr: {
+                en: 'bla... is great for high-cycle, low strength applications due to its fatigue resistance, semi-flexible, and lightweight characteristics.',
+                ru: 'bla... is great for high-cycle, low strength applications due to its fatigue resistance, semi-flexible, and lightweight characteristics.'
+            }
         },
         text: {
             en: [
