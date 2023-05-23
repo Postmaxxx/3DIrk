@@ -58,7 +58,7 @@ $gap_to_text: 5px;
                     height: 0;
                     background-color: var(--main_vv);
                     position: absolute;
-                    transition: all $transition_subMenu $transition_subMenu;
+                    transition: all $transition_subMenu 2*$transition_subMenu;
                     border-radius: 2px;
                     transform-origin: 0 0;
                 }
@@ -88,7 +88,7 @@ $gap_to_text: 5px;
                         height: 3px;
                         background-color: var(--main_vv);
                         position: absolute;
-                        transition: all $transition_subMenu $transition_subMenu;
+                        transition: all $transition_subMenu 2*$transition_subMenu;
                         border-radius: 2px;
                         transform-origin: 0 0;
                     }
@@ -115,30 +115,40 @@ $gap_to_text: 5px;
 
                 & > ul.sub_menu {
                     position: absolute;
-                    display: flex;
-                    flex-direction: column;
-                    padding: 20px;
-                    padding-top: 40px;
+                    //padding: 20px;
+                    //padding-top: 40px;
                     background-color: var(--main);;
                     left: 50%;
                     transform-origin: top center;
-                    transform: translate(-50%, 0) scaleY(0);
-                    transition: transform $transition_subMenu;
+                    transform: translate(-50%, 0);
+                    transition: width $transition_subMenu, transform $transition_subMenu, grid-template-rows $transition_subMenu $transition_subMenu;
                     width: 100%;
                     border: 1px solid red;
+                    box-sizing: border-box;
+                    display: grid;
+                    grid-template-rows: 0fr;
                     overflow: hidden;
-    
-                    & > li {
-                        display: block;
-                        position: relative;
-                        left: 50%;
-                        transform: translate(-50%, 0);
-                        border: 1px solid green;
-                        & > a {
+
+
+                    & > .submenu__content {
+                        min-height: 0;
+                        transition: visibility 1s;
+                        visibility: hidden;
+
+                        & > li {
                             display: block;
-                            white-space: nowrap;
+                            position: relative;
+                            left: 50%;
+                            transform: translate(-50%, 0);
+                            border: 1px solid green;
+    
+                            & > a {
+                                display: block;
+                                white-space: nowrap;
+                            }
                         }
                     }
+    
     
                 }
                 
@@ -163,12 +173,17 @@ $gap_to_text: 5px;
                     }
 
                     & > ul.sub_menu {
-                        transform: translate(-50%, 0) scaleY(1);
+                        grid-template-rows: 1fr;
+                        transform: translate(-50%, 0px);
                         width: 300px;
-                        transition: transform $transition_subMenu $transition_subMenu, width $transition_subMenu 2*$transition_subMenu;
-                        & > li {
-        
+                        transition: transform $transition_subMenu $transition_subMenu, grid-template-rows $transition_subMenu $transition_subMenu, width $transition_subMenu 2*$transition_subMenu;
+                        
+                        & > .submenu__content {
+                            & > li {
+            
+                            }
                         }
+
         
                     }
 

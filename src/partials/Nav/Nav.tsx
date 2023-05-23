@@ -132,18 +132,20 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened}): JSX.E
                                     </NavLink>
                                     {page.subMenu ? 
                                         <ul className="sub_menu">
-                                            {page.subMenu.map(subPage => {
-                                                return (
-                                                    <li key={subPage.path}>
-                                                        <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
-                                                            to={subPage.path}
-                                                            data-text={page.name[lang]}
-                                                        >
-                                                            {subPage.name[lang]}
-                                                        </NavLink>
-                                                    </li>
-                                                )
-                                            })}
+                                            <div className="submenu__content">
+                                                {page.subMenu.map(subPage => {
+                                                    return (
+                                                        <li key={subPage.path}>
+                                                            <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
+                                                                to={subPage.path}
+                                                                data-text={page.name[lang]}
+                                                            >
+                                                                {subPage.name[lang]}
+                                                            </NavLink>
+                                                        </li>
+                                                    )
+                                                })}
+                                            </div>
                                         </ul>
                                     : null}
                                 </li>
