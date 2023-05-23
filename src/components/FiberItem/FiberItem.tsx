@@ -2,6 +2,8 @@ import { IColor, IFiber, TLang } from 'src/interfaces'
 import Proscons from '../Proscons/Proscons'
 import './fiber-item.scss'
 import SpliderCommon from '../Spliders/Common/SpliderCommon';
+import ProsconsValue from '../ProsconsFeature/ProsconsFeature';
+import ProsconsFeature from '../ProsconsFeature/ProsconsFeature';
 
 
 interface IProps {
@@ -22,14 +24,13 @@ const FiberItem = ({fiber, lang, colors}: IProps) => {
 					{fiber.text[lang].map((textItem, i) => <p key={i}>{textItem.part}</p>)}
 					<div className="features__container">
 						<h3>{lang === 'en' ? 'Features' : 'Характеристики'}</h3>
-						<div className="features">
-							{fiber.features.map((feature, i) => (
+							{/*fiber.features.map((feature, i) => (
 								<div className="feature" key={i}>
 									<span>{feature.name[lang]}: </span>
 									<span className='feature__value'>{feature.value[lang]}</span>
 								</div>
-							))}
-						</div>
+							))*/}
+							<ProsconsFeature {...fiber.features} lang={lang}/>
 					</div>
 					<div className="colors">
 						<h3>{lang === 'en' ? 'Available colors' : 'Доступные цвета'}</h3>

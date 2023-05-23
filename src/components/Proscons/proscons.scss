@@ -3,18 +3,18 @@
 
 .proscons__container {
     display: grid;
-    grid-template-columns: 1fr auto;
-    width: 80%;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
     margin-left: auto;
     margin-right: auto;
-    column-gap: 15%;
+    column-gap: 7%;
 
     @include respond-to(sm) {
         width: 100%;
+        grid-template-columns: 1fr;
     }
 
     @include respond-to(xs) {
-        grid-template-columns: 1fr;
     }
 
     & > ul {
@@ -60,7 +60,7 @@
     
     & .cons {
 
-        @include respond-to(xs) {
+        @include respond-to(sm) {
             margin-top: 20px;
         }
 

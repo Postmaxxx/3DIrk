@@ -1,12 +1,20 @@
 @use '/src/assets/css/variables' as *;
 
-.page_fiber {
+.page_fibers {
     background-color: var(--bg);
     transition: background-color $transition-theme;
 	flex-grow: 1;
 	
 	& .fiber {
 		width: 100%;
+	
+			& > .block_text {
+				//margin-top: 20px;
+
+				& > p > b {
+					font-weight: 900;
+				}
+			}
 	
 	
 		& .fibers__container {
@@ -17,7 +25,7 @@
 				margin-top: 200px;
 	
 				&:first-child {
-					margin-top: 50px;
+					margin-top: 100px;
 				}
 	
 				&:last-child > .fiber__descr__container::after {

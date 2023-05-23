@@ -1,0 +1,12 @@
+@use '/src/assets/css/variables' as *;
+
+
+.proscons_feature__container {
+    width: 100%;
+    & > ul {
+        & > li::first-letter {
+            text-transform: capitalize;
+        }
+    }
+}
+

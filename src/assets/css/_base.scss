@@ -152,6 +152,7 @@ p {
     width: 80%;
     margin-left: auto;
     margin-right: auto;
+    margin-top: 40px;
 
     @include respond-to(sm) {
         width: 90%;
@@ -191,3 +192,4 @@ section {
     transition: background-color 1s;
     flex-grow: 1;
 }
+

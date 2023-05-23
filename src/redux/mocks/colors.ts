@@ -2,7 +2,15 @@ import { IColor } from "src/interfaces";
 
 const mockColors = [
     {
-        id:'c1',
+        id:'c_b',
+        name: {
+            ru: 'Черный',
+            en: 'Black'
+        },
+        value: '000000'
+    },
+    {
+        id:'c_w',
         name: {
             ru: 'Белый',
             en: 'White'
@@ -10,7 +18,15 @@ const mockColors = [
         value: 'FFFFFF'
     },
     {
-        id:'c2',
+        id:'c_t',
+        name: {
+            ru: 'Прозрачный',
+            en: 'Transparent'
+        },
+        value: 'transparent'
+    },
+    {
+        id:'c_m',
         name: {
             ru: 'Разноцветный',
             en: 'Mixed'
@@ -18,7 +34,7 @@ const mockColors = [
         value: 'mixed'
     },
     {
-        id:'c3',
+        id:'c_r',
         name: {
             ru: 'Красный',
             en: 'Red'
@@ -26,7 +42,7 @@ const mockColors = [
         value: 'FF0000'
     },
     {
-        id:'c4',
+        id:'c_g',
         name: {
             ru: 'Зеленый',
             en: 'Green'
@@ -34,7 +50,7 @@ const mockColors = [
         value: '00FF00'
     },
     {
-        id:'c5',
+        id:'c_b',
         name: {
             ru: 'Синий',
             en: 'Blue'
@@ -42,7 +58,7 @@ const mockColors = [
         value: '0000FF'
     },
     {
-        id:'c6',
+        id:'c_y',
         name: {
             ru: 'Желтый',
             en: 'Yellow'
@@ -50,7 +66,7 @@ const mockColors = [
         value: 'FFFF00'
     },
     {
-        id:'c7',
+        id:'c_u',
         name: {
             ru: 'Фиолетовый',
             en: 'Violet'

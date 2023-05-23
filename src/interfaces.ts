@@ -464,15 +464,20 @@ export interface IColor {
 }
 
 
+export interface IProsCons {
+    pros: TLangText[]
+    cons: TLangText[]
+}
 
 
+export interface IFeatures {
+    pros: IFeature[]
+    cons: IFeature[]
+}
 
 
 //==========================================Fibers State
-export interface IProsCons {
-    pros: TLangTextArr
-    cons: TLangTextArr
-}
+
 
 
 
@@ -483,7 +488,7 @@ export interface IFiber {
     proscons: IProsCons
     colors: IColor["id"][] 
     imgs: IImg[]
-    features: IFeature[]
+    features: IFeatures
 }
 
 export interface IFibersState {
@@ -502,11 +507,13 @@ export interface IFibersState {
     products: Omit<IProduct, "colors">[]
 }*/
 
-
 export interface IFeature {
     name: TLangText
     value: TLangText
 }
+
+
+
 
 export interface IProduct {
     id: TId
