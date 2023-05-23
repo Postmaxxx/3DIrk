@@ -36,20 +36,7 @@
             padding-top: 40px;
         }
        
-      /* &::after {
-            position: absolute;
-            content: '';
-            width: 80%;
-            border-bottom: 1px solid var(--main_vv);
-            transition: border $transition_theme;
-            bottom: -100px;
-            left: 50%;
-            transform: translate(-50%, 0);
 
-            @include respond-to(sm) {
-                width: 80%;
-            }
-        }*/
 
         & > .block_text {
 
@@ -68,61 +55,6 @@
                     margin-top: 20px;
                 }
                 
-                /*
-                & .features {
-                    width: 100%;
-                    display: grid;
-                    grid-template-columns: 1fr auto;
-                    width: 80%;
-                    margin-left: auto;
-                    margin-right: auto;
-                    margin-top: 30px;
-                    column-gap: 15%;
-
-                    @include respond-to(md) {
-                        grid-template-columns: auto;
-                        margin-left: auto;
-                        margin-right: auto;
-                        width: fit-content;
-                    }
-
-                    @include respond-to(sm) {
-                        margin-top: 10px;
-                    }
-                    
-                    & .feature {
-                        margin-top: 10px;
-                        position: relative;
-    
-                        & span {
-                            font-size: 18px;
-
-                            @include respond-to(xs) {
-                                font-size: 16px;
-                            }
-                        }
-    
-                        & .feature__value {
-                            font-weight: 800;
-                        }
-
-                        /*@include respond-to(md) {
-                            &::after {
-                                content: '';
-                                position: absolute;
-                                left: 50%;
-                                bottom: -10px;
-                                width: 30%;
-                                height: 1px;
-                                background-color: var(--main_vv);
-                                transform: translate(-50%, -50%);
-                            }
-                        }
-    
-                    }
-                }*/
-
-
 
             }
 
@@ -159,17 +91,11 @@
 
             & .proscons {
                 margin-top: 70px;
-                /*h3 {
-                    //margin-bottom: 15px;
 
-                                        
-                    @include respond-to(xs) {
-                        margin-bottom: 10px;
-                    }
-                }*/
 
                 & .proscons__container {
                     margin-top: 20px;
+
                 }
             }
 

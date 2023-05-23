@@ -39,7 +39,30 @@ const pagesList = [
             ru: "материалы",
             en: 'fibers'
         },
-        path: "/fibers"
+        path: "/fibers",
+        subMenu : [
+            {
+                name: {
+                    ru: "Все материалы",
+                    en: 'All fibers'
+                },
+                path: "/fibers",
+            },
+            {
+                name: {
+                    ru: "f_PLA",
+                    en: 'f_PLA'
+                },
+                path: "/fibers/f_PLA",
+            },
+            {
+                name: {
+                    ru: "f_PETg",
+                    en: 'f_PETg'
+                },
+                path: "/fibers/f_PETg",
+            },
+        ]
     },
     {
         name: {
@@ -107,6 +130,22 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened}): JSX.E
                                         {page.name[lang]}
                                         {page.name.en === 'order' ? <div className="cart-informer__container"><CartInformer /></div> : null}
                                     </NavLink>
+                                    {page.subMenu ? 
+                                        <ul className="sub_menu">
+                                            {page.subMenu.map(subPage => {
+                                                return (
+                                                    <li key={subPage.path}>
+                                                        <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
+                                                            to={subPage.path}
+                                                            data-text={page.name[lang]}
+                                                        >
+                                                            {subPage.name[lang]}
+                                                        </NavLink>
+                                                    </li>
+                                                )
+                                            })}
+                                        </ul>
+                                    : null}
                                 </li>
                             )
                         })

@@ -84,11 +84,3 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
 
 export default connect(mapStateToProps, mapDispatchToProps)(Gallery);
 
-/*
-                            <div className='colors__container'>
-                                <span>Colors:</span>
-                                {product.colors?.map((color, i) => (
-                                <div key={i} className={`color ${color.value === 'mixed' ? "mixed" : ""}`} style={{backgroundColor: `#${color.value}`}} title={color.name[lang]}></div>
-                            ))}
-                            </div>
-                            */

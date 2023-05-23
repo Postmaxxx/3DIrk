@@ -185,6 +185,11 @@ section {
       );
 }
 
+.color_transparent {
+    background: url(../img/color_transparent.jpg);
+    background-size: 30%;
+}
+
 .page {
     background-color: var(--bg);
     transition: background-color 1s;

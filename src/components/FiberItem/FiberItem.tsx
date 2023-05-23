@@ -31,7 +31,7 @@ const FiberItem = ({fiber, lang, colors}: IProps) => {
 							{fiber.colors.map((color, i) => {
 								const colorData: IColor | undefined = colors.find(colorItem => colorItem.id === color)
 								if (colorData) {
-									return <div key={i} className={`color ${colorData.value === 'mixed' ? "color_mixed" : ""}`} style={{backgroundColor: `#${colorData.value}`}} title={colorData.name[lang]}></div>
+									return <div key={i} className={`color ${colorData.value === 'mixed' ? "color_mixed" : ""} ${colorData.value === 'transparent' ? "color_transparent" : ''}`} style={{backgroundColor: `#${colorData.value}`}} title={colorData.name[lang]}></div>
 								}
 							})}
 						</div>

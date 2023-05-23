@@ -119,7 +119,7 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors, fibe
                     <div className="colors__wrapper">
                         {colors.colors.map((color, i) => {
                             const colorAvailable = fibers.fibersList.find(fiber => fiber.id === selectedFiber)?.colors.find(colorId => colorId === color.id)
-                            return <div key={i} onClick={colorAvailable ? () => onChangeColor(color.id) : undefined} className={`color ${color.value === 'mixed' ? "color_mixed" : ''} ${!colorAvailable && "disabled"} ${selectedColor === color.id && "selected"}`} style={{backgroundColor: `#${color.value}`}} title={color.name[lang]}></div>
+                            return <div key={i} onClick={colorAvailable ? () => onChangeColor(color.id) : undefined} className={`color ${color.value === 'mixed' ? "color_mixed" : ''} ${color.value === 'transparent' ? "color_transparent" : ''} ${!colorAvailable && "disabled"} ${selectedColor === color.id && "selected"}`} style={{backgroundColor: `#${color.value}`}} title={color.name[lang]}></div>
                         })}
                     </div>
                 </div>

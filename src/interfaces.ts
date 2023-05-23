@@ -55,17 +55,21 @@ export type TLangTextArr = {
 
 
 // ---------------------------------------------nav
-export interface IPage {
-    name: TLangText,
+export interface IPageItem {
+    name: TLangText
     path: string
 }
 
+export interface IPage extends IPageItem {
+    subMenu?: IPageItem[]
+}
+/*
 export interface INav {
     mobOpened: boolean,
     desktopOpened: boolean
     //pages: IPage[]
 }
-
+*/
 
 //-------------------------------------------img
 export interface IImg {
@@ -135,32 +139,6 @@ export interface ISpliderOptions {
 	}
 }
 
-//-------------------------------------------- block Order
-/*export interface IOrderInput {
-    //label: TLangText,
-    data: string
-}
-
-export interface IOrderBlock {
-    header: TLangText
-    subheader: TLangText
-    name: IOrderInput
-    phone: IOrderInput
-    email: IOrderInput
-    message: IOrderInput
-    files: {
-        /*label: TLangText,
-        listLabel: TLangText
-        link: TLangText
-        linkRest: TLangText*/
-      /*  filesList: Array<any>
-    },
-    qrcode: string,
-    text: TLangTextArr
-}
-*/
-
-
 
 
 //------------------------------------block SliderMax
@@ -226,28 +204,6 @@ export interface IOrderBlock {
     qrcode: string,
     text: TLangTextArr
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

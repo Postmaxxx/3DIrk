@@ -83,6 +83,7 @@ const CartContent: React.FC<IProps> = ({lang, cart, colors, fibers, setState}): 
                 <>
                     {cart.items.map((item, i) => {
                         const fiber = fibers.fibersList.find(fiberItem => fiberItem.id === item.fiber)?.name[lang]
+                        const color: IColor | undefined = colors.colors.find(color => color.id === item.color)
                         return(
                             <div className="cart__item" key={item.id}>
                                 <NavLink className="item__product-link_img" to={`../catalog/${item.product.id}`} onClick={() => onProductClick(item.product)} aria-label={lang === 'en' ? 'Go to product' : 'Перейти к товару'}>
@@ -111,16 +112,13 @@ const CartContent: React.FC<IProps> = ({lang, cart, colors, fibers, setState}): 
                                         <div className="breaker_2sm"></div>
                                         <div className="item__block">
                                             <span>{lang === 'en' ? 'Color' : 'Цвет'}:</span>
-                                            <div className="colors__container">
-                                                {colors.colors
-                                                    .filter(color => color.id === item.color)
-                                                    .map(color => 
-                                                        <div 
-                                                            key={i} 
-                                                            className={`color ${color.value === 'mixed' ? "color_mixed" : ''}`} 
-                                                            style={{backgroundColor: `#${color.value}`}} 
-                                                            title={color.name[lang]}>
-                                                        </div>)}
+                                            <div className="colors__container"> 
+                                                <div 
+                                                    className={`color ${color?.value === 'mixed' ? "color_mixed" : ''} ${color?.value === 'transparent' ? "color_transparent" : ''}`} 
+                                                    style={{backgroundColor: `#${color?.value}`}} 
+                                                    title={color?.name[lang]}>
+                                                </div>
+                                                <span className="color__name">({color?.name[lang]})</span>
                                             </div>
                                         </div>
                                     </div>

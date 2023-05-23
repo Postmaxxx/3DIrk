@@ -35,18 +35,7 @@
                 border-radius: 5px;
                 overflow: hidden;
                 position: relative;
-                //flex-shrink: 0;
-    
-                /*@include respond-to(sm) {
-                    width: 90px;
-                    height: 90px;
-                }
-    
-    
-                @include respond-to(xs) {
-                    width: 60px;
-                    height: 80px;
-                }*/
+
 
                 & > img {
                     width: 100%;
@@ -130,6 +119,11 @@
                                 width: 13px;
                                 height: 13px;
                             }
+                        }
+
+                        & .color__name {
+                            margin-left: 10px;
+                            text-transform: lowercase;
                         }
                     }
                     
