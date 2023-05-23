@@ -2,7 +2,7 @@ import { connect } from "react-redux";
 import React from "react";
 import { IFullState, TLang } from "src/interfaces";
 import './catalog-intro.scss'
-import catalogPhoto1 from 'src/assets/img/catalog/1.png'
+import catalogPhoto1 from 'src/assets/img/catalog/catalog_hero.webp'
 import ImgWithPreloader from "src/assets/js/ImgWithPreloader";
 
 

@@ -1,10 +1,12 @@
 import { IFiber } from "src/interfaces";
-import fiberImage1 from 'src/assets/img/fibers/1.png'
-import fiberImage2 from 'src/assets/img/fibers/2.jpeg'
-import fiberImage3 from 'src/assets/img/fibers/3.jpeg'
-import fiberImage4 from 'src/assets/img/fibers/4.jpeg'
-import fiberImage5 from 'src/assets/img/fibers/5.png'
-import fiberImage6 from 'src/assets/img/fibers/6.png'
+import pla_1 from 'src/assets/img/fibers/pla/1.webp'
+import pla_2 from 'src/assets/img/fibers/pla/2.webp'
+import pla_3 from 'src/assets/img/fibers/pla/3.webp'
+import pla_4 from 'src/assets/img/fibers/pla/4.webp'
+import pla_5 from 'src/assets/img/fibers/pla/5.webp'
+import pla_6 from 'src/assets/img/fibers/pla/6.webp'
+
+
 
 const mockFibers = [
     {
@@ -49,42 +51,42 @@ const mockFibers = [
         },
         imgs: [
             {
-                url: fiberImage1,
+                url: pla_1,
                 name: {
-                    ru: 'Изображение 1',
-                    en: 'Image 1'
+                    ru: 'Подходит для моделей',
+                    en: 'Good for models'
                 }
             },
             {
-                url: fiberImage2,
+                url: pla_2,
                 name: {
                     ru: 'Изображение 2',
                     en: 'Image 2'
                 }
             },
             {
-                url: fiberImage3,
+                url: pla_3,
                 name: {
                     ru: 'Изображение 3',
                     en: 'Image 3'
                 }
             },
             {
-                url: fiberImage4,
+                url: pla_4,
                 name: {
                     ru: 'Изображение 4',
                     en: 'Image 4'
                 }
             },
             {
-                url: fiberImage5,
+                url: pla_5,
                 name: {
                     ru: 'Изображение 5',
                     en: 'Image 5'
                 }
             },
             {
-                url: fiberImage6,
+                url: pla_6,
                 name: {
                     ru: 'Изображение 6',
                     en: 'Image 6'
@@ -253,28 +255,28 @@ const mockFibers = [
         },
         imgs: [
             {
-                url: fiberImage3,
+                url: pla_1,
                 name: {
                     ru: 'Изображение 3',
                     en: 'Image 3'
                 }
             },
             {
-                url: fiberImage5,
+                url: pla_1,
                 name: {
                     ru: 'Изображение 5',
                     en: 'Image 5'
                 }
             },
             {
-                url: fiberImage2,
+                url: pla_1,
                 name: {
                     ru: 'Изображение 2',
                     en: 'Image 2'
                 }
             },
             {
-                url: fiberImage6,
+                url: pla_1,
                 name: {
                     ru: 'Изображение 6',
                     en: 'Image 6'
@@ -441,28 +443,28 @@ const mockFibers = [
         },
         imgs: [
             {
-                url: fiberImage6,
+                url: pla_1,
                 name: {
                     ru: 'Изображение 6',
                     en: 'Image 6'
                 }
             },
             {
-                url: fiberImage3,
+                url: pla_1,
                 name: {
                     ru: 'Изображение 3',
                     en: 'Image 3'
                 }
             },
             {
-                url: fiberImage4,
+                url: pla_1,
                 name: {
                     ru: 'Изображение 4',
                     en: 'Image 4'
                 }
             },
             {
-                url: fiberImage1,
+                url: pla_1,
                 name: {
                     ru: 'Изображение 1',
                     en: 'Image 1'
@@ -637,28 +639,28 @@ const mockFibers = [
         },
         imgs: [
             {
-                url: fiberImage6,
+                url: pla_1,
                 name: {
                     ru: 'Изображение 6',
                     en: 'Image 6'
                 }
             },
             {
-                url: fiberImage3,
+                url: pla_1,
                 name: {
                     ru: 'Изображение 3',
                     en: 'Image 3'
                 }
             },
             {
-                url: fiberImage4,
+                url: pla_1,
                 name: {
                     ru: 'Изображение 4',
                     en: 'Image 4'
                 }
             },
             {
-                url: fiberImage1,
+                url: pla_1,
                 name: {
                     ru: 'Изображение 1',
                     en: 'Image 1'
@@ -827,28 +829,28 @@ const mockFibers = [
         },
         imgs: [
             {
-                url: fiberImage6,
+                url: pla_1,
                 name: {
                     ru: 'Изображение 6',
                     en: 'Image 6'
                 }
             },
             {
-                url: fiberImage3,
+                url: pla_1,
                 name: {
                     ru: 'Изображение 3',
                     en: 'Image 3'
                 }
             },
             {
-                url: fiberImage4,
+                url: pla_1,
                 name: {
                     ru: 'Изображение 4',
                     en: 'Image 4'
                 }
             },
             {
-                url: fiberImage1,
+                url: pla_1,
                 name: {
                     ru: 'Изображение 1',
                     en: 'Image 1'
@@ -1013,12 +1015,12 @@ const mockFibers = [
                 part: 'GF (glass fibers)'
             },
             {
-                part: 'CF (coal fibers)'
+                part: 'CF (carbon fibers)'
             },
         ],
         ru: [
             {
-                part: 'Плохая спекаемость и высокая усадка ABS пластика влекут за собой низкую прочность, однако, данный пластик обладает хорошей термостойкостью. Чаще всего из него печатают детали интерьера/экстерьера автомобиля. Без покрытия краской или лаком боится открытых солнечных лучей. Благодаря добавлению стеклянных и угольных нитей повышается прочность и жёсткость.'
+                part: 'Плохая спекаемость и высокая усадка ABS пластика влекут за собой низкую прочность, однако, данный пластик обладает хорошей термостойкостью. Чаще всего из него печатают детали интерьера/экстерьера автомобиля. Без покрытия краской или лаком боится открытых солнечных лучей. Благодаря добавлению стеклянных и углеродных нитей повышается прочность и жёсткость.'
             },
             {
                 part: ''
@@ -1030,7 +1032,7 @@ const mockFibers = [
                 part: 'GF (стеклянные нити)'
             },
             {
-                part: 'CF (угольные нити)'
+                part: 'CF (углеродные нити)'
             },
         ]
     },
@@ -1052,28 +1054,28 @@ const mockFibers = [
     },
     imgs: [
         {
-            url: fiberImage6,
+            url: pla_1,
             name: {
                 ru: 'Изображение 6',
                 en: 'Image 6'
             }
         },
         {
-            url: fiberImage3,
+            url: pla_1,
             name: {
                 ru: 'Изображение 3',
                 en: 'Image 3'
             }
         },
         {
-            url: fiberImage4,
+            url: pla_1,
             name: {
                 ru: 'Изображение 4',
                 en: 'Image 4'
             }
         },
         {
-            url: fiberImage1,
+            url: pla_1,
             name: {
                 ru: 'Изображение 1',
                 en: 'Image 1'
@@ -1235,12 +1237,12 @@ const mockFibers = [
                     part: 'GF (glass fibers)'
                 },
                 {
-                    part: 'CF (coal fibers)'
+                    part: 'CF (carbon fibers)'
                 },
             ],
             ru: [
                 {
-                    part: 'Полиамид стоек к нефтепродуктам и растворителям, из-за низкого трения он лучше всего подходит для изготовления втулок, шестерен, при этом смазка не обязательна. Из-за высокой прочности, даже, на морозе детали сохраняют работоспособность. Благодаря добавлению стеклянных и угольных нитей повышается прочность и жёсткость.'
+                    part: 'Полиамид стоек к нефтепродуктам и растворителям, из-за низкого трения он лучше всего подходит для изготовления втулок, шестерен, при этом смазка не обязательна. Из-за высокой прочности, даже, на морозе детали сохраняют работоспособность. Благодаря добавлению стеклянных и углеродных нитей повышается прочность и жёсткость.'
                 },
                 {
                     part: ''
@@ -1252,7 +1254,7 @@ const mockFibers = [
                     part: 'GF (стеклянные нити)'
                 },
                 {
-                    part: 'CF (угольные нити)'
+                    part: 'CF (углеродные нити)'
                 },
             ]
         },
@@ -1274,28 +1276,28 @@ const mockFibers = [
         },
         imgs: [
             {
-                url: fiberImage6,
+                url: pla_1,
                 name: {
                     ru: 'Изображение 6',
                     en: 'Image 6'
                 }
             },
             {
-                url: fiberImage3,
+                url: pla_1,
                 name: {
                     ru: 'Изображение 3',
                     en: 'Image 3'
                 }
             },
             {
-                url: fiberImage4,
+                url: pla_1,
                 name: {
                     ru: 'Изображение 4',
                     en: 'Image 4'
                 }
             },
             {
-                url: fiberImage1,
+                url: pla_1,
                 name: {
                     ru: 'Изображение 1',
                     en: 'Image 1'
@@ -1476,28 +1478,28 @@ const mockFibers = [
         },
         imgs: [
             {
-                url: fiberImage6,
+                url: pla_1,
                 name: {
                     ru: 'Изображение 6',
                     en: 'Image 6'
                 }
             },
             {
-                url: fiberImage3,
+                url: pla_1,
                 name: {
                     ru: 'Изображение 3',
                     en: 'Image 3'
                 }
             },
             {
-                url: fiberImage4,
+                url: pla_1,
                 name: {
                     ru: 'Изображение 4',
                     en: 'Image 4'
                 }
             },
             {
-                url: fiberImage1,
+                url: pla_1,
                 name: {
                     ru: 'Изображение 1',
                     en: 'Image 1'
@@ -1691,28 +1693,28 @@ const mockFibers = [
         },
         imgs: [
             {
-                url: fiberImage6,
+                url: pla_1,
                 name: {
                     ru: 'Изображение 6',
                     en: 'Image 6'
                 }
             },
             {
-                url: fiberImage3,
+                url: pla_1,
                 name: {
                     ru: 'Изображение 3',
                     en: 'Image 3'
                 }
             },
             {
-                url: fiberImage4,
+                url: pla_1,
                 name: {
                     ru: 'Изображение 4',
                     en: 'Image 4'
                 }
             },
             {
-                url: fiberImage1,
+                url: pla_1,
                 name: {
                     ru: 'Изображение 1',
                     en: 'Image 1'
@@ -1899,28 +1901,28 @@ const mockFibers = [
         },
         imgs: [
             {
-                url: fiberImage6,
+                url: pla_1,
                 name: {
                     ru: 'Изображение 6',
                     en: 'Image 6'
                 }
             },
             {
-                url: fiberImage3,
+                url: pla_1,
                 name: {
                     ru: 'Изображение 3',
                     en: 'Image 3'
                 }
             },
             {
-                url: fiberImage4,
+                url: pla_1,
                 name: {
                     ru: 'Изображение 4',
                     en: 'Image 4'
                 }
             },
             {
-                url: fiberImage1,
+                url: pla_1,
                 name: {
                     ru: 'Изображение 1',
                     en: 'Image 1'

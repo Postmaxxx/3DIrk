@@ -40,6 +40,7 @@ const SpliderCommon: React.FC<IProps> = ({lang, images, imagesPerSlide=1}): JSX.
         //type   : 'loop',
         perPage: imagesPerSlide,
         gap: '5%',
+		rewind: true,
 		lazyLoad: true,
 		updateOnMove: true,
 		perMove: 1,

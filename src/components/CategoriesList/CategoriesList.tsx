@@ -29,7 +29,7 @@ interface IProps extends IPropsState, IPropsActions {}
 
 const CatalogList: React.FC<IProps> = ({list, selectedCategory, loading, lang, setState}): JSX.Element => {
 
-	const selectPortfolio = (id: TId) => {
+	const selectCategory = (id: TId) => {
 		setState.catalog.setSelectedCategory(id)
 	};
 
@@ -51,7 +51,7 @@ const CatalogList: React.FC<IProps> = ({list, selectedCategory, loading, lang, s
 							<li 
 								key={category.id} 
 								className={category.id === selectedCategory ? "selected" : ""}
-								onClick={():void => selectPortfolio(category.id)}
+								onClick={():void => selectCategory(category.id)}
 							>
 								{category.name[lang]}
 							</li>

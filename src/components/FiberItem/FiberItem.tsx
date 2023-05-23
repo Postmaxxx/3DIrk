@@ -2,7 +2,6 @@ import { IColor, IFiber, TLang } from 'src/interfaces'
 import Proscons from '../Proscons/Proscons'
 import './fiber-item.scss'
 import SpliderCommon from '../Spliders/Common/SpliderCommon';
-import ProsconsValue from '../ProsconsFeature/ProsconsFeature';
 import ProsconsFeature from '../ProsconsFeature/ProsconsFeature';
 
 

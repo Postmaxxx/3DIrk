@@ -21,6 +21,13 @@ const mockCategoriesList = [
             en: 'Test',
             ru: 'Тест'
         },
+    },
+    {
+        id: 'c4',
+        name: {
+            en: 'Decor',
+            ru: 'Декор'
+        },
     }
 ] satisfies ICategoriesListItem[]
 

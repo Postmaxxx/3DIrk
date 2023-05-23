@@ -14,13 +14,13 @@ export const appStorage = getStorage(appDB);
 
 
 
-const storageRef = ref(appStorage, 'Portfolio/1.png');
+//const storageRef = ref(appStorage, 'Portfolio/1.png');
 
-getDownloadURL(storageRef).then((url) => {
+/*getDownloadURL(storageRef).then((url) => {
   
 }).catch((error) => {
   console.error(error);
-});
+});*/
 
 
 

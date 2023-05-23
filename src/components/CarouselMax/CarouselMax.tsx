@@ -1,10 +1,10 @@
 import './carouselmax.scss'
-import image1 from '../../assets/img/portfolio/1.png'
-import image2 from '../../assets/img/portfolio/2.jpeg'
-import image3 from '../../assets/img/portfolio/3.jpeg'
-import image4 from '../../assets/img/portfolio/4.jpeg'
-import image5 from '../../assets/img/portfolio/5.png'
-import image6 from '../../assets/img/portfolio/6.png'
+import image1 from 'src/assets/img/carouselMax/1.png'
+import image2 from 'src/assets/img/carouselMax/2.jpeg'
+import image3 from 'src/assets/img/carouselMax/3.jpeg'
+import image4 from 'src/assets/img/carouselMax/4.jpeg'
+import image5 from 'src/assets/img/carouselMax/5.png'
+import image6 from 'src/assets/img/carouselMax/6.png'
 import { useEffect,useRef, useState } from 'react';
 import ImgWithPreloader from 'src/assets/js/ImgWithPreloader'
 
