@@ -32,7 +32,7 @@ export const ratingNumberToText = (value: number): TLangText => {
         },
         7: {
             en: 'upper medium',
-            ru: 'выше средней'
+            ru: 'хорошая'
         },
         8: {
             en: 'hign',
