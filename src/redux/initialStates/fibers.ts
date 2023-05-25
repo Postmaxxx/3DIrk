@@ -7,7 +7,7 @@ const initialFibers = {
     },
     fibersList: [],
     selected: '',
-    compareList: []
+    showList: []
 } satisfies IFibersState
 
 export default initialFibers

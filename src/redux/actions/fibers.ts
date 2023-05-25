@@ -16,8 +16,8 @@ export const setDataFibers = <T extends Array<IFiber>>(payload: T):IAction<T> =>
 });
 
 
-export const setCompareListFibers = <T extends Array<IFiber['id']>>(payload: T):IAction<T> => ({
-    type: actionsListFibers.SET_COMPARE_LIST_FIBERS,
+export const setShowListFibers = <T extends Array<IFiber['id']>>(payload: T):IAction<T> => ({
+    type: actionsListFibers.SET_SHOW_LIST_FIBERS,
     payload: payload
 });
 

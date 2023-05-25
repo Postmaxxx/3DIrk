@@ -278,7 +278,7 @@ export interface IFiber {
 
 export interface IFibersState {
     selected: IFiber['id']
-    compareList: IFiber['id'][]
+    showList: IFiber['id'][]
     dataLoading: IDataLoading
     fibersList: Array<IFiber>
 }

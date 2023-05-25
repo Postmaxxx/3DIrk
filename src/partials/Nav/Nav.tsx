@@ -36,11 +36,18 @@ const pagesList = [
     },
     {
         name: {
-            ru: "материалы",
-            en: 'fibers'
+            ru: "Филаменты",
+            en: 'Fialaments'
         },
         path: "/fibers",
         subMenu : [
+            {
+                name: {
+                    ru: "О филаментах",
+                    en: 'About'
+                },
+                path: "/fibers",
+            },
             {
                 name: {
                     ru: "Сравнение",

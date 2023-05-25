@@ -22,10 +22,10 @@ const reducerFibers = (state:IFibersState = initialFibersState, action: IAction<
                 ...state, 
                 selected: action.payload
             }
-        case actionsListFibers.SET_COMPARE_LIST_FIBERS: 
+        case actionsListFibers.SET_SHOW_LIST_FIBERS: 
             return {
                 ...state, 
-                compareList: action.payload
+                showList: action.payload
             }
 
 
