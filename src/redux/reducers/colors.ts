@@ -16,7 +16,7 @@ const reducerColors = (state:IColorsState = initialColorsState, action: IAction<
                 colors: action.payload
             }
 
-        default: return {...state}
+        default: return state
     }
 }
 

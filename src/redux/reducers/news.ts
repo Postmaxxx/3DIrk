@@ -18,7 +18,7 @@ const reducerNews = (state:INewsState = initialNewsState, action: IAction<any>):
                 newsList: [...action.payload]
             }
 
-        default: return {...state}
+        default: return state
     }
 }
 

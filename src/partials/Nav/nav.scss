@@ -115,36 +115,53 @@ $gap_to_text: 5px;
 
                 & > ul.sub_menu {
                     position: absolute;
-                    //padding: 20px;
-                    //padding-top: 40px;
                     background-color: var(--main);;
                     left: 50%;
                     transform-origin: top center;
                     transform: translate(-50%, 0);
                     transition: width $transition_subMenu, transform $transition_subMenu, grid-template-rows $transition_subMenu $transition_subMenu;
                     width: 100%;
-                    border: 1px solid red;
                     box-sizing: border-box;
                     display: grid;
                     grid-template-rows: 0fr;
                     overflow: hidden;
-
-
+                    
+                    
                     & > .submenu__content {
                         min-height: 0;
-                        transition: visibility 1s;
-                        visibility: hidden;
+                        padding-left: 20px;
+                        padding-right: 20px;
+                        overflow: hidden;
+                        border: 0px solid transparent;
+                        transition: border $transition_subMenu 1*$transition_subMenu, padding $transition_subMenu 1*$transition_subMenu, margin $transition_subMenu $transition_subMenu;
 
+                        
                         & > li {
                             display: block;
                             position: relative;
                             left: 50%;
                             transform: translate(-50%, 0);
-                            border: 1px solid green;
+                            width: 0;
+                            overflow: hidden;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            transition: width $transition_subMenu 0s;
+                            margin-top: 10px;
+
     
                             & > a {
+                                text-transform: uppercase;
                                 display: block;
                                 white-space: nowrap;
+                                text-align: center;
+                                /*transform: scaleX(0);
+                                transition: transform $transition_subMenu 0s;*/
+
+                                &:hover {
+                                    color: var(--text_vv);
+                                    transition: color $transition_fast;
+                                }
                             }
                         }
                     }
@@ -157,7 +174,7 @@ $gap_to_text: 5px;
 
 
 
-                &:hover {
+                &.extandable:hover {
                     &::before,&::after {
                         height: 100%;
                         top: 0;
@@ -175,12 +192,26 @@ $gap_to_text: 5px;
                     & > ul.sub_menu {
                         grid-template-rows: 1fr;
                         transform: translate(-50%, 0px);
-                        width: 300px;
+                        width: 250px;
                         transition: transform $transition_subMenu $transition_subMenu, grid-template-rows $transition_subMenu $transition_subMenu, width $transition_subMenu 2*$transition_subMenu;
                         
                         & > .submenu__content {
+                            padding-top: 20px;
+                            margin-top: 23px;
+                            border-right: 3px solid var(--main_vv);
+                            border-left: 3px solid var(--main_vv);
+                            border-bottom: 3px solid var(--main_vv);
+                            padding-bottom: 30px;
+                            transition: padding $transition_subMenu 1*$transition_subMenu, margin $transition_subMenu $transition_subMenu, border 0s $transition_subMenu;
+
                             & > li {
-            
+                                width: 100%;
+                                transition: width $transition_subMenu 2*$transition_subMenu;
+
+                                & > a {
+                                    /*transform: scaleX(1);
+                                    transition: transform $transition_subMenu 2*$transition_subMenu;*/
+                                }
                             }
                         }
 

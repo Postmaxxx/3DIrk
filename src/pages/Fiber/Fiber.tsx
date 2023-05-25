@@ -32,6 +32,7 @@ const Fiber:React.FC<IProps> = ({lang, fibers, colors, setState}):JSX.Element =>
     
     const [loaded, setLoaded] = useState<boolean>(false)
     const [fiber, setFiber] = useState<IFiber>()
+    
 
     useEffect(() => {
         if (fibers.dataLoading.status === 'idle') {
@@ -46,8 +47,8 @@ const Fiber:React.FC<IProps> = ({lang, fibers, colors, setState}):JSX.Element =>
             setLoaded(true)
             setFiber(fibers.fibersList.find(item => item.id === paramFiberId))
         }
-    }, [colors.dataLoading?.status, fibers.dataLoading?.status])
-
+    }, [colors.dataLoading?.status, fibers.dataLoading?.status, paramFiberId])
+    
 
     return (
         <div className="page page_fiber">

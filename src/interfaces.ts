@@ -235,7 +235,30 @@ export interface IFeatures {
 
 //==========================================Fibers State
 
-
+export interface IFiberParam {
+    strength: number //MPa
+    stiffnes: number //1..10
+    durability: number //1..10
+    minTemp: number //in C
+    maxTemp: number //in C
+    thermalExpansion: number //µm/m-°C
+    density: number //g/cm3
+    flexible: number //0..2, 0 -no, 1 - maybe, 3 - ok
+    elastic: number //0..2, 0 -no, 1 - maybe, 3 - ok
+    soft: number //0..2, 0 -no, 1 - maybe, 3 - ok
+    composite: number //0..2, 0 -no, 1 - maybe, 3 - ok
+    resistantImpact: number //0..2, 0 -no, 1 - maybe, 3 - ok
+    resistantUV: number //0..2, 0 -no, 1 - maybe, 3 - ok
+    resistantWater: number //0..2, 0 -no, 1 - maybe, 3 - ok
+    resistantHeat: number //0..2, 0 -no, 1 - maybe, 3 - ok
+    resistantChemically: number //0..2, 0 -no, 1 - maybe, 3 - ok
+    dissolvable: number //0..2, 0 -no, 1 - maybe, 3 - ok
+    resistantFatigue: number //0..2, 0 -no, 1 - maybe, 3 - ok
+    cutting: number //0..2, 0 -no, 1 - maybe, 3 - ok
+    grinding: number  //0..2, 0 -no, 1 - maybe, 3 - ok
+    speed: number //0-lo ... 5-high
+    price: number //1-low...5-high
+}
 
 
 export interface IFiber {
@@ -250,9 +273,12 @@ export interface IFiber {
         name: TLangText
         descr: TLangText
     }
+    params: IFiberParam
 }
 
 export interface IFibersState {
+    selected: IFiber['id']
+    compareList: IFiber['id'][]
     dataLoading: IDataLoading
     fibersList: Array<IFiber>
 }

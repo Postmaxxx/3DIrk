@@ -218,6 +218,30 @@ const mockFibers = [
                     }
                 },
             ]
+        },
+        params: {
+            strength: 5,
+            stiffnes: 5,
+            durability: 5,
+            minTemp: 30,
+            maxTemp: 110,
+            thermalExpansion: 90 ,
+            density: 1.04 ,
+            price: 2 ,
+            flexible: 0 ,
+            elastic: 0,
+            resistantImpact: 2,
+            soft: 2,
+            composite: 2,
+            resistantUV: 0,
+            resistantWater: 0,
+            dissolvable: 2,
+            resistantHeat: 0,
+            resistantChemically: 2,
+            resistantFatigue: 0,
+            cutting: 2,
+            grinding: 0 ,
+            speed: 5 ,
         }
     },
 
@@ -419,6 +443,30 @@ const mockFibers = [
                 },
             ]
         },
+        params: {
+            strength: 3,
+            stiffnes: 1,
+            durability: 8,
+            minTemp: 10,
+            maxTemp: 90,
+            thermalExpansion: 170 ,
+            density: 1.44 ,
+            price: 4 ,
+            flexible: 2 ,
+            elastic: 2,
+            resistantImpact: 0,
+            soft: 0,
+            composite: 0 ,
+            resistantUV: 2,
+            resistantWater: 2,
+            dissolvable: 0,
+            resistantHeat: 2,
+            resistantChemically: 0,
+            resistantFatigue: 2,
+            cutting: 2,
+            grinding: 2 ,
+            speed: 1,
+        }
 
     },
 
@@ -617,6 +665,30 @@ const mockFibers = [
                 },
             ]
         },
+        params: {
+            strength: 3,
+            stiffnes: 1,
+            durability: 8,
+            minTemp: 10,
+            maxTemp: 90,
+            thermalExpansion: 170 ,
+            density: 1.44 ,
+            price: 4 ,
+            flexible: 2 ,
+            elastic: 2,
+            resistantImpact: 0,
+            soft: 0,
+            composite: 0 ,
+            resistantUV: 2,
+            resistantWater: 2,
+            dissolvable: 0,
+            resistantHeat: 2,
+            resistantChemically: 0,
+            resistantFatigue: 2,
+            cutting: 2,
+            grinding: 2 ,
+            speed: 1,
+        }
         
     },
     
@@ -823,7 +895,32 @@ const mockFibers = [
                 },
             ]
         },
+        params: {
+            strength: 3,
+            stiffnes: 1,
+            durability: 8,
+            minTemp: 10,
+            maxTemp: 90,
+            thermalExpansion: 170 ,
+            density: 1.44 ,
+            price: 4 ,
+            flexible: 2 ,
+            elastic: 2,
+            resistantImpact: 0,
+            soft: 0,
+            composite: 0 ,
+            resistantUV: 2,
+            resistantWater: 2,
+            dissolvable: 0,
+            resistantHeat: 2,
+            resistantChemically: 0,
+            resistantFatigue: 2,
+            cutting: 2,
+            grinding: 2 ,
+            speed: 1,
+        }
     },
+    
 
 
 
@@ -1033,6 +1130,30 @@ const mockFibers = [
                 },
             ]
         },
+        params: {
+            strength: 3,
+            stiffnes: 1,
+            durability: 8,
+            minTemp: 10,
+            maxTemp: 90,
+            thermalExpansion: 170 ,
+            density: 1.44 ,
+            price: 4 ,
+            flexible: 2 ,
+            elastic: 2,
+            resistantImpact: 0,
+            soft: 0,
+            composite: 0 ,
+            resistantUV: 2,
+            resistantWater: 2,
+            dissolvable: 0,
+            resistantHeat: 2,
+            resistantChemically: 0,
+            resistantFatigue: 2,
+            cutting: 2,
+            grinding: 2 ,
+            speed: 1,
+        }
     },
 
 
@@ -1043,223 +1164,247 @@ const mockFibers = [
 
 //------------------------------------------------------------------------------------------------------
 
-{
-    id: 'f_CABS',
-    colors: ["c_b"],
-    name: {
-        ru: 'Композиты на основе ABS',
-        en: 'Composites based on ABS'
-    },
-    short: {
+    {
+        id: 'f_CABS',
+        colors: ["c_b"],
         name: {
-            ru: 'Композиты + ABS',
-            en: 'Composites + ABS'
+            ru: 'Композиты на основе ABS',
+            en: 'Composites based on ABS'
         },
-        descr: {
-            en: 'bla.... is a common alternative to ABS and is great for outdoor applications due to its high UV, temperature, and impact resistance.',
-            ru: 'bla....  is a common alternative to ABS and is great for outdoor applications due to its high UV, temperature, and impact resistance.'
+        short: {
+            name: {
+                ru: 'Композиты + ABS',
+                en: 'Composites + ABS'
+            },
+            descr: {
+                en: 'bla.... is a common alternative to ABS and is great for outdoor applications due to its high UV, temperature, and impact resistance.',
+                ru: 'bla....  is a common alternative to ABS and is great for outdoor applications due to its high UV, temperature, and impact resistance.'
+            }
+        },
+        text: {
+            en: [
+                {
+                    part: 'Poor meltability and high shrinkage of ABS plastic result in low strength. However, this plastic has good thermal resistance. It is most commonly used for 3D printing interior/exterior parts of automobiles. Without paint or coating, it is susceptible to direct sunlight. By adding glass and carbon fibers, the strength and stiffness are increased.'
+                },
+                {
+                    part: ''
+                },
+                {
+                    part: 'Types of fibers: '
+                },
+                {
+                    part: 'GF (glass fibers)'
+                },
+                {
+                    part: 'CF (carbon fibers)'
+                },
+            ],
+            ru: [
+                {
+                    part: 'Плохая спекаемость и высокая усадка ABS пластика влекут за собой низкую прочность, однако, данный пластик обладает хорошей термостойкостью. Чаще всего из него печатают детали интерьера/экстерьера автомобиля. Без покрытия краской или лаком боится открытых солнечных лучей. Благодаря добавлению стеклянных и углеродных нитей повышается прочность и жёсткость.'
+                },
+                {
+                    part: ''
+                },
+                {
+                    part: 'Виды нитей: '
+                },
+                {
+                    part: 'GF (стеклянные нити)'
+                },
+                {
+                    part: 'CF (углеродные нити)'
+                },
+            ]
+        },
+        proscons: {
+            pros: [
+                {
+                    en: '+',
+                    ru: '+'
+                },
+
+            ],
+            cons: [
+                {
+                    en: '-',
+                    ru: '-'
+                },
+
+            ]
+        },
+        imgs: [
+            {
+                url: pla_1,
+                name: {
+                    ru: 'Изображение 6',
+                    en: 'Image 6'
+                }
+            },
+            {
+                url: pla_1,
+                name: {
+                    ru: 'Изображение 3',
+                    en: 'Image 3'
+                }
+            },
+            {
+                url: pla_1,
+                name: {
+                    ru: 'Изображение 4',
+                    en: 'Image 4'
+                }
+            },
+            {
+                url: pla_1,
+                name: {
+                    ru: 'Изображение 1',
+                    en: 'Image 1'
+                }
+            },
+        ],
+        features: {
+            pros: [
+                {
+                    name: {
+                        ru: 'прочность',
+                        en: 'hardness'
+                    },
+                    value: {
+                        ru: 'средняя ????',
+                        en: 'medium ????'
+                    }
+                },
+                {
+                    name: {
+                        ru: 'жёсткость',
+                        en: 'toughness'
+                    },
+                    value: {
+                        ru: 'высокая ????',
+                        en: 'very high ????'
+                    }
+                },
+                {
+                    name: {
+                        ru: 'обработка',
+                        en: 'processing'
+                    },
+                    value: {
+                        ru: 'резанием и шлифованием ',
+                        en: 'cutting and grinding'
+                    }
+                },
+                {
+                    name: {
+                        ru: 'обработка растворителями',
+                        en: 'solvent treatment '
+                    },
+                    value: {
+                        ru: 'дихлорметан, дихлорэтан, ацетон',
+                        en: 'dichloromethane, dichloroethane,acetone'
+                    }
+                },
+                {
+                    name: {
+                        ru: 'ударостойкость',
+                        en: 'impact resistance'
+                    },
+                    value: {
+                        ru: 'высокая',
+                        en: 'high'
+                    }
+                },
+                {
+                    name: {
+                        ru: 'температура эксплуатации',
+                        en: 'expluatation tempreture'
+                    },
+                    value: {
+                        ru: '-40…+85°С',
+                        en: '-40…+85°C'
+                    }
+                },
+                {
+                    name: {
+                        ru: 'средняя стоимость',
+                        en: 'average price'
+                    },
+                    value: {
+                        ru: '4.5-6.5 р/гр',
+                        en: '4.5-6.5 rub/gr'
+                    }
+                },
+            ],
+            cons: [
+                {
+                    name: {
+                        ru: 'усадка',
+                        en: 'shrinkage'
+                    },
+                    value: {
+                        ru: 'высокая',
+                        en: 'high'
+                    }
+                },
+                {
+                    name: {
+                        ru: 'УФ стойкость (Солнце)',
+                        en: 'ultraviolet resistance (Sun)'
+                    },
+                    value: {
+                        ru: 'низкая',
+                        en: 'low'
+                    }
+                },
+                {
+                    name: {
+                        ru: 'износостойкость',
+                        en: 'durability'
+                    },
+                    value: {
+                        ru: 'низкая',
+                        en: 'low'
+                    }
+                },
+                {
+                    name: {
+                        ru: 'спекаемость',
+                        en: 'sinterability'
+                    },
+                    value: {
+                        ru: 'плохая',
+                        en: 'low'
+                    }
+                },
+            ]
+        },
+        params: {
+            strength: 3,
+            stiffnes: 1,
+            durability: 8,
+            minTemp: 10,
+            maxTemp: 90,
+            thermalExpansion: 170 ,
+            density: 1.44 ,
+            price: 4 ,
+            flexible: 2 ,
+            elastic: 2,
+            resistantImpact: 0,
+            soft: 0,
+            composite: 0 ,
+            resistantUV: 2,
+            resistantWater: 2,
+            dissolvable: 0,
+            resistantHeat: 2,
+            resistantChemically: 0,
+            resistantFatigue: 2,
+            cutting: 2,
+            grinding: 2 ,
+            speed: 1,
         }
+        
     },
-    text: {
-        en: [
-            {
-                part: 'Poor meltability and high shrinkage of ABS plastic result in low strength. However, this plastic has good thermal resistance. It is most commonly used for 3D printing interior/exterior parts of automobiles. Without paint or coating, it is susceptible to direct sunlight. By adding glass and carbon fibers, the strength and stiffness are increased.'
-            },
-            {
-                part: ''
-            },
-            {
-                part: 'Types of fibers: '
-            },
-            {
-                part: 'GF (glass fibers)'
-            },
-            {
-                part: 'CF (carbon fibers)'
-            },
-        ],
-        ru: [
-            {
-                part: 'Плохая спекаемость и высокая усадка ABS пластика влекут за собой низкую прочность, однако, данный пластик обладает хорошей термостойкостью. Чаще всего из него печатают детали интерьера/экстерьера автомобиля. Без покрытия краской или лаком боится открытых солнечных лучей. Благодаря добавлению стеклянных и углеродных нитей повышается прочность и жёсткость.'
-            },
-            {
-                part: ''
-            },
-            {
-                part: 'Виды нитей: '
-            },
-            {
-                part: 'GF (стеклянные нити)'
-            },
-            {
-                part: 'CF (углеродные нити)'
-            },
-        ]
-    },
-    proscons: {
-        pros: [
-            {
-                en: '+',
-                ru: '+'
-            },
-
-        ],
-        cons: [
-            {
-                en: '-',
-                ru: '-'
-            },
-
-        ]
-    },
-    imgs: [
-        {
-            url: pla_1,
-            name: {
-                ru: 'Изображение 6',
-                en: 'Image 6'
-            }
-        },
-        {
-            url: pla_1,
-            name: {
-                ru: 'Изображение 3',
-                en: 'Image 3'
-            }
-        },
-        {
-            url: pla_1,
-            name: {
-                ru: 'Изображение 4',
-                en: 'Image 4'
-            }
-        },
-        {
-            url: pla_1,
-            name: {
-                ru: 'Изображение 1',
-                en: 'Image 1'
-            }
-        },
-    ],
-    features: {
-        pros: [
-            {
-                name: {
-                    ru: 'прочность',
-                    en: 'hardness'
-                },
-                value: {
-                    ru: 'средняя ????',
-                    en: 'medium ????'
-                }
-            },
-            {
-                name: {
-                    ru: 'жёсткость',
-                    en: 'toughness'
-                },
-                value: {
-                    ru: 'высокая ????',
-                    en: 'very high ????'
-                }
-            },
-            {
-                name: {
-                    ru: 'обработка',
-                    en: 'processing'
-                },
-                value: {
-                    ru: 'резанием и шлифованием ',
-                    en: 'cutting and grinding'
-                }
-            },
-            {
-                name: {
-                    ru: 'обработка растворителями',
-                    en: 'solvent treatment '
-                },
-                value: {
-                    ru: 'дихлорметан, дихлорэтан, ацетон',
-                    en: 'dichloromethane, dichloroethane,acetone'
-                }
-            },
-            {
-                name: {
-                    ru: 'ударостойкость',
-                    en: 'impact resistance'
-                },
-                value: {
-                    ru: 'высокая',
-                    en: 'high'
-                }
-            },
-            {
-                name: {
-                    ru: 'температура эксплуатации',
-                    en: 'expluatation tempreture'
-                },
-                value: {
-                    ru: '-40…+85°С',
-                    en: '-40…+85°C'
-                }
-            },
-            {
-                name: {
-                    ru: 'средняя стоимость',
-                    en: 'average price'
-                },
-                value: {
-                    ru: '4.5-6.5 р/гр',
-                    en: '4.5-6.5 rub/gr'
-                }
-            },
-        ],
-        cons: [
-            {
-                name: {
-                    ru: 'усадка',
-                    en: 'shrinkage'
-                },
-                value: {
-                    ru: 'высокая',
-                    en: 'high'
-                }
-            },
-            {
-                name: {
-                    ru: 'УФ стойкость (Солнце)',
-                    en: 'ultraviolet resistance (Sun)'
-                },
-                value: {
-                    ru: 'низкая',
-                    en: 'low'
-                }
-            },
-            {
-                name: {
-                    ru: 'износостойкость',
-                    en: 'durability'
-                },
-                value: {
-                    ru: 'низкая',
-                    en: 'low'
-                }
-            },
-            {
-                name: {
-                    ru: 'спекаемость',
-                    en: 'sinterability'
-                },
-                value: {
-                    ru: 'плохая',
-                    en: 'low'
-                }
-            },
-        ]
-    },
-    
-},
 
 
 
@@ -1500,6 +1645,30 @@ const mockFibers = [
                 },
             ]
         },
+        params: {
+            strength: 3,
+            stiffnes: 1,
+            durability: 8,
+            minTemp: 10,
+            maxTemp: 90,
+            thermalExpansion: 170 ,
+            density: 1.44 ,
+            price: 4 ,
+            flexible: 2 ,
+            elastic: 2,
+            resistantImpact: 0,
+            soft: 0,
+            composite: 0 ,
+            resistantUV: 2,
+            resistantWater: 2,
+            dissolvable: 0,
+            resistantHeat: 2,
+            resistantChemically: 0,
+            resistantFatigue: 2,
+            cutting: 2,
+            grinding: 2 ,
+            speed: 1,
+        }
     },
 
 
@@ -1713,6 +1882,30 @@ const mockFibers = [
                 },
             ]
         },
+        params: {
+            strength: 3,
+            stiffnes: 1,
+            durability: 8,
+            minTemp: 10,
+            maxTemp: 90,
+            thermalExpansion: 170 ,
+            density: 1.44 ,
+            price: 4 ,
+            flexible: 2 ,
+            elastic: 2,
+            resistantImpact: 0,
+            soft: 0,
+            composite: 0 ,
+            resistantUV: 2,
+            resistantWater: 2,
+            dissolvable: 0,
+            resistantHeat: 2,
+            resistantChemically: 0,
+            resistantFatigue: 2,
+            cutting: 2,
+            grinding: 2 ,
+            speed: 1,
+        }
     },
 
 
@@ -1939,6 +2132,30 @@ const mockFibers = [
                 },
             ]
         },
+        params: {
+            strength: 3,
+            stiffnes: 1,
+            durability: 8,
+            minTemp: 10,
+            maxTemp: 90,
+            thermalExpansion: 170 ,
+            density: 1.44 ,
+            price: 4 ,
+            flexible: 2 ,
+            elastic: 2,
+            resistantImpact: 0,
+            soft: 0,
+            composite: 0 ,
+            resistantUV: 2,
+            resistantWater: 2,
+            dissolvable: 0,
+            resistantHeat: 2,
+            resistantChemically: 0,
+            resistantFatigue: 2,
+            cutting: 2,
+            grinding: 2 ,
+            speed: 1,
+        }
     },
 
 
@@ -2175,6 +2392,30 @@ const mockFibers = [
                 },
             ]
         },
+        params: {
+            strength: 3,
+            stiffnes: 1,
+            durability: 8,
+            minTemp: 10,
+            maxTemp: 90,
+            thermalExpansion: 170 ,
+            density: 1.44 ,
+            price: 4 ,
+            flexible: 2 ,
+            elastic: 2,
+            resistantImpact: 0,
+            soft: 0,
+            composite: 0 ,
+            resistantUV: 2,
+            resistantWater: 2,
+            dissolvable: 0,
+            resistantHeat: 2,
+            resistantChemically: 0,
+            resistantFatigue: 2,
+            cutting: 2,
+            grinding: 2 ,
+            speed: 1,
+        }
     },
 
 

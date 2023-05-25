@@ -5,7 +5,9 @@ const initialFibers = {
         status: 'idle',
         message: ""
     },
-    fibersList: []
+    fibersList: [],
+    selected: '',
+    compareList: []
 } satisfies IFibersState
 
 export default initialFibers

@@ -49,7 +49,7 @@ const reducerOrder = (state:IOrderState = initialOrderState, action: IAction<any
             }
 
 
-        default: return {...state}
+        default: return state
     }
 }
 

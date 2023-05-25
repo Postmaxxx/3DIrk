@@ -43,10 +43,10 @@ const pagesList = [
         subMenu : [
             {
                 name: {
-                    ru: "Все материалы",
-                    en: 'All fibers'
+                    ru: "Сравнение",
+                    en: 'Comparasing'
                 },
-                path: "/fibers",
+                path: "/fibers/compare",
             },
             {
                 name: {
@@ -61,6 +61,62 @@ const pagesList = [
                     en: 'f_PETg'
                 },
                 path: "/fibers/f_PETg",
+            },
+            {
+                name: {
+                    ru: "f_ABS",
+                    en: 'f_ABS'
+                },
+                path: "/fibers/f_ABS",
+            },
+            {
+                name: {
+                    ru: "f_ASA",
+                    en: 'f_ASA'
+                },
+                path: "/fibers/f_ASA",
+            },
+            {
+                name: {
+                    ru: "f_PA",
+                    en: 'f_PA'
+                },
+                path: "/fibers/f_PA",
+            },
+            {
+                name: {
+                    ru: "f_CABS",
+                    en: 'f_CABS'
+                },
+                path: "/fibers/f_CABS",
+            },
+            {
+                name: {
+                    ru: "f_CN",
+                    en: 'f_CN'
+                },
+                path: "/fibers/f_CN",
+            },
+            {
+                name: {
+                    ru: "f_PC",
+                    en: 'f_PC'
+                },
+                path: "/fibers/f_PC",
+            },
+            {
+                name: {
+                    ru: "f_PP",
+                    en: 'f_PP'
+                },
+                path: "/fibers/f_PP",
+            },
+            {
+                name: {
+                    ru: "f_SEBS",
+                    en: 'f_SEBS'
+                },
+                path: "/fibers/f_SEBS",
             },
         ]
     },
@@ -115,6 +171,11 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened}): JSX.E
     },[])
 
 
+    const subMenuClicked = () => {
+        console.log('nav re');
+    }
+    
+
     return (
         <>
             <nav className={desktopOpened ? "nav_desktop opened" : "nav_desktop"}>
@@ -122,7 +183,7 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened}): JSX.E
                     <ul>
                         {pagesList.map((page: IPage) => {
                             return (
-                                <li key={page.path}>
+                                <li key={page.path} className={page.subMenu? 'extandable' : ''}>
                                     <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
                                         to={page.path}
                                         data-text={page.name[lang]}
@@ -136,9 +197,10 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened}): JSX.E
                                                 {page.subMenu.map(subPage => {
                                                     return (
                                                         <li key={subPage.path}>
-                                                            <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
+                                                            <NavLink
                                                                 to={subPage.path}
                                                                 data-text={page.name[lang]}
+                                                                onClick={subMenuClicked}
                                                             >
                                                                 {subPage.name[lang]}
                                                             </NavLink>

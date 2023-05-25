@@ -15,7 +15,7 @@ const reducerOrder = (state:IProductState = initialProductState, action: IAction
                 ...state, 
                 ...action.payload
             }
-        default: return {...state}
+        default: return state
     }
 }
 

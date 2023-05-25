@@ -111,6 +111,10 @@ a {
     transition: color $transition_theme;
 }
 
+sup {
+    transition: color $transition_theme;
+}
+
 p {
     font-size: 18px;
     text-indent: 3rem;

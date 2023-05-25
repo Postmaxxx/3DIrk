@@ -46,7 +46,7 @@ const reducerBase = (state:IBaseState = initialBaseState, action: IAction<any>):
                 desktopOpened: false
             }
 
-        default: return {...state}
+        default: return state
     }
 }
 

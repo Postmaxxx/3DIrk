@@ -52,3 +52,20 @@ export const ratingNumberToText = (value: number): TLangText => {
     return compareTable[Number(value)]
     
 }
+
+/*
+export type TSvgTypes = 'minus' | 'ok' | 'con' | 'pro' | 'question' | 1 |2 |3
+
+interface ISvgInserter {
+    color: string
+    type: TSvgTypes
+}
+
+export const icon = ({type, color}: ISvgInserter): JSX.Element => {
+
+
+    return (
+        <>
+        </>
+    )
+}*/

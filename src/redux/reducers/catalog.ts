@@ -71,7 +71,7 @@ const reducerCatalog = (state: ICatalogState = initialCatalogState, action: IAct
                 }
             }
 
-        default: return {...state}
+        default: return state
     }
 }
 
