@@ -34,6 +34,7 @@ $col_other: 130px;
                 .cell {
                     position: relative;
                     width: $col_other;
+                    height: 100%;
                     padding: 15px;
                     border-right: 1px solid var(--border_compare);
                     border-bottom: 1px solid var(--border_compare);
@@ -103,7 +104,7 @@ $col_other: 130px;
 
 
                     & .rating__container {
-                        height: 80%;
+                        //height: 60px;
                         width: 100%;
                     }
 
@@ -114,7 +115,7 @@ $col_other: 130px;
                     }
 
 
-                    &.padding_no {
+                    &.cell_checkbox {
                         padding: 0;
 
 
@@ -200,6 +201,10 @@ $col_other: 130px;
                     }
                 }
 
+                .padding_no {
+                    padding: 0;
+                }
+
                 & .selectors {
                     flex-wrap: nowrap;
                     flex-direction: row;
@@ -219,16 +224,33 @@ $col_other: 130px;
                 }
 
 
-                .name_raw {
-                    align-items: flex-start;
-  
+                .row-name {
+                    padding: 0;
+                    width: 100%;
+                    
+                    & > .button_blue {
+                        margin-top: 15px;
+                        margin-bottom: 15px;
+                    }
+
+                    & > a {
+                        display: flex;
+                        height: 100%;
+                        width: 100%; 
+                        align-items: center;
+                    }
+
+
+                    &_last {
+                        border-bottom: none;
+                    }
                 }
 
 
-                .name_col {
+                .col-name {
                     justify-content: space-between;
                     &_last {
-
+                        border-bottom: none;
                         & > span {
                             color: var(--main_vv);
                             font-weight: 700;
@@ -236,6 +258,7 @@ $col_other: 130px;
                         }
                     }
                 }
+
 
 
                 .svg-icon {

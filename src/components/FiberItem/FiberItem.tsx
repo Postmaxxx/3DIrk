@@ -2,7 +2,8 @@ import { IColor, IFiber, TLang } from 'src/interfaces'
 import Proscons from '../Proscons/Proscons'
 import './fiber-item.scss'
 import SpliderCommon from '../Spliders/Common/SpliderCommon';
-import ProsconsFeature from '../ProsconsFeature/ProsconsFeature';
+import Features from '../Features/Features';
+import { NavLink } from 'react-router-dom';
 
 
 interface IProps {
@@ -23,7 +24,7 @@ const FiberItem = ({fiber, lang, colors}: IProps) => {
 					{fiber.text[lang].map((textItem, i) => <p key={i}>{textItem.part}</p>)}
 					<div className="features__container">
 						<h3>{lang === 'en' ? 'Features' : 'Характеристики'}</h3>
-							<ProsconsFeature {...fiber.features} lang={lang}/>
+						<Features params={fiber.params} fiber={fiber} lang={lang}/>
 					</div>
 					<div className="colors">
 						<h3>{lang === 'en' ? 'Available colors' : 'Доступные цвета'}</h3>
@@ -37,9 +38,15 @@ const FiberItem = ({fiber, lang, colors}: IProps) => {
 						</div>
 					</div>
 					<div className="proscons">
-						<h3>{lang === 'en' ? 'Best for' : 'Применение'}</h3>
+						<h3>{lang === 'en' ? 'Summary' : '?'}</h3>
 						<Proscons {...fiber.proscons} lang={lang}/>
 					</div>
+						
+					<NavLink
+						className="button_blue link_compareList"
+						to="/fibers/compare">
+							{lang === 'en' ? 'Watch in comparasing' : 'Посмотреть в сравнении'}
+					</NavLink>
 				</div>
             </div>
         </div>

@@ -1,6 +1,6 @@
-import { Fragment, useEffect, useRef } from "react";
+import { Fragment, useEffect, useState,  useRef } from "react";
 import { NavLink } from "react-router-dom";
-import { IFullState, IPage, TLang } from "src/interfaces";
+import { IFibersState, IFullState, IPage, TLang } from "src/interfaces";
 import "./nav.scss"
 import navLogo from "../../assets/img/nav_logo.png"
 import { connect } from "react-redux";
@@ -8,19 +8,23 @@ import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { setNavCloseDt, setNavCloseMob, setNavOpenDt, setNavOpenMob }  from "../../redux/actions/base"
 import CartInformer from "src/components/CartInformer/CartInformer";
+import { loadFibers, setSelectedFiber } from "src/redux/actions/fibers"
 
 
-const actionsList = {setNavCloseDt, setNavCloseMob, setNavOpenDt, setNavOpenMob }
+const actionsListBase = {setNavCloseDt, setNavCloseMob, setNavOpenDt, setNavOpenMob }
+const actionsListFibers = { loadFibers, setSelectedFiber }
 
 interface IPropsState {
     lang: TLang
     mobOpened: boolean
     desktopOpened: boolean
+    fibersState: IFibersState
 }
 
 interface IPropsActions {
     setState: {
-        base: typeof actionsList
+        base: typeof actionsListBase
+        fibers: typeof actionsListFibers
     }
 }
 
@@ -32,98 +36,35 @@ const pagesList = [
             ru: "главная",
             en: 'home'
         },
-        path: "/"
+        path: "/",
+        id: 'main_home'
     },
     {
         name: {
             ru: "Филаменты",
-            en: 'Fialaments'
+            en: 'Filaments'
         },
         path: "/fibers",
+        id: 'main_fibers',
+
         subMenu : [
             {
                 name: {
-                    ru: "О филаментах",
-                    en: 'About'
+                    ru: "О ФИЛАМЕНТАХ",
+                    en: 'ABOUT'
                 },
                 path: "/fibers",
+                id: 'about',
+
             },
             {
                 name: {
-                    ru: "Сравнение",
-                    en: 'Comparasing'
+                    ru: "СРАВНЕНИЕ",
+                    en: 'COMPARASING'
                 },
                 path: "/fibers/compare",
-            },
-            {
-                name: {
-                    ru: "f_PLA",
-                    en: 'f_PLA'
-                },
-                path: "/fibers/f_PLA",
-            },
-            {
-                name: {
-                    ru: "f_PETg",
-                    en: 'f_PETg'
-                },
-                path: "/fibers/f_PETg",
-            },
-            {
-                name: {
-                    ru: "f_ABS",
-                    en: 'f_ABS'
-                },
-                path: "/fibers/f_ABS",
-            },
-            {
-                name: {
-                    ru: "f_ASA",
-                    en: 'f_ASA'
-                },
-                path: "/fibers/f_ASA",
-            },
-            {
-                name: {
-                    ru: "f_PA",
-                    en: 'f_PA'
-                },
-                path: "/fibers/f_PA",
-            },
-            {
-                name: {
-                    ru: "f_CABS",
-                    en: 'f_CABS'
-                },
-                path: "/fibers/f_CABS",
-            },
-            {
-                name: {
-                    ru: "f_CN",
-                    en: 'f_CN'
-                },
-                path: "/fibers/f_CN",
-            },
-            {
-                name: {
-                    ru: "f_PC",
-                    en: 'f_PC'
-                },
-                path: "/fibers/f_PC",
-            },
-            {
-                name: {
-                    ru: "f_PP",
-                    en: 'f_PP'
-                },
-                path: "/fibers/f_PP",
-            },
-            {
-                name: {
-                    ru: "f_SEBS",
-                    en: 'f_SEBS'
-                },
-                path: "/fibers/f_SEBS",
+                id: 'compare',
+
             },
         ]
     },
@@ -132,20 +73,26 @@ const pagesList = [
             ru: "каталог",
             en: 'catalog'
         },
-        path: "/catalog"
+        path: "/catalog",
+        id: 'catalog',
     },
     {
         name: {
             ru: "заказать",
-            en: 'order'
+            en: 'order',
         },
-        path: "/order"
+        path: "/order",
+        id: 'order',
     },
 ] satisfies IPage[]
 
-const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened}): JSX.Element => {
+
+
+
+const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersState}): JSX.Element => {
     //const scrollTimeout = useRef<any>()
     const _blur = useRef<HTMLDivElement>(null)
+	const [fibersList, setFibersList] = useState<any>()
     
 
     const navToggle = () => {
@@ -172,16 +119,40 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened}): JSX.E
     },[])
 
 
-  
-    useEffect(() => {
-
-    },[])
-
-
-    const subMenuClicked = () => {
-        console.log('nav re');
+    const setFibers = () => {
+        const _filamentsNav = document.querySelector('[data-nav-text="main_fibers"]')
+		if (!_filamentsNav) return          
+		const fibersToAdd = fibersState.fibersList.map((fiber) => {                
+			return (
+				<li key={fiber.id}>
+					<NavLink
+						to={`/fibers/${fiber.id}`}
+						data-subnav-text={fiber.id}
+						onClick={() => setState.fibers.setSelectedFiber(fiber.id)}
+						>
+						{fiber.short.name[lang]}
+					</NavLink>
+				</li>
+            )
+		})
+        if (fibersToAdd) {
+            setFibersList(fibersToAdd)
+        }
     }
-    
+
+
+	useEffect(() => {
+        if (fibersState.dataLoading.status !== 'success') return
+		if (fibersList) return
+        setFibers()	
+	}, [fibersState.dataLoading.status])
+
+
+	useEffect(() => {
+        if (fibersState.dataLoading.status !== 'success') return
+        setFibers()	
+	}, [lang])
+   
 
     return (
         <>
@@ -193,7 +164,7 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened}): JSX.E
                                 <li key={page.path} className={page.subMenu? 'extandable' : ''}>
                                     <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
                                         to={page.path}
-                                        data-text={page.name[lang]}
+                                        data-nav-text={page.id}
                                     >
                                         {page.name[lang]}
                                         {page.name.en === 'order' ? <div className="cart-informer__container"><CartInformer /></div> : null}
@@ -206,14 +177,14 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened}): JSX.E
                                                         <li key={subPage.path}>
                                                             <NavLink
                                                                 to={subPage.path}
-                                                                data-text={page.name[lang]}
-                                                                onClick={subMenuClicked}
+                                                                data-subnav-text={page.id}
                                                             >
                                                                 {subPage.name[lang]}
                                                             </NavLink>
                                                         </li>
                                                     )
                                                 })}
+                                                {fibersList ? fibersList : null}
                                             </div>
                                         </ul>
                                     : null}
@@ -276,13 +247,15 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened}): JSX.E
 const mapStateToProps = (state: IFullState): IPropsState => ({
 	lang: state.base.lang,
     mobOpened: state.base.mobOpened,
-    desktopOpened: state.base.desktopOpened
+    desktopOpened: state.base.desktopOpened,
+    fibersState: state.fibers
 })
   
   
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
     setState: {
-		base: bindActionCreators(actionsList, dispatch)
+		base: bindActionCreators(actionsListBase, dispatch),
+		fibers: bindActionCreators(actionsListFibers, dispatch),
 	}
 })
   

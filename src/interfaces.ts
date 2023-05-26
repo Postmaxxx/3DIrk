@@ -1,4 +1,5 @@
 import { AnyAction } from "redux";
+import { propertiesList } from "./assets/data/fibers";
 
 
 
@@ -58,6 +59,7 @@ export type TLangTextArr = {
 export interface IPageItem {
     name: TLangText
     path: string
+    id: string
 }
 
 export interface IPage extends IPageItem {
@@ -258,6 +260,7 @@ export interface IFiberParam {
     grinding: number  //0..2, 0 -no, 1 - maybe, 3 - ok
     speed: number //0-lo ... 5-high
     price: number //1-low...5-high
+    priceGr: string
 }
 
 
@@ -466,4 +469,20 @@ export interface IProductBE {
     fibers: IFiber["id"][]
     features: IFeature[]
     mods: TLangText[]
+}
+
+
+
+
+
+// fibers
+
+export type IPropertyTypes = typeof propertiesList[number]; 
+
+export type TPropertiesValues = {
+    [key in IPropertyTypes] : {
+        name: TLangText
+        tip: TLangText
+        unit: TLangText
+    }
 }

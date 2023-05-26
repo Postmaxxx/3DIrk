@@ -63,8 +63,10 @@ body {
     --rating_value_green: rgb(64, 170, 54);
     --rating_value_red: rgb(228, 43, 43);
 
-    --compare_selected: rgb(190, 190, 190);
+    --compare_selected: rgb(190, 190, 190); 
     --compare_mark: rgb(46, 46, 46);
+
+    --rating_money: rgb(168, 168, 136);
 
  }
  body.dark {
@@ -99,6 +101,8 @@ body {
 
     --compare_selected: rgb(52, 65, 80);
     --compare_mark: rgb(218, 218, 218);
+
+    --rating_money: rgb(185, 185, 141);
 
  }
 

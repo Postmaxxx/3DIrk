@@ -151,7 +151,7 @@ $gap_to_text: 5px;
 
     
                             & > a {
-                                text-transform: uppercase;
+                                //text-transform: uppercase;
                                 display: block;
                                 white-space: nowrap;
                                 text-align: center;
@@ -192,7 +192,7 @@ $gap_to_text: 5px;
                     & > ul.sub_menu {
                         grid-template-rows: 1fr;
                         transform: translate(-50%, 0px);
-                        width: 250px;
+                        width: 280px;
                         transition: transform $transition_subMenu $transition_subMenu, grid-template-rows $transition_subMenu $transition_subMenu, width $transition_subMenu 2*$transition_subMenu;
                         
                         & > .submenu__content {

@@ -1,0 +1,30 @@
+@use '/src/assets/css/variables' as *;
+
+
+.homer {
+    width: 40px;
+    height: 40px;
+    background-color: var(--main_vv);
+    position: fixed;
+    bottom: 30px;
+    right: 0;
+    transform: translateX(100%) rotate(180deg);
+    transition: transform $transition_fast, background-color $transition_theme;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    z-index: 2000;
+    opacity: 0.4;
+    cursor: pointer;
+
+    & > svg {
+        fill: var(--text_vv);
+        transition: fill $transition_theme;
+    }
+
+    &.show {
+        transform: translateX(10%) rotate(180deg);
+
+    }
+}

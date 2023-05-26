@@ -1,8 +1,8 @@
-import { Routes, Route, BrowserRouter, HashRouter } from "react-router-dom";
+import { Routes, Route, BrowserRouter, HashRouter, NavLink } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import Preloader from "./components/Preloaders/Preloader"; 
 import "./assets/css/_base.scss";
-import { IDataLoading, IFullState, IOrderState, TLang } from "./interfaces";
+import { IDataLoading, IFiber, IFibersState, IFullState, IOrderState, TLang } from "./interfaces";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
@@ -13,6 +13,7 @@ import { useState, useEffect, useRef, KeyboardEventHandler } from 'react'
 
 const LazyThemeSwitcher = lazy(() => import("./components/ThemeSwitcher/ThemeSwitcher"));
 const LazyLangSwitcher = lazy(() => import("./components/LangSwitcher/LangSwitcher"));
+const LazyHomer = lazy(() => import("./components/Homer/Homer"));
 const LazyHeader = lazy(() => import('./partials/Header/Header'));
 const LazyFooter = lazy(() => import('./partials/Footer/Footer'));
 const LazyHomePage = lazy(() => import("./pages/Home/Home"));
@@ -41,7 +42,7 @@ interface IPropsActions {
     setState: {
         cart: typeof actionsCartList,
         colors: typeof actionsListColors,
-        fibers: typeof actionsListFibers,
+        fiber: typeof actionsListFibers,
     }
 }
 
@@ -50,18 +51,20 @@ interface IProps extends IPropsState, IPropsActions {}
 
 
 
-const App:React.FC<IProps> = ({lang, cartLoad, colorsLoad, fibersLoad, setState}):JSX.Element => {
+const App:React.FC<IProps> = ({lang, cartLoad, colorsLoad, setState, fibersLoad}):JSX.Element => {
 	
+
 	cartLoad.status === 'idle' && setState.cart.loadCart()
 	colorsLoad.status === 'idle' && setState.colors.loadColors()
-	fibersLoad.status === 'idle' && setState.fibers.loadFibers()
-	
+	fibersLoad.status === 'idle' && setState.fiber.loadFibers()
+
 	
 	return (
 		<HashRouter>
 			<Suspense fallback={<Preloader />}><LazyThemeSwitcher /></Suspense>
 			<Suspense fallback={<Preloader />}><LazyLangSwitcher /></Suspense>
 			<Suspense fallback={<Preloader />}><LazyHeader /></Suspense>
+			<Suspense fallback={<Preloader />}><LazyHomer /></Suspense>
 			
 			<Routes>
 				<Route index path="/" element={<Suspense fallback={<Preloader />}><LazyHomePage /></Suspense>} />
@@ -93,14 +96,13 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
 	cartLoad: state.cart.dataLoading,
 	colorsLoad: state.colors.dataLoading,
 	fibersLoad: state.fibers.dataLoading,
-
 })
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
     setState: {
 		cart: bindActionCreators(actionsCartList, dispatch),
         colors: bindActionCreators(actionsListColors, dispatch),
-        fibers: bindActionCreators(actionsListFibers, dispatch),
+        fiber: bindActionCreators(actionsListFibers, dispatch),
 	}
 })
   

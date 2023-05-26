@@ -1,0 +1,53 @@
+@use '/src/assets/css/variables' as *;
+
+
+.features {
+    margin-top: 50px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 10%;
+    grid-auto-flow: dense;
+
+    @include respond-to(md) {
+        grid-template-columns: 1fr;
+
+    }
+
+    & > .feature__container {
+        width: 100%;    
+        align-self: end;
+        
+        & > .feature {
+            display: grid;
+            grid-template-columns: 169px 1fr auto;
+            align-items: end;
+            margin-top: 7px;
+    
+            & > span:nth-of-type(1) {
+                font-weight: 400;
+                font-size: 18px;
+
+                @include respond-to(sm) {
+                    font-size: 16px;
+                }
+            }
+            & > span:nth-of-type(2) {
+                flex-grow: 1;
+                margin-left: 10px;
+                margin-right: 15px;
+                border-bottom: 1px dotted #FFF;
+                margin-bottom: 3px;
+            }            
+            & > span:nth-of-type(3) {
+                font-weight: 700;
+                font-size: 18px;
+                @include respond-to(sm) {
+                    font-size: 16px;
+                }
+            }
+        }
+    }
+
+}
+

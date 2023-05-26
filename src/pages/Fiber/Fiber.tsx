@@ -27,6 +27,9 @@ interface IPropsActions {
 
 interface IProps extends IPropsState, IPropsActions {}
 
+
+
+
 const Fiber:React.FC<IProps> = ({lang, fibers, colors, setState}):JSX.Element => {
     const paramFiberId = useParams().fiberId || ''
     

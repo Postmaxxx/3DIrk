@@ -47,15 +47,22 @@ const mockFibers = [
         proscons: {
             pros: [
                 {
-                    en: '+',
+                    en: 'Very high hardeness',
                     ru: '+'
                 },
-
+                {
+                    en: 'Good for toys',
+                    ru: '+'
+                },
             ],
             cons: [
                 {
-                    en: '-',
+                    en: 'Non UV resistant',
                     ru: '-'
+                },
+                {
+                    en: 'Toxic',
+                    ru: '+'
                 },
             ]
         },
@@ -220,7 +227,7 @@ const mockFibers = [
             ]
         },
         params: {
-            strength: 5,
+            strength: 120,
             stiffnes: 5,
             durability: 5,
             minTemp: 30,
@@ -242,6 +249,7 @@ const mockFibers = [
             cutting: 2,
             grinding: 0 ,
             speed: 5 ,
+            priceGr: '4-6',
         }
     },
 
@@ -444,14 +452,14 @@ const mockFibers = [
             ]
         },
         params: {
-            strength: 3,
+            strength: 30,
             stiffnes: 1,
             durability: 8,
             minTemp: 10,
             maxTemp: 90,
             thermalExpansion: 170 ,
             density: 1.44 ,
-            price: 4 ,
+            price: 5 ,
             flexible: 2 ,
             elastic: 2,
             resistantImpact: 0,
@@ -466,6 +474,7 @@ const mockFibers = [
             cutting: 2,
             grinding: 2 ,
             speed: 1,
+            priceGr: '8-12',
         }
 
     },
@@ -506,17 +515,23 @@ const mockFibers = [
         proscons: {
             pros: [
                 {
-                    en: '+',
+                    en: 'Very high hardeness',
                     ru: '+'
                 },
-
+                {
+                    en: 'Good for toys',
+                    ru: '+'
+                },
             ],
             cons: [
                 {
-                    en: '-',
+                    en: 'Non UV resistant',
                     ru: '-'
                 },
-
+                {
+                    en: 'Toxic',
+                    ru: '+'
+                },
             ]
         },
         imgs: [
@@ -666,7 +681,7 @@ const mockFibers = [
             ]
         },
         params: {
-            strength: 3,
+            strength: 103,
             stiffnes: 1,
             durability: 8,
             minTemp: 10,
@@ -688,6 +703,7 @@ const mockFibers = [
             cutting: 2,
             grinding: 2 ,
             speed: 1,
+            priceGr: '1-2',
         }
         
     },
@@ -896,7 +912,7 @@ const mockFibers = [
             ]
         },
         params: {
-            strength: 3,
+            strength: 130,
             stiffnes: 1,
             durability: 8,
             minTemp: 10,
@@ -918,6 +934,7 @@ const mockFibers = [
             cutting: 2,
             grinding: 2 ,
             speed: 1,
+            priceGr: '9',
         }
     },
     
@@ -1131,7 +1148,7 @@ const mockFibers = [
             ]
         },
         params: {
-            strength: 3,
+            strength: 70,
             stiffnes: 1,
             durability: 8,
             minTemp: 10,
@@ -1153,6 +1170,7 @@ const mockFibers = [
             cutting: 2,
             grinding: 2 ,
             speed: 1,
+            priceGr: '4-6',
         }
     },
 
@@ -1380,7 +1398,7 @@ const mockFibers = [
             ]
         },
         params: {
-            strength: 3,
+            strength: 39,
             stiffnes: 1,
             durability: 8,
             minTemp: 10,
@@ -1402,6 +1420,7 @@ const mockFibers = [
             cutting: 2,
             grinding: 2 ,
             speed: 1,
+            priceGr: '4-6',
         }
         
     },
@@ -1646,7 +1665,7 @@ const mockFibers = [
             ]
         },
         params: {
-            strength: 3,
+            strength: 160,
             stiffnes: 1,
             durability: 8,
             minTemp: 10,
@@ -1668,6 +1687,7 @@ const mockFibers = [
             cutting: 2,
             grinding: 2 ,
             speed: 1,
+            priceGr: '4-6',
         }
     },
 
@@ -1905,6 +1925,7 @@ const mockFibers = [
             cutting: 2,
             grinding: 2 ,
             speed: 1,
+            priceGr: '4-6',
         }
     },
 
@@ -2155,6 +2176,7 @@ const mockFibers = [
             cutting: 2,
             grinding: 2 ,
             speed: 1,
+            priceGr: '4-6',
         }
     },
 
@@ -2415,6 +2437,7 @@ const mockFibers = [
             cutting: 2,
             grinding: 2 ,
             speed: 1,
+            priceGr: '4-6',
         }
     },
 
