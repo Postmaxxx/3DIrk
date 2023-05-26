@@ -1191,8 +1191,8 @@ const mockFibers = [
         },
         short: {
             name: {
-                ru: 'Композиты + ABS',
-                en: 'Composites + ABS'
+                ru: 'ABS+',
+                en: 'ABS+'
             },
             descr: {
                 en: 'bla.... is a common alternative to ABS and is great for outdoor applications due to its high UV, temperature, and impact resistance.',
@@ -1448,8 +1448,8 @@ const mockFibers = [
         },
         short: {
             name: {
-                ru: 'Композиты + нейлон',
-                en: 'Composites + nylon'
+                ru: 'НЕЙЛОН+',
+                en: 'NYLON+'
             },
             descr: {
                 en: 'bla.... is a common alternative to ABS and is great for outdoor applications due to its high UV, temperature, and impact resistance.',

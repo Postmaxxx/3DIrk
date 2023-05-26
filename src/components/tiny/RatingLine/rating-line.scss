@@ -67,10 +67,20 @@
             color: var(--text);
             font-weight: 700;
             
+            @include respond-to(xs) {
+                font-weight: 400;   
+                font-size: 13px;
+            }
+            
             & > span {
                 font-weight: 400;
                 font-size: .8em;
                 color: var(--text_mild);
+
+                @include respond-to(xs) {
+                    font-weight: 200;
+                }
+                
             }
         }
     }

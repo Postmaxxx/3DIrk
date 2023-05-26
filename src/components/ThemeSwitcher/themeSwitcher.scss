@@ -10,16 +10,25 @@
     height: 40px;
     overflow: hidden;
     z-index: 5500;
-    transition: transform $transition_nav, right $transition_nav 0.3s;
+    transition: background-color $transition_theme, right $nav_mobile_delay $transition_nav, opacity $nav_mobile_delay $transition_nav;
 
+    
     @include respond-to(sm) {
         transform: scale(0.85);
         top: calc($header_height + 55px);
         right: 25%;
     }
-
+    
     @include respond-to(xs) {
         transform: scale(0.7);
+    }
+
+    &.hide {
+        @include respond-to(sm) {
+            right: 75%;
+            opacity: 0;
+            transition: background-color $transition_theme, right $nav_mobile_delay, opacity $nav_mobile_delay;
+        }
     }
 
     & input {
@@ -32,12 +41,7 @@
         height: 100%;
     }
 
-    &.hide {
-        @include respond-to(sm) {
-            right: 35%;
-            transform: translateY(-$nav_height);
-        }
-    }
+
 }
 
 

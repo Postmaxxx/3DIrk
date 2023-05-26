@@ -28,19 +28,31 @@ $transition_lang: cubic-bezier(0.51, 0.06, 0.56, 1.37) .2s;
     background-color: var(--main);
     font-weight: 700;
     z-index: 5500;
-    transition: transform $transition_nav, background-color $transition_theme, left $transition_nav 0.3s;
+    transition: background-color $transition_theme, left $nav_mobile_delay $transition_nav, opacity $nav_mobile_delay $transition_nav;
 
-
+    
     @include respond-to(sm) {
         transform: scale(0.85);
         top: 600px;
         left: 25%;
         top: calc($header_height + 55px);
     }
-
+    
     @include respond-to(xs) {
         transform: scale(0.7);
     }
+    
+    
+    
+    &.hide {
+        @include respond-to(sm) {
+            left: 75%;
+            opacity: 0;
+            transition: background-color $transition_theme, left $nav_mobile_delay, opacity $nav_mobile_delay;
+        }
+    }
+    
+
 
     & > .lang-switcher__text {
         z-index: 5600;
@@ -141,13 +153,6 @@ $transition_lang: cubic-bezier(0.51, 0.06, 0.56, 1.37) .2s;
     }
 
 
-
-    &.hide {
-        @include respond-to(sm) {
-            left: 35%;
-            transform: translateY(-$nav_height);
-        }
-    }
 
 }
 

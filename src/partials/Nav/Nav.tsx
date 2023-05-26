@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState,  useRef } from "react";
 import { NavLink } from "react-router-dom";
-import { IFibersState, IFullState, IPage, TLang } from "src/interfaces";
+import { IFibersState, IFullState, IPageItem, TLang } from "src/interfaces";
 import "./nav.scss"
 import navLogo from "../../assets/img/nav_logo.png"
 import { connect } from "react-redux";
@@ -37,7 +37,7 @@ const pagesList = [
             en: 'home'
         },
         path: "/",
-        id: 'main_home'
+        id: 'main_home',
     },
     {
         name: {
@@ -46,7 +46,7 @@ const pagesList = [
         },
         path: "/fibers",
         id: 'main_fibers',
-
+        //expanded: false,
         subMenu : [
             {
                 name: {
@@ -84,15 +84,15 @@ const pagesList = [
         path: "/order",
         id: 'order',
     },
-] satisfies IPage[]
+] satisfies IPageItem[]
 
 
 
 
 const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersState}): JSX.Element => {
-    //const scrollTimeout = useRef<any>()
     const _blur = useRef<HTMLDivElement>(null)
-	const [fibersList, setFibersList] = useState<any>()
+    const [nav, setNav] = useState<IPageItem[]>(pagesList)
+    const [expandedNavItems, setExpandedNavItems] = useState<IPageItem["id"][]>([])
     
 
     const navToggle = () => {
@@ -119,47 +119,40 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
     },[])
 
 
-    const setFibers = () => {
-        const _filamentsNav = document.querySelector('[data-nav-text="main_fibers"]')
-		if (!_filamentsNav) return          
-		const fibersToAdd = fibersState.fibersList.map((fiber) => {                
-			return (
-				<li key={fiber.id}>
-					<NavLink
-						to={`/fibers/${fiber.id}`}
-						data-subnav-text={fiber.id}
-						onClick={() => setState.fibers.setSelectedFiber(fiber.id)}
-						>
-						{fiber.short.name[lang]}
-					</NavLink>
-				</li>
-            )
-		})
-        if (fibersToAdd) {
-            setFibersList(fibersToAdd)
-        }
+	useEffect(() => {
+        if (fibersState.dataLoading.status !== 'success' || fibersState.fibersList.length === 0) return
+        const newNav = pagesList.map((page) => {
+            if (page.id === "main_fibers") {
+                const newSub = fibersState.fibersList.map((fiber) => ({
+                        name: fiber.short.name,
+                        path: `/fibers/${fiber.id}`,
+                        id: fiber.id
+                    })
+                )
+                return {...page, subMenu: page.subMenu?.concat(newSub)}
+            }
+
+            return page
+        })
+        setNav(newNav)
+	}, [fibersState.dataLoading.status, lang])
+
+
+    const onNavWithSubClicked = (pageId: IPageItem["id"]) => {
+        if (expandedNavItems.includes(pageId)) {
+            setExpandedNavItems(expandedNavItems.filter(id => id !== pageId))
+        } else (
+            setExpandedNavItems([...expandedNavItems, pageId])
+        )
     }
 
-
-	useEffect(() => {
-        if (fibersState.dataLoading.status !== 'success') return
-		if (fibersList) return
-        setFibers()	
-	}, [fibersState.dataLoading.status])
-
-
-	useEffect(() => {
-        if (fibersState.dataLoading.status !== 'success') return
-        setFibers()	
-	}, [lang])
-   
 
     return (
         <>
             <nav className={desktopOpened ? "nav_desktop opened" : "nav_desktop"}>
                 <div className="nav__container">
                     <ul>
-                        {pagesList.map((page: IPage) => {
+                        {nav.map((page: IPageItem) => {
                             return (
                                 <li key={page.path} className={page.subMenu? 'extandable' : ''}>
                                     <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
@@ -184,7 +177,6 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
                                                         </li>
                                                     )
                                                 })}
-                                                {fibersList ? fibersList : null}
                                             </div>
                                         </ul>
                                     : null}
@@ -221,16 +213,38 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
                 <div className="blur" ref={_blur}></div>
                 <div className="nav__container">
                     <ul>
-                        {pagesList.map((page: IPage) => {
+                        {nav.map((page: IPageItem) => {
                             return (
                                 <Fragment key={page.path}>
-                                    <li>
-                                        <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} onClick={navToggleMobile}
-                                            to={page.path}>
-                                            {page.name[lang]}
-                                        </NavLink>
-                                    </li>
-                                    <div className="line"></div>
+                                    {page.subMenu?.length ? 
+                                        <li className={`${expandedNavItems.includes(page.id) ? 'expanded' : ''}`}>
+                                            <span onClick={() => onNavWithSubClicked(page.id)}>{page.name[lang]}</span>
+                                            <ul>
+                                                <div className="nav__subNav">
+                                                    {page.subMenu?.map((subPage) => {
+                                                        return (
+                                                            <li>
+                                                                <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} 
+                                                                    onClick={navToggleMobile}
+                                                                    to={subPage.path} end>
+                                                                    {subPage.name[lang]}
+                                                                    
+                                                                </NavLink>
+                                                            </li>
+                                                        )
+                                                    })}
+
+                                                </div>
+                                            </ul>
+                                        </li>
+                                        :
+                                        <li>
+                                            <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} onClick={navToggleMobile}
+                                                to={page.path}>
+                                                {page.name[lang]}
+                                            </NavLink>
+                                        </li>
+                                    }
                                 </Fragment>
                             )
                         })

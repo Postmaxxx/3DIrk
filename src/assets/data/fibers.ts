@@ -21,7 +21,7 @@ export const propertiesList = [
     "resistantFatigue",
     "cutting",
     "grinding",
-    "speed",
+    //"speed",
     "price",
 ] as const
 
@@ -321,7 +321,7 @@ export const propertiesValues: TPropertiesValues = {
             ru: ''
         }
     },
-    speed: {
+    /*speed: {
         name: {
             en: 'Printing speed',
             ru: 'Прочность'
@@ -334,5 +334,5 @@ export const propertiesValues: TPropertiesValues = {
             en: '',
             ru: ''
         }
-    },
+    },*/
 }

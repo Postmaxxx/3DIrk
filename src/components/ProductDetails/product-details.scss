@@ -63,10 +63,11 @@
                         display: flex;
                         flex-direction: column;
 
-                        & > select {
-                            margin-top: 5px;
-                        }
-
+                        
+                    }
+                    & > select {
+                        margin-top: 5px;
+                        width: 100%;
                     }
                 }
             }
@@ -81,8 +82,13 @@
             align-items: center;
             flex-wrap: wrap;
 
+            
+            @include respond-to(sm) {
+                margin-top: 10px;
+            }
+
             @include respond-to(xs) {
-                margin-top: 20px;
+                margin-top: 10px;
                 flex-direction: column;
                 align-items: center;
             }
@@ -90,6 +96,10 @@
             & > span {
                 font-size: 18px;
                 font-weight: 700;
+
+                @include respond-to(sm) {
+                    margin-top: 10px;
+                }
 
                 @include respond-to(xs) {
                     text-align: center;
@@ -103,7 +113,7 @@
                 align-items: center;
                 margin-left: 10px;
 
-                @include respond-to(xs) {
+                @include respond-to(sm) {
                     margin-top: 10px;
                 }
 
@@ -116,6 +126,16 @@
                     cursor: pointer;
                     border: 1px solid var(--text);
                     transition: border $transition_theme;
+
+                    @include respond-to(sm) {
+                        width: 25px;
+                        height: 25px;
+                    }
+
+                    @include respond-to(xs) {
+                        width: 30px;
+                        height: 30px;
+                    }
     
    
                     &:not(.disabled):not(.selected) {

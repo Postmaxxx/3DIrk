@@ -192,7 +192,7 @@ $gap_to_text: 5px;
                     & > ul.sub_menu {
                         grid-template-rows: 1fr;
                         transform: translate(-50%, 0px);
-                        width: 280px;
+                        width: 240px;
                         transition: transform $transition_subMenu $transition_subMenu, grid-template-rows $transition_subMenu $transition_subMenu, width $transition_subMenu 2*$transition_subMenu;
                         
                         & > .submenu__content {
@@ -432,7 +432,6 @@ $gap_to_text: 5px;
     & > .blur {
         height: 0;
         width: 100%;
-        //top: calc(100% + 2px);
         top: 100%;
         left: 0;
         z-index: -1;
@@ -449,14 +448,15 @@ $gap_to_text: 5px;
         transform: translateY(-100%);
         display: flex;
         align-items: stretch;
-        transition: $transition_nav;
+        transition: transform $transition_nav $nav_mobile_delay, background-color $transition_theme;
         width: calc(100% - 20px * 2);
         background-color: var(--main);
         margin-left: 20px;
         margin-right: 20px;
         z-index: -1;
-        height: ($nav_height);
+        height: auto;
         width: calc(100% - 40px);
+
 
 
         & > .right-line {
@@ -475,7 +475,7 @@ $gap_to_text: 5px;
             justify-content: space-between;
             font-weight: 600;
             //padding-top: 80px;
-            padding-bottom: 50px;
+            padding-bottom: 20px;
             height: 100%;
             width: 100%;
             border-left: 4px solid var(--main_vv);
@@ -496,8 +496,12 @@ $gap_to_text: 5px;
     
     
             & > li {
+                width: 100%;
+                margin-top: 10px;
+                margin-bottom: 10px;
                 
-                & > a {
+                & > a, span {
+                    text-align: center;
                     font-size: 2.4rem;
                     position: relative;
                     transition: 1s;
@@ -506,6 +510,11 @@ $gap_to_text: 5px;
                     text-transform: uppercase;
                     transition: $transition_nav_menu;
                     display: block;
+                    cursor: pointer;
+
+                    @include respond-to(xs) {
+                        font-size: 1.8rem;
+                    }
                     
                     &:hover {
                         color: var(--text_contrast);
@@ -516,6 +525,110 @@ $gap_to_text: 5px;
                     &.selected {
                         color: var(--text_contrast);
                         transition: color $transition-theme;
+                        text-decoration: underline;
+                    }
+                }
+
+
+                & > span {
+                    
+                    &::before, &::after {
+                        content: '';
+                        position: absolute;
+                        height: 20px;
+                        width: 20px;
+                        left: 7%;
+                        top: 50%;
+                        transform: translate(-50%, -75%) rotate(-45deg);
+                        border-left: 3px solid var(--text);
+                        border-bottom: 3px solid var(--text);
+                        transition: transform $transition_fast, border $transition_theme;
+                        
+                        @include respond-to(xs) {
+                            height: 10px;
+                            width: 10px;
+                        }
+                    }
+
+                    &::after {
+                        right: 7%;
+                        left: initial;
+                    }
+
+
+                }
+
+                & > ul {
+                    overflow: hidden;
+                    display: grid;
+                    grid-template-rows: 0fr;
+                    transition: grid $transition_fast;
+                    
+                    & > .nav__subNav {
+                        overflow: hidden;
+                        max-height: 40vh;
+                        overflow: auto;
+
+                        & > li {
+                            margin-top: 20px;
+                            text-align: center;
+                            width: 100%;
+                            position: relative;
+
+                            &::before {
+                                content: '';
+                                position: absolute;
+                                top: -10px;
+                                left: 50%;
+                                width: 60%;
+                                border-top: 1px dotted var(--text);
+                                transform: translate(-50%);
+                            }
+
+                            & > a, span {
+                                text-align: center;
+                                font-size: 1.5rem;
+                                position: relative;
+                                transition: 1s;
+                                color: var(--text);
+                                transition: color $transition-theme;
+                                text-transform: uppercase;
+                                transition: $transition_nav_menu;
+                                display: block;
+                                cursor: pointer;
+            
+                                @include respond-to(xs) {
+                                    font-size: 1.2rem;
+                                }
+                                
+                                &:hover {
+                                    color: var(--text_contrast);
+                                    transition: color $transition-theme;
+                                    //transform: translateY(12px);
+                                }
+            
+                                &.selected {
+                                    color: var(--text_contrast);
+                                    transition: color $transition-theme;
+                                    font-weight: 800;
+                                }
+                            }
+                        }
+                    }
+
+                }
+
+
+                &.expanded {
+                    & > span {
+                        &::before, &::after {
+                            transform: translate(-50%, -25%) rotate(-45deg) scale(-1);
+                        }
+
+                    }
+
+                    & > ul {
+                        grid-template-rows: 1fr;
                     }
                 }
             }
@@ -531,23 +644,23 @@ $gap_to_text: 5px;
             }
         }
 
-    }
+        &::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            right: -10px;
+            height: calc(100% + $header_height);
+            transform: translateY(-100%);
+            transition: $transition_nav;
+            width: 10px;
+            background-color: var(--main);
+            background-image: url('../../assets/img/nav_line_right.png');
+            background-size: 8px;
+            background-repeat: repeat-y;
+            background-position-x: right;
+            z-index: 100;
+        }
 
-    & .nav__container_right {
-        position: absolute;
-        top: calc(100%);
-        right: 0;
-        margin-right: 20px;
-        transform: translateY(-100%);
-        transition: $transition_nav;
-        width: 10px;
-        background-color: transparent;
-        background-image: url('../../assets/img/nav_line_right.png');
-        background-size: 8px;
-        background-repeat: repeat-y;
-        background-position-x: right;
-        height: calc($nav_height + $header_height);
-        z-index: 100;
     }
     
     & .nav__switcher {
@@ -574,6 +687,11 @@ $gap_to_text: 5px;
             display: flex;
             align-items: center;
             justify-content: center;
+
+            @include respond-to(sm) {
+                position: relative;
+                left: 5px;
+            }
 
             
             & > input {
@@ -635,6 +753,7 @@ $gap_to_text: 5px;
 
 
     &.opened {
+        
 
         & .blur {
             height: 100vh;
@@ -644,6 +763,7 @@ $gap_to_text: 5px;
         
         & .nav__container {
             transform: translateY(0);
+            transition: transform $transition_nav, background-color $transition_theme;
         } 
 
         & .nav__container_right {

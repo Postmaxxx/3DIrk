@@ -1,3 +1,6 @@
+@use "/src/assets/css/variables" as *;
+
+
 .preloader_w {
 	position: absolute;
 	top: 50%;
@@ -16,25 +19,25 @@
 		&_1 {
 			margin-right: -18px;
 			transform-origin: center left;
-			animation: spin 3s linear infinite;  
+			animation: spin $preloader_speed_w linear infinite;  
 		}
 
 		&_2 {
 			transform-origin: center right;
-			animation: spin2 3s linear infinite;
-			animation-delay: .2s;
+			animation: spin2 $preloader_speed_w linear infinite;
+			animation-delay: $preloader_speed_w/15;
 		}
 
 		&_3 {
 			transform-origin: center right;
-			animation: spin3 3s linear infinite;
-			animation-delay: .3s;
+			animation: spin3 $preloader_speed_w linear infinite;
+			animation-delay: $preloader_speed_w/10;
 		}
 
 		&_4 {
 			transform-origin: center right;
-			animation: spin4 3s linear infinite;
-			animation-delay: .4s;
+			animation: spin4 $preloader_speed_w linear infinite;
+			animation-delay: $preloader_speed_w/7.5;
 		}
 	}
 	

@@ -30,8 +30,10 @@ $dark: #286181;
 $color_danger: red;
 $color_success: green;
 $header_height: 80px;
-$nav_height: 550px;
+//$nav_height: 550px;
 $transition_subMenu: 0.3s;
+$preloader_speed_w: 2s;
+$nav_mobile_delay: 0.3s;
 
 body {
     --main: rgb(100, 181, 245);

@@ -92,27 +92,36 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors, fibe
                         </div>
                     )
                 })}
+
+                <div className="feature">
+                    <span>{lang === 'en' ? 'Price' : 'Цена'}: </span>
+                    <span>{product.price[lang]}</span>
+                </div>
+                
                 {product.mods.length > 0 ? 
                     <div className="feature wrap_xs">
-                        <label>{lang === 'en' ? 'Version' : 'Версия'}: 
-                            <select ref={_type} defaultValue={'-1'} onChange={onChangeType}>
-                                <option key={-1} value={'-1'} disabled hidden>{lang === 'en' ? 'Select type' : 'Выберите тип'}</option>
-                                {product.mods.map((mod, i) => <option key={i} value={i}>{mod[lang]}</option>)}
-                            </select>
+                        <label htmlFor="type">{lang === 'en' ? 'Version' : 'Версия'}: 
                         </label>
+                        <select id="type" ref={_type} defaultValue={'-1'} onChange={onChangeType}>
+                            <option key={-1} value={'-1'} disabled hidden>{lang === 'en' ? 'Select type' : 'Выберите тип'}</option>
+                            {product.mods.map((mod, i) => <option key={i} value={i}>{mod[lang]}</option>)}
+                        </select>
                     </div>
                     :
                     null
                 }
                 <div className="feature wrap_xs">
+                <label htmlFor="fiber">
                     {selectedFiber ? 
                         <NavLink to={`../../fibers/${selectedFiber}`} aria-label={lang === 'en' ? '(About selected fiber)' : ' (О выбранном материале)'}>
-                            {lang === 'en' ? 'Fiber' : 'Материал'}
+                            {lang === 'en' ? 'Fiber' : 'Материал'}:
                         </NavLink>
                         :
-                        <label>{lang === 'en' ? 'Fiber' : 'Материал'}:</label>
+                        <>{lang === 'en' ? 'Fiber' : 'Материал'}:</>    
                     }
-                    <select onChange={onChangeFiber} defaultValue={''}>
+                </label>
+
+                    <select id="fiber" onChange={onChangeFiber} defaultValue={''}>
                         <option key={-1} disabled hidden value={''}>{lang === 'en' ? 'Select fiber' : 'Выберите материал'}</option>
                         {fibersDetailed.map((fiber, i) => <option key={i} value={fiber.id}>{fiber.name[lang]}</option>)}
                     </select>
@@ -127,10 +136,6 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors, fibe
                     </div>
                 </div>
     
-                <div className="feature">
-                    <span>{lang === 'en' ? 'Price' : 'Цена'}: </span>
-                    <span>{product.price[lang]}</span>
-                </div>
                 
             </div>
             <AddToCart 

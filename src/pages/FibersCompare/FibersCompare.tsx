@@ -184,7 +184,7 @@ const FibersCompare:React.FC<IProps> = ({lang, fibers, colors, setState}):JSX.El
                                                     || property === "cutting"
                                                     || property === "grinding"
                                                     ) && <SvgInserter type={fiber.params[property] === 2 ? 'plus' : fiber.params[property] === 1 ? 'minus' : 'con'}/>}
-                                                    {property === "speed" && <span>{fiber.params.speed}</span>}
+                                                    {/*property === "speed" && <span>{fiber.params.speed}</span>*/}
                                                     {property === "price" && <RatingMoney value={fiber.params.price} max={5} text={``} measurment={''} />}
                                                     
                                                 </div>

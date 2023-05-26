@@ -60,11 +60,13 @@ export interface IPageItem {
     name: TLangText
     path: string
     id: string
-}
-
-export interface IPage extends IPageItem {
+    expanded?: boolean
     subMenu?: IPageItem[]
 }
+/*
+export interface IPage extends IPageItem {
+    subMenu?: IPageItem[]
+}*/
 /*
 export interface INav {
     mobOpened: boolean,

@@ -38,7 +38,7 @@ const Features = ({params, lang, fiber} : IProps) => {
                         || property === "grinding"
                         ) && <div className="feature"><span>{propertiesValues[property].name[lang]}: </span><span></span><span>{ratingNumberToText(params[property]+1, 3)[lang]}</span></div>}
 
-                        {property === "speed" && <div className="feature"><span>{propertiesValues[property].name[lang]}: </span><span></span><span>{ratingNumberToText(params[property]+1, 10)[lang]}</span></div>}
+                        {/*property === "speed" && <div className="feature"><span>{propertiesValues[property].name[lang]}: </span><span></span><span>{ratingNumberToText(params[property]+1, 10)[lang]}</span></div>*/}
                         {property === "price" && <div className="feature"><span>{propertiesValues[property].name[lang]}: </span><span></span><span>{fiber.params.priceGr} {propertiesValues.price.unit[lang]}</span></div>}
 
                     </div>
