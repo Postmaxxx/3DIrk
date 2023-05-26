@@ -58,6 +58,8 @@ const AddToCart: React.FC<IProps> = ({product, type, fiber, color, lang, cart, s
     const closeModal = () => {
 		setModal({visible: false})
 	}
+
+    
     
     const addToCart = () => {
         const errorsList: string[] = []

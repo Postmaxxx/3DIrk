@@ -48,6 +48,7 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors, fibe
     const [fibersDetailed, setFibersDetailed] = useState<IFiber[]>([])
     const [selectedFiber, setSelectedFiber] = useState<IFiber["id"]>('')
     const [selectedColor, setSelectedColor] = useState<IColor["id"]>('')
+    const [selectedType, setSelectedType] = useState<any>(undefined)
     const _type = useRef<HTMLSelectElement>(null)
 
     
@@ -58,6 +59,10 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors, fibe
 
     const onChangeColor = (colorId: IColor["id"]) => {
         setSelectedColor(colorId)
+    }
+
+    const onChangeType: React.ChangeEventHandler<HTMLSelectElement> = (e) => {
+        setSelectedType(product.mods[Number(e.target.value)]);
     }
 
 
@@ -71,8 +76,6 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors, fibe
         
     },[fibers.dataLoading.status, colors.dataLoading.status, product.dataLoading.status])
         
-    console.log('changer');
-
     return (
         <div className="details__descr">
             <h2>{lang === 'en' ? 'Features' : 'Характеристики'}:</h2>
@@ -92,7 +95,7 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors, fibe
                 {product.mods.length > 0 ? 
                     <div className="feature wrap_xs">
                         <label>{lang === 'en' ? 'Version' : 'Версия'}: 
-                            <select ref={_type} defaultValue={'-1'}>
+                            <select ref={_type} defaultValue={'-1'} onChange={onChangeType}>
                                 <option key={-1} value={'-1'} disabled hidden>{lang === 'en' ? 'Select type' : 'Выберите тип'}</option>
                                 {product.mods.map((mod, i) => <option key={i} value={i}>{mod[lang]}</option>)}
                             </select>
@@ -132,7 +135,7 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors, fibe
             </div>
             <AddToCart 
                 product={product} 
-                type={product.mods.length > 0 ? product.mods[Number(_type.current?.value)] : {en: '-', ru: '-'}} 
+                type={product.mods.length > 0 ? selectedType : {en: '-', ru: '-'}} 
                 fiber={selectedFiber} 
                 color={selectedColor}
                 />

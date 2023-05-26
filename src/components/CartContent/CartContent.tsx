@@ -72,8 +72,6 @@ const CartContent: React.FC<IProps> = ({lang, cart, colors, fibers, setState}): 
 
     const onAmountChange = (item: ICartItem, amount: number) => {
         setState.cart.changeItem({...item, amount})
-        console.log(cart);
-        
     }
 
     return (

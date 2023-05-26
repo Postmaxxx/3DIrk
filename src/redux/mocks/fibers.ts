@@ -11,7 +11,7 @@ import pla_6 from 'src/assets/img/fibers/pla/6.webp'
 const mockFibers = [
     {
         id: 'f_PLA',
-        colors: ["c_b", "c_w", "c_t"],
+        colors: ["c_black", "c_white", "c_transp"],
         name: {
             ru: 'PLA (полилактид)',
             en: 'PLA (polyactid)'

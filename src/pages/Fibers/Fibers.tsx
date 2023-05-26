@@ -90,7 +90,7 @@ const Fibers:React.FC<IProps> = ({lang, fibers, colors, setState}):JSX.Element =
                         <div className="fibers__container">
                             {fibers.fibersList.map((fiber, i) => {
                                 return (
-                                    <NavLink to={`../../fibers/${fiber.id}`} aria-label={lang === 'en' ? '(About fiber)' : ' (О материале)'}>
+                                    <NavLink to={`../../fibers/${fiber.id}`} aria-label={lang === 'en' ? '(About fiber)' : ' (О материале)'} key={fiber.id}>
                                         <FiberPreview {...{fiber}} lang={lang} colors={colors.colors} key={i}/>  
                                     </NavLink>
                                 )})}
