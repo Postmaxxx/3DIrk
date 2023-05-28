@@ -522,7 +522,7 @@ $gap_to_text: 5px;
                         //transform: translateY(12px);
                     }
 
-                    &.selected {
+                    &.selected { 
                         color: var(--text_contrast);
                         transition: color $transition-theme;
                         text-decoration: underline;
