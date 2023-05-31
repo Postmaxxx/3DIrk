@@ -1,13 +1,19 @@
 {
   "compilerOptions": {
-    "typeRoots": ["./src/@types", "./node_modules/@types"],
-    "baseUrl": ".",
+    "typeRoots": [
+      "./src/@types",
+      "./node_modules/@types"
+    ],
     "target": "ES2020",
     "lib": [
       "dom",
       "dom.iterable",
       "esnext"
     ],
+    "baseUrl": ".",
+    "paths": {
+      "*": ["*"]
+    },
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -20,9 +26,10 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "preserve"
   },
   "include": [
-    "src"
-, "src/serviceWorkerRegistration.ts"  ]
+    "src",
+    "src/serviceWorkerRegistration.ts"
+  ]
 }

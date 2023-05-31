@@ -5,9 +5,9 @@ import { StaleWhileRevalidate, CacheFirst } from "workbox-strategies";
 
 
 
-import {warmStrategyCache} from 'workbox-recipes';
+//import {warmStrategyCache} from 'workbox-recipes';
 import {setDefaultHandler, setCatchHandler} from 'workbox-routing';
-import {generateSW} from 'workbox-build';
+//import {generateSW} from 'workbox-build';
 import {precacheAndRoute} from 'workbox-precaching';
 
 declare const self: any;
