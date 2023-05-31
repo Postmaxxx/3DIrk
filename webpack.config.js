@@ -30,6 +30,8 @@ module.exports = {
 		new InjectManifest({
 			swSrc: "./service-worker.js",
 			swDest: "service-worker.js",
-		})
+			exclude: [/\.map$/, /\.jpg/],
+		}),
+		
 	]
 };
