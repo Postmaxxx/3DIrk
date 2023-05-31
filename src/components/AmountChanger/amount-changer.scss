@@ -6,7 +6,7 @@
     
 
     & input {
-        font-size: 20px;
+        font-size: 18px;
         padding-right: 5px;
         font-weight: 700;
         outline: none;
@@ -22,7 +22,7 @@
         @include respond-to(sm) {
             height: 25px;
             width: 40px;
-            font-size: 18px;
+            font-size: 16px;
         }
     }
 
@@ -51,6 +51,7 @@
         }
 
         &.disabled {
+            //color: var(--text);
             opacity: 0.3;
             cursor: not-allowed
         }

@@ -2,7 +2,7 @@ import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import './cart-content.scss'
-import { ICartItem, ICartState, IColor, IColorsState, IFiber, IFibersState, IFullState, IProduct, IProductState, TLang } from "src/interfaces";
+import { ICartItem, ICartState, IColor, IColorsState, IFiber, IFibersState, IFullState, IModal, IModalImg, IProduct, IProductState, TLang } from "src/interfaces";
 import { changeItem, saveCart, removeItem }  from "src/redux/actions/cart"
 import { useState, useEffect, useRef } from 'react'
 import { loadFibers } from "src/redux/actions/fibers"
@@ -14,6 +14,8 @@ import { setProduct, setLoadDataStatusProduct }  from "src/redux/actions/product
 import AmountChanger from "../AmountChanger/AmountChanger";
 import PreloaderW from "../Preloaders/PreloaderW";
 import ImgWithPreloader from "src/assets/js/ImgWithPreloader";
+import Modal from "../Modal/Modal";
+import ModalImage from "../MessageImage/MessageImage";
 
 
 const actionsCartList = { changeItem, saveCart, removeItem }
@@ -45,7 +47,8 @@ interface IProps extends IPropsState, IPropsActions {}
 const CartContent: React.FC<IProps> = ({lang, cart, colors, fibers, setState}): JSX.Element => {
 
     const [cartReady, setCartReady] = useState<boolean>(false)
-
+	const [modal, setModal] = useState<IModal>({visible: false})
+	const [modalImg, setModalImg] = useState<IModalImg>({descr: '', path: ''})
   
     useEffect(() => {
         if (cart.dataLoading.status !== 'loading'){
@@ -65,6 +68,7 @@ const CartContent: React.FC<IProps> = ({lang, cart, colors, fibers, setState}): 
         }
     }, [colors.dataLoading.status, fibers.dataLoading.status, cart.dataLoading.status])
 
+
     const onProductClick = (product: IProduct) => {
         setState.product.setLoadDataStatusProduct({status: 'success', message: ''})
         setState.product.setProduct(product)
@@ -74,13 +78,28 @@ const CartContent: React.FC<IProps> = ({lang, cart, colors, fibers, setState}): 
         setState.cart.changeItem({...item, amount})
     }
 
+
+    
+    const onImageClick = (e: React.MouseEvent , color: IColor | undefined) => {
+        if (!color) return
+        e.stopPropagation()
+        setModalImg({descr: color.name[lang], path: color.url})
+        setModal({visible: true})
+    }
+
+    
+    const closeModal = () => {
+		setModal({visible: false})
+	}
+
+
     return (
         <div className="cart-content">
             {cartReady ? 
                 cart.items.length > 0 ? 
                 <>
                     {cart.items.map((item, i) => {
-                        const fiber = fibers.fibersList.find(fiberItem => fiberItem.id === item.fiber)?.name[lang]
+                        const fiber = fibers.fibersList.find(fiberItem => fiberItem.id === item.fiber)?.short.name[lang]
                         const color: IColor | undefined = colors.colors.find(color => color.id === item.color)
                         return(
                             <div className="cart__item" key={item.id}>
@@ -91,36 +110,31 @@ const CartContent: React.FC<IProps> = ({lang, cart, colors, fibers, setState}): 
                                 </NavLink>
 
 
-                                <NavLink className="item__product-link" to={`../catalog/${item.product.id}`} onClick={() => onProductClick(item.product)} aria-label={lang === 'en' ? 'Go to product' : 'Перейти к товару'} >
-                                    <div className="item-descr__container">
+                                <div className="item-descr__container">
+                                    <div className="item__block">
+                                        <span aria-label={lang === 'en' ? "Go to product page" : 'Перейти на страницу продукта'}>{item.product.name[lang]}</span>
+                                    </div>
+                                    {item.type ? 
                                         <div className="item__block">
-                                            <span aria-label={lang === 'en' ? "Go to product page" : 'Перейти на страницу продукта'}>{item.product.name[lang]}</span>
+                                            <span>{lang === 'en' ? 'Type' : 'Модификация'}:</span>
+                                            <span className="fiber">{item.type[lang]}</span>
                                         </div>
-                                        {item.type ? 
-                                            <div className="item__block">
-                                                <span>{lang === 'en' ? 'Type' : 'Модификация'}:</span>
-                                                <span className="fiber">{item.type[lang]}</span>
+                                    : 
+                                    null}
+                                    <div className="item__block">
+                                        <span>{lang === 'en' ? 'Fiber' : 'Материал'}:</span>
+                                        <span className="fiber">{fiber}</span>
+                                    </div>
+                                    <div className="item__block">
+                                        <span>{lang === 'en' ? 'Color' : 'Цвет'}:</span>
+                                        <div className="colors__container" onClick={(e) => onImageClick(e, color)}> 
+                                            <div className="color__container">
+                                                <img src={color?.url} alt={color?.name[lang]} />
                                             </div>
-                                        : 
-                                        null}
-                                        <div className="item__block">
-                                            <span>{lang === 'en' ? 'Fiber' : 'Материал'}:</span>
-                                            <span className="fiber">{fiber}</span>
-                                        </div>
-                                        <div className="breaker_2sm"></div>
-                                        <div className="item__block">
-                                            <span>{lang === 'en' ? 'Color' : 'Цвет'}:</span>
-                                            <div className="colors__container"> 
-                                                <div 
-                                                    className={`color ${color?.value === 'mixed' ? "color_mixed" : ''} ${color?.value === 'transparent' ? "color_transparent" : ''}`} 
-                                                    style={{backgroundColor: `#${color?.value}`}} 
-                                                    title={color?.name[lang]}>
-                                                </div>
-                                                <span className="color__name">({color?.name[lang]})</span>
-                                            </div>
+                                            <span className="color__name">({color?.name[lang]})</span>
                                         </div>
                                     </div>
-                                </NavLink>
+                                </div>
                                 <div className="item__amount-delete">
                                     <div className="delete__container">
                                         <div className="delete__wrapper">
@@ -140,6 +154,9 @@ const CartContent: React.FC<IProps> = ({lang, cart, colors, fibers, setState}): 
             :
             <PreloaderW />
         } 
+            <Modal {...{visible: modal.visible, close: closeModal, escExit: true}}>
+                    <ModalImage props={{path: modalImg.path, descr: modalImg.descr}}/>
+            </Modal> 
         </div>
     )
 

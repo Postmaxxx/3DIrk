@@ -1,5 +1,5 @@
 import './fiber.scss'
-import { loadFibers }  from "../../redux/actions/fibers"
+import { loadFibers, setSelectedFiber }  from "../../redux/actions/fibers"
 import { loadColors }  from "../../redux/actions/colors"
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -9,7 +9,7 @@ import Preloader from '../../components/Preloaders/Preloader';
 import { TLang, IFullState, IFiber, IFibersState, IColorsState, IColor } from "../../interfaces";
 import FiberItem from 'src/components/FiberItem/FiberItem';
 
-const actionsListFibers = { loadFibers }
+const actionsListFibers = { loadFibers, setSelectedFiber }
 const actionsListColors = { loadColors }
 
 interface IPropsState {
@@ -49,6 +49,7 @@ const Fiber:React.FC<IProps> = ({lang, fibers, colors, setState}):JSX.Element =>
         if (colors.dataLoading.status === 'success' && fibers.dataLoading.status === 'success') {
             setLoaded(true)
             setFiber(fibers.fibersList.find(item => item.id === paramFiberId))
+            setState.fibers.setSelectedFiber(paramFiberId)
         }
     }, [colors.dataLoading?.status, fibers.dataLoading?.status, paramFiberId])
     

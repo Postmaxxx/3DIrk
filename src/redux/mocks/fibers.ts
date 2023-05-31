@@ -6,12 +6,21 @@ import pla_4 from 'src/assets/img/fibers/pla/4.webp'
 import pla_5 from 'src/assets/img/fibers/pla/5.webp'
 import pla_6 from 'src/assets/img/fibers/pla/6.webp'
 
+import petg_1 from 'src/assets/img/fibers/petg/1.webp'
+import petg_2 from 'src/assets/img/fibers/petg/2.webp'
+import petg_3 from 'src/assets/img/fibers/petg/3.webp'
+import petg_4 from 'src/assets/img/fibers/petg/4.webp'
+import petg_5 from 'src/assets/img/fibers/petg/5.webp'
+import petg_6 from 'src/assets/img/fibers/petg/6.webp'
+import petg_7 from 'src/assets/img/fibers/petg/7.webp'
+import petg_8 from 'src/assets/img/fibers/petg/8.webp'
+
 
 
 const mockFibers = [
     {
         id: 'f_PLA',
-        colors: ["c_black", "c_white", "c_transp"],
+        colors: ["c_lilac_pearl", "c_orange", "c_pink", "c_raspberry", "c_torque"],
         name: {
             ru: 'PLA (полилактид)',
             en: 'PLA (polyactid)'
@@ -23,7 +32,7 @@ const mockFibers = [
             },
             descr: {
                 en: 'PLA is the go-to material for most users due to its ease-of-use, dimensional accuracy, and low cost.',
-                ru: 'PLA распостраненный материал для печати благодаря низкой цене и хорошим характеристикам'
+                ru: 'PLA распостраненный материал для печати благодаря низкой цене и хорошим характеристикам.'
             }
         },
         text: {
@@ -47,131 +56,100 @@ const mockFibers = [
         proscons: {
             pros: [
                 {
-                    en: 'Very high hardeness',
-                    ru: '+'
+                    en: 'Stiff and good strength',
+                    ru: 'Высокая прочность и жесткость'
                 },
                 {
-                    en: 'Good for toys',
-                    ru: '+'
+                    en: 'Good dimensional accuracy',
+                    ru: 'Хорошая точность печати'
                 },
+                {
+                    en: 'Good shelf life',
+                    ru: 'Большой срок годности'
+                },
+                {
+                    en: 'Low cost',
+                    ru: 'Низкая стоимость'
+                },
+                {
+                    en: 'Suitable for decorative elements',
+                    ru: 'Хорошо подходит для печати элементов декора'
+                },
+                {
+                    en: 'Suitable for models with movable joints',
+                    ru: 'Подходит для моделей с подвижными соединениями'
+                },
+                
             ],
             cons: [
                 {
                     en: 'Non UV resistant',
-                    ru: '-'
+                    ru: 'Боится солнечных лучей'
                 },
                 {
-                    en: 'Toxic',
-                    ru: '+'
+                    en: 'Low heat resistance',
+                    ru: 'Низкая устойчивость к высоким температурам'
                 },
+                {
+                    en: 'Narrow temperature range of use',
+                    ru: 'Узкий температурный диапазон использования'
+                },
+                {
+                    en: 'Not suitable for contact with food',
+                    ru: 'Не подходит для контактов с пищей'
+                },
+                {
+                    en: 'Low impact resistance',
+                    ru: 'Низкая ударопрочность'
+                },
+
             ]
         },
         imgs: [
             {
                 url: pla_1,
                 name: {
-                    ru: 'Подходит для моделей',
-                    en: 'Good for models'
+                    ru: 'Подходит для маленьких моделей',
+                    en: 'Suitable for small models'
                 }
             },
             {
                 url: pla_2,
                 name: {
-                    ru: 'Изображение 2',
-                    en: 'Image 2'
+                    ru: 'Подходит для ненагруженных механизмов',
+                    en: 'Suitable for lightly loaded mechanisms'
                 }
             },
             {
                 url: pla_3,
                 name: {
-                    ru: 'Изображение 3',
-                    en: 'Image 3'
+                    ru: 'Подходит для декоративных элементов',
+                    en: 'Suitable for decorative elements'
                 }
             },
             {
                 url: pla_4,
                 name: {
-                    ru: 'Изображение 4',
-                    en: 'Image 4'
+                    ru: 'Подходит для моделей с подвижными соединениями',
+                    en: 'Suitable for models with movable joints'
                 }
             },
             {
                 url: pla_5,
                 name: {
-                    ru: 'Изображение 5',
-                    en: 'Image 5'
+                    ru: 'Подходит для печати деталей интерьера',
+                    en: 'Suitable for printing interior parts'
                 }
             },
             {
                 url: pla_6,
                 name: {
-                    ru: 'Изображение 6',
-                    en: 'Image 6'
+                    ru: 'Подходит для печати запасных частей без высоких требований к качеству',
+                    en: 'Suitable for printing spare parts without high quality requirements'
                 }
             },
         ],
-        features: {
-            pros: [
-                {
-                    name: {
-                        ru: 'прочность',
-                        en: 'hardness'
-                    },
-                    value: {
-                        ru: 'очень высокая',
-                        en: 'very high'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'спекаемость',
-                        en: 'sinterability'
-                    },
-                    value: {
-                        ru: 'высокая',
-                        en: 'very high'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'жёсткость',
-                        en: 'toughness'
-                    },
-                    value: {
-                        ru: 'очень высокая',
-                        en: 'very high'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'износостойкость',
-                        en: 'durability'
-                    },
-                    value: {
-                        ru: 'высокая',
-                        en: 'high'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'усадка',
-                        en: 'shrinkage'
-                    },
-                    value: {
-                        ru: 'низкая',
-                        en: 'low'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'обработка',
-                        en: 'processing'
-                    },
-                    value: {
-                        ru: 'резанием и шлифованием ',
-                        en: 'cutting and grinding'
-                    }
-                },
+        features: [
                 {
                     name: {
                         ru: 'обработка растворителями',
@@ -182,73 +160,29 @@ const mockFibers = [
                         en: 'dichloromethane, dichloroethane'
                     }
                 },
-                {
-                    name: {
-                        ru: 'средняя стоимость',
-                        en: 'average price'
-                    },
-                    value: {
-                        ru: '4-6 р/гр',
-                        en: '4-6 rub/gr'
-                    }
-                },
-            ],
-            cons: [
-                {
-                    name: {
-                        ru: 'ударостойкость',
-                        en: 'impact resistance'
-                    },
-                    value: {
-                        ru: 'низкая',
-                        en: 'low'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'температура эксплуатации',
-                        en: 'expluatation tempreture'
-                    },
-                    value: {
-                        ru: '-20…+45°С',
-                        en: '-20…+45°C'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'УФ стойкость (Солнце)',
-                        en: 'ultraviolet resistance (Sun)'
-                    },
-                    value: {
-                        ru: 'низкая',
-                        en: 'low'
-                    }
-                },
-            ]
-        },
+        ],
         params: {
-            strength: 120,
-            stiffnes: 5,
-            durability: 5,
-            minTemp: 30,
-            maxTemp: 110,
-            thermalExpansion: 90 ,
-            density: 1.04 ,
-            price: 2 ,
-            flexible: 1 ,
-            elastic: 1,
-            resistantImpact: 2,
-            soft: 2,
-            composite: 2,
-            resistantUV: 1,
-            resistantWater: 1,
-            dissolvable: 2,
-            resistantHeat: 1,
-            resistantChemically: 2,
-            resistantFatigue: 1,
+            strength: 65,
+            stiffnes: 7,
+            durability: 4,
+            resistantImpact: 3,
+            minTemp: -20,
+            maxTemp: 45,
+            thermalExpansion: 80 ,
+            density: 1.24 ,
+            price: 1,
+            flexible: 0,
+            elastic: 0,
+            soft: 0,
+            composite: 0,
+            resistantUV: 0,
+            resistantWater: 0,
+            dissolvable: 0,
+            resistantHeat: 0,
+            resistantChemically: 0,
+            resistantFatigue: 0,
             cutting: 2,
-            grinding: 0 ,
-            speed: 5 ,
+            grinding: 2 ,
             priceGr: '4-6',
         }
     },
@@ -262,7 +196,7 @@ const mockFibers = [
 //------------------------------------------------------------------------------------------------------
     {
         id: 'f_PETg',
-        colors: ["c_b", "c_w", "c_t"],
+        colors: ["c_amber", "c_blue", "c_blue_dark", "c_cooper", "c_corn", "c_emerald", "c_lilac_pearl", "c_orange", "c_pink", "c_raspberry", "c_torque"],
         name: {
             ru: 'PETg (полиэтилентерефталат, модифицированный гликолем)',
             en: 'PETg (Polyethylene, terephthalate modified with glycol)'
@@ -292,111 +226,106 @@ const mockFibers = [
         proscons: {
             pros: [
                 {
-                    en: '+',
-                    ru: '+'
+                    en: 'Glossy and smooth surface finish',
+                    ru: 'Глянцевая и гладкая поверхность'
                 },
-
+                {
+                    en: 'High durability',
+                    ru: 'Высокая долговечность'
+                },
+                {
+                    en: 'Good shelf life',
+                    ru: 'Большой срок годности'
+                },
+                {
+                    en: 'Low cost',
+                    ru: 'Низкая стоимость'
+                },
+                {
+                    en: 'Suitable for decorative elements',
+                    ru: 'Хорошо подходит для печати элементов декора'
+                },
+                {
+                    en: 'UV resistant',
+                    ru: 'Не боится солнечных лучей'
+                },
+                {
+                    en: 'Wide temperature range of use',
+                    ru: 'Широкий температурный диапазон использования'
+                },
+                
             ],
             cons: [
                 {
-                    en: '-',
-                    ru: '-'
+                    en: 'Not suitable for contact with food',
+                    ru: 'Не подходит для контактов с пищей'
+                },
+                {
+                    en: 'Low impact resistance',
+                    ru: 'Низкая ударопрочность'
                 },
 
             ]
         },
         imgs: [
             {
-                url: pla_1,
+                url: petg_1,
                 name: {
-                    ru: 'Изображение 3',
-                    en: 'Image 3'
+                    ru: 'Изображение 1',
+                    en: 'Image 1'
                 }
             },
             {
-                url: pla_1,
+                url: petg_2,
                 name: {
-                    ru: 'Изображение 5',
-                    en: 'Image 5'
+                    ru: '',
+                    en: ''
                 }
             },
             {
-                url: pla_1,
+                url: petg_3,
                 name: {
-                    ru: 'Изображение 2',
-                    en: 'Image 2'
+                    ru: '',
+                    en: ''
                 }
             },
             {
-                url: pla_1,
+                url: petg_4,
                 name: {
-                    ru: 'Изображение 6',
-                    en: 'Image 6'
+                    ru: '',
+                    en: ''
+                }
+            },
+            {
+                url: petg_5,
+                name: {
+                    ru: '',
+                    en: ''
+                }
+            },
+            {
+                url: petg_6,
+                name: {
+                    ru: '',
+                    en: ''
+                }
+            },
+            {
+                url: petg_7,
+                name: {
+                    ru: '',
+                    en: ''
+                }
+            },
+            {
+                url: petg_8,
+                name: {
+                    ru: '',
+                    en: ''
                 }
             },
         ],
-        features: {
-            pros: [
-                {
-                    name: {
-                        ru: 'прочность',
-                        en: 'hardness'
-                    },
-                    value: {
-                        ru: 'хорошая',
-                        en: 'high'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'спекаемость',
-                        en: 'sinterability'
-                    },
-                    value: {
-                        ru: 'хорошая',
-                        en: 'high'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'жёсткость',
-                        en: 'toughness'
-                    },
-                    value: {
-                        ru: 'средняя',
-                        en: 'medium'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'износостойкость',
-                        en: 'durability'
-                    },
-                    value: {
-                        ru: 'высокая',
-                        en: 'high'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'усадка',
-                        en: 'shrinkage'
-                    },
-                    value: {
-                        ru: 'низкая',
-                        en: 'low'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'обработка',
-                        en: 'processing'
-                    },
-                    value: {
-                        ru: 'резанием и шлифованием ',
-                        en: 'cutting and grinding'
-                    }
-                },
+        features: [
                 {
                     name: {
                         ru: 'обработка растворителями',
@@ -407,74 +336,30 @@ const mockFibers = [
                         en: 'dichloromethane, dichloroethane'
                     }
                 },
-                {
-                    name: {
-                        ru: 'температура эксплуатации',
-                        en: 'expluatation tempreture'
-                    },
-                    value: {
-                        ru: '-40…+70°С',
-                        en: '-40…+70°C'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'УФ стойкость (Солнце)',
-                        en: 'ultraviolet resistance (Sun)'
-                    },
-                    value: {
-                        ru: 'высокая',
-                        en: 'high'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'средняя стоимость',
-                        en: 'average price'
-                    },
-                    value: {
-                        ru: '4.5-6.5 р/гр',
-                        en: '4.5-6.5 rub/gr'
-                    }
-                },
             ],
-            cons: [
-                {
-                    name: {
-                        ru: 'ударостойкость',
-                        en: 'impact resistance'
-                    },
-                    value: {
-                        ru: 'низкая',
-                        en: 'low'
-                    }
-                },
-            ]
-        },
         params: {
-            strength: 30,
-            stiffnes: 1,
-            durability: 8,
-            minTemp: 10,
-            maxTemp: 90,
-            thermalExpansion: 170 ,
-            density: 1.44 ,
-            price: 5 ,
-            flexible: 2 ,
-            elastic: 2,
-            resistantImpact: 0,
-            soft: 1,
-            composite: 1 ,
+            strength: 53,
+            stiffnes: 10,
+            durability: 7,
+            resistantImpact: 3,
+            minTemp: -40,
+            maxTemp: 70,
+            thermalExpansion: 60 ,
+            density: 1.23,
+            price: 2,
+            flexible: 0,
+            elastic: 0,
+            soft: 0,
+            composite: 0,
             resistantUV: 2,
             resistantWater: 2,
-            dissolvable: 1,
-            resistantHeat: 2,
-            resistantChemically: 1,
+            dissolvable: 0,
+            resistantHeat: 0,
+            resistantChemically: 2,
             resistantFatigue: 2,
             cutting: 2,
             grinding: 2 ,
-            speed: 1,
-            priceGr: '8-12',
+            priceGr: '4.5-6.5',
         }
 
     },
@@ -564,8 +449,7 @@ const mockFibers = [
                 }
             },
         ],
-        features: {
-            pros: [
+        features: [
                 {
                     name: {
                         ru: 'прочность',
@@ -576,110 +460,7 @@ const mockFibers = [
                         en: 'medium'
                     }
                 },
-                {
-                    name: {
-                        ru: 'жёсткость',
-                        en: 'toughness'
-                    },
-                    value: {
-                        ru: 'высокая',
-                        en: 'very high'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'обработка',
-                        en: 'processing'
-                    },
-                    value: {
-                        ru: 'резанием и шлифованием ',
-                        en: 'cutting and grinding'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'обработка растворителями',
-                        en: 'solvent treatment '
-                    },
-                    value: {
-                        ru: 'дихлорметан, дихлорэтан, ацетон',
-                        en: 'dichloromethane, dichloroethane,acetone'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'ударостойкость',
-                        en: 'impact resistance'
-                    },
-                    value: {
-                        ru: 'высокая',
-                        en: 'high'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'температура эксплуатации',
-                        en: 'expluatation tempreture'
-                    },
-                    value: {
-                        ru: '-40…+85°С',
-                        en: '-40…+85°C'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'средняя стоимость',
-                        en: 'average price'
-                    },
-                    value: {
-                        ru: '4.5-6.5 р/гр',
-                        en: '4.5-6.5 rub/gr'
-                    }
-                },
-            ],
-            cons: [
-                {
-                    name: {
-                        ru: 'усадка',
-                        en: 'shrinkage'
-                    },
-                    value: {
-                        ru: 'высокая',
-                        en: 'high'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'УФ стойкость (Солнце)',
-                        en: 'ultraviolet resistance (Sun)'
-                    },
-                    value: {
-                        ru: 'низкая',
-                        en: 'low'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'износостойкость',
-                        en: 'durability'
-                    },
-                    value: {
-                        ru: 'низкая',
-                        en: 'low'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'спекаемость',
-                        en: 'sinterability'
-                    },
-                    value: {
-                        ru: 'плохая',
-                        en: 'low'
-                    }
-                },
-            ]
-        },
+        ],
         params: {
             strength: 103,
             stiffnes: 1,
@@ -702,7 +483,6 @@ const mockFibers = [
             resistantFatigue: 2,
             cutting: 2,
             grinding: 2 ,
-            speed: 1,
             priceGr: '1-2',
         }
         
@@ -795,8 +575,7 @@ const mockFibers = [
                 }
             },
         ],
-        features: {
-            pros: [
+        features: [
                 {
                     name: {
                         ru: 'прочность',
@@ -807,110 +586,7 @@ const mockFibers = [
                         en: 'medium'
                     }
                 },
-                {
-                    name: {
-                        ru: 'жёсткость',
-                        en: 'toughness'
-                    },
-                    value: {
-                        ru: 'высокая',
-                        en: 'very high'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'обработка',
-                        en: 'processing'
-                    },
-                    value: {
-                        ru: 'резанием и шлифованием ',
-                        en: 'cutting and grinding'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'обработка растворителями',
-                        en: 'solvent treatment '
-                    },
-                    value: {
-                        ru: 'дихлорметан, дихлорэтан, ацетон',
-                        en: 'dichloromethane, dichloroethane,acetone'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'ударостойкость',
-                        en: 'impact resistance'
-                    },
-                    value: {
-                        ru: 'высокая',
-                        en: 'high'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'температура эксплуатации',
-                        en: 'expluatation tempreture'
-                    },
-                    value: {
-                        ru: '-40…+85°С',
-                        en: '-40…+85°C'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'средняя стоимость',
-                        en: 'average price'
-                    },
-                    value: {
-                        ru: '6-8 р/гр',
-                        en: '6-8 rub/gr'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'УФ стойкость (Солнце)',
-                        en: 'ultraviolet resistance (Sun)'
-                    },
-                    value: {
-                        ru: 'высокая',
-                        en: 'ршпр'
-                    }
-                },
             ],
-            cons: [
-                {
-                    name: {
-                        ru: 'усадка',
-                        en: 'shrinkage'
-                    },
-                    value: {
-                        ru: 'высокая',
-                        en: 'high'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'износостойкость',
-                        en: 'durability'
-                    },
-                    value: {
-                        ru: 'низкая',
-                        en: 'low'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'спекаемость',
-                        en: 'sinterability'
-                    },
-                    value: {
-                        ru: 'плохая',
-                        en: 'low'
-                    }
-                },
-            ]
-        },
         params: {
             strength: 130,
             stiffnes: 1,
@@ -933,7 +609,6 @@ const mockFibers = [
             resistantFatigue: 2,
             cutting: 2,
             grinding: 2 ,
-            speed: 1,
             priceGr: '9',
         }
     },
@@ -1021,132 +696,18 @@ const mockFibers = [
                 }
             },
         ],
-        features: {
-            pros: [
-                {
-                    name: {
-                        ru: 'прочность',
-                        en: 'hardness'
-                    },
-                    value: {
-                        ru: 'очень высокая',
-                        en: 'very high'
-                    }
+        features: [
+            {
+                name: {
+                    ru: 'прочность',
+                    en: 'hardness'
                 },
-                {
-                    name: {
-                        ru: 'жёсткость',
-                        en: 'toughness'
-                    },
-                    value: {
-                        ru: 'средняя',
-                        en: 'medium'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'ударостойкость',
-                        en: 'impact resistance'
-                    },
-                    value: {
-                        ru: 'очень высокая',
-                        en: 'very high'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'износостойкость',
-                        en: 'durability'
-                    },
-                    value: {
-                        ru: 'очень высокая',
-                        en: 'very high'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'температура эксплуатации',
-                        en: 'expluatation tempreture'
-                    },
-                    value: {
-                        ru: '-60…+90°С',
-                        en: '-60…+90°C'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'УФ стойкость (Солнце)',
-                        en: 'ultraviolet resistance (Sun)'
-                    },
-                    value: {
-                        ru: '?????',
-                        en: '?????'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'стойкость к растворителям',
-                        en: 'solvent resistance'
-                    },
-                    value: {
-                        ru: 'высокая',
-                        en: 'very high'
-                    }
-                },
-            ],
-            cons: [
-                {
-                    name: {
-                        ru: 'обработка',
-                        en: 'processing'
-                    },
-                    value: {
-                        ru: 'резанием и шлифованием, затруднена',
-                        en: 'hard to cutting and grinding'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'обработка растворителями',
-                        en: 'solvent treatment '
-                    },
-                    value: {
-                        ru: 'не обрабатывается',
-                        en: 'solvent resistance'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'усадка',
-                        en: 'shrinkage'
-                    },
-                    value: {
-                        ru: 'высокая',
-                        en: 'high'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'спекаемость',
-                        en: 'sinterability'
-                    },
-                    value: {
-                        ru: '??????',
-                        en: '??????'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'средняя стоимость',
-                        en: 'average price'
-                    },
-                    value: {
-                        ru: '10-15 р/гр',
-                        en: '10-15 rub/gr'
-                    }
-                },
-            ]
-        },
+                value: {
+                    ru: 'средняя',
+                    en: 'medium'
+                }
+            },
+        ],
         params: {
             strength: 70,
             stiffnes: 1,
@@ -1168,8 +729,7 @@ const mockFibers = [
             resistantChemically: 1,
             resistantFatigue: 2,
             cutting: 2,
-            grinding: 2 ,
-            speed: 1,
+            grinding: 2,
             priceGr: '4-6',
         }
     },
@@ -1281,122 +841,18 @@ const mockFibers = [
                 }
             },
         ],
-        features: {
-            pros: [
-                {
-                    name: {
-                        ru: 'прочность',
-                        en: 'hardness'
-                    },
-                    value: {
-                        ru: 'средняя ????',
-                        en: 'medium ????'
-                    }
+        features: [
+            {
+                name: {
+                    ru: 'прочность',
+                    en: 'hardness'
                 },
-                {
-                    name: {
-                        ru: 'жёсткость',
-                        en: 'toughness'
-                    },
-                    value: {
-                        ru: 'высокая ????',
-                        en: 'very high ????'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'обработка',
-                        en: 'processing'
-                    },
-                    value: {
-                        ru: 'резанием и шлифованием ',
-                        en: 'cutting and grinding'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'обработка растворителями',
-                        en: 'solvent treatment '
-                    },
-                    value: {
-                        ru: 'дихлорметан, дихлорэтан, ацетон',
-                        en: 'dichloromethane, dichloroethane,acetone'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'ударостойкость',
-                        en: 'impact resistance'
-                    },
-                    value: {
-                        ru: 'высокая',
-                        en: 'high'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'температура эксплуатации',
-                        en: 'expluatation tempreture'
-                    },
-                    value: {
-                        ru: '-40…+85°С',
-                        en: '-40…+85°C'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'средняя стоимость',
-                        en: 'average price'
-                    },
-                    value: {
-                        ru: '4.5-6.5 р/гр',
-                        en: '4.5-6.5 rub/gr'
-                    }
-                },
-            ],
-            cons: [
-                {
-                    name: {
-                        ru: 'усадка',
-                        en: 'shrinkage'
-                    },
-                    value: {
-                        ru: 'высокая',
-                        en: 'high'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'УФ стойкость (Солнце)',
-                        en: 'ultraviolet resistance (Sun)'
-                    },
-                    value: {
-                        ru: 'низкая',
-                        en: 'low'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'износостойкость',
-                        en: 'durability'
-                    },
-                    value: {
-                        ru: 'низкая',
-                        en: 'low'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'спекаемость',
-                        en: 'sinterability'
-                    },
-                    value: {
-                        ru: 'плохая',
-                        en: 'low'
-                    }
-                },
-            ]
-        },
+                value: {
+                    ru: 'средняя',
+                    en: 'medium'
+                }
+            },
+        ],
         params: {
             strength: 39,
             stiffnes: 1,
@@ -1419,7 +875,6 @@ const mockFibers = [
             resistantFatigue: 2,
             cutting: 2,
             grinding: 2 ,
-            speed: 1,
             priceGr: '4-6',
         }
         
@@ -1538,132 +993,18 @@ const mockFibers = [
                 }
             },
         ],
-        features: {
-            pros: [
-                {
-                    name: {
-                        ru: 'прочность',
-                        en: 'hardness'
-                    },
-                    value: {
-                        ru: 'очень высокая ????',
-                        en: 'very high ????'
-                    }
+        features: [
+            {
+                name: {
+                    ru: 'прочность',
+                    en: 'hardness'
                 },
-                {
-                    name: {
-                        ru: 'жёсткость',
-                        en: 'toughness'
-                    },
-                    value: {
-                        ru: 'средняя ????',
-                        en: 'medium ????'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'ударостойкость',
-                        en: 'impact resistance'
-                    },
-                    value: {
-                        ru: 'очень высокая',
-                        en: 'very high'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'износостойкость',
-                        en: 'durability'
-                    },
-                    value: {
-                        ru: 'очень высокая',
-                        en: 'very high'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'температура эксплуатации',
-                        en: 'expluatation tempreture'
-                    },
-                    value: {
-                        ru: '-60…+90°С',
-                        en: '-60…+90°C'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'УФ стойкость (Солнце)',
-                        en: 'ultraviolet resistance (Sun)'
-                    },
-                    value: {
-                        ru: '?????',
-                        en: '?????'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'стойкость к растворителям',
-                        en: 'solvent resistance'
-                    },
-                    value: {
-                        ru: 'высокая',
-                        en: 'very high'
-                    }
-                },
-            ],
-            cons: [
-                {
-                    name: {
-                        ru: 'обработка',
-                        en: 'processing'
-                    },
-                    value: {
-                        ru: 'резанием и шлифованием, затруднена',
-                        en: 'hard to cutting and grinding'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'обработка растворителями',
-                        en: 'solvent treatment '
-                    },
-                    value: {
-                        ru: 'не обрабатывается',
-                        en: 'solvent resistance'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'усадка',
-                        en: 'shrinkage'
-                    },
-                    value: {
-                        ru: 'высокая',
-                        en: 'high'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'спекаемость',
-                        en: 'sinterability'
-                    },
-                    value: {
-                        ru: '??????',
-                        en: '??????'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'средняя стоимость',
-                        en: 'average price'
-                    },
-                    value: {
-                        ru: '10-15 р/гр',
-                        en: '10-15 rub/gr'
-                    }
-                },
-            ]
-        },
+                value: {
+                    ru: 'средняя',
+                    en: 'medium'
+                }
+            },
+        ],
         params: {
             strength: 160,
             stiffnes: 1,
@@ -1686,7 +1027,6 @@ const mockFibers = [
             resistantFatigue: 2,
             cutting: 2,
             grinding: 2 ,
-            speed: 1,
             priceGr: '4-6',
         }
     },
@@ -1775,133 +1115,18 @@ const mockFibers = [
                 }
             },
         ],
-        features: {
-            pros: [
-                {
-                    name: {
-                        ru: 'прочность',
-                        en: 'hardness'
-                    },
-                    value: {
-                        ru: 'средняя',
-                        en: 'medium'
-                    }
+        features: [
+            {
+                name: {
+                    ru: 'прочность',
+                    en: 'hardness'
                 },
-                {
-                    name: {
-                        ru: 'жёсткость',
-                        en: 'toughness'
-                    },
-                    value: {
-                        ru: 'высокая',
-                        en: 'high'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'ударостойкость',
-                        en: 'impact resistance'
-                    },
-                    value: {
-                        ru: 'высокая',
-                        en: 'high'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'износостойкость',
-                        en: 'durability'
-                    },
-                    value: {
-                        ru: 'очень высокая',
-                        en: 'very high'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'температура эксплуатации',
-                        en: 'expluatation tempreture'
-                    },
-                    value: {
-                        ru: '-100…+110°С',
-                        en: '-100…+110°C'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'обработка',
-                        en: 'processing'
-                    },
-                    value: {
-                        ru: 'резанием и шлифованием',
-                        en: 'cutting and grinding'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'УФ стойкость (Солнце)',
-                        en: 'ultraviolet resistance (Sun)'
-                    },
-                    value: {
-                        ru: '?????',
-                        en: '?????'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'стойкость к растворителям',
-                        en: 'solvent resistance'
-                    },
-                    value: {
-                        ru: 'высокая',
-                        en: 'very high'
-                    }
-                },
-            ],
-            cons: [
-
-                {
-                    name: {
-                        ru: 'обработка растворителями',
-                        en: 'solvent treatment '
-                    },
-                    value: {
-                        ru: 'не обрабатывается',
-                        en: 'solvent resistance'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'усадка',
-                        en: 'shrinkage'
-                    },
-                    value: {
-                        ru: 'высокая',
-                        en: 'high'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'спекаемость',
-                        en: 'sinterability'
-                    },
-                    value: {
-                        ru: 'плохая',
-                        en: 'low'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'средняя стоимость',
-                        en: 'average price'
-                    },
-                    value: {
-                        ru: '????? р/гр',
-                        en: '????? rub/gr'
-                    }
-                },
-            ]
-        },
+                value: {
+                    ru: 'средняя',
+                    en: 'medium'
+                }
+            },
+        ],
         params: {
             strength: 3,
             stiffnes: 1,
@@ -1924,7 +1149,6 @@ const mockFibers = [
             resistantFatigue: 2,
             cutting: 2,
             grinding: 2 ,
-            speed: 1,
             priceGr: '4-6',
         }
     },
@@ -2025,134 +1249,18 @@ const mockFibers = [
                 }
             },
         ],
-        features: {
-            pros: [
-                {
-                    name: {
-                        ru: 'прочность',
-                        en: 'hardness'
-                    },
-                    value: {
-                        ru: 'средняя',
-                        en: 'medium'
-                    }
+        features: [
+            {
+                name: {
+                    ru: 'прочность',
+                    en: 'hardness'
                 },
-                {
-                    name: {
-                        ru: 'спекаемость',
-                        en: 'sinterability'
-                    },
-                    value: {
-                        ru: 'очень высокая',
-                        en: 'very high'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'жёсткость',
-                        en: 'toughness'
-                    },
-                    value: {
-                        ru: 'средняя',
-                        en: 'medium'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'ударостойкость',
-                        en: 'impact resistance'
-                    },
-                    value: {
-                        ru: 'очень высокая',
-                        en: 'very high'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'износостойкость',
-                        en: 'durability'
-                    },
-                    value: {
-                        ru: 'очень высокая',
-                        en: 'very high'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'температура эксплуатации',
-                        en: 'expluatation tempreture'
-                    },
-                    value: {
-                        ru: '-20…+120°С',
-                        en: '-20…+120°C'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'обработка',
-                        en: 'processing'
-                    },
-                    value: {
-                        ru: 'резанием и шлифованием',
-                        en: 'cutting and grinding'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'УФ стойкость (Солнце)',
-                        en: 'ultraviolet resistance (Sun)'
-                    },
-                    value: {
-                        ru: '?????',
-                        en: '?????'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'стойкость к растворителям',
-                        en: 'solvent resistance'
-                    },
-                    value: {
-                        ru: 'высокая',
-                        en: 'very high'
-                    }
-                },
-            ],
-            cons: [
-
-                {
-                    name: {
-                        ru: 'обработка растворителями',
-                        en: 'solvent treatment '
-                    },
-                    value: {
-                        ru: 'не обрабатывается',
-                        en: 'solvent resistance'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'усадка',
-                        en: 'shrinkage'
-                    },
-                    value: {
-                        ru: 'высокая',
-                        en: 'high'
-                    }
-                },
-
-                {
-                    name: {
-                        ru: 'средняя стоимость',
-                        en: 'average price'
-                    },
-                    value: {
-                        ru: '????? р/гр',
-                        en: '????? rub/gr'
-                    }
-                },
-            ]
-        },
+                value: {
+                    ru: 'средняя',
+                    en: 'medium'
+                }
+            },
+        ],
         params: {
             strength: 3,
             stiffnes: 1,
@@ -2175,7 +1283,6 @@ const mockFibers = [
             resistantFatigue: 2,
             cutting: 2,
             grinding: 2 ,
-            speed: 1,
             priceGr: '4-6',
         }
     },
@@ -2268,152 +1375,18 @@ const mockFibers = [
                 }
             },
         ],
-        features: {
-            pros: [
-                {
-                    name: {
-                        ru: 'спекаемость',
-                        en: 'sinterability'
-                    },
-                    value: {
-                        ru: 'средняя',
-                        en: 'medium'
-                    }
+        features: [
+            {
+                name: {
+                    ru: 'прочность',
+                    en: 'hardness'
                 },
-                {
-                    name: {
-                        ru: 'гибкость',
-                        en: 'suppleness'
-                    },
-                    value: {
-                        ru: 'средняя',
-                        en: 'medium'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'жёсткость',
-                        en: 'toughness'
-                    },
-                    value: {
-                        ru: '????',
-                        en: '????'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'ударостойкость',
-                        en: 'impact resistance'
-                    },
-                    value: {
-                        ru: 'высокая',
-                        en: 'high'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'износостойкость',
-                        en: 'durability'
-                    },
-                    value: {
-                        ru: 'высокая',
-                        en: 'high'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'температура эксплуатации',
-                        en: 'expluatation tempreture'
-                    },
-                    value: {
-                        ru: '-35…+85°С',
-                        en: '-35…+85°C'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'усадка',
-                        en: 'shrinkage'
-                    },
-                    value: {
-                        ru: 'средняя',
-                        en: 'medium'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'обработка',
-                        en: 'processing'
-                    },
-                    value: {
-                        ru: 'резанием',
-                        en: 'cutting'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'УФ стойкость (Солнце)',
-                        en: 'ultraviolet resistance (Sun)'
-                    },
-                    value: {
-                        ru: '?????',
-                        en: '?????'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'стойкость к растворителям',
-                        en: 'solvent resistance'
-                    },
-                    value: {
-                        ru: 'высокая',
-                        en: 'very high'
-                    }
-                },
-            ],
-            cons: [
-                {
-                    name: {
-                        ru: 'прочность',
-                        en: 'hardness'
-                    },
-                    value: {
-                        ru: 'низкая',
-                        en: 'low'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'обработка растворителями',
-                        en: 'solvent treatment '
-                    },
-                    value: {
-                        ru: 'не обрабатывается',
-                        en: 'solvent resistance'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'обработка',
-                        en: 'processing'
-                    },
-                    value: {
-                        ru: 'шлифованием затруднена',
-                        en: 'hard to grinding'
-                    }
-                },
-                {
-                    name: {
-                        ru: 'средняя стоимость',
-                        en: 'average price'
-                    },
-                    value: {
-                        ru: '????? р/гр',
-                        en: '????? rub/gr'
-                    }
-                },
-            ]
-        },
+                value: {
+                    ru: 'средняя',
+                    en: 'medium'
+                }
+            },
+        ],
         params: {
             strength: 3,
             stiffnes: 1,
@@ -2436,7 +1409,6 @@ const mockFibers = [
             resistantFatigue: 2,
             cutting: 2,
             grinding: 2 ,
-            speed: 1,
             priceGr: '4-6',
         }
     },

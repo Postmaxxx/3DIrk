@@ -2,10 +2,10 @@ import { ICategoriesListItem } from "src/interfaces"
 
 const mockCategoriesList = [
     {
-        id: 'c1',
+        id: 'auto',
         name: {
-            en: 'Auto',
-            ru: 'Авто'
+            en: 'Auto/moto',
+            ru: 'Авто/мото'
         },
     },
     {

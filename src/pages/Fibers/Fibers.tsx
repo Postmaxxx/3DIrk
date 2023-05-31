@@ -10,6 +10,7 @@ import { loadFibers }  from "../../redux/actions/fibers"
 import { loadColors }  from "../../redux/actions/colors"
 import { NavLink, useParams } from 'react-router-dom';
 import FiberPreview from 'src/components/FiberPreview/FiberPreview';
+import ColorPicker from 'src/components/tiny/ColorPicker/ColorPicker';
 
 const actionsListFibers = { loadFibers }
 const actionsListColors = { loadColors }
@@ -87,6 +88,7 @@ const Fibers:React.FC<IProps> = ({lang, fibers, colors, setState}):JSX.Element =
 
                     </div>}
                     {loaded  ? (
+                        
                         <div className="fibers__container">
                             {fibers.fibersList.map((fiber, i) => {
                                 return (

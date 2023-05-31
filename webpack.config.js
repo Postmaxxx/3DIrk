@@ -1,4 +1,5 @@
 import Dotenv from "dotenv-webpack";
+const {InjectManifest} = require("workbox-webpack-plugin");
 
 const path = require('path')
 
@@ -26,5 +27,9 @@ module.exports = {
 
 	plugins: [
 		new Dotenv(),
+		new InjectManifest({
+			swSrc: "./service-worker.js",
+			swDest: "service-worker.js",
+		})
 	]
 };

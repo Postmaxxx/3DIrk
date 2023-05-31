@@ -1,9 +1,12 @@
-import { IColor, IFiber, TLang } from 'src/interfaces'
+import { IColor, IFiber, IModal, IModalImg, TLang } from 'src/interfaces'
 import Proscons from '../Proscons/Proscons'
 import './fiber-item.scss'
 import SpliderCommon from '../Spliders/Common/SpliderCommon';
 import Features from '../Features/Features';
 import { NavLink } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react'
+import Modal from '../Modal/Modal';
+import ModalImage from '../MessageImage/MessageImage';
 
 
 interface IProps {
@@ -13,6 +16,23 @@ interface IProps {
 }
 
 const FiberItem = ({fiber, lang, colors}: IProps) => {
+	const [modal, setModal] = useState<IModal>({visible: false})
+	const [modalImg, setModalImg] = useState<IModalImg>({descr: '', path: ''})
+
+
+	
+    const onImageClick = (e: React.MouseEvent , color: IColor) => {
+        e.stopPropagation()
+		setModalImg({descr: color.name[lang], path: color.url})
+        setModal({visible: true})
+    }
+
+    
+    const closeModal = () => {
+		setModal({visible: false})
+	}
+
+
     return (
         <div className="fiber__item">
 			<h2>{fiber.name[lang]}</h2>
@@ -32,7 +52,11 @@ const FiberItem = ({fiber, lang, colors}: IProps) => {
 							{fiber.colors.map((color, i) => {
 								const colorData: IColor | undefined = colors.find(colorItem => colorItem.id === color)
 								if (colorData) {
-									return <div key={i} className={`color ${colorData.value === 'mixed' ? "color_mixed" : ""} ${colorData.value === 'transparent' ? "color_transparent" : ''}`} style={{backgroundColor: `#${colorData.value}`}} title={colorData.name[lang]}></div>
+									return (
+										<div key={i} className='color__container' onClick={(e) => onImageClick(e, colorData)}>
+											<img src={colorData.url} alt={colorData.name[lang]} />
+										</div>
+									)
 								}
 							})}
 						</div>
@@ -49,6 +73,9 @@ const FiberItem = ({fiber, lang, colors}: IProps) => {
 					</NavLink>
 				</div>
             </div>
+			<Modal {...{visible: modal.visible, close: closeModal, escExit: true}}>
+				<ModalImage props={{path: modalImg.path, descr: modalImg.descr}}/>
+			</Modal> 
         </div>
     )
 }

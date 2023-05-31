@@ -1,77 +1,104 @@
 import { IColor } from "src/interfaces";
+import amber from 'src/assets/img/colors/amber.webp'
+import blue from 'src/assets/img/colors/blue.webp'
+import blue_dark from 'src/assets/img/colors/blue_dark.webp'
+import cooper from 'src/assets/img/colors/cooper.webp'
+import corn from 'src/assets/img/colors/corn.webp'
+import emerald from 'src/assets/img/colors/emerald.webp'
+import lilac_pearl from 'src/assets/img/colors/lilac_pearl.webp'
+import orange from 'src/assets/img/colors/orange.webp'
+import pink from 'src/assets/img/colors/pink.webp'
+import raspberry from 'src/assets/img/colors/raspberry.webp'
+import torque from 'src/assets/img/colors/torque.webp'
 
 const mockColors = [
     {
-        id:'c_black',
+        id:'c_amber',
         name: {
-            ru: 'Черный',
-            en: 'Black'
+            ru: 'Янтарный',
+            en: 'Amber'
         },
-        value: '000000'
-    },
-    {
-        id:'c_white',
-        name: {
-            ru: 'Белый',
-            en: 'White'
-        },
-        value: 'FFFFFF'
-    },
-    {
-        id:'c_transp',
-        name: {
-            ru: 'Прозрачный',
-            en: 'Transparent'
-        },
-        value: 'transparent'
-    },
-    {
-        id:'c_mixed',
-        name: {
-            ru: 'Разноцветный',
-            en: 'Mixed'
-        },
-        value: 'mixed'
-    },
-    {
-        id:'c_red',
-        name: {
-            ru: 'Красный',
-            en: 'Red'
-        },
-        value: 'FF0000'
-    },
-    {
-        id:'c_green',
-        name: {
-            ru: 'Зеленый',
-            en: 'Green'
-        },
-        value: '00FF00'
+        url: amber
     },
     {
         id:'c_blue',
         name: {
-            ru: 'Синий',
+            ru: 'Голубой',
             en: 'Blue'
         },
-        value: '0000FF'
+        url: blue
     },
     {
-        id:'c_yellow',
+        id:'c_blue_dark',
         name: {
-            ru: 'Желтый',
-            en: 'Yellow'
+            ru: 'Темно-голубой',
+            en: 'Dark blue'
         },
-        value: 'FFFF00'
+        url: blue_dark
     },
     {
-        id:'c_u',
+        id:'c_cooper',
         name: {
-            ru: 'Фиолетовый',
-            en: 'Violet'
+            ru: 'Медный',
+            en: 'Cooper'
         },
-        value: 'FF00FF'
+        url: cooper
+    },
+    {
+        id:'c_corn',
+        name: {
+            ru: 'Кукурузный',
+            en: 'Corn'
+        },
+        url: corn
+    },
+    {
+        id:'c_emerald',
+        name: {
+            ru: 'Изумрудный',
+            en: 'Emerald'
+        },
+        url: emerald
+    },
+    {
+        id:'c_lilac_pearl',
+        name: {
+            ru: 'Лиловая жемчужина',
+            en: 'Lilac pearl'
+        },
+        url: lilac_pearl
+    },
+    {
+        id:'c_orange',
+        name: {
+            ru: 'Оранжевый',
+            en: 'Orange'
+        },
+        url: orange
+    },
+    {
+        id:'c_pink',
+        name: {
+            ru: 'Розовый',
+            en: 'Pink'
+        },
+        url: pink
+    },
+    {
+        id:'c_raspberry',
+        name: {
+            ru: 'Малиновый',
+            en: 'Raspberry'
+        },
+        url: raspberry
+    },
+    {
+        id:'c_torque',
+        name: {
+            ru: 'Бирюзовый',
+            en: 'Torque'
+        },
+        url: torque
     },
 ] satisfies IColor[]
 

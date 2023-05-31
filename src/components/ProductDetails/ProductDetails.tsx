@@ -1,4 +1,4 @@
-import { ICartState, ICategories, IColor, IColorsState, IFiber, IFibersState, IFullState, IModal, IProductState, TId, TLang, TLangText, TLangTextArr } from 'src/interfaces'
+import { ICartState, ICategories, IColor, IColorsState, IFiber, IFibersState, IFullState, IModal, IModalImg, IProductState, TId, TLang, TLangText, TLangTextArr } from 'src/interfaces'
 import './product-details.scss'
 import { useRef, useEffect, useState, useMemo } from "react";
 import { AnyAction, bindActionCreators } from "redux";
@@ -11,6 +11,8 @@ import AddToCart from '../AddToCart/AddToCart';
 import Modal from '../Modal/Modal';
 import MessageInfo from '../MessageInfo/MessageInfo';
 import { NavLink } from 'react-router-dom';
+import ColorPicker from '../tiny/ColorPicker/ColorPicker';
+import ModalImage from '../MessageImage/MessageImage';
 //import { addItem } from "src/redux/actions/cart"
 
 
@@ -46,18 +48,20 @@ interface IProps extends IPropsState, IPropsActions {}
 const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors, fibers }): JSX.Element => {
 
     const [fibersDetailed, setFibersDetailed] = useState<IFiber[]>([])
-    const [selectedFiber, setSelectedFiber] = useState<IFiber["id"]>('')
+    const [selectedFiber, setSelectedFiber] = useState<IFiber>()
     const [selectedColor, setSelectedColor] = useState<IColor["id"]>('')
     const [selectedType, setSelectedType] = useState<any>(undefined)
+
     const _type = useRef<HTMLSelectElement>(null)
 
     
     const onChangeFiber: React.ChangeEventHandler<HTMLSelectElement> = (e) => {
-        setSelectedFiber(e.target.value)
-        setSelectedColor('')
+        setSelectedFiber(fibers.fibersList.find(fiber => fiber.id === e.target.value))
+        setSelectedColor('')        
     }
 
-    const onChangeColor = (colorId: IColor["id"]) => {
+
+    const onSelectColor = (colorId: IColor["id"]) => {
         setSelectedColor(colorId)
     }
 
@@ -113,7 +117,7 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors, fibe
                 <div className="feature wrap_xs">
                 <label htmlFor="fiber">
                     {selectedFiber ? 
-                        <NavLink to={`../../fibers/${selectedFiber}`} aria-label={lang === 'en' ? '(About selected fiber)' : ' (О выбранном материале)'}>
+                        <NavLink to={`../../fibers/${selectedFiber.id}`} aria-label={lang === 'en' ? '(About selected fiber)' : ' (О выбранном материале)'}>
                             {lang === 'en' ? 'Fiber' : 'Материал'}:
                         </NavLink>
                         :
@@ -123,16 +127,13 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors, fibe
 
                     <select id="fiber" onChange={onChangeFiber} defaultValue={''}>
                         <option key={-1} disabled hidden value={''}>{lang === 'en' ? 'Select fiber' : 'Выберите материал'}</option>
-                        {fibersDetailed.map((fiber, i) => <option key={i} value={fiber.id}>{fiber.name[lang]}</option>)}
+                        {fibersDetailed.map((fiber, i) => <option key={i} value={fiber.id}>{fiber.short.name[lang]}</option>)}
                     </select>
                 </div>
                 <div className="colors__container wrap_xs">
                     <span>{lang === 'en' ? 'Available colors' : 'Доступные цвета'}: </span>
                     <div className="colors__wrapper">
-                        {colors.colors.map((color, i) => {
-                            const colorAvailable = fibers.fibersList.find(fiber => fiber.id === selectedFiber)?.colors.find(colorId => colorId === color.id)
-                            return <div key={i} onClick={colorAvailable ? () => onChangeColor(color.id) : undefined} className={`color ${color.value === 'mixed' ? "color_mixed" : ''} ${color.value === 'transparent' ? "color_transparent" : ''} ${!colorAvailable && "disabled"} ${selectedColor === color.id && "selected"}`} style={{backgroundColor: `#${color.value}`}} title={color.name[lang]}></div>
-                        })}
+                        <ColorPicker lang={lang} colors={colors.colors.filter(color => selectedFiber?.colors.includes(color.id))} onSelect={onSelectColor}/>
                     </div>
                 </div>
     
@@ -141,7 +142,7 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors, fibe
             <AddToCart 
                 product={product} 
                 type={product.mods.length > 0 ? selectedType : {en: '-', ru: '-'}} 
-                fiber={selectedFiber} 
+                fiber={selectedFiber?.id} 
                 color={selectedColor}
                 />
         </div>

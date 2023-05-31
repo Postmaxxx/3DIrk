@@ -1,81 +1,80 @@
-import p1photo1 from 'src/assets/img/catalog/c1/p1/1.jpg'
-import p1photo2 from 'src/assets/img/catalog/c1/p1/2.jpg'
-import p1photo3 from 'src/assets/img/catalog/c1/p1/3.jpg'
-import p1photo4 from 'src/assets/img/catalog/c1/p1/4.jpg'
+import canister_1_1 from 'src/assets/img/catalog/car-parts/canister_1/1.webp'
+import canister_1_2 from 'src/assets/img/catalog/car-parts/canister_1/2.webp'
+import canister_1_3 from 'src/assets/img/catalog/car-parts/canister_1/3.webp'
+import canister_1_4 from 'src/assets/img/catalog/car-parts/canister_1/4.webp'
+import canister_1_5 from 'src/assets/img/catalog/car-parts/canister_1/5.webp'
 
-import p4photo1 from 'src/assets/img/catalog/c1/p4/1.jpg'
-import p4photo2 from 'src/assets/img/catalog/c1/p4/2.jpg'
-import p4photo3 from 'src/assets/img/catalog/c1/p4/3.jpg'
-import p4photo4 from 'src/assets/img/catalog/c1/p4/4.jpg'
-import p4photo5 from 'src/assets/img/catalog/c1/p4/5.jpg'
 
-import p2photo1 from 'src/assets/img/catalog/c2/p2/1.jpg'
-import p2photo2 from 'src/assets/img/catalog/c2/p2/2.jpg'
-import p2photo3 from 'src/assets/img/catalog/c2/p2/3.jpg'
-import p2photo4 from 'src/assets/img/catalog/c2/p2/4.jpg'
 import { IProductBE } from 'src/interfaces'
 
 const mockProducts = [
     {
-        categoryId: 'c1',
-        id: 'p1',
+        categoryId: 'auto',
+        id: 'canister_1',
         name: {
-            en: 'Wheel decor Pajero 5',
-            ru: 'Колпак на колеса Pajero 5'
+            en: 'Attachment for a canister',
+            ru: 'Крепление для канистры'
         },
         price: {
-            en: 'from 400r',
-            ru: 'От 400р'
+            en: 'from 500 rub.',
+            ru: 'От 500 р.'
         },
         text: {
             en: [
                 {
-                    part: 'All about product number1'
+                    part: 'Designed for transportation of «extreme» type canisters.'
                 },
                 {
-                    part: 'fgh Lorem ipsum, dolor sit amet consectetur adipisicing elit. Necessitatibus, eveniet odit veritatis totam exercitationem id perspiciatis dolores, ipsum'
+                    part: 'Upgraded model. Enhanced based on operational characteristics and customer feedback.'
                 },
             ],
             ru: [
                 {
-                    part: 'Вся информация о продукте номер 1'
+                    part: 'Предназначено для перевозок канистр типа «экстрим».'
                 },
                 {
-                    part: 'ВАП вап ывап в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра авпрва пдрваыплопдорва лопвапрвыалод рпвлап а'
+                    part: 'Улучшенная модель. Доработана с учетом особенностей эксплуатации и отзывов покупателей.'
                 },
             ]
         },
         imgs: [
             {
-                url: p1photo1,
+                url: canister_1_1,
                 name: {
-                    ru: 'Товар 1 фото 1',
-                    en: 'Product 1 photo 1'
+                    ru: 'Каждое изделие проходит полную сборку и проверку перед передачей заказчику',
+                    en: 'Each product undergoes full assembly and inspection before delivery to the customer'
                 }
             },
             {
-                url: p1photo2,
+                url: canister_1_2,
                 name: {
-                    ru: 'Товар 1 фото 2',
-                    en: 'Product 1 photo 2'
+                    ru: 'Качественная посадка крепежа для удобной эксплуатации',
+                    en: 'Secure fastening for convenient operation'
                 }
             },
             {
-                url: p1photo3,
+                url: canister_1_3,
                 name: {
-                    ru: 'Товар 1 фото 3',
-                    en: 'Product 1 photo 3' 
+                    ru: 'Специальная текстура, показавшая максимальные эксплуатационные характеристики',
+                    en: 'Special texture that has demonstrated maximum operational characteristics'
                 }
             },
             {
-                url: p1photo4,
+                url: canister_1_4,
                 name: {
-                    ru: 'Товар 1 фото 4',
-                    en: 'Product 1 photo 4'
+                    ru: 'Полный комплект, включающий в себя все необходимое для комфортной эксплуатации',
+                    en: 'Complete set that includes everything necessary for comfortable operation' 
+                }
+            },
+            {
+                url: canister_1_5,
+                name: {
+                    ru: 'Полное заполнение детали для максимальной надежности изделия',
+                    en: 'Full filling of the part for maximum reliability of the product'
                 }
             },
         ],
-        fibers: ["f_PLA"],
+        fibers: ["f_PETg"],
         features: [
             {
                 name: {
@@ -83,8 +82,8 @@ const mockProducts = [
                     ru: 'Вес'
                 },
                 value: {
-                    en: '0.5kg',
-                    ru: '500гр.'
+                    en: '0.2kg',
+                    ru: '200гр.'
                 },
             },
             {
@@ -100,7 +99,7 @@ const mockProducts = [
             {
                 name: {
                     en: 'Min items to order',
-                    ru: 'Минимальная партия для заказа'
+                    ru: 'Минимальная партия'
                 },
                 value: {
                     en: '1 item',
@@ -109,24 +108,25 @@ const mockProducts = [
             },
             {
                 name: {
-                    ru: 'Совместимость с родными колесами',
-                    en: 'Compatible with original wheels'
+                    en: 'Compatible with original part',
+                    ru: 'Совместимость с оригинальным креплением',
                 },
                 value: {
                     en: 'Full',
-                    ru: 'Полная'
+                    ru: 'Полная',
                 },
             },
         ],
         mods: [
             {
-                en:  '10*10*10mm',
-                ru: '10*10*10мм'
+                en: 'The length of the bolt: 8cm.',
+                ru: 'Длина болта: 8см.'
             },
             {
-                en:  '20*20*20mm',
-                ru: '20*20*20мм'
+                en: 'The length of the bolt: 12cm.',
+                ru: 'Длина болта: 12см.'
             },
+
         ]
     },
    

@@ -23,7 +23,7 @@
             grid-template-rows: auto auto;
         }
 
-        & .item__product-link_img {
+            & .item__product-link_img {
             cursor: pointer;
             align-self: center;
 
@@ -49,11 +49,11 @@
 
 
 
-        & .item__product-link {
+        /*& .item__product-link {
             display: block;
             margin-right: auto;
             display: flex;
-            align-items: stretch;
+            align-items: stretch;*/
 
             & .item-descr__container {
                 display: flex;
@@ -101,27 +101,35 @@
                         display: flex;
                         flex-grow: 1;
                         align-items: center;
+                        cursor: pointer;
         
-                        & .color {
-                            width: 20px;
-                            height: 20px;
-                            border-radius: 50%;
-                            border: 1px solid var(--text);
-                            transition: border $transition_theme;
+                        & .color__container {
+                            width: 25px;
+                            height: 25px;
+                            border-radius: 3px;
+                            overflow: hidden;
+                            
 
                             @include respond-to(sm) {
-                                width: 16px;
-                                height: 16px;
+                                width: 20px;
+                                height: 20  px;
                             }
 
                             
                             @include respond-to(xs) {
-                                width: 13px;
-                                height: 13px;
+                                width: 18px;
+                                height: 18px;
+                            }
+
+
+                            & > img {
+                                height: 100%;
+                                width: 100%;object-fit: cover;
                             }
                         }
 
                         & .color__name {
+                            text-decoration: underline;
                             margin-left: 10px;
                             text-transform: lowercase;
                         }
@@ -130,7 +138,7 @@
                 }
     
             }
-        }
+        /*}*/
 
         
         .item__amount-delete {
@@ -217,10 +225,10 @@
         }
 
         
-        .breaker_sm {
+        .breaker_xs {
             display: none;
             height: 20px;
-            @include respond-to(sm) {
+            @include respond-to(xs) {
                 display: block;
                 flex-basis: 100%;
             }

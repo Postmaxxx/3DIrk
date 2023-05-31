@@ -2,7 +2,7 @@ import './splider-common.scss'
 import Splide from "@splidejs/splide";
 import { findBestSuitedImg } from "src/assets/js/findBestSuitedImg";
 import ImgWithPreloader from 'src/assets/js/ImgWithPreloader';
-import { IImg, IModal, ISpliderOptions, TLang } from 'src/interfaces';
+import { IImg, IModal, IModalImg, ISpliderOptions, TLang } from 'src/interfaces';
 import "@splidejs/react-splide/css";
 import Modal from 'src/components/Modal/Modal';
 import ModalImage from 'src/components/MessageImage/MessageImage';
@@ -22,10 +22,6 @@ interface IContainerSize {
 }
 
 
-interface modalImg {
-	descr: string 
-	path: string
-}
 
 
 const SpliderCommon: React.FC<IProps> = ({lang, images, imagesPerSlide=1}): JSX.Element => {
@@ -34,7 +30,7 @@ const SpliderCommon: React.FC<IProps> = ({lang, images, imagesPerSlide=1}): JSX.
 	const containerSize = useRef<IContainerSize>();
 	const _splideFabric = useRef<any>();
 	const [modal, setModal] = useState<IModal>({visible: false})
-	const [modalImg, setModalImg] = useState<modalImg>({descr: '', path: ''})
+	const [modalImg, setModalImg] = useState<IModalImg>({descr: '', path: ''})
 
     const options: Partial<ISpliderOptions> = {
         //type   : 'loop',

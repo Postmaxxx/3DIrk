@@ -34,6 +34,10 @@
             &.color_green {
                 background-color: var(--rating_value_green);
             }
+
+            &.color_lilac {
+                background-color: var(--rating_value_lilac);
+            }
         }
 
         & .border_inner {

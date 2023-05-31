@@ -8,11 +8,11 @@ import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { setNavCloseDt, setNavCloseMob, setNavOpenDt, setNavOpenMob }  from "../../redux/actions/base"
 import CartInformer from "src/components/CartInformer/CartInformer";
-import { loadFibers, setSelectedFiber } from "src/redux/actions/fibers"
+import { loadFibers } from "src/redux/actions/fibers"
 
 
 const actionsListBase = {setNavCloseDt, setNavCloseMob, setNavOpenDt, setNavOpenMob }
-const actionsListFibers = { loadFibers, setSelectedFiber }
+const actionsListFibers = { loadFibers }
 
 interface IPropsState {
     lang: TLang
@@ -223,7 +223,7 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
                                                 <div className="nav__subNav">
                                                     {page.subMenu?.map((subPage) => {
                                                         return (
-                                                            <li>
+                                                            <li key={subPage.id}>
                                                                 <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} 
                                                                     onClick={navToggleMobile}
                                                                     to={subPage.path} end>

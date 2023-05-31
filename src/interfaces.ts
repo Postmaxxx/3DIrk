@@ -221,7 +221,7 @@ export interface IOrderBlock {
 export interface IColor {
     id: TId
     name: TLangText
-    value: string
+    url: string
 }
 
 
@@ -230,12 +230,12 @@ export interface IProsCons {
     cons: TLangText[]
 }
 
-
+/*
 export interface IFeatures {
     pros: IFeature[]
     cons: IFeature[]
 }
-
+*/
 
 //==========================================Fibers State
 
@@ -243,6 +243,7 @@ export interface IFiberParam {
     strength: number //MPa
     stiffnes: number //1..10
     durability: number //1..10
+    resistantImpact: number //1..10
     minTemp: number //in C
     maxTemp: number //in C
     thermalExpansion: number //µm/m-°C
@@ -251,7 +252,6 @@ export interface IFiberParam {
     elastic: number //0..2, 0 -no, 1 - maybe, 3 - ok
     soft: number //0..2, 0 -no, 1 - maybe, 3 - ok
     composite: number //0..2, 0 -no, 1 - maybe, 3 - ok
-    resistantImpact: number //0..2, 0 -no, 1 - maybe, 3 - ok
     resistantUV: number //0..2, 0 -no, 1 - maybe, 3 - ok
     resistantWater: number //0..2, 0 -no, 1 - maybe, 3 - ok
     resistantHeat: number //0..2, 0 -no, 1 - maybe, 3 - ok
@@ -260,7 +260,7 @@ export interface IFiberParam {
     resistantFatigue: number //0..2, 0 -no, 1 - maybe, 3 - ok
     cutting: number //0..2, 0 -no, 1 - maybe, 3 - ok
     grinding: number  //0..2, 0 -no, 1 - maybe, 3 - ok
-    speed: number //0-lo ... 5-high
+    //speed: number //0-lo ... 5-high
     price: number //1-low...5-high
     priceGr: string
 }
@@ -273,7 +273,7 @@ export interface IFiber {
     proscons: IProsCons
     colors: IColor["id"][] 
     imgs: IImg[]
-    features: IFeatures
+    features?: IFeature[]
     short: {
         name: TLangText
         descr: TLangText
@@ -487,4 +487,10 @@ export type TPropertiesValues = {
         tip: TLangText
         unit: TLangText
     }
+}
+
+
+export interface IModalImg {
+	descr: string 
+	path: string
 }

@@ -10,6 +10,7 @@ import { loadFibers } from "src/redux/actions/fibers"
 import { loadColors } from "src/redux/actions/colors"
 import { loadCart }  from "src/redux/actions/cart"
 import { useState, useEffect, useRef, KeyboardEventHandler } from 'react'
+import P404 from "./pages/P404/P404";
 
 const LazyThemeSwitcher = lazy(() => import("./components/ThemeSwitcher/ThemeSwitcher"));
 const LazyLangSwitcher = lazy(() => import("./components/LangSwitcher/LangSwitcher"));
@@ -81,6 +82,7 @@ const App:React.FC<IProps> = ({lang, cartLoad, colorsLoad, setState, fibersLoad}
 					<Route path=":productId" element={<Suspense fallback={<Preloader />}><LazyProduct /></Suspense>} />
 				</Route>
 				<Route path="news/:newsId" element={<Suspense fallback={<Preloader />}><LazyNewsDetails /></Suspense>} />
+				<Route path="/*" element={<Suspense fallback={<Preloader />}><P404 lang={lang}/></Suspense>} />
 			</Routes>
 
 			<LazyFooter />

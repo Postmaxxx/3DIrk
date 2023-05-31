@@ -103,6 +103,8 @@ const FibersCompare:React.FC<IProps> = ({lang, fibers, colors, setState}):JSX.El
         }
     }
 
+
+
     return (
         <div className="page page_compare">
             <div className="container_page">
@@ -169,10 +171,10 @@ const FibersCompare:React.FC<IProps> = ({lang, fibers, colors, setState}):JSX.El
                                                     {property === "strength" && <div className="rating__container"><RatingLine colorValue='blue' min={0} max={180} value={fiber.params[property]} text={`${fiber.params[property]}`} measurment={lang === 'en' ? ' MPa' : ' МПа'}/></div>}
                                                     {property === "stiffnes" && <div className="rating__container"><RatingLine colorValue='red' min={0} max={10} value={fiber.params[property]} text={`${fiber.params[property]}`} measurment={' / 10'}/></div>}
                                                     {property === "durability" && <div className="rating__container"><RatingLine colorValue='green' min={0} max={10} value={fiber.params[property]} text={`${fiber.params[property]}`} measurment={' / 10'}/></div>}
+                                                    {property === "resistantImpact" && <div className="rating__container"><RatingLine colorValue='lilac' min={0} max={10} value={fiber.params[property]} text={`${fiber.params[property]}`} measurment={' / 10'}/></div>}
                                                     {(property === "minTemp" || property === "maxTemp" || property === "thermalExpansion" || property === "density") && <span>{fiber.params[property]} <span>{propertiesValues[property].unit[lang]}</span></span>}
                                                     {(property === "flexible" 
                                                     || property === "elastic"
-                                                    || property === "resistantImpact"
                                                     || property === "soft"
                                                     || property === "composite"
                                                     || property === "resistantUV"
@@ -183,7 +185,7 @@ const FibersCompare:React.FC<IProps> = ({lang, fibers, colors, setState}):JSX.El
                                                     || property === "resistantFatigue"
                                                     || property === "cutting"
                                                     || property === "grinding"
-                                                    ) && <SvgInserter type={fiber.params[property] === 2 ? 'plus' : fiber.params[property] === 1 ? 'minus' : 'con'}/>}
+                                                    ) && <SvgInserter type={fiber.params[property] === 2 ? 'plus' : fiber.params[property] === 0 ? 'minus' : 'con'}/>}
                                                     {/*property === "speed" && <span>{fiber.params.speed}</span>*/}
                                                     {property === "price" && <RatingMoney value={fiber.params.price} max={5} text={``} measurment={''} />}
                                                     

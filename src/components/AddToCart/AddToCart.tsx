@@ -22,7 +22,7 @@ interface IPropsState {
 interface IPropsParent extends IPropsState {
     product : IProduct
     type: TLangText | undefined
-    fiber: IFiber['id']
+    fiber: IFiber['id'] | undefined
     color: IColor['id']
 }
 

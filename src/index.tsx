@@ -3,9 +3,7 @@ import { Suspense, lazy } from "react";
 import { Provider } from 'react-redux';
 import store from './redux/store';
 import Preloader from './components/Preloaders/Preloader';
-
-
-
+import * as sw from './serviceWorkerRegistration';
 
 const LazyApp = lazy(() => import('./App'));
 
@@ -24,4 +22,7 @@ root.render(
 	</Provider>
 );
 
+
+
+sw.register('')
 

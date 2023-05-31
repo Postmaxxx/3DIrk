@@ -20,12 +20,11 @@ const Features = ({params, lang, fiber} : IProps) => {
                 return (
                     <div className="feature__container" key={property}>
                         {(property === "strength" || property === "thermalExpansion" || property === "density") && <div className="feature"><span>{propertiesValues[property].name[lang]}: </span><span></span><span>{params[property]} {propertiesValues[property].unit[lang]}</span></div>}
-                        {(property === "stiffnes" || property === "durability") && <div className="feature"><span>{propertiesValues[property].name[lang]}: </span><span></span><span>{ratingNumberToText(params.stiffnes, 10)[lang]}</span></div>}
+                        {(property === "stiffnes" || property === "durability" || property === "resistantImpact") && <div className="feature"><span>{propertiesValues[property].name[lang]}: </span><span></span><span>{ratingNumberToText(params.stiffnes, 10)[lang]}</span></div>}
                         {property === "minTemp" && <div className="feature"><span>{lang === "en" ? "Temperetures" : 't использования'}: </span><span></span><span>{params.minTemp} ... {params.maxTemp} {propertiesValues[property].unit[lang]}</span></div>}
 
                         {(property === "flexible" 
                         || property === "elastic"
-                        || property === "resistantImpact"
                         || property === "soft"
                         || property === "composite"
                         || property === "resistantUV"
