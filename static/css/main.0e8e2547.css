@@ -1,2 +1,0 @@
-.preloader{animation:spin 1s linear infinite;aspect-ratio:1;border-color:#0968b5 #0000;border-radius:50%;border-style:solid;border-width:6px;left:50%;position:absolute;top:50%;transform:translate(-50%,-50%);width:20%}@keyframes spin{0%{transform:translate(-50%,-50%) rotate(0deg)}to{transform:translate(-50%,-50%) rotate(1turn)}}
-/*# sourceMappingURL=main.0e8e2547.css.map*/
