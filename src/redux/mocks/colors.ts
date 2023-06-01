@@ -1,15 +1,15 @@
 import { IColor } from "src/interfaces";
-import amber from 'src/assets/img/colors/amber.webp'
-import blue from 'src/assets/img/colors/blue.webp'
-import blue_dark from 'src/assets/img/colors/blue_dark.webp'
-import cooper from 'src/assets/img/colors/cooper.webp'
-import corn from 'src/assets/img/colors/corn.webp'
-import emerald from 'src/assets/img/colors/emerald.webp'
-import lilac_pearl from 'src/assets/img/colors/lilac_pearl.webp'
-import orange from 'src/assets/img/colors/orange.webp'
-import pink from 'src/assets/img/colors/pink.webp'
-import raspberry from 'src/assets/img/colors/raspberry.webp'
-import torque from 'src/assets/img/colors/torque.webp'
+import amber from '../../assets/img/colors/amber.webp'
+import blue from '../../assets/img/colors/blue.webp'
+import blue_dark from '../../assets/img/colors/blue_dark.webp'
+import cooper from '../../assets/img/colors/cooper.webp'
+import corn from '../../assets/img/colors/corn.webp'
+import emerald from '../../assets/img/colors/emerald.webp'
+import lilac_pearl from '../../assets/img/colors/lilac_pearl.webp'
+import orange from '../../assets/img/colors/orange.webp'
+import pink from '../../assets/img/colors/pink.webp'
+import raspberry from '../../assets/img/colors/raspberry.webp'
+import torque from '../../assets/img/colors/torque.webp'
 
 const mockColors = [
     {

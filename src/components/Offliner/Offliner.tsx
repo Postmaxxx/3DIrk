@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import './offliner.scss'
-import { TLang } from 'src/interfaces'
+import { TLang } from '../../interfaces'
 
 
 interface IOffliner {

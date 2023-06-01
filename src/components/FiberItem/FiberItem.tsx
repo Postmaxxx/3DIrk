@@ -1,4 +1,4 @@
-import { IColor, IFiber, IModal, IModalImg, TLang } from 'src/interfaces'
+import { IColor, IFiber, IModal, IModalImg, TLang } from '../../interfaces'
 import Proscons from '../Proscons/Proscons'
 import './fiber-item.scss'
 import SpliderCommon from '../Spliders/Common/SpliderCommon';

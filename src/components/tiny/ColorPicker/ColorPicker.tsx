@@ -1,8 +1,8 @@
 import './color-picker.scss'
-import { ICartState, IColor, IModal, IModalImg, TLang } from "src/interfaces";
+import { ICartState, IColor, IModal, IModalImg, TLang } from "../../../interfaces";
 import { useState, useEffect, useRef } from 'react'
-import Modal from 'src/components/Modal/Modal';
-import ModalImage from 'src/components/MessageImage/MessageImage';
+import Modal from '../../../components/Modal/Modal';
+import ModalImage from '../../../components/MessageImage/MessageImage';
 
 
 interface IPropsState {

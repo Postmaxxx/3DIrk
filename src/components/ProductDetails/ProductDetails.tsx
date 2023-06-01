@@ -4,16 +4,16 @@ import { useRef, useEffect, useState, useMemo } from "react";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import { loadProduct } from "src/redux/actions/product"
-import { loadFibers } from "src/redux/actions/fibers"
-import { loadColors } from "src/redux/actions/colors"
+import { loadProduct } from "../../redux/actions/product"
+import { loadFibers } from "../../redux/actions/fibers"
+import { loadColors } from "../../redux/actions/colors"
 import AddToCart from '../AddToCart/AddToCart';
 import Modal from '../Modal/Modal';
 import MessageInfo from '../MessageInfo/MessageInfo';
 import { NavLink } from 'react-router-dom';
 import ColorPicker from '../tiny/ColorPicker/ColorPicker';
 import ModalImage from '../MessageImage/MessageImage';
-//import { addItem } from "src/redux/actions/cart"
+//import { addItem } from "../../redux/actions/cart"
 
 
 const actionsListProduct = { loadProduct }

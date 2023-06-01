@@ -1,7 +1,7 @@
 import "./langSwitcher.scss"
 import { useEffect } from "react";
 import { connect } from "react-redux";
-import { IFullState, TLang, TTheme } from "src/interfaces";
+import { IFullState, TLang, TTheme } from "../../interfaces";
 import { setLangEn, setLangRu }  from "../../redux/actions/base"
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";

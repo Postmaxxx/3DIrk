@@ -3,17 +3,17 @@ import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import './cart-content.scss'
 import { ICartItem, ICartState, IColor, IColorsState, IFiber, IFibersState, IFullState, IModal, IModalImg, IProduct, IProductState, TLang } from "src/interfaces";
-import { changeItem, saveCart, removeItem }  from "src/redux/actions/cart"
+import { changeItem, saveCart, removeItem }  from "../../redux/actions/cart"
 import { useState, useEffect, useRef } from 'react'
-import { loadFibers } from "src/redux/actions/fibers"
-import { loadColors } from "src/redux/actions/colors"
+import { loadFibers } from "../../redux/actions/fibers"
+import { loadColors } from "../../redux/actions/colors"
 import { NavLink } from "react-router-dom";
 import Delete from "../Delete/Delete";
 import Preloader from "../Preloaders/Preloader";
-import { setProduct, setLoadDataStatusProduct }  from "src/redux/actions/product"
+import { setProduct, setLoadDataStatusProduct }  from "../../redux/actions/product"
 import AmountChanger from "../AmountChanger/AmountChanger";
 import PreloaderW from "../Preloaders/PreloaderW";
-import ImgWithPreloader from "src/assets/js/ImgWithPreloader";
+import ImgWithPreloader from "../../assets/js/ImgWithPreloader";
 import Modal from "../Modal/Modal";
 import ModalImage from "../MessageImage/MessageImage";
 

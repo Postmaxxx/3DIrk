@@ -2,7 +2,7 @@ import './news_block.scss'
 import { useState, useEffect, Fragment } from 'react'
 import { connect } from "react-redux";
 import News from '../News/News'
-import { IFullState, INewsState, TLang } from 'src/interfaces'
+import { IFullState, INewsState, TLang } from '../../interfaces'
 import { AnyAction, Dispatch, bindActionCreators } from 'redux';
 import Preloader from '../Preloaders/Preloader';
 import { loadAllNews }  from "../../redux/actions/news"

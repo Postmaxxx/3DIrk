@@ -4,9 +4,9 @@ export function register(config: string) {
 		if (publicUrl.origin !== window.location.origin) { return; }
 
 		window.addEventListener("load", () => {
-			let swUrl: string = `${process.env.PUBLIC_URL}/service-worker.js`;
+			let swUrl: string = `${process.env.PUBLIC_URL}/sw.js`;
 			if (process.env.NODE_ENV === "development") {
-				swUrl = "localhost/static/js/service-worker.js";
+				swUrl = "localhost/static/js/sw.js";
 			}
 			registerValidSW(swUrl, config);
 		});

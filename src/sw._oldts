@@ -182,4 +182,3 @@ self.addEventListener("activate", async () => {
 		})
 		.forEach(async cache => await caches.delete(cache));
 }); 
-

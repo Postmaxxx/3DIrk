@@ -1,7 +1,7 @@
-import { IFeature, IFiber, IFiberParam, TLang, TLangText } from 'src/interfaces'
+import { IFeature, IFiber, IFiberParam, TLang, TLangText } from '../../interfaces'
 import './features.scss'
-import { ratingNumberToText } from 'src/assets/js/processors'
-import { propertiesValues, propertiesList } from 'src/assets/data/fibers'
+import { ratingNumberToText } from '../../assets/js/processors'
+import { propertiesValues, propertiesList } from '../../assets/data/fibers'
 
 interface IProps {  
     params: IFiberParam

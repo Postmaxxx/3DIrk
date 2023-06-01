@@ -1,16 +1,16 @@
 import "./product.scss"
 import { useRef, useEffect, useState, useMemo } from "react";
 import { useNavigate, useParams  } from "react-router-dom"
-import Preloader from 'src/components/Preloaders/Preloader';
+import Preloader from '../../components/Preloaders/Preloader';
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { ICategories, IColorsState, IFibersState, IFullState, IProductState, TId, TLang } from "src/interfaces";
-import SpliderPreview from "src/components/Spliders/Preview/SpliderPreview";
-import { loadProduct } from "src/redux/actions/product"
-import { loadFibers } from "src/redux/actions/fibers"
-import { loadColors } from "src/redux/actions/colors"
-import ProductDetails from "src/components/ProductDetails/ProductDetails";
+import SpliderPreview from "../../components/Spliders/Preview/SpliderPreview";
+import { loadProduct } from "../../redux/actions/product"
+import { loadFibers } from "../../redux/actions/fibers"
+import { loadColors } from "../../redux/actions/colors"
+import ProductDetails from "../../components/ProductDetails/ProductDetails";
 
 
 

@@ -3,14 +3,14 @@ import { AnyAction, bindActionCreators, Dispatch } from "redux";
 import { connect } from "react-redux";
 import { TLang, IFullState, IFibersState, IColorsState, IColor, TLangText, IFiber, IPropertyTypes } from "../../interfaces";
 import { useEffect, useState, Fragment } from 'react'; 
-import Preloader from 'src/components/Preloaders/Preloader';
+import Preloader from '../../components/Preloaders/Preloader';
 import { loadFibers, setShowListFibers, setSelectedFiber }  from "../../redux/actions/fibers"
 import { loadColors }  from "../../redux/actions/colors"
 import { NavLink } from 'react-router-dom';
-import SvgInserter from 'src/components/tiny/SvgInserter/SvgInserter';
-import RatingLine from 'src/components/tiny/RatingLine/RatingLine';
-import RatingMoney from 'src/components/tiny/RatingMoney/RatingMoney';
-import { propertiesList, propertiesValues } from 'src/assets/data/fibers';
+import SvgInserter from '../../components/tiny/SvgInserter/SvgInserter';
+import RatingLine from '../../components/tiny/RatingLine/RatingLine';
+import RatingMoney from '../../components/tiny/RatingMoney/RatingMoney';
+import { propertiesList, propertiesValues } from '../../assets/data/fibers';
 
 const actionsListFibers = { loadFibers, setShowListFibers, setSelectedFiber }
 const actionsListColors = { loadColors }

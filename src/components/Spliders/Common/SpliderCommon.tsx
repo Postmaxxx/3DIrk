@@ -1,11 +1,11 @@
 import './splider-common.scss'
 import Splide from "@splidejs/splide";
-import { findBestSuitedImg } from "src/assets/js/findBestSuitedImg";
-import ImgWithPreloader from 'src/assets/js/ImgWithPreloader';
-import { IImg, IModal, IModalImg, ISpliderOptions, TLang } from 'src/interfaces';
+import { findBestSuitedImg } from "../../../assets/js/findBestSuitedImg";
+import ImgWithPreloader from '../../../assets/js/ImgWithPreloader';
+import { IImg, IModal, IModalImg, ISpliderOptions, TLang } from '../../../interfaces';
 import "@splidejs/react-splide/css";
-import Modal from 'src/components/Modal/Modal';
-import ModalImage from 'src/components/MessageImage/MessageImage';
+import Modal from '../../../components/Modal/Modal';
+import ModalImage from '../../../components/MessageImage/MessageImage';
 import { useRef, useState, useEffect, MouseEvent } from 'react'
 
 

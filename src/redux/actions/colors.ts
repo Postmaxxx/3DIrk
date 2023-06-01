@@ -1,4 +1,4 @@
-import { IAction, IProductState, ICategoriesListItem, ICategory, ICategoryReceived, IDispatch, IProduct, IColor, IColorsState } from "src/interfaces"
+import { IAction, IProductState, ICategoriesListItem, ICategory, ICategoryReceived, IDispatch, IProduct, IColor, IColorsState } from "../../interfaces"
 import { actionsListColors } from './actionsList'
 import mockColors from "../mocks/colors";
 

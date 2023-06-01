@@ -1,4 +1,4 @@
-import { ICartItem, ICartState, TLang } from "src/interfaces"
+import { ICartItem, ICartState, TLang } from "../../interfaces"
 import './delete.scss'
 import { useState, useEffect } from 'react'
 

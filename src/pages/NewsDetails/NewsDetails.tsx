@@ -1,14 +1,14 @@
-import { IFullState, INewsItem, INewsState, TLang } from 'src/interfaces'
+import { IFullState, INewsItem, INewsState, TLang } from '../../interfaces'
 import './news-details.scss'
-import { loadAllNews } from "src/redux/actions/news"
+import { loadAllNews } from "../../redux/actions/news"
 import { NavLink, useParams, useNavigate } from 'react-router-dom'
-import Preloader from 'src/components/Preloaders/Preloader';
+import Preloader from '../../components/Preloaders/Preloader';
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { useRef, useEffect, useState, useMemo } from "react";
-import mockNews from 'src/redux/mocks/news';
-import SpliderCommon from 'src/components/Spliders/Common/SpliderCommon';
+import mockNews from '../../redux/mocks/news';
+import SpliderCommon from '../../components/Spliders/Common/SpliderCommon';
 
 const actionsListNews = { loadAllNews }
 

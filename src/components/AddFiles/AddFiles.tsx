@@ -1,8 +1,8 @@
-import { TLang } from 'src/interfaces'
+import { TLang } from '../../interfaces'
 import './add-files.scss'
 import { useState, useEffect, useRef, forwardRef, useImperativeHandle} from 'react'
 import iconFileQuestion from '../../assets/img/icon_file_question.svg'
-import Delete from "src/components/Delete/Delete";
+import Delete from "../../components/Delete/Delete";
 
 interface IProps {
     lang: TLang

@@ -1,4 +1,4 @@
-import { TLang } from 'src/interfaces'
+import { TLang } from '../../interfaces'
 import './amount-changer.scss'
 import { useRef, useEffect, useState, useMemo } from "react";
 

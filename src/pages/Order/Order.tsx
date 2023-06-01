@@ -4,14 +4,14 @@ import { connect } from "react-redux";
 import './order.scss'
 import { ICartItem, ICartState, IColorsState, IFibersState, IFullState, IModal, IOrderState, TLang, TLangText, TLangTextArr } from "src/interfaces";
 import { useState, useEffect, useRef, KeyboardEventHandler } from 'react'
-import Modal from "src/components/Modal/Modal";
-import MessageInfo from "src/components/MessageInfo/MessageInfo";
+import Modal from "../../components/Modal/Modal";
+import MessageInfo from "../../components/MessageInfo/MessageInfo";
 import { setName, setEmail, setPhone, setMessage, clearFiles, clearForm, addFiles, sendOrder, setSendDataStatus }  from "../../redux/actions/order"
-import CartContent from "src/components/CartContent/CartContent";
-import AddFiles, { IAddFilesFunctions } from "src/components/AddFiles/AddFiles";
-import { loadFibers } from "src/redux/actions/fibers"
-import { loadColors } from "src/redux/actions/colors"
-import { clearCart } from "src/redux/actions/cart"
+import CartContent from "../../components/CartContent/CartContent";
+import AddFiles, { IAddFilesFunctions } from "../../components/AddFiles/AddFiles";
+import { loadFibers } from "../../redux/actions/fibers"
+import { loadColors } from "../../redux/actions/colors"
+import { clearCart } from "../../redux/actions/cart"
 
 const actionsListOrder = { setName, setEmail, setPhone, setMessage, clearFiles, clearForm, addFiles, sendOrder, setSendDataStatus  }
 const actionsListColors = { loadColors }

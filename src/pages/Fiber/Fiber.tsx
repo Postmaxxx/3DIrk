@@ -7,7 +7,7 @@ import { AnyAction, bindActionCreators, Dispatch } from "redux";
 import { connect } from "react-redux";
 import Preloader from '../../components/Preloaders/Preloader';
 import { TLang, IFullState, IFiber, IFibersState, IColorsState, IColor } from "../../interfaces";
-import FiberItem from 'src/components/FiberItem/FiberItem';
+import FiberItem from '../../components/FiberItem/FiberItem';
 
 const actionsListFibers = { loadFibers, setSelectedFiber }
 const actionsListColors = { loadColors }

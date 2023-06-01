@@ -3,7 +3,7 @@ import { Suspense, lazy } from "react";
 import { Provider } from 'react-redux';
 import store from './redux/store';
 import Preloader from './components/Preloaders/Preloader';
-import * as sw from './serviceWorkerRegistration';
+//import * as sw from './serviceWorkerRegistration';
 import React from "react";
 
 
@@ -23,5 +23,5 @@ root.render(
 
 
 
-sw.register('')
+//sw.register('')
 

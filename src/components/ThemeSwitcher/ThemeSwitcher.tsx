@@ -6,7 +6,7 @@ import cloud from "./theme_day__cloud.svg";
 import star from "./theme_nigth__star.svg";
 import "./themeSwitcher.scss";
 import { setThemeDark, setThemeLight, setThemeToggle }  from "../../redux/actions/base"
-import { IBaseState, IFullState, TLang } from "src/interfaces";
+import { IBaseState, IFullState, TLang } from "../../interfaces";
 
 const actionsList = {setThemeDark, setThemeLight, setThemeToggle}
 

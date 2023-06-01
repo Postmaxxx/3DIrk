@@ -1,4 +1,4 @@
-import { IAction, ICartItem, ICartItemSave, ICartState, IDispatch, IProduct } from 'src/interfaces';
+import { IAction, ICartItem, ICartItemSave, ICartState, IDispatch, IProduct } from '../../interfaces';
 import { actionsListCart } from './actionsList'
 import mockProducts from '../mocks/catalogFull';
 

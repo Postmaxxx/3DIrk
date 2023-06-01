@@ -1,11 +1,11 @@
-import { ICartItem, ICartState, IColor, IFiber, IFullState, IModal, IProduct, TLang, TLangText } from 'src/interfaces';
+import { ICartItem, ICartState, IColor, IFiber, IFullState, IModal, IProduct, TLang, TLangText } from '../../interfaces';
 import './add-to-cart.scss'
 import { useRef, useEffect, useState, useMemo } from "react";
-import { addItem, saveCart } from "src/redux/actions/cart"
+import { addItem, saveCart } from "../../redux/actions/cart"
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import Modal from "src/components/Modal/Modal";
+import Modal from "../../components/Modal/Modal";
 import MessageInfo from '../MessageInfo/MessageInfo';
 import AmountChanger from '../AmountChanger/AmountChanger';
 var uniqid = require('uniqid');

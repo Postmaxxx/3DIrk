@@ -1,7 +1,7 @@
 import { useLocation } from 'react-router-dom'
 import './p404.scss'
 import React from 'react'
-import { TLang } from 'src/interfaces'
+import { TLang } from '../../interfaces'
 
 
 interface IP404 {

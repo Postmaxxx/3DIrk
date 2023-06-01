@@ -7,8 +7,8 @@ import { connect } from "react-redux";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { setNavCloseDt, setNavCloseMob, setNavOpenDt, setNavOpenMob }  from "../../redux/actions/base"
-import CartInformer from "src/components/CartInformer/CartInformer";
-import { loadFibers } from "src/redux/actions/fibers"
+import CartInformer from "../../components/CartInformer/CartInformer";
+import { loadFibers } from "../../redux/actions/fibers"
 
 
 const actionsListBase = {setNavCloseDt, setNavCloseMob, setNavOpenDt, setNavOpenMob }

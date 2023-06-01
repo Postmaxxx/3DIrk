@@ -1,5 +1,5 @@
-import NewsBlock from 'src/components/NewsBlock/NewsBlock';
-import SpliderMax from 'src/components/CarouselMax/CarouselMax';
+import NewsBlock from '../../components/NewsBlock/NewsBlock';
+import SpliderMax from '../../components/CarouselMax/CarouselMax';
 import './home.scss'
 import { connect } from "react-redux";
 import { IFullState, TLang } from "../../interfaces";

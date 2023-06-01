@@ -1,14 +1,14 @@
 import './catalog.scss'
-import { IDataLoading, IFullState, TLang } from "src/interfaces";
+import { IDataLoading, IFullState, TLang } from "../../interfaces";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { useEffect } from "react";
-import SpliderSingle from 'src/components/Spliders/Single/SpliderSingle';
+import SpliderSingle from '../../components/Spliders/Single/SpliderSingle';
 import "@splidejs/react-splide/css"; 
 
-import CategoriesList from 'src/components/CategoriesList/CategoriesList';
-import CatalogIntro from 'src/components/CatalogIntro/CatalogIntro';
+import CategoriesList from '../../components/CategoriesList/CategoriesList';
+import CatalogIntro from '../../components/CatalogIntro/CatalogIntro';
 
 import { loadColors }  from "../../redux/actions/colors"
 import { loadFibers }  from "../../redux/actions/fibers"

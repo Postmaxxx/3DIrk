@@ -1,6 +1,6 @@
-import { IColor, IFiber, TLang } from 'src/interfaces'
+import { IColor, IFiber, TLang } from '../../interfaces'
 import './fiber-preview.scss'
-import ImgWithPreloader from 'src/assets/js/ImgWithPreloader'
+import ImgWithPreloader from '../../assets/js/ImgWithPreloader'
 
 
 interface IProps {

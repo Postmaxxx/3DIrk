@@ -6,9 +6,9 @@ import { IDataLoading, IFiber, IFibersState, IFullState, IOrderState, TLang } fr
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import { loadFibers } from "src/redux/actions/fibers"
-import { loadColors } from "src/redux/actions/colors"
-import { loadCart }  from "src/redux/actions/cart"
+import { loadFibers } from "./redux/actions/fibers"
+import { loadColors } from "./redux/actions/colors"
+import { loadCart }  from "./redux/actions/cart"
 import { useState, useEffect, useRef, KeyboardEventHandler } from 'react'
 import P404 from "./pages/P404/P404";
 

@@ -1,6 +1,6 @@
 import './tech.scss'
 import siteLogo from "../../assets/img/logo.png"
-import TechItem from 'src/components/TechItem/TechItem';
+import TechItem from '../../components/TechItem/TechItem';
 
 
 const Tech = () => {

@@ -1,8 +1,8 @@
-import canister_1_1 from 'src/assets/img/catalog/car-parts/canister_1/1.webp'
-import canister_1_2 from 'src/assets/img/catalog/car-parts/canister_1/2.webp'
-import canister_1_3 from 'src/assets/img/catalog/car-parts/canister_1/3.webp'
-import canister_1_4 from 'src/assets/img/catalog/car-parts/canister_1/4.webp'
-import canister_1_5 from 'src/assets/img/catalog/car-parts/canister_1/5.webp'
+import canister_1_1 from '../../assets/img/catalog/car-parts/canister_1/canister_1.webp'
+import canister_1_2 from '../../assets/img/catalog/car-parts/canister_1/canister_2.webp'
+import canister_1_3 from '../../assets/img/catalog/car-parts/canister_1/canister_3.webp'
+import canister_1_4 from '../../assets/img/catalog/car-parts/canister_1/canister_4.webp'
+import canister_1_5 from '../../assets/img/catalog/car-parts/canister_1/canister_5.webp'
 
 
 import { IProductBE } from 'src/interfaces'

@@ -1,7 +1,7 @@
-import { INewsItem, TLang } from "src/interfaces";
+import { INewsItem, TLang } from "../../interfaces";
 import './news.scss'
 import { NavLink } from "react-router-dom";
-import ImgWithPreloader from "src/assets/js/ImgWithPreloader";
+import ImgWithPreloader from "../../assets/js/ImgWithPreloader";
 
 
 interface IProps {

@@ -1,19 +1,19 @@
 import { IFiber } from "src/interfaces";
-import pla_1 from 'src/assets/img/fibers/pla/1.webp'
-import pla_2 from 'src/assets/img/fibers/pla/2.webp'
-import pla_3 from 'src/assets/img/fibers/pla/3.webp'
-import pla_4 from 'src/assets/img/fibers/pla/4.webp'
-import pla_5 from 'src/assets/img/fibers/pla/5.webp'
-import pla_6 from 'src/assets/img/fibers/pla/6.webp'
+import pla_1 from '../../assets/img/fibers/pla/pla_1.webp'
+import pla_2 from '../../assets/img/fibers/pla/pla_2.webp'
+import pla_3 from '../../assets/img/fibers/pla/pla_3.webp'
+import pla_4 from '../../assets/img/fibers/pla/pla_4.webp'
+import pla_5 from '../../assets/img/fibers/pla/pla_5.webp'
+import pla_6 from '../../assets/img/fibers/pla/pla_6.webp'
 
-import petg_1 from 'src/assets/img/fibers/petg/1.webp'
-import petg_2 from 'src/assets/img/fibers/petg/2.webp'
-import petg_3 from 'src/assets/img/fibers/petg/3.webp'
-import petg_4 from 'src/assets/img/fibers/petg/4.webp'
-import petg_5 from 'src/assets/img/fibers/petg/5.webp'
-import petg_6 from 'src/assets/img/fibers/petg/6.webp'
-import petg_7 from 'src/assets/img/fibers/petg/7.webp'
-import petg_8 from 'src/assets/img/fibers/petg/8.webp'
+import petg_1 from '../../assets/img/fibers/petg/petg_1.webp'
+import petg_2 from '../../assets/img/fibers/petg/petg_2.webp'
+import petg_3 from '../../assets/img/fibers/petg/petg_3.webp'
+import petg_4 from '../../assets/img/fibers/petg/petg_4.webp'
+import petg_5 from '../../assets/img/fibers/petg/petg_5.webp'
+import petg_6 from '../../assets/img/fibers/petg/petg_6.webp'
+import petg_7 from '../../assets/img/fibers/petg/petg_7.webp'
+import petg_8 from '../../assets/img/fibers/petg/petg_8.webp'
 
 
 

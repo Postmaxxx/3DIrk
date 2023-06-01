@@ -2,7 +2,7 @@ import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import './cart-informer.scss'
-import { ICartState, IFullState, TLang } from "src/interfaces";
+import { ICartState, IFullState, TLang } from "../../interfaces";
 
 
 interface IPropsState {

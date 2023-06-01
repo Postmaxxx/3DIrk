@@ -3,12 +3,12 @@ import { connect } from "react-redux";
 import { useEffect, useMemo, useRef, useState, } from "react";
 import "@splidejs/react-splide/css";
 import "./splider-preview.scss";
-import { IFullState, IImg, IModal, IProduct, IProductState, ISpliderOptions, TLang } from "src/interfaces";
+import { IFullState, IImg, IModal, IProduct, IProductState, ISpliderOptions, TLang } from "../../../interfaces";
 import Splide from "@splidejs/splide";
-import ImgWithPreloader from "src/assets/js/ImgWithPreloader";
-import { loadProduct } from "src/redux/actions/product"
-import Modal from "src/components/Modal/Modal";
-import ModalImage from "src/components/MessageImage/MessageImage";
+import ImgWithPreloader from "../../../assets/js/ImgWithPreloader";
+import { loadProduct } from "../../../redux/actions/product"
+import Modal from "../../../components/Modal/Modal";
+import ModalImage from "../../../components/MessageImage/MessageImage";
 const actionsList = { loadProduct }
 
 

@@ -2,13 +2,13 @@ import './gallery.scss'
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import Preloader from 'src/components/Preloaders/Preloader';
-import { IFibersState, IFullState, IProduct, TLang } from "src/interfaces";
+import Preloader from '../../components/Preloaders/Preloader';
+import { IFibersState, IFullState, IProduct, TLang } from "../../interfaces";
 import { useEffect } from 'react';
-import ImgWithPreloader from 'src/assets/js/ImgWithPreloader';
+import ImgWithPreloader from '../../assets/js/ImgWithPreloader';
 import { NavLink } from 'react-router-dom';
-import { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedProduct, loadCategoriesList, loadCategory }  from "src/redux/actions/catalog"
-import { setProduct, setLoadDataStatusProduct }  from "src/redux/actions/product"
+import { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedProduct, loadCategoriesList, loadCategory }  from "../../redux/actions/catalog"
+import { setProduct, setLoadDataStatusProduct }  from "../../redux/actions/product"
 
 const actionsListCatalog = { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedProduct, loadCategoriesList, loadCategory  }
 const actionsListProduct = { setProduct, setLoadDataStatusProduct  }

@@ -1,5 +1,5 @@
 import "./categories-list.scss";
-import { ICategoriesListItem, IDataLoading, IFullState, TId, TLang } from "src/interfaces";
+import { ICategoriesListItem, IDataLoading, IFullState, TId, TLang } from "../../interfaces";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";

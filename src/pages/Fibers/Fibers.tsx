@@ -1,16 +1,16 @@
 import './fibers.scss'
-import FiberItem from 'src/components/FiberItem/FiberItem';
+import FiberItem from '../../components/FiberItem/FiberItem';
 import { AnyAction, bindActionCreators, Dispatch } from "redux";
 import { connect } from "react-redux";
 import { TLang, IFullState, IFibersState, IColorsState, IColor } from "../../interfaces";
 import { useEffect, useState } from 'react';
 import "@splidejs/react-splide/css";    
-import Preloader from 'src/components/Preloaders/Preloader';
+import Preloader from '../../components/Preloaders/Preloader';
 import { loadFibers }  from "../../redux/actions/fibers"
 import { loadColors }  from "../../redux/actions/colors"
 import { NavLink, useParams } from 'react-router-dom';
-import FiberPreview from 'src/components/FiberPreview/FiberPreview';
-import ColorPicker from 'src/components/tiny/ColorPicker/ColorPicker';
+import FiberPreview from '../../components/FiberPreview/FiberPreview';
+import ColorPicker from '../../components/tiny/ColorPicker/ColorPicker';
 
 const actionsListFibers = { loadFibers }
 const actionsListColors = { loadColors }

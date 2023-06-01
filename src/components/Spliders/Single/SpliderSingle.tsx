@@ -1,14 +1,14 @@
 import './splider-single.scss'
-import { ICategories, ICategoriesListItem, IDataLoading, IFullState, IProduct, ISpliderOptions, TId, TLang,} from "src/interfaces";
+import { ICategories, ICategoriesListItem, IDataLoading, IFullState, IProduct, ISpliderOptions, TId, TLang,} from "../../../interfaces";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import React, { useRef, useEffect, useState, useMemo } from "react";
 import Splide from "@splidejs/splide";
-import { findBestSuitedImg } from "src/assets/js/findBestSuitedImg";
-import { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedProduct, loadCategoriesList, loadCategory, setPage, setCategory } from "src/redux/actions/catalog"
-import Preloader from 'src/components/Preloaders/Preloader';
-import Gallery from 'src/components/Gallery/Gallery';
+import { findBestSuitedImg } from "../../../assets/js/findBestSuitedImg";
+import { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedProduct, loadCategoriesList, loadCategory, setPage, setCategory } from "../../../redux/actions/catalog"
+import Preloader from '../../../components/Preloaders/Preloader';
+import Gallery from '../../../components/Gallery/Gallery';
 
 const actionsList = { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedProduct, loadCategoriesList, loadCategory, setPage, setCategory  }
 
