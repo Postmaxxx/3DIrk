@@ -1,4 +1,4 @@
-import { clientsClaim, setCacheNameDetails } from "workbox-core";
+import { clientsClaim } from "workbox-core";
 import { ExpirationPlugin } from "workbox-expiration";
 import { registerRoute, Route } from "workbox-routing";
 import { StaleWhileRevalidate, CacheFirst } from "workbox-strategies";
@@ -9,21 +9,32 @@ import {setDefaultHandler, setCatchHandler} from 'workbox-routing';
 //import {generateSW} from 'workbox-build';
 import {precacheAndRoute} from 'workbox-precaching';
 
+
+declare const self: any;
 precacheAndRoute(self.__WB_MANIFEST);
 
 //core.cacheNames = {precache: 'install', runtime: '', prefix: 'my-app'};
 //setCacheNameDetails({prefix: 'we'});
 
 
-const versionStyles = "1.03"; 
-const versionScripts  = "1.03";
-const versionImages  = "1.03";
-const versionFonts  = "1.03";
-const versionHtmls  = "1.03";
-const versionOffline = '1.03';
+const versionStyles: string = "1.03";
+const versionScripts: string  = "1.03";
+const versionImages: string  = "1.03";
+const versionFonts: string  = "1.03";
+const versionHtmls: string  = "1.03";
+const versionOffline: string = '1.03';
+
+interface ICaches {
+	styles: string
+	scripts: string
+	images: string
+	fonts: string
+	htmls: string
+	offline: string
+}
 
 
-const cachesCurrent = {
+const cachesCurrent: ICaches = {
 	styles: `styles-${versionStyles}`,
 	scripts: `scripts-${versionScripts}`,
 	images: `images-${versionImages}`,
@@ -37,7 +48,7 @@ clientsClaim();
 //navigationPreload.enable();
 
 // Handle styles:
-const stylesRoute = new Route(( event ) => {
+const stylesRoute: Route = new Route(( event ) => {
 	return event.request.destination === "style";
 }, new CacheFirst({
 	cacheName: cachesCurrent.styles,
@@ -51,7 +62,7 @@ const stylesRoute = new Route(( event ) => {
 
 
 
-const scriptsRoute = new Route(({ request }) => {
+const scriptsRoute: Route = new Route(({ request }) => {
 	return request.destination === "script";
 }, new CacheFirst({
 	cacheName: cachesCurrent.scripts,
@@ -64,12 +75,12 @@ const scriptsRoute = new Route(({ request }) => {
 }));
 
 
-const imagesRoute = new Route(({ request }) => {
+const imagesRoute: Route = new Route(({ request }) => {
 	return request.destination === "image";
-}, new CacheFirst({
+}, new StaleWhileRevalidate({
 	cacheName: cachesCurrent.images,
 	plugins: [
-		new StaleWhileRevalidate({
+		new ExpirationPlugin({
 		  maxAgeSeconds: 60 * 60 * 24 * 90,
 		  maxEntries: 200,
 		})
@@ -77,7 +88,7 @@ const imagesRoute = new Route(({ request }) => {
 }));
 
 
-const fontsRoute = new Route(({ request }) => {
+const fontsRoute: Route = new Route(({ request }) => {
 	return request.destination === "font";
 }, new CacheFirst({
 	cacheName: cachesCurrent.fonts,
@@ -90,7 +101,7 @@ const fontsRoute = new Route(({ request }) => {
 }));
 
 
-const htmlsRoute = new Route(({ request }) => {
+const htmlsRoute: Route  = new Route(({ request }) => {
 	return request.destination === "document";
 }, new CacheFirst({ //StaleWhileRevalidate
 	cacheName: cachesCurrent.htmls
@@ -131,7 +142,7 @@ setCatchHandler(async (options) => {
 
 // This allows the web app to trigger skipWaiting via
 // registration.waiting.postMessage({type: 'SKIP_WAITING'})
-self.addEventListener("message", (event) => {
+self.addEventListener("message", (event: MessageEvent) => {
 	if (event.data && event.data.type === "SKIP_WAITING") {
 		self.skipWaiting();
 	}
@@ -140,13 +151,13 @@ self.addEventListener("message", (event) => {
 
 
 //auto set new sw
-self.addEventListener("install", (event) => {
+self.addEventListener("install", (event: any) => {
 	console.log("ServiceWorker will be updated in a moment...");
 
 	const files = ['offline.jpg']; 
 	event.waitUntil(
 	  self.caches.open(cachesCurrent.offline)
-		  .then((cache) => cache.addAll(files))
+		  .then((cache: Cache) => cache.addAll(files))
 	);
 
 	self.skipWaiting();
@@ -155,7 +166,7 @@ self.addEventListener("install", (event) => {
 
 
 
-self.addEventListener("activate", async (event) => {
+self.addEventListener("activate", async (event: MessageEvent) => {
 	/*if (self.registration.navigationPreload) {
 		await self.registration.navigationPreload.enable();
 	}*/

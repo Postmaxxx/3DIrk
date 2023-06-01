@@ -21,7 +21,7 @@ module.exports = {
 		}),
 		new Dotenv(),
 		new InjectManifest({
-			swSrc: './src/sw.js',
+			swSrc: './src/sw.ts',
 			swDest: 'sw.js',
 			include: [/\.(html|js|css|woff2)$/],
 			maximumFileSizeToCacheInBytes: 2 * 1024 * 1024,
