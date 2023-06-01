@@ -1,53 +1,54 @@
 import { clientsClaim } from "workbox-core";
 import { ExpirationPlugin } from "workbox-expiration";
 import { registerRoute, Route } from "workbox-routing";
-import { StaleWhileRevalidate, CacheFirst } from "workbox-strategies";
-
+import { StaleWhileRevalidate } from "workbox-strategies";
 
 //import {warmStrategyCache} from 'workbox-recipes';
-import {setDefaultHandler, setCatchHandler} from 'workbox-routing';
-//import {generateSW} from 'workbox-build';
+import { setCatchHandler} from 'workbox-routing';
 import {precacheAndRoute} from 'workbox-precaching';
 
-
+//for ts
 declare const self: any;
+//declare precache, will be changed during building
 precacheAndRoute(self.__WB_MANIFEST);
 
-//core.cacheNames = {precache: 'install', runtime: '', prefix: 'my-app'};
+//trying to change cachename for precaching, does not work ???
 //setCacheNameDetails({prefix: 'we'});
 
-
-const versionStyles: string = "1.03";
+//do not need due to precache all js+svg+css+fonts
+/*const versionStyles: string = "1.03";
 const versionScripts: string  = "1.03";
-const versionImages: string  = "1.03";
 const versionFonts: string  = "1.03";
-const versionHtmls: string  = "1.03";
-const versionOffline: string = '1.03';
+const versionHtmls: string  = "1.03";*/
+
+const versionImages: string  = "1.03";
+const versionOffline: string = '1.04';
 
 interface ICaches {
-	styles: string
+	/*styles: string
 	scripts: string
-	images: string
 	fonts: string
-	htmls: string
+	htmls: string*/
+	images: string
 	offline: string
 }
 
-
+//versioning caches, except precaching resources
 const cachesCurrent: ICaches = {
-	styles: `styles-${versionStyles}`,
+	/*styles: `styles-${versionStyles}`,
 	scripts: `scripts-${versionScripts}`,
-	images: `images-${versionImages}`,
 	fonts: `fonts-${versionFonts}`,
-	htmls: `htmls-${versionHtmls}`,
+	htmls: `htmls-${versionHtmls}`,*/
+	images: `images-${versionImages}`,
 	offline: `offline-fallbacks-${versionOffline}`
 };
 
 
-clientsClaim();
+clientsClaim(); //for updating sw immediately without waiting for reload app
 //navigationPreload.enable();
 
-// Handle styles:
+// Handle type of requests during work and caching them
+/*
 const stylesRoute: Route = new Route(( event ) => {
 	return event.request.destination === "style";
 }, new CacheFirst({
@@ -75,17 +76,7 @@ const scriptsRoute: Route = new Route(({ request }) => {
 }));
 
 
-const imagesRoute: Route = new Route(({ request }) => {
-	return request.destination === "image";
-}, new StaleWhileRevalidate({
-	cacheName: cachesCurrent.images,
-	plugins: [
-		new ExpirationPlugin({
-		  maxAgeSeconds: 60 * 60 * 24 * 90,
-		  maxEntries: 200,
-		})
-	  ]
-}));
+
 
 
 const fontsRoute: Route = new Route(({ request }) => {
@@ -110,30 +101,34 @@ const htmlsRoute: Route  = new Route(({ request }) => {
 
 //registerRoute(stylesRoute);
 //registerRoute(scriptsRoute);
-registerRoute(imagesRoute);
 //registerRoute(fontsRoute);
 //registerRoute(htmlsRoute);
+*/
 
 
 
+//cache all fetched images
+const imagesRoute: Route = new Route(({ request }) => {
+	return request.destination === "image";
+}, new StaleWhileRevalidate({
+	cacheName: cachesCurrent.images,
+	plugins: [
+		new ExpirationPlugin({
+		  maxAgeSeconds: 60 * 60 * 24 * 60,
+		  maxEntries: 300,
+		})
+	  ]
+}));
+registerRoute(imagesRoute);
+
+
+//catch errors during fetching resources
 setCatchHandler(async (options) => {
 	const destination = options.request.destination;
-	const cache = await self.caches.open(cachesCurrent.offline);
-
-	/*if (destination === 'script') {
-		//alert('You are offline, unable to proceed')
-		//console.log(options.request.url);
-		const t = await cache.match('./order')
-		console.log(t);
-		return new Response('');
-	}*/
-/*
-	if (destination === 'style') {
-		return new Response('');
-	}
-*/
+	//in case of fetching images are unabled to reach response with cached mock image
 	if (destination === 'image') {
-		return (await cache.match('offline.jpg')) || Response.error();
+		const cache = await self.caches.open(cachesCurrent.offline);
+		return (await cache.match('offline.webp')) || Response.error();
 	}
 	return Response.error();
   });
@@ -153,13 +148,13 @@ self.addEventListener("message", (event: MessageEvent) => {
 //auto set new sw
 self.addEventListener("install", (event: any) => {
 	console.log("ServiceWorker will be updated in a moment...");
-
+	//caching img as a mock in case of unable download actual images
 	const files = ['offline.jpg']; 
 	event.waitUntil(
-	  self.caches.open(cachesCurrent.offline)
+	  self.caches.open(cachesCurrent.offline) 
 		  .then((cache: Cache) => cache.addAll(files))
 	);
-
+	//for updating sw immediately without waiting for reload app
 	self.skipWaiting();
 }); 
 
@@ -167,20 +162,10 @@ self.addEventListener("install", (event: any) => {
 
 
 self.addEventListener("activate", async (event: MessageEvent) => {
-	/*if (self.registration.navigationPreload) {
-		await self.registration.navigationPreload.enable();
-	}*/
+	//clean all non-actual caches
 	/*const siteCacheKeys = await caches.keys();
-	const cacheKeys = Object.values(cachesCurrent);*/
-/*
-	const files = ['offline.jpg']; 
-	console.log(777);
-	event.waitUntil(
-	  self.caches.open(cachesCurrent.offline)
-		  .then((cache) => cache.addAll(files))
-	);*/
-
-	/*await siteCacheKeys
+	const cacheKeys = Object.values(cachesCurrent);
+	await siteCacheKeys
 		.filter(cache => {
 			return !cacheKeys.includes(cache);
 		})

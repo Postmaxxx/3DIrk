@@ -38,6 +38,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy_old": "npm run build && npx workbox injectManifest workbox-config.js",
+    "deploy_old": "gh-pages -d build",
+
     "servew": "webpack serve --mode development",
     "predeploy": "webpack --mode production",
     "deploy": "gh-pages -d dist",

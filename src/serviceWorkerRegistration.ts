@@ -17,7 +17,7 @@ async function registerValidSW(swUrl: string, config: string) {
 	//console.log(swUrl);
 	try {
 		const regSW: ServiceWorkerRegistration = await navigator.serviceWorker.register(swUrl, {
-			scope: "/",
+			scope: "/3DIrk/",
 			//updateViaCache: 'none' 
 		});
 		regSW.update();
