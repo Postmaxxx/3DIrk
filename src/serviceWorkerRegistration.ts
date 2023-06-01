@@ -4,9 +4,9 @@ export function register(config: string) {
 		if (publicUrl.origin !== window.location.origin) { return; }
 
 		window.addEventListener("load", () => {
-			let swUrl: string = `${process.env.PUBLIC_URL}/sw.js`;
+			let swUrl: string = `sw.js`;
 			if (process.env.NODE_ENV === "development") {
-				swUrl = "localhost/static/js/sw.js";
+				swUrl = "sw.js";
 			}
 			registerValidSW(swUrl, config);
 		});
@@ -17,13 +17,13 @@ async function registerValidSW(swUrl: string, config: string) {
 	//console.log(swUrl);
 	try {
 		const regSW: ServiceWorkerRegistration = await navigator.serviceWorker.register(swUrl, {
-			scope: "./",
+			scope: "/",
 			//updateViaCache: 'none' 
 		});
 		regSW.update();
-		//console.log("ServiceWorker registered successfully", regSW);
+		console.log("ServiceWorker registered successfully", regSW);
 		navigator.serviceWorker.oncontrollerchange = (ev) => {
-			//console.log("New ServiceWorker activated");
+			console.log("New ServiceWorker activated");
 			window.location.reload();
 		};
 	} catch (error) {

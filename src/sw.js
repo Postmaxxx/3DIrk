@@ -1,8 +1,7 @@
-import { clientsClaim } from "workbox-core";
+import { clientsClaim, setCacheNameDetails } from "workbox-core";
 import { ExpirationPlugin } from "workbox-expiration";
 import { registerRoute, Route } from "workbox-routing";
 import { StaleWhileRevalidate, CacheFirst } from "workbox-strategies";
-
 
 
 //import {warmStrategyCache} from 'workbox-recipes';
@@ -12,16 +11,16 @@ import {precacheAndRoute} from 'workbox-precaching';
 
 precacheAndRoute(self.__WB_MANIFEST);
 
+//core.cacheNames = {precache: 'install', runtime: '', prefix: 'my-app'};
+//setCacheNameDetails({prefix: 'we'});
 
-//const ignored = self.__WB_MANIFEST;
 
-const versionStyles = "1.03";
+const versionStyles = "1.03"; 
 const versionScripts  = "1.03";
 const versionImages  = "1.03";
 const versionFonts  = "1.03";
 const versionHtmls  = "1.03";
 const versionOffline = '1.03';
-
 
 
 const cachesCurrent = {
@@ -64,12 +63,13 @@ const scriptsRoute = new Route(({ request }) => {
 	  ]
 }));
 
+
 const imagesRoute = new Route(({ request }) => {
 	return request.destination === "image";
 }, new CacheFirst({
 	cacheName: cachesCurrent.images,
 	plugins: [
-		new ExpirationPlugin({
+		new StaleWhileRevalidate({
 		  maxAgeSeconds: 60 * 60 * 24 * 90,
 		  maxEntries: 200,
 		})
@@ -97,11 +97,11 @@ const htmlsRoute = new Route(({ request }) => {
 }));
 
 
-registerRoute(stylesRoute);
-registerRoute(scriptsRoute);
+//registerRoute(stylesRoute);
+//registerRoute(scriptsRoute);
 registerRoute(imagesRoute);
-registerRoute(fontsRoute);
-registerRoute(htmlsRoute);
+//registerRoute(fontsRoute);
+//registerRoute(htmlsRoute);
 
 
 
@@ -121,7 +121,6 @@ setCatchHandler(async (options) => {
 		return new Response('');
 	}
 */
-
 	if (destination === 'image') {
 		return (await cache.match('offline.jpg')) || Response.error();
 	}
@@ -147,30 +146,32 @@ self.addEventListener("install", (event) => {
 	const files = ['offline.jpg']; 
 	event.waitUntil(
 	  self.caches.open(cachesCurrent.offline)
-		  .then((cacheny) => cache.addAll(files))
+		  .then((cache) => cache.addAll(files))
 	);
 
-/*
-	event.waitUntil(
-		self.caches.open(cachesCurrent.scripts)
-			.then((cache: any) => cache.addAll(files))
-	  );*/
 	self.skipWaiting();
 }); 
 
 
 
 
-self.addEventListener("activate", async () => {
+self.addEventListener("activate", async (event) => {
 	/*if (self.registration.navigationPreload) {
 		await self.registration.navigationPreload.enable();
 	}*/
-	const siteCahceKeys = await caches.keys();
-	const cacheKeys = Object.values(cachesCurrent);
+	/*const siteCacheKeys = await caches.keys();
+	const cacheKeys = Object.values(cachesCurrent);*/
+/*
+	const files = ['offline.jpg']; 
+	console.log(777);
+	event.waitUntil(
+	  self.caches.open(cachesCurrent.offline)
+		  .then((cache) => cache.addAll(files))
+	);*/
 
-	await siteCahceKeys
+	/*await siteCacheKeys
 		.filter(cache => {
 			return !cacheKeys.includes(cache);
 		})
-		.forEach(async cache => await caches.delete(cache));
+		.forEach(async cache => await caches.delete(cache)); */
 }); 

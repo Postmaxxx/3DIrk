@@ -1,6 +1,6 @@
 const Dotenv = require('dotenv-webpack');
 const {InjectManifest} = require("workbox-webpack-plugin");
-
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -23,8 +23,14 @@ module.exports = {
 		new InjectManifest({
 			swSrc: './src/sw.js',
 			swDest: 'sw.js',
-			include: [/\.(html|js|css|woff2|woff|ttf)$/]
-		})
+			include: [/\.(html|js|css|woff2)$/],
+			maximumFileSizeToCacheInBytes: 2 * 1024 * 1024,
+		}),
+		new CopyWebpackPlugin({
+			patterns: [
+			  { from: 'public', to: '', filter: (resourcePath) => !/index\.html$/.test(resourcePath) }
+			]
+		  })
 	],
 	devServer: {
 		port: 3030, // change the port
