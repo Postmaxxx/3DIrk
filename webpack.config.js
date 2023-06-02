@@ -46,7 +46,7 @@ module.exports = (env, argv) => {
 				exclude: ['bundle.js'],
 			}),
 
-		],
+		], 
 		optimization: { //works for build mode
 			minimizer: [
 				new CssMinimizerPlugin(), //minimize css file, remove duplicates
