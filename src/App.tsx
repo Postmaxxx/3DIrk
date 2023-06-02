@@ -1,16 +1,17 @@
-import { Routes, Route, BrowserRouter, HashRouter, NavLink } from "react-router-dom";
+import { Routes, Route, HashRouter } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import Preloader from "./components/Preloaders/Preloader"; 
 import "./assets/css/_base.scss";
-import { IDataLoading, IFiber, IFibersState, IFullState, IOrderState, TLang } from "./interfaces";
+import { IDataLoading, IFullState, TLang } from "./interfaces";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { loadFibers } from "./redux/actions/fibers"
 import { loadColors } from "./redux/actions/colors"
 import { loadCart }  from "./redux/actions/cart"
-import { useState, useEffect, useRef, KeyboardEventHandler } from 'react'
 import P404 from "./pages/P404/P404";
+
+
 
 const LazyThemeSwitcher = lazy(() => import("./components/ThemeSwitcher/ThemeSwitcher"));
 const LazyLangSwitcher = lazy(() => import("./components/LangSwitcher/LangSwitcher"));

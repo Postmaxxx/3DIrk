@@ -1,19 +1,16 @@
 {
 	"compilerOptions": {
 		"typeRoots": [
-		"./src/@types",
-		"./node_modules/@types"
+			"./src/@types",
+			"./node_modules/@types"
 		],
 		"target": "ES2020",
 		"lib": [
-		"dom",
-		"dom.iterable",
-		"esnext"
+			"dom",
+			"dom.iterable",
+			"esnext"
 		],
 		"baseUrl": ".",
-		"paths": {
-		"*": ["*"]
-		},
 		"allowJs": true,
 		"skipLibCheck": true,
 		"esModuleInterop": true,
@@ -23,6 +20,7 @@
 		"noFallthroughCasesInSwitch": true,
 		
 		//"module": "esnext",
+		//"isolatedModules": true, //for separating js bundles, redundant during precaching all js
 		"module": "commonjs",
 		"isolatedModules": false,
 
@@ -34,7 +32,5 @@
 		"jsx": "react-jsx",
 		"rootDir": "./src",
 	},
-	"include": [
-		"src",
-		]
+	"include": ["src"]
 }

@@ -1,3 +1,12 @@
+working with webpack:
+npm run buildw - build the project
+npm run servew - run server for project
+npm run predeploy - build the project to as preparation to deploy it to gh-pages
+npm run deploy - deploy the project to gh pages, auto starts predeploy first (do not forget to check the folder to deploy, default - dist)
+
+
+npm run deploy_old - deploy the project to gh pages using react builder, auto starts predeploy first (need to rename predeploy_old)
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

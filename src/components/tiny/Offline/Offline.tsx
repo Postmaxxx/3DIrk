@@ -2,7 +2,6 @@ import './offline.scss'
 import React from 'react'
 import { TLang } from '../../../interfaces'
 
-
 interface IOffline {
     lang: TLang
 }

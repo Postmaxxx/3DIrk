@@ -1,7 +1,7 @@
-export function register(config: string) {
+export function register(config: {scope: string}) {
 	if ("serviceWorker" in navigator) {
 		const publicUrl: URL = new URL(process.env.PUBLIC_URL, window.location.href);
-		if (publicUrl.origin !== window.location.origin) { return; }
+		if (publicUrl.origin !== window.location.origin) return
 
 		window.addEventListener("load", () => {
 			let swUrl: string = `sw.js`;
@@ -13,21 +13,20 @@ export function register(config: string) {
 	}
 }
 
-async function registerValidSW(swUrl: string, config: string) {
-	//console.log(swUrl);
+async function registerValidSW(swUrl: string, config: {scope: string}) {
 	try {
 		const regSW: ServiceWorkerRegistration = await navigator.serviceWorker.register(swUrl, {
-			scope: "/3DIrk/",
+			scope: config.scope, //change if url changed
 			//updateViaCache: 'none' 
 		});
-		regSW.update();
+		regSW.update(); //update if changed
 		console.log("ServiceWorker registered successfully", regSW);
 		navigator.serviceWorker.oncontrollerchange = (ev) => {
 			console.log("New ServiceWorker activated");
 			window.location.reload();
 		};
 	} catch (error) {
-		console.log("ServiceWorker register fail");
+		console.log("ServiceWorker register fail:", error);
 	}
 }
 
@@ -39,7 +38,7 @@ export function unregister() {
 				registration.unregister();
 			})
 			.catch((error) => {
-				console.error(error.message);
+				console.error('Unable to unregister service-worker: ', error.message);
 			});
 	}
 }

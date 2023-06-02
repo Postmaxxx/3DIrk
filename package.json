@@ -39,11 +39,10 @@
     "eject": "react-scripts eject",
     "predeploy_old": "npm run build && npx workbox injectManifest workbox-config.js",
     "deploy_old": "gh-pages -d build",
-
     "servew": "webpack serve --mode development",
+    "buildw": "webpack --mode production",
     "predeploy": "webpack --mode production",
-    "deploy": "gh-pages -d dist",
-    "buildw": "webpack --mode production"
+    "deploy": "gh-pages -d dist"
   },
   "eslintConfig": {
     "extends": [
@@ -53,10 +52,10 @@
   },
   "browserslist": {
     "production": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version",
-      ">2%",
+      "last 20 chrome version",
+      "last 20 firefox version",
+      "last 20 safari version",
+      ">.5%",
       "not dead",
       "not op_mini all"
     ],
@@ -74,11 +73,13 @@
     "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.8.1",
+    "css-minimizer-webpack-plugin": "^5.0.0",
     "dotenv-webpack": "^8.0.1",
     "gh-pages": "^5.0.0",
     "html-webpack-plugin": "^5.5.1",
     "mini-css-extract-plugin": "^2.7.6",
     "postcss-normalize": "^10.0.1",
+    "purgecss-webpack-plugin": "^5.0.0",
     "react-redux": "^8.0.5",
     "redux-thunk": "^2.4.2",
     "sass": "^1.62.1",

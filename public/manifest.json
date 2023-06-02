@@ -7,7 +7,7 @@
     "name": "3DPrint",
     "short_name": "3DPrint",
     "description": "Site for order 3D printing",
-    "orientation": "portrait",
+    "orientation": "any",
     "icons": [
         {
             "src": "./icon-72x72.png",
