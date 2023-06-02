@@ -5,8 +5,8 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const TerserPlugin = require('terser-webpack-plugin')
 const webpack = require('webpack');
-
 
 
 module.exports = (env, argv) => {
@@ -42,20 +42,30 @@ module.exports = (env, argv) => {
 					}
 				]
 			}),
-			new webpack.SourceMapDevToolPlugin({}) //build sourcemap
+			new webpack.SourceMapDevToolPlugin({
+				exclude: ['bundle.js'],
+			}),
+
 		],
 		optimization: { //works for build mode
 			minimizer: [
 				new CssMinimizerPlugin(), //minimize css file, remove duplicates
+				new TerserPlugin({ //minimize js file
+					terserOptions: {
+					  compress: {
+						drop_console: true, // remove console statement
+					  },
+					},
+				  }),
 			],
-			minimize: true
+			minimize: true,
 		},
 
 		devServer: {
 			port: 80, // change the port if neccessary
 		},
 		resolve: {
-			extensions: [ ".tsx", ".ts", ".jsx", ".js", ""], //to add extensions for import, tu use './components/Preloaders/Preloader' <- Preloader.tsx
+			extensions: [ ".tsx", ".ts", ".jsx", ".js", ""], //to add extensions for import, to use './components/Preloaders/Preloader' <- Preloader.tsx
 		},
 		module: {
 			rules: [
@@ -68,7 +78,7 @@ module.exports = (env, argv) => {
 				},
 				{
 					test: /\.(js|jsx)$/, //processing js/jsx files
-					exclude: /node_modules/,
+					exclude: [/node_modules/],
 					use: {
 						loader: 'babel-loader',
 					},
@@ -98,7 +108,7 @@ module.exports = (env, argv) => {
 					test: /\.(png|svg|webp|jpeg|jpg)$/, // to process images 
 					type: "asset/resource",
 					generator: {
-						filename: 'assets/images/[name].[ext]', //folder and name to put
+						filename: 'assets/images/[name][ext]', //folder and name to put
 					},
 				},
 				{

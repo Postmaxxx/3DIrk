@@ -65,7 +65,7 @@ const ColorPicker: React.FC<IPropsState> = ({lang, colors, onSelect}): JSX.Eleme
                                 <img src={color.url} alt={color.name[lang]} />
                             </div>
                             <span>{color.name[lang]}</span>
-                            <span onClick={(e) => onImageClick(e, color)}>{lang === 'en' ? '(details)' : '(детальнее)'}</span>
+                            <span onClick={(e) => onImageClick(e, color)}>{lang === 'en' ? '(details)' : '(смотреть)'}</span>
                         </div>
                     )
                 })}

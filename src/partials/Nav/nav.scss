@@ -113,7 +113,7 @@ $gap_to_text: 5px;
                 }
 
 
-                & > ul.sub_menu {
+                & li.sub_menu {
                     position: absolute;
                     background-color: var(--main);;
                     left: 50%;
@@ -133,7 +133,7 @@ $gap_to_text: 5px;
                         padding-right: 20px;
                         overflow: hidden;
                         border: 0px solid transparent;
-                        transition: border $transition_subMenu 1*$transition_subMenu, padding $transition_subMenu 1*$transition_subMenu, margin $transition_subMenu $transition_subMenu;
+                        transition: border 0s 2*$transition_subMenu, padding $transition_subMenu 1*$transition_subMenu, margin $transition_subMenu $transition_subMenu;
 
                         
                         & > li {
@@ -189,7 +189,7 @@ $gap_to_text: 5px;
                         
                     }
 
-                    & > ul.sub_menu {
+                    & li.sub_menu {
                         grid-template-rows: 1fr;
                         transform: translate(-50%, 0px);
                         width: 240px;
@@ -282,7 +282,6 @@ $gap_to_text: 5px;
                 position: absolute;
            
                 span {
-
                     margin: 0 auto;
                     position: relative;
                     top: 50%;
@@ -441,7 +440,7 @@ $gap_to_text: 5px;
     }
 
 
-    & .nav__container {
+    & > .nav__container {
         position: absolute;
         top: 100%;
         left: 0;
@@ -456,8 +455,6 @@ $gap_to_text: 5px;
         z-index: -1;
         height: auto;
         width: calc(100% - 40px);
-
-
 
         & > .right-line {
             width: 10px;
@@ -558,23 +555,24 @@ $gap_to_text: 5px;
 
                 }
 
-                & > ul {
+                & > div {
                     overflow: hidden;
                     display: grid;
                     grid-template-rows: 0fr;
                     transition: grid $transition_fast;
-                    
+
+
                     & > .nav__subNav {
                         overflow: hidden;
                         max-height: 40vh;
                         overflow: auto;
-
+    
                         & > li {
                             margin-top: 20px;
                             text-align: center;
                             width: 100%;
                             position: relative;
-
+    
                             &::before {
                                 content: '';
                                 position: absolute;
@@ -584,7 +582,7 @@ $gap_to_text: 5px;
                                 border-top: 1px dotted var(--text);
                                 transform: translate(-50%);
                             }
-
+    
                             & > a, span {
                                 text-align: center;
                                 font-size: 1.5rem;
@@ -596,7 +594,7 @@ $gap_to_text: 5px;
                                 transition: $transition_nav_menu;
                                 display: block;
                                 cursor: pointer;
-            
+                
                                 @include respond-to(xs) {
                                     font-size: 1.2rem;
                                 }
@@ -606,7 +604,7 @@ $gap_to_text: 5px;
                                     transition: color $transition-theme;
                                     //transform: translateY(12px);
                                 }
-            
+                
                                 &.selected {
                                     color: var(--text_contrast);
                                     transition: color $transition-theme;
@@ -615,6 +613,7 @@ $gap_to_text: 5px;
                             }
                         }
                     }
+                    
 
                 }
 
@@ -627,7 +626,7 @@ $gap_to_text: 5px;
 
                     }
 
-                    & > ul {
+                    & > div {
                         grid-template-rows: 1fr;
                     }
                 }
@@ -702,7 +701,8 @@ $gap_to_text: 5px;
             & > img {
                 height: 100%;
                 transform: rotate(13deg);
-                transition: $transition_nav;
+                transition: transform $transition_nav $nav_mobile_delay;
+
             }
 
 
@@ -793,6 +793,7 @@ $gap_to_text: 5px;
             
             & > img {
                 transform: rotate(540deg);
+                transition: transform $transition_nav;
             }
             
         }

@@ -25,19 +25,19 @@
 		&_2 {
 			transform-origin: center right;
 			animation: spin2 $preloader_speed_w linear infinite;
-			animation-delay: $preloader_speed_w/15;
+			animation-delay: calc($preloader_speed_w/15);
 		}
 
 		&_3 {
 			transform-origin: center right;
 			animation: spin3 $preloader_speed_w linear infinite;
-			animation-delay: $preloader_speed_w/10;
+			animation-delay: calc($preloader_speed_w/10);
 		}
 
 		&_4 {
 			transform-origin: center right;
 			animation: spin4 $preloader_speed_w linear infinite;
-			animation-delay: $preloader_speed_w/7.5;
+			animation-delay: calc($preloader_speed_w/7.5);
 		}
 	}
 	

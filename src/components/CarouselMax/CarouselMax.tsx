@@ -1,19 +1,49 @@
 import './carouselmax.scss'
-import image1 from '../../assets/img/carouselMax/carousel_1.png'
-import image2 from '../../assets/img/carouselMax/carousel_2.jpeg'
-import image3 from '../../assets/img/carouselMax/carousel_3.jpeg'
-import image4 from '../../assets/img/carouselMax/carousel_4.jpeg'
-import image5 from '../../assets/img/carouselMax/carousel_5.png'
-import image6 from '../../assets/img/carouselMax/carousel_6.png'
 import { useEffect,useRef, useState } from 'react';
 import ImgWithPreloader from '../../assets/js/ImgWithPreloader'
+import { findBestSuitedImgHeight } from '../../assets/js/findBestSuitedImg'
+import { TLangText } from 'src/interfaces';
 
 
+interface ISize {
+    height: number
+    url: string
+}
+
+interface IImage {
+    name: TLangText
+    sizes: ISize[]
+}
+
+const initialImages = Array(13).fill('').map((image, i) => ({
+    name: {
+        en: `Image ${i}`,
+        ru: `Изображение ${i}`
+    },
+            sizes: [
+            {
+                height: 250,
+                url: `./static/img/carouselMax/carousel_${i}_250.webp`
+            },
+            {
+                height: 400,
+                url: `./static/img/carouselMax/carousel_${i}_400.webp`
+
+            },
+            {
+                height: 5000,
+                url: `./static/img/carouselMax/carousel_${i}.webp`
+
+            },
+        ]
+})) satisfies IImage[]
+
+/*
 interface ICarouselSize {
     height: number
     width: number
 }
-
+*/
 interface IOptions {
     imageContainerWidth: number
     innerContainerWidth :number
@@ -30,12 +60,11 @@ interface IOptions {
     speed: number
 }
 
-const initialImages = [image1, image2, image3, image4, image5, image6]
 
 const options: IOptions = {
     imageContainerWidth: 600,
     imageWidth: 0,
-    imageRatio: 1.3,
+    imageRatio: 1.2,
     parallaxRatio: 0,
     innerContainerWidth: 0,
     carouselCenterDx: 0,
@@ -51,9 +80,8 @@ const options: IOptions = {
 const SliderMax = () => {
     
     const _carouselRef = useRef<HTMLDivElement>(null)
-    const _ribbonRef = useRef<HTMLDivElement>(null)
     const [ribbonPos, setRibbonPos] = useState<number>(0)
-    const [images, setImages] = useState<string[]>([...initialImages])
+    const [images, setImages] = useState<string[]>([])
     const [state, setState] = useState<IOptions>({...options})
     const [ribbonDx, setRibbonDx] = useState<number>(0)
     const [firstRender, setFirstRender] = useState<boolean>(true)
@@ -91,7 +119,11 @@ const SliderMax = () => {
             return
         }
         const innerContainerWidth = state.imageContainerWidth
-        
+        const abc = initialImages.map(image => findBestSuitedImgHeight({height: _carouselRef.current?.clientHeight, images: image.sizes}))
+
+        setImages(abc)
+
+
         const imagesPerContainer = Math.ceil(_carouselRef.current.offsetWidth / state.imageContainerWidth);
         setImages(prev => [...prev.slice(-imagesPerContainer).reverse(),...prev, ...prev.slice(0,imagesPerContainer)]);
         
@@ -139,7 +171,7 @@ const SliderMax = () => {
 
     return (
         <div className="carouselmax" ref={_carouselRef}>
-            <div className="ribbon" ref={_ribbonRef} style={{left: `${ribbonPos + ribbonDx}px`}}>
+            <div className="ribbon" style={{left: `${ribbonPos + ribbonDx}px`}}>
                 {images.map((image, index) => {
                     let dx = state.parallaxRatio*(state.carouselCenterDx - state.imageContainerWidth*(index) - ribbonDx);
                     return(

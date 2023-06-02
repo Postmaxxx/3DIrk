@@ -1,8 +1,8 @@
 import { INewsItem } from 'src/interfaces';
-import newsImage1 from '../../assets/img/news/news_1.png'
-import newsImage2 from '../../assets/img/news/news_2.jpeg'
-import newsImage3 from '../../assets/img/news/news_3.jpeg'
-import newsImage4 from '../../assets/img/news/news_4.jpeg'
+import newsImage1 from '../../assets/img/news/news_1.webp'
+import newsImage2 from '../../assets/img/news/news_2.webp'
+import newsImage3 from '../../assets/img/news/news_3.webp'
+import newsImage4 from '../../assets/img/news/news_4.webp'
 
 const currentDate: Date = new Date;
 

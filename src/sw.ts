@@ -1,7 +1,7 @@
 import { clientsClaim } from "workbox-core";
 import { ExpirationPlugin } from "workbox-expiration";
 import { registerRoute, Route } from "workbox-routing";
-import { StaleWhileRevalidate } from "workbox-strategies";
+import { CacheFirst, StaleWhileRevalidate } from "workbox-strategies";
 
 //import {warmStrategyCache} from 'workbox-recipes';
 import { setCatchHandler} from 'workbox-routing';
@@ -16,29 +16,29 @@ precacheAndRoute(self.__WB_MANIFEST);
 //setCacheNameDetails({prefix: 'we'});
 
 //do not need due to precache all js+svg+css+fonts
-/*const versionStyles: string = "1.03";
+const versionStyles: string = "1.03";
 const versionScripts: string  = "1.03";
-const versionFonts: string  = "1.03";
-const versionHtmls: string  = "1.03";*/
+const versionHtmls: string  = "1.03";
 
-const versionImages: string  = "1.03";
-const versionOffline: string = '1.04';
+const versionFonts: string  = "1.05";
+const versionImages: string  = "1.05";
+const versionOffline: string = '1.05';
 
 interface ICaches {
-	/*styles: string
+	styles: string
 	scripts: string
+	htmls: string
 	fonts: string
-	htmls: string*/
 	images: string
 	offline: string
 }
 
 //versioning caches, except precaching resources
 const cachesCurrent: ICaches = {
-	/*styles: `styles-${versionStyles}`,
+	styles: `styles-${versionStyles}`,
 	scripts: `scripts-${versionScripts}`,
+	htmls: `htmls-${versionHtmls}`,
 	fonts: `fonts-${versionFonts}`,
-	htmls: `htmls-${versionHtmls}`,*/
 	images: `images-${versionImages}`,
 	offline: `offline-fallbacks-${versionOffline}`
 };
@@ -48,7 +48,7 @@ clientsClaim(); //for updating sw immediately without waiting for reload app
 //navigationPreload.enable();
 
 // Handle type of requests during work and caching them
-/*
+
 const stylesRoute: Route = new Route(( event ) => {
 	return event.request.destination === "style";
 }, new CacheFirst({
@@ -79,6 +79,21 @@ const scriptsRoute: Route = new Route(({ request }) => {
 
 
 
+
+
+
+const htmlsRoute: Route  = new Route(({ request }) => {
+	return request.destination === "document";
+}, new CacheFirst({ //StaleWhileRevalidate
+	cacheName: cachesCurrent.htmls
+}));
+
+
+registerRoute(stylesRoute);
+registerRoute(scriptsRoute);
+registerRoute(htmlsRoute);
+
+
 const fontsRoute: Route = new Route(({ request }) => {
 	return request.destination === "font";
 }, new CacheFirst({
@@ -90,21 +105,7 @@ const fontsRoute: Route = new Route(({ request }) => {
 		})
 	  ]
 }));
-
-
-const htmlsRoute: Route  = new Route(({ request }) => {
-	return request.destination === "document";
-}, new CacheFirst({ //StaleWhileRevalidate
-	cacheName: cachesCurrent.htmls
-}));
-
-
-//registerRoute(stylesRoute);
-//registerRoute(scriptsRoute);
-//registerRoute(fontsRoute);
-//registerRoute(htmlsRoute);
-*/
-
+registerRoute(fontsRoute);
 
 
 //cache all fetched images
@@ -126,6 +127,7 @@ registerRoute(imagesRoute);
 setCatchHandler(async (options) => {
 	const destination = options.request.destination;
 	//in case of fetching images are unabled to reach response with cached mock image
+	console.log(111);
 	if (destination === 'image') {
 		const cache = await self.caches.open(cachesCurrent.offline);
 		return (await cache.match('offline.webp')) || Response.error();
@@ -149,7 +151,7 @@ self.addEventListener("message", (event: MessageEvent) => {
 self.addEventListener("install", (event: any) => {
 	console.log("ServiceWorker will be updated in a moment...");
 	//caching img as a mock in case of unable download actual images
-	const files = ['offline.jpg']; 
+	const files = ['offline.webp']; 
 	event.waitUntil(
 	  self.caches.open(cachesCurrent.offline) 
 		  .then((cache: Cache) => cache.addAll(files))

@@ -370,6 +370,7 @@ const ThemeSwitcher: React.FC<IProps> = ({mobOpened, lang, setState}): JSX.Eleme
 				.forEach((star: IStar) => {
 					const _star = document.createElement("img");
 					_star.classList.add(`theme_dark__star-${star.blinkDuration}`);
+					_star.alt = '.';
 					_star.style.position = "absolute";
 					_star.style.left = `${star.x}px`;
 					_star.style.top = `${star.y}px`;
@@ -394,6 +395,7 @@ const ThemeSwitcher: React.FC<IProps> = ({mobOpened, lang, setState}): JSX.Eleme
 					listOfClouds.forEach((): void => {
 						const _cloud = document.createElement("img");
 						_cloud.classList.add("cloud");
+						_cloud.alt = '.';
 						_cloud.src = String(stateSW.cloud);
 						_clouds.appendChild(_cloud);
 					});

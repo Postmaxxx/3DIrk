@@ -1,19 +1,34 @@
-type PImage = {
+type TImage = {
 	width: number
 	height: number
-	image: string
+	url: string
 }
 
 
-type PfindBestSuitedImg = {
+type TfindBestSuitedImg = {
 	width: number
-	height: number
-	images: Array<PImage>
+	height: number | undefined
+	images: Array<TImage>
 }
 
-const findBestSuitedImg = ({width, height, images}: PfindBestSuitedImg): PImage => {
-	const resultImage = images.find(image => ((image.width >= width) || (image.height >= height)));
-	return resultImage || images[images.length - 1];
+type TfindBestSuitedImgHeight = {
+	height: number | undefined
+	images: Array<Omit<TImage, "width">>
+}
+
+
+const findBestSuitedImg = ({width, height, images}: TfindBestSuitedImg): string => { //images must be sorted from smallest to biggest
+	const resultImage = images.find(image => ((image.width >= width) || (image.height >= (height ? height : 0))));
+	console.log(height, resultImage);
+	
+	return resultImage?.url || images[images.length - 1].url;
 };
 
-export { findBestSuitedImg };
+const findBestSuitedImgHeight = ({height, images}: TfindBestSuitedImgHeight): string => { //images must be sorted from smallest to biggest
+	const resultImage = images.find(image => ((image.height >= (height ? height : 0))));
+	console.log(height, resultImage);
+	
+	return resultImage?.url || images[images.length - 1].url;
+};
+
+export { findBestSuitedImg, findBestSuitedImgHeight };

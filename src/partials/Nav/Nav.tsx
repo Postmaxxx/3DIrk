@@ -163,21 +163,23 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
                                         {page.name.en === 'order' ? <div className="cart-informer__container"><CartInformer /></div> : null}
                                     </NavLink>
                                     {page.subMenu ? 
-                                        <ul className="sub_menu">
-                                            <div className="submenu__content">
-                                                {page.subMenu.map(subPage => {
-                                                    return (
-                                                        <li key={subPage.path}>
-                                                            <NavLink
-                                                                to={subPage.path}
-                                                                data-subnav-text={page.id}
-                                                            >
-                                                                {subPage.name[lang]}
-                                                            </NavLink>
-                                                        </li>
-                                                    )
-                                                })}
-                                            </div>
+                                        <ul>
+                                            <li className="sub_menu">
+                                                <ul className="submenu__content">
+                                                    {page.subMenu.map(subPage => {
+                                                        return (
+                                                            <li key={subPage.path}>
+                                                                <NavLink
+                                                                    to={subPage.path}
+                                                                    data-subnav-text={page.id}
+                                                                >
+                                                                    {subPage.name[lang]}
+                                                                </NavLink>
+                                                            </li>
+                                                        )
+                                                    })}
+                                                </ul>
+                                            </li>
                                         </ul>
                                     : null}
                                 </li>
@@ -190,7 +192,7 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
                     <div className="text-hider"></div>
                     <label aria-label="open/hide navigation">
                         <input type="checkbox" onClick={navToggle}/>
-                        <img src={navLogo} alt="Menu" />
+                        <img src={navLogo} alt="Menu"/>
                         <div className="nav__sign">
                             <span></span>
                         </div>
@@ -204,7 +206,7 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
                 <div className="nav__switcher">
                     <label aria-label="open/hide navigation">
                         <input type="checkbox" onClick={navToggleMobile}/>
-                        <img src={navLogo} alt="Menu" />
+                        <img src={navLogo} alt="Menu"/>
                         <div className="nav__sign">
                             <span></span>
                         </div>
@@ -219,8 +221,8 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
                                     {page.subMenu?.length ? 
                                         <li className={`${expandedNavItems.includes(page.id) ? 'expanded' : ''}`}>
                                             <span onClick={() => onNavWithSubClicked(page.id)}>{page.name[lang]}</span>
-                                            <ul>
-                                                <div className="nav__subNav">
+                                            <div>
+                                                <ul className="nav__subNav">
                                                     {page.subMenu?.map((subPage) => {
                                                         return (
                                                             <li key={subPage.id}>
@@ -234,8 +236,9 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
                                                         )
                                                     })}
 
-                                                </div>
-                                            </ul>
+                                                </ul>
+                                            </div>
+                                            
                                         </li>
                                         :
                                         <li>

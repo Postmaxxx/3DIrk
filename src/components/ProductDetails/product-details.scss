@@ -81,7 +81,7 @@
 
 
         & > .colors__container {
-            margin-top: 15px;
+            //margin-top: 15px;
             width: 100%;
             display: flex;
             align-items: center;
@@ -101,9 +101,10 @@
             & > span {
                 font-size: 18px;
                 font-weight: 700;
+                margin-right: 10px;
+                margin-top: 10px;
 
                 @include respond-to(sm) {
-                    margin-top: 10px;
                 }
 
                 @include respond-to(xs) {
@@ -112,16 +113,14 @@
             }
 
             & .colors__wrapper {
-                margin-left: 10px;
                 height: 40px;
+                margin-top: 10px;
 
                 @include respond-to(sm) {
-                    margin-top: 10px;
                 }
 
                 @include respond-to(xs) {
                     width: 100%;
-                    margin-left: 0;
                 }
 
             }
