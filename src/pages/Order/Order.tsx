@@ -2,7 +2,7 @@ import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import './order.scss'
-import { ICartItem, ICartState, IColorsState, IFibersState, IFullState, IModal, IOrderState, TLang, TLangText, TLangTextArr } from "src/interfaces";
+import { ICartItem, ICartState, ICheckErrorItem, IColorsState, IFibersState, IFullState, IModal, IOrderState, TLang, TLangText, TLangTextArr } from "src/interfaces";
 import { useState, useEffect, useRef, KeyboardEventHandler } from 'react'
 import Modal from "../../components/Modal/Modal";
 import MessageInfo from "../../components/MessageInfo/MessageInfo";
@@ -12,6 +12,7 @@ import AddFiles, { IAddFilesFunctions } from "../../components/AddFiles/AddFiles
 import { loadFibers } from "../../redux/actions/fibers"
 import { loadColors } from "../../redux/actions/colors"
 import { clearCart } from "../../redux/actions/cart"
+import inputChecker from "src/assets/js/inputChecker";
 
 const actionsListOrder = { setName, setEmail, setPhone, setMessage, clearFiles, clearForm, addFiles, sendOrder, setSendDataStatus  }
 const actionsListColors = { loadColors }
@@ -45,10 +46,7 @@ interface IMessage {
     text: string[]
 }
 
-interface ICheckErrorItem {
-    ref: React.RefObject<HTMLInputElement | HTMLTextAreaElement>
-    name: TLangText
-}
+
 
 const Order:React.FC<IProps> = ({lang, order, cart, colors, fibers, setState}): JSX.Element => {
 
@@ -80,15 +78,8 @@ const Order:React.FC<IProps> = ({lang, order, cart, colors, fibers, setState}): 
             {ref: _phone, name: {en: 'Your phone', ru: 'Ваш телефон'}},
             {ref: _message, name: {en: 'Information about the order', ru: 'Информация о заказе'}},
         ]
-        let isWrong: boolean = false
-        setMessage(prev => ({status: 'error', header: lang === 'en' ? 'Errors found' : 'Обнаружены ошибки', text: []}))
-        feildsToCheck.forEach(field => {
-            if (!field.ref.current?.checkValidity()) {
-                setMessage(prev => ({...prev, text: prev.text.concat(lang === 'en' ? `Field "${field.name[lang]}" is incorrect` : `Поле "${field.name[lang]}" заполнено неверно`)}))
-                field.ref.current?.parentElement?.classList.add('error')
-                isWrong = true
-            }
-        })
+        const {isWrong, header, errors} = inputChecker(feildsToCheck)
+        setMessage({status: 'error', header: header[lang], text: errors.map(error => error[lang])})
         return isWrong
     }
 
@@ -112,8 +103,6 @@ const Order:React.FC<IProps> = ({lang, order, cart, colors, fibers, setState}): 
             return
         }
         
-       // console.log(cart.items);
-
         const textCart = cart.items.reduce((text: string, item: ICartItem, i: number) => {
             
             return text + `${i+1}) ${item.product.name[lang]}
@@ -224,8 +213,8 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
                                                 id="name" 
                                                 type="text" 
                                                 required 
-                                                min={2} 
-                                                max={25} 
+                                                minLength={2} 
+                                                maxLength={25} 
                                                 ref={_name} 
                                                 value={order.name}
                                                 onChange={onChangeText} 
@@ -239,8 +228,8 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
                                                 className="input-element" 
                                                 id="phone"
                                                 type="tel" 
-                                                min={6} 
-                                                max={25} 
+                                                minLength={6} 
+                                                maxLength={25} 
                                                 ref={_phone} 
                                                 value={order.phone}
                                                 onChange={onChangeText} 

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { connect } from "react-redux";
 import * as actions from "../../redux/actions/base";
 import { AnyAction, Dispatch, bindActionCreators } from "redux";
@@ -460,7 +460,7 @@ const ThemeSwitcher: React.FC<IProps> = ({mobOpened, lang, setState}): JSX.Eleme
 	};
 	
 
-	useEffect((): void => {
+	useEffect(() => {
 		localStorage.getItem("theme") as TTheme === 'dark' ? setState.base.setThemeDark() : setState.base.setThemeLight()
 		const themeProps: Partial<IStateSwitcher> = { 
 			themeSwitcherContainer: _themeSwitcherCont.current as HTMLDivElement, 
@@ -477,10 +477,27 @@ const ThemeSwitcher: React.FC<IProps> = ({mobOpened, lang, setState}): JSX.Eleme
 		};		
 		const themeSwitcher = dayLightSwitcher(themeProps);
 		themeSwitcher.create();
+
+		const onScroll = () => {
+			if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
+				_themeSwitcherCont.current?.classList.add('scrolled')
+			} else {
+				_themeSwitcherCont.current?.classList.remove('scrolled')
+			}
+		}
+
+		document.addEventListener('scroll', onScroll)
+
+		return () => {document.addEventListener('scroll', onScroll)}
 	},[]);
+
+
+	useEffect(() => {
+		mobOpened ? _themeSwitcherCont.current?.classList.remove('hide') : _themeSwitcherCont.current?.classList.add('hide')
+	}, [mobOpened])
 	
 	return (
-		<div className={mobOpened ? 'theme-switcher__container' : 'theme-switcher__container hide'} ref={_themeSwitcherCont}></div>
+		<div className='theme-switcher__container' ref={_themeSwitcherCont}></div>
 	);
 };
 

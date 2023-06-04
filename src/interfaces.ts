@@ -60,8 +60,9 @@ export interface IPageItem {
     name: TLangText
     path: string
     id: string
+    notLink?: boolean
     expanded?: boolean
-    subMenu?: IPageItem[]
+    subMenu?: Array<IPageItem>
 }
 /*
 export interface IPage extends IPageItem {
@@ -441,6 +442,45 @@ export interface ICartState {
 }
 
 
+
+//============================================== User state
+type TOrderStatus = 'working' | 'canceled' | 'finished'
+
+export interface IOrder {
+    date: Date
+    status: TOrderStatus
+    items: Omit<ICartItem, "id">[]
+}
+
+type TLoggingStatus = 'idle' | 'error' | 'fetching' | 'success'
+
+export interface ILogging {
+    status: TLoggingStatus
+    message: TLangText
+    errors: TLangText[]
+}
+
+
+export interface ILoggingForm {
+    name?: string,
+    email: string
+    phone?: string
+    password: string
+    repassword?: string
+}
+
+export interface IUserState {
+    name: string
+    email: string
+    phone: string
+    token: string
+    orders: IOrder[]
+    auth: ILogging
+}
+
+
+
+
 //============================================== full state
 export interface IFullState {
     base: IBaseState
@@ -451,6 +491,14 @@ export interface IFullState {
     product: IProductState //current product
     colors:  IColorsState
     cart: ICartState
+    user: IUserState
+}
+
+
+
+export interface ICheckErrorItem {
+    ref: React.RefObject<HTMLInputElement | HTMLTextAreaElement>
+    name: TLangText
 }
 
 //////////////////////////////////////////////////////////////////////////////////////  BackEnd
@@ -493,4 +541,21 @@ export type TPropertiesValues = {
 export interface IModalImg {
 	descr: string 
 	path: string
+}
+
+
+
+export interface IUserRegisterRes {
+    errors?: TLangText[]
+    message: TLangText
+}
+
+export interface IUserLoginResErr {
+    errors?: TLangText[]
+    message: TLangText
+}
+
+export interface IUserLoginResOk {
+    message: TLangText
+    user: Pick<IUserState, 'name' | 'email' | 'phone' | 'orders' | 'token'>
 }

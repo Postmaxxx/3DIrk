@@ -1,5 +1,5 @@
 import "./langSwitcher.scss"
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { connect } from "react-redux";
 import { IFullState, TLang, TTheme } from "../../interfaces";
 import { setLangEn, setLangRu }  from "../../redux/actions/base"
@@ -26,32 +26,54 @@ interface IProps extends IPropsState, IPropsActions {}
 
 const LangSwitcher:React.FC<IProps> = ({lang, mobOpened, setState}): JSX.Element => {
 
+    const _lang = useRef<HTMLDivElement>(null)
+
+
     const handleChangeLang = (e: React.MouseEvent<HTMLDivElement>) => {
         if (lang === 'en') {
             window.localStorage.setItem('language', 'ru')
             setState.base.setLangRu()
-            e.currentTarget.classList.add('ru')
-            e.currentTarget.classList.remove('en')
         } else {
             window.localStorage.setItem('language', 'en')
             setState.base.setLangEn();
-            e.currentTarget.classList.add('en')
-            e.currentTarget.classList.remove('ru')
         }
     }
 
     useEffect(() => {
         (window.localStorage.getItem('language') as TLang) === 'en' ? setState.base.setLangEn() : setState.base.setLangRu()
+
+        const onScroll = () => {
+			if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
+				_lang.current?.classList.add('scrolled')
+			} else {
+				_lang.current?.classList.remove('scrolled')
+			}
+		}
+		document.addEventListener('scroll', onScroll)
+		return () => {document.addEventListener('scroll', onScroll)}
     }, [])
 
 
+
+    useEffect(() => {
+        if (lang === 'en') {
+            _lang.current?.classList.add('ru')
+            _lang.current?.classList.remove('en')
+        } else {
+            _lang.current?.classList.add('en')
+            _lang.current?.classList.remove('ru')
+        }
+
+        mobOpened ? _lang.current?.classList.remove('hide') : _lang.current?.classList.add('hide')
+    }, [lang, mobOpened])
+
+
     return (
-        <div className={`lang-switcher ${lang} ${mobOpened || "hide"}`} onClick={handleChangeLang}>
+        <div className='lang-switcher' onClick={handleChangeLang} ref={_lang}>
             <div className="lang-switcher__text lang_ru" data-lang='ru'>RU</div>
             <div className="lang-switcher__text lang_en" data-lang='en'>EN</div>
         </div>
-
-        )   
+    )   
 }
 
 

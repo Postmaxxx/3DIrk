@@ -5,6 +5,7 @@
   "private": true,
   "author": "PostMaxxx",
   "license": "ISC",
+  "proxy": "http://localhost:5000",
   "dependencies": {
     "@splidejs/react-splide": "^0.7.12",
     "@testing-library/jest-dom": "^5.16.5",
@@ -39,8 +40,16 @@
     "eject": "react-scripts eject",
     "predeploy_old": "npm run build && npx workbox injectManifest workbox-config.js",
     "deploy_old": "gh-pages -d build",
-    "servew": "webpack serve --mode development",
-    "buildw": "webpack --mode production",
+    
+    
+    "serverfe": "webpack serve --mode development",
+    "buildfe": "webpack --mode production",
+    
+    "startbe": "npm run start --prefix backend",
+    "serverbe": "npm run server --prefix backend",
+    
+    "dev": "concurrently \"npm run serverfe\" \"npm run serverbe\"",
+
     "predeploy": "webpack --mode production",
     "deploy": "gh-pages -d dist"
   },

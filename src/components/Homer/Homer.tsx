@@ -13,16 +13,16 @@ const Homer = () => {
 
     function scrollHomer() {
         if (!_homer.current) return
-      if (document.body.scrollTop > 500 || document.documentElement.scrollTop > 500) {
-        _homer.current.classList.add("show");
-      } else {
-        _homer.current.classList.remove("show")
-      }
+		if (document.body.scrollTop > 500 || document.documentElement.scrollTop > 500) {
+			_homer.current.classList.add("show");
+		} else {
+			_homer.current.classList.remove("show")
+		}
     }
 
     const onHomerClicked = () => {
         document.body.scrollTop = 0; // For Safari
-          document.documentElement.scrollTop = 0;
+          	document.documentElement.scrollTop = 0;
 
     }
 

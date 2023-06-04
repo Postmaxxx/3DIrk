@@ -74,3 +74,8 @@ export const actionsListCart = {
     CHANGE_ITEM: 'CHANGE_ITEM', //
     SET_CART: 'SET_CART' //
 }
+
+
+export const actionsListUser = {
+    SET_USER: 'SET_USER', //
+}

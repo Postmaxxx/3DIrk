@@ -46,7 +46,6 @@ const pagesList = [
         },
         path: "/fibers",
         id: 'main_fibers',
-        //expanded: false,
         subMenu : [
             {
                 name: {
@@ -84,6 +83,26 @@ const pagesList = [
         path: "/order",
         id: 'order',
     },
+    /*{
+        name: {
+            ru: "Войти",
+            en: 'Login'
+        },
+        path: "/auth",
+        id: 'main_auth',
+        notLink: true,
+        subMenu : [
+            {
+                name: {
+                    ru: "ВОЙТИ",
+                    en: 'LOGIN'
+                },
+                path: "/fibers",
+                id: 'about',
+                notLink: true
+            },
+        ]
+    },*/
 ] satisfies IPageItem[]
 
 
@@ -104,34 +123,20 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
     }
 
 
-    /*const handleScroll =() => {
-        scrollTimeout.current && clearTimeout(scrollTimeout.current)
-        scrollTimeout.current = setTimeout(()=> {
-            setOpened(window.scrollY < 400)
-        }, 250)
-    }*/
-
-    useEffect(() => {
-        /*window.addEventListener("scroll", handleScroll);
-        return(() => {
-            window.removeEventListener("scroll", handleScroll);
-        })*/
-    },[])
-
-
 	useEffect(() => {
         if (fibersState.dataLoading.status !== 'success' || fibersState.fibersList.length === 0) return
         const newNav = pagesList.map((page) => {
             if (page.id === "main_fibers") {
-                const newSub = fibersState.fibersList.map((fiber) => ({
+                const newSub: IPageItem[] = fibersState.fibersList.map((fiber) => ({
                         name: fiber.short.name,
                         path: `/fibers/${fiber.id}`,
-                        id: fiber.id
-                    })
-                )
-                return {...page, subMenu: page.subMenu?.concat(newSub)}
+                        id: fiber.id,
+                    }))
+                return {
+                    ...page, 
+                    subMenu: [...page.subMenu as [], ...newSub]
+                }
             }
-
             return page
         })
         setNav(newNav)
@@ -147,6 +152,11 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
     }
 
 
+    const onClickNotLink = (id: IPageItem['id']) => {
+
+    }
+
+
     return (
         <>
             <nav className={desktopOpened ? "nav_desktop opened" : "nav_desktop"}>
@@ -155,13 +165,17 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
                         {nav.map((page: IPageItem) => {
                             return (
                                 <li key={page.path} className={page.subMenu? 'extandable' : ''}>
-                                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
-                                        to={page.path}
-                                        data-nav-text={page.id}
-                                    >
-                                        {page.name[lang]}
-                                        {page.name.en === 'order' ? <div className="cart-informer__container"><CartInformer /></div> : null}
-                                    </NavLink>
+                                    {page.notLink ? 
+                                        <a className="not-link" onClick={() => onClickNotLink(page.id)}>{page.name[lang]}</a>
+                                    :
+                                        <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
+                                            to={page.path}
+                                            data-nav-text={page.id}
+                                        >
+                                            {page.name[lang]}
+                                            {page.name.en === 'order' ? <div className="cart-informer__container"><CartInformer /></div> : null}
+                                        </NavLink>
+                                    }
                                     {page.subMenu ? 
                                         <ul>
                                             <li className="sub_menu">
@@ -169,12 +183,16 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
                                                     {page.subMenu.map(subPage => {
                                                         return (
                                                             <li key={subPage.path}>
-                                                                <NavLink
-                                                                    to={subPage.path}
-                                                                    data-subnav-text={page.id}
-                                                                >
-                                                                    {subPage.name[lang]}
-                                                                </NavLink>
+                                                                {page.notLink ? 
+                                                                    <a className="not-link" onClick={() => onClickNotLink(page.id)}>{subPage.name[lang]}</a>
+                                                                :
+                                                                    <NavLink
+                                                                        to={subPage.path}
+                                                                        data-subnav-text={page.id}
+                                                                    >
+                                                                        {subPage.name[lang]}
+                                                                    </NavLink>
+                                                                }   
                                                             </li>
                                                         )
                                                     })}
@@ -184,8 +202,7 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
                                     : null}
                                 </li>
                             )
-                        })
-                        }
+                        })}
                     </ul>
                 </div>
                 <div className="nav__switcher">

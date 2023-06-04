@@ -2,11 +2,24 @@ const express = require('express')
 require('dotenv').config()
 const mongoose = require("mongoose")
 const routesAuth = require("./routes/auth")
+const cors = require('cors')
 
 const app = express()
 
 
-app.use('api/auth', require("./routes/auth"))
+app.use(express.json({ extended: true }));
+
+
+// cors
+app.use(cors({ 
+    origin: "*", 
+    credentials: true,
+    methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH']
+}));
+
+//auth
+app.use('/api/auth', require("./routes/auth"))
+
 
 
 const PORT: number = Number(process.env.PORT) || 5000
@@ -16,7 +29,8 @@ const start = async () => {
     try {
         await mongoose.connect(process.env.mongoUri, {
             useNewUrlParser: true,
-            useUnifiedTopology: true
+            useUnifiedTopology: true,
+            dbName: "allData"
         })
         
     } catch (error: unknown) {
@@ -27,4 +41,4 @@ const start = async () => {
 
 start()
 
-app.listen(PORT, () => console.log(`Server has been started on port ${PORT}...`))
+app.listen(PORT, () => console.log(`Server has been successfully started on port ${PORT}...`))

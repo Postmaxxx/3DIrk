@@ -19,14 +19,12 @@ type TfindBestSuitedImgHeight = {
 
 const findBestSuitedImg = ({width, height, images}: TfindBestSuitedImg): string => { //images must be sorted from smallest to biggest
 	const resultImage = images.find(image => ((image.width >= width) || (image.height >= (height ? height : 0))));
-	console.log(height, resultImage);
 	
 	return resultImage?.url || images[images.length - 1].url;
 };
 
 const findBestSuitedImgHeight = ({height, images}: TfindBestSuitedImgHeight): string => { //images must be sorted from smallest to biggest
 	const resultImage = images.find(image => ((image.height >= (height ? height : 0))));
-	console.log(height, resultImage);
 	
 	return resultImage?.url || images[images.length - 1].url;
 };
