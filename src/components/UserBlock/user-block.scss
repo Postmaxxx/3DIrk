@@ -11,7 +11,7 @@
     border-radius: 25px;
     border: 2px solid var(--main_vv);
     overflow: hidden;
-    transition: max-width $transition-theme, background-color $transition_theme, right $nav_mobile_delay, opacity $nav_mobile_delay;
+    transition: max-width $transition-theme, background-color $transition_theme, right $transition_subMenu, transform $transition_subMenu, opacity $nav_mobile_delay;
     
     
     & > .info {
@@ -70,8 +70,43 @@
 
 
     &.scrolled {
-        right: -70px;
+        transform: translate(100%, 0);
+        right: 0;
+    }
 
+
+
+
+
+
+    &.autorized {
+        max-width: fit-content;
+        overflow: visible;
+
+        & .content {
+            position: absolute;
+            display: grid;
+            grid-template-rows: 0fr;
+            overflow: hidden;
+            border: 1px solid red;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+        &:hover {
+            .content {
+                grid-template-rows: 1fr;
+            }
+        }
     }
 
 

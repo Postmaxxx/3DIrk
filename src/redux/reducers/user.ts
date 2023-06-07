@@ -8,9 +8,7 @@ const reducerBase = (state:IUserState = initialUserState, action: IAction<any>):
             const newData: IUserState = {...state}
             for (let key in action.payload) {
                 newData[key as keyof IUserState] = action.payload[key]
-            }
-            console.log(newData);
-            
+            }           
             return newData
         default: return state
     }

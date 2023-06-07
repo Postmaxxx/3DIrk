@@ -70,7 +70,7 @@ const App:React.FC<IProps> = ({lang, cartLoad, colorsLoad, setState, fibersLoad}
 			<Suspense fallback={<Preloader />}><LazyHeader /></Suspense>
 			<Suspense fallback={<Preloader />}><LazyHomer /></Suspense>
 			<Suspense fallback={<Preloader />}><LazyOffliner lang={lang}/></Suspense>
-			<Suspense fallback={<Preloader />}><LazyUserBlock /></Suspense>
+			{/*<Suspense fallback={<Preloader />}><LazyUserBlock /></Suspense>*/}
 
 			
 			<Routes>

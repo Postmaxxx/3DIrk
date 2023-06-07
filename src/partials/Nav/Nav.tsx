@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState,  useRef } from "react";
 import { NavLink } from "react-router-dom";
-import { IFibersState, IFullState, IPageItem, TLang } from "src/interfaces";
+import { IFibersState, IFullState, IModal, IPageItem, IUserState, TLang } from "src/interfaces";
 import "./nav.scss"
 import navLogo from "../../assets/img/nav_logo.png"
 import { connect } from "react-redux";
@@ -9,109 +9,39 @@ import { Dispatch } from "redux";
 import { setNavCloseDt, setNavCloseMob, setNavOpenDt, setNavOpenMob }  from "../../redux/actions/base"
 import CartInformer from "../../components/CartInformer/CartInformer";
 import { loadFibers } from "../../redux/actions/fibers"
-
+import { setUser } from "../../redux/actions/user"
+import Modal from "src/components/Modal/Modal";
+import Auth from "src/components/Auth/Auth";
+import { pagesList } from "./initialNav";
 
 const actionsListBase = {setNavCloseDt, setNavCloseMob, setNavOpenDt, setNavOpenMob }
 const actionsListFibers = { loadFibers }
+const actionsListUser = { setUser }
 
 interface IPropsState {
     lang: TLang
     mobOpened: boolean
     desktopOpened: boolean
     fibersState: IFibersState
+    userState: IUserState
 }
 
 interface IPropsActions {
     setState: {
         base: typeof actionsListBase
         fibers: typeof actionsListFibers
+        user: typeof actionsListUser
     }
 }
 
 interface IProps extends IPropsState, IPropsActions {}
 
-const pagesList = [
-    {
-        name: {
-            ru: "главная",
-            en: 'home'
-        },
-        path: "/",
-        id: 'main_home',
-    },
-    {
-        name: {
-            ru: "Филаменты",
-            en: 'Filaments'
-        },
-        path: "/fibers",
-        id: 'main_fibers',
-        subMenu : [
-            {
-                name: {
-                    ru: "О ФИЛАМЕНТАХ",
-                    en: 'ABOUT'
-                },
-                path: "/fibers",
-                id: 'about',
 
-            },
-            {
-                name: {
-                    ru: "СРАВНЕНИЕ",
-                    en: 'COMPARASING'
-                },
-                path: "/fibers/compare",
-                id: 'compare',
-
-            },
-        ]
-    },
-    {
-        name: {
-            ru: "каталог",
-            en: 'catalog'
-        },
-        path: "/catalog",
-        id: 'catalog',
-    },
-    {
-        name: {
-            ru: "заказать",
-            en: 'order',
-        },
-        path: "/order",
-        id: 'order',
-    },
-    /*{
-        name: {
-            ru: "Войти",
-            en: 'Login'
-        },
-        path: "/auth",
-        id: 'main_auth',
-        notLink: true,
-        subMenu : [
-            {
-                name: {
-                    ru: "ВОЙТИ",
-                    en: 'LOGIN'
-                },
-                path: "/fibers",
-                id: 'about',
-                notLink: true
-            },
-        ]
-    },*/
-] satisfies IPageItem[]
-
-
-
-
-const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersState}): JSX.Element => {
+const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersState, userState}): JSX.Element => {
     const _blur = useRef<HTMLDivElement>(null)
     const [nav, setNav] = useState<IPageItem[]>(pagesList)
     const [expandedNavItems, setExpandedNavItems] = useState<IPageItem["id"][]>([])
+	const [modal, setModal] = useState<IModal>({visible: false})
     
 
     const navToggle = () => {
@@ -152,8 +82,29 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
     }
 
 
-    const onClickNotLink = (id: IPageItem['id']) => {
+       
+    const closeModal = () => {
+		setModal({visible: false})
+	}
 
+
+    const onClickNotLink = (id: IPageItem['id']) => {
+        if (id === 'main_auth') {
+		    setModal({visible: true})
+        }
+    }
+
+
+    const onLogoutClick = () => {
+        setState.user.setUser({
+            name: '', 
+            email: '', 
+            phone: '', 
+            token: '', 
+            orders: [], 
+            auth: {status: 'idle', message: {en: '', ru: ''}, errors: []}
+        })
+        localStorage.removeItem('token')
     }
 
 
@@ -272,6 +223,9 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
                     </ul>
                 </div>
                 <div className="nav__container_right"></div>
+                <Modal {...{visible: modal.visible, close: closeModal, escExit: true}}>
+                    <Auth onCancel={closeModal}/>
+			    </Modal> 
             </nav>
         </>
     )
@@ -282,7 +236,8 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
 	lang: state.base.lang,
     mobOpened: state.base.mobOpened,
     desktopOpened: state.base.desktopOpened,
-    fibersState: state.fibers
+    fibersState: state.fibers,
+    userState: state.user
 })
   
   
@@ -290,6 +245,7 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
     setState: {
 		base: bindActionCreators(actionsListBase, dispatch),
 		fibers: bindActionCreators(actionsListFibers, dispatch),
+		user: bindActionCreators(actionsListUser, dispatch),
 	}
 })
   
