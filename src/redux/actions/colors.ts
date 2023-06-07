@@ -23,7 +23,7 @@ export const loadColors = () => {
                 setTimeout(() => {
                     const receivedData = mockColors
                     if (receivedData) {
-                        console.log(`colors loaded`);
+                        //console.log(`colors loaded`);
                         res(receivedData)
                     } else (
                         rej({mesasage: `colors not found`})

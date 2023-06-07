@@ -5,6 +5,7 @@ import { IFullState, TLang, TTheme } from "../../interfaces";
 import { setLangEn, setLangRu }  from "../../redux/actions/base"
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
+import { useScrollHider } from "src/hooks/scrollHider";
 
 
 const actionsList = {setLangEn, setLangRu}
@@ -27,7 +28,7 @@ interface IProps extends IPropsState, IPropsActions {}
 const LangSwitcher:React.FC<IProps> = ({lang, mobOpened, setState}): JSX.Element => {
 
     const _lang = useRef<HTMLDivElement>(null)
-
+    const langHider = useScrollHider()   
 
     const handleChangeLang = (e: React.MouseEvent<HTMLDivElement>) => {
         if (lang === 'en') {
@@ -41,16 +42,10 @@ const LangSwitcher:React.FC<IProps> = ({lang, mobOpened, setState}): JSX.Element
 
     useEffect(() => {
         (window.localStorage.getItem('language') as TLang) === 'en' ? setState.base.setLangEn() : setState.base.setLangRu()
+        if (!_lang.current) return
+        langHider.add(_lang.current, 50)
 
-        const onScroll = () => {
-			if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
-				_lang.current?.classList.add('scrolled')
-			} else {
-				_lang.current?.classList.remove('scrolled')
-			}
-		}
-		document.addEventListener('scroll', onScroll)
-		return () => {document.addEventListener('scroll', onScroll)}
+		return () => langHider.remove()
     }, [])
 
 

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import './auth.scss'
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
@@ -44,10 +44,13 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
         const key = e.target.name as keyof ILoggingForm
         setForm({...form, [key]: e.target.value});
         (e.target as HTMLElement).parentElement?.classList.remove('error')
-        clearErrors()       
+        if (status !== 'idle') {
+            clearErrors()
+        }
     }
 
-    
+    const status = useMemo(() => userState.auth.status, [userState.auth.status])
+
     const focusNext = ({e, target}: {e: KeyboardEvent, target: HTMLInputElement | HTMLTextAreaElement | null}) => {
         if (e.key === 'Enter') {
             e.preventDefault()
@@ -60,25 +63,13 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
     }
 
 
-    const onCancelClick = () => {
+    const onCancelClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault()
+        e.stopPropagation()
         onCancel()
     }
     
-    
-    /*const checkErrors = (): {isWrong: boolean, header: TLangText, errors: TLangText[]} => {
-        const feildsToCheck: Array<ICheckErrorItem> = [
-            {ref: _name, name: {en: 'Your name', ru: 'Ваше имя'}},
-            {ref: _email, name: {en: 'Your email', ru: 'Ваша почта'}},
-            {ref: _phone, name: {en: 'Your phone', ru: 'Ваш телефон'}},
-            {ref: _password, name: {en: 'Your password', ru: 'Ваш пароль'}},
-            {ref: _rePassword, name: {en: 'Repeat your password', ru: 'Повторите ваш пароль'}},
-        ]
-        const {isWrong, header, errors} = inputChecker(feildsToCheck)
-        if (_password.current?.value !== _rePassword.current?.value) {
-            errors.push({en: 'Passwords do not match', ru: 'Пароли не совпадают'})
-        }
-        return {isWrong, header, errors}
-    }*/
+
 
 
     const onSubmit: React.EventHandler<any> = (e) => {
@@ -123,11 +114,11 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
     useEffect(() => {
         if (register) {
             if (userState.auth.status === 'success') {
-                console.log('now we should logging in...');
+                //console.log('now we should logging in...');
             }
         } else {
             if (userState.auth.status === 'success') {
-                console.log('now we are logged in...');
+                //console.log('now we are logged in...');
                 onCancel()
             }
         }
@@ -139,7 +130,7 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
         clearErrors()
     }, [])
 
-    
+   
 
     return (
         <div className="login">
@@ -258,7 +249,7 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
                                     :  
                                     lang === 'en' ? 'Login' : 'Вход'}
                                 </button>
-                            <button className='button_blue' onClick={onCancelClick}>{
+                            <button className='button_blue' onClick={e => onCancelClick(e)}>{
                                 lang === 'en' ? 'Cancel' : 'Отмена'}
                             </button>
                         </div>

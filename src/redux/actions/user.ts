@@ -68,6 +68,7 @@ export const login = ({email, password}: ILoggingForm) => {
                 }))
             }
             const result: IUserLoginResOk = await response.json() //message, errors
+            
             dispatch(setUser({
                 ...user, 
                 name: result.user.name,
@@ -77,8 +78,12 @@ export const login = ({email, password}: ILoggingForm) => {
                 token: result.user.token,
                 auth: {status: 'success', message: result.message, errors: []},
             }))
+            localStorage.setItem('token', JSON.stringify({token: result.user.token}))
         } catch (e) {         
-            dispatch(setUser({...user,auth: {status: 'error', message: (e as IUserRegisterRes).message, errors: []}}))
+            dispatch(setUser({...user, auth: {status: 'error', message: (e as IUserRegisterRes).message, errors: []}}))
         } 
     }
 }
+
+
+

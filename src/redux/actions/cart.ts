@@ -46,7 +46,7 @@ export const loadCart = () => {
             setTimeout(()=> {res(localStorage.getItem('cart') as string)}, 1000)
         })
         if (receivedData) {
-            console.log('raw cart loaded');
+            //console.log('raw cart loaded');
             const loadedRawItems: ICartItemSave[] = JSON.parse(receivedData) || []
 
             const filledItems: ICartItem[] = loadedRawItems
@@ -54,7 +54,7 @@ export const loadCart = () => {
                     const productFull: IProduct | undefined = mockProducts.find(product => product.id === item.product)
                     return productFull ? {...item, product: productFull } : undefined
                 }).filter((item): item is ICartItem => item !== undefined)
-            console.log('cart converted');
+            //console.log('cart converted');
                 
             dispatch(setCart(filledItems))
             dispatch(setLoadDataStatusCart({status: 'success', message: `Cart is loaded`}))

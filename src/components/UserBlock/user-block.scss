@@ -10,8 +10,8 @@
     min-width: 50px;
     border-radius: 25px;
     border: 2px solid var(--main_vv);
-    transition: all $transition-theme;
     overflow: hidden;
+    transition: max-width $transition-theme, background-color $transition_theme, right $nav_mobile_delay, opacity $nav_mobile_delay;
     
     
     & > .info {
@@ -33,9 +33,10 @@
                 width: 100%;
                 fill: var(--text)
             }
+            
         }
 
-        & > .btn_login {
+        & > .btn_login, .btn_logout {
             //margin-left: 10px;
             margin-right: 5px;
             height: 35px;
@@ -51,12 +52,26 @@
             }
         }
 
-    }    
+        & .username {
+            white-space: nowrap;
+            font-size: 18px;
+            font-weight: 600px;
+            margin-left: 10px;
+        }
+
+    }   
+    
 
 
 
     &:hover {
         max-width: 300px;
+    }
+
+
+    &.scrolled {
+        right: -70px;
+
     }
 
 

@@ -237,7 +237,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
                                         </div>
                                         <div className="input-block">
                                             <label htmlFor="email">
-                                                {lang === 'en' ? 'Your email*' : 'Ваше почта*'}
+                                                {lang === 'en' ? 'Your email*' : 'Ваша почта*'}
                                             </label>
                                             <input 
                                                 className="input-element" 

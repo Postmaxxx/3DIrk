@@ -7,6 +7,7 @@ import star from "./theme_nigth__star.svg";
 import "./themeSwitcher.scss";
 import { setThemeDark, setThemeLight, setThemeToggle }  from "../../redux/actions/base"
 import { IBaseState, IFullState, TLang } from "../../interfaces";
+import { useScrollHider } from "src/hooks/scrollHider";
 
 const actionsList = {setThemeDark, setThemeLight, setThemeToggle}
 
@@ -72,6 +73,8 @@ interface IProps extends IPropsState, IPropsActions {}
 const ThemeSwitcher: React.FC<IProps> = ({mobOpened, lang, setState}): JSX.Element => {
 
 	const _themeSwitcherCont = useRef<HTMLDivElement>(null);
+    const themeHider = useScrollHider()   
+
 
 	const dayLightSwitcher = (switcherProps: Partial<IStateSwitcher>) => {
 
@@ -370,7 +373,7 @@ const ThemeSwitcher: React.FC<IProps> = ({mobOpened, lang, setState}): JSX.Eleme
 				.forEach((star: IStar) => {
 					const _star = document.createElement("img");
 					_star.classList.add(`theme_dark__star-${star.blinkDuration}`);
-					_star.alt = '.';
+					_star.alt = '';
 					_star.style.position = "absolute";
 					_star.style.left = `${star.x}px`;
 					_star.style.top = `${star.y}px`;
@@ -395,7 +398,7 @@ const ThemeSwitcher: React.FC<IProps> = ({mobOpened, lang, setState}): JSX.Eleme
 					listOfClouds.forEach((): void => {
 						const _cloud = document.createElement("img");
 						_cloud.classList.add("cloud");
-						_cloud.alt = '.';
+						_cloud.alt = '';
 						_cloud.src = String(stateSW.cloud);
 						_clouds.appendChild(_cloud);
 					});
@@ -461,6 +464,7 @@ const ThemeSwitcher: React.FC<IProps> = ({mobOpened, lang, setState}): JSX.Eleme
 	
 
 	useEffect(() => {
+		if (!_themeSwitcherCont.current) return
 		localStorage.getItem("theme") as TTheme === 'dark' ? setState.base.setThemeDark() : setState.base.setThemeLight()
 		const themeProps: Partial<IStateSwitcher> = { 
 			themeSwitcherContainer: _themeSwitcherCont.current as HTMLDivElement, 
@@ -478,17 +482,8 @@ const ThemeSwitcher: React.FC<IProps> = ({mobOpened, lang, setState}): JSX.Eleme
 		const themeSwitcher = dayLightSwitcher(themeProps);
 		themeSwitcher.create();
 
-		const onScroll = () => {
-			if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
-				_themeSwitcherCont.current?.classList.add('scrolled')
-			} else {
-				_themeSwitcherCont.current?.classList.remove('scrolled')
-			}
-		}
-
-		document.addEventListener('scroll', onScroll)
-
-		return () => {document.addEventListener('scroll', onScroll)}
+        themeHider.add(_themeSwitcherCont.current, 50)
+		return () => themeHider.remove()
 	},[]);
 
 
@@ -512,7 +507,6 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
     setState: {
 		base: bindActionCreators(actionsList, dispatch)
 	}
-	
 })
   
   
