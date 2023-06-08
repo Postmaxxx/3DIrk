@@ -113,65 +113,75 @@ $gap_to_text: 5px;
 
                 }
 
-
-                & li.sub_menu {
-                    position: absolute;
-                    background-color: var(--main);;
-                    left: 50%;
-                    transform-origin: top center;
-                    transform: translate(-50%, 0);
-                    transition: width $transition_subMenu, transform $transition_subMenu, grid-template-rows $transition_subMenu $transition_subMenu;
-                    width: 100%;
-                    box-sizing: border-box;
-                    display: grid;
-                    grid-template-rows: 0fr;
-                    overflow: hidden;
+                ul.sub_menu {
                     
-                    
-                    & > .submenu__content {
-                        min-height: 0;
-                        padding-left: 20px;
-                        padding-right: 20px;
+                    & li {
+                        position: absolute;
+                        background-color: var(--main);;
+                        left: 50%;
+                        transform-origin: top center;
+                        transform: translate(-50%, 0);
+                        transition: width $transition_subMenu, transform $transition_subMenu, grid-template-rows $transition_subMenu $transition_subMenu;
+                        width: 100%;
+                        box-sizing: border-box;
+                        display: grid;
+                        grid-template-rows: 0fr;
                         overflow: hidden;
-                        border: 0px solid transparent;
-                        transition: border 0s 2*$transition_subMenu, padding $transition_subMenu 1*$transition_subMenu, margin $transition_subMenu $transition_subMenu;
-
                         
-                        & > li {
-                            display: block;
-                            position: relative;
-                            left: 50%;
-                            transform: translate(-50%, 0);
-                            width: 0;
+                        
+                        & > .submenu__content {
+                            min-height: 0;
+                            padding-left: 20px;
+                            padding-right: 20px;
                             overflow: hidden;
-                            display: flex;
-                            flex-direction: column;
-                            align-items: center;
-                            transition: width $transition_subMenu 0s;
-                            margin-top: 10px;
-
-    
-                            & > a {
-                                //text-transform: uppercase;
+                            border: 0px solid transparent;
+                            transition: border 0s 2*$transition_subMenu, padding $transition_subMenu 1*$transition_subMenu, margin $transition_subMenu $transition_subMenu;
+                    
+                            
+                            & > li {
                                 display: block;
-                                white-space: nowrap;
-                                text-align: center;
-                                cursor: pointer;
+                                position: relative;
+                                left: 50%;
+                                transform: translate(-50%, 0);
+                                width: 0;
+                                overflow: hidden;
+                                display: flex;
+                                flex-direction: column;
+                                align-items: center;
+                                transition: width $transition_subMenu 0s;
+                                margin-top: 10px;
+                    
+                    
+                                & > a {
+                                    //text-transform: uppercase;
+                                    display: block;
+                                    white-space: nowrap;
+                                    text-align: center;
+                                    cursor: pointer;
+                    
+                                    /*transform: scaleX(0);
+                                    transition: transform $transition_subMenu 0s;*/
+                    
+                                    &:hover {
+                                        color: var(--text_vv);
+                                        transition: color $transition_fast;
+                                    }
 
-                                /*transform: scaleX(0);
-                                transition: transform $transition_subMenu 0s;*/
 
-                                &:hover {
-                                    color: var(--text_vv);
-                                    transition: color $transition_fast;
+                                    &.selected {
+                                        color: var(--text_vv);  
+                                    }
+
+
                                 }
                             }
                         }
+                    
+                    
                     }
-    
-    
+                                    
+                    
                 }
-                
 
 
 
@@ -192,34 +202,38 @@ $gap_to_text: 5px;
                         
                     }
 
-                    & li.sub_menu {
-                        grid-template-rows: 1fr;
-                        transform: translate(-50%, 0px);
-                        width: 240px;
-                        transition: transform $transition_subMenu $transition_subMenu, grid-template-rows $transition_subMenu $transition_subMenu, width $transition_subMenu 2*$transition_subMenu;
-                        
-                        & > .submenu__content {
-                            padding-top: 20px;
-                            margin-top: 23px;
-                            border-right: 3px solid var(--main_vv);
-                            border-left: 3px solid var(--main_vv);
-                            border-bottom: 3px solid var(--main_vv);
-                            padding-bottom: 30px;
-                            transition: padding $transition_subMenu 1*$transition_subMenu, margin $transition_subMenu $transition_subMenu, border 0s $transition_subMenu;
+                    & ul.sub_menu {
 
-                            & > li {
-                                width: 100%;
-                                transition: width $transition_subMenu 2*$transition_subMenu;
-
-                                & > a {
-                                    /*transform: scaleX(1);
-                                    transition: transform $transition_subMenu 2*$transition_subMenu;*/
+                        & li {
+                            grid-template-rows: 1fr;
+                            transform: translate(-50%, 0px);
+                            width: 240px;
+                            transition: transform $transition_subMenu $transition_subMenu, grid-template-rows $transition_subMenu $transition_subMenu, width $transition_subMenu 2*$transition_subMenu;
+                            
+                            & > .submenu__content {
+                                padding-top: 20px;
+                                margin-top: 23px;
+                                border-right: 3px solid var(--main_vv);
+                                border-left: 3px solid var(--main_vv);
+                                border-bottom: 3px solid var(--main_vv);
+                                padding-bottom: 30px;
+                                transition: padding $transition_subMenu 1*$transition_subMenu, margin $transition_subMenu $transition_subMenu, border 0s $transition_subMenu;
+    
+                                & > li {
+                                    width: 100%;
+                                    transition: width $transition_subMenu 2*$transition_subMenu;
+    
+                                    & > a {
+                                        /*transform: scaleX(1);
+                                        transition: transform $transition_subMenu 2*$transition_subMenu;*/
+                                    }
                                 }
                             }
+    
+            
                         }
-
-        
                     }
+
 
                 }
 
@@ -239,7 +253,7 @@ $gap_to_text: 5px;
         .cart-informer__container {
             position: absolute;
             top: -8px;
-            right: -15px;
+            right: -25px;
             height: 20px;
             width: 20px;
         }
@@ -508,6 +522,7 @@ $gap_to_text: 5px;
                 width: 100%;
                 margin-top: 10px;
                 margin-bottom: 10px;
+                position: relative;
                 
                 & > a, span {
                     text-align: center;
@@ -520,6 +535,7 @@ $gap_to_text: 5px;
                     transition: $transition_nav_menu;
                     display: block;
                     cursor: pointer;
+                    
 
                     @include respond-to(xs) {
                         font-size: 1.8rem;
@@ -536,6 +552,7 @@ $gap_to_text: 5px;
                         transition: color $transition-theme;
                         text-decoration: underline;
                     }
+
                 }
 
 
@@ -574,15 +591,19 @@ $gap_to_text: 5px;
                     transition: grid $transition_fast;
 
 
-                    & > .nav__subNav {
+                    & > .nav__subnav {
                         overflow: hidden;
                         max-height: 40vh;
                         overflow: auto;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
     
                         & > li {
                             margin-top: 20px;
                             text-align: center;
-                            width: 100%;
+                            display: inline-block;
+                            //width: 100%;
                             position: relative;
     
                             &::before {
@@ -596,6 +617,7 @@ $gap_to_text: 5px;
                             }
     
                             & > a, span {
+                                
                                 text-align: center;
                                 font-size: 1.5rem;
                                 position: relative;
@@ -629,6 +651,17 @@ $gap_to_text: 5px;
 
                 }
 
+                & .cart-informer__container {
+                    position: absolute;
+                    top: 0;
+                    transform: translate(calc(100% + 5px), -50%);
+                    right: 0px;
+
+                    & span {
+                        font-size: 1em !important;
+                    }
+                }
+
 
                 &.expanded {
                     & > span {
@@ -641,6 +674,11 @@ $gap_to_text: 5px;
                     & > div {
                         grid-template-rows: 1fr;
                     }
+                }
+
+
+                &.narrow {
+                    width: auto;
                 }
             }
 
@@ -811,6 +849,11 @@ $gap_to_text: 5px;
         }
         
         
+    }
+
+
+    .noscroll {
+        overflow: hidden !important;
     }
 
 

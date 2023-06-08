@@ -73,6 +73,7 @@ const UserBlock: React.FC<IProps> = ({setState, userState, lang}): JSX.Element =
             {userState.token ? 
             <div className="info">
                 <span className='username'>{lang === 'en' ? '' : 'Личный кабинет'}</span>
+                <button className='button_blue btn_logout' onClick={onLogoutClick}>{lang === 'en' ? 'Logout' : 'Выйти'}</button>
             </div>
             :
             <div className="info">
@@ -84,11 +85,6 @@ const UserBlock: React.FC<IProps> = ({setState, userState, lang}): JSX.Element =
                 <button className='button_blue btn_login' onClick={onLoginClick}>{lang === 'en' ? 'Login' : 'Войти'}</button>
             </div>
             }           
-            <div className="content">
-                <button className='button_blue btn_logout' onClick={onLogoutClick}>{lang === 'en' ? 'Logout' : 'Выйти'}</button>
-                dfgfdg
-
-            </div>
 
 
             <Modal {...{visible: modal.visible, close: closeModal, escExit: true}}>

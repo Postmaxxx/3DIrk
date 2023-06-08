@@ -200,7 +200,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
                         <div className="order__block">
 
                             <form className="order__container">
-                                <h2>{lang === 'en' ? 'Make an order' : 'Отправить заявку'}</h2>
+                                <h2>{lang === 'en' ? 'Additional information' : 'Дополнительная информация'}</h2>
                                 <div className="data-block">
 
                                     <div className="inputs-block">

@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 const { Router } = require("express")
 const User = require("../models/User")
 const { check, validationResult } = require('express-validator')
@@ -57,7 +58,6 @@ router.post('/login',
     ],
     async (req, res) => {
         const errors = validationResult(req)
-
         if (!errors.isEmpty()) {
             return res.status(400).json({
                 errors: errors.array(),
@@ -101,5 +101,49 @@ router.post('/login',
         }
     }
 )
+
+
+
+router.post('/login-token',
+    async (req, res) => {       
+        try {
+            const receivedToken = req.headers.authorization?.split(' ')?.[1]
+            const decodedUserID = jwt.verify(receivedToken, process.env.jwtSecret)
+            if (!decodedUserID) {
+                return res.status(400).json({ message: { en: 'Token is invalid', ru: "Токен недействителен"}})
+            }
+            if (decodedUserID.iat > decodedUserID.exp) {
+                return res.status(400).json({ message: { en: 'Token is expired', ru: "Токен истек"}})
+            }
+            const user = await User.findOne( {_id: decodedUserID.userId} )
+            if (!user) {
+                return res.status(400).json({ message: { en: 'User was not found', ru: "Пользователь не найден"}})
+            }
+
+            const newToken = jwt.sign(
+                {userId: user.id},
+                process.env.jwtSecret,
+                { expiresIn: "1h"}
+            )
+
+            const userToFront = {
+                name: user.name,
+                email: user.email,
+                phone: user.phone,
+                orders: user.orders,
+                token: newToken
+            }
+            
+            res.status(200).json({user: userToFront, message: {en: 'Login success', ru: 'Успешный вход'}})
+
+        } catch (error) {
+            res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})
+        }
+    }
+)
+
+
+
+
 
 module.exports = router

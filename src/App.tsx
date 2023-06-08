@@ -1,17 +1,14 @@
+import { Fragment, useEffect, useState,  useRef } from "react";
 import { Routes, Route, HashRouter } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import Preloader from "./components/Preloaders/Preloader"; 
 import "./assets/css/_base.scss";
-import { IDataLoading, IFullState, TLang } from "./interfaces";
+import { IDataLoading, IFullState, IUserState, TLang } from "./interfaces";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import { loadFibers } from "./redux/actions/fibers"
-import { loadColors } from "./redux/actions/colors"
-import { loadCart }  from "./redux/actions/cart"
+import { allActions } from "./redux/actions/all";
 import P404 from "./pages/P404/P404";
-
-
 
 const LazyThemeSwitcher = lazy(() => import("./components/ThemeSwitcher/ThemeSwitcher"));
 const LazyLangSwitcher = lazy(() => import("./components/LangSwitcher/LangSwitcher"));
@@ -30,11 +27,6 @@ const LazyOffliner= lazy(() => import("./components/Offliner/Offliner"));
 const LazyUserBlock= lazy(() => import("./components/UserBlock/UserBlock"));
 
 
-const actionsCartList = { loadCart }
-const actionsListColors = { loadColors }
-const actionsListFibers = { loadFibers }
-
-
 interface IPropsState {
     lang: TLang
 	cartLoad: IDataLoading
@@ -44,9 +36,11 @@ interface IPropsState {
 
 interface IPropsActions {
     setState: {
-        cart: typeof actionsCartList,
-        colors: typeof actionsListColors,
-        fiber: typeof actionsListFibers,
+        base: typeof allActions.base
+        fibers: typeof allActions.fibers
+        user: typeof allActions.user
+        colors: typeof allActions.colors
+		cart: typeof allActions.cart
     }
 }
 
@@ -58,11 +52,14 @@ interface IProps extends IPropsState, IPropsActions {}
 const App:React.FC<IProps> = ({lang, cartLoad, colorsLoad, setState, fibersLoad}):JSX.Element => {
 	
 
-	cartLoad.status === 'idle' && setState.cart.loadCart()
-	colorsLoad.status === 'idle' && setState.colors.loadColors()
-	fibersLoad.status === 'idle' && setState.fiber.loadFibers()
+	useEffect(() => {
+		setState.cart.loadCart()
+		setState.colors.loadColors()
+		setState.fibers.loadFibers()
+		setState.user.loginWithToken()
+	}, [])
 
-	
+
 	return (
 		<HashRouter>
 			<Suspense fallback={<Preloader />}><LazyThemeSwitcher /></Suspense>
@@ -106,11 +103,13 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
 	fibersLoad: state.fibers.dataLoading,
 })
 
-const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>):IPropsActions => ({
     setState: {
-		cart: bindActionCreators(actionsCartList, dispatch),
-        colors: bindActionCreators(actionsListColors, dispatch),
-        fiber: bindActionCreators(actionsListFibers, dispatch),
+		base: bindActionCreators(allActions.base, dispatch),
+		fibers: bindActionCreators(allActions.fibers, dispatch),
+		colors: bindActionCreators(allActions.colors, dispatch),
+		user: bindActionCreators(allActions.user, dispatch),
+		cart: bindActionCreators(allActions.cart, dispatch),
 	}
 })
   

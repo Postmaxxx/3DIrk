@@ -73,11 +73,11 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
 	}, [fibersState.dataLoading.status, lang])
 
 
-    const onNavWithSubClicked = (pageId: IPageItem["id"]) => {
-        if (expandedNavItems.includes(pageId)) {
-            setExpandedNavItems(expandedNavItems.filter(id => id !== pageId))
+    const onNavWithSubClicked = (navId: string) => {
+        if (expandedNavItems.includes(navId)) {
+            setExpandedNavItems(expandedNavItems.filter(id => id !== navId))
         } else (
-            setExpandedNavItems([...expandedNavItems, pageId])
+            setExpandedNavItems([...expandedNavItems, navId])
         )
     }
 
@@ -88,13 +88,26 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
 	}
 
 
-    const onClickNotLink = (id: IPageItem['id']) => {
-        if (id === 'main_auth') {
+    const onClickNotLink = (action: string) => {
+        if (action === 'login' && !userState.token) {
 		    setModal({visible: true})
         }
+        if (action === 'logout') {
+            setState.user.setUser({
+                name: '', 
+                email: '', 
+                phone: '', 
+                token: '', 
+                orders: [], 
+                auth: {status: 'idle', message: {en: '', ru: ''}, errors: []}
+            })
+            localStorage.removeItem('user')        
+        }
+
+        navToggleMobile()
     }
 
-
+/*
     const onLogoutClick = () => {
         setState.user.setUser({
             name: '', 
@@ -106,54 +119,126 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
         })
         localStorage.removeItem('token')
     }
-
+*/
 
     return (
         <>
             <nav className={desktopOpened ? "nav_desktop opened" : "nav_desktop"}>
                 <div className="nav__container">
                     <ul>
-                        {nav.map((page: IPageItem) => {
-                            return (
-                                <li key={page.path} className={page.subMenu? 'extandable' : ''}>
-                                    {page.notLink ? 
-                                        <a className="not-link" onClick={() => onClickNotLink(page.id)}>{page.name[lang]}</a>
-                                    :
-                                        <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
-                                            to={page.path}
-                                            data-nav-text={page.id}
-                                        >
-                                            {page.name[lang]}
-                                            {page.name.en === 'order' ? <div className="cart-informer__container"><CartInformer /></div> : null}
-                                        </NavLink>
-                                    }
-                                    {page.subMenu ? 
-                                        <ul>
-                                            <li className="sub_menu">
-                                                <ul className="submenu__content">
-                                                    {page.subMenu.map(subPage => {
-                                                        return (
-                                                            <li key={subPage.path}>
-                                                                {page.notLink ? 
-                                                                    <a className="not-link" onClick={() => onClickNotLink(page.id)}>{subPage.name[lang]}</a>
-                                                                :
-                                                                    <NavLink
-                                                                        to={subPage.path}
-                                                                        data-subnav-text={page.id}
-                                                                    >
-                                                                        {subPage.name[lang]}
-                                                                    </NavLink>
-                                                                }   
-                                                            </li>
-                                                        )
-                                                    })}
-                                                </ul>
+                        <li>
+                            <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
+                                to='/'
+                            >
+                                {lang === 'en' ? 'HOME' : 'ГЛАВНАЯ'}
+                            </NavLink>
+                        </li>
+
+                        <li className="extandable">
+                            <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
+                                to='/fibers'
+                            >
+                                {lang === 'en' ? 'FIBERS' : 'МАТЕРИАЛЫ '}
+                            </NavLink>
+                            <ul className="sub_menu">
+                                <li>
+                                    <ul className="submenu__content">
+                                        <li>
+                                            <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
+                                                to={`fibers`}
+                                                end
+                                            >
+                                                {lang === 'en' ? 'ABOUT' : 'О ФИЛАМЕНТАХ'}
+                                            </NavLink>
+                                        </li>
+                                        <li>
+                                            <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
+                                                to={`/fibers/compare`}
+                                            >
+                                                {lang === 'en' ? 'COMPARASING' : 'СРАВНЕНИЕ'}
+                                            </NavLink>
+                                        </li>
+                                        {fibersState.fibersList.map(fiber => {
+                                            return (
+                                                <li key={fiber.id}>
+                                                   <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
+                                                       to={`fibers/${fiber.id}`}
+                                                   >
+                                                       {fiber.short.name[lang]}
+                                                   </NavLink>
+                                                </li>
+                                            )
+                                        })}
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li>
+                            <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
+                                to='/catalog'
+                            >
+                                {lang === 'en' ? 'CATALOG' : 'КАТАЛОГ'}
+                            </NavLink>
+                        </li>
+                        {userState.token ? 
+                            <li>
+                                <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
+                                    to='/order'
+                                >
+                                    {lang === 'en' ? 'CART' : 'КОРЗИНА'}
+                                </NavLink>
+                                <div className="cart-informer__container"><CartInformer /></div>
+
+                            </li>
+                        :
+                            <li>
+                                <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
+                                    to='/contact_us'
+                                >
+                                    {lang === 'en' ? 'CONTACT' : 'НАПИСАТЬ'}
+                                </NavLink>
+                            </li>
+                        }
+                        {userState.token ? 
+                            <li className="extandable">
+                                <a className="not-link" onClick={() => onClickNotLink('login')}>{lang === 'en' ? 'CABINET' : 'Кабинет'}</a>
+                                <ul className="sub_menu">
+                                    <li>
+                                        <ul className="submenu__content">
+                                            <li>
+                                                <NavLink
+                                                    to='/order'
+                                                >
+                                                    {lang === 'en' ? 'CART' : 'КОРЗИНА'}
+                                                </NavLink>
+                                            </li> 
+                                            <li>
+                                                <NavLink
+                                                    to='/order'
+                                                >
+                                                    {lang === 'en' ? 'ORDERS HISTORY' : 'ИСТОРИЯ ЗАКАЗОВ'}
+                                                </NavLink>
+                                            </li>
+                                            <li>
+                                                <NavLink
+                                                    to='/contact_us'
+                                                >
+                                                    {lang === 'en' ? 'WRITE US' : 'НАПИСАТЬ НАМ'}
+                                                </NavLink>
+                                            </li>
+                                            <li>
+                                                <a className="not-link" onClick={() => onClickNotLink('logout')}>{lang === 'en' ? 'LOGOUT' : 'ВЫХОД'}</a>
                                             </li>
                                         </ul>
-                                    : null}
-                                </li>
-                            )
-                        })}
+                                    </li>
+                                </ul>
+                            </li>
+                            :
+                            <li>
+                                <a className="not-link" onClick={() => onClickNotLink('login')}>{lang === 'en' ? 'LOGIN' : 'ВХОД'}</a>
+                            </li>
+                        }
                     </ul>
                 </div>
                 <div className="nav__switcher">
@@ -170,6 +255,11 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
 
 
 
+
+
+
+
+
             <nav className={mobOpened ? "nav_mobile opened" : "nav_mobile"}>
                 <div className="nav__switcher">
                     <label aria-label="open/hide navigation">
@@ -183,42 +273,108 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
                 <div className="blur" ref={_blur}></div>
                 <div className="nav__container">
                     <ul>
-                        {nav.map((page: IPageItem) => {
-                            return (
-                                <Fragment key={page.path}>
-                                    {page.subMenu?.length ? 
-                                        <li className={`${expandedNavItems.includes(page.id) ? 'expanded' : ''}`}>
-                                            <span onClick={() => onNavWithSubClicked(page.id)}>{page.name[lang]}</span>
-                                            <div>
-                                                <ul className="nav__subNav">
-                                                    {page.subMenu?.map((subPage) => {
-                                                        return (
-                                                            <li key={subPage.id}>
-                                                                <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} 
-                                                                    onClick={navToggleMobile}
-                                                                    to={subPage.path} end>
-                                                                    {subPage.name[lang]}
-                                                                    
-                                                                </NavLink>
-                                                            </li>
-                                                        )
-                                                    })}
+                        <li>
+                            <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
+                                to='/'
+                                onClick={navToggleMobile}
+                            >
+                                {lang === 'en' ? 'HOME' : 'ГЛАВНАЯ'}
+                            </NavLink>
+                        </li>
 
-                                                </ul>
-                                            </div>
-                                            
-                                        </li>
-                                        :
+
+                        <li className={`${expandedNavItems.includes('fibers') ? 'expanded' : ''}`}>
+                            <span onClick={() => onNavWithSubClicked('fibers')}>{lang === 'en' ? 'FIBERS' : 'МАТЕРИАЛЫ '}</span>
+                            <div>
+                                <ul className="nav__subnav">
+                                    {fibersState.fibersList.map((fiber) => {
+                                        return (
+                                            <li key={fiber.id}>
+                                                <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} 
+                                                    onClick={navToggleMobile}
+                                                    to={`fibers/${fiber.id}`}
+                                                    end>
+                                                    {fiber.short.name[lang]}
+                                                    
+                                                </NavLink>
+                                            </li>
+                                        )
+                                    })}
+                                </ul>
+                            </div>              
+                        </li>
+
+
+                        <li>
+                            <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
+                                to='/catalog'
+                                onClick={navToggleMobile}
+                            >
+                                {lang === 'en' ? 'CATALOG' : 'КАТАЛОГ'}
+                            </NavLink>
+                        </li>
+                        {userState.token ? 
+                            <li className="narrow">
+                                <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
+                                    to='/order'
+                                    onClick={navToggleMobile}
+                                >
+                                    {lang === 'en' ? 'CART' : 'КОРЗИНА'}
+                                </NavLink>
+                                <div className="cart-informer__container"><CartInformer /></div>          
+                            </li>
+                        :
+                            <li>
+                                <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
+                                    to='/contacts'
+                                    onClick={navToggleMobile}
+                                >
+                                    {lang === 'en' ? 'CONTACTS' : 'КОНТАКТЫ'}
+                                </NavLink>
+                            </li>
+                        }
+
+                        
+                        {userState.token ? 
+                            <li className={`${expandedNavItems.includes('cabinet') ? 'expanded' : ''}`}>
+                                <span onClick={() => onNavWithSubClicked('cabinet')}>{lang === 'en' ? 'CABINET' : 'КАБИНЕТ '}</span>
+                                <div>
+                                    <ul className="nav__subnav noscroll">
                                         <li>
-                                            <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} onClick={navToggleMobile}
-                                                to={page.path}>
-                                                {page.name[lang]}
+                                            <NavLink
+                                                to='/order'
+                                                onClick={navToggleMobile}
+                                            >
+                                                {lang === 'en' ? 'CART' : 'КОРЗИНА'}
+                                            </NavLink>
+                                            <div className="cart-informer__container"><CartInformer /></div>          
+                                        </li> 
+                                        <li>
+                                            <NavLink
+                                                to='/order'
+                                                onClick={navToggleMobile}
+                                            >
+                                                {lang === 'en' ? 'ORDERS HISTORY' : 'ИСТОРИЯ ЗАКАЗОВ'}
                                             </NavLink>
                                         </li>
-                                    }
-                                </Fragment>
-                            )
-                        })
+                                        <li>
+                                            <NavLink
+                                                to='/order'
+                                                onClick={navToggleMobile}
+                                            >
+                                                {lang === 'en' ? 'WRITE US' : 'НАПИСАТЬ НАМ'}
+                                            </NavLink>
+                                        </li>
+                                        <li>
+                                            <a className="not-link" onClick={() => onClickNotLink('logout')}>{lang === 'en' ? 'LOGOUT' : 'ВЫХОД'}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                        :
+                            <li>
+                                <a className="not-link" onClick={() => onClickNotLink('login')}>{lang === 'en' ? 'LOGIN' : 'ВХОД'}</a>
+                            </li>
                         }
                     </ul>
                 </div>
