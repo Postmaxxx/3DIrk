@@ -42,30 +42,20 @@ export const register = ({name, email, phone, password}: ILoggingForm) => {
 
 
 
-export const login = ({email, password}: ILoggingForm) => {   
+export const login = ({email, password}: ILoggingForm) => {       
     return async function(dispatch: IDispatch, getState: () => IFullState) {
         const { user } = getState() //get current user state
         dispatch(setUser({...user, auth: {status: 'fetching', message: {en: '', ru: ''}, errors: []}}))
         const savedUser = localStorage.getItem('user')
-        const currentToken: string = savedUser ? await JSON.parse(savedUser).token : null
         try {
-            const response: Response = currentToken ? (
-                await fetch('/api/auth/login-token', {
-                    method: 'POST',
-                    headers: {
-                        "Content-Type": 'application/json',
-                        'Authorization': `Bearer ${currentToken}`
-                    },
-                })
-            ) : (
-                await fetch('/api/auth/login', {
+            const response: Response = await fetch('/api/auth/login', {
                     method: 'POST',
                     headers: {
                         "Content-Type": 'application/json',
                     },
                     body: JSON.stringify({email, password})
                 })
-            )
+            
             
             if (response.status !== 200) {
                 const result: IUserLoginResErr = await response.json() //message, errors

@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { TLang, IFullState, IFibersState, IColorsState, IColor, TLangText, IFiber, IPropertyTypes } from "../../interfaces";
 import { useEffect, useState, Fragment } from 'react'; 
 import Preloader from '../../components/Preloaders/Preloader';
-import { loadFibers, setShowListFibers, setSelectedFiber }  from "../../redux/actions/fibers"
+import { loadFibers, setSelectedFiber }  from "../../redux/actions/fibers"
 import { loadColors }  from "../../redux/actions/colors"
 import { NavLink } from 'react-router-dom';
 import SvgInserter from '../../components/tiny/SvgInserter/SvgInserter';
@@ -12,7 +12,7 @@ import RatingLine from '../../components/tiny/RatingLine/RatingLine';
 import RatingMoney from '../../components/tiny/RatingMoney/RatingMoney';
 import { propertiesList, propertiesValues } from '../../assets/data/fibers';
 
-const actionsListFibers = { loadFibers, setShowListFibers, setSelectedFiber }
+const actionsListFibers = { loadFibers, setSelectedFiber }
 const actionsListColors = { loadColors }
 
 interface IPropsState {
@@ -37,6 +37,7 @@ const FibersCompare:React.FC<IProps> = ({lang, fibers, colors, setState}):JSX.El
     const [selectError, setSelectError] = useState<boolean>(false)
     const [selectedMore, setSelectedMore] = useState<boolean>(false)
     const [selectedProperty, setSelectedProperty] = useState<IPropertyTypes>()
+    const [showList, setShowList] = useState<IFiber['id'][]>([])
 
     useEffect(() => {
         if (fibers.dataLoading.status === 'idle') {
@@ -48,7 +49,7 @@ const FibersCompare:React.FC<IProps> = ({lang, fibers, colors, setState}):JSX.El
             setLoaded(false)
         }
         if (colors.dataLoading.status === 'success' && fibers.dataLoading.status === 'success') {
-            setState.fibers.setShowListFibers(fibers.fibersList.map(fiber => fiber.id))
+            setShowList(fibers.fibersList.map(fiber => fiber.id))
             setLoaded(true)
         }
     }, [colors.dataLoading?.status, fibers.dataLoading?.status])
@@ -68,7 +69,7 @@ const FibersCompare:React.FC<IProps> = ({lang, fibers, colors, setState}):JSX.El
                 setSelectError(true)
             return
         }
-        setState.fibers.setShowListFibers(selectedFibers)
+        setShowList(selectedFibers)
         setFiltered(true)
         clearCheckboxes()
         setSelectedMore(false)
@@ -82,7 +83,7 @@ const FibersCompare:React.FC<IProps> = ({lang, fibers, colors, setState}):JSX.El
 
     const clearSelected = () => {
         setFiltered(false)  
-        setState.fibers.setShowListFibers(fibers.fibersList.map(fiber => fiber.id))
+        setShowList(fibers.fibersList.map(fiber => fiber.id))
         clearCheckboxes()
     }
 
@@ -143,7 +144,7 @@ const FibersCompare:React.FC<IProps> = ({lang, fibers, colors, setState}):JSX.El
 
 
                                 {fibers.fibersList
-                                    .filter(fiber => fibers.showList.includes(fiber.id))
+                                    .filter(fiber => showList.includes(fiber.id))
                                     .map((fiber, i) => {
                                     return (
                                     <Fragment key={fiber.id}>

@@ -1,4 +1,3 @@
-import { useRef } from 'react';
 const { Router } = require("express")
 const User = require("../models/User")
 const { check, validationResult } = require('express-validator')
@@ -97,7 +96,7 @@ router.post('/login',
             res.status(200).json({user: userToFront, message: {en: 'Login success', ru: 'Успешный вход'}})
 
         } catch (error) {
-            res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})
+            res.status(500).json({ message:{en: `Something wrong with server (${error}), try again later`, ru: `Ошибка на сервере (${error}), попробуйте позже`}})
         }
     }
 )
@@ -137,7 +136,7 @@ router.post('/login-token',
             res.status(200).json({user: userToFront, message: {en: 'Login success', ru: 'Успешный вход'}})
 
         } catch (error) {
-            res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})
+            res.status(500).json({ message:{en: `Something wrong with server (${error}), try again later`, ru: `Ошибка на сервере (${error}), попробуйте позже`}})
         }
     }
 )
@@ -146,4 +145,4 @@ router.post('/login-token',
 
 
 
-module.exports = router
+export default router

@@ -22,13 +22,6 @@ const reducerFibers = (state:IFibersState = initialFibersState, action: IAction<
                 ...state, 
                 selected: action.payload
             }
-        case actionsListFibers.SET_SHOW_LIST_FIBERS: 
-            return {
-                ...state, 
-                showList: action.payload
-            }
-
-
         default: return state
     }
 }

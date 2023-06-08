@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken')
 
-module.exports = (req, res, next) => {
+const tokenInjector = (req, res, next) => {
 
     if (req.method === 'OPTIONS') {
         return next()
@@ -22,3 +22,5 @@ module.exports = (req, res, next) => {
     }
 
 }
+
+export default tokenInjector

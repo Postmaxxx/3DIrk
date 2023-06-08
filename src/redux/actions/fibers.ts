@@ -16,11 +16,6 @@ export const setDataFibers = <T extends Array<IFiber>>(payload: T):IAction<T> =>
 });
 
 
-export const setShowListFibers = <T extends Array<IFiber['id']>>(payload: T):IAction<T> => ({
-    type: actionsListFibers.SET_SHOW_LIST_FIBERS,
-    payload: payload
-});
-
 export const setSelectedFiber = <T extends IFiber['id']>(payload: T):IAction<T> => ({
     type: actionsListFibers.SET_SELECTED_FIBER,
     payload: payload

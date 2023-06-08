@@ -1,9 +1,9 @@
-const express = require('express')
 require('dotenv').config()
+import authRoutes from './routes/auth.routes'
+import fibersRoutes from './routes/fibers.routes'
+const express = require('express')
 const mongoose = require("mongoose")
-const routesAuth = require("./routes/auth")
 const cors = require('cors')
-
 const app = express()
 
 
@@ -18,9 +18,10 @@ app.use(cors({
 }));
 
 //auth
-app.use('/api/auth', require("./routes/auth"))
+app.use('/api/auth', authRoutes)
 
-
+//fibers
+app.use('/api/fibers', fibersRoutes)
 
 const PORT: number = Number(process.env.PORT) || 5000
 

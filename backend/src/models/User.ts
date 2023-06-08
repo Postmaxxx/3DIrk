@@ -1,7 +1,7 @@
 const { Schema, model, Types } = require('mongoose')
 
 interface IUserSchema {
-    
+
 }
 
 const userSchema = new Schema({
@@ -14,4 +14,4 @@ const userSchema = new Schema({
 })
 
 
-module.exports = model('User', userSchema)
+export default model('User', userSchema)

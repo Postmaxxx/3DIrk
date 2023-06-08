@@ -196,7 +196,7 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
                                 <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
                                     to='/contact_us'
                                 >
-                                    {lang === 'en' ? 'CONTACT' : 'НАПИСАТЬ'}
+                                    {lang === 'en' ? 'CONTACT' : 'СООБЩЕНИЕ'}
                                 </NavLink>
                             </li>
                         }
@@ -217,14 +217,14 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
                                                 <NavLink
                                                     to='/order'
                                                 >
-                                                    {lang === 'en' ? 'ORDERS HISTORY' : 'ИСТОРИЯ ЗАКАЗОВ'}
+                                                    {lang === 'en' ? 'ORDERS HISTORY' : 'ЗАКАЗЫ'}
                                                 </NavLink>
                                             </li>
                                             <li>
                                                 <NavLink
                                                     to='/contact_us'
                                                 >
-                                                    {lang === 'en' ? 'WRITE US' : 'НАПИСАТЬ НАМ'}
+                                                    {lang === 'en' ? 'WRITE US' : 'СООБЩЕНИЕ'}
                                                 </NavLink>
                                             </li>
                                             <li>
@@ -354,7 +354,7 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
                                                 to='/order'
                                                 onClick={navToggleMobile}
                                             >
-                                                {lang === 'en' ? 'ORDERS HISTORY' : 'ИСТОРИЯ ЗАКАЗОВ'}
+                                                {lang === 'en' ? 'ORDERS HISTORY' : 'ЗАКАЗЫ'}
                                             </NavLink>
                                         </li>
                                         <li>
@@ -362,7 +362,7 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
                                                 to='/order'
                                                 onClick={navToggleMobile}
                                             >
-                                                {lang === 'en' ? 'WRITE US' : 'НАПИСАТЬ НАМ'}
+                                                {lang === 'en' ? 'WRITE US' : 'СООБЩЕНИЕ'}
                                             </NavLink>
                                         </li>
                                         <li>
