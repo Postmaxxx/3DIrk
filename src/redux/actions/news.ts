@@ -1,4 +1,4 @@
-import { IAction, IDataLoading, IDispatch, INewsItem } from "src/interfaces"
+import { IAction, IDataLoading, IDataSending, IDispatch, IFullState, IMsgErrRes, INewsItem } from "src/interfaces"
 import mockNews from '../mocks/news'
 import { actionsListNews } from './actionsList'
 
@@ -6,6 +6,12 @@ import { actionsListNews } from './actionsList'
 
 export const setLoadDataStatusNews = <T extends IDataLoading>(payload: T):IAction<T> => ({
     type: actionsListNews.SET_LOAD_DATA_STATUS_NEWS,
+    payload: payload
+});
+
+
+export const setSendDataStatusNews = <T extends IDataSending>(payload: T):IAction<T> => ({
+    type: actionsListNews.SET_SEND_DATA_STATUS_NEWS,
     payload: payload
 });
 
@@ -32,3 +38,40 @@ export const loadAllNews = () => {
         }
     }
 }
+
+
+export const postNews = (news: Omit<INewsItem, "id" | "imgs">) => {
+    return async function(dispatch: IDispatch, getState: () => IFullState) {
+        const { user } = getState() //get current user state
+        dispatch(setSendDataStatusNews({status: 'sending', message: `Sending news`}))
+
+        console.log(JSON.stringify(news));
+        
+        try {
+            const response: Response = await fetch('/api/news/create', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": 'application/json',
+                    'Authorization': `Bearer ${user.token}`
+                },
+                body: '{"header":{"en":"","ru":""},"short":{"en":"","ru":""},"text":{"en":["3"],"ru":[{"part":""}]},"date":"2023-06-09T04:00:03.825Z"}'
+            })
+
+            const result: IMsgErrRes = await response.json() //message, errors
+
+            if (response.status !== 201) {
+                dispatch(setSendDataStatusNews({status: 'error', message: `Error while posting news: ${result.message}`}))
+            }
+
+            dispatch(setSendDataStatusNews({status: 'success', message: `News has been posted`}))
+
+
+            
+        } catch (error) {
+            dispatch(setSendDataStatusNews({status: 'error', message: `Error while posting news: ${error}`}))
+        }
+
+    }
+}
+
+

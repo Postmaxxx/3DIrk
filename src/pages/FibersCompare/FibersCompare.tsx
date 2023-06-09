@@ -1,7 +1,7 @@
 import './FibersCompare.scss'
 import { AnyAction, bindActionCreators, Dispatch } from "redux";
 import { connect } from "react-redux";
-import { TLang, IFullState, IFibersState, IColorsState, IColor, TLangText, IFiber, IPropertyTypes } from "../../interfaces";
+import { TLang, IFullState, IFibersState, IColorsState, IColor, TLangText, IFiber } from "../../interfaces";
 import { useEffect, useState, Fragment } from 'react'; 
 import Preloader from '../../components/Preloaders/Preloader';
 import { loadFibers, setSelectedFiber }  from "../../redux/actions/fibers"
@@ -10,7 +10,7 @@ import { NavLink } from 'react-router-dom';
 import SvgInserter from '../../components/tiny/SvgInserter/SvgInserter';
 import RatingLine from '../../components/tiny/RatingLine/RatingLine';
 import RatingMoney from '../../components/tiny/RatingMoney/RatingMoney';
-import { propertiesList, propertiesValues } from '../../assets/data/fibers';
+import { fibersProperties } from '../../assets/data/fibersProperties';
 
 const actionsListFibers = { loadFibers, setSelectedFiber }
 const actionsListColors = { loadColors }
@@ -36,7 +36,7 @@ const FibersCompare:React.FC<IProps> = ({lang, fibers, colors, setState}):JSX.El
     const [filtered, setFiltered] = useState<boolean>(false)
     const [selectError, setSelectError] = useState<boolean>(false)
     const [selectedMore, setSelectedMore] = useState<boolean>(false)
-    const [selectedProperty, setSelectedProperty] = useState<IPropertyTypes>()
+    const [selectedProperty, setSelectedProperty] = useState<any>()
     const [showList, setShowList] = useState<IFiber['id'][]>([])
 
     useEffect(() => {
@@ -97,7 +97,7 @@ const FibersCompare:React.FC<IProps> = ({lang, fibers, colors, setState}):JSX.El
     }
 
 
-    const onCellClick = (id: IFiber['id'], propertyName: IPropertyTypes | '') => { //
+    const onCellClick = (id: IFiber['id'], propertyName: string) => { 
         setState.fibers.setSelectedFiber(id)
         if (propertyName) {
             setSelectedProperty(propertyName)
@@ -124,14 +124,14 @@ const FibersCompare:React.FC<IProps> = ({lang, fibers, colors, setState}):JSX.El
                                        
                                         {selectError && <span className='error-message'>{lang === 'en' ? `select 2 or more` : `выберите 2 или более`}</span>}
                                 </div>
-                                {propertiesList.map((property) => {
+                                {fibersProperties.map((property, i) => {
                                     return (
-                                        <div className="cell row-name fixed-left with-tip padding_no" key={property}>
+                                        <div className="cell row-name fixed-left with-tip padding_no" key={property.id}>
                                             <NavLink 
-                                                key={property}
+                                                key={property.id}
                                                 to='/fibers'>
-                                                    <span>{propertiesValues[property].name[lang]}</span>
-                                                    <div className='tip' title={propertiesValues[property].tip[lang]}>
+                                                    <span>{property.name[lang]}</span>
+                                                    <div className='tip' title={property.tip[lang]}>
                                                         <SvgInserter type={'question'}/>
                                                     </div>
                                             </NavLink>
@@ -166,29 +166,28 @@ const FibersCompare:React.FC<IProps> = ({lang, fibers, colors, setState}):JSX.El
                                                 <span></span>
                                             </label>
                                         </div>
-                                        {propertiesList.map((property, i) => {
+                                        {fibersProperties.map((property, i) => {
                                             return (
-                                                <div className={`cell ${fiber.id === fibers.selected ? 'selected' : ''} ${selectedProperty === property ? 'selected' : ''}`} key={`${fiber.id}-${property}`}  onClick={e => onCellClick(fiber.id, property)}>
-                                                    {property === "strength" && <div className="rating__container"><RatingLine colorValue='blue' min={0} max={180} value={fiber.params[property]} text={`${fiber.params[property]}`} measurment={lang === 'en' ? ' MPa' : ' МПа'}/></div>}
-                                                    {property === "stiffnes" && <div className="rating__container"><RatingLine colorValue='red' min={0} max={10} value={fiber.params[property]} text={`${fiber.params[property]}`} measurment={' / 10'}/></div>}
-                                                    {property === "durability" && <div className="rating__container"><RatingLine colorValue='green' min={0} max={10} value={fiber.params[property]} text={`${fiber.params[property]}`} measurment={' / 10'}/></div>}
-                                                    {property === "resistantImpact" && <div className="rating__container"><RatingLine colorValue='lilac' min={0} max={10} value={fiber.params[property]} text={`${fiber.params[property]}`} measurment={' / 10'}/></div>}
-                                                    {(property === "minTemp" || property === "maxTemp" || property === "thermalExpansion" || property === "density") && <span>{fiber.params[property]} <span>{propertiesValues[property].unit[lang]}</span></span>}
-                                                    {(property === "flexible" 
-                                                    || property === "elastic"
-                                                    || property === "soft"
-                                                    || property === "composite"
-                                                    || property === "resistantUV"
-                                                    || property === "resistantWater"
-                                                    || property === "dissolvable"
-                                                    || property === "resistantHeat"
-                                                    || property === "resistantChemically"
-                                                    || property === "resistantFatigue"
-                                                    || property === "cutting"
-                                                    || property === "grinding"
-                                                    ) && <SvgInserter type={fiber.params[property] === 2 ? 'plus' : fiber.params[property] === 0 ? 'minus' : 'con'}/>}
-                                                    {/*property === "speed" && <span>{fiber.params.speed}</span>*/}
-                                                    {property === "price" && <RatingMoney value={fiber.params.price} max={5} text={``} measurment={''} />}
+                                                <div className={`cell ${fiber.id === fibers.selected ? 'selected' : ''} ${selectedProperty === property.id ? 'selected' : ''}`} key={`${fiber.id}-${property.id}`}  onClick={e => onCellClick(fiber.id, property.id)}>
+                                                    {property.id === "strength" && <div className="rating__container"><RatingLine colorValue='blue' min={0} max={180} value={fiber.params[property.id]} text={`${fiber.params[property.id]}`} measurment={lang === 'en' ? ' MPa' : ' МПа'}/></div>}
+                                                    {property.id === "stiffnes" && <div className="rating__container"><RatingLine colorValue='red' min={0} max={10} value={fiber.params[property.id]} text={`${fiber.params[property.id]}`} measurment={' / 10'}/></div>}
+                                                    {property.id === "durability" && <div className="rating__container"><RatingLine colorValue='green' min={0} max={10} value={fiber.params[property.id]} text={`${fiber.params[property.id]}`} measurment={' / 10'}/></div>}
+                                                    {property.id === "resistantImpact" && <div className="rating__container"><RatingLine colorValue='lilac' min={0} max={10} value={fiber.params[property.id]} text={`${fiber.params[property.id]}`} measurment={' / 10'}/></div>}
+                                                    {(property.id === "minTemp" || property.id === "maxTemp" || property.id === "thermalExpansion" || property.id === "density") && <span>{fiber.params[property.id]} <span>{property.unit[lang]}</span></span>}
+                                                    {(property.id === "flexible" 
+                                                    || property.id === "elastic"
+                                                    || property.id === "soft"
+                                                    || property.id === "composite"
+                                                    || property.id === "resistantUV"
+                                                    || property.id === "resistantWater"
+                                                    || property.id === "dissolvable"
+                                                    || property.id === "resistantHeat"
+                                                    || property.id === "resistantChemically"
+                                                    || property.id === "resistantFatigue"
+                                                    || property.id === "cutting"
+                                                    || property.id === "grinding"
+                                                    ) && <SvgInserter type={fiber.params[property.id] === 2 ? 'plus' : fiber.params[property.id] === 0 ? 'minus' : 'con'}/>}
+                                                    {property.id === "price" && <RatingMoney value={fiber.params.price} max={5} text={``} measurment={''} />}
                                                     
                                                 </div>
                                             )

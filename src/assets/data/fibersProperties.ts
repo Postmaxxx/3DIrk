@@ -1,33 +1,9 @@
-import { TPropertiesValues } from "src/interfaces"
-
-export const propertiesList = [
-    "strength",
-    "stiffnes",
-    "durability",
-    "resistantImpact",
-    "minTemp",
-    "maxTemp",
-    "thermalExpansion",
-    "density",
-    "flexible",
-    "elastic",
-    "soft",
-    "composite",
-    "resistantUV",
-    "resistantWater",
-    "dissolvable",
-    "resistantHeat",
-    "resistantChemically",
-    "resistantFatigue",
-    "cutting",
-    "grinding",
-    //"speed",
-    "price",
-] as const
+import { IFiberProperties } from "src/interfaces"
 
 
-export const propertiesValues: TPropertiesValues = {
-    strength: {
+export const fibersProperties = [
+    {
+        id: 'strength',
         name: {
             en: 'Strength',
             ru: 'Прочность'
@@ -41,7 +17,8 @@ export const propertiesValues: TPropertiesValues = {
             ru: 'Мпа'
         }
     },
-    stiffnes: {
+    {
+        id: 'stiffnes',
         name: {
             en: 'Stiffnes',
             ru: 'SПрочность'
@@ -55,7 +32,8 @@ export const propertiesValues: TPropertiesValues = {
             ru: ''
         }
     },
-    durability: {
+    {
+        id: 'durability',
         name: {
             en: 'Durability',
             ru: 'DПрочность'
@@ -69,105 +47,8 @@ export const propertiesValues: TPropertiesValues = {
             ru: ''
         }
     },
-    minTemp: {
-        name: {
-            en: 'Min usage temp',
-            ru: 'mПрочность'
-        },
-        tip: {
-            en: 'The maximum stress that a material can withstand without breaking.',
-            ru: 'Максимальная нагрузка, которую материал может выдержать без разрушения.'
-        },
-        unit: {
-            en: '°C',
-            ru: '°C'
-        }
-    },
-    maxTemp: {
-        name: {
-            en: 'Max usage temp',
-            ru: 'Прочность'
-        },
-        tip: {
-            en: 'The maximum stress that a material can withstand without breaking.',
-            ru: 'Максимальная нагрузка, которую материал может выдержать без разрушения.'
-        },
-        unit: {
-            en: '°C',
-            ru: '°C'
-        }
-    },
-    thermalExpansion: {
-        name: {
-            en: 'Thermal expansion',
-            ru: 'svПрочность'
-        },
-        tip: {
-            en: 'The maximum stress that a material can withstand without breaking.',
-            ru: 'Максимальная нагрузка, которую материал может выдержать без разрушения.'
-        },
-        unit: {
-            en: 'µm/m-°C',
-            ru: 'µm/m-°C'
-        }
-    },
-    density: {
-        name: {
-            en: 'Density',
-            ru: 'Прочность'
-        },
-        tip: {
-            en: 'The maximum stress that a material can withstand without breaking.',
-            ru: 'Максимальная нагрузка, которую материал может выдержать без разрушения.'
-        },
-        unit: {
-            en: 'g/cm3',
-            ru: 'г/см3'
-        }
-    },
-    price: {
-        name: {
-            en: 'Price',
-            ru: 'Цена'
-        },
-        tip: {
-            en: 'The maximum stress that a material can withstand without breaking.',
-            ru: 'Максимальная нагрузка, которую материал может выдержать без разрушения.'
-        },
-        unit: {
-            en: 'rub/gr',
-            ru: 'руб/гр'
-        }
-    },
-    flexible: {
-        name: {
-            en: 'Flexible',
-            ru: 'Прочность'
-        },
-        tip: {
-            en: 'The maximum stress that a material can withstand without breaking.',
-            ru: 'Максимальная нагрузка, которую материал может выдержать без разрушения.'
-        },
-        unit: {
-            en: '',
-            ru: ''
-        }
-    },
-    elastic: {
-        name: {
-            en: 'Elastic',
-            ru: 'Прочность'
-        },
-        tip: {
-            en: 'The maximum stress that a material can withstand without breaking.',
-            ru: 'Максимальная нагрузка, которую материал может выдержать без разрушения.'
-        },
-        unit: {
-            en: '',
-            ru: ''
-        }
-    },
-    resistantImpact: {
+    {
+        id: 'resistantImpact',
         name: {
             en: 'Impact resistant',
             ru: 'Прочность'
@@ -181,7 +62,98 @@ export const propertiesValues: TPropertiesValues = {
             ru: ''
         }
     },
-    soft: {
+    {
+        id: 'minTemp',
+        name: {
+            en: 'Min usage temp',
+            ru: 'mПрочность'
+        },
+        tip: {
+            en: 'The maximum stress that a material can withstand without breaking.',
+            ru: 'Максимальная нагрузка, которую материал может выдержать без разрушения.'
+        },
+        unit: {
+            en: '°C',
+            ru: '°C'
+        }
+    },
+    {
+        id: 'maxTemp',
+        name: {
+            en: 'Max usage temp',
+            ru: 'Прочность'
+        },
+        tip: {
+            en: 'The maximum stress that a material can withstand without breaking.',
+            ru: 'Максимальная нагрузка, которую материал может выдержать без разрушения.'
+        },
+        unit: {
+            en: '°C',
+            ru: '°C'
+        }
+    },
+    {
+        id: 'thermalExpansion',
+        name: {
+            en: 'Thermal expansion',
+            ru: 'svПрочность'
+        },
+        tip: {
+            en: 'The maximum stress that a material can withstand without breaking.',
+            ru: 'Максимальная нагрузка, которую материал может выдержать без разрушения.'
+        },
+        unit: {
+            en: 'µm/m-°C',
+            ru: 'µm/m-°C'
+        }
+    },
+    {
+        id: 'density',
+        name: {
+            en: 'Density',
+            ru: 'Прочность'
+        },
+        tip: {
+            en: 'The maximum stress that a material can withstand without breaking.',
+            ru: 'Максимальная нагрузка, которую материал может выдержать без разрушения.'
+        },
+        unit: {
+            en: 'g/cm3',
+            ru: 'г/см3'
+        }
+    },
+    {
+        id: 'flexible',
+        name: {
+            en: 'Flexible',
+            ru: 'Прочность'
+        },
+        tip: {
+            en: 'The maximum stress that a material can withstand without breaking.',
+            ru: 'Максимальная нагрузка, которую материал может выдержать без разрушения.'
+        },
+        unit: {
+            en: '',
+            ru: ''
+        }
+    },
+    {
+        id: 'elastic',
+        name: {
+            en: 'Elastic',
+            ru: 'Прочность'
+        },
+        tip: {
+            en: 'The maximum stress that a material can withstand without breaking.',
+            ru: 'Максимальная нагрузка, которую материал может выдержать без разрушения.'
+        },
+        unit: {
+            en: '',
+            ru: ''
+        }
+    },
+    {
+        id: 'soft',
         name: {
             en: 'Soft',
             ru: 'Прочность'
@@ -195,7 +167,8 @@ export const propertiesValues: TPropertiesValues = {
             ru: ''
         }
     },
-    composite: {
+    {
+        id: 'composite',
         name: {
             en: 'Composite',
             ru: 'Прочность'
@@ -209,7 +182,8 @@ export const propertiesValues: TPropertiesValues = {
             ru: ''
         }
     },
-    resistantUV: {
+    {
+        id: 'resistantUV',
         name: {
             en: 'UV resistant',
             ru: 'Прочность'
@@ -223,7 +197,8 @@ export const propertiesValues: TPropertiesValues = {
             ru: ''
         }
     },
-    resistantWater: {
+    {
+        id: 'resistantWater',
         name: {
             en: 'Water resistant',
             ru: 'Прочность'
@@ -237,7 +212,8 @@ export const propertiesValues: TPropertiesValues = {
             ru: ''
         }
     },
-    dissolvable: {
+    {
+        id: 'dissolvable',
         name: {
             en: 'Dissolvable',
             ru: 'Прочность'
@@ -251,7 +227,8 @@ export const propertiesValues: TPropertiesValues = {
             ru: ''
         }
     },
-    resistantHeat: {
+    {
+        id: 'resistantHeat',
         name: {
             en: 'Heat resistant',
             ru: 'Прочность'
@@ -265,7 +242,8 @@ export const propertiesValues: TPropertiesValues = {
             ru: '°C'
         }
     },
-    resistantChemically: {
+    {
+        id: 'resistantChemically',
         name: {
             en: 'Chemically resistant',
             ru: 'Прочность'
@@ -279,7 +257,8 @@ export const propertiesValues: TPropertiesValues = {
             ru: ''
         }
     },
-    resistantFatigue: {
+    {
+        id: 'resistantFatigue',
         name: {
             en: 'Fatigue resistant',
             ru: 'Прочность'
@@ -293,7 +272,8 @@ export const propertiesValues: TPropertiesValues = {
             ru: ''
         }
     },
-    cutting: {
+    {
+        id: 'cutting',
         name: {
             en: 'Cutting',
             ru: 'Прочность'
@@ -307,7 +287,8 @@ export const propertiesValues: TPropertiesValues = {
             ru: ''
         }
     },
-    grinding: {
+    {
+        id: 'grinding',
         name: {
             en: 'Grinding',
             ru: 'Прочность'
@@ -321,18 +302,19 @@ export const propertiesValues: TPropertiesValues = {
             ru: ''
         }
     },
-    /*speed: {
+    {
+        id: 'price',
         name: {
-            en: 'Printing speed',
-            ru: 'Прочность'
+            en: 'Price',
+            ru: 'Цена'
         },
         tip: {
             en: 'The maximum stress that a material can withstand without breaking.',
             ru: 'Максимальная нагрузка, которую материал может выдержать без разрушения.'
         },
         unit: {
-            en: '',
-            ru: ''
+            en: 'rub/gr',
+            ru: 'руб/гр'
         }
-    },*/
-}
+    },
+] satisfies IFiberProperties[]

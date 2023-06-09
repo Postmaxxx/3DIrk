@@ -5,6 +5,10 @@ const initialNews = {
         status: 'idle',
         message: ""
     },
+    dataSending: {
+        status: 'idle',
+        message: ""
+    },
     newsList: []
 } satisfies INewsState
 

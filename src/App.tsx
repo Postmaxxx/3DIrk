@@ -25,7 +25,7 @@ const LazyNewsDetails = lazy(() => import("./pages/NewsDetails/NewsDetails"));
 const LazyFibersCompare= lazy(() => import("./pages/FibersCompare/FibersCompare"));
 const LazyOffliner= lazy(() => import("./components/Offliner/Offliner"));
 const LazyUserBlock= lazy(() => import("./components/UserBlock/UserBlock"));
-
+const LasyNewsCreator = lazy(() => import("./pages/Admin/NewsCreator"));
 
 interface IPropsState {
     lang: TLang
@@ -86,6 +86,11 @@ const App:React.FC<IProps> = ({lang, cartLoad, colorsLoad, setState, fibersLoad}
 				</Route>
 				<Route path="news/:newsId" element={<Suspense fallback={<Preloader />}><LazyNewsDetails /></Suspense>} />
 				<Route path="/*" element={<Suspense fallback={<Preloader />}><P404 lang={lang}/></Suspense>} />
+
+
+				<Route path="/admin">
+					<Route path="news-create" element={<Suspense fallback={<Preloader />}><LasyNewsCreator /></Suspense>} />
+				</Route>
 			</Routes>
 
 			<LazyFooter />

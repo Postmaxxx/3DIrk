@@ -16,7 +16,8 @@ export const actionsListBase = {
 
 export const actionsListNews = {
     SET_DATA_NEWS: 'SET_DATA_NEWS',
-    SET_LOAD_DATA_STATUS_NEWS: 'SET_LOAD_DATA_STATUS_NEWS'
+    SET_LOAD_DATA_STATUS_NEWS: 'SET_LOAD_DATA_STATUS_NEWS',
+    SET_SEND_DATA_STATUS_NEWS: 'SET_SEND_DATA_STATUS_NEWS'
 }
 
 export const actionsListFibers = {

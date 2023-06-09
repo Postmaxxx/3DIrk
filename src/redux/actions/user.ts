@@ -1,4 +1,4 @@
-import { IAction, IDispatch, IFullState, ILoggingForm, IUserLoginResErr, IUserLoginResOk, IUserRegisterRes, IUserState, TLangText } from "src/interfaces";
+import { IAction, IDispatch, IFullState, ILoggingForm, IMsgErrRes, IUserLoginResOk, IUserState, TLangText } from "src/interfaces";
 import { actionsListUser } from './actionsList'
 
 
@@ -20,21 +20,21 @@ export const register = ({name, email, phone, password}: ILoggingForm) => {
                 },
                 body: JSON.stringify({name, email, phone, password})
             })    
-            const result: IUserRegisterRes = await response.json() //message, errors
+            const result: IMsgErrRes = await response.json() //message, errors
             if (response.status !== 201) {
                 return dispatch(setUser({
                     ...user, 
                     auth: {
                         status: 'error', 
-                        message: (result as IUserRegisterRes).message, 
+                        message: (result as IMsgErrRes).message, 
                         errors: result.errors as TLangText[] || []
                     }
                 }))
             }
-            dispatch(setUser({...user, auth: {status: 'success', message: result.message, errors: []}}))
-            login({email, password})
+            //dispatch(setUser({...user, auth: {status: 'success', message: result.message, errors: []}}))     
+            await login({email, password})(dispatch, getState)
         } catch (e) {   
-            dispatch(setUser({...user,auth: {status: 'error', message: (e as IUserRegisterRes).message, errors: []}}))
+            dispatch(setUser({...user,auth: {status: 'error', message: (e as IMsgErrRes).message, errors: []}}))
         } 
     }
 }
@@ -42,11 +42,10 @@ export const register = ({name, email, phone, password}: ILoggingForm) => {
 
 
 
-export const login = ({email, password}: ILoggingForm) => {       
-    return async function(dispatch: IDispatch, getState: () => IFullState) {
+export const login = ({email, password}: ILoggingForm) => {         
+    return async function(dispatch: IDispatch, getState: () => IFullState) {              
         const { user } = getState() //get current user state
         dispatch(setUser({...user, auth: {status: 'fetching', message: {en: '', ru: ''}, errors: []}}))
-        const savedUser = localStorage.getItem('user')
         try {
             const response: Response = await fetch('/api/auth/login', {
                     method: 'POST',
@@ -58,17 +57,18 @@ export const login = ({email, password}: ILoggingForm) => {
             
             
             if (response.status !== 200) {
-                const result: IUserLoginResErr = await response.json() //message, errors
+                const result: IMsgErrRes = await response.json() //message, errors
                 
                 return dispatch(setUser({
                     ...user, 
                     auth: {
                         status: 'error', 
-                        message: (result as IUserRegisterRes).message, 
+                        message: (result as IMsgErrRes).message, 
                         errors: result.errors as TLangText[] || []
                     }
                 }))
             }
+            
             const result: IUserLoginResOk = await response.json() //message, errors
             
             dispatch(setUser({
@@ -82,7 +82,7 @@ export const login = ({email, password}: ILoggingForm) => {
             }))
             localStorage.setItem('user', JSON.stringify({token: result.user.token}))
         } catch (e) {         
-            dispatch(setUser({...user, auth: {status: 'error', message: (e as IUserRegisterRes).message, errors: []}}))
+            dispatch(setUser({...user, auth: {status: 'error', message: (e as IMsgErrRes).message, errors: []}}))
         } 
     }
 }
@@ -111,13 +111,13 @@ export const loginWithToken = () => {
             
             
             if (response.status !== 200) {
-                const result: IUserLoginResErr = await response.json() //message, errors
+                const result: IMsgErrRes = await response.json() //message, errors
                 
                 return dispatch(setUser({
                     ...user, 
                     auth: {
                         status: 'error', 
-                        message: (result as IUserRegisterRes).message, 
+                        message: (result as IMsgErrRes).message, 
                         errors: result.errors as TLangText[] || []
                     }
                 }))
@@ -135,7 +135,7 @@ export const loginWithToken = () => {
             }))
             localStorage.setItem('user', JSON.stringify({token: result.user.token}))
         } catch (e) {         
-            dispatch(setUser({...user, auth: {status: 'error', message: (e as IUserRegisterRes).message, errors: []}}))
+            dispatch(setUser({...user, auth: {status: 'error', message: (e as IMsgErrRes).message, errors: []}}))
         } 
     }
 }

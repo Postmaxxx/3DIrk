@@ -1,8 +1,5 @@
 const { Schema, model, Types } = require('mongoose')
 
-interface IUserSchema {
-
-}
 
 const userSchema = new Schema({
     date: {type: Date, required: false},
@@ -14,4 +11,4 @@ const userSchema = new Schema({
 })
 
 
-export default model('User', userSchema)
+module.exports = model('User', userSchema)

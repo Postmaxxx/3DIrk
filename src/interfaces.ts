@@ -1,5 +1,4 @@
 import { AnyAction } from "redux";
-import { propertiesList } from "./assets/data/fibers";
 
 
 
@@ -231,12 +230,6 @@ export interface IProsCons {
     cons: TLangText[]
 }
 
-/*
-export interface IFeatures {
-    pros: IFeature[]
-    cons: IFeature[]
-}
-*/
 
 //==========================================Fibers State
 
@@ -294,11 +287,7 @@ export interface IFibersState {
 
 
 //============================================== category state
-/*export interface mockCategory {
-    id: TId,
-    name: TLangText
-    products: Omit<IProduct, "colors">[]
-}*/
+
 
 export interface IFeature {
     name: TLangText
@@ -319,12 +308,7 @@ export interface IProduct {
     mods: TLangText[]
 }
 
-/*export interface IProductShort {
-    id: TId
-    price: TLangText
-    name: TLangText
-    img: IImg
-}*/
+
 
 
 export interface ICategory {
@@ -361,7 +345,7 @@ export interface ICatalogState {
 
 //================================================news state
 export interface INewsItem {
-    id: TId
+    id: string
     header: TLangText
     date: Date
     short: TLangText
@@ -371,6 +355,7 @@ export interface INewsItem {
 
 export interface INewsState {
     dataLoading: IDataLoading
+    dataSending: IDataSending
     newsList: INewsItem[]
 }
 
@@ -527,14 +512,13 @@ export interface IProductBE {
 
 // fibers
 
-export type IPropertyTypes = typeof propertiesList[number]; 
+//export type IPropertyTypes = typeof propertiesList[number]; 
 
-export type TPropertiesValues = {
-    [key in IPropertyTypes] : {
-        name: TLangText
-        tip: TLangText
-        unit: TLangText
-    }
+export interface IFiberProperties {
+    id: string
+    name: TLangText
+    tip: TLangText
+    unit: TLangText
 }
 
 
@@ -545,17 +529,20 @@ export interface IModalImg {
 
 
 
-export interface IUserRegisterRes {
+export interface IMsgErrRes {
     errors?: TLangText[]
     message: TLangText
 }
 
-export interface IUserLoginResErr {
-    errors?: TLangText[]
+
+export interface INewsPostRes {
     message: TLangText
 }
+
 
 export interface IUserLoginResOk {
     message: TLangText
     user: Pick<IUserState, 'name' | 'email' | 'phone' | 'orders' | 'token'>
 }
+
+

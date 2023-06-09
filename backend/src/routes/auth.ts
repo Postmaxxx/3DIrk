@@ -5,8 +5,9 @@ const bcrypt = require('bcryptjs')
 const router = Router()
 const jwt = require('jsonwebtoken')
 
+
 //api/outh/register
-router.post('/register/', 
+router.post('/register', 
     [
         check('email', {en: 'Wrong email', ru: 'Неправильная почта'}).isEmail(),
         check('password', { en: 'Password should be at least 8 symbols', ru: 'Пароль должен быть не менее 8 символов'}).isLength({ min: 8 }),
@@ -142,7 +143,6 @@ router.post('/login-token',
 )
 
 
+module.exports = router
 
-
-
-export default router
+export {}

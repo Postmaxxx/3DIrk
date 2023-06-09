@@ -112,15 +112,8 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
 
 
     useEffect(() => {
-        if (register) {
-            if (userState.auth.status === 'success') {
-                console.log('now we should logging in...');
-            }
-        } else {
-            if (userState.auth.status === 'success') {
-                console.log('now we are logged in...');
-                onCancel()
-            }
+        if (userState.auth.status === 'success') {
+            onCancel()
         }
     }, [userState.auth.status])
 

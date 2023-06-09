@@ -222,7 +222,7 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
                                             </li>
                                             <li>
                                                 <NavLink
-                                                    to='/contact_us'
+                                                    to='/admin/news-create'
                                                 >
                                                     {lang === 'en' ? 'WRITE US' : 'СООБЩЕНИЕ'}
                                                 </NavLink>
