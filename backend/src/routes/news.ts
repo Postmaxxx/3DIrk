@@ -10,13 +10,10 @@ const authMW = require('../middleware/auth')
 router.post('/create', async (req, res) => {
     
     try {
-        console.log(req.body);
-        const { header, date, short} = req.body
-
+        const { header, date, short, text} = req.body 
         
-       // const news = new News({ header, date, short, text})
-        
-        //await news.save()
+        const news = new News({ header, date, short, text})
+        await news.save()
         res.status(201).json({message: {en: 'News saved', ru: 'Новость сохранена'}})
  
     } catch (error) {

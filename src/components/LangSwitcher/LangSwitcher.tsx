@@ -65,8 +65,8 @@ const LangSwitcher:React.FC<IProps> = ({lang, mobOpened, setState}): JSX.Element
 
     return (
         <div className='lang-switcher' onClick={handleChangeLang} ref={_lang}>
-            <div className="lang-switcher__text lang_ru" data-lang='ru'>RU</div>
-            <div className="lang-switcher__text lang_en" data-lang='en'>EN</div>
+            <div className="lang-switcher__text lang_ru" data-lang='ru'>EN</div>
+            <div className="lang-switcher__text lang_en" data-lang='en'>RU</div>
         </div>
     )   
 }

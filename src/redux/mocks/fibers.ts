@@ -36,22 +36,8 @@ const mockFibers = [
             }
         },
         text: {
-            en: [
-                {
-                    part: 'The most common material for 3D printing is available in numerous colors and fillings, primarily for decorative purposes. Some manufacturers produce PLA filled with marble crumbs, metal powder, or wood fibers, which gives the plastic parts the appearance of metal, stone, or wood. '
-                },
-                {
-                    part: 'Polylactic acid (PLA) is made from corn or sugarcane and is environmentally friendly since products made from it decompose in natural conditions.'
-                },
-            ],
-            ru: [
-                {
-                    part: 'Самый распространённый материал для 3д печати, встречается множество расцветок и наполнений, в основном, декоративного характера. Некоторые производители выпускают PLA, наполненный мраморной крошкой, металлической пудрой или древесными волокнами, из-за чего внешне пластиковые детали становятся похожими на металл, камень или дерево. '
-                },
-                {
-                    part: 'Полилактид производится из кукурузы или сахарного тростника, экологичен, так, как изделия из него разлагаются в природных условиях '
-                },
-            ]
+            en: 'The most common material for 3D printing is available in numerous colors and fillings, primarily for decorative purposes. Some manufacturers produce PLA filled with marble crumbs, metal powder, or wood fibers, which gives the plastic parts the appearance of metal, stone, or wood.\nPolylactic acid (PLA) is made from corn or sugarcane and is environmentally friendly since products made from it decompose in natural conditions.',
+            ru: 'Самый распространённый материал для 3д печати, встречается множество расцветок и наполнений, в основном, декоративного характера. Некоторые производители выпускают PLA, наполненный мраморной крошкой, металлической пудрой или древесными волокнами, из-за чего внешне пластиковые детали становятся похожими на металл, камень или дерево.\nПолилактид производится из кукурузы или сахарного тростника, экологичен, так, как изделия из него разлагаются в природных условиях '
         },
         proscons: {
             pros: [
@@ -212,16 +198,8 @@ const mockFibers = [
             }
         },
         text: {
-            en: [
-                {
-                    part: 'Indeed, this material is most commonly used for manufacturing technical parts, and it handles heat better than PLA and is not susceptible to sunlight. PETg is available in various colors, with fillings resembling stone, metal, or wood, although, like PLA, it is less commonly encountered.'
-                },
-            ],
-            ru: [
-                {
-                    part: 'Именно, этот материал чаще всего используют для изготовления технических деталей, лучше, чем PLA переносит нагрев, не боится солнечного света. Выпускается PETg в различных цветах, наполнение под камень, металл или дерево, как в случае с PLA, встречается редко.'
-                },
-            ]
+            en: 'Indeed, this material is most commonly used for manufacturing technical parts, and it handles heat better than PLA and is not susceptible to sunlight. PETg is available in various colors, with fillings resembling stone, metal, or wood, although, like PLA, it is less commonly encountered.',
+            ru:  'Именно, этот материал чаще всего используют для изготовления технических деталей, лучше, чем PLA переносит нагрев, не боится солнечного света. Выпускается PETg в различных цветах, наполнение под камень, металл или дерево, как в случае с PLA, встречается редко.'
         },
         proscons: {
             pros: [
@@ -386,16 +364,8 @@ const mockFibers = [
             }
         },
         text: {
-            en: [
-                {
-                    part: 'Poor meltability and high shrinkage of ABS plastic result in low strength. However, this plastic has good thermal resistance. It is most commonly used for 3D printing interior/exterior parts of automobiles. Without paint or coating, it is susceptible to direct sunlight.'
-                },
-            ],
-            ru: [
-                {
-                    part: 'Плохая спекаемость и высокая усадка ABS пластика влекут за собой низкую прочность, однако, данный пластик обладает хорошей термостойкостью. Чаще всего из него печатают детали интерьера/экстерьера автомобиля. Без покрытия краской или лаком боится открытых солнечных лучей.'
-                },
-            ]
+            en: 'Poor meltability and high shrinkage of ABS plastic result in low strength. However, this plastic has good thermal resistance. It is most commonly used for 3D printing interior/exterior parts of automobiles. Without paint or coating, it is susceptible to direct sunlight.',
+            ru:  'Плохая спекаемость и высокая усадка ABS пластика влекут за собой низкую прочность, однако, данный пластик обладает хорошей термостойкостью. Чаще всего из него печатают детали интерьера/экстерьера автомобиля. Без покрытия краской или лаком боится открытых солнечных лучей.'
         },
         proscons: {
             pros: [
@@ -518,16 +488,8 @@ const mockFibers = [
             }
         },
         text: {
-            en: [
-                {
-                    part: 'ASA is a relative of ABS plastic and shares the same physical properties as its counterpart. The most significant and only difference between them is that ASA has high weather resistance and, in its uncolored form, is not susceptible to direct sunlight.'
-                },
-            ],
-            ru: [
-                {
-                    part: 'ASA является родственником ABS пластика, обладает теми же физическими свойствами, что и его собрат. Важнейшее и единственное отличие между ними – ASA обладает высокой атмосферостойкостью, в неокрашенном виде не боится прямых солнечных лучей.'
-                },
-            ]
+            en:  'ASA is a relative of ABS plastic and shares the same physical properties as its counterpart. The most significant and only difference between them is that ASA has high weather resistance and, in its uncolored form, is not susceptible to direct sunlight.',
+            ru: 'ASA является родственником ABS пластика, обладает теми же физическими свойствами, что и его собрат. Важнейшее и единственное отличие между ними – ASA обладает высокой атмосферостойкостью, в неокрашенном виде не боится прямых солнечных лучей.'
         },
         proscons: {
             pros: [
@@ -639,16 +601,8 @@ const mockFibers = [
             }
         },
         text: {
-            en: [
-                {
-                    part: 'Polyamide is resistant to petroleum products and solvents. Due to its low friction, it is particularly well-suited for manufacturing bushings and gears, where lubrication is not necessary. Thanks to its high strength, even in freezing conditions, the parts retain their functionality'
-                },
-            ],
-            ru: [
-                {
-                    part: 'Полиамид стоек к нефтепродуктам и растворителям, из-за низкого трения он лучше всего подходит для изготовления втулок, шестерен, при этом смазка не обязательна. Из-за высокой прочности, даже, на морозе детали сохраняют работоспособность.'
-                },
-            ]
+            en: 'Polyamide is resistant to petroleum products and solvents. Due to its low friction, it is particularly well-suited for manufacturing bushings and gears, where lubrication is not necessary. Thanks to its high strength, even in freezing conditions, the parts retain their functionality',
+            ru:  'Полиамид стоек к нефтепродуктам и растворителям, из-за низкого трения он лучше всего подходит для изготовления втулок, шестерен, при этом смазка не обязательна. Из-за высокой прочности, даже, на морозе детали сохраняют работоспособность.'
         },
         proscons: {
             pros: [
@@ -760,40 +714,8 @@ const mockFibers = [
             }
         },
         text: {
-            en: [
-                {
-                    part: 'Poor meltability and high shrinkage of ABS plastic result in low strength. However, this plastic has good thermal resistance. It is most commonly used for 3D printing interior/exterior parts of automobiles. Without paint or coating, it is susceptible to direct sunlight. By adding glass and carbon fibers, the strength and stiffness are increased.'
-                },
-                {
-                    part: ''
-                },
-                {
-                    part: 'Types of fibers: '
-                },
-                {
-                    part: 'GF (glass fibers)'
-                },
-                {
-                    part: 'CF (carbon fibers)'
-                },
-            ],
-            ru: [
-                {
-                    part: 'Плохая спекаемость и высокая усадка ABS пластика влекут за собой низкую прочность, однако, данный пластик обладает хорошей термостойкостью. Чаще всего из него печатают детали интерьера/экстерьера автомобиля. Без покрытия краской или лаком боится открытых солнечных лучей. Благодаря добавлению стеклянных и углеродных нитей повышается прочность и жёсткость.'
-                },
-                {
-                    part: ''
-                },
-                {
-                    part: 'Виды нитей: '
-                },
-                {
-                    part: 'GF (стеклянные нити)'
-                },
-                {
-                    part: 'CF (углеродные нити)'
-                },
-            ]
+            en: 'Poor meltability and high shrinkage of ABS plastic result in low strength. However, this plastic has good thermal resistance. It is most commonly used for 3D printing interior/exterior parts of automobiles. Without paint or coating, it is susceptible to direct sunlight. By adding glass and carbon fibers, the strength and stiffness are increased.\n\n\n Types of fibers:\n\nGF (glass fibers)\nCF (carbon fibers)',
+            ru: 'Плохая спекаемость и высокая усадка ABS пластика влекут за собой низкую прочность, однако, данный пластик обладает хорошей термостойкостью. Чаще всего из него печатают детали интерьера/экстерьера автомобиля. Без покрытия краской или лаком боится открытых солнечных лучей. Благодаря добавлению стеклянных и углеродных нитей повышается прочность и жёсткость.\n\n\nВиды нитей:\nGF (стеклянные нити)\nCF (углеродные нити)'
         },
         proscons: {
             pros: [
@@ -912,42 +834,10 @@ const mockFibers = [
             }
         },
         text: {
-            en: [
-                {
-                    part: 'Polyamide is resistant to petroleum products and solvents. Due to its low friction, it is particularly well-suited for manufacturing bushings and gears, where lubrication is not necessary. Thanks to its high strength, even in freezing conditions, the parts retain their functionality. By adding glass and carbon fibers, the strength and stiffness are increased.'
-                },
-                {
-                    part: ''
-                },
-                {
-                    part: 'Types of fibers: '
-                },
-                {
-                    part: 'GF (glass fibers)'
-                },
-                {
-                    part: 'CF (carbon fibers)'
-                },
-            ],
-            ru: [
-                {
-                    part: 'Полиамид стоек к нефтепродуктам и растворителям, из-за низкого трения он лучше всего подходит для изготовления втулок, шестерен, при этом смазка не обязательна. Из-за высокой прочности, даже, на морозе детали сохраняют работоспособность. Благодаря добавлению стеклянных и углеродных нитей повышается прочность и жёсткость.'
-                },
-                {
-                    part: ''
-                },
-                {
-                    part: 'Виды нитей: '
-                },
-                {
-                    part: 'GF (стеклянные нити)'
-                },
-                {
-                    part: 'CF (углеродные нити)'
-                },
-            ]
+            en:  'Polyamide is resistant to petroleum products and solvents. Due to its low friction, it is particularly well-suited for manufacturing bushings and gears, where lubrication is not necessary. Thanks to its high strength, even in freezing conditions, the parts retain their functionality. By adding glass and carbon fibers, the strength and stiffness are increased.\n\n\nTypes of fibers:\nGF (glass fibers)\nCF (carbon fibers)',
+            ru: 'Полиамид стоек к нефтепродуктам и растворителям, из-за низкого трения он лучше всего подходит для изготовления втулок, шестерен, при этом смазка не обязательна. Из-за высокой прочности, даже, на морозе детали сохраняют работоспособность. Благодаря добавлению стеклянных и углеродных нитей повышается прочность и жёсткость.\n\n\nВиды нитей:\nGF (стеклянные нити)\nCF (углеродные нити)'
         },
-        proscons: {
+            proscons: {
             pros: [
                 {
                     en: '+',
@@ -1058,16 +948,8 @@ const mockFibers = [
             }
         },
         text: {
-            en: [
-                {
-                    part: 'Polycarbonate stands out among materials with its wide range of operating temperatures and high wear resistance. It is non-combustible.'
-                },
-            ],
-            ru: [
-                {
-                    part: 'Поликарбонат из спектра материалов выделяется широким диапазоном рабочих температур и высокой износостойкостью. Не поддерживает горение.'
-                },
-            ]
+            en:  'Polycarbonate stands out among materials with its wide range of operating temperatures and high wear resistance. It is non-combustible.',
+            ru:  'Поликарбонат из спектра материалов выделяется широким диапазоном рабочих температур и высокой износостойкостью. Не поддерживает горение.'
         },
         proscons: {
             pros: [
@@ -1192,16 +1074,8 @@ const mockFibers = [
             }
         },
         text: {
-            en: [
-                {
-                    part: 'Polypropylene possesses high fatigue strength, and parts made from it can withstand multiple flexural cycles.'
-                },
-            ],
-            ru: [
-                {
-                    part: 'Полипропилен обладает высокой усталостной прочностью, детали, изготовленные из него выдерживают многократные изгибы.'
-                },
-            ]
+            en:  'Polypropylene possesses high fatigue strength, and parts made from it can withstand multiple flexural cycles.',
+            ru:  'Полипропилен обладает высокой усталостной прочностью, детали, изготовленные из него выдерживают многократные изгибы.'
         },
         proscons: {
             pros: [
@@ -1318,16 +1192,8 @@ const mockFibers = [
             }
         },
         text: {
-            en: [
-                {
-                    part: 'Thermoplastic elastomer, similar to rubber in physical properties, is often used in modeling for the production of tires, tracks, and damping pads.'
-                },
-            ],
-            ru: [
-                {
-                    part: 'Термопластичный эластомер, по физическим свойствам похож на резину, а потому в моделировании его часто применяют для изготовления шин и гусениц, демпфирующих прокладок.'
-                },
-            ]
+            en: 'Thermoplastic elastomer, similar to rubber in physical properties, is often used in modeling for the production of tires, tracks, and damping pads.',
+            ru: 'Термопластичный эластомер, по физическим свойствам похож на резину, а потому в моделировании его часто применяют для изготовления шин и гусениц, демпфирующих прокладок.'
         },
         proscons: {
             pros: [

@@ -40,12 +40,10 @@ export const loadAllNews = () => {
 }
 
 
-export const postNews = (news: Omit<INewsItem, "id" | "imgs">) => {
+export const postNews = (news: Omit<INewsItem, "id">) => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
         const { user } = getState() //get current user state
         dispatch(setSendDataStatusNews({status: 'sending', message: `Sending news`}))
-
-        console.log(JSON.stringify(news));
         
         try {
             const response: Response = await fetch('/api/news/create', {
@@ -54,7 +52,7 @@ export const postNews = (news: Omit<INewsItem, "id" | "imgs">) => {
                     "Content-Type": 'application/json',
                     'Authorization': `Bearer ${user.token}`
                 },
-                body: '{"header":{"en":"","ru":""},"short":{"en":"","ru":""},"text":{"en":["3"],"ru":[{"part":""}]},"date":"2023-06-09T04:00:03.825Z"}'
+                body: JSON.stringify(news)
             })
 
             const result: IMsgErrRes = await response.json() //message, errors

@@ -2,7 +2,7 @@ import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import './order.scss'
-import { ICartItem, ICartState, ICheckErrorItem, IColorsState, IFibersState, IFullState, IModal, IOrderState, TLang, TLangText, TLangTextArr } from "src/interfaces";
+import { ICartItem, ICartState, ICheckErrorItem, IColorsState, IFibersState, IFullState, IModal, IOrderState, TLang, TLangText } from "src/interfaces";
 import { useState, useEffect, useRef, KeyboardEventHandler } from 'react'
 import Modal from "../../components/Modal/Modal";
 import MessageInfo from "../../components/MessageInfo/MessageInfo";

@@ -20,22 +20,8 @@ const mockProducts = [
             ru: 'От 500 р.'
         },
         text: {
-            en: [
-                {
-                    part: 'Designed for transportation of «extreme» type canisters.'
-                },
-                {
-                    part: 'Upgraded model. Enhanced based on operational characteristics and customer feedback.'
-                },
-            ],
-            ru: [
-                {
-                    part: 'Предназначено для перевозок канистр типа «экстрим».'
-                },
-                {
-                    part: 'Улучшенная модель. Доработана с учетом особенностей эксплуатации и отзывов покупателей.'
-                },
-            ]
+            en: 'Designed for transportation of «extreme» type canisters.\nUpgraded model. Enhanced based on operational characteristics and customer feedback.',
+            ru: 'Предназначено для перевозок канистр типа «экстрим».\nУлучшенная модель. Доработана с учетом особенностей эксплуатации и отзывов покупателей.'
         },
         imgs: [
             {

@@ -76,8 +76,8 @@ const NewsDetails: React.FC<IProps> = ({lang, news }): JSX.Element => {
                                     <span className='date'>{String(newsPiece.date.toISOString().slice(0, 10))}</span>
                                     <div className="news__details">
                                         <>
-                                            {newsPiece.text[lang].map((text, i) => {
-                                                return <p key={i}>{text.part}</p>
+                                            {newsPiece.text[lang].split('\n').map((text, i) => {
+                                                return <p key={i}>{text}</p>
                                             })}
                                             <div className="images__container">
                                                 <SpliderCommon images={newsPiece.imgs} lang={lang} imagesPerSlide={2}/>

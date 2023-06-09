@@ -4,27 +4,62 @@
 .page_news-add {
 
     & form {
+        margin-top: 70px;
         display: grid;
         grid-template-columns: 1fr 1fr;
+        gap: 30px 40px;
+
+        & h3 {
+            text-align: center;
+            margin-left: 150px;
+            @include respond-to(md) {
+                display: none;
+            }
+        }
+
+        @include respond-to(md) {
+            grid-template-columns: 1fr; 
+        }
 
         & .input-item {
-            margin-top: 15px;
             display: flex;
-            width: 500px;
+            width: 100%;
             justify-content: space-between;
+            align-items: stretch;
+
+            & label {
+                min-width: 160px;
+                align-self: center;
+                white-space: nowrap;
+            }
             
             & input, textarea {
-                color: red;
+                color: $black;
                 margin-left: 20px;
-                padding: 5px;
-                font-weight: 700;
-                width: 300px;
+                width: 100%;
+                font-size: 20px;
+                font-weight: 600;
+                padding: 5px 10px;
+                border-radius: 4px;
+                background-color: var(--inputs-bg);
+                transition: background-color 1s, border 1s;
+                outline: none;
+                border: 2px solid transparent;
+            }
+            
+            & textarea {
+                resize: vertical;
+                
             }
         }
 
         button {
             margin-top: 30px;
             width: fit-content; 
+
+            &:disabled {
+                opacity: 0.4;
+            }
         }
 
     }

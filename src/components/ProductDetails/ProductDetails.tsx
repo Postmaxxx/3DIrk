@@ -1,4 +1,4 @@
-import { ICartState, ICategories, IColor, IColorsState, IFiber, IFibersState, IFullState, IModal, IModalImg, IProductState, TId, TLang, TLangText, TLangTextArr } from 'src/interfaces'
+import { ICartState, ICategories, IColor, IColorsState, IFiber, IFibersState, IFullState, IModal, IModalImg, IProductState, TId, TLang, TLangText,  } from 'src/interfaces'
 import './product-details.scss'
 import { useRef, useEffect, useState, useMemo } from "react";
 import { AnyAction, bindActionCreators } from "redux";
@@ -86,7 +86,7 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors, fibe
             <div className="features__container">
                 <div className="feature">
                     <span>{lang === 'en' ? 'Description' : 'Описание'}: </span>
-                    {product.text[lang].map((text, i) => <p key={i}>{text.part}</p>)}
+                    {product.text[lang].split('\n').map((text, i) => <p key={i}>{text}</p>)}
                 </div>
                 {product.features.map((feature, i) => {
                     return (

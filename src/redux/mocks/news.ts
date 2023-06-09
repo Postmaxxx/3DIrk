@@ -19,22 +19,8 @@ const mockNews: INewsItem[] = [
             en: 'News 1 dfg df dfdf df gdf dfdfghdfgkj dkdfk dfk hfd dfkjdfhg kdfjgkdfsj dfdf kfkfd dfkgkj kj kh '
         },
         text: {
-            en: [
-                {
-                    part: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quo tempore atque et nostrum qui vitae! Dolor necessitatibus ipsum consectetur optio.'
-                },
-                {
-                    part: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Necessitatibus, eveniet odit veritatis totam exercitationem id perspiciatis dolores, ipsum quos reprehenderit, consectetur facere harum rerum libero tempore incidunt modi! Placeat cumque quidem velit porro amet quam possimus dolorum eaque exercitationem quod!'
-                },
-            ],
-            ru: [
-                {
-                    part: 'ВАП в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра'
-                },
-                {
-                    part: 'ВАП в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра авпрва пдрваыплопдорва лопвапрвыалод рпвлдаопрвал дпрвлдарпдлыварплвырап дывлаопрыдлв рапвыдлаопрылвдоарплдываорпфы жвапшщ вапврыап выарпваы п выалопрвалоыпр влап а'
-                },
-            ]
+            en: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quo tempore atque et nostrum qui vitae! Dolor necessitatibus ipsum consectetur optio.\nLorem ipsum, dolor sit amet consectetur adipisicing elit. Necessitatibus, eveniet odit veritatis totam exercitationem id perspiciatis dolores, ipsum quos reprehenderit, consectetur facere harum rerum libero tempore incidunt modi! Placeat cumque quidem velit porro amet quam possimus dolorum eaque exercitationem quod!',
+            ru: 'ВАП в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра\nВАП в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра авпрва пдрваыплопдорва лопвапрвыалод рпвлдаопрвал дпрвлдарпдлыварплвырап дывлаопрыдлв рапвыдлаопрылвдоарплдываорпфы жвапшщ вапврыап выарпваы п выалопрвалоыпр влап а'
         },
         imgs: [
             {
@@ -79,22 +65,8 @@ const mockNews: INewsItem[] = [
             en: 'News 2 dfg df dfdf df gdf dfdfghdfgkj dkdfk dfk hfd dfkjdfhg kdfjgkdfsj dfdf kfkfd dfkgkj kj kh '
         },
         text: {
-            en: [
-                {
-                    part: 'Lorem gf hfgh dfghipsum dolor sit amet, consectetur adipisicing elit. Quo tempore atque et nostrum qui vitae! Dolor necessitatibus ipsum consectetur optio.'
-                },
-                {
-                    part: 'fgdh fgh Lorem ipsum, dolor sit amet consectetur adipisicing elit. Necessitatibus, eveniet odit veritatis totam exercitationem id perspiciatis dolores, ipsum quos reprehenderit, consectetur facere harum rerum libero tempore incidunt modi! Placeat cumque quidem velit porro amet quam possimus dolorum eaque exercitationem quod!'
-                },
-            ],
-            ru: [
-                {
-                    part: 'ВАП авыпв а в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра'
-                },
-                {
-                    part: 'ВАП вап ывап в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра авпрва пдрваыплопдорва лопвапрвыалод рпвлдаопрвал дпрвлдарпдлыварплвырап дывлаопрыдлв рапвыдлаопрылвдоарплдываорпфы жвапшщ вапврыап выарпваы п выалопрвалоыпр влап а'
-                },
-            ]
+            en: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quo tempore atque et nostrum qui vitae! Dolor necessitatibus ipsum consectetur optio.\nLorem ipsum, dolor sit amet consectetur adipisicing elit. Necessitatibus, eveniet odit veritatis totam exercitationem id perspiciatis dolores, ipsum quos reprehenderit, consectetur facere harum rerum libero tempore incidunt modi! Placeat cumque quidem velit porro amet quam possimus dolorum eaque exercitationem quod!',
+            ru: 'ВАП в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра\nВАП в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра авпрва пдрваыплопдорва лопвапрвыалод рпвлдаопрвал дпрвлдарпдлыварплвырап дывлаопрыдлв рапвыдлаопрылвдоарплдываорпфы жвапшщ вапврыап выарпваы п выалопрвалоыпр влап а'
         },
         imgs: [
             {
@@ -125,22 +97,8 @@ const mockNews: INewsItem[] = [
             en: 'News 3 dfg df dfdf df gdf dfdfghdfgkj dkdfk dfk hfd dfkjdfhg kdfjgkdfsj dfdf kfkfd dfkgkj kj kh '
         },
         text: {
-            en: [
-                {
-                    part: 'Lorem gf hfgh dfghipsum dolor sit amet, consectetur adipisicing elit. Quo tempore atque et nostrum qui vitae! Dolor necessitatibus ipsum consectetur optio.'
-                },
-                {
-                    part: 'fgdh fgh Lorem ipsum, dolor sit amet consectetur adipisicing elit. Necessitatibus, eveniet odit veritatis totam exercitationem id perspiciatis dolores, ipsum quos reprehenderit, consectetur facere harum rerum libero tempore incidunt modi! Placeat cumque quidem velit porro amet quam possimus dolorum eaque exercitationem quod!'
-                },
-            ],
-            ru: [
-                {
-                    part: 'ВАП авыпв а в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра'
-                },
-                {
-                    part: 'ВАП вап ывап в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра авпрва пдрваыплопдорва лопвапрвыалод рпвлдаопрвал дпрвлдарпдлыварплвырап дывлаопрыдлв рапвыдлаопрылвдоарплдываорпфы жвапшщ вапврыап выарпваы п выалопрвалоыпр влап а'
-                },
-            ]
+            en: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quo tempore atque et nostrum qui vitae! Dolor necessitatibus ipsum consectetur optio.\nLorem ipsum, dolor sit amet consectetur adipisicing elit. Necessitatibus, eveniet odit veritatis totam exercitationem id perspiciatis dolores, ipsum quos reprehenderit, consectetur facere harum rerum libero tempore incidunt modi! Placeat cumque quidem velit porro amet quam possimus dolorum eaque exercitationem quod!',
+            ru: 'ВАП в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра\nВАП в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра авпрва пдрваыплопдорва лопвапрвыалод рпвлдаопрвал дпрвлдарпдлыварплвырап дывлаопрыдлв рапвыдлаопрылвдоарплдываорпфы жвапшщ вапврыап выарпваы п выалопрвалоыпр влап а'
         },
         imgs: [
             {
@@ -171,22 +129,8 @@ const mockNews: INewsItem[] = [
             en: 'News 4 dfg df dfdf df gdf dfdfghdfgkj dkdfk dfk hfd dfkjdfhg kdfjgkdfsj dfdf kfkfd dfkgkj kj kh '
         },
         text: {
-            en: [
-                {
-                    part: 'Lorem gf hfgh dfghipsum dolor sit amet, consectetur adipisicing elit. Quo tempore atque et nostrum qui vitae! Dolor necessitatibus ipsum consectetur optio.'
-                },
-                {
-                    part: 'fgdh fgh Lorem ipsum, dolor sit amet consectetur adipisicing elit. Necessitatibus, eveniet odit veritatis totam exercitationem id perspiciatis dolores, ipsum quos reprehenderit, consectetur facere harum rerum libero tempore incidunt modi! Placeat cumque quidem velit porro amet quam possimus dolorum eaque exercitationem quod!'
-                },
-            ],
-            ru: [
-                {
-                    part: 'ВАП авыпв а в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра'
-                },
-                {
-                    part: 'ВАП вап ывап в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра авпрва пдрваыплопдорва лопвапрвыалод рпвлдаопрвал дпрвлдарпдлыварплвырап дывлаопрыдлв рапвыдлаопрылвдоарплдываорпфы жвапшщ вапврыап выарпваы п выалопрвалоыпр влап а'
-                },
-            ]
+            en: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quo tempore atque et nostrum qui vitae! Dolor necessitatibus ipsum consectetur optio.\nLorem ipsum, dolor sit amet consectetur adipisicing elit. Necessitatibus, eveniet odit veritatis totam exercitationem id perspiciatis dolores, ipsum quos reprehenderit, consectetur facere harum rerum libero tempore incidunt modi! Placeat cumque quidem velit porro amet quam possimus dolorum eaque exercitationem quod!',
+            ru: 'ВАП в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра\nВАП в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра авпрва пдрваыплопдорва лопвапрвыалод рпвлдаопрвал дпрвлдарпдлыварплвырап дывлаопрыдлв рапвыдлаопрылвдоарплдываорпфы жвапшщ вапврыап выарпваы п выалопрвалоыпр влап а'
         },
         imgs: [
             {
@@ -210,22 +154,8 @@ const mockNews: INewsItem[] = [
             en: 'News 5 dfg df dfdf df gdf dfdfghdfgkj dkdfk dfk hfd dfkjdfhg kdfjgkdfsj dfdf kfkfd dfkgkj kj kh '
         },
         text: {
-            en: [
-                {
-                    part: 'Lorem gf hfgh dfghipsum dolor sit amet, consectetur adipisicing elit. Quo tempore atque et nostrum qui vitae! Dolor necessitatibus ipsum consectetur optio.'
-                },
-                {
-                    part: 'fgdh fgh Lorem ipsum, dolor sit amet consectetur adipisicing elit. Necessitatibus, eveniet odit veritatis totam exercitationem id perspiciatis dolores, ipsum quos reprehenderit, consectetur facere harum rerum libero tempore incidunt modi! Placeat cumque quidem velit porro amet quam possimus dolorum eaque exercitationem quod!'
-                },
-            ],
-            ru: [
-                {
-                    part: 'ВАП авыпв а в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра'
-                },
-                {
-                    part: 'ВАП вап ывап в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра авпрва пдрваыплопдорва лопвапрвыалод рпвлдаопрвал дпрвлдарпдлыварплвырап дывлаопрыдлв рапвыдлаопрылвдоарплдываорпфы жвапшщ вапврыап выарпваы п выалопрвалоыпр влап а'
-                },
-            ]
+            en: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quo tempore atque et nostrum qui vitae! Dolor necessitatibus ipsum consectetur optio.\nLorem ipsum, dolor sit amet consectetur adipisicing elit. Necessitatibus, eveniet odit veritatis totam exercitationem id perspiciatis dolores, ipsum quos reprehenderit, consectetur facere harum rerum libero tempore incidunt modi! Placeat cumque quidem velit porro amet quam possimus dolorum eaque exercitationem quod!',
+            ru: 'ВАП в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра\nВАП в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра авпрва пдрваыплопдорва лопвапрвыалод рпвлдаопрвал дпрвлдарпдлыварплвырап дывлаопрыдлв рапвыдлаопрылвдоарплдываорпфы жвапшщ вапврыап выарпваы п выалопрвалоыпр влап а'
         },
         imgs: [
             {

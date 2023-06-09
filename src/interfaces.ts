@@ -46,9 +46,9 @@ export type TLangText = {
     [key in TLang]: string
 }
 
-export type TLangTextArr = {
+/*export type TLangTextArr = {
     [key in TLang]: TTextMultiLines
-}
+}*/
 
 
 
@@ -157,13 +157,13 @@ export interface ISpliderOptions {
 
 export interface IHeroBlock {
     header: TLangText,
-    text: TLangTextArr
+    text: TLangText
 }
 
 //----------------------------------- block news
 export interface INewsBlock {
     header: TLangText
-    text: TLangTextArr
+    text: TLangText
 }
 
 
@@ -171,7 +171,7 @@ export interface INewsBlock {
 
 export interface IFibersBlock {
     header: TLangText
-    text: TLangTextArr
+    text: TLangText
     colors: TLangText
     features: TLangText
 }
@@ -180,7 +180,7 @@ export interface IFibersBlock {
 export interface ICatalogBlock {
     header: TLangText
     subheader: TLangText
-    text: TLangTextArr
+    text: TLangText
     img: IImg
     headerGallery: TLangText
     priceGallery: TLangText
@@ -206,7 +206,7 @@ export interface IOrderBlock {
         linkRest: TLangText
     },
     qrcode: string,
-    text: TLangTextArr
+    text: TLangText
 }
 
 
@@ -263,7 +263,7 @@ export interface IFiberParam {
 export interface IFiber {
     id: TId
     name: TLangText
-    text: TLangTextArr
+    text: TLangText
     proscons: IProsCons
     colors: IColor["id"][] 
     imgs: IImg[]
@@ -301,7 +301,7 @@ export interface IProduct {
     id: TId
     price: TLangText
     name: TLangText
-    text: TLangTextArr
+    text: TLangText
     imgs: IImg[]
     fibers: IFiber["id"][]
     features: IFeature[]
@@ -349,7 +349,7 @@ export interface INewsItem {
     header: TLangText
     date: Date
     short: TLangText
-    text: TLangTextArr
+    text: TLangText
     imgs: Array<IImg>
 }
 
@@ -499,7 +499,7 @@ export interface IProductBE {
     id: IProduct["id"]
     price: TLangText
     name: TLangText
-    text: TLangTextArr
+    text: TLangText
     imgs: IImg[]
     fibers: IFiber["id"][]
     features: IFeature[]

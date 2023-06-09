@@ -41,7 +41,7 @@ const FiberItem = ({fiber, lang, colors}: IProps) => {
             </div>
             <div className="fiber__descr__container">
 				<div className="block_text">
-					{fiber.text[lang].map((textItem, i) => <p key={i}>{textItem.part}</p>)}
+					{fiber.text[lang].split('\n').map((textItem, i) => <p key={i}>{textItem}</p>)}
 					<div className="features__container">
 						<h3>{lang === 'en' ? 'Features' : 'Характеристики'}</h3>
 						<Features params={fiber.params} fiber={fiber} lang={lang}/>

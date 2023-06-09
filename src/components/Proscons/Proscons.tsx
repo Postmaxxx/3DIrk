@@ -1,4 +1,4 @@
-import { TLang, TLangText, TLangTextArr } from '../../interfaces'
+import { TLang, TLangText } from '../../interfaces'
 import './proscons.scss'
 
 interface IProps {  

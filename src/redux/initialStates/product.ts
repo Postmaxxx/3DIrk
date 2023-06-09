@@ -15,8 +15,8 @@ const initialProduct = {
         ru: ''
     },
     text: {
-        en: [],
-        ru: []
+        en: '',
+        ru: ''
     },
     imgs: [],
     fibers: [],
