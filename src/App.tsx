@@ -3,7 +3,7 @@ import { Routes, Route, HashRouter } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import Preloader from "./components/Preloaders/Preloader"; 
 import "./assets/css/_base.scss";
-import { IFullState, TLang } from "./interfaces";
+import { IFullState, TId, TLang } from "./interfaces";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
@@ -100,7 +100,7 @@ const App:React.FC<IProps> = ({lang, setState}):JSX.Element => {
 
 
 const mapStateToProps = (state: IFullState): IPropsState => ({
-    lang: state.base.lang
+    lang: state.base.lang,
 })
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>):IPropsActions => ({

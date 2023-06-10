@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import SpliderSingle from '../../components/Spliders/Single/SpliderSingle';
 import "@splidejs/react-splide/css"; 
 
-import CategoriesList from '../../components/CategoriesList/CategoriesList';
+import CategoriesList from '../../components/CatalogList/CatalogList';
 import CatalogIntro from '../../components/CatalogIntro/CatalogIntro';
 import { allActions } from "../../redux/actions/all";
 

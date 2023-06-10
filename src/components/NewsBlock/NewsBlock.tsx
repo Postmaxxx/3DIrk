@@ -5,9 +5,8 @@ import News from '../News/News'
 import { IFullState, INewsState, TLang } from '../../interfaces'
 import { AnyAction, Dispatch, bindActionCreators } from 'redux';
 import Preloader from '../Preloaders/Preloader';
-import { loadAllNews }  from "../../redux/actions/news"
+import { allActions } from "../../redux/actions/all";
 
-const actionsList = { loadAllNews }
 
 interface IPropsState {
     lang: TLang,
@@ -16,7 +15,7 @@ interface IPropsState {
 
 interface IPropsActions {
     setState: {
-        news: typeof actionsList
+        news: typeof allActions.news
     }
 }
 
@@ -30,7 +29,7 @@ const NewsBlock:React.FC<IProps>  = ({lang, news, setState}): JSX.Element => {
     }
 
     useEffect(()=> {
-        if (news.dataLoading.status === 'idle') {
+        if (news.load.status === 'idle') {
             setState.news.loadAllNews()
         }
     },[])
@@ -39,7 +38,7 @@ const NewsBlock:React.FC<IProps>  = ({lang, news, setState}): JSX.Element => {
         <>
             <h2>{lang === 'en' ? 'Recent news' : 'Последние новости'}</h2>
             <div className="news-block">
-                {news.dataLoading.status === 'success' ? 
+                {news.load.status === 'success' ? 
                 <>
                     {news.newsList.map((newsPiece, i) => (
                         <Fragment key={i}>
@@ -75,9 +74,11 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
     news: state.news,
 })
 
-const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
+
+
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>):IPropsActions => ({
     setState: {
-		news: bindActionCreators(actionsList, dispatch)
+		news: bindActionCreators(allActions.news, dispatch),
 	}
 })
   

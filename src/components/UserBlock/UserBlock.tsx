@@ -1,15 +1,14 @@
-import { IFullState, IModal, IUserState, TLang } from 'src/interfaces'
+import { IFullState, IUserState, TLang } from 'src/interfaces'
 import Modal from '../Modal/Modal'
 import './user-block.scss'
 import { useState, useRef, useEffect } from 'react'
 import Auth from '../Auth/Auth'
-import { setUser } from "../../redux/actions/user"
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { useScrollHider } from 'src/hooks/scrollHider'
+import { allActions } from "../../redux/actions/all";
 
-const actionsListUser = { setUser }
 
 
 interface IPropsState {
@@ -19,7 +18,7 @@ interface IPropsState {
 
 interface IPropsActions {
     setState: {
-        user: typeof actionsListUser
+        user: typeof allActions.user
     }
 }
 
@@ -31,12 +30,12 @@ interface IProps extends IPropsState, IPropsActions {
 const UserBlock: React.FC<IProps> = ({setState, userState, lang}): JSX.Element => {
 
     const _userBlock = useRef<HTMLDivElement>(null)
-	const [modal, setModal] = useState<IModal>({visible: false})
+	const [modal, setModal] = useState<boolean>(false)
     const userHider = useScrollHider()   
 
 
     const onLoginClick = () => {
-		setModal({visible: true})
+		setModal(true)
     }
 
 
@@ -54,7 +53,7 @@ const UserBlock: React.FC<IProps> = ({setState, userState, lang}): JSX.Element =
 
    
     const closeModal = () => {
-		setModal({visible: false})
+		setModal(false)
 	}
 
 
@@ -87,7 +86,7 @@ const UserBlock: React.FC<IProps> = ({setState, userState, lang}): JSX.Element =
             }           
 
 
-            <Modal {...{visible: modal.visible, close: closeModal, escExit: true}}>
+            <Modal {...{visible: modal, close: closeModal, escExit: true}}>
                 <Auth onCancel={closeModal}/>
 			</Modal> 
         </div>
@@ -102,7 +101,7 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
     setState: {
-		user: bindActionCreators(actionsListUser, dispatch),
+		user: bindActionCreators(allActions.user, dispatch),
 	}
 })
   

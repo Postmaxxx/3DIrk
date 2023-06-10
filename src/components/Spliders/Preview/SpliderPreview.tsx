@@ -3,25 +3,29 @@ import { connect } from "react-redux";
 import { useEffect, useMemo, useRef, useState, } from "react";
 import "@splidejs/react-splide/css";
 import "./splider-preview.scss";
-import { IFullState, IImg, IModal, IProduct, IProductState, ISpliderOptions, TLang } from "../../../interfaces";
+import { IFullState, IImg, IProduct, ISpliderOptions, TLang } from "../../../interfaces";
 import Splide from "@splidejs/splide";
 import ImgWithPreloader from "../../../assets/js/ImgWithPreloader";
-import { loadProduct } from "../../../redux/actions/product"
+
 import Modal from "../../../components/Modal/Modal";
 import ModalImage from "../../../components/MessageImage/MessageImage";
-const actionsList = { loadProduct }
+import { allActions } from "../../../redux/actions/all";
+
+
 
 
 interface IPropsState {
 	lang: TLang,
-	product: IProductState
+	product: IProduct
 }
+
 
 interface IPropsActions {
     setState: {
-        product: typeof actionsList
+        catalog: typeof allActions.catalog
     }
 }
+
 
 interface IProps extends IPropsState, IPropsActions {}
 
@@ -36,7 +40,7 @@ const SpliderPreview: React.FC<IProps> = ({ lang, product, setState}): JSX.Eleme
 	const _splideThumbs = useRef<HTMLDivElement>(null);
 	const splideMain = useRef<Splide>();
 	const splideThumb = useRef<Splide>();
-	const [modal, setModal] = useState<IModal>({visible: false})
+	const [modal, setModal] = useState<boolean>(false)
 		
 	const optionsThumbs: Partial<ISpliderOptions> = {
 		lazyLoad	: false,
@@ -101,12 +105,12 @@ const SpliderPreview: React.FC<IProps> = ({ lang, product, setState}): JSX.Eleme
 	}*/
 
 	const onImageClick = (slide: IImg) => {
-		setModal({visible: true})
+		setModal(true)
 	}
 
 
 	const closeModal = () => {
-		setModal({visible: false})
+		setModal(false)
 	}
 
 	useEffect(() => {
@@ -167,7 +171,7 @@ const SpliderPreview: React.FC<IProps> = ({ lang, product, setState}): JSX.Eleme
 					</ul>
 				</div>
 			</div>
-			<Modal {...{visible: modal.visible, close: closeModal, escExit: true}}>
+			<Modal {...{visible: modal, close: closeModal, escExit: true}}>
 				<ModalImage props={{path: product.imgs[splideMain.current?.index || 0].url, descr: product.imgs[splideMain.current?.index || 0].name[lang]}}/>
 			</Modal> 
 
@@ -179,16 +183,17 @@ const SpliderPreview: React.FC<IProps> = ({ lang, product, setState}): JSX.Eleme
 
 const mapStateToProps = (state: IFullState): IPropsState  => {
 	return {
-		product: state.product,
+		product: state.catalog.category.product,
 		lang: state.base.lang
 	};
 };
 
 
 
-const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
+
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>):IPropsActions => ({
     setState: {
-		product: bindActionCreators(actionsList, dispatch)
+		catalog: bindActionCreators(allActions.catalog, dispatch),
 	}
 })
   

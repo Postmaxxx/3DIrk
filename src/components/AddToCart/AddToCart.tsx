@@ -1,4 +1,4 @@
-import { ICartItem, ICartState, IColor, IFiber, IFullState, IModal, IProduct, TLang, TLangText } from '../../interfaces';
+import { ICartItem, ICartState, IColor, IFiber, IFullState, IProduct, TLang, TLangText } from '../../interfaces';
 import './add-to-cart.scss'
 import { useRef, useEffect, useState, useMemo } from "react";
 import { addItem, saveCart } from "../../redux/actions/cart"
@@ -8,7 +8,7 @@ import { connect } from "react-redux";
 import Modal from "../../components/Modal/Modal";
 import MessageInfo from '../MessageInfo/MessageInfo';
 import AmountChanger from '../AmountChanger/AmountChanger';
-var uniqid = require('uniqid');
+//var uniqid = require('uniqid');
 
 
 const actionsListCart = { addItem, saveCart }
@@ -51,12 +51,12 @@ interface IMessageCart {
 
 const AddToCart: React.FC<IProps> = ({product, type, fiber, color, lang, cart, setState}): JSX.Element => {
     const [amount, setAmount] = useState<number>(1)
-	const [modal, setModal] = useState<IModal>({visible: false})
+	const [modal, setModal] = useState<boolean>(false)
     const [message, setMessage] = useState<IMessageCart>({header: '', status: '', text: []})
     const [amountChangerReset, setAmountChangerReset] = useState<{amount: number}>({amount: 1})
 
     const closeModal = () => {
-		setModal({visible: false})
+		setModal(false)
 	}
 
     
@@ -81,7 +81,7 @@ const AddToCart: React.FC<IProps> = ({product, type, fiber, color, lang, cart, s
                 color, 
                 amount, 
                 type, 
-                id: uniqid()
+                //id: uniqid()
             }
             setState.cart.addItem(newItem)
             setState.cart.saveCart([...cart.items, newItem]);
@@ -94,7 +94,7 @@ const AddToCart: React.FC<IProps> = ({product, type, fiber, color, lang, cart, s
                 text: lang === 'en' ? [`This item has been added to your сart.`, `You now have ${amountItemsInCart} item${amountItemsInCart > 1 ? 's' : ''} in your сart`, ] : [`Этот товар был успешно добавлен в Вашу корзину.`, `Сейчас у Вас товаров в корзине: ${amountItemsInCart}`, ]
             })
         }
-        setModal({visible: true})
+        setModal(true)
 
     }
 
@@ -112,7 +112,7 @@ const AddToCart: React.FC<IProps> = ({product, type, fiber, color, lang, cart, s
                 </div>
                 <button className='button_news' title='Add to cart' onClick={addToCart}>{lang === 'en' ? 'Add to cart' : 'Добавить в корзину'}</button>
             </div>
-            <Modal {...{visible: modal.visible, close: closeModal, escExit: true}}>
+            <Modal {...{visible: modal, close: closeModal, escExit: true}}>
             <MessageInfo {...{  
                     status: message.status,
                     header: message.header,

@@ -1,5 +1,5 @@
 import './color-picker.scss'
-import { ICartState, IColor, IModal, IModalImg, TLang } from "../../../interfaces";
+import { ICartState, IColor, IModalImg, TLang } from "../../../interfaces";
 import { useState, useEffect, useRef } from 'react'
 import Modal from '../../../components/Modal/Modal';
 import ModalImage from '../../../components/MessageImage/MessageImage';
@@ -18,7 +18,7 @@ const ColorPicker: React.FC<IPropsState> = ({lang, colors, onSelect}): JSX.Eleme
 
     const [currentColor, setCurrentColor] = useState<IColor>()
     const [expanded, setExpanded] = useState<boolean>(false)
-	const [modal, setModal] = useState<IModal>({visible: false})
+	const [modal, setModal] = useState<boolean>(false)
 	const [modalImg, setModalImg] = useState<IModalImg>({descr: '', path: ''})
 
     const onCurrentClick = () => {
@@ -35,12 +35,12 @@ const ColorPicker: React.FC<IPropsState> = ({lang, colors, onSelect}): JSX.Eleme
     const onImageClick = (e: React.MouseEvent , color: IColor) => {
         e.stopPropagation()
 		setModalImg({descr: color.name[lang], path: color.url})
-        setModal({visible: true})
+        setModal(true)
     }
 
     
     const closeModal = () => {
-		setModal({visible: false})
+		setModal(false)
 	}
 
     return (
@@ -70,7 +70,7 @@ const ColorPicker: React.FC<IPropsState> = ({lang, colors, onSelect}): JSX.Eleme
                     )
                 })}
             </div>
-            <Modal {...{visible: modal.visible, close: closeModal, escExit: true}}>
+            <Modal {...{visible: modal, close: closeModal, escExit: true}}>
 				<ModalImage props={{path: modalImg.path, descr: modalImg.descr}}/>
 			</Modal> 
         </div>

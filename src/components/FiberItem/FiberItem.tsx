@@ -1,4 +1,4 @@
-import { IColor, IFiber, IModal, IModalImg, TLang } from '../../interfaces'
+import { IColor, IFiber, IModalImg, TLang } from '../../interfaces'
 import Proscons from '../Proscons/Proscons'
 import './fiber-item.scss'
 import SpliderCommon from '../Spliders/Common/SpliderCommon';
@@ -16,7 +16,7 @@ interface IProps {
 }
 
 const FiberItem = ({fiber, lang, colors}: IProps) => {
-	const [modal, setModal] = useState<IModal>({visible: false})
+	const [modal, setModal] = useState<boolean>(false)
 	const [modalImg, setModalImg] = useState<IModalImg>({descr: '', path: ''})
 
 
@@ -24,12 +24,12 @@ const FiberItem = ({fiber, lang, colors}: IProps) => {
     const onImageClick = (e: React.MouseEvent , color: IColor) => {
         e.stopPropagation()
 		setModalImg({descr: color.name[lang], path: color.url})
-        setModal({visible: true})
+        setModal(true)
     }
 
     
     const closeModal = () => {
-		setModal({visible: false})
+		setModal(false)
 	}
 
 
@@ -73,7 +73,7 @@ const FiberItem = ({fiber, lang, colors}: IProps) => {
 					</NavLink>
 				</div>
             </div>
-			<Modal {...{visible: modal.visible, close: closeModal, escExit: true}}>
+			<Modal {...{visible: modal, close: closeModal, escExit: true}}>
 				<ModalImage props={{path: modalImg.path, descr: modalImg.descr}}/>
 			</Modal> 
         </div>

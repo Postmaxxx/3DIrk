@@ -2,7 +2,7 @@ import './splider-common.scss'
 import Splide from "@splidejs/splide";
 import { findBestSuitedImg } from "../../../assets/js/findBestSuitedImg";
 import ImgWithPreloader from '../../../assets/js/ImgWithPreloader';
-import { IImg, IModal, IModalImg, ISpliderOptions, TLang } from '../../../interfaces';
+import { IImg, IModalImg, ISpliderOptions, TLang } from '../../../interfaces';
 import "@splidejs/react-splide/css";
 import Modal from '../../../components/Modal/Modal';
 import ModalImage from '../../../components/MessageImage/MessageImage';
@@ -29,7 +29,7 @@ const SpliderCommon: React.FC<IProps> = ({lang, images, imagesPerSlide=1}): JSX.
 	const splideCommon = useRef<Splide>();
 	const containerSize = useRef<IContainerSize>();
 	const _splideFabric = useRef<any>();
-	const [modal, setModal] = useState<IModal>({visible: false})
+	const [modal, setModal] = useState<boolean>(false)
 	const [modalImg, setModalImg] = useState<IModalImg>({descr: '', path: ''})
 
     const options: Partial<ISpliderOptions> = {
@@ -62,13 +62,13 @@ const SpliderCommon: React.FC<IProps> = ({lang, images, imagesPerSlide=1}): JSX.
 	const handleImgClick = (e: MouseEvent<HTMLDivElement>) => {
 		if ((e.target as HTMLImageElement).tagName === 'IMG') {
 			const id = Number(((e.target as HTMLImageElement).id));
-			setModal({visible: true})
+			setModal(true)
 			setModalImg({path: images[id].url, descr: images[id].name[lang]})
 		}
 	}
 
 	const closeModal = () => {
-		setModal({visible: false})
+		setModal(false)
 	}
 
 
@@ -105,7 +105,7 @@ const SpliderCommon: React.FC<IProps> = ({lang, images, imagesPerSlide=1}): JSX.
                     </ul>
                 </div>
             </div>
-            <Modal {...{visible: modal.visible, close: closeModal, escExit: true}}>
+            <Modal {...{visible: modal, close: closeModal, escExit: true}}>
 				<ModalImage props={{path: modalImg.path, descr: modalImg.descr}}/>
 			</Modal> 
         </div>

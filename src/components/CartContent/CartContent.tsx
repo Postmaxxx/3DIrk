@@ -2,56 +2,50 @@ import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import './cart-content.scss'
-import { ICartItem, ICartState, IColor, IColorsState, IFiber, IFibersState, IFullState, IModal, IModalImg, IProduct, IProductState, TLang } from "src/interfaces";
-import { changeItem, saveCart, removeItem }  from "../../redux/actions/cart"
-import { useState, useEffect, useRef } from 'react'
-import { loadFibers } from "../../redux/actions/fibers"
-import { loadColors } from "../../redux/actions/colors"
+import { ICartItem, ICartState, ICatalogState, IColor, IColorsState, IFiber, IFibersState, IFullState, IModalImg, IProduct, TLang } from "src/interfaces";
+import { useState, useEffect } from 'react'
 import { NavLink } from "react-router-dom";
 import Delete from "../Delete/Delete";
-import Preloader from "../Preloaders/Preloader";
-import { setProduct, setLoadDataStatusProduct }  from "../../redux/actions/product"
 import AmountChanger from "../AmountChanger/AmountChanger";
 import PreloaderW from "../Preloaders/PreloaderW";
 import ImgWithPreloader from "../../assets/js/ImgWithPreloader";
 import Modal from "../Modal/Modal";
 import ModalImage from "../MessageImage/MessageImage";
+import { allActions } from "../../redux/actions/all";
 
 
-const actionsCartList = { changeItem, saveCart, removeItem }
-const actionsListColors = { loadColors }
-const actionsListFibers = { loadFibers }
-const actionsListProduct = { setProduct, setLoadDataStatusProduct  }
 
 
 
 interface IPropsState {
     lang: TLang,
     cart: ICartState,
-    product: IProductState
+    catalog: ICatalogState
     colors: IColorsState
     fibers: IFibersState
 }
 
+
 interface IPropsActions {
     setState: {
-        cart: typeof actionsCartList,
-        colors: typeof actionsListColors,
-        fibers: typeof actionsListFibers,
-        product: typeof actionsListProduct
+        fibers: typeof allActions.fibers
+        catalog: typeof allActions.catalog
+        colors: typeof allActions.colors
+		cart: typeof allActions.cart
     }
 }
+
 
 interface IProps extends IPropsState, IPropsActions {}
 
 const CartContent: React.FC<IProps> = ({lang, cart, colors, fibers, setState}): JSX.Element => {
 
     const [cartReady, setCartReady] = useState<boolean>(false)
-	const [modal, setModal] = useState<IModal>({visible: false})
+	const [modal, setModal] = useState<boolean>(false)
 	const [modalImg, setModalImg] = useState<IModalImg>({descr: '', path: ''})
   
     useEffect(() => {
-        if (cart.dataLoading.status !== 'loading'){
+        if (cart.load.status !== 'fetching'){
             setState.cart.saveCart(cart.items)
         }
     }, [cart.items])
@@ -63,15 +57,15 @@ const CartContent: React.FC<IProps> = ({lang, cart, colors, fibers, setState}): 
 
 
     useEffect(() => {
-        if (colors.dataLoading.status === 'success' && fibers.dataLoading.status === 'success' &&  cart.dataLoading.status === 'success') {
+        if (colors.load.status === 'success' && fibers.load.status === 'success' &&  cart.load.status === 'success') {
             setCartReady(true)
         }
-    }, [colors.dataLoading.status, fibers.dataLoading.status, cart.dataLoading.status])
+    }, [colors.load.status, fibers.load.status, cart.load.status])
 
 
     const onProductClick = (product: IProduct) => {
-        setState.product.setLoadDataStatusProduct({status: 'success', message: ''})
-        setState.product.setProduct(product)
+        setState.catalog.setFetchProduct({status: 'success', message: {en: '', ru: ''}, errors: []})
+        //setState.product.setProduct(product)
     }
 
     const onAmountChange = (item: ICartItem, amount: number) => {
@@ -84,12 +78,12 @@ const CartContent: React.FC<IProps> = ({lang, cart, colors, fibers, setState}): 
         if (!color) return
         e.stopPropagation()
         setModalImg({descr: color.name[lang], path: color.url})
-        setModal({visible: true})
+        setModal(true)
     }
 
     
     const closeModal = () => {
-		setModal({visible: false})
+		setModal(false)
 	}
 
 
@@ -102,7 +96,7 @@ const CartContent: React.FC<IProps> = ({lang, cart, colors, fibers, setState}): 
                         const fiber = fibers.fibersList.find(fiberItem => fiberItem.id === item.fiber)?.short.name[lang]
                         const color: IColor | undefined = colors.colors.find(color => color.id === item.color)
                         return(
-                            <div className="cart__item" key={item.id}>
+                            <div className="cart__item" key={i}>
                                 <NavLink className="item__product-link_img" to={`../catalog/${item.product.id}`} onClick={() => onProductClick(item.product)} aria-label={lang === 'en' ? 'Go to product' : 'Перейти к товару'}>
                                     <div className="img__container">
                                         <ImgWithPreloader src={item.product.imgs[0].url} alt={item.product.imgs[0].name[lang]}/>
@@ -154,7 +148,7 @@ const CartContent: React.FC<IProps> = ({lang, cart, colors, fibers, setState}): 
             :
             <PreloaderW />
         } 
-            <Modal {...{visible: modal.visible, close: closeModal, escExit: true}}>
+            <Modal {...{visible: modal, close: closeModal, escExit: true}}>
                     <ModalImage props={{path: modalImg.path, descr: modalImg.descr}}/>
             </Modal> 
         </div>
@@ -168,18 +162,19 @@ const CartContent: React.FC<IProps> = ({lang, cart, colors, fibers, setState}): 
 const mapStateToProps = (state: IFullState): IPropsState => ({
     cart: state.cart,
     lang: state.base.lang,
-    product: state.product,
+    catalog: state.catalog,
     colors: state.colors,
     fibers: state.fibers,
 })
 
 
-const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
+
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>):IPropsActions => ({
     setState: {
-		cart: bindActionCreators(actionsCartList, dispatch),
-        colors: bindActionCreators(actionsListColors, dispatch),
-        fibers: bindActionCreators(actionsListFibers, dispatch),
-		product: bindActionCreators(actionsListProduct, dispatch),
+		fibers: bindActionCreators(allActions.fibers, dispatch),
+		colors: bindActionCreators(allActions.colors, dispatch),
+		catalog: bindActionCreators(allActions.catalog, dispatch),
+		cart: bindActionCreators(allActions.cart, dispatch),
 	}
 })
   

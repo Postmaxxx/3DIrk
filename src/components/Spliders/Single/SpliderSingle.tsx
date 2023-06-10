@@ -1,35 +1,32 @@
 import './splider-single.scss'
-import { ICategories, ICategoriesListItem, IDataLoading, IFullState, IProduct, ISpliderOptions, TId, TLang,} from "../../../interfaces";
+import { ICatalogState, IFullState, IProduct, ISpliderOptions, TId, TLang,} from "../../../interfaces";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import React, { useRef, useEffect, useState, useMemo } from "react";
 import Splide from "@splidejs/splide";
-import { findBestSuitedImg } from "../../../assets/js/findBestSuitedImg";
-import { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedProduct, loadCategoriesList, loadCategory, setPage, setCategory } from "../../../redux/actions/catalog"
 import Preloader from '../../../components/Preloaders/Preloader';
 import Gallery from '../../../components/Gallery/Gallery';
+import { allActions } from "../../../redux/actions/all";
 
-const actionsList = { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedProduct, loadCategoriesList, loadCategory, setPage, setCategory  }
 
 interface IPropsState {
-    categoriesList: ICategoriesListItem[]
-	selectedCategory: TId
-	selectedProduct: TId
 	lang: TLang
-	loadingProducts: IDataLoading
-	categories: ICategories
+	catalog: ICatalogState
 }
+
 
 interface IPropsActions {
     setState: {
-        catalog: typeof actionsList
+        catalog: typeof allActions.catalog
     }
 }
 
+
+
 interface IProps extends IPropsState, IPropsActions {}
 
-const SpliderSingle: React.FC<IProps> = ({lang, selectedCategory, setState, loadingProducts, categories}): JSX.Element => {
+const SpliderSingle: React.FC<IProps> = ({lang, catalog, setState}): JSX.Element => {
 	
 	const spliderSingle = useRef<Splide>();
 	const _splideMain = useRef<HTMLDivElement>(null);
@@ -57,7 +54,7 @@ const SpliderSingle: React.FC<IProps> = ({lang, selectedCategory, setState, load
 		},
 	};
 
-
+/*
 
 	useEffect(() => {
 		if (selectedCategory && !categories[selectedCategory]) {
@@ -126,14 +123,14 @@ const SpliderSingle: React.FC<IProps> = ({lang, selectedCategory, setState, load
 	}, [productSlides])
 
 
-
+*/
 
 	return (
 		<div className="splider_single__container">
-			{loadingProducts?.status === 'success' ? 
+			{catalog.category.loadCategory.status === 'success' ? 
 				<div className="splide splider_single" ref={_splideMain} aria-label="">
 					<div className="splide__track">
-						<ul className="splide__list">
+						{/*<ul className="splide__list">
 							{productSlides.map((products, i): JSX.Element => {
 								return (
 									<li className="splide__slide" key={i}>
@@ -141,7 +138,7 @@ const SpliderSingle: React.FC<IProps> = ({lang, selectedCategory, setState, load
 									</li>
 								)
 							})}
-						</ul>
+						</ul>*/}
 					</div>
 				</div>
 			:
@@ -154,20 +151,16 @@ const SpliderSingle: React.FC<IProps> = ({lang, selectedCategory, setState, load
 
 const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
-	loadingProducts: state.catalog.categories[state.catalog.selectedCategory]?.dataLoading,
-	categoriesList: state.catalog.categoriesList,
-	selectedCategory: state.catalog.selectedCategory,
-	categories: state.catalog.categories,
-	selectedProduct: state.catalog.selectedProduct,
+	catalog: state.catalog
 })
 
 
-const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
+
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>):IPropsActions => ({
     setState: {
-		catalog: bindActionCreators(actionsList, dispatch)
+		catalog: bindActionCreators(allActions.catalog, dispatch),
 	}
 })
-  
   
 
 export default connect(mapStateToProps, mapDispatchToProps)(SpliderSingle);

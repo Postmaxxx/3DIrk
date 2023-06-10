@@ -1,22 +1,17 @@
 import { Fragment, useEffect, useState,  useRef } from "react";
 import { NavLink } from "react-router-dom";
-import { IFibersState, IFullState, IModal, IPageItem, IUserState, TLang } from "src/interfaces";
+import { IFibersState, IFullState, IPageItem, IUserState, TLang } from "src/interfaces";
 import "./nav.scss"
 import navLogo from "../../assets/img/nav_logo.png"
 import { connect } from "react-redux";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
-import { setNavCloseDt, setNavCloseMob, setNavOpenDt, setNavOpenMob }  from "../../redux/actions/base"
 import CartInformer from "../../components/CartInformer/CartInformer";
-import { loadFibers } from "../../redux/actions/fibers"
-import { setUser } from "../../redux/actions/user"
 import Modal from "src/components/Modal/Modal";
 import Auth from "src/components/Auth/Auth";
 import { pagesList } from "./initialNav";
+import { allActions } from "../../redux/actions/all";
 
-const actionsListBase = {setNavCloseDt, setNavCloseMob, setNavOpenDt, setNavOpenMob }
-const actionsListFibers = { loadFibers }
-const actionsListUser = { setUser }
 
 interface IPropsState {
     lang: TLang
@@ -26,11 +21,12 @@ interface IPropsState {
     userState: IUserState
 }
 
+
 interface IPropsActions {
     setState: {
-        base: typeof actionsListBase
-        fibers: typeof actionsListFibers
-        user: typeof actionsListUser
+        fibers: typeof allActions.fibers
+        user: typeof allActions.user
+        base: typeof allActions.base
     }
 }
 
@@ -41,7 +37,7 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
     const _blur = useRef<HTMLDivElement>(null)
     const [nav, setNav] = useState<IPageItem[]>(pagesList)
     const [expandedNavItems, setExpandedNavItems] = useState<IPageItem["id"][]>([])
-	const [modal, setModal] = useState<IModal>({visible: false})
+	const [modal, setModal] = useState<boolean>(false)
     
 
     const navToggle = () => {
@@ -54,7 +50,7 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
 
 
 	useEffect(() => {
-        if (fibersState.dataLoading.status !== 'success' || fibersState.fibersList.length === 0) return
+        if (fibersState.load.status !== 'success' || fibersState.fibersList.length === 0) return
         const newNav = pagesList.map((page) => {
             if (page.id === "main_fibers") {
                 const newSub: IPageItem[] = fibersState.fibersList.map((fiber) => ({
@@ -70,7 +66,7 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
             return page
         })
         setNav(newNav)
-	}, [fibersState.dataLoading.status, lang])
+	}, [fibersState.load.status, lang])
 
 
     const onNavWithSubClicked = (navId: string) => {
@@ -84,13 +80,13 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
 
        
     const closeModal = () => {
-		setModal({visible: false})
+		setModal(false)
 	}
 
 
     const onClickNotLink = (action: string) => {
         if (action === 'login' && !userState.token) {
-		    setModal({visible: true})
+		    setModal(true)
         }
         if (action === 'logout') {
             setState.user.setUser({
@@ -379,7 +375,7 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
                     </ul>
                 </div>
                 <div className="nav__container_right"></div>
-                <Modal {...{visible: modal.visible, close: closeModal, escExit: true}}>
+                <Modal {...{visible: modal, close: closeModal, escExit: true}}>
                     <Auth onCancel={closeModal}/>
 			    </Modal> 
             </nav>
@@ -399,9 +395,9 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
   
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
     setState: {
-		base: bindActionCreators(actionsListBase, dispatch),
-		fibers: bindActionCreators(actionsListFibers, dispatch),
-		user: bindActionCreators(actionsListUser, dispatch),
+		fibers: bindActionCreators(allActions.fibers, dispatch),
+		base: bindActionCreators(allActions.base, dispatch),
+		user: bindActionCreators(allActions.user, dispatch),
 	}
 })
   

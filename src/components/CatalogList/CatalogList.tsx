@@ -1,0 +1,80 @@
+import "./catalog-list.scss";
+import { ICatalog, ICatalogItem, IFullState, TId, TLang } from "../../interfaces";
+import { AnyAction, bindActionCreators } from "redux";
+import { Dispatch } from "redux";
+import { connect } from "react-redux";
+import { useEffect, useState } from "react";
+import { allActions } from "../../redux/actions/all";
+import Preloader from "../Preloaders/Preloader";
+
+
+interface IPropsState {
+    catalog: ICatalog
+	lang: TLang
+	selectedCategory: TId
+}
+
+interface IPropsActions {
+    setState: {
+        catalog: typeof allActions.catalog
+    }
+}
+interface IProps extends IPropsState, IPropsActions {}
+
+
+const CatalogList: React.FC<IProps> = ({catalog, lang, selectedCategory, setState}): JSX.Element => {
+
+	const loadCategory = (id: TId) => {
+		setState.catalog.loadCategory(id)
+	};
+
+
+	useEffect(() => {
+		if (catalog.load.status === 'idle') {
+			setState.catalog.loadCatalog()
+		}
+	}, [])
+
+
+
+	return(
+		<div className="catalog-list__container">
+			<div className="list">
+				{catalog.load.status === 'success' ? 
+				<ul>
+					{catalog.list.map((category: ICatalogItem, index: number): JSX.Element => {
+						return (
+							<li 
+								key={category.id} 
+								className={category.id === selectedCategory ? "selected" : ""}
+								onClick={():void => loadCategory(category.id)}
+							>
+								{category.name[lang]}
+							</li>
+						);
+					})}
+				</ul>
+				:
+				<Preloader />
+			}
+			</div>
+		</div>
+	);
+};
+
+
+
+
+const mapStateToProps = (state: IFullState): IPropsState => ({
+    lang: state.base.lang,
+	catalog: state.catalog.catalog,
+	selectedCategory: state.catalog.category.id
+})
+
+
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>):IPropsActions => ({
+    setState: {
+		catalog: bindActionCreators(allActions.catalog, dispatch),
+	}
+})
+export default connect(mapStateToProps, mapDispatchToProps)(CatalogList);

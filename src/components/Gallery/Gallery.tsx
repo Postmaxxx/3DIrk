@@ -2,20 +2,11 @@ import './gallery.scss'
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import Preloader from '../../components/Preloaders/Preloader';
 import { IFibersState, IFullState, IProduct, TLang } from "../../interfaces";
-import { useEffect } from 'react';
 import ImgWithPreloader from '../../assets/js/ImgWithPreloader';
 import { NavLink } from 'react-router-dom';
-import { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedProduct, loadCategoriesList, loadCategory }  from "../../redux/actions/catalog"
-import { setProduct, setLoadDataStatusProduct }  from "../../redux/actions/product"
+import { allActions } from "../../redux/actions/all";
 
-const actionsListCatalog = { setCategoriesList, setLoadDataStatusCategoriesList, setLoadDataStatusCategory, setSelectedCategory, setSelectedProduct, loadCategoriesList, loadCategory  }
-const actionsListProduct = { setProduct, setLoadDataStatusProduct  }
-
-interface IPropsReceived {
-    products: IProduct[]
-}
 
 interface IPropsState {
 	lang: TLang
@@ -23,22 +14,22 @@ interface IPropsState {
 
 interface IPropsActions {
     setState: {
-        catalog: typeof actionsListCatalog,
-        product: typeof actionsListProduct
+        catalog: typeof allActions.catalog
     }
 }
 
-interface IProps extends IPropsState, IPropsActions, IPropsReceived {}
+interface IProps extends IPropsState, IPropsActions {
+    products: IProduct[]
+}
 
 
 const Gallery: React.FC<IProps> = ({lang, products, setState}):JSX.Element => {
 
     const onClicked = (product: IProduct) => {
         //setState.catalog.setSelectedProduct(product.id)
-        setState.product.setLoadDataStatusProduct({status: 'success', message: ''})
-        setState.product.setProduct(product)
+        /*setState.product.setLoadDataStatusProduct({status: 'success', message: ''})
+        setState.product.setProduct(product)*/
     }
-
 
     return (
         <div className="gallery__container">
@@ -56,7 +47,6 @@ const Gallery: React.FC<IProps> = ({lang, products, setState}):JSX.Element => {
                             <div className="descr__container">
                                 <span className='name'>{product.name[lang]}</span>
                                 <span className='price'>{lang === 'en' ? 'Price' : 'Цена'}: {product.price[lang]}</span>
-
                             </div>
                         </div>
                     </NavLink>
@@ -75,8 +65,7 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
     setState: {
-		catalog: bindActionCreators(actionsListCatalog, dispatch),
-		product: bindActionCreators(actionsListProduct, dispatch),
+		catalog: bindActionCreators(allActions.catalog, dispatch),
 	}
 })
   

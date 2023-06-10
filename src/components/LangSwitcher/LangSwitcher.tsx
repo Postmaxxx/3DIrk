@@ -2,13 +2,10 @@ import "./langSwitcher.scss"
 import { useEffect, useRef } from "react";
 import { connect } from "react-redux";
 import { IFullState, TLang, TTheme } from "../../interfaces";
-import { setLangEn, setLangRu }  from "../../redux/actions/base"
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { useScrollHider } from "src/hooks/scrollHider";
-
-
-const actionsList = {setLangEn, setLangRu}
+import { allActions } from "../../redux/actions/all";
 
 
 interface IPropsState {
@@ -16,10 +13,11 @@ interface IPropsState {
 	mobOpened: boolean
 }
 
+
 interface IPropsActions {
-	setState: {
-		base: typeof actionsList
-	}
+    setState: {
+        base: typeof allActions.base
+    }
 }
 
 interface IProps extends IPropsState, IPropsActions {}
@@ -82,7 +80,7 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
   
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
     setState: {
-		base: bindActionCreators(actionsList, dispatch)
+		base: bindActionCreators(allActions.base, dispatch),
 	}
 	
 })

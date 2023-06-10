@@ -18,7 +18,7 @@ const CartInformer: React.FC<IPropsState> = ({lang, cart}): JSX.Element => {
     const itemsInCart = cart.items.reduce((total, item) => total + item.amount, 0)
     return (
         <>
-            {cart.dataLoading.status === 'success' ? 
+            {cart.load.status === 'success' ? 
                 <div className="cart-informer">
                     <span>{itemsInCart > 0 ? `+${itemsInCart}` : null}</span>
                 </div>

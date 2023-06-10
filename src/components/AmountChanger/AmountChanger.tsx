@@ -1,6 +1,6 @@
 import { TLang } from '../../interfaces'
 import './amount-changer.scss'
-import { useRef, useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 
 interface IProps<T> {
     onChange: (idInstance: T, amount: number) => void
