@@ -1,9 +1,10 @@
 import { IFibersState } from "src/interfaces"
 
 const initialFibers = {
-    dataLoading: {
+    load: {
         status: 'idle',
-        message: ""
+        message: {en: '', ru: ''},
+        errors: []
     },
     fibersList: [],
     selected: '',

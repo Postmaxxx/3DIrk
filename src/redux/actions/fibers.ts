@@ -1,10 +1,10 @@
-import { IAction, IDataLoading, IDispatch, IFiber } from "src/interfaces"
+import { IAction, IDispatch, IFetch, IFiber } from "src/interfaces"
 import mockFibers from '../mocks/fibers'
 import { actionsListFibers } from './actionsList'
 
 
 
-export const setLoadDataStatusFibers = <T extends IDataLoading>(payload: T):IAction<T> => ({
+export const setFetchFibers = <T extends IFetch>(payload: T):IAction<T> => ({
     type: actionsListFibers.SET_LOAD_DATA_STATUS_FIBERS,
     payload: payload
 });
@@ -24,7 +24,7 @@ export const setSelectedFiber = <T extends IFiber['id']>(payload: T):IAction<T> 
 
 export const loadFibers = () => {
     return async function(dispatch: IDispatch) {
-        dispatch(setLoadDataStatusFibers({status: 'loading', message: `Loading fibers`}))
+        dispatch(setFetchFibers({status: 'fetching', message: {en: `Loading fibers`, ru: 'Загрузка материалов'}, errors: []}))
         try {
             const data: IFiber[] = await new Promise((res, rej) => {
                 setTimeout(() => {
@@ -33,10 +33,10 @@ export const loadFibers = () => {
                 }, 2000)
             })
 
-            dispatch(setLoadDataStatusFibers({status: 'success', message: `Fibers loaded`}))
+            dispatch(setFetchFibers({status: 'success', message: {en: `Fibers has been loaded`, ru: 'Материалы загружены'}, errors: []}))
             dispatch(setDataFibers(data))
         } catch (e) {
-            dispatch(setLoadDataStatusFibers({status: 'error', message: `ERROR while loading fibers: ${e}`}))
+            dispatch(setFetchFibers({status: 'error', message: {en:`Error while loading fibers: ${e}`, ru: `Ошибка при загрузке материалов: ${e}`}, errors: []}))
         }
     }
 }

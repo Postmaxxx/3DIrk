@@ -1,16 +1,18 @@
 import { ICartState } from "src/interfaces"
 
 const cartState = {
-    dataLoading: {
+    load: {
         status: 'idle',
-        message: ""
+        message: {en: '', ru: ''},
+        errors: []
     },
-    dataSending: {
+    send: {
         status: 'idle',
         message: {
             en: '',
             ru: ''
-        }
+        },
+        errors: []
     },
     items: [],
     //newItems: 0

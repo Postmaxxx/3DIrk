@@ -1,5 +1,5 @@
 import './catalog.scss'
-import { IDataLoading, IFullState, TLang } from "../../interfaces";
+import { IFetch, IFullState, TLang } from "../../interfaces";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
@@ -9,24 +9,21 @@ import "@splidejs/react-splide/css";
 
 import CategoriesList from '../../components/CategoriesList/CategoriesList';
 import CatalogIntro from '../../components/CatalogIntro/CatalogIntro';
+import { allActions } from "../../redux/actions/all";
 
-import { loadColors }  from "../../redux/actions/colors"
-import { loadFibers }  from "../../redux/actions/fibers"
-
-const actionsListColors = { loadColors }
-const actionsListFibers = { loadFibers }
 
 interface IPropsState {
-    colorsLoading: IDataLoading
-    fibersLoading: IDataLoading
+    colorsLoading: IFetch
+    fibersLoading: IFetch
 }
 
 interface IPropsActions {
     setState: {
-        colors: typeof actionsListColors,
-        fibers: typeof actionsListFibers,
+        fibers: typeof allActions.fibers
+        colors: typeof allActions.colors
     }
 }
+
 
 interface IProps extends IPropsState, IPropsActions {}
 
@@ -63,16 +60,17 @@ const Catalog:React.FC<IProps> = ({colorsLoading, fibersLoading, setState}): JSX
 
 
 const mapStateToProps = (state: IFullState): IPropsState => ({
-    colorsLoading: state.colors.dataLoading,
-    fibersLoading: state.fibers.dataLoading
+    colorsLoading: state.colors.load,
+    fibersLoading: state.fibers.load
 })
 
 
-const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>):IPropsActions => ({
     setState: {
-		colors: bindActionCreators(actionsListColors, dispatch),
-		fibers: bindActionCreators(actionsListFibers, dispatch),
+		fibers: bindActionCreators(allActions.fibers, dispatch),
+		colors: bindActionCreators(allActions.colors, dispatch),
 	}
 })
+  
   
 export default connect(mapStateToProps, mapDispatchToProps)(Catalog)

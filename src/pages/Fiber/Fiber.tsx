@@ -1,6 +1,4 @@
 import './fiber.scss'
-import { loadFibers, setSelectedFiber }  from "../../redux/actions/fibers"
-import { loadColors }  from "../../redux/actions/colors"
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { AnyAction, bindActionCreators, Dispatch } from "redux";
@@ -8,9 +6,8 @@ import { connect } from "react-redux";
 import Preloader from '../../components/Preloaders/Preloader';
 import { TLang, IFullState, IFiber, IFibersState, IColorsState, IColor } from "../../interfaces";
 import FiberItem from '../../components/FiberItem/FiberItem';
+import { allActions } from "../../redux/actions/all";
 
-const actionsListFibers = { loadFibers, setSelectedFiber }
-const actionsListColors = { loadColors }
 
 interface IPropsState {
     lang: TLang,
@@ -18,12 +15,14 @@ interface IPropsState {
     colors: IColorsState
 }
 
+
 interface IPropsActions {
     setState: {
-        fibers: typeof actionsListFibers
-        colors: typeof actionsListColors
+        fibers: typeof allActions.fibers
+        colors: typeof allActions.colors
     }
 }
+
 
 interface IProps extends IPropsState, IPropsActions {}
 
@@ -38,20 +37,20 @@ const Fiber:React.FC<IProps> = ({lang, fibers, colors, setState}):JSX.Element =>
     
 
     useEffect(() => {
-        if (fibers.dataLoading.status === 'idle') {
+        if (fibers.load.status === 'idle') {
             setState.fibers.loadFibers()
             setLoaded(false)
         }
-        if (colors.dataLoading.status === 'idle') {
+        if (colors.load.status === 'idle') {
             setState.colors.loadColors()
             setLoaded(false)
         }
-        if (colors.dataLoading.status === 'success' && fibers.dataLoading.status === 'success') {
+        if (colors.load.status === 'success' && fibers.load.status === 'success') {
             setLoaded(true)
             setFiber(fibers.fibersList.find(item => item.id === paramFiberId))
             setState.fibers.setSelectedFiber(paramFiberId)
         }
-    }, [colors.dataLoading?.status, fibers.dataLoading?.status, paramFiberId])
+    }, [colors.load.status, fibers.load.status, paramFiberId])
     
 
     return (
@@ -75,11 +74,12 @@ const mapStateToProps = (state: IFullState): IPropsState  => ({
     colors: state.colors
 })
 
-const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
+
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>):IPropsActions => ({
     setState: {
-		fibers: bindActionCreators(actionsListFibers, dispatch),
-		colors: bindActionCreators(actionsListColors, dispatch)
+		fibers: bindActionCreators(allActions.fibers, dispatch),
+		colors: bindActionCreators(allActions.colors, dispatch),
 	}
 })
-    
+  
 export default connect(mapStateToProps, mapDispatchToProps)(Fiber)

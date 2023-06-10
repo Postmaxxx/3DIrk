@@ -1,4 +1,4 @@
-import { IAction, ICatalogState, ICategory } from "src/interfaces"
+import { IAction, ICatalogItem, ICatalogState, ICategory, IFetch, IProduct } from "src/interfaces"
 import initialCatalogState from '../initialStates/catalog'
 import { actionsListCatalog } from '../actions/actionsList'
 
@@ -8,66 +8,73 @@ import { actionsListCatalog } from '../actions/actionsList'
 const reducerCatalog = (state: ICatalogState = initialCatalogState, action: IAction<unknown>): ICatalogState => {
     switch (action.type) {
         case actionsListCatalog.SET_LOAD_DATA_STATUS_CATEGORIES_LIST:
-            const categoriesListStatus = action.payload as ICatalogState["categoriesListLoading"]
+            const categoriesListStatus = action.payload as IFetch
             return {
                 ...state, 
-                categoriesListLoading: categoriesListStatus
+                catalog: {
+                    ...state.catalog,
+                    load: categoriesListStatus
+                }
             }
         case actionsListCatalog.SET_DATA_CATEGORIES_LIST: 
-            const categoriesList = action.payload as ICatalogState["categoriesList"]
+            const categoriesList = action.payload as ICatalogItem[]
             return {
                 ...state, 
-                categoriesList: categoriesList
+                catalog: {
+                    ...state.catalog,
+                    list: categoriesList
+                }
             }
-        case actionsListCatalog.SET_SELECTED_CATEGORY: 
-            const selectedCategory = action.payload as ICatalogState["selectedCategory"]
-            return {
-                ...state, 
-                selectedCategory: selectedCategory
-            }
-        case actionsListCatalog.SET_SELECTED_PRODUCT: 
-            const selectedProduct = action.payload as ICatalogState["selectedProduct"]
-            return {
-                ...state, 
-                selectedProduct: selectedProduct
-            }
+
         case actionsListCatalog.SET_LOAD_DATA_STATUS_CATEGORY: 
-            const dataLoadingCategory = action.payload as Pick<ICategory, "dataLoading" | "id">
+            const dataLoadingCategory = action.payload as IFetch
             return {
                 ...state, 
-                categories: {
-                    ...state.categories,
-                    [dataLoadingCategory.id]: {
-                        ...state.categories[dataLoadingCategory.id],
-                        dataLoading: dataLoadingCategory.dataLoading
-                    }
+                category: {
+                    ...state.category,
+                    loadCategory: dataLoadingCategory
                 }
             }
         case actionsListCatalog.SET_DATA_CATEGORY: 
-            const dataCategory = action.payload as Omit<ICategory, "dataLoading">
+            const dataCategory = action.payload as Omit<ICategory, "loadCategory" | 'page' | 'product' | "loadProduct">
             return {
                 ...state, 
-                categories: {
-                    ...state.categories,
-                    [dataCategory.id]: {
-                        ...state.categories[dataCategory.id],
-                        id: dataCategory.id,
-                        name: dataCategory.name,
-                        products: dataCategory.products,
-                        page: dataCategory.page
-                    }
+                category: {
+                    ...state.category,
+                    ...dataCategory
                 }
             }
         case actionsListCatalog.SET_PAGE: 
             const selectedPage = action.payload as ICategory["page"]
             return {
                 ...state, 
-                categories: {
-                    ...state.categories,
-                    [state.selectedCategory]: {
-                        ...state.categories[state.selectedCategory],
-                        page: selectedPage
-                    }
+                category: {
+                    ...state.category,
+                    page: selectedPage
+                }
+            }
+
+
+
+
+
+
+        case actionsListCatalog.SET_LOAD_DATA_STATUS_PRODUCT: 
+            const loadProductStatus = action.payload as IFetch
+            return {
+                ...state, 
+                category: {
+                    ...state.category,
+                    loadProduct: loadProductStatus
+                }
+            }
+        case actionsListCatalog.SET_DATA_PRODUCT: 
+            const product = action.payload as IProduct
+            return {
+                ...state, 
+                category: {
+                    ...state.category,
+                    product: product
                 }
             }
 

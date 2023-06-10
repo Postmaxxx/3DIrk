@@ -1,16 +1,15 @@
 import { INewsState } from "src/interfaces"
 
 const initialNews = {
-    dataLoading: {
+    load: {
         status: 'idle',
-        message: ""
+        message: {en: '', ru: ''},
+        errors: []
     },
-    dataSending: {
+    send: {
         status: 'idle',
-        message: {
-            en: '',
-            ru: ''
-        }
+        message: {en: '', ru: ''},
+        errors: []
     },
     newsList: []
 } satisfies INewsState

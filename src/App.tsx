@@ -1,14 +1,14 @@
-import { Fragment, useEffect, useState,  useRef } from "react";
+import { useEffect } from "react";
 import { Routes, Route, HashRouter } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import Preloader from "./components/Preloaders/Preloader"; 
 import "./assets/css/_base.scss";
-import { IDataLoading, IFullState, IUserState, TLang } from "./interfaces";
+import { IFullState, TLang } from "./interfaces";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import { allActions } from "./redux/actions/all";
 import P404 from "./pages/P404/P404";
+import { allActions } from "./redux/actions/all";
 
 const LazyThemeSwitcher = lazy(() => import("./components/ThemeSwitcher/ThemeSwitcher"));
 const LazyLangSwitcher = lazy(() => import("./components/LangSwitcher/LangSwitcher"));
@@ -24,19 +24,17 @@ const LazyProduct = lazy(() => import("./pages/Product/Product"));
 const LazyNewsDetails = lazy(() => import("./pages/NewsDetails/NewsDetails"));
 const LazyFibersCompare= lazy(() => import("./pages/FibersCompare/FibersCompare"));
 const LazyOffliner= lazy(() => import("./components/Offliner/Offliner"));
-const LazyUserBlock= lazy(() => import("./components/UserBlock/UserBlock"));
+//const LazyUserBlock= lazy(() => import("./components/UserBlock/UserBlock"));
 const LasyNewsCreator = lazy(() => import("./pages/Admin/NewsCreator"));
+
+
 
 interface IPropsState {
     lang: TLang
-	cartLoad: IDataLoading
-	colorsLoad: IDataLoading
-	fibersLoad: IDataLoading
 }
 
 interface IPropsActions {
     setState: {
-        base: typeof allActions.base
         fibers: typeof allActions.fibers
         user: typeof allActions.user
         colors: typeof allActions.colors
@@ -49,7 +47,7 @@ interface IProps extends IPropsState, IPropsActions {}
 
 
 
-const App:React.FC<IProps> = ({lang, cartLoad, colorsLoad, setState, fibersLoad}):JSX.Element => {
+const App:React.FC<IProps> = ({lang, setState}):JSX.Element => {
 	
 
 	useEffect(() => {
@@ -102,15 +100,11 @@ const App:React.FC<IProps> = ({lang, cartLoad, colorsLoad, setState, fibersLoad}
 
 
 const mapStateToProps = (state: IFullState): IPropsState => ({
-    lang: state.base.lang,
-	cartLoad: state.cart.dataLoading,
-	colorsLoad: state.colors.dataLoading,
-	fibersLoad: state.fibers.dataLoading,
+    lang: state.base.lang
 })
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>):IPropsActions => ({
     setState: {
-		base: bindActionCreators(allActions.base, dispatch),
 		fibers: bindActionCreators(allActions.fibers, dispatch),
 		colors: bindActionCreators(allActions.colors, dispatch),
 		user: bindActionCreators(allActions.user, dispatch),

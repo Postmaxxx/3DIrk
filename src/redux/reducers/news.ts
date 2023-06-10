@@ -10,12 +10,12 @@ const reducerNews = (state:INewsState = initialNewsState, action: IAction<any>):
         case actionsListNews.SET_LOAD_DATA_STATUS_NEWS: 
             return {
                 ...state, 
-                dataLoading: action.payload
+                load: action.payload
             }
         case actionsListNews.SET_SEND_DATA_STATUS_NEWS: 
             return {
                 ...state, 
-                dataSending: action.payload
+                send: action.payload
             }
         case actionsListNews.SET_DATA_NEWS: 
             return {

@@ -10,7 +10,7 @@ const reducerOrder = (state:IOrderState = initialOrderState, action: IAction<any
         case actionsListOrder.SET_SEND_DATA_STATUS_ORDER: 
             return {
                 ...state, 
-                dataSending: action.payload
+                send: action.payload
             }
         case actionsListOrder.SET_ORDER_NAME: 
             return {

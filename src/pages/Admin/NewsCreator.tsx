@@ -1,4 +1,4 @@
-import { IDataSending, IFullState, IModal, INewsItem, IUserState, TLang } from 'src/interfaces';
+import { IFetch, IFullState, IUserState, TLang } from 'src/interfaces';
 import './news-creator.scss'
 import React, {  useRef } from "react";
 import { connect } from "react-redux";
@@ -7,20 +7,21 @@ import { Dispatch } from "redux";
 import { postNews } from "../../redux/actions/news"
 import Modal from 'src/components/Modal/Modal';
 import MessageInfo from 'src/components/MessageInfo/MessageInfo';
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
+import { allActions } from "../../redux/actions/all";
 
 const actionsListNews = { postNews }
 
 interface IPropsState {
     lang: TLang
     userState: IUserState
-    sending: IDataSending
+    sending: IFetch
 }
 
 
 interface IPropsActions {
     setState: {
-        news: typeof actionsListNews
+        news: typeof allActions.news
     }
 }
 
@@ -40,7 +41,7 @@ const NewsCreator: React.FC<IProps> = ({lang, userState, sending, setState}): JS
     const _text_en = useRef<HTMLTextAreaElement>(null)
     const _text_ru = useRef<HTMLTextAreaElement>(null)
     const _images = useRef<HTMLDivElement>(null)
-	const [modal, setModal] = useState<IModal>({visible: false})
+	const [modal, setModal] = useState<boolean>(false)
     const [message, setMessage] = useState({header: '', status: '', text: ['']})
 
 
@@ -134,24 +135,24 @@ const NewsCreator: React.FC<IProps> = ({lang, userState, sending, setState}): JS
 
     
     const closeModal = () => {
-		setModal({visible: false})
+		setModal(false)
         setMessage({
             status: '',
-            header: 'sending.status',
+            header: sending.status,
             text: ['']
         })
 	}
 
 
     useEffect(() => {
-        if (sending.status === 'idle' || sending.status === 'sending')  return
+        if (sending.status === 'idle' || sending.status === 'fetching')  return
         const errors: string[] = sending.errors?.map(e => e[lang]) || []
         setMessage({
             header: sending.status === 'success' ? lang === 'en' ? 'News posted' : 'Новость добавлена' : lang === 'en' ? 'Error' : 'Ошибка',
             status: sending.status,
             text: [sending.message[lang], ...errors]
         })
-		setModal({visible: true})
+		setModal(true)
 
     }, [sending.status])
 
@@ -228,10 +229,10 @@ const NewsCreator: React.FC<IProps> = ({lang, userState, sending, setState}): JS
 
 
                         <button className='button_blue add' onClick={e => onAddImage(e)}>{lang === 'en' ? 'Add image' : 'Добавить изображение'}</button>
-                        <button className='button_blue post' disabled={sending.status === 'sending'} onClick={e => onSubmit(e)}>{lang === 'en' ? 'Post news' : "Отправить новость"}</button>
+                        <button className='button_blue post' disabled={sending.status === 'fetching'} onClick={e => onSubmit(e)}>{lang === 'en' ? 'Post news' : "Отправить новость"}</button>
                     </form>
                 </div>
-                <Modal {...{visible: modal.visible, close: closeModal, escExit: true}}>
+                <Modal {...{visible: modal, close: closeModal, escExit: true}}>
                     <MessageInfo {...{  
                             status: message.status,
                             header: message.header,
@@ -252,14 +253,16 @@ const NewsCreator: React.FC<IProps> = ({lang, userState, sending, setState}): JS
 const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
     userState: state.user,
-    sending: state.news.dataSending
+    sending: state.news.send
 })
 
-const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
+
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>):IPropsActions => ({
     setState: {
-		news: bindActionCreators(actionsListNews, dispatch),
+		news: bindActionCreators(allActions.news, dispatch),
 	}
 })
+  
 
     
 export default connect(mapStateToProps, mapDispatchToProps)(NewsCreator)

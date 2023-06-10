@@ -2,22 +2,14 @@ import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import './order.scss'
-import { ICartItem, ICartState, ICheckErrorItem, IColorsState, IFibersState, IFullState, IModal, IOrderState, TLang, TLangText } from "src/interfaces";
-import { useState, useEffect, useRef, KeyboardEventHandler } from 'react'
+import { ICartItem, ICartState, ICheckErrorItem, IColorsState, IFibersState, IFullState, IOrderState, TLang, TLangText } from "src/interfaces";
+import { useState, useEffect, useRef } from 'react'
 import Modal from "../../components/Modal/Modal";
 import MessageInfo from "../../components/MessageInfo/MessageInfo";
-import { setName, setEmail, setPhone, setMessage, clearFiles, clearForm, addFiles, sendOrder, setSendDataStatus }  from "../../redux/actions/order"
 import CartContent from "../../components/CartContent/CartContent";
 import AddFiles, { IAddFilesFunctions } from "../../components/AddFiles/AddFiles";
-import { loadFibers } from "../../redux/actions/fibers"
-import { loadColors } from "../../redux/actions/colors"
-import { clearCart } from "../../redux/actions/cart"
 import inputChecker from "src/assets/js/inputChecker";
-
-const actionsListOrder = { setName, setEmail, setPhone, setMessage, clearFiles, clearForm, addFiles, sendOrder, setSendDataStatus  }
-const actionsListColors = { loadColors }
-const actionsListFibers = { loadFibers }
-const actionsListCart = { clearCart }
+import { allActions } from "src/redux/actions/all";
 
 
 interface IPropsState {
@@ -30,10 +22,10 @@ interface IPropsState {
 
 interface IPropsActions {
     setState: {
-        order: typeof actionsListOrder
-        colors: typeof actionsListColors,
-        fibers: typeof actionsListFibers,
-        cart: typeof actionsListCart,
+        order: typeof allActions.order
+        fibers: typeof allActions.fibers
+        colors: typeof allActions.colors
+		cart: typeof allActions.cart
     }
 }
 
@@ -47,27 +39,26 @@ interface IMessage {
 }
 
 
-
 const Order:React.FC<IProps> = ({lang, order, cart, colors, fibers, setState}): JSX.Element => {
 
     const _name = useRef<HTMLInputElement>(null)
     const _email = useRef<HTMLInputElement>(null)
     const _phone = useRef<HTMLInputElement>(null)
     const _message = useRef<HTMLTextAreaElement>(null)
-	const [modal, setModal] = useState<IModal>({visible: false})
+	const [modal, setModal] = useState<boolean>(false)
     const addFilesRef = useRef<IAddFilesFunctions>(null)
     const [message, setMessage] = useState<IMessage>({status: '', header: '', text: []})
 
 
     const closeModal = () => {
-		setModal({visible: false})
-        if (order.dataSending.status === 'success') {
+		setModal(false)
+        if (order.send.status === 'success') {
             setState.order.clearFiles();
             setState.order.clearForm();
             addFilesRef.current?.clearAttachedFiles()
             setState.cart.clearCart()
         }
-        setState.order.setSendDataStatus({status: 'idle', message: {en: '', ru: ''}})
+        setState.order.setSendDataStatus({status: 'idle', message: {en: '', ru: ''}, errors: []})
 	}
 
 
@@ -99,12 +90,12 @@ const Order:React.FC<IProps> = ({lang, order, cart, colors, fibers, setState}): 
         const email:string = order.email;
         const message:string = order.message;
         if (checkErrors()) {
-            setModal({visible: true})
+            setModal(true)
             return
         }
         
         const textCart = cart.items.reduce((text: string, item: ICartItem, i: number) => {
-            
+            item.product
             return text + `${i+1}) ${item.product.name[lang]}
 ${lang === 'en' ? 'Options' : 'Версия'}: ${item.type} 
 ${lang === 'en' ? 'Fiber' : 'Материал'}: ${fibers.fibersList.find(fiberItem => fiberItem.id === item.fiber)?.short.name[lang]}
@@ -132,20 +123,20 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
             header: lang === 'en' ? "Sending order..." : "Отправка заказа...",
             text: [message[lang]],
         })
-        setModal({visible: true})
+        setModal(true)
     }
 
 
     useEffect(() => {
-        if (order.dataSending.status === 'success' || order.dataSending.status === 'error') {
+        if (order.send.status === 'success' || order.send.status === 'error') {
             setMessage({
-                status: order.dataSending.status,
-                header: order.dataSending.status === 'success' ? lang === 'en' ? "Success" : "Отправлено" : lang === 'en' ? "Error" : "Ошибка",
-                text: [order.dataSending.message[lang]],
+                status: order.send.status,
+                header: order.send.status === 'success' ? lang === 'en' ? "Success" : "Отправлено" : lang === 'en' ? "Error" : "Ошибка",
+                text: [order.send.message[lang]],
             })
-            setModal({visible: true})
+            setModal(true)
         }
-    }, [order.dataSending.status])
+    }, [order.send.status])
 
 
 
@@ -280,7 +271,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
 
                                 <button 
                                     type="submit" 
-                                    disabled={cart.dataLoading.status !== 'success' && fibers.dataLoading.status !== 'success' && colors.dataLoading.status !== 'success' && order.dataSending.status !== 'sending'} 
+                                    disabled={cart.load.status !== 'success' && fibers.load.status !== 'success' && colors.load.status !== 'success' && order.send.status !== 'fetching'} 
                                     className="button_order" 
                                     onClick={onSubmit}>
                                         {lang === 'en' ? 'Order' : "Отправить"}
@@ -290,7 +281,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
                     </div>
                 </div>
             </div>
-            <Modal {...{visible: modal.visible, close: closeModal, escExit: true}}>
+            <Modal {...{visible: modal, close: closeModal, escExit: true}}>
 				<MessageInfo {...{
                     status: message.status,
                     header: message.header,
@@ -315,19 +306,16 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
     fibers: state.fibers,
 })
 
-const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
+
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>):IPropsActions => ({
     setState: {
-		order: bindActionCreators(actionsListOrder, dispatch),
-		colors: bindActionCreators(actionsListColors, dispatch),
-		fibers: bindActionCreators(actionsListFibers, dispatch),
-		cart: bindActionCreators(actionsListCart, dispatch),
+		fibers: bindActionCreators(allActions.fibers, dispatch),
+		colors: bindActionCreators(allActions.colors, dispatch),
+		order: bindActionCreators(allActions.order, dispatch),
+		cart: bindActionCreators(allActions.cart, dispatch),
 	}
 })
   
+  
     
 export default connect(mapStateToProps, mapDispatchToProps)(Order)
-/*
-                        <div className="img__container">
-                            <img src={imgSide} alt="" />
-                        </div>
-*/

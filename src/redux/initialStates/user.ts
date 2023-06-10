@@ -10,7 +10,7 @@ const initialUserState = {
         message: {en: '', ru: ''},
         errors: []
     },
-    orders: []
+    //orders: []
 } satisfies IUserState
 
 export default initialUserState

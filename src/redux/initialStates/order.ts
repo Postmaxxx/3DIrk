@@ -1,12 +1,12 @@
 import { IOrderState } from "src/interfaces"
 
 const initialOrder = {
-    dataSending: {
+    id: '',
+    date: new Date(),
+    send: {
         status: 'idle',
-        message: {
-            en: '',
-            ru: ''
-        }
+        message: {en: '', ru: ''},
+        errors: []
     },
     name: '',
     phone: '',

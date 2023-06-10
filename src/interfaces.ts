@@ -1,12 +1,8 @@
 import { AnyAction } from "redux";
 
-
-
 //================================================================================
 export type TTheme = 'dark' | 'light'
 export type TLang = 'en' | 'ru'
-export type TLoadDataStatus = 'idle' | 'success' | 'loading' | 'error'
-export type TSendDataStatus = 'idle' | 'success' | 'sending' | 'error'
 export type TId = string
 
 //---------------------------------------redux
@@ -24,72 +20,37 @@ export interface IDispatch {
 }
 
 
-//---------------------------------------------data load
-export interface IDataLoading {
-    status: TLoadDataStatus
-    message: string
-}
+//---------------------------------------------data fetch
+export type TFetchStatus = 'idle' | 'success' | 'fetching' | 'error'
 
-
-//---------------------------------------------data send
-export interface IDataSending {
-    status: TSendDataStatus
+export interface IFetch {
+    status: TFetchStatus
     message: TLangText
-    errors?: TLangText[]
+    errors: TLangText[]
 }
 
 
-//---------------------------------------------lang
-export type TTextMultiLines = Array<{part: string}>
-
-
+//---------------------------------------------lang text
 export type TLangText = {
     [key in TLang]: string
 }
-
-/*export type TLangTextArr = {
-    [key in TLang]: TTextMultiLines
-}*/
-
-
-
 
 
 // ---------------------------------------------nav
 export interface IPageItem {
     name: TLangText
     path: string
-    id: string
+    id: TId
     notLink?: boolean
     expanded?: boolean
     subMenu?: Array<IPageItem>
 }
-/*
-export interface IPage extends IPageItem {
-    subMenu?: IPageItem[]
-}*/
-/*
-export interface INav {
-    mobOpened: boolean,
-    desktopOpened: boolean
-    //pages: IPage[]
-}
-*/
+
 
 //-------------------------------------------img
 export interface IImg {
     url: string
     name: TLangText
-}
-
-
-
-
-//=============================================BLOCKS
-
-//------------------------------------------ modal
-export interface IModal {
-	visible: boolean
 }
 
 
@@ -146,94 +107,31 @@ export interface ISpliderOptions {
 
 
 
-//------------------------------------block SliderMax
-/*export interface ISliderMaxBlock {
-    path: string
-    alt: string
-    url?: string
-    descr: string
-}*/
-
-//----------------------------------- block hero
-
-export interface IHeroBlock {
-    header: TLangText,
-    text: TLangText
-}
-
-//----------------------------------- block news
-export interface INewsBlock {
-    header: TLangText
-    text: TLangText
-}
-
-
-//----------------------------------- block fibers
-
-export interface IFibersBlock {
-    header: TLangText
-    text: TLangText
-    colors: TLangText
-    features: TLangText
-}
-
-//----------------------------------- block Catalog
-export interface ICatalogBlock {
-    header: TLangText
-    subheader: TLangText
-    text: TLangText
-    img: IImg
-    headerGallery: TLangText
-    priceGallery: TLangText
-}
-
-
-//----------------------------------- block order
-export interface IOrderInput {
-    label: TLangText,
-}
-
-export interface IOrderBlock {
-    header: TLangText
-    subheader: TLangText
-    name: IOrderInput
-    phone: IOrderInput
-    email: IOrderInput
-    message: IOrderInput
-    files: {
-        label: TLangText,
-        listLabel: TLangText
-        link: TLangText
-        linkRest: TLangText
-    },
-    qrcode: string,
-    text: TLangText
-}
-
-
-
-
-
-
-
 
 //----------------------------------- color
-
 export interface IColor {
     id: TId
     name: TLangText
     url: string
 }
 
-
+//----------------------------------- pros / cons
 export interface IProsCons {
     pros: TLangText[]
     cons: TLangText[]
 }
 
 
-//==========================================Fibers State
 
+//----------------------------------- base
+export interface IFeature {
+    name: TLangText
+    value: TLangText
+}
+
+
+
+//==========================================Fibers State
 export interface IFiberParam {
     strength: number //MPa
     stiffnes: number //1..10
@@ -255,7 +153,6 @@ export interface IFiberParam {
     resistantFatigue: number //0..2, 0 -no, 1 - maybe, 3 - ok
     cutting: number //0..2, 0 -no, 1 - maybe, 3 - ok
     grinding: number  //0..2, 0 -no, 1 - maybe, 3 - ok
-    //speed: number //0-lo ... 5-high
     price: number //1-low...5-high
     priceGr: string
 }
@@ -266,9 +163,9 @@ export interface IFiber {
     name: TLangText
     text: TLangText
     proscons: IProsCons
-    colors: IColor["id"][] 
+    colors: TId[] //ids of colors
     imgs: IImg[]
-    features?: IFeature[]
+    features: IFeature[]
     short: {
         name: TLangText
         descr: TLangText
@@ -277,10 +174,10 @@ export interface IFiber {
 }
 
 export interface IFibersState {
-    selected: IFiber['id']
-    showList: IFiber['id'][]
-    dataLoading: IDataLoading
-    fibersList: Array<IFiber>
+    selected: TId //id
+    showList: TId[] //list of id to show
+    load: IFetch //receiving data
+    fibersList: Array<IFiber> 
 }
 
 
@@ -288,84 +185,67 @@ export interface IFibersState {
 
 
 //============================================== category state
-
-
-export interface IFeature {
-    name: TLangText
-    value: TLangText
-}
-
-
-
-
 export interface IProduct {
     id: TId
     price: TLangText
     name: TLangText
     text: TLangText
     imgs: IImg[]
-    fibers: IFiber["id"][]
+    fibers: TId[] //array of fiber ids
     features: IFeature[]
     mods: TLangText[]
 }
 
 
-
-
 export interface ICategory {
     id: TId
     name: TLangText
-    dataLoading: IDataLoading//for load products in selected category
-    products: IProduct[]
-    //products: IProductShort[]
-    page: number
+    products: IProduct[] //part of loaded products, i.e.: 1-9, 10-18, ...
+    loadCategory: IFetch //for load products in selected category
+    product: IProduct //current opened product (in case opened from bookmarks)
+    loadProduct: IFetch
+    total: number //total amount of products, i.e.: 36
+    page: number //current open page of products in category, max as total / amountOfItemsPerPage
+    //selectedProduct: string //id of selected product in category
 }
 
 
-export interface ICategories {
-    [key: string]: ICategory
+export interface ICatalogItem { //one category name
+    name: TLangText
+    id: TId
 }
 
-export interface ICategoriesListItem {
-    name: TLangText,
-    id: ICategory["id"]
+export interface ICatalog{
+    load: IFetch //for load categoriesList
+    list: ICatalogItem[] //list of all categories
 }
 
 export interface ICatalogState {
-    categoriesListLoading: IDataLoading //for load categoriesList
-    categoriesList: ICategoriesListItem[]
-    categories: ICategories
-    selectedCategory: ICategory["id"]
-    selectedProduct: IProduct["id"]
+    catalog: ICatalog //list of all categories
+    category: ICategory //current category
 }
-
-
-
 
 
 
 //================================================news state
 export interface INewsItem {
-    id: string
+    id: TId
     header: TLangText
     date: Date
     short: TLangText
     text: TLangText
-    images: Array<IImg>
+    images: IImg[]
 }
 
 export interface INewsState {
-    dataLoading: IDataLoading
-    dataSending: IDataSending
+    load: IFetch
+    send: IFetch
     newsList: INewsItem[]
 }
 
 
 
-
-
 //============================================== base state
-
 export interface IBaseState {
     theme: TTheme
     lang: TLang
@@ -377,9 +257,10 @@ export interface IBaseState {
 
 
 //============================================== order state
-
 export interface IOrderState {
-    dataSending: IDataSending
+    id: TId
+    date: Date
+    send: IFetch
     name: string
     phone: string
     email: string
@@ -388,42 +269,49 @@ export interface IOrderState {
 }
 
 
-//============================================== Product state
 
-export interface IProductState extends IProduct {
-    dataLoading: IDataLoading
+
+//============================================== Product state
+/*export interface IProductState extends IProduct {
+    load: IFetch
    // selectedImage: number
-}
+}*/
 
 //============================================== Colors state
 
 export interface IColorsState {
-    dataLoading: IDataLoading
-    colors: IColor[]
+    load: IFetch
+    colors: IColor[] //list of all colors
 }
+
+
+
+
 
 //============================================== Cart state
 export interface ICartItem {
-    id: string
+    //product: TId //
     product: IProduct
-    amount: number
-    fiber: IFiber["id"]
-    color: IColor["id"]
+    fiber: TId //id
+    color: TId  //id
     type: TLangText
+    amount: number
 }
 
+
+/*
 export interface ICartItemSave { //format for saving cart, BE
-    product: IProduct["id"]
+    product: string //id
     amount: number
-    fiber: IFiber["id"]
-    color: IColor["id"]
+    fiber: string //id
+    color: string //id
     type: TLangText
 }
-
+*/
 
 export interface ICartState {
-    dataLoading: IDataLoading
-    dataSending: IDataSending
+    load: IFetch
+    send: IFetch
     items: ICartItem[]
 }
 
@@ -432,36 +320,21 @@ export interface ICartState {
 //============================================== User state
 type TOrderStatus = 'working' | 'canceled' | 'finished'
 
+/*
 export interface IOrder {
     date: Date
     status: TOrderStatus
     items: Omit<ICartItem, "id">[]
 }
-
-type TLoggingStatus = 'idle' | 'error' | 'fetching' | 'success'
-
-export interface ILogging {
-    status: TLoggingStatus
-    message: TLangText
-    errors: TLangText[]
-}
-
-
-export interface ILoggingForm {
-    name?: string,
-    email: string
-    phone?: string
-    password: string
-    repassword?: string
-}
+*/
 
 export interface IUserState {
     name: string
     email: string
     phone: string
     token: string
-    orders: IOrder[]
-    auth: ILogging
+    //orders: TId[]
+    auth: IFetch
 }
 
 
@@ -474,7 +347,6 @@ export interface IFullState {
     fibers: IFibersState
     catalog: ICatalogState
     order: IOrderState
-    product: IProductState //current product
     colors:  IColorsState
     cart: ICartState
     user: IUserState
@@ -482,27 +354,25 @@ export interface IFullState {
 
 
 
-export interface ICheckErrorItem {
-    ref: React.RefObject<HTMLInputElement | HTMLTextAreaElement>
-    name: TLangText
-}
+
 
 //////////////////////////////////////////////////////////////////////////////////////  BackEnd
 
 export interface ICategoryReceived {
-    id: ICategory["id"]
+    id: TId
     name: TLangText
     products: IProduct[]
 }
 
+
 export interface IProductBE {
-    categoryId: ICategory["id"]
-    id: IProduct["id"]
+    categoryId: TId
+    id: TId
     price: TLangText
     name: TLangText
     text: TLangText
     imgs: IImg[]
-    fibers: IFiber["id"][]
+    fibers: TId[]
     features: IFeature[]
     mods: TLangText[]
 }
@@ -510,16 +380,43 @@ export interface IProductBE {
 
 
 
-
-// fibers
-
-//export type IPropertyTypes = typeof propertiesList[number]; 
-
 export interface IFiberProperties {
-    id: string
+    id: TId
     name: TLangText
     tip: TLangText
     unit: TLangText
+}
+
+
+
+
+export interface IUserLoginResOk {
+    message: TLangText
+    user: Pick<IUserState, 'name' | 'email' | 'phone' | 'token'>
+}
+
+
+
+
+//////////////////////////////////////////////////////////
+export interface IErrRes {
+    errors?: TLangText[]
+    message: TLangText
+}
+
+
+
+export interface ILoggingForm {
+    email: string
+    password: string
+    name?: string,
+    phone?: string
+    repassword?: string
+}
+
+export interface ICheckErrorItem {
+    ref: React.RefObject<HTMLInputElement | HTMLTextAreaElement>
+    name: TLangText
 }
 
 
@@ -527,23 +424,3 @@ export interface IModalImg {
 	descr: string 
 	path: string
 }
-
-
-
-export interface IMsgErrRes {
-    errors?: TLangText[]
-    message: TLangText
-}
-
-
-export interface INewsPostRes {
-    message: TLangText
-}
-
-
-export interface IUserLoginResOk {
-    message: TLangText
-    user: Pick<IUserState, 'name' | 'email' | 'phone' | 'orders' | 'token'>
-}
-
-

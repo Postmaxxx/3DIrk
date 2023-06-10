@@ -1,14 +1,14 @@
-import { IAction, ICartItem, ICartItemSave, ICartState, IDispatch, IProduct } from '../../interfaces';
+import { IAction, ICartItem, IDispatch, IFetch, IProduct } from '../../interfaces';
 import { actionsListCart } from './actionsList'
 import mockProducts from '../mocks/catalogFull';
 
-export const setLoadDataStatusCart = <T extends ICartState["dataLoading"]>(payload: T):IAction<T> => ({
+export const setLoadDataStatusCart = <T extends IFetch>(payload: T):IAction<T> => ({
     type: actionsListCart.SET_LOAD_DATA_STATUS_CART,
     payload
 });
 
 
-export const setSendDataStatusCart = <T extends ICartState["dataSending"]>(payload: T):IAction<T> => ({
+export const setSendDataStatusCart = <T extends IFetch>(payload: T):IAction<T> => ({
     type: actionsListCart.SET_SEND_DATA_STATUS_CART,
     payload
 });
@@ -25,7 +25,7 @@ export const setCart = <T extends ICartItem[]>(payload: T):IAction<T> => ({
 });
 
 export const changeItem = <T extends ICartItem>(payload: T):IAction<T> => ({
-    type: actionsListCart.CHANGE_ITEM,
+    type: actionsListCart.CHANGE_AMOUNT,
     payload
 });
 
@@ -41,26 +41,26 @@ export const removeItem = <T extends ICartItem>(payload: T):IAction<T> => ({
 
 export const loadCart = () => {
     return async function(dispatch: IDispatch) {
-        dispatch(setLoadDataStatusCart({status: 'loading', message: `Loading cart`}))
+        dispatch(setLoadDataStatusCart({status: 'fetching', message: {en: `Loading cart`, ru: 'Загрузка корзины'}, errors: []}))
         const receivedData: string = await new Promise((res, rej) => {
             setTimeout(()=> {res(localStorage.getItem('cart') as string)}, 1000)
         })
         if (receivedData) {
             //console.log('raw cart loaded');
-            const loadedRawItems: ICartItemSave[] = JSON.parse(receivedData) || []
+            const loadedItems: ICartItem[] = JSON.parse(receivedData) || []
 
-            const filledItems: ICartItem[] = loadedRawItems
-                .map(item => {
+            //const filledItems: ICartItem[] = loadedRawItems
+                /*.map(item => {
                     const productFull: IProduct | undefined = mockProducts.find(product => product.id === item.product)
                     return productFull ? {...item, product: productFull } : undefined
-                }).filter((item): item is ICartItem => item !== undefined)
+                }).filter((item): item is ICartItem => item !== undefined)*/
+
             //console.log('cart converted');
-                
-            dispatch(setCart(filledItems))
-            dispatch(setLoadDataStatusCart({status: 'success', message: `Cart is loaded`}))
+            dispatch(setCart(loadedItems))
+            dispatch(setLoadDataStatusCart({status: 'success', message: {en: `Cart has been loaded`, ru: 'Корзина была загружена'}, errors: []}))
         } else {
             clearCart()
-            dispatch(setLoadDataStatusCart({status: 'success', message: `Cart is empty`}))
+            dispatch(setLoadDataStatusCart({status: 'success', message: {en: `Сart is empty`, ru: 'Корзина пуста'}, errors: []}))
         }
     }
 }
@@ -68,15 +68,15 @@ export const loadCart = () => {
 
 export const saveCart = (items: ICartItem[]) => {
     return async function(dispatch: IDispatch) {
-        dispatch(setSendDataStatusCart({status: 'sending', message: {en: 'Saving cart', ru: 'Сохраняем корзину'}}))
+        dispatch(setSendDataStatusCart({status: 'fetching', message: {en: 'Saving cart', ru: 'Сохраняем корзину'}, errors: []}))
         const dataToSave = items.map(item => {
             return {
                 ...item,
-                product: item.product.id
+                product: item.product
             }
         })
         localStorage.setItem('cart', JSON.stringify(dataToSave))
-        dispatch(setSendDataStatusCart({status: 'success', message: {en: 'Cart has been saved', ru: 'Корзина сохранена'}}))
+        dispatch(setSendDataStatusCart({status: 'success', message: {en: 'Cart has been saved', ru: 'Корзина сохранена'}, errors: []}))
     }
 }
 

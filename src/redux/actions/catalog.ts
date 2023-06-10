@@ -1,170 +1,164 @@
-import { IAction, ICatalogState, ICategoriesListItem, ICategory, IDispatch, IProduct, TLangText } from "../../interfaces"
+import { IAction, ICatalogItem, ICatalogState, ICategory, IDispatch, IFetch, IProduct, TId, TLangText } from "../../interfaces"
 import mockProducts from '../mocks/catalogFull'
 import mockFibers from '../mocks/fibers'
 import { actionsListCatalog } from './actionsList'
 import mockCategoriesList from "../mocks/categoriesList"
 
-export const setLoadDataStatusCategoriesList = <T extends ICatalogState["categoriesListLoading"]>(payload: T):IAction<T> => ({
+export const setFetchCatalog = <T extends IFetch>(payload: T):IAction<T> => ({
     type: actionsListCatalog.SET_LOAD_DATA_STATUS_CATEGORIES_LIST,
     payload
 });
 
-
+/*
 export const setSelectedCategory = <T extends ICatalogState["selectedCategory"]>(payload: T):IAction<T> => ({
     type: actionsListCatalog.SET_SELECTED_CATEGORY,
     payload
 });
-
+*//*
 export const setSelectedProduct = <T extends ICatalogState["selectedProduct"]>(payload: T):IAction<T> => ({
     type: actionsListCatalog.SET_SELECTED_PRODUCT,
     payload
 });
+*/
 
-
-export const setCategoriesList = <T extends ICategoriesListItem[]>(payload: T):IAction<T> => ({
+export const setCatalog = <T extends ICatalogItem[]>(payload: T):IAction<T> => ({
     type: actionsListCatalog.SET_DATA_CATEGORIES_LIST,
     payload
 });
 
 
-export const loadCategoriesList = () => {
+export const loadCatalog = () => {
     return async function(dispatch: IDispatch) {
-        dispatch(setLoadDataStatusCategoriesList({status: 'loading', message: `Loading categories list`}))
+        dispatch(setFetchCatalog({status: 'fetching', message: {en: `Loading catalog`, ru: 'Загрузка каталога'}, errors: []}))
         try {
             new Promise((res, rej) => {
                 setTimeout(() => {
-                    const categoriesList: ICategoriesListItem[] = mockCategoriesList;
+                    const categoriesList: ICatalogItem[] = mockCategoriesList;
                     if (categoriesList) {
-                        console.log('CategoriesList list loaded');
                         res(categoriesList)
                     } else (
                         rej({mesasage: `CategoriesList not found`})
                     )
                 }, 200)
             }).then((data) => {
-                dispatch(setCategoriesList(data as ICategoriesListItem[]))
-                dispatch(setLoadDataStatusCategoriesList({status: 'success', message: `Categories list loaded`}))
+                dispatch(setCatalog(data as ICatalogItem[]))
+                dispatch(setFetchCatalog({status: 'success', message: {en: `Catalog has been loaded`, ru: 'Каталог загружен'}, errors: []}))
             }).catch(err => {
-                dispatch(setLoadDataStatusCategoriesList({status: 'error', message: `ERROR while loading categories list: ${err}`}))
+                dispatch(setFetchCatalog({status: 'error', message: {en:`Error while loading catalog: ${err}`, ru: `Ошибка при загрузке каталога: ${err}`}, errors: []}))
             })
 
         } catch (e) {
-            dispatch(setLoadDataStatusCategoriesList({status: 'error', message: `ERROR while loading categories list: ${e}`}))
+            dispatch(setFetchCatalog({status: 'error', message: {en:`Error while loading catalog: ${e}`, ru: `Ошибка при загрузке каталога: ${e}`}, errors: []}))
         }
     }
 }
 
 
 
-export const setLoadDataStatusCategory = <T extends Pick<ICategory, "dataLoading" | "id">>(payload: T):IAction<T> => ({
+export const setFetchCategory = <T extends IFetch>(payload: T):IAction<T> => ({
     type: actionsListCatalog.SET_LOAD_DATA_STATUS_CATEGORY,
     payload
 });
 
 
-export const setCategory = <T extends Omit<ICategory, "dataLoading">>(payload: T):IAction<T> => ({
+export const setCategory = <T extends Omit<ICategory, "loadCategory" | "loadProduct" | "product" | "page">>(payload: T):IAction<T> => ({
     type: actionsListCatalog.SET_DATA_CATEGORY,
     payload
 });
 
 
-export const loadCategory = (id: ICategory["id"]) => {    
+
+
+export const loadCategory = (id: TId) => {    
     return async function(dispatch: IDispatch) {
-        dispatch(setLoadDataStatusCategory({ dataLoading: {status: 'loading', message: `Loading category id: ${id}`}, id: id}))
-        try{
-            const receivedProducts: Omit<IProduct, "colors">[] = await new Promise((res, rej) => {
+        dispatch(setFetchCategory({status: 'fetching', message: {en: `Loading category`, ru: 'Загрузка категории'}, errors: []}))
+        try {
+            const receivedProducts: IProduct[] = await new Promise((res, rej) => {
                 setTimeout(() => {
-                    const products: Omit<IProduct, "colors">[] = mockProducts.filter(product => 
+                    const products: IProduct[] = mockProducts.filter(product => 
                         product.categoryId === id)
-                    if (products) {
-                        res(products)
-                    } else {
-                        rej(`Category ${id} is empty`)
-                    }
-                    console.log(`category ${id} loaded`);
+                    products? res(products) : rej(`Category ${id} is empty`)
+                    //console.log(`category ${id} loaded`);
                 }, 200)
             })
             
-            
-            //create array of unique colors
-            /*const productsWithColors = await receivedProducts.map(product => {
-                const currentColors: IColors[] = [] 
-                product.fibers.forEach(fiber => {
-                    mockFibers.find(item => item.id === fiber)?.colors.forEach(color => {
-                        if (!currentColors.find(existedColor => existedColor.value === color.value)) {
-                            currentColors.push(color)
-                        }
-                    })
-                })
-                return {
-                    ...product,
-                    colors: currentColors
-                }
-            })*/
             const categoryName: TLangText = mockCategoriesList.find(category => category.id === id)?.name || {en: 'Other', ru: 'Другое'}
-            const data: Omit<ICategory, "dataLoading"> = {
+            const data: Omit<ICategory, "loadCategory" | "loadProduct" | "product"> = {
                 id,
                 name: categoryName,
                 products: receivedProducts,
+                total: receivedProducts.length, //get all products
                 page: 0,
             }              
             dispatch(setCategory(data))
-            dispatch(setLoadDataStatusCategory({ dataLoading: {status: 'success', message: `Loaded category id: ${id}`}, id: id}))
+            dispatch(setFetchCategory({status: 'success', message: {en: `Category ${id} has been loaded`, ru: `Категория ${id} была загружена`}, errors: []}))
 
         } catch(err) {
-            dispatch(setLoadDataStatusCategory({ dataLoading: {status: 'error', message: `ERROR while loading category id=${id}: error:${err}`}, id: id}))
+            dispatch(setFetchCategory({status: 'error', message: {en: `Error occured while loading category: ${id}`, ru: `Произошла ошибка при загрузке категории: ${id}`}, errors: []}))
         }
 
     }
 }
 
-/*
-export const loadCategory = (id: ICategory["id"]) => {    
-    return async function(dispatch: IDispatch) {
-        dispatch(setLoadDataStatusCategory({ dataLoading: {status: 'loading', message: `Loading category id: ${id}`}, id: id}))
-        try{
-            const receivedProducts: IProductShort[] = await new Promise((res, rej) => {
-                setTimeout(() => {
-                    const products: IProductShort[] = mockProducts
-                        .filter(product => product.categoryId === id)
-                        .map(product => {
-                            return {
-                                id: product.id,
-                                price: product.price,
-                                name: product.name,
-                                img: product.imgs[0]
-                            }
-                        })
-                    if (products) {
-                        res(products)
-                    } else {
-                        rej(`Category ${id} is empty`)
-                    }
-                    console.log(`category ${id} loaded`);
-                }, 200)
-            })
-            
-
-            const categoryName: TLangText = mockCategoriesList.find(category => category.id === id)?.name || {en: 'Other', ru: 'Другое'}
-            const data: Omit<ICategory, "dataLoading"> = {
-                id,
-                name: categoryName,
-                products: receivedProducts,
-                page: 0,
-            }              
-            dispatch(setCategory(data))
-            dispatch(setLoadDataStatusCategory({ dataLoading: {status: 'success', message: `Loaded category id: ${id}`}, id: id}))
-
-        } catch(err) {
-            dispatch(setLoadDataStatusCategory({ dataLoading: {status: 'error', message: `ERROR while loading category id=${id}: error:${err}`}, id: id}))
-        }
-
-    }
-}
-*/
 
 
 export const setPage = <T extends ICategory["page"]>(payload: T):IAction<T> => ({
     type: actionsListCatalog.SET_PAGE,
     payload
 });
+
+
+
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+export const setFetchProduct = <T extends IFetch>(payload: T):IAction<T> => ({
+    type: actionsListCatalog.SET_LOAD_DATA_STATUS_PRODUCT,
+    payload
+});
+
+
+export const setProduct = <T extends IProduct>(payload: T):IAction<T> => ({
+    type: actionsListCatalog.SET_DATA_PRODUCT,
+    payload
+});
+
+
+export const loadProduct = (id: IProduct["id"]) => {
+    return async function(dispatch: IDispatch) {
+        dispatch(setFetchProduct({status: 'fetching', message: {en: `Loading product ${id}`, ru: `Загрузка продукта ${id}`}, errors: []}))
+        try {
+            new Promise((res, rej) => {
+                setTimeout(() => {
+                    const product = mockProducts.find(product => product.id === id)
+                    if (product) {
+                        //console.log(`product ${id} loaded`);
+                        res(product)
+                    } else (
+                        rej({mesasage: `product ${id} not found`})
+                    )
+                }, 1000)
+            }).then((data) => {
+                dispatch(setProduct(data as IProduct))
+                dispatch(setFetchProduct({status: 'success', message: {en: `Product ${id} has been loaded`, ru: `Продукт ${id} был загружен`}, errors: []}))
+            }).catch(e => {
+                dispatch(setFetchProduct({status: 'error', message: {en: `ERROR while loading product id=${id}: ${e}`, ru: `Ошибка при загрузке продукта ${id}: ${e}`}, errors: []}))
+            })
+
+        } catch (e) {
+            dispatch(setFetchProduct({status: 'error', message: {en: `ERROR while loading product id=${id}: ${e}`, ru: `Ошибка при загрузке продукта ${id}: ${e}`}, errors: []}))
+        }
+    }
+}

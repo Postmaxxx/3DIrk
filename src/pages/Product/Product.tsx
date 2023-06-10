@@ -5,77 +5,60 @@ import Preloader from '../../components/Preloaders/Preloader';
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import { ICategories, IColorsState, IFibersState, IFullState, IProductState, TId, TLang } from "src/interfaces";
+import { IColorsState, IFetch, IFibersState, IFullState, IProduct, TId, TLang } from "src/interfaces";
 import SpliderPreview from "../../components/Spliders/Preview/SpliderPreview";
-import { loadProduct } from "../../redux/actions/product"
-import { loadFibers } from "../../redux/actions/fibers"
-import { loadColors } from "../../redux/actions/colors"
 import ProductDetails from "../../components/ProductDetails/ProductDetails";
+import { allActions } from "../../redux/actions/all";
 
 
 
-const actionsListProduct = { loadProduct }
-const actionsListColors = { loadColors }
-const actionsListFibers = { loadFibers }
-//const actionsListCatalog = { setSelectedProduct }
 
 interface IPropsState {
-	selectedCategory: TId
-	//selectedProduct: TId
 	lang: TLang
-	categories: ICategories
-    product: IProductState
+    product: IProduct
     colors: IColorsState
     fibers: IFibersState
+    productFetch: IFetch
 }
 
 interface IPropsActions {
     setState: {
-        product: typeof actionsListProduct,
-        colors: typeof actionsListColors,
-        fibers: typeof actionsListFibers,
+        catalog: typeof allActions.catalog,
+        colors: typeof allActions.colors,
+        fibers: typeof allActions.fibers,
     }
 }
+
 
 interface IProps extends IPropsState, IPropsActions {}
 
 
-const Product: React.FC<IProps> = ({lang, setState, product, colors, fibers }): JSX.Element => {
+const Product: React.FC<IProps> = ({lang, setState, product, colors, fibers, productFetch }): JSX.Element => {
     const paramProductId = useParams().productId || ''
     const [loaded, setLoaded] = useState<boolean>(false)
     
     useEffect(() => {
         if (paramProductId !== product.id) {
-            setState.product.loadProduct(paramProductId)
+            setState.catalog.loadProduct(paramProductId)
+            setLoaded(false)
+        }
+        if (fibers.load.status === 'idle') {
+            setState.fibers.loadFibers()
+            setLoaded(false)
+        }
+        if (colors.load.status === 'idle') {
+            setState.colors.loadColors()
             setLoaded(false)
         }
     }, [])
 
 
-    useEffect(() => {
-        if (fibers.dataLoading.status === 'idle') {
-            setState.fibers.loadFibers()
-            setLoaded(false)
-        }
-    }, [fibers.dataLoading.status])
-
 
     useEffect(() => {
-        if (colors.dataLoading.status === 'idle') {
-            setState.colors.loadColors()
-            setLoaded(false)
-        }
-    }, [colors.dataLoading.status])
-
-
-
-    useEffect(() => {
-        if (colors.dataLoading.status === 'success' && fibers.dataLoading.status === 'success' && product.dataLoading.status === 'success') {
+        if (colors.load.status === 'success' && fibers.load.status === 'success' && productFetch.status === 'success') {
             setLoaded(true)
         }
-
-
-    },[fibers.dataLoading.status, colors.dataLoading.status, product.dataLoading.status])
+    },[fibers.load.status, colors.load.status, productFetch.status])
     
 
     return (
@@ -104,10 +87,8 @@ const Product: React.FC<IProps> = ({lang, setState, product, colors, fibers }): 
 
 const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
-	selectedCategory: state.catalog.selectedCategory,
-	categories: state.catalog.categories,
-	//selectedProduct: state.catalog.selectedProduct,
-    product: state.product,
+    product: state.catalog.category.product,
+    productFetch: state.catalog.category.loadProduct,
     colors: state.colors,
     fibers: state.fibers
 })
@@ -115,9 +96,10 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
     setState: {
-        product: bindActionCreators(actionsListProduct, dispatch),
-        colors: bindActionCreators(actionsListColors, dispatch),
-        fibers: bindActionCreators(actionsListFibers, dispatch),
+		catalog: bindActionCreators(allActions.catalog, dispatch),
+		colors: bindActionCreators(allActions.colors, dispatch),
+		fibers: bindActionCreators(allActions.fibers, dispatch),
+
 	}
 })
   

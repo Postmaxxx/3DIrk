@@ -62,7 +62,6 @@ const Home:React.FC<IProps> = ({lang} : IProps): JSX.Element => {
 
 
 
-
 const mapStateToProps = (state: IFullState):IPropsState => ({
     lang: state.base.lang,
 })

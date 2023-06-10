@@ -52,7 +52,7 @@ const NewsDetails: React.FC<IProps> = ({lang, news }): JSX.Element => {
 
 
     useEffect(() => {
-        if (news.dataLoading.status === 'success') {
+        if (news.load.status === 'success') {
             const newsPieceFound = news.newsList.find(newsPiece => newsPiece.id === paramNewsId)
             if (newsPieceFound) {
                 setNewsPiece(newsPieceFound)

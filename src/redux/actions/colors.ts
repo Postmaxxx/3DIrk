@@ -1,9 +1,9 @@
-import { IAction, IProductState, ICategoriesListItem, ICategory, ICategoryReceived, IDispatch, IProduct, IColor, IColorsState } from "../../interfaces"
+import { IAction, IDispatch, IColor, IColorsState, IFetch } from "../../interfaces"
 import { actionsListColors } from './actionsList'
 import mockColors from "../mocks/colors";
 
 
-export const setLoadDataStatusColors = <T extends IColorsState["dataLoading"]>(payload: T):IAction<T> => ({
+export const setFetchColors = <T extends IFetch>(payload: T):IAction<T> => ({
     type: actionsListColors.SET_LOAD_DATA_STATUS_COLORS,
     payload
 });
@@ -17,7 +17,7 @@ export const setColors = <T extends IColor[]>(payload: T):IAction<T> => ({
 
 export const loadColors = () => {
     return async function(dispatch: IDispatch) {
-        dispatch(setLoadDataStatusColors({status: 'loading', message: `Loading colors`}))
+        dispatch(setFetchColors({status: 'fetching', message: {en: `Loading colors`, ru: 'Загрузка цветов'}, errors: []}))
         try {
             new Promise((res, rej) => {
                 setTimeout(() => {
@@ -31,13 +31,13 @@ export const loadColors = () => {
                 }, 500)
             }).then((data) => {
                 dispatch(setColors(data as IColor[]))
-                dispatch(setLoadDataStatusColors({status: 'success', message: `colors loaded`}))
+                dispatch(setFetchColors({status: 'success', message: {en: `Colors has been loaded`, ru: 'Цвета загружены'}, errors: []}))
             }).catch(err => {
-                dispatch(setLoadDataStatusColors({status: 'error', message: `ERROR while loading colors: ${err}`}))
+                dispatch(setFetchColors({status: 'error', message: {en:`Error while loading colors: ${err}`, ru: `Ошибка при загрузке цветов: ${err}`}, errors: []}))
             })
 
         } catch (e) {
-            dispatch(setLoadDataStatusColors({status: 'error', message: `ERROR while loading colors: ${e}`}))
+            dispatch(setFetchColors({status: 'error', message: {en:`Error while loading colors: ${e}`, ru: `Ошибка при загрузке цветов: ${e}`}, errors: []}))
         }
     }
 }

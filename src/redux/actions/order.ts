@@ -1,4 +1,4 @@
-import { IAction, ICartItem, ICartState, IDataLoading, IDataSending, IDispatch, IOrderState, TLang, TLangText } from "src/interfaces"
+import { IAction, ICartState, IDispatch, IFetch, TLang, TLangText } from "src/interfaces"
 import { actionsListOrder } from './actionsList'
 
 export const setName = <T extends string>(payload: T):IAction<T> => ({
@@ -37,7 +37,7 @@ export const addFiles = <T extends File[]>(payload: T):IAction<T> => ({
 });
 
 
-export const setSendDataStatus = <T extends IDataSending>(payload: T):IAction<T> => ({
+export const setSendDataStatus = <T extends IFetch>(payload: T):IAction<T> => ({
     type: actionsListOrder.SET_SEND_DATA_STATUS_ORDER,
     payload
 });
@@ -58,7 +58,7 @@ export const sendOrder = ({lang, text, filesArr, cart, informer}: ISendOrder) =>
         const urlMessage= `https://api.telegram.org/bot${process.env.REACT_APP_TG_TOK}/sendMessage`;
         const urlDocument= `https://api.telegram.org/bot${process.env.REACT_APP_TG_TOK}/sendDocument`;
         
-        dispatch(setSendDataStatus({status: 'sending', message: {en: 'Sending message', ru: 'Отправка сообщения'}}))
+        dispatch(setSendDataStatus({status: 'fetching', message: {en: 'Sending message', ru: 'Отправка сообщения'}, errors: []}))
        
         await fetch(urlMessage, {
             method: 'POST',
@@ -77,7 +77,8 @@ export const sendOrder = ({lang, text, filesArr, cart, informer}: ISendOrder) =>
                         message: {
                             en: `Error while sending a message. HTTP error, status: ${res.status}. Try again later.`, 
                             ru: `Ошибка http при отправке сообщения, статус: ${res.status}. Пожалуйста, попробуйте позже.`
-                        }
+                        },
+                        errors: []
                     }))
                     return
                 }
@@ -89,7 +90,8 @@ export const sendOrder = ({lang, text, filesArr, cart, informer}: ISendOrder) =>
                     message: {
                         en: `Error while sending a message: ${err.message}. Please try again later.`,
                         ru: `Ошибка при отправке сообщения: ${err.message}. Пожалуйста, попробуйте позже.`
-                    }
+                    },
+                    errors: []
                 }))
                 return
             });
@@ -116,7 +118,8 @@ export const sendOrder = ({lang, text, filesArr, cart, informer}: ISendOrder) =>
                                 message: {
                                     en: `Error while sending files. HTTP error, status: ${res.status}. Try again later.`,
                                     ru: `Ошибка http при отправке файлов, статус: ${res.status}. Пожалуйста, попробуйте позже.`
-                                }
+                                },
+                                errors: []
                             }))
                             rej(lang === 'en' ? `Error while sending file "${file.name}": ${res.status}. Sending files has been aborted.` : `Error при отправке файла "${file.name}": ${res.status}. Отправка файлов прервана.`)
                         }
@@ -133,7 +136,8 @@ export const sendOrder = ({lang, text, filesArr, cart, informer}: ISendOrder) =>
                             message: {
                                 en: `Your message has been sent succesfully, but the error has been occured while sending a file:, ${file.name}, error: ${error.message}`,
                                 ru: `Ваше сообщение было успешно отправлено, но возникла ошибка при отправке файла: ${file.name}, ошибка: ${error.message}`
-                            }
+                            },
+                            errors: []
                         }))
                         rej(lang === 'en' ? `Error while sending file "${file.name}": ${error.message}. Sending files has been aborted.` : `Error при отправке файла "${file.name}": ${error.message}. Отправка файлов прервана.`)
                     })
@@ -146,7 +150,8 @@ export const sendOrder = ({lang, text, filesArr, cart, informer}: ISendOrder) =>
                     message: {
                         en: `Your message ${filesArr.length > 0 ? "and files have" : "has"} been sent`,
                         ru: `Ваше сообщение ${filesArr.length > 0 ? "и вложения были успешно отправлены" : "было успешно отправлено"}`
-                    }
+                    },
+                    errors: []
                 }))
             })
             .catch(err => {
@@ -155,7 +160,8 @@ export const sendOrder = ({lang, text, filesArr, cart, informer}: ISendOrder) =>
                     message: {
                         en: `The error occur while saving files: ${err}`,
                         ru: `Возникла ошибка при отправке файлов: ${err}` 
-                    }
+                    },
+                    errors: []
                 }))
             })
     }

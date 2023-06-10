@@ -90,7 +90,7 @@ router.post('/login',
                 name: user.name,
                 email: user.email,
                 phone: user.phone,
-                orders: user.orders,
+                //orders: user.orders,
                 token
             }
 
@@ -130,7 +130,7 @@ router.post('/login-token',
                 name: user.name,
                 email: user.email,
                 phone: user.phone,
-                orders: user.orders,
+                //orders: user.orders,
                 token: newToken
             }
             

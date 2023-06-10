@@ -1,9 +1,10 @@
 import { IColorsState } from "src/interfaces"
 
 const initialColors = {
-    dataLoading: {
+    load: {
         status: 'idle',
-        message: ""
+        message: {en: '', ru: ''},
+        errors: []
     },
     colors: []
 } satisfies IColorsState

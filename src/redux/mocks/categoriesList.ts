@@ -1,4 +1,4 @@
-import { ICategoriesListItem } from "src/interfaces"
+import { ICatalogItem } from "src/interfaces"
 
 const mockCategoriesList = [
     {
@@ -29,7 +29,7 @@ const mockCategoriesList = [
             ru: 'Декор'
         },
     }
-] satisfies ICategoriesListItem[]
+] satisfies ICatalogItem[]
 
 
 
