@@ -7,7 +7,10 @@ const initialNews = {
     },
     dataSending: {
         status: 'idle',
-        message: ""
+        message: {
+            en: '',
+            ru: ''
+        }
     },
     newsList: []
 } satisfies INewsState

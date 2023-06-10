@@ -7,7 +7,10 @@ const cartState = {
     },
     dataSending: {
         status: 'idle',
-        message: ""
+        message: {
+            en: '',
+            ru: ''
+        }
     },
     items: [],
     //newItems: 0

@@ -68,7 +68,7 @@ export const loadCart = () => {
 
 export const saveCart = (items: ICartItem[]) => {
     return async function(dispatch: IDispatch) {
-        dispatch(setSendDataStatusCart({status: 'sending', message: `Saving cart`}))
+        dispatch(setSendDataStatusCart({status: 'sending', message: {en: 'Saving cart', ru: 'Сохраняем корзину'}}))
         const dataToSave = items.map(item => {
             return {
                 ...item,
@@ -76,7 +76,7 @@ export const saveCart = (items: ICartItem[]) => {
             }
         })
         localStorage.setItem('cart', JSON.stringify(dataToSave))
-        dispatch(setSendDataStatusCart({status: 'success', message: `Cart is saved`}))
+        dispatch(setSendDataStatusCart({status: 'success', message: {en: 'Cart has been saved', ru: 'Корзина сохранена'}}))
     }
 }
 

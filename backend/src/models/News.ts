@@ -5,9 +5,8 @@ const newsSchema = new Schema({
     header: {type: Object},
     short: {type: Object},
     text: {type: Object},
-    images: [String],
+    images: [{type: Object}],
 })
-
 
 module.exports = model('News', newsSchema)
 export {}

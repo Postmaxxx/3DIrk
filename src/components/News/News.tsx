@@ -13,7 +13,7 @@ const News:React.FC<IProps> = ({newsPiece, lang}):JSX.Element => {
     return (
         <div className="news card">
             <div className="img__container">
-                <ImgWithPreloader src={newsPiece.imgs[0].url} alt={newsPiece.header[lang]} />
+                <ImgWithPreloader src={newsPiece.images[0].url} alt={newsPiece.header[lang]} />
             </div>
             <div className="news_text">
                 <span>{String(newsPiece.date.toISOString().slice(0, 10))}</span>

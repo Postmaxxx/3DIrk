@@ -34,7 +34,8 @@ export interface IDataLoading {
 //---------------------------------------------data send
 export interface IDataSending {
     status: TSendDataStatus
-    message: string
+    message: TLangText
+    errors?: TLangText[]
 }
 
 
@@ -350,7 +351,7 @@ export interface INewsItem {
     date: Date
     short: TLangText
     text: TLangText
-    imgs: Array<IImg>
+    images: Array<IImg>
 }
 
 export interface INewsState {

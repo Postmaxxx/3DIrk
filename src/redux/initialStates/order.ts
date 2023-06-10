@@ -3,7 +3,10 @@ import { IOrderState } from "src/interfaces"
 const initialOrder = {
     dataSending: {
         status: 'idle',
-        message: ""
+        message: {
+            en: '',
+            ru: ''
+        }
     },
     name: '',
     phone: '',

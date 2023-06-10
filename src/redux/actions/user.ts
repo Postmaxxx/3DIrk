@@ -26,7 +26,7 @@ export const register = ({name, email, phone, password}: ILoggingForm) => {
                     ...user, 
                     auth: {
                         status: 'error', 
-                        message: (result as IMsgErrRes).message, 
+                        message: result.message, 
                         errors: result.errors as TLangText[] || []
                     }
                 }))

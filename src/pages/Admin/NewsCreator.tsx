@@ -1,10 +1,13 @@
-import { IDataSending, IFullState, INewsItem, IUserState, TLang } from 'src/interfaces';
+import { IDataSending, IFullState, IModal, INewsItem, IUserState, TLang } from 'src/interfaces';
 import './news-creator.scss'
-import {  useRef } from "react";
+import React, {  useRef } from "react";
 import { connect } from "react-redux";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { postNews } from "../../redux/actions/news"
+import Modal from 'src/components/Modal/Modal';
+import MessageInfo from 'src/components/MessageInfo/MessageInfo';
+import { useEffect, useState, useMemo } from "react";
 
 const actionsListNews = { postNews }
 
@@ -36,13 +39,27 @@ const NewsCreator: React.FC<IProps> = ({lang, userState, sending, setState}): JS
     const _date = useRef<HTMLInputElement>(null)
     const _text_en = useRef<HTMLTextAreaElement>(null)
     const _text_ru = useRef<HTMLTextAreaElement>(null)
-    const _images = useRef<HTMLTextAreaElement>(null)
+    const _images = useRef<HTMLDivElement>(null)
+	const [modal, setModal] = useState<IModal>({visible: false})
+    const [message, setMessage] = useState({header: '', status: '', text: ['']})
+
+
+    const prevent = (e: React.MouseEvent<HTMLElement>) => {
+        e.preventDefault()
+        e.stopPropagation()
+    }
 
 
     const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault()
-        e.stopPropagation()
+        prevent(e)
 
+        const images = [...document.querySelectorAll('.image-block')].map((el) => {
+            const url = (el.querySelector('[data-content="url"]') as HTMLInputElement).value
+            const en = (el.querySelector('[data-content="en"]') as HTMLInputElement).value
+            const ru = (el.querySelector('[data-content="ru"]') as HTMLInputElement).value
+            return { url, name: {en, ru} }
+        }).filter(image => image.url)
+        
         const news = {
             header: {
                 en: _header_en.current?.value || '',
@@ -57,7 +74,7 @@ const NewsCreator: React.FC<IProps> = ({lang, userState, sending, setState}): JS
                 ru: _text_ru.current?.value || '',
             },
             date: _date.current?.valueAsDate || new Date(),
-            imgs: _images.current?.value || ''
+            images: images
         }
         
         setState.news.postNews(news)
@@ -65,53 +82,164 @@ const NewsCreator: React.FC<IProps> = ({lang, userState, sending, setState}): JS
 
     }
 
+
+
+
+    const onAddImage = (e: React.MouseEvent<HTMLButtonElement>) => {
+        prevent(e)
+        const newImageBlock = document.createElement('div')
+        newImageBlock.classList.add('image-block')
+        newImageBlock.classList.add('full-width')
+
+
+        const wrUrl = document.createElement('div')
+        wrUrl.classList.add('input__wrapper')
+        const inputUrl = document.createElement('input')
+        inputUrl.setAttribute('data-content','url')
+        wrUrl.appendChild(inputUrl)
+
+        const wrEn = document.createElement('div')
+        wrEn.classList.add('input__wrapper')
+        const inputEn = document.createElement('input')
+        inputEn.setAttribute('data-content','en')
+        wrEn.appendChild(inputEn)
+
+        const wrRu = document.createElement('div')
+        wrRu.classList.add('input__wrapper')
+        const inputRu = document.createElement('input')
+        inputRu.setAttribute('data-content','ru')
+        wrRu.appendChild(inputRu)
+
+        const delBtn = document.createElement('button');
+        delBtn.innerHTML = 'X';
+        delBtn.classList.add('button_blue');
+        delBtn.classList.add('del');
+        delBtn.onclick = (e) => onDeleteImage(e as unknown as React.MouseEvent<HTMLButtonElement, MouseEvent>)
+
+        newImageBlock.appendChild(wrUrl)
+        newImageBlock.appendChild(wrEn)
+        newImageBlock.appendChild(wrRu)
+        newImageBlock.appendChild(delBtn)
+        if (!_images.current) return
+        _images.current.appendChild(newImageBlock)
+    }
+
+
+    const onDeleteImage = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        prevent(e)
+        const parent = e.currentTarget?.parentNode as HTMLElement
+        parent.remove();
+    }
+
+
+    
+    const closeModal = () => {
+		setModal({visible: false})
+        setMessage({
+            status: '',
+            header: 'sending.status',
+            text: ['']
+        })
+	}
+
+
+    useEffect(() => {
+        if (sending.status === 'idle' || sending.status === 'sending')  return
+        const errors: string[] = sending.errors?.map(e => e[lang]) || []
+        setMessage({
+            header: sending.status === 'success' ? lang === 'en' ? 'News posted' : 'Новость добавлена' : lang === 'en' ? 'Error' : 'Ошибка',
+            status: sending.status,
+            text: [sending.message[lang], ...errors]
+        })
+		setModal({visible: true})
+
+    }, [sending.status])
+
     return (
         <div className="page page_news-add">
             <div className="container_page">
                 <div className="container">
                     <h1>{lang === 'en' ? 'Post news' : 'Добавление новости'}</h1>
                     <form>
-                        <h3>EN</h3>
-                        <h3>RU</h3>
-                        <div className="input-item">
-                            <label htmlFor="header-en">{lang === 'en' ? 'Header (EN)' : 'Заголовок (EN)'}:</label>
-                            <input type="text" id="header-en" ref={_header_en}/>
+
+                        <div className="input-block_header">
+                            <span></span>
+                            <h3 className='lang'>EN</h3>
+                            <h3 className='lang'>RU</h3>
                         </div>
-                        <div className="input-item">
-                            <label htmlFor="header-ru">{lang === 'en' ? 'Header (RU)' : 'Заголовок (RU)'}:</label>
-                            <input type="text" id="header-ru" ref={_header_ru}/>
+                        <div className="input-block">
+                            <label htmlFor="header_en">{lang === 'en' ? 'Header' : 'Заголовок'}:</label>
+                            <div className="input__wrapper">
+                                <input type="text" id="header_en" ref={_header_en}/>
+                            </div>
+                            <div className="input__wrapper">
+                                <input type="text" id="header_ru" ref={_header_ru}/>
+                            </div>
                         </div>
 
-                        <div className="input-item">
-                            <label htmlFor="short-en">{lang === 'en' ? 'Short text (EN)' : 'Краткий текст (EN)'}:</label>
-                            <textarea id="short-en"  ref={_short_en}/>
+                        <div className="input-block">
+                            <label htmlFor="short_en">{lang === 'en' ? 'Short text' : 'Краткий текст'}:</label>
+                            <div className="input__wrapper">
+                                <textarea id="short_en" ref={_short_en}/>
+                            </div>
+                            <div className="input__wrapper">
+                                <textarea id="short_ru" ref={_short_ru}/>
+                            </div>
                         </div>
-                        <div className="input-item">
-                            <label htmlFor="short-ru">{lang === 'en' ? 'Short text (RU)' : 'Краткий текст (RU)'}:</label>
-                            <textarea id="short-ru"  ref={_short_ru}/>
+
+                        <div className="input-block">
+                            <label htmlFor="full_en">{lang === 'en' ? 'Full text' : 'Полный текст'}:</label>
+                            <div className="input__wrapper">
+                                <textarea id="full_en" ref={_text_en}/>
+                            </div>
+                            <div className="input__wrapper">
+                                <textarea id="full_ru" ref={_text_ru}/>
+                            </div>
                         </div>
-                        <div className="input-item">
-                            <label htmlFor="text">{lang === 'en' ? 'Full text (EN)' : 'Полный текст (EN)'}:</label>
-                            <textarea id="text" ref={_text_en}/>
-                        </div>
-                        <div className="input-item">
-                            <label htmlFor="text">{lang === 'en' ? 'Full text (RU)' : 'Полный текст (RU)'}:</label>
-                            <textarea id="text" ref={_text_ru}/>
-                        </div>
-                        <div className="input-item">
-                            <label htmlFor="images">{lang === 'en' ? 'Images' : 'Изображения'}:</label>
-                            <textarea id="images" ref={_images}/>
-                        </div>
-                        <span></span>
-                        <div className="input-item">
+
+
+                        <div className="input-block">
                             <label htmlFor="date">{lang === 'en' ? 'Date' : 'Дата'}:</label>
                             <input type="date" id="date" ref={_date}/>
                         </div>
-                        <span></span>
 
-                        <button className='button_blue' disabled={sending.status === 'sending'} onClick={e => onSubmit(e)}>{lang === 'en' ? 'Post news' : "Отправить новость"}</button>
+                        <div className="images full-width" ref={_images}>
+                            <h3 className='images__header full-width'>{lang === 'en' ? 'Images' : 'Изображения'}</h3>           
+
+                            <div className="image-block_header full-width">
+                                <span>URL</span>
+                                <span>EN</span>
+                                <span>RU</span>
+                                <span></span>
+                            </div>
+                            <div className="image-block full-width">
+                                <div className="input__wrapper">
+                                    <input type="text" data-content='url'/>
+                                </div>
+                                <div className="input__wrapper">
+                                    <input type="text" data-content='en'/>
+                                </div>
+                                <div className="input__wrapper">
+                                    <input type="text" data-content='ru'/>
+                                </div>
+                                <button className='button_blue del' onClick={e => onDeleteImage(e)}>X</button>
+                            </div>
+                        </div>
+
+
+                        <button className='button_blue add' onClick={e => onAddImage(e)}>{lang === 'en' ? 'Add image' : 'Добавить изображение'}</button>
+                        <button className='button_blue post' disabled={sending.status === 'sending'} onClick={e => onSubmit(e)}>{lang === 'en' ? 'Post news' : "Отправить новость"}</button>
                     </form>
                 </div>
+                <Modal {...{visible: modal.visible, close: closeModal, escExit: true}}>
+                    <MessageInfo {...{  
+                            status: message.status,
+                            header: message.header,
+                            text: message.text, 
+                            buttonText: lang === 'en' ? 'Close' : "Закрыть", 
+                            buttonAction: closeModal
+                        }}/>
+                </Modal> 
             </div>
         </div>
     )

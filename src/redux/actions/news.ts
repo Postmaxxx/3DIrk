@@ -1,4 +1,4 @@
-import { IAction, IDataLoading, IDataSending, IDispatch, IFullState, IMsgErrRes, INewsItem } from "src/interfaces"
+import { IAction, IDataLoading, IDataSending, IDispatch, IFullState, IMsgErrRes, INewsItem, TLangText } from "src/interfaces"
 import mockNews from '../mocks/news'
 import { actionsListNews } from './actionsList'
 
@@ -41,11 +41,13 @@ export const loadAllNews = () => {
 
 
 export const postNews = (news: Omit<INewsItem, "id">) => {
+    console.log(111);
     return async function(dispatch: IDispatch, getState: () => IFullState) {
         const { user } = getState() //get current user state
-        dispatch(setSendDataStatusNews({status: 'sending', message: `Sending news`}))
+        dispatch(setSendDataStatusNews({status: 'sending', message: {en: '', ru: ''}}))
         
         try {
+            
             const response: Response = await fetch('/api/news/create', {
                 method: 'POST',
                 headers: {
@@ -56,17 +58,21 @@ export const postNews = (news: Omit<INewsItem, "id">) => {
             })
 
             const result: IMsgErrRes = await response.json() //message, errors
-
             if (response.status !== 201) {
-                dispatch(setSendDataStatusNews({status: 'error', message: `Error while posting news: ${result.message}`}))
+                return dispatch(setSendDataStatusNews({
+                    status: 'error', 
+                    message: result.message, 
+                    errors: result.errors as TLangText[] || []
+                }))
             }
 
-            dispatch(setSendDataStatusNews({status: 'success', message: `News has been posted`}))
-
-
             
-        } catch (error) {
-            dispatch(setSendDataStatusNews({status: 'error', message: `Error while posting news: ${error}`}))
+            dispatch(setSendDataStatusNews({status: 'success', message: result.message, errors: []}))
+            
+            
+            
+        } catch (e) {
+            dispatch(setSendDataStatusNews({status: 'error', message: (e as IMsgErrRes).message, errors: []}))
         }
 
     }

@@ -67,7 +67,7 @@ const Order:React.FC<IProps> = ({lang, order, cart, colors, fibers, setState}): 
             addFilesRef.current?.clearAttachedFiles()
             setState.cart.clearCart()
         }
-        setState.order.setSendDataStatus({status: 'idle', message: ''})
+        setState.order.setSendDataStatus({status: 'idle', message: {en: '', ru: ''}})
 	}
 
 
@@ -141,7 +141,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
             setMessage({
                 status: order.dataSending.status,
                 header: order.dataSending.status === 'success' ? lang === 'en' ? "Success" : "Отправлено" : lang === 'en' ? "Error" : "Ошибка",
-                text: [order.dataSending.message],
+                text: [order.dataSending.message[lang]],
             })
             setModal({visible: true})
         }

@@ -80,7 +80,7 @@ const NewsDetails: React.FC<IProps> = ({lang, news }): JSX.Element => {
                                                 return <p key={i}>{text}</p>
                                             })}
                                             <div className="images__container">
-                                                <SpliderCommon images={newsPiece.imgs} lang={lang} imagesPerSlide={2}/>
+                                                <SpliderCommon images={newsPiece.images} lang={lang} imagesPerSlide={2}/>
                                             </div>
                                         </>
                                     </div>
