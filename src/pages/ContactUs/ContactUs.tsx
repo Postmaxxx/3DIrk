@@ -1,12 +1,11 @@
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import './order.scss'
-import { ICartItem, ICartState, ICheckErrorItem, IColorsState, IFibersState, IFullState, IOrderState, TLang, TLangText } from "src/interfaces";
+import './contact-us.scss'
+import {  ICheckErrorItem, IFullState, IOrderState, TLang, TLangText } from "src/interfaces";
 import { useState, useEffect, useRef } from 'react'
 import Modal from "../../components/Modal/Modal";
 import MessageInfo from "../../components/MessageInfo/MessageInfo";
-import CartContent from "../../components/CartContent/CartContent";
 import AddFiles, { IAddFilesFunctions } from "../../components/AddFiles/AddFiles";
 import inputChecker from "src/assets/js/inputChecker";
 import { allActions } from "src/redux/actions/all";
@@ -15,17 +14,11 @@ import { allActions } from "src/redux/actions/all";
 interface IPropsState {
     lang: TLang,
     order: IOrderState
-    cart: ICartState
-    colors: IColorsState
-    fibers: IFibersState
 }
 
 interface IPropsActions {
     setState: {
         order: typeof allActions.order
-        fibers: typeof allActions.fibers
-        colors: typeof allActions.colors
-		cart: typeof allActions.cart
     }
 }
 
@@ -39,7 +32,7 @@ interface IMessage {
 }
 
 
-const Order:React.FC<IProps> = ({lang, order, cart, colors, fibers, setState}): JSX.Element => {
+const ContactUs:React.FC<IProps> = ({lang, order, setState}): JSX.Element => {
 
     const _name = useRef<HTMLInputElement>(null)
     const _email = useRef<HTMLInputElement>(null)
@@ -56,7 +49,6 @@ const Order:React.FC<IProps> = ({lang, order, cart, colors, fibers, setState}): 
             setState.order.clearFiles();
             setState.order.clearForm();
             addFilesRef.current?.clearAttachedFiles()
-            setState.cart.clearCart()
         }
         setState.order.setSendDataStatus({status: 'idle', message: {en: '', ru: ''}, errors: []})
 	}
@@ -67,7 +59,7 @@ const Order:React.FC<IProps> = ({lang, order, cart, colors, fibers, setState}): 
             {ref: _name, name: {en: 'Your name', ru: 'Ваше имя'}},
             {ref: _email, name: {en: 'Your email', ru: 'Ваша почта'}},
             {ref: _phone, name: {en: 'Your phone', ru: 'Ваш телефон'}},
-            {ref: _message, name: {en: 'Information about the order', ru: 'Информация о заказе'}},
+            {ref: _message, name: {en: 'Ypur message', ru: 'Ваше сообщение'}},
         ]
         const {isWrong, header, errors} = inputChecker(feildsToCheck)
         setMessage({status: 'error', header: header[lang], text: errors.map(error => error[lang])})
@@ -75,7 +67,6 @@ const Order:React.FC<IProps> = ({lang, order, cart, colors, fibers, setState}): 
     }
 
 
-        
     const preventDefaults = (e: DragEvent | React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
         e.stopPropagation()
@@ -94,13 +85,6 @@ const Order:React.FC<IProps> = ({lang, order, cart, colors, fibers, setState}): 
             return
         }
         
-        const textCart = cart.items.reduce((text: string, item: ICartItem, i: number) => {
-            return text + `${i+1}) ${item.product.name[lang]}
-${lang === 'en' ? 'Options' : 'Версия'}: ${item.type} 
-${lang === 'en' ? 'Fiber' : 'Материал'}: ${fibers.fibersList.find(fiberItem => fiberItem.id === item.fiber)?.short.name[lang]}
-${lang === 'en' ? 'Color' : 'Цвет'}: ${colors.colors.find(color => color.id === item.color)?.name[lang]}
-${lang === 'en' ? 'Amount' : 'Количество'}: ${item.amount}\n\n`
-        }, '')
 
         const textOrder: string = `
 ${lang === 'en' ? 'Date' : 'Дата'}: ${currentDate.toISOString().slice(0,10)}
@@ -110,13 +94,13 @@ ${lang === 'en' ? 'Email' : 'Почта'}: ${email}
 ${lang === 'en' ? 'Phone' : 'Телефон'}: ${phone}
 ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
 
-        const text = `${lang === 'en' ? 'New order' : 'Новый заказ'}:${textOrder}\n\n\n ${lang === 'en' ? 'Cart content' : 'Содержимое корзины'}: \n${textCart}${order.files.length > 0 ? (lang==='en' ? '\n\n\nAttached files:' : '\n\n\nПрикрепленные файлы:') : ''}`
+        const text = `${lang === 'en' ? 'New message' : 'Новое сообщение'}:${textOrder}\n\n\n ${order.files.length > 0 ? (lang==='en' ? '\n\n\nAttached files:' : '\n\n\nПрикрепленные файлы:') : ''}`
         
         setState.order.sendOrder({lang, text, filesArr: order.files, informer})
     }
 
 
-    const informer = (message: TLangText): void => {
+    const informer = (message: TLangText) => {
         setMessage({
             status: '',
             header: lang === 'en' ? "Sending order..." : "Отправка заказа...",
@@ -186,11 +170,10 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
             <div className='container_page'>
                 <div className="container">
                     <div className="page_order">
-                        <h1>{lang === 'en' ? 'Order 3D printing' : 'Заказать 3D печать'}</h1>
+                        <h1>{lang === 'en' ? 'Send us a message' : 'Написать нам'}</h1>
                         <div className="order__block">
 
                             <form className="order__container">
-                                <h2>{lang === 'en' ? 'Additional information' : 'Дополнительная информация'}</h2>
                                 <div className="data-block">
 
                                     <div className="inputs-block">
@@ -241,7 +224,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
                                         </div>
                                         <div className="input-block message-block">
                                             <label htmlFor="message">
-                                                {lang === 'en' ? 'Information about the order (at least 10 symbols)*' : 'Информация о заказе (минимум 10 символов)*'}
+                                                {lang === 'en' ? 'Your message (at least 10 symbols)*' : 'Ваше сообщение (минимум 10 символов)*'}
                                             </label>
                                             <textarea 
                                                 className="input-element" 
@@ -263,17 +246,12 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
 
                                 </div>
 
-                                <div className="cart-content__container">
-                                    <h3>{lang === 'en' ? 'Your cart' : 'Ваша корзина'}</h3>
-                                    <CartContent />
-                                </div>
-
                                 <button 
                                     type="submit" 
-                                    disabled={cart.load.status !== 'success' || fibers.load.status !== 'success' || colors.load.status !== 'success' || order.send.status === 'fetching'} 
+                                    disabled={order.send.status === 'fetching'} 
                                     className="button_order" 
                                     onClick={onSubmit}>
-                                        {lang === 'en' ? 'Order' : "Отправить"}
+                                        {lang === 'en' ? 'Send' : "Отправить"}
                                     </button>
                             </form>
                         </div>
@@ -300,21 +278,15 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
 const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
     order: state.order,
-    cart: state.cart,
-    colors: state.colors,
-    fibers: state.fibers,
 })
 
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>):IPropsActions => ({
     setState: {
-		fibers: bindActionCreators(allActions.fibers, dispatch),
-		colors: bindActionCreators(allActions.colors, dispatch),
 		order: bindActionCreators(allActions.order, dispatch),
-		cart: bindActionCreators(allActions.cart, dispatch),
 	}
 })
   
   
     
-export default connect(mapStateToProps, mapDispatchToProps)(Order)
+export default connect(mapStateToProps, mapDispatchToProps)(ContactUs)

@@ -1,25 +1,25 @@
 import { IFullState, INewsItem, INewsState, TLang } from '../../interfaces'
 import './news-details.scss'
-import { loadAllNews } from "../../redux/actions/news"
+import { loadSomeNews } from "../../redux/actions/news"
 import { NavLink, useParams, useNavigate } from 'react-router-dom'
 import Preloader from '../../components/Preloaders/Preloader';
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { useRef, useEffect, useState, useMemo } from "react";
-import mockNews from '../../redux/mocks/news';
 import SpliderCommon from '../../components/Spliders/Common/SpliderCommon';
+import { allActions } from "../../redux/actions/all";
 
-const actionsListNews = { loadAllNews }
 
 interface IPropsState {
 	news: INewsState
     lang: TLang
 }
 
+
 interface IPropsActions {
     setState: {
-        news: typeof actionsListNews,
+        news: typeof allActions.news
     }
 }
 
@@ -28,39 +28,33 @@ interface IProps extends IPropsState, IPropsActions {}
 
 const NewsDetails: React.FC<IProps> = ({lang, news }): JSX.Element => {
     const paramNewsId = useParams().newsId || ''
+    
     const navigate = useNavigate()
     const [loaded, setLoaded] = useState<boolean>(false)
-    const [newsPiece, setNewsPiece] = useState<INewsItem | undefined>(undefined)
-    
+    const [newsItem, setNewsItem] = useState<INewsItem>()
 
-    const loadNewsPiece = async (id: INewsItem['id']) => {
-        new Promise<INewsItem>((res, rej) => {
-            setTimeout(() => {
-                const newsPieceFound = mockNews.find(newsPiece => newsPiece.id === id)
-                newsPieceFound ? res(newsPieceFound) : rej()
-            }, 500)
-        })
-            .then((result) => {
-                setNewsPiece(result)
-                setLoaded(true)
+    const loadNews = async (_id: string) => {
+        try {
+            const response: Response = await fetch(`/api/news/get-one?_id=${_id}`, {
+                method: 'GET',
+                headers: {
+                    "Content-Type": 'application/json',
+                },
             })
-            .catch((err) => {
-                setNewsPiece(undefined)
-                setLoaded(true)
-            })
+            if (response.status === 200) {
+                const result = await response.json()
+                setNewsItem({
+                    ...result.news,
+                    date: new Date(result.news.date)
+                })
+            }
+            setLoaded(true)
+        } catch (e) {
+        }
     }
 
-
     useEffect(() => {
-        if (news.load.status === 'success') {
-            const newsPieceFound = news.newsList.find(newsPiece => newsPiece.id === paramNewsId)
-            if (newsPieceFound) {
-                setNewsPiece(newsPieceFound)
-                setLoaded(true)
-            } 
-        } else {
-            loadNewsPiece(paramNewsId)
-        }
+        loadNews(paramNewsId)
     }, [])
 
     
@@ -70,18 +64,22 @@ const NewsDetails: React.FC<IProps> = ({lang, news }): JSX.Element => {
                 <div className="container">
                     {loaded ? 
                         <>
-                            {newsPiece ? 
+                            {newsItem ? 
                                 <>
-                                    <h1>{newsPiece.header[lang]}</h1>
-                                    <span className='date'>{String(newsPiece.date.toISOString().slice(0, 10))}</span>
+                                    <h1>{newsItem.header[lang]}</h1>
+                                    <span className='date'>{String(newsItem.date.toISOString().slice(0, 10))}</span>
                                     <div className="news__details">
                                         <>
-                                            {newsPiece.text[lang].split('\n').map((text, i) => {
+                                            {newsItem.text[lang].split('\n').map((text, i) => {
                                                 return <p key={i}>{text}</p>
                                             })}
-                                            <div className="images__container">
-                                                <SpliderCommon images={newsPiece.images} lang={lang} imagesPerSlide={2}/>
-                                            </div>
+                                            {newsItem.images.length > 0 ? 
+                                                <div className="images__container">
+                                                    <SpliderCommon images={newsItem.images} lang={lang} imagesPerSlide={2}/>
+                                                </div>
+                                            :
+                                                null
+                                            }
                                         </>
                                     </div>
                                 </>
@@ -113,7 +111,7 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
     setState: {
-        news: bindActionCreators(actionsListNews, dispatch),
+		news: bindActionCreators(allActions.news, dispatch),
 	}
 })
   

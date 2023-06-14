@@ -225,7 +225,7 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
                                 <span className='errors__header'>{lang === 'en' ? 'Errors' : 'Ошибки'}: </span>
                                 <span className='errors__name'>{userState.auth.message[lang]}</span>
                                 <ul className='errors__list'>
-                                    {userState.auth.errors.length > 0 && userState.auth.errors.map((error, i) => {
+                                    {userState.auth.errors && userState.auth.errors.length > 0 && userState.auth.errors.map((error, i) => {
                                         return (
                                             <li key={i} className='errors__item'>{error[lang]}</li>
                                         )

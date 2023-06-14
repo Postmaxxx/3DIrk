@@ -7,6 +7,7 @@ const userSchema = new Schema({
     password: {type: String, required: true},
     phone: {type: Number, required: true},
     name: {type: String, required: true},
+    cart: [{type: Object, required: false}]
     //orders: [{type: Types.ObjectId, ref: 'Order'}]
 })
 

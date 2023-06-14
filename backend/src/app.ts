@@ -1,15 +1,17 @@
 require('dotenv').config()
 const authRoutes = require('./routes/auth')
+const cartRoutes = require('./routes/cart')
 //import fibersRoutes from './routes/fibers'
 const newsRoutes = require('./routes/news')
 const express = require('express')
 const mongoose = require("mongoose")
 const cors = require('cors')
 const app = express()
+//var bodyParser = require('body-parser')
 
 
-app.use(express.json({ extended: true }));
-
+app.use(express.json({ extended: true, }));
+//app.use(bodyParser.json({strict: false}))
 
 // cors
 app.use(cors({ 
@@ -20,6 +22,7 @@ app.use(cors({
 
 //auth
 app.use('/api/auth', authRoutes)
+app.use('/api/cart', cartRoutes)
 /*
 //fibers
 app.use('/api/fibers', fibersRoutes)

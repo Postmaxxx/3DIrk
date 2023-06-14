@@ -54,25 +54,23 @@ const SpliderSingle: React.FC<IProps> = ({lang, catalog, setState}): JSX.Element
 		},
 	};
 
-/*
+
 
 	useEffect(() => {
-		if (selectedCategory && !categories[selectedCategory]) {
-			setState.catalog.loadCategory(selectedCategory)
-		}
-	},[selectedCategory]);
+		setState.catalog.loadCategory(catalog.category.id)	
+	},[catalog.category.id]);
 
 
 	
 	useEffect(() => {
-		if (categories[selectedCategory]?.dataLoading?.status !== 'success') return
+		if (catalog.category.loadCategory.status !== 'success') return
 		const result: IProduct[][] = []
-		for (let i = 0; i < categories[selectedCategory].products.length; i += productsPerSlide) {
-			result.push(categories[selectedCategory].products.slice(i, i + productsPerSlide))
+		for (let i = 0; i < catalog.category.products.length; i += productsPerSlide) {
+			result.push(catalog.category.products.slice(i, i + productsPerSlide))
 		}
 		setProductSlides(result)
 		
-	},[categories[selectedCategory]?.dataLoading?.status, selectedCategory]);
+	},[catalog.category.loadCategory.status, catalog.category.id]);
 	
 	
 	
@@ -114,7 +112,7 @@ const SpliderSingle: React.FC<IProps> = ({lang, catalog, setState}): JSX.Element
 
 		spliderSingle.current.mount();
 
-		spliderSingle.current?.go(categories[selectedCategory].page);
+		spliderSingle.current?.go(catalog.category.page);
 
 		
 		return () => {
@@ -123,14 +121,14 @@ const SpliderSingle: React.FC<IProps> = ({lang, catalog, setState}): JSX.Element
 	}, [productSlides])
 
 
-*/
+
 
 	return (
 		<div className="splider_single__container">
 			{catalog.category.loadCategory.status === 'success' ? 
 				<div className="splide splider_single" ref={_splideMain} aria-label="">
 					<div className="splide__track">
-						{/*<ul className="splide__list">
+						<ul className="splide__list">
 							{productSlides.map((products, i): JSX.Element => {
 								return (
 									<li className="splide__slide" key={i}>
@@ -138,7 +136,7 @@ const SpliderSingle: React.FC<IProps> = ({lang, catalog, setState}): JSX.Element
 									</li>
 								)
 							})}
-						</ul>*/}
+						</ul>
 					</div>
 				</div>
 			:

@@ -85,6 +85,9 @@
                 display: flex;
                 align-items: flex-start;
                 justify-content: center;
+                border-radius: 5px;
+                overflow: hidden;
+
 
                 & img {
                     /*max-height: 100%;
@@ -112,6 +115,7 @@
         display: flex;
         align-items: flex-start;
         margin-top: 50px;
+
 
         @include respond-to(sm) {
             margin-top: 50px;
@@ -197,8 +201,10 @@
                 justify-content: center;
                 height: auto !important;
                 position: relative;
-
-    
+                overflow: hidden;
+                border-radius: 5px;
+                
+                
                 &.is-active {
                     //opacity: 1;
                     filter: brightness(1);
@@ -206,7 +212,7 @@
                     border: 3px solid var(--main_vv);
                     border-radius: 5px;
                 }
-    
+                
                 & img {
                     height: 100%;
                     width: 100%;
@@ -215,6 +221,11 @@
                     height: 100%;
                     object-fit: cover;
                     object-position: 50% 50%;*/
+                    transition: scale $transition_fast;
+
+                    &:hover {
+                        scale: 1.2;
+                    }
                 }
             }
         }

@@ -1,4 +1,4 @@
-import { IAction, ICartItem, IDispatch, IFetch, IProduct } from '../../interfaces';
+import { IAction, ICartItem, IDispatch, IFetch, IFullState, IProduct } from '../../interfaces';
 import { actionsListCart } from './actionsList'
 import mockProducts from '../mocks/catalogFull';
 
@@ -46,7 +46,7 @@ export const loadCart = () => {
             setTimeout(()=> {res(localStorage.getItem('cart') as string)}, 1000)
         })
         if (receivedData) {
-            //console.log('raw cart loaded');
+            console.log('raw cart loaded', receivedData);
             const loadedItems: ICartItem[] = JSON.parse(receivedData) || []
 
             //const filledItems: ICartItem[] = loadedRawItems
@@ -65,7 +65,7 @@ export const loadCart = () => {
     }
 }
 
-
+/*
 export const saveCart = (items: ICartItem[]) => {
     return async function(dispatch: IDispatch) {
         dispatch(setSendDataStatusCart({status: 'fetching', message: {en: 'Saving cart', ru: 'Сохраняем корзину'}, errors: []}))
@@ -79,5 +79,62 @@ export const saveCart = (items: ICartItem[]) => {
         dispatch(setSendDataStatusCart({status: 'success', message: {en: 'Cart has been saved', ru: 'Корзина сохранена'}, errors: []}))
     }
 }
+*/
+
+
+
+
+export const sendCart = () => {   
+    return async function(dispatch: IDispatch, getState: () => IFullState) {
+        const { cart, user } = getState() //get current cart state
+       
+        dispatch(setSendDataStatusCart({status: 'fetching', message: {en: 'Sending cart', ru: 'Отправка корзины'}, errors: []}))
+        
+        try {
+            const cartToSend = cart.items.map(item => {
+                return {
+                    fiber: item.fiber,
+                    color: item.color,
+                    type: item.type,
+                    amount: item.amount
+                }
+            })
+            const response: Response = await fetch('/api/cart/set', {
+                    method: 'PUT',
+                    headers: {
+                        "Content-Type": 'application/json',
+                        'Authorization': `Bearer ${user.token}`
+                    },
+                    body: JSON.stringify({items: cartToSend}),
+                })
+            
+            if (response.status !== 200) {
+                /*const result: IErrRes = await response.json() //message, errors
+                return dispatch(setUser({
+                    ...user, 
+                    auth: {
+                        status: 'error', 
+                        message: (result as IErrRes).message, 
+                        errors: result.errors as TLangText[] || []
+                    }
+                }))*/
+            }
+            /*const result: IUserLoginResOk = await response.json() //message, errors
+            dispatch(setUser({
+                ...user, 
+                name: result.user.name,
+                email: result.user.email,
+                phone: result.user.phone,
+                //orders: result.user.orders,
+                token: result.user.token,
+                auth: {status: 'success', message: result.message, errors: []},
+            }))
+            localStorage.setItem('user', JSON.stringify({token: result.user.token}))*/
+        } catch (e) {         
+            //dispatch(setSendDataStatusCart({...user, auth: {status: 'error', message: (e as IErrRes).message, errors: []}}))
+        } 
+    }
+}
+
 
 

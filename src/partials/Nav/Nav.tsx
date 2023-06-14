@@ -177,28 +177,18 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
                                 {lang === 'en' ? 'CATALOG' : 'КАТАЛОГ'}
                             </NavLink>
                         </li>
-                        {userState.token ? 
-                            <li>
-                                <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
-                                    to='/order'
-                                >
-                                    {lang === 'en' ? 'CART' : 'КОРЗИНА'}
-                                </NavLink>
-                                <div className="cart-informer__container"><CartInformer /></div>
 
-                            </li>
-                        :
-                            <li>
-                                <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
-                                    to='/contact_us'
-                                >
-                                    {lang === 'en' ? 'CONTACT' : 'СООБЩЕНИЕ'}
-                                </NavLink>
-                            </li>
-                        }
+                        <li>
+                            <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
+                                to='/contact_us'
+                            >
+                                {lang === 'en' ? 'CONTACT' : 'КОНТАКТЫ'}
+                            </NavLink>
+                        </li>
+                        
                         {userState.token ? 
                             <li className="extandable">
-                                <a className="not-link" onClick={() => onClickNotLink('login')}>{lang === 'en' ? 'CABINET' : 'Кабинет'}</a>
+                                <a className="not-link" onClick={() => onClickNotLink('login')}>{lang === 'en' ? 'ACCOUNT' : 'Кабинет'}</a>
                                 <ul className="sub_menu">
                                     <li>
                                         <ul className="submenu__content">
@@ -333,7 +323,7 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
                         
                         {userState.token ? 
                             <li className={`${expandedNavItems.includes('cabinet') ? 'expanded' : ''}`}>
-                                <span onClick={() => onNavWithSubClicked('cabinet')}>{lang === 'en' ? 'CABINET' : 'КАБИНЕТ '}</span>
+                                <span onClick={() => onNavWithSubClicked('cabinet')}>{lang === 'en' ? 'ACCOUNT' : 'КАБИНЕТ '}</span>
                                 <div>
                                     <ul className="nav__subnav noscroll">
                                         <li>

@@ -11,6 +11,7 @@ const initialNews = {
         message: {en: '', ru: ''},
         errors: []
     },
+    total: 0,
     newsList: []
 } satisfies INewsState
 

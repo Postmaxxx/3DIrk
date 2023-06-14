@@ -115,7 +115,7 @@
         
             & .image-block, .image-block_header {
                 display: grid;
-                grid-template-columns: 2fr 1fr 1fr 40px;
+                grid-template-columns: 2fr 1fr 1fr 35px;
                 gap: 20px 40px;
                 position: relative;
                 margin-top: 15px;
@@ -175,6 +175,10 @@
 
             & .image-block_header {
 
+                &:only-of-type {
+                    display: none;
+                }
+
                 @include respond-to(md) {
                     display: none;
                 }
@@ -186,10 +190,21 @@
         & .add {
             padding-left: 20px;
             padding-right: 20px;
+            margin-left: auto;
+            @include respond-to(xs) {
+                width: 100%;
+                display: grid;
+                place-items: center;
+            }
         }
 
         & .post {
             margin-left: auto;
+            @include respond-to(xs) {
+                width: 100%;
+                display: grid;
+                place-items: center;
+            }
         }
 
 
@@ -206,10 +221,25 @@
             outline: none;
             border: 2px solid transparent;
             position: relative;
+
+            @include respond-to(sm) {
+                font-size: 16px;
+            }
+
+            @include respond-to(xs) {
+                font-size: 14px;
+                padding: 3px 6px;
+            }
         }
         
         & textarea {
             resize: vertical;
+            height: 100px;
+
+            @include respond-to(sm) {
+                height: 70px;
+
+            }
         }
 
     }

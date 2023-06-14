@@ -47,13 +47,12 @@ interface ISendOrder {
     lang: TLang
     text: string
     filesArr: File[]
-    cart: ICartState
     informer: (message: TLangText) => void
 }
 
 const minTimeBetweenSendings = 1000; //in ms
 
-export const sendOrder = ({lang, text, filesArr, cart, informer}: ISendOrder) => {
+export const sendOrder = ({lang, text, filesArr, informer}: ISendOrder) => {
     return async function(dispatch: IDispatch) {
         const urlMessage= `https://api.telegram.org/bot${process.env.REACT_APP_TG_TOK}/sendMessage`;
         const urlDocument= `https://api.telegram.org/bot${process.env.REACT_APP_TG_TOK}/sendDocument`;

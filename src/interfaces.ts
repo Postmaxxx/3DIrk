@@ -26,7 +26,7 @@ export type TFetchStatus = 'idle' | 'success' | 'fetching' | 'error'
 export interface IFetch {
     status: TFetchStatus
     message: TLangText
-    errors: TLangText[]
+    errors?: TLangText[]
 }
 
 
@@ -229,7 +229,7 @@ export interface ICatalogState {
 
 //================================================news state
 export interface INewsItem {
-    id: TId
+    _id: TId
     header: TLangText
     date: Date
     short: TLangText
@@ -240,6 +240,7 @@ export interface INewsItem {
 export interface INewsState {
     load: IFetch
     send: IFetch
+    total: number
     newsList: INewsItem[]
 }
 

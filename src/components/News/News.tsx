@@ -23,8 +23,8 @@ const News:React.FC<IProps> = ({newsPiece, lang}):JSX.Element => {
             
             <NavLink
                 className="button_news"
-                to={`news/${newsPiece.id}`}
-                key={newsPiece.id}
+                to={`news/${newsPiece._id}`}
+                key={newsPiece._id}
                 >
                     {lang === 'en' ? 'Read more...' : 'Подробнее...'}
                     <svg width="24" height="16" viewBox="0 0 24 16" xmlns="http://www.w3.org/2000/svg">

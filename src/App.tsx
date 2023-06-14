@@ -26,6 +26,7 @@ const LazyFibersCompare= lazy(() => import("./pages/FibersCompare/FibersCompare"
 const LazyOffliner= lazy(() => import("./components/Offliner/Offliner"));
 //const LazyUserBlock= lazy(() => import("./components/UserBlock/UserBlock"));
 const LasyNewsCreator = lazy(() => import("./pages/Admin/NewsCreator"));
+const LasyContactUs = lazy(() => import("./pages/ContactUs/ContactUs"));
 
 
 
@@ -51,9 +52,10 @@ const App:React.FC<IProps> = ({lang, setState}):JSX.Element => {
 	
 
 	useEffect(() => {
-		setState.cart.loadCart()
+		//setState.cart.loadCart()
 		setState.colors.loadColors()
 		setState.fibers.loadFibers()
+		//setState.user.loadUser()
 		setState.user.loginWithToken()
 	}, [])
 
@@ -78,10 +80,13 @@ const App:React.FC<IProps> = ({lang, setState}):JSX.Element => {
 				</Route>
 				
 				<Route path="/order" element={<Suspense fallback={<Preloader />}><LazyOrderPage /></Suspense>} />
+				<Route path="/contact_us" element={<Suspense fallback={<Preloader />}><LasyContactUs /></Suspense>} />
+
 				<Route path="/catalog">
 					<Route index element={<Suspense fallback={<Preloader />}><LazyCatalogPage /></Suspense>} />
 					<Route path=":productId" element={<Suspense fallback={<Preloader />}><LazyProduct /></Suspense>} />
 				</Route>
+
 				<Route path="news/:newsId" element={<Suspense fallback={<Preloader />}><LazyNewsDetails /></Suspense>} />
 				<Route path="/*" element={<Suspense fallback={<Preloader />}><P404 lang={lang}/></Suspense>} />
 

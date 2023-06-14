@@ -1,4 +1,12 @@
-const { Schema, model, Types } = require('mongoose')
+import { Document, Schema, Model, model } from 'mongoose';
+
+interface INews extends Document {
+    date: Date
+    header: object
+    short: object
+    text: object
+    images: object[]
+}
 
 const newsSchema = new Schema({
     date: {type: Date},
@@ -8,5 +16,7 @@ const newsSchema = new Schema({
     images: [{type: Object}],
 })
 
-module.exports = model('News', newsSchema)
-export {}
+const News: Model<INews> = model<INews>('News', newsSchema);
+
+module.exports = News
+export {INews}

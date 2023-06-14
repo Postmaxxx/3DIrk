@@ -46,7 +46,7 @@ const CartContent: React.FC<IProps> = ({lang, cart, colors, fibers, setState}): 
   
     useEffect(() => {
         if (cart.load.status !== 'fetching'){
-            setState.cart.saveCart(cart.items)
+            //setState.cart.saveCart(cart.items)
         }
     }, [cart.items])
 

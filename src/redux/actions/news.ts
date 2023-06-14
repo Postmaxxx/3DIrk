@@ -1,5 +1,4 @@
 import { IAction, IDispatch, IErrRes, IFetch, IFullState, INewsItem, TLangText } from "src/interfaces"
-import mockNews from '../mocks/news'
 import { actionsListNews } from './actionsList'
 
 
@@ -22,26 +21,55 @@ export const setDataNews = <T extends Array<INewsItem>>(payload: T):IAction<T> =
 });
 
 
-export const loadAllNews = () => {
-    return async function(dispatch: IDispatch) {
-        dispatch(setLoadDataStatusNews({status: 'fetching', message: {en: `Loading news`, ru: 'Загрузка новостей'}, errors: []}))
+export const setTotalNews = <T extends number>(payload: T):IAction<T> => ({
+    type: actionsListNews.SET_TOTAL_NEWS,
+    payload: payload
+});
+
+
+export const loadSomeNews = (from: number, amount: number) => {
+    return async function(dispatch: IDispatch, getState: () => IFullState) {
+        const news = getState().news
+        if (news.load.status === 'fetching') return
+        dispatch(setLoadDataStatusNews({status: 'fetching', message: {en: `Loading ${amount} news`, ru: `Загрузка ${amount} новостей`},}))
         try {
-            const data: INewsItem[] = await new Promise((res, rej) => {
-                setTimeout(() => {
-                    res(mockNews)
-                }, 1000)
+            const response: Response = await fetch(`/api/news/get-some?from=${from}&amount=${amount}`, {
+                method: 'GET',
+                headers: {
+                    "Content-Type": 'application/json',
+                },
             })
-            dispatch(setLoadDataStatusNews({status: 'success', message: {en: `News have been loaded`, ru: 'Новости были загружены успешно'}, errors: []}))
-            dispatch(setDataNews(data))
+            if (response.status !== 200) {
+                const result: IErrRes = await response.json() //message, errors
+                return dispatch(setLoadDataStatusNews({
+                    status: 'error', 
+                    message: (result as IErrRes).message, 
+                    errors: result.errors as TLangText[] || []
+                }))
+            }
+            
+            const result: {news: INewsItem[], total: number} = await response.json()
+            dispatch(setDataNews([...news.newsList, ...result.news.map(item => {
+                return {
+                    ...item,
+                    date: new Date(item.date),
+                }
+            })]))
+            dispatch(setTotalNews(result.total))
+            dispatch(setLoadDataStatusNews({status: 'success', message: {en: `News have been loaded`, ru: 'Новости были загружены успешно'}}))
+
         } catch (e) {
-            dispatch(setLoadDataStatusNews({status: 'error', message: {en: `Error occured while loading news: ${e}`, ru: `Ошибка в процессе загрузки новостей: ${e}`}, errors: []}))
+            dispatch(setLoadDataStatusNews({status: 'error', message: {en: `Error occured while loading news: ${e}`, ru: `Ошибка в процессе загрузки новостей: ${e}`}}))
         }
     }
 }
 
 
-export const postNews = (news: Omit<INewsItem, "id">) => {
-    console.log(111);
+
+
+
+
+export const postNews = (news: Omit<INewsItem, "_id">) => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
         const { user } = getState() //get current user state
         dispatch(setSendDataStatusNews({status: 'fetching', message: {en: '', ru: ''}, errors: []}))
@@ -69,13 +97,12 @@ export const postNews = (news: Omit<INewsItem, "id">) => {
             
             dispatch(setSendDataStatusNews({status: 'success', message: result.message, errors: []}))
             
-            
-            
-        } catch (e) {
-            dispatch(setSendDataStatusNews({status: 'error', message: (e as IErrRes).message, errors: []}))
+        } catch (e) {           
+            dispatch(setSendDataStatusNews({status: 'error', message: {en: `Error "${e}", try again later`, ru: `Ошибка "${e}", попробуйте позже`}, errors: []}))
         }
 
     }
 }
+
 
 

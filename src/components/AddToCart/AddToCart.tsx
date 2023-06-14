@@ -1,7 +1,6 @@
 import { ICartItem, ICartState, IColor, IFiber, IFullState, IProduct, TLang, TLangText } from '../../interfaces';
 import './add-to-cart.scss'
 import { useRef, useEffect, useState, useMemo } from "react";
-import { addItem, saveCart } from "../../redux/actions/cart"
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
@@ -9,9 +8,7 @@ import Modal from "../../components/Modal/Modal";
 import MessageInfo from '../MessageInfo/MessageInfo';
 import AmountChanger from '../AmountChanger/AmountChanger';
 //var uniqid = require('uniqid');
-
-
-const actionsListCart = { addItem, saveCart }
+import { allActions } from "../../redux/actions/all";
 
 
 interface IPropsState {
@@ -20,6 +17,17 @@ interface IPropsState {
 }
 
 interface IPropsParent extends IPropsState {
+
+}
+
+interface IPropsActions {
+    setState: {
+		cart: typeof allActions.cart
+    }
+}
+
+
+interface IProps extends IPropsParent, IPropsActions {
     product : IProduct
     type: TLangText | undefined
     fiber: IFiber['id'] | undefined
@@ -27,22 +35,9 @@ interface IPropsParent extends IPropsState {
 }
 
 
-interface IPropsActions {
-    setState: {
-        cart: typeof actionsListCart
-    }
-}
-
-interface IProps extends IPropsParent, IPropsActions {}
-
-
 interface IMessageCart {
-    //color: string
-    //type: string
     header: string
     status: string
-    //fiber: string
-    //amount: number
     text: string[]
 }
 
@@ -84,7 +79,7 @@ const AddToCart: React.FC<IProps> = ({product, type, fiber, color, lang, cart, s
                 //id: uniqid()
             }
             setState.cart.addItem(newItem)
-            setState.cart.saveCart([...cart.items, newItem]);
+            setState.cart.sendCart();
             //setAmount(1)
             setAmountChangerReset({amount: 1})
             const amountItemsInCart = cart.items.reduce((total, item) => total + item.amount, 0) + amount
@@ -133,7 +128,7 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
     setState: {
-        cart: bindActionCreators(actionsListCart, dispatch),
+		cart: bindActionCreators(allActions.cart, dispatch),
 	}
 })
   

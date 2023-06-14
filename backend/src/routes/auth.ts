@@ -4,7 +4,7 @@ const { check, validationResult } = require('express-validator')
 const bcrypt = require('bcryptjs')
 const router = Router()
 const jwt = require('jsonwebtoken')
-
+const authMW = require('../middleware/auth')
 
 //api/outh/register
 router.post('/register', 
@@ -33,7 +33,7 @@ router.post('/register',
             }
         
             const hashedPassword = await bcrypt.hash(password, 12);
-            const user = new User({ email, password: hashedPassword, name, phone, date: new Date() })
+            const user = new User({ email, password: hashedPassword, name, phone, date: new Date(), cart: [] })
         
             await user.save()
 
@@ -90,8 +90,9 @@ router.post('/login',
                 name: user.name,
                 email: user.email,
                 phone: user.phone,
+                cart: user.cart,
                 //orders: user.orders,
-                token
+                token,
             }
 
             res.status(200).json({user: userToFront, message: {en: 'Login success', ru: 'Успешный вход'}})
@@ -105,17 +106,49 @@ router.post('/login',
 
 
 router.post('/login-token',
+    authMW,
+    async (req, res) => {              
+        try {
+            const { id } = req.user
+            
+            const user = await User.findOne( {_id: id} )
+            
+            if (!user) {
+                return res.status(400).json({ message: { en: 'User was not found', ru: "Пользователь не найден"}})
+            }
+            const newToken = jwt.sign(
+                {userId: user.id},
+                process.env.jwtSecret,
+                { expiresIn: "1h"}
+            )
+
+            const userToFront = {
+                name: user.name,
+                email: user.email,
+                phone: user.phone,
+                cart: user.cart,
+                //orders: user.orders,
+                token: newToken //auto token prolong
+            }
+           
+            res.status(200).json({user: userToFront, message: {en: 'Login success', ru: 'Успешный вход'}})
+
+        } catch (error) {
+            res.status(500).json({ message:{en: `Something wrong with server (${error}), try again later`, ru: `Ошибка на сервере (${error}), попробуйте позже`}})
+        }
+    }
+)
+
+
+
+
+/*
+router.put('/update-cart',
+    authMW,
     async (req, res) => {       
         try {
-            const receivedToken = req.headers.authorization?.split(' ')?.[1]
-            const decodedUserID = jwt.verify(receivedToken, process.env.jwtSecret)
-            if (!decodedUserID) {
-                return res.status(400).json({ message: { en: 'Token is invalid', ru: "Токен недействителен"}})
-            }
-            if (decodedUserID.iat > decodedUserID.exp) {
-                return res.status(400).json({ message: { en: 'Token is expired', ru: "Токен истек"}})
-            }
-            const user = await User.findOne( {_id: decodedUserID.userId} )
+            const {userId} = req.body
+            const user = await User.findOne( {_id: userId} )
             if (!user) {
                 return res.status(400).json({ message: { en: 'User was not found', ru: "Пользователь не найден"}})
             }
@@ -125,7 +158,7 @@ router.post('/login-token',
                 process.env.jwtSecret,
                 { expiresIn: "1h"}
             )
-
+                
             const userToFront = {
                 name: user.name,
                 email: user.email,
@@ -141,7 +174,7 @@ router.post('/login-token',
         }
     }
 )
-
+*/
 
 module.exports = router
 

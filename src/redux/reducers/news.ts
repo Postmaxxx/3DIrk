@@ -22,6 +22,11 @@ const reducerNews = (state:INewsState = initialNewsState, action: IAction<any>):
                 ...state, 
                 newsList: [...action.payload]
             }
+        case actionsListNews.SET_TOTAL_NEWS: 
+            return {
+                ...state, 
+                total: action.payload
+            }
 
         default: return state
     }

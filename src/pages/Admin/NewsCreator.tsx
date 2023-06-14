@@ -79,8 +79,6 @@ const NewsCreator: React.FC<IProps> = ({lang, userState, sending, setState}): JS
         }
         
         setState.news.postNews(news)
-
-
     }
 
 
@@ -141,6 +139,7 @@ const NewsCreator: React.FC<IProps> = ({lang, userState, sending, setState}): JS
             header: sending.status,
             text: ['']
         })
+        setState.news.setSendDataStatusNews({status: 'idle', message: {en: '', ru: ''}})
 	}
 
 

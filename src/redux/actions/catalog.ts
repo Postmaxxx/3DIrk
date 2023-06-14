@@ -1,4 +1,4 @@
-import { IAction, ICatalogItem, ICatalogState, ICategory, IDispatch, IFetch, IProduct, TId, TLangText } from "../../interfaces"
+import { IAction, ICatalogItem, ICatalogState, ICategory, IDispatch, IFetch, IFullState, IProduct, TId, TLangText } from "../../interfaces"
 import mockProducts from '../mocks/catalogFull'
 import mockFibers from '../mocks/fibers'
 import { actionsListCatalog } from './actionsList'
@@ -9,17 +9,6 @@ export const setFetchCatalog = <T extends IFetch>(payload: T):IAction<T> => ({
     payload
 });
 
-/*
-export const setSelectedCategory = <T extends ICatalogState["selectedCategory"]>(payload: T):IAction<T> => ({
-    type: actionsListCatalog.SET_SELECTED_CATEGORY,
-    payload
-});
-*//*
-export const setSelectedProduct = <T extends ICatalogState["selectedProduct"]>(payload: T):IAction<T> => ({
-    type: actionsListCatalog.SET_SELECTED_PRODUCT,
-    payload
-});
-*/
 
 export const setCatalog = <T extends ICatalogItem[]>(payload: T):IAction<T> => ({
     type: actionsListCatalog.SET_DATA_CATEGORIES_LIST,
@@ -28,7 +17,8 @@ export const setCatalog = <T extends ICatalogItem[]>(payload: T):IAction<T> => (
 
 
 export const loadCatalog = () => {
-    return async function(dispatch: IDispatch) {
+    return async function(dispatch: IDispatch, getState: () => IFullState) {
+        const {catalog} = getState()
         dispatch(setFetchCatalog({status: 'fetching', message: {en: `Loading catalog`, ru: 'Загрузка каталога'}, errors: []}))
         try {
             new Promise((res, rej) => {
@@ -43,6 +33,7 @@ export const loadCatalog = () => {
             }).then((data) => {
                 dispatch(setCatalog(data as ICatalogItem[]))
                 dispatch(setFetchCatalog({status: 'success', message: {en: `Catalog has been loaded`, ru: 'Каталог загружен'}, errors: []}))
+                loadCategory((data as ICatalogItem[])[0].id)(dispatch)
             }).catch(err => {
                 dispatch(setFetchCatalog({status: 'error', message: {en:`Error while loading catalog: ${err}`, ru: `Ошибка при загрузке каталога: ${err}`}, errors: []}))
             })
@@ -120,10 +111,6 @@ export const setPage = <T extends ICategory["page"]>(payload: T):IAction<T> => (
 
 
 
-
-
-
-
 export const setFetchProduct = <T extends IFetch>(payload: T):IAction<T> => ({
     type: actionsListCatalog.SET_LOAD_DATA_STATUS_PRODUCT,
     payload
@@ -144,7 +131,6 @@ export const loadProduct = (id: IProduct["id"]) => {
                 setTimeout(() => {
                     const product = mockProducts.find(product => product.id === id)
                     if (product) {
-                        //console.log(`product ${id} loaded`);
                         res(product)
                     } else (
                         rej({mesasage: `product ${id} not found`})
