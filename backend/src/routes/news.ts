@@ -58,9 +58,9 @@ router.post('/create',
 
             await saveChanges('news', true);
 
-            res.status(201).json({message: {en: 'News posted', ru: 'Новость сохранена'}})
+            return res.status(201).json({message: {en: 'News posted', ru: 'Новость сохранена'}})
         } catch (error) {
-            res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})
+            return res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})
         }
     }
 )
@@ -87,7 +87,7 @@ const loadNews = async (res): Promise<{loaded: boolean, msg: string}> => {
 
 router.get('/get-amount', async (req, res) => {
     await loadNews(res)
-    res.status(200).json({amount: allNews.length, message: {en: '', ru: ''}})
+    return res.status(200).json({amount: allNews.length, message: {en: '', ru: ''}})
 })
 
 
@@ -117,7 +117,6 @@ router.get('/get-some',
         const to = Number(from) + Number(amount)
         if (since >= allNews.length) {
             return res.status(400).json({message: {en: `"From" is more than total amount of news`, ru: `"From" больше чем общее количество новостей`}})
-            
         }
         
         const newsToRes = allNews.slice(since, to)
@@ -165,6 +164,51 @@ router.get('/get-one',
     }
 
 })
+
+
+
+
+
+
+router.post('/delete', 
+    [authMW, isAdmin,
+    check('_id')
+        .exists()
+        .withMessage({en: 'News _id is messied', ru: 'Отсутствует _id новости'})
+    ],
+    async (req, res) => {
+
+        const errors = validationResult(req)
+        
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                errors: errors.array().map(error => error.msg),
+                message: {en: 'Errors in received data', ru: 'Ошибки в полученных данных'}
+            })
+        }
+
+        try {
+            const { _id } = req.body 
+
+            try {
+                const newsToDelete = await News.findOneAndDelete({_id}) 
+                if (!newsToDelete) {
+                    return res.status(404).json({message: {en: `News has not not found`, ru: `Новость не найдена`}})
+                }
+                await saveChanges('news', true);
+                await loadNews(res)
+            } catch (error) {
+                return res.status(404).json({message: {en: `News has not not found`, ru: `Новость не найдена`}})
+            }
+
+
+            return res.status(200).json({message: {en: `News  deleted`, ru: `Новость удалена`}})
+        } catch (error) {
+            return res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})
+        }
+    }
+)
+
 
 
 export {};

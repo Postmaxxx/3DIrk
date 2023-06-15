@@ -1,8 +1,8 @@
 import './news_block.scss'
-import { useEffect, Fragment } from 'react'
+import { useEffect, Fragment, useState } from 'react'
 import { connect } from "react-redux";
 import News from '../News/News'
-import { IFullState, INewsState, TLang } from '../../interfaces'
+import { IFullState, INewsItem, INewsState, TLang } from '../../interfaces'
 import { AnyAction, Dispatch, bindActionCreators } from 'redux';
 import { allActions } from "../../redux/actions/all";
 import Preloader from '../Preloaders/Preloader';
@@ -58,6 +58,7 @@ const NewsBlock:React.FC<IProps>  = ({lang, news, setState}): JSX.Element => {
                 )}
                 {news.newsList.length === 0 && news.load.status !== 'success' && <Preloader />}
             </div>
+            
         </>
     )
 }

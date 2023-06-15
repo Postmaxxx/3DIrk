@@ -1,4 +1,4 @@
-import { ICartItem, ICartState, IColor, IFiber, IFullState, IOrderState, IProduct, TLang, TLangText } from '../../interfaces';
+import { ICartItem, ICartState, IColor, IFiber, IFullState, IMessageModal, IOrderState, IProduct, TLang, TLangText } from '../../interfaces';
 import './add-to-cart.scss'
 import { useRef, useEffect, useState, useMemo } from "react";
 import { AnyAction, bindActionCreators } from "redux";
@@ -35,19 +35,13 @@ interface IProps extends IPropsParent, IPropsActions {
 }
 
 
-interface IMessageCart {
-    header: string
-    status: string
-    text: string[]
-}
-
 
 
 
 const AddToCart: React.FC<IProps> = ({product, type, fiber, color, lang, order, setState}): JSX.Element => {
     const [amount, setAmount] = useState<number>(1)
 	const [modal, setModal] = useState<boolean>(false)
-    const [message, setMessage] = useState<IMessageCart>({header: '', status: '', text: []})
+    const [message, setMessage] = useState<IMessageModal>({header: '', status: '', text: []})
     const [amountChangerReset, setAmountChangerReset] = useState<{amount: number}>({amount: 1})
 
     const closeModal = () => {
@@ -108,13 +102,13 @@ const AddToCart: React.FC<IProps> = ({product, type, fiber, color, lang, order, 
                 <button className='button_news' title='Add to cart' onClick={addToCart}>{lang === 'en' ? 'Add to cart' : 'Добавить в корзину'}</button>
             </div>
             <Modal {...{visible: modal, close: closeModal, escExit: true}}>
-            <MessageInfo {...{  
-                    status: message.status,
-                    header: message.header,
-                    text: message.text, 
-                    buttonText: lang === 'en' ? 'Close' : "Закрыть", 
-                    buttonAction: closeModal
-                }}/>
+                <MessageInfo {...{  
+                        status: message.status,
+                        header: message.header,
+                        text: message.text, 
+                        buttonText: lang === 'en' ? 'Close' : "Закрыть", 
+                        buttonAction: closeModal
+                    }}/>
             </Modal> 
         </>
     )

@@ -29,6 +29,12 @@ export interface IFetch {
     errors?: TLangText[]
 }
 
+export interface IMessageModal {
+    header: string
+    status: string
+    text: string[]
+}
+
 
 //---------------------------------------------lang text
 export type TLangText = {

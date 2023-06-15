@@ -1,4 +1,4 @@
-import { IAction, IDispatch, IErrRes, IFetch, IFullState, INewsItem, TLangText } from "src/interfaces"
+import { IAction, IDispatch, IErrRes, IFetch, IFullState, IMsgRes, INewsItem, TLangText } from "src/interfaces"
 import { actionsListNews } from './actionsList'
 
 
@@ -72,7 +72,7 @@ export const loadSomeNews = (from: number, amount: number) => {
 export const postNews = (news: Omit<INewsItem, "_id">) => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
         const { user } = getState() //get current user state
-        dispatch(setSendDataStatusNews({status: 'fetching', message: {en: '', ru: ''}, errors: []}))
+        dispatch(setSendDataStatusNews({status: 'fetching', message: {en: '', ru: ''}}))
         
         try {
             
@@ -85,8 +85,44 @@ export const postNews = (news: Omit<INewsItem, "_id">) => {
                 body: JSON.stringify(news)
             })
 
-            const result: IErrRes = await response.json() //message, errors
             if (response.status !== 201) {
+                const result: IErrRes = await response.json() //message, errors
+                return dispatch(setSendDataStatusNews({
+                    status: 'error', 
+                    message: result.message, 
+                    errors: result.errors as TLangText[] || []
+                }))
+            }
+            const result: IMsgRes = await response.json() //message, errors
+            
+            dispatch(setSendDataStatusNews({status: 'success', message: result.message}))
+            
+        } catch (e) {           
+            dispatch(setSendDataStatusNews({status: 'error', message: {en: `Error "${e}", try again later`, ru: `Ошибка "${e}", попробуйте позже`}}))
+        }
+
+    }
+}
+
+
+export const deleteNews = (_id: string) => {
+    return async function(dispatch: IDispatch, getState: () => IFullState) {
+        const { user } = getState() //get current user state
+        dispatch(setSendDataStatusNews({status: 'fetching', message: {en: '', ru: ''}, errors: []}))
+        
+        try {
+            
+            const response: Response = await fetch('/api/news/delete', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": 'application/json',
+                    'Authorization': `Bearer ${user.token}`
+                },
+                body: JSON.stringify({_id})
+            })
+
+            if (response.status !== 200) {
+                const result: IErrRes = await response.json() //message, errors
                 return dispatch(setSendDataStatusNews({
                     status: 'error', 
                     message: result.message, 
@@ -94,9 +130,8 @@ export const postNews = (news: Omit<INewsItem, "_id">) => {
                 }))
             }
 
-            
-            dispatch(setSendDataStatusNews({status: 'success', message: result.message, errors: []}))
-            
+            const result: IMsgRes = await response.json()
+            dispatch(setSendDataStatusNews({status: 'success', message: result.message}))
         } catch (e) {           
             dispatch(setSendDataStatusNews({status: 'error', message: {en: `Error "${e}", try again later`, ru: `Ошибка "${e}", попробуйте позже`}, errors: []}))
         }

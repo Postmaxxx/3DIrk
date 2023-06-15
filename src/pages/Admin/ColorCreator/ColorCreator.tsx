@@ -111,16 +111,22 @@ const ColorCreator: React.FC<IProps> = ({lang, colorState, setState}): JSX.Eleme
 
 
     useEffect(() => {
-        console.log(colorState.send.status);
-        if (colorState.send.status === 'idle' || colorState.send.status === 'fetching')  return
-        
-        const errors: string[] = colorState.send.errors?.map(e => e[lang]) || []
-        setMessage({
-            header: colorState.send.status === 'success' ? lang === 'en' ? 'News posted' : 'Новость добавлена' : lang === 'en' ? 'Error' : 'Ошибка',
-            status: colorState.send.status,
-            text: [colorState.send.message[lang], ...errors]
-        })
-		setModal(true)
+        if (!_name_en.current || !_name_ru.current || !_urlBig.current || !_urlSmall.current) return
+        if (colorState.send.status === 'success' || colorState.send.status === 'error') {
+            const errors: string[] = colorState.send.errors?.map(e => e[lang]) || []
+            setMessage({
+                header: colorState.send.status === 'success' ? lang === 'en' ? 'Success' : 'Успех' : lang === 'en' ? 'Error' : 'Ошибка',
+                status: colorState.send.status,
+                text: [colorState.send.message[lang], ...errors]
+            })
+            setModal(true)
+            if (colorState.send.status === 'success') {
+                _name_en.current.value = ''
+                _name_ru.current.value = ''
+                _urlBig.current.value = ''
+                _urlSmall.current.value = ''
+            }
+        }
 
     }, [colorState.send.status])
 

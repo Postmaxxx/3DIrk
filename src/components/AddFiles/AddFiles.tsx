@@ -140,7 +140,7 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, saveFiles}, ref)
             <input id="files" type="file" multiple onChange={onSelectFiles} ref={_files}/>
             <div className="preview-gallery" ref={_filesGallery}></div>
             <div className="clear-files">
-                <Delete<string> remove={remove} idInstance="cartCleaner" lang={lang}/>
+                <Delete<string> remove={remove} idInstance="cartCleaner" lang={lang} disabled={false}/>
             </div>
         </div>
     );

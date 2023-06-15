@@ -132,7 +132,7 @@ const CartContent: React.FC<IProps> = ({lang, order, colors, fibers, setState}):
                                 <div className="item__amount-delete">
                                     <div className="delete__container">
                                         <div className="delete__wrapper">
-                                            <Delete<ICartItem> remove={deleteItem} idInstance={item} lang={lang}/>
+                                            <Delete<ICartItem> remove={deleteItem} idInstance={item} lang={lang} disabled={false}/>
                                         </div>
                                     </div>
                                     <div className="amount__container">
