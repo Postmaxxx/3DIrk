@@ -86,6 +86,7 @@ router.post('/login',
                 { expiresIn: "1h"}
             )
 
+
             const userToFront = {
                 name: user.name,
                 email: user.email,
@@ -93,6 +94,11 @@ router.post('/login',
                 cart: user.cart,
                 //orders: user.orders,
                 token,
+                isAdmin: false
+            }
+
+            if (user.email === process.env.admEmail) {
+                userToFront.isAdmin = true
             }
 
             res.status(200).json({user: userToFront, message: {en: 'Login success', ru: 'Успешный вход'}})
@@ -128,7 +134,13 @@ router.post('/login-token',
                 phone: user.phone,
                 cart: user.cart,
                 //orders: user.orders,
-                token: newToken //auto token prolong
+                token: newToken, //auto token prolong
+                isAdmin: false
+
+            }
+
+            if (user.email === process.env.admEmail) {
+                userToFront.isAdmin = true
             }
            
             res.status(200).json({user: userToFront, message: {en: 'Login success', ru: 'Успешный вход'}})

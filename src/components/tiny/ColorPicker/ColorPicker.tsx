@@ -8,7 +8,7 @@ import ModalImage from '../../../components/MessageImage/MessageImage';
 interface IPropsState {
     colors: IColor[]
     lang: TLang
-    onSelect: (id: IColor['id']) => void
+    onSelect: (id: IColor['_id']) => void
 }
 
 
@@ -25,8 +25,8 @@ const ColorPicker: React.FC<IPropsState> = ({lang, colors, onSelect}): JSX.Eleme
         setExpanded(prev => !prev)
     }
 
-    const onOptionClick = (id: IColor['id']) => {
-        setCurrentColor(colors.find(color => color.id === id))
+    const onOptionClick = (id: IColor['_id']) => {
+        setCurrentColor(colors.find(color => color._id === id))
         setExpanded(false)
         onSelect(id)
     }
@@ -34,7 +34,7 @@ const ColorPicker: React.FC<IPropsState> = ({lang, colors, onSelect}): JSX.Eleme
 
     const onImageClick = (e: React.MouseEvent , color: IColor) => {
         e.stopPropagation()
-		setModalImg({descr: color.name[lang], path: color.url})
+		setModalImg({descr: color.name[lang], path: color.url.big})
         setModal(true)
     }
 
@@ -49,7 +49,7 @@ const ColorPicker: React.FC<IPropsState> = ({lang, colors, onSelect}): JSX.Eleme
                 {currentColor ? 
                     <>
                         <div className="img__container">
-                            <img src={currentColor.url} alt={currentColor.name[lang]} />
+                            <img src={currentColor.url.small} alt={currentColor.name[lang]} />
                         </div>
                         <span>{currentColor.name[lang]}</span>
                     </>
@@ -60,9 +60,9 @@ const ColorPicker: React.FC<IPropsState> = ({lang, colors, onSelect}): JSX.Eleme
             <div className='list'>
                 {colors.map(color => {
                     return (
-                        <div className="option" key={color.id} onClick={() => onOptionClick(color.id)} >
+                        <div className="option" key={color._id} onClick={() => onOptionClick(color._id)} >
                             <div className="img__container" >
-                                <img src={color.url} alt={color.name[lang]} />
+                                <img src={color.url.small} alt={color.name[lang]} />
                             </div>
                             <span>{color.name[lang]}</span>
                             <span onClick={(e) => onImageClick(e, color)}>{lang === 'en' ? '(details)' : '(смотреть)'}</span>

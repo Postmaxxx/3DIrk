@@ -110,9 +110,12 @@ export interface ISpliderOptions {
 
 //----------------------------------- color
 export interface IColor {
-    id: TId
+    _id: TId
     name: TLangText
-    url: string
+    url: {
+        big: string
+        small: string
+    }
 }
 
 //----------------------------------- pros / cons
@@ -260,13 +263,14 @@ export interface IBaseState {
 //============================================== order state
 export interface IOrderState {
     id: TId
-    date: Date
     send: IFetch
+    date: Date
     name: string
     phone: string
     email: string
     message: string
     files: File[]
+    cart: ICartState
 }
 
 
@@ -282,6 +286,7 @@ export interface IOrderState {
 
 export interface IColorsState {
     load: IFetch
+    send: IFetch
     colors: IColor[] //list of all colors
 }
 
@@ -336,6 +341,7 @@ export interface IUserState {
     token: string
     //orders: TId[]
     auth: IFetch
+    isAdmin: boolean
 }
 
 
@@ -347,10 +353,10 @@ export interface IFullState {
     news: INewsState
     fibers: IFibersState
     catalog: ICatalogState
-    order: IOrderState
     colors:  IColorsState
-    cart: ICartState
     user: IUserState
+    order: IOrderState
+    //cart: ICartState
 }
 
 
@@ -393,7 +399,7 @@ export interface IFiberProperties {
 
 export interface IUserLoginResOk {
     message: TLangText
-    user: Pick<IUserState, 'name' | 'email' | 'phone' | 'token'>
+    user: Pick<IUserState, 'name' | 'email' | 'phone' | 'token' | 'isAdmin'>
 }
 
 
@@ -405,6 +411,9 @@ export interface IErrRes {
     message: TLangText
 }
 
+export interface IMsgRes {
+    message: TLangText
+}
 
 
 export interface ILoggingForm {

@@ -1,4 +1,4 @@
-import { ICartItem, ICartState, IColor, IFiber, IFullState, IProduct, TLang, TLangText } from '../../interfaces';
+import { ICartItem, ICartState, IColor, IFiber, IFullState, IOrderState, IProduct, TLang, TLangText } from '../../interfaces';
 import './add-to-cart.scss'
 import { useRef, useEffect, useState, useMemo } from "react";
 import { AnyAction, bindActionCreators } from "redux";
@@ -12,7 +12,7 @@ import { allActions } from "../../redux/actions/all";
 
 
 interface IPropsState {
-    cart: ICartState
+    order: IOrderState
     lang: TLang
 }
 
@@ -22,7 +22,7 @@ interface IPropsParent extends IPropsState {
 
 interface IPropsActions {
     setState: {
-		cart: typeof allActions.cart
+		order: typeof allActions.order
     }
 }
 
@@ -31,7 +31,7 @@ interface IProps extends IPropsParent, IPropsActions {
     product : IProduct
     type: TLangText | undefined
     fiber: IFiber['id'] | undefined
-    color: IColor['id']
+    color: IColor['_id']
 }
 
 
@@ -44,7 +44,7 @@ interface IMessageCart {
 
 
 
-const AddToCart: React.FC<IProps> = ({product, type, fiber, color, lang, cart, setState}): JSX.Element => {
+const AddToCart: React.FC<IProps> = ({product, type, fiber, color, lang, order, setState}): JSX.Element => {
     const [amount, setAmount] = useState<number>(1)
 	const [modal, setModal] = useState<boolean>(false)
     const [message, setMessage] = useState<IMessageCart>({header: '', status: '', text: []})
@@ -78,11 +78,11 @@ const AddToCart: React.FC<IProps> = ({product, type, fiber, color, lang, cart, s
                 type, 
                 //id: uniqid()
             }
-            setState.cart.addItem(newItem)
-            setState.cart.sendCart();
+            setState.order.addItem(newItem)
+            setState.order.sendCart();
             //setAmount(1)
             setAmountChangerReset({amount: 1})
-            const amountItemsInCart = cart.items.reduce((total, item) => total + item.amount, 0) + amount
+            const amountItemsInCart = order.cart.items.reduce((total, item) => total + item.amount, 0) + amount
             setMessage({
                 status: 'success',
                 header: lang === 'en' ? 'Added' : 'Добавлено',
@@ -121,14 +121,14 @@ const AddToCart: React.FC<IProps> = ({product, type, fiber, color, lang, cart, s
 }
 
 const mapStateToProps = (state: IFullState): IPropsState => ({
-    cart: state.cart,
+    order: state.order,
     lang: state.base.lang
 })
 
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
     setState: {
-		cart: bindActionCreators(allActions.cart, dispatch),
+		order: bindActionCreators(allActions.order, dispatch),
 	}
 })
   

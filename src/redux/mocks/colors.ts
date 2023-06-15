@@ -1,4 +1,4 @@
-import { IColor } from "src/interfaces";
+/*import { IColor } from "src/interfaces";
 import amber from '../../assets/img/colors/amber.webp'
 import blue from '../../assets/img/colors/blue.webp'
 import blue_dark from '../../assets/img/colors/blue_dark.webp'
@@ -102,4 +102,4 @@ const mockColors = [
     },
 ] satisfies IColor[]
 
-export default mockColors
+export default mockColors*/

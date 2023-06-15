@@ -6,6 +6,11 @@ const initialColors = {
         message: {en: '', ru: ''},
         errors: []
     },
+    send: {
+        status: 'idle',
+        message: {en: '', ru: ''},
+        errors: []
+    },
     colors: []
 } satisfies IColorsState
 

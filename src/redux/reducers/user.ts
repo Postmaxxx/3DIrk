@@ -2,16 +2,17 @@ import { IAction, IUserState } from "src/interfaces"
 import initialUserState from '../initialStates/user'
 import { actionsListUser } from '../actions/actionsList'
 
-const reducerBase = (state:IUserState = initialUserState, action: IAction<any>): IUserState => {
+const reducerUser = (state:IUserState = initialUserState, action: IAction<any>): IUserState => {
     switch (action.type) {
         case actionsListUser.SET_USER: 
-            const newData: IUserState = {...state}
-            for (let key in action.payload) {
-                newData[key as keyof IUserState] = action.payload[key]
-            }           
-            return newData
+        const newProps: Partial<IUserState> = action.payload
+            const newUser: IUserState = {...state}
+            Object.keys(newProps).forEach(key => {
+                newUser[key as keyof IUserState] = newProps[key as keyof IUserState] as never;
+              });
+            return newUser
         default: return state
     }
 }
 
-export default reducerBase
+export default reducerUser

@@ -12,7 +12,23 @@ const initialOrder = {
     phone: '',
     email: '',
     message: '',
-    files: []
+    files: [],
+    cart: {
+        load: {
+            status: 'idle',
+            message: {en: '', ru: ''},
+            errors: []
+        },
+        send: {
+            status: 'idle',
+            message: {
+                en: '',
+                ru: ''
+            },
+            errors: []
+        },
+        items: [],
+    }
 } satisfies IOrderState
 
 export default initialOrder

@@ -38,7 +38,7 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors,produ
 
     const [fibersDetailed, setFibersDetailed] = useState<IFiber[]>([])
     const [selectedFiber, setSelectedFiber] = useState<IFiber>()
-    const [selectedColor, setSelectedColor] = useState<IColor["id"]>('')
+    const [selectedColor, setSelectedColor] = useState<IColor["_id"]>('')
     const [selectedType, setSelectedType] = useState<any>(undefined)
 
     const _type = useRef<HTMLSelectElement>(null)
@@ -50,7 +50,7 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors,produ
     }
 
 
-    const onSelectColor = (colorId: IColor["id"]) => {
+    const onSelectColor = (colorId: IColor["_id"]) => {
         setSelectedColor(colorId)
     }
 
@@ -122,7 +122,7 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors,produ
                 <div className="colors__container wrap_xs">
                     <span>{lang === 'en' ? 'Available colors' : 'Доступные цвета'}: </span>
                     <div className="colors__wrapper">
-                        <ColorPicker lang={lang} colors={colors.colors.filter(color => selectedFiber?.colors.includes(color.id))} onSelect={onSelectColor}/>
+                        <ColorPicker lang={lang} colors={colors.colors.filter(color => selectedFiber?.colors.includes(color._id))} onSelect={onSelectColor}/>
                     </div>
                 </div>
     

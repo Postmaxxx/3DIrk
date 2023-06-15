@@ -95,6 +95,7 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
                 phone: '', 
                 token: '', 
                 orders: [], 
+                isAdmin: false,
                 auth: {status: 'idle', message: {en: '', ru: ''}, errors: []}
             })
             localStorage.removeItem('user')        
@@ -103,19 +104,6 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
         navToggleMobile()
     }
 
-/*
-    const onLogoutClick = () => {
-        setState.user.setUser({
-            name: '', 
-            email: '', 
-            phone: '', 
-            token: '', 
-            orders: [], 
-            auth: {status: 'idle', message: {en: '', ru: ''}, errors: []}
-        })
-        localStorage.removeItem('token')
-    }
-*/
 
     return (
         <>
@@ -203,16 +191,29 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
                                                 <NavLink
                                                     to='/order'
                                                 >
-                                                    {lang === 'en' ? 'ORDERS HISTORY' : 'ЗАКАЗЫ'}
+                                                    {lang === 'en' ? 'ORDERS HISTORY' : 'ВСЕ ЗАКАЗЫ'}
                                                 </NavLink>
                                             </li>
-                                            <li>
-                                                <NavLink
-                                                    to='/admin/news-create'
-                                                >
-                                                    {lang === 'en' ? 'WRITE US' : 'СООБЩЕНИЕ'}
-                                                </NavLink>
-                                            </li>
+                                            {userState.isAdmin ? 
+                                                <>
+                                                    <li>
+                                                        <NavLink
+                                                            to='/admin/news-create'
+                                                        >
+                                                            {lang === 'en' ? '+ NEWS' : '+ НОВОСТЬ'}
+                                                        </NavLink>
+                                                    </li>
+                                                    <li>
+                                                        <NavLink
+                                                            to='/admin/color-create'
+                                                        >
+                                                            {lang === 'en' ? '+ COLOR' : '+ ЦВЕТ'}
+                                                        </NavLink>
+                                                    </li>
+                                                </>
+                                            : 
+                                                null
+                                            }
                                             <li>
                                                 <a className="not-link" onClick={() => onClickNotLink('logout')}>{lang === 'en' ? 'LOGOUT' : 'ВЫХОД'}</a>
                                             </li>

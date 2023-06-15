@@ -73,13 +73,16 @@ const NewsDetails: React.FC<IProps> = ({lang, news }): JSX.Element => {
                                             {newsItem.text[lang].split('\n').map((text, i) => {
                                                 return <p key={i}>{text}</p>
                                             })}
-                                            {newsItem.images.length > 0 ? 
-                                                <div className="images__container">
+                                            <div className="images__container">
+                                                {newsItem.images.length > 1 ? 
                                                     <SpliderCommon images={newsItem.images} lang={lang} imagesPerSlide={2}/>
-                                                </div>
-                                            :
-                                                null
-                                            }
+                                                :
+                                                    newsItem.images.length > 0 ? 
+                                                        <img src={newsItem.images[0].url} alt={newsItem.images[0].name[lang]} />
+                                                    :
+                                                        null
+                                                }
+                                            </div>
                                         </>
                                     </div>
                                 </>

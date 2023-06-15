@@ -46,6 +46,7 @@ const UserBlock: React.FC<IProps> = ({setState, userState, lang}): JSX.Element =
             phone: '', 
             token: '', 
             orders: [], 
+            isAdmin: false,
             auth: {status: 'idle', message: {en: '', ru: ''}, errors: []}
         })
         localStorage.removeItem('token')

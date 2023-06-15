@@ -1,6 +1,5 @@
 import * as actionsListFibers from "./fibers"
 import * as actionsListColors from "./colors"
-import * as actionsListCart from "./cart"
 import * as actionsListUser from "./user"
 import * as actionsListCatalog from "./catalog"
 import * as actionsListNews from "./news"
@@ -12,12 +11,10 @@ import * as actionsListBase from "./base"
 const allActions = {
     fibers: {...actionsListFibers},
     colors: {...actionsListColors},
-    cart: {...actionsListCart},
     user: {...actionsListUser},
     catalog: {...actionsListCatalog},
     news: {...actionsListNews},
     order: {...actionsListOrder},
-    //product: {...actionsListProduct},
     base: {...actionsListBase}
 }
 

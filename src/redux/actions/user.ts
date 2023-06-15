@@ -1,6 +1,6 @@
 import { IAction, IDispatch, IErrRes, IFullState, ILoggingForm, IUserLoginResOk, IUserState, TLangText } from "src/interfaces";
 import { actionsListUser } from './actionsList'
-
+import { setName, setEmail, setPhone } from "./order";
 
 export const setUser = <T extends IUserState>(payload: T):IAction<T> => ({
     type: actionsListUser.SET_USER,
@@ -61,7 +61,7 @@ export const register = ({name, email, phone, password}: ILoggingForm) => {
 
 export const login = ({email, password}: ILoggingForm) => {         
     return async function(dispatch: IDispatch, getState: () => IFullState) {              
-        const { user } = getState() //get current user state
+        const { user, order } = getState() //get current user state
         dispatch(setUser({...user, auth: {status: 'fetching', message: {en: '', ru: ''}, errors: []}}))
         try {
             const response: Response = await fetch('/api/auth/login', {
@@ -96,7 +96,13 @@ export const login = ({email, password}: ILoggingForm) => {
                 //orders: result.user.orders,
                 token: result.user.token,
                 auth: {status: 'success', message: result.message, errors: []},
+                isAdmin: result.user.isAdmin
             }))
+
+            dispatch(setName( result.user.name))
+            dispatch(setPhone( result.user.phone))
+            dispatch(setEmail( result.user.email))
+
             localStorage.setItem('user', JSON.stringify({token: result.user.token}))
         } catch (e) {         
             dispatch(setUser({...user, auth: {status: 'error', message: (e as IErrRes).message, errors: []}}))
@@ -153,6 +159,7 @@ export const loginWithToken = () => {
                 //orders: result.user.orders,
                 token: result.user.token,
                 auth: {status: 'success', message: result.message, errors: []},
+                isAdmin: result.user.isAdmin
             }))
             localStorage.setItem('user', JSON.stringify({token: result.user.token}))
         } catch (e) {         

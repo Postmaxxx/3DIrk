@@ -10,6 +10,7 @@ const initialUserState = {
         message: {en: '', ru: ''},
         errors: []
     },
+    isAdmin: false
     //orders: []
 } satisfies IUserState
 

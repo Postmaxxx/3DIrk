@@ -10,6 +10,11 @@ const reducerColors = (state:IColorsState = initialColorsState, action: IAction<
                 ...state, 
                 load: action.payload
             }
+        case actionsListColors.SET_SEND_DATA_STATUS_COLORS: 
+            return {
+                ...state, 
+                send: action.payload
+            }
         case actionsListColors.SET_DATA_COLORS: 
             return {
                 ...state, 

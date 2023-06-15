@@ -10,10 +10,15 @@ interface IProps {
 }
 
 const News:React.FC<IProps> = ({newsPiece, lang}):JSX.Element => {
+    //console.log(newsPiece);
     return (
         <div className="news card">
             <div className="img__container">
-                <ImgWithPreloader src={newsPiece.images[0].url} alt={newsPiece.header[lang]} />
+                {newsPiece.images[0]?.url ? 
+                    <ImgWithPreloader src={newsPiece.images[0].url} alt={newsPiece.header[lang]} />
+                :
+                    null
+                }
             </div>
             <div className="news_text">
                 <span>{String(newsPiece.date.toISOString().slice(0, 10))}</span>

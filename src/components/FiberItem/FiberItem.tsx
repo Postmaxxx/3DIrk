@@ -23,7 +23,7 @@ const FiberItem = ({fiber, lang, colors}: IProps) => {
 	
     const onImageClick = (e: React.MouseEvent , color: IColor) => {
         e.stopPropagation()
-		setModalImg({descr: color.name[lang], path: color.url})
+		setModalImg({descr: color.name[lang], path: color.url.big})
         setModal(true)
     }
 
@@ -50,11 +50,11 @@ const FiberItem = ({fiber, lang, colors}: IProps) => {
 						<h3>{lang === 'en' ? 'Available colors' : 'Доступные цвета'}</h3>
 						<div className="colors__container">
 							{fiber.colors.map((color, i) => {
-								const colorData: IColor | undefined = colors.find(colorItem => colorItem.id === color)
+								const colorData: IColor | undefined = colors.find(colorItem => colorItem._id === color)
 								if (colorData) {
 									return (
 										<div key={i} className='color__container' onClick={(e) => onImageClick(e, colorData)}>
-											<img src={colorData.url} alt={colorData.name[lang]} />
+											<img src={colorData.url.small} alt={colorData.name[lang]} />
 										</div>
 									)
 								}

@@ -6,7 +6,6 @@ import reducerFibers from './reducers/fibers';
 import reducerOrder from './reducers/order';
 import reducerCatalog from './reducers/catalog';
 import reducerColors from './reducers/colors';
-import reducerCart from './reducers/cart';
 import reducerUser from './reducers/user';
 
 
@@ -17,7 +16,6 @@ const rootReducer = combineReducers({
     order: reducerOrder,
     catalog: reducerCatalog,
     colors: reducerColors,
-    cart: reducerCart,
     user: reducerUser
 });
 

@@ -4,13 +4,10 @@ import React, {  useRef } from "react";
 import { connect } from "react-redux";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
-import { postNews } from "../../redux/actions/news"
 import Modal from 'src/components/Modal/Modal';
 import MessageInfo from 'src/components/MessageInfo/MessageInfo';
 import { useEffect, useState } from "react";
-import { allActions } from "../../redux/actions/all";
-
-const actionsListNews = { postNews }
+import { allActions } from "../../../redux/actions/all";
 
 interface IPropsState {
     lang: TLang
@@ -211,18 +208,6 @@ const NewsCreator: React.FC<IProps> = ({lang, userState, sending, setState}): JS
                                 <span>EN</span>
                                 <span>RU</span>
                                 <span></span>
-                            </div>
-                            <div className="image-block full-width">
-                                <div className="input__wrapper">
-                                    <input type="text" data-content='url'/>
-                                </div>
-                                <div className="input__wrapper">
-                                    <input type="text" data-content='en'/>
-                                </div>
-                                <div className="input__wrapper">
-                                    <input type="text" data-content='ru'/>
-                                </div>
-                                <button className='button_blue del' onClick={e => onDeleteImage(e)}>X</button>
                             </div>
                         </div>
 

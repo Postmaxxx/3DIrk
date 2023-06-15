@@ -15,7 +15,6 @@ import { allActions } from "src/redux/actions/all";
 interface IPropsState {
     lang: TLang,
     order: IOrderState
-    cart: ICartState
     colors: IColorsState
     fibers: IFibersState
 }
@@ -25,7 +24,6 @@ interface IPropsActions {
         order: typeof allActions.order
         fibers: typeof allActions.fibers
         colors: typeof allActions.colors
-		cart: typeof allActions.cart
     }
 }
 
@@ -39,7 +37,7 @@ interface IMessage {
 }
 
 
-const Order:React.FC<IProps> = ({lang, order, cart, colors, fibers, setState}): JSX.Element => {
+const Order:React.FC<IProps> = ({lang, order, colors, fibers, setState}): JSX.Element => {
 
     const _name = useRef<HTMLInputElement>(null)
     const _email = useRef<HTMLInputElement>(null)
@@ -56,7 +54,7 @@ const Order:React.FC<IProps> = ({lang, order, cart, colors, fibers, setState}): 
             setState.order.clearFiles();
             setState.order.clearForm();
             addFilesRef.current?.clearAttachedFiles()
-            setState.cart.clearCart()
+            setState.order.clearCart()
         }
         setState.order.setSendDataStatus({status: 'idle', message: {en: '', ru: ''}, errors: []})
 	}
@@ -94,11 +92,11 @@ const Order:React.FC<IProps> = ({lang, order, cart, colors, fibers, setState}): 
             return
         }
         
-        const textCart = cart.items.reduce((text: string, item: ICartItem, i: number) => {
+        const textCart = order.cart.items.reduce((text: string, item: ICartItem, i: number) => {
             return text + `${i+1}) ${item.product.name[lang]}
 ${lang === 'en' ? 'Options' : 'Версия'}: ${item.type} 
 ${lang === 'en' ? 'Fiber' : 'Материал'}: ${fibers.fibersList.find(fiberItem => fiberItem.id === item.fiber)?.short.name[lang]}
-${lang === 'en' ? 'Color' : 'Цвет'}: ${colors.colors.find(color => color.id === item.color)?.name[lang]}
+${lang === 'en' ? 'Color' : 'Цвет'}: ${colors.colors.find(color => color._id === item.color)?.name[lang]}
 ${lang === 'en' ? 'Amount' : 'Количество'}: ${item.amount}\n\n`
         }, '')
 
@@ -270,7 +268,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
 
                                 <button 
                                     type="submit" 
-                                    disabled={cart.load.status !== 'success' || fibers.load.status !== 'success' || colors.load.status !== 'success' || order.send.status === 'fetching'} 
+                                    disabled={order.cart.load.status !== 'success' || fibers.load.status !== 'success' || colors.load.status !== 'success' || order.send.status === 'fetching'} 
                                     className="button_order" 
                                     onClick={onSubmit}>
                                         {lang === 'en' ? 'Order' : "Отправить"}
@@ -300,7 +298,6 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
 const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
     order: state.order,
-    cart: state.cart,
     colors: state.colors,
     fibers: state.fibers,
 })
@@ -311,7 +308,6 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>):IPropsActions => ({
 		fibers: bindActionCreators(allActions.fibers, dispatch),
 		colors: bindActionCreators(allActions.colors, dispatch),
 		order: bindActionCreators(allActions.order, dispatch),
-		cart: bindActionCreators(allActions.cart, dispatch),
 	}
 })
   

@@ -25,7 +25,8 @@ const LazyNewsDetails = lazy(() => import("./pages/NewsDetails/NewsDetails"));
 const LazyFibersCompare= lazy(() => import("./pages/FibersCompare/FibersCompare"));
 const LazyOffliner= lazy(() => import("./components/Offliner/Offliner"));
 //const LazyUserBlock= lazy(() => import("./components/UserBlock/UserBlock"));
-const LasyNewsCreator = lazy(() => import("./pages/Admin/NewsCreator"));
+const LasyNewsCreator = lazy(() => import("./pages/Admin/NewsCreator/NewsCreator"));
+const LasyColorsCreator = lazy(() => import("./pages/Admin/ColorCreator/ColorCreator"));
 const LasyContactUs = lazy(() => import("./pages/ContactUs/ContactUs"));
 
 
@@ -39,7 +40,7 @@ interface IPropsActions {
         fibers: typeof allActions.fibers
         user: typeof allActions.user
         colors: typeof allActions.colors
-		cart: typeof allActions.cart
+		order: typeof allActions.order
     }
 }
 
@@ -52,11 +53,10 @@ const App:React.FC<IProps> = ({lang, setState}):JSX.Element => {
 	
 
 	useEffect(() => {
-		//setState.cart.loadCart()
 		setState.colors.loadColors()
 		setState.fibers.loadFibers()
-		//setState.user.loadUser()
 		setState.user.loginWithToken()
+		//cart!!!
 	}, [])
 
 
@@ -93,6 +93,7 @@ const App:React.FC<IProps> = ({lang, setState}):JSX.Element => {
 
 				<Route path="/admin">
 					<Route path="news-create" element={<Suspense fallback={<Preloader />}><LasyNewsCreator /></Suspense>} />
+					<Route path="color-create" element={<Suspense fallback={<Preloader />}><LasyColorsCreator /></Suspense>} />
 				</Route>
 			</Routes>
 
@@ -113,7 +114,7 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>):IPropsActions => ({
 		fibers: bindActionCreators(allActions.fibers, dispatch),
 		colors: bindActionCreators(allActions.colors, dispatch),
 		user: bindActionCreators(allActions.user, dispatch),
-		cart: bindActionCreators(allActions.cart, dispatch),
+		order: bindActionCreators(allActions.order, dispatch),
 	}
 })
   
