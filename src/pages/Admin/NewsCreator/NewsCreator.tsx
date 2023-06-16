@@ -8,6 +8,7 @@ import Modal from 'src/components/Modal/Modal';
 import MessageInfo from 'src/components/MessageInfo/MessageInfo';
 import { useEffect, useState } from "react";
 import { allActions } from "../../../redux/actions/all";
+import AddFiles, { IAddFilesFunctions } from 'src/components/AddFiles/AddFiles';
 
 interface IPropsState {
     lang: TLang
@@ -30,6 +31,7 @@ interface IProps extends IPropsState, IPropsActions {
 
 const NewsCreator: React.FC<IProps> = ({lang, userState, sending, setState}): JSX.Element => {
 
+    const addFiles = useRef<IAddFilesFunctions>(null)
     const _header_en = useRef<HTMLInputElement>(null)
     const _header_ru = useRef<HTMLInputElement>(null)
     const _short_en = useRef<HTMLTextAreaElement>(null)
@@ -37,9 +39,10 @@ const NewsCreator: React.FC<IProps> = ({lang, userState, sending, setState}): JS
     const _date = useRef<HTMLInputElement>(null)
     const _text_en = useRef<HTMLTextAreaElement>(null)
     const _text_ru = useRef<HTMLTextAreaElement>(null)
-    const _images = useRef<HTMLDivElement>(null)
+    //const _images = useRef<HTMLDivElement>(null)
 	const [modal, setModal] = useState<boolean>(false)
     const [message, setMessage] = useState({header: '', status: '', text: ['']})
+    const [files, setFiles] = useState<File[]>([])
 
 
     const prevent = (e: React.MouseEvent<HTMLElement>) => {
@@ -51,12 +54,12 @@ const NewsCreator: React.FC<IProps> = ({lang, userState, sending, setState}): JS
     const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
         prevent(e)
 
-        const images = [...document.querySelectorAll('.image-block')].map((el) => {
+        /*const images = [...document.querySelectorAll('.image-block')].map((el) => {
             const url = (el.querySelector('[data-content="url"]') as HTMLInputElement).value
             const en = (el.querySelector('[data-content="en"]') as HTMLInputElement).value
             const ru = (el.querySelector('[data-content="ru"]') as HTMLInputElement).value
             return { url, name: {en, ru} }
-        }).filter(image => image.url)
+        }).filter(image => image.url)*/
         
         const news = {
             header: {
@@ -72,7 +75,7 @@ const NewsCreator: React.FC<IProps> = ({lang, userState, sending, setState}): JS
                 ru: _text_ru.current?.value || '',
             },
             date: _date.current?.valueAsDate || new Date(),
-            images: images
+            images: files
         }
         
         setState.news.postNews(news)
@@ -81,7 +84,7 @@ const NewsCreator: React.FC<IProps> = ({lang, userState, sending, setState}): JS
 
 
 
-    const onAddImage = (e: React.MouseEvent<HTMLButtonElement>) => {
+    /*const onAddImage = (e: React.MouseEvent<HTMLButtonElement>) => {
         prevent(e)
         const newImageBlock = document.createElement('div')
         newImageBlock.classList.add('image-block')
@@ -118,14 +121,14 @@ const NewsCreator: React.FC<IProps> = ({lang, userState, sending, setState}): JS
         newImageBlock.appendChild(delBtn)
         if (!_images.current) return
         _images.current.appendChild(newImageBlock)
-    }
+    }*/
 
 
-    const onDeleteImage = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    /*const onDeleteImage = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         prevent(e)
         const parent = e.currentTarget?.parentNode as HTMLElement
         parent.remove();
-    }
+    }*/
 
 
     
@@ -151,6 +154,14 @@ const NewsCreator: React.FC<IProps> = ({lang, userState, sending, setState}): JS
 		setModal(true)
 
     }, [sending.status])
+
+
+
+    const saveFiles = (files: File[]) => {
+        setFiles(files)
+    }
+
+
 
     return (
         <div className="page page_news-add">
@@ -200,19 +211,12 @@ const NewsCreator: React.FC<IProps> = ({lang, userState, sending, setState}): JS
                             <input type="date" id="date" ref={_date}/>
                         </div>
 
-                        <div className="images full-width" ref={_images}>
-                            <h3 className='images__header full-width'>{lang === 'en' ? 'Images' : 'Изображения'}</h3>           
-
-                            <div className="image-block_header full-width">
-                                <span>URL</span>
-                                <span>EN</span>
-                                <span>RU</span>
-                                <span></span>
-                            </div>
-                        </div>
 
 
-                        <button className='button_blue add' onClick={e => onAddImage(e)}>{lang === 'en' ? 'Add image' : 'Добавить изображение'}</button>
+                        {/*<button className='button_blue add' onClick={e => onAddImage(e)}>{lang === 'en' ? 'Add image' : 'Добавить изображение'}</button>*/}
+
+                        <h2 className='images__header full-width'>{lang === 'en' ? 'Images' : 'Изображения'}</h2>           
+                        <AddFiles saveFiles={saveFiles} lang={lang} ref={addFiles} multiple={true} id='big'/>
                         <button className='button_blue post' disabled={sending.status === 'fetching'} onClick={e => onSubmit(e)}>{lang === 'en' ? 'Post news' : "Отправить новость"}</button>
                     </form>
                 </div>

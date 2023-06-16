@@ -7,7 +7,7 @@ const authMW = require('../middleware/auth')
 const { check, validationResult } = require('express-validator')
 const isAdmin = require('../middleware/isAdmin')
 
-let allNews = [] as INews[] //for caching news
+let allNews: INews[] = [] //for caching news
 
 router.post('/create', 
     [authMW, isAdmin],
@@ -42,17 +42,8 @@ router.post('/create',
 
         try {
             const { header, date, short, text, images} = req.body 
-            const imagesToSave = images.map(image => {
-                return {
-                    url: image.url,
-                    name: {
-                        en: image.name.en,
-                        ru: image.name.ru
-                    }
-                }
-            }).filter(image => image.url)
 
-            const news = new News({ header, date, short, text, images: imagesToSave})
+            const news = new News({ header, date, short, text, images: images})
             
             await news.save()
 
@@ -81,7 +72,6 @@ const loadNews = async (res): Promise<{loaded: boolean, msg: string}> => {
         }
     }
 }
-
 
 
 

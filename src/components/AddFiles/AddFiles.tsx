@@ -7,13 +7,15 @@ import Delete from "../../components/Delete/Delete";
 interface IProps {
     lang: TLang
     saveFiles: (files: File[]) => void
+    multiple: boolean
+    id: string
 }
 
 export interface IAddFilesFunctions {
     clearAttachedFiles: () => void;
 }
 
-const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, saveFiles}, ref) => {
+const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, saveFiles, multiple, id}, ref) => {
     useImperativeHandle(ref, () => ({
         clearAttachedFiles() {
             setFiles([])
@@ -26,8 +28,7 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, saveFiles}, ref)
     let dragCounter: number = 0
     const [files, setFiles] = useState<File[]>([])
 
-    
-    
+ 
     const preventDefaults = (e: DragEvent | React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
         e.stopPropagation()
@@ -56,12 +57,22 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, saveFiles}, ref)
     const dragDrop = (e: DragEvent) => {
         preventDefaults(e)
         _dropArea.current?.classList.remove('active')
-        setFiles(prev => [...prev, ...(e.dataTransfer?.files as FileList)])
+        if (multiple) {
+            setFiles(prev => [...prev, ...(e.dataTransfer?.files as FileList)])
+        } else {
+            const file: File = e.dataTransfer?.files[0] as File
+            setFiles([file])
+        }
     }
     
-    const onSelectFiles = () => {       
+    const onSelectFiles = () => {   
         _dropArea.current?.classList.remove('active')
-        setFiles(prev => [...prev, ...(_files.current?.files as FileList)])
+        if (multiple) {
+            setFiles(prev => [...prev, ...(_files.current?.files as FileList)])
+        } else {
+            const file: File = (_files.current?.files as FileList)[0] as File
+            setFiles([file])
+        }
     }
 
     const clearFiles = () => {
@@ -70,7 +81,6 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, saveFiles}, ref)
 
 
     const previewFiles = (arrayOfFiles: File[]) => {
-        
         (_filesGallery.current as HTMLDivElement).innerHTML = '';
         const imageTypes: string[] = ['jpg', 'jpeg', 'bmp', 'svg', 'png', 'tiff', 'webp'];
         arrayOfFiles.reduce(async (acc: Promise<string>, currentFile: File) => {
@@ -123,7 +133,7 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, saveFiles}, ref)
 
 
 
-    const remove = (idInstance: string) => {
+    const remove = () => {
         clearFiles()
     }
 
@@ -134,14 +144,18 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, saveFiles}, ref)
                 <path d="M7.31719 23.7322C7.71856 24.1116 8.35148 24.0937 8.73084 23.6924L14.9129 17.1516C15.2923 16.7502 15.2745 16.1173 14.8731 15.7379C14.4717 15.3586 13.8388 15.3764 13.4594 15.7778L7.96424 21.5918L2.15022 16.0966C1.74885 15.7172 1.11593 15.7351 0.73657 16.1365C0.357206 16.5378 0.375048 17.1707 0.776422 17.5501L7.31719 23.7322ZM6.36655 0.404461L7.00449 23.0336L9.00369 22.9773L8.36576 0.348102L6.36655 0.404461Z"/>
             </svg>
             <div className="link__container">
-                <label htmlFor="files">{lang === 'en' ? 'Add files' : 'Выберите файлы'}</label> 
+                <label htmlFor={id}>{lang === 'en' ? 'Add files' : 'Выберите файлы'}</label> 
                 <span>{lang === 'en' ? ' or drag it here' : 'для добавления или перетащите их сюда'}</span>
             </div>
-            <input id="files" type="file" multiple onChange={onSelectFiles} ref={_files}/>
+            <input id={id} type="file" multiple={multiple} onChange={onSelectFiles} ref={_files}/>
             <div className="preview-gallery" ref={_filesGallery}></div>
-            <div className="clear-files">
-                <Delete<string> remove={remove} idInstance="cartCleaner" lang={lang} disabled={false}/>
-            </div>
+            {files.length > 0 ? 
+                <div className="clear-files">
+                    <Delete<string> remove={remove} idInstance="cartCleaner" lang={lang} disabled={false}/>
+                </div>
+            :
+                null
+            }
         </div>
     );
 })

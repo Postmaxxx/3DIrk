@@ -6,18 +6,30 @@
     & form {
         margin-top: 70px;
         gap: 30px 40px;
+        background-color: var(--main);
+        border-radius: 5px;
+        padding: 40px;
+        width: 80%; 
+        margin-left: auto;
+        margin-right: auto;
+
+        @include respond-to(sm) {
+            padding: 20px;
+            width: 100%; 
+        }
 
 
         & .input-block, .input-block_header {
             display: grid;
-            grid-template-columns: 150px 1fr 1fr;
+            grid-template-columns: 100px 1fr 1fr;
             gap: 10px 20px;
             margin-top: 30px;
+            align-content: center;
 
 
 
             @include respond-to(md) {
-                grid-template-columns: 150px 1fr;
+                grid-template-columns: 100px 1fr;
                 border-bottom: 1px solid var(--main_vv);
                 margin-top: 30px;
                 padding-bottom: 35px;
@@ -37,7 +49,7 @@
 
 
             & label {
-                min-width: 160px;
+                //min-width: 160px;
                 align-self: center;
                 white-space: nowrap;
                 font-size: 18px;
@@ -51,6 +63,7 @@
 
             .input__wrapper {
                 position: relative;
+
                 &::before {
                     @include respond-to(md) {
                         font-size: 14px;
@@ -62,9 +75,65 @@
                     }   
                 }
 
+                @include respond-to(md) {
+                    margin-bottom: 30px;
+                }
+
                 &:nth-of-type(2)::before {
                     @include respond-to(md) {
                         content: 'RU';
+                    }
+                }
+
+
+                & > .drop-area {
+                    padding: 15px;
+                    height: 100%;
+
+                    & > svg {
+                        display: none;
+                    }
+
+                    & > input {
+                        display: none;
+                    }
+
+                    & .link__container {
+                        align-items: flex-start;
+
+                        & label {
+
+                        }
+
+                        & span {
+                            text-align: left;
+                            max-width: 80%;
+                            text-align: center;
+                            margin-left: auto;
+                            margin-right: auto;
+                        }
+                    }
+
+
+                    & .preview-gallery {
+                        margin-top: 0;
+                        margin-top: 20px;
+                        //margin-left: 30px;
+                        margin-left: 0;
+
+
+                        & > div {
+                            width: 110px;
+
+                            & img {
+                                object-fit: contain;
+                            }
+                        }
+                    }
+
+                    & .clear-files {
+                        top: auto;
+                        bottom: 20px
                     }
                 }
 
@@ -73,32 +142,30 @@
         }
 
 
-        & .input-block:nth-of-type(3) .input__wrapper::before{
-            content: 'Full';
+        & .input-block:nth-of-type(4) .input__wrapper::before{
+            @include respond-to(md) {
+                content: 'FULL';
+            }
         }
 
 
-        & .input-block:nth-of-type(4) .input__wrapper::before{
-            content: 'Small';
+        & .input-block:nth-of-type(4) .input__wrapper:nth-of-type(2)::before{
+            @include respond-to(md) {
+                content: 'SMALL';
+            }
         }
 
 
 
 
         & .input-block_header {
+            margin-top: 60px;
             @include respond-to(md) {
                 display: none;
             }
         }
 
-        button {
-            margin-top: 30px;
-            width: fit-content; 
 
-            &:disabled {
-                opacity: 0.4;
-            }
-        }
 
         & .full-width {
             grid-column: 1 / -1;
@@ -112,8 +179,16 @@
 
 
 
+
         & .post {
             margin-left: auto;
+            margin-top: 30px;
+            width: fit-content; 
+            background-color: var(--main_vv);
+            &:disabled {
+                opacity: 0.4;
+            }
+
             @include respond-to(xs) {
                 width: 100%;
                 display: grid;

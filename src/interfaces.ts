@@ -59,6 +59,14 @@ export interface IImg {
     name: TLangText
 }
 
+export interface IImgWithThumb {
+    full: string
+    medium: string
+    thumb: string
+    fileName: string
+}
+
+
 
 //-------------------------------------------splider
 export interface ISpliderOptions {
@@ -173,7 +181,7 @@ export interface IFiber {
     text: TLangText
     proscons: IProsCons
     colors: TId[] //ids of colors
-    imgs: IImg[]
+    images: IImg[]
     features: IFeature[]
     short: {
         name: TLangText
@@ -243,7 +251,7 @@ export interface INewsItem {
     date: Date
     short: TLangText
     text: TLangText
-    images: IImg[]
+    images: IImgWithThumb[]
 }
 
 export interface INewsState {

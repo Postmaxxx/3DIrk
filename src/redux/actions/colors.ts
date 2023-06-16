@@ -60,13 +60,85 @@ export const loadColors = () => {
 
 
 
+interface ISendColor {
+    name: {
+        ru: string, 
+        en: string
+    }, 
+    files: {
+        big: File, 
+        small: File
+    }
+    //file: File
+}
 
-
-export const sendColor = (color: Omit<IColor, "_id">) => {
+export const sendColor = (color: ISendColor) => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
         const token = getState().user.token
         const temp = getState().colors.send
         dispatch(setSendColors({status: 'fetching', message: {en: `Saving color`, ru: 'Сохранение цвета'}}))
+
+        /*try {
+            await fetch(`https://api.imgbb.com/1/upload?key=${process.env.REACT_APP_IMGBB}`, {
+                method: 'OPTIONS',
+                headers: {
+                    'Access-Control-Request-Method': 'POST',
+                }
+            })
+        }
+        catch(e) {
+            return dispatch(setSendColors({status: 'error', message: {en:`Error while deploying color image: ${e}`, ru: `Ошибка при сохранении файла цвета: ${e}`}}))
+        }*/
+
+        
+        let fullUrl = ''
+        let smallUrl = ''
+        
+        // to imgbb big
+        try {
+            let form = new FormData();
+            form.append("image", color.files.big)
+
+            const response: Response = await fetch(`https://api.imgbb.com/1/upload?key=${process.env.REACT_APP_IMGBB}`, {
+                method: 'POST',
+                body: form
+            })
+
+            const result = await response.json()
+            
+            if (!result.success) {
+                return dispatch(setSendColors({status: 'error', message: {en:`No file`, ru: `отсутствует файл`}}))
+            }
+            fullUrl = result.data.image.url
+           
+        } catch (e) {
+            return dispatch(setSendColors({status: 'error', message: {en:`Error while deploying color image: ${e}`, ru: `Ошибка при сохранении файла цвета: ${e}`}}))
+        }  
+        
+        
+        // to imgbb small
+        try {
+            let form = new FormData();
+            form.append("image", color.files.small)
+
+            const response: Response = await fetch(`https://api.imgbb.com/1/upload?key=${process.env.REACT_APP_IMGBB}`, {
+                method: 'POST',
+                body: form
+            })
+
+            const result = await response.json()
+
+            if (!result.success) {
+                return dispatch(setSendColors({status: 'error', message: {en:`No file`, ru: `отсутствует файл`}}))
+            }
+            smallUrl = result.data.image.url
+           
+        } catch (e) {
+            return dispatch(setSendColors({status: 'error', message: {en:`Error while deploying color image: ${e}`, ru: `Ошибка при сохранении файла цвета: ${e}`}}))
+        }   
+
+
+        // to db
         try {
             const response: Response = await fetch('/api/colors/create', {
                 method: 'POST',
@@ -74,7 +146,13 @@ export const sendColor = (color: Omit<IColor, "_id">) => {
                     "Content-Type": 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(color)
+                body: JSON.stringify({
+                    name: color.name,
+                    url: {
+                        full: fullUrl,
+                        small: smallUrl
+                    }
+                })
             })
         
         
@@ -89,13 +167,12 @@ export const sendColor = (color: Omit<IColor, "_id">) => {
             }
 
             const result: IMsgRes = await response.json() //message, errors
-            console.log('111', temp);
             
             dispatch(setSendColors({status: 'success', message: result.message}))
 
 
         } catch (e) {
-            dispatch(setSendColors({status: 'error', message: {en:`Error while saving color: ${e}`, ru: `Ошибка при сохранении цвета: ${e}`}}))
+            dispatch(setSendColors({status: 'error', message: {en:`Error while saving color to db: ${e}`, ru: `Ошибка при сохранении цвета в бд: ${e}`}}))
         }
     }
 }

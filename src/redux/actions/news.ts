@@ -66,23 +66,67 @@ export const loadSomeNews = (from: number, amount: number) => {
 
 
 
+interface IPostNews {
+    header: TLangText
+    short: TLangText
+    text: TLangText
+    date: Date
+    images: File[]
+}
 
 
-
-export const postNews = (news: Omit<INewsItem, "_id">) => {
+export const postNews = (news: IPostNews) => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
         const { user } = getState() //get current user state
         dispatch(setSendDataStatusNews({status: 'fetching', message: {en: '', ru: ''}}))
+        const delayBetweenImagesPost = 300
+
+        const imageUrls: {full: string, medium: string, thumb: string, fileName: string}[] = []
+        // images to imgbb
+        await news.images.reduce(async (acc: Promise<string>, image: File, i) => {
+            return new Promise(async (res, rej) => {
+                await acc
+                try {
+                    let form = new FormData();
+                    form.append("image", image)
         
-        try {
+                    const response: Response = await fetch(`https://api.imgbb.com/1/upload?key=${process.env.REACT_APP_IMGBB}`, {
+                        method: 'POST',
+                        body: form
+                    })
+        
+                    const result = await response.json()
+                    
+                    if (!result.success) {
+                        rej(`Error while uploading image ${image.name}`)
+                        return dispatch(setSendDataStatusNews({status: 'error', message: {en:`Error while deploying images`, ru: `Ошибка при сохранении файлов`}}))
+                    }
+
+                    imageUrls.push({full: result.data.image?.url, medium: result.data.medium?.url, thumb: result.data.thumb?.url, fileName: image.name.split(".").slice(0,-1).join(".") || image.name})
+                    setTimeout(() => res('ok'), delayBetweenImagesPost)
+                   
+                } catch (e) {
+                    return dispatch(setSendDataStatusNews({status: 'error', message: {en:`Error while deploying images: ${e}`, ru: `Ошибка при сохранении файлов: ${e}`}}))
+                }  
+            })
             
+        }, Promise.resolve('start fetching images'))
+
+
+
+        //post to db
+        try {
+            const newsToDb = {
+                ...news,
+                images: imageUrls
+            }
             const response: Response = await fetch('/api/news/create', {
                 method: 'POST',
                 headers: {
                     "Content-Type": 'application/json',
                     'Authorization': `Bearer ${user.token}`
                 },
-                body: JSON.stringify(news)
+                body: JSON.stringify(newsToDb)
             })
 
             if (response.status !== 201) {

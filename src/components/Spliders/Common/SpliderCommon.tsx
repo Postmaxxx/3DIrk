@@ -2,7 +2,7 @@ import './splider-common.scss'
 import Splide from "@splidejs/splide";
 import { findBestSuitedImg } from "../../../assets/js/findBestSuitedImg";
 import ImgWithPreloader from '../../../assets/js/ImgWithPreloader';
-import { IImg, IModalImg, ISpliderOptions, TLang } from '../../../interfaces';
+import { IImg, IImgWithThumb, IModalImg, ISpliderOptions, TLang } from '../../../interfaces';
 import "@splidejs/react-splide/css";
 import Modal from '../../../components/Modal/Modal';
 import ModalImage from '../../../components/MessageImage/MessageImage';
@@ -12,7 +12,7 @@ import { useRef, useState, useEffect, MouseEvent } from 'react'
 
 interface IProps {
 	lang: TLang
-	images: IImg[]
+	images: IImgWithThumb[]
     imagesPerSlide: number
 }
 
@@ -63,7 +63,7 @@ const SpliderCommon: React.FC<IProps> = ({lang, images, imagesPerSlide=1}): JSX.
 		if ((e.target as HTMLImageElement).tagName === 'IMG') {
 			const id = Number(((e.target as HTMLImageElement).id));
 			setModal(true)
-			setModalImg({path: images[id].url, descr: images[id].name[lang]})
+			setModalImg({path: images[id].full, descr: images[id].fileName})
 		}
 	}
 
@@ -94,9 +94,9 @@ const SpliderCommon: React.FC<IProps> = ({lang, images, imagesPerSlide=1}): JSX.
                     <ul className="splide__list">
                         {images.map((img, i) => {
                             return (
-                                <li className="splide__slide" key={i} data-path={img.url}>
+                                <li className="splide__slide" key={i} data-path={img.full}>
                                     <div className="splide__slide-container">
-										<ImgWithPreloader src={img.url} alt={img.name[lang]} id={String(i)}/>
+										<ImgWithPreloader src={img.medium || img.thumb} alt={img.fileName} id={String(i)}/>
                                     </div>
                                 </li>
                             );

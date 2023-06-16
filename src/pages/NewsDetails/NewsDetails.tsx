@@ -114,7 +114,7 @@ const NewsDetails: React.FC<IProps> = ({lang, setState, send, isAdmin }): JSX.El
                                                     <SpliderCommon images={newsItem.images} lang={lang} imagesPerSlide={2}/>
                                                 :
                                                     newsItem.images.length > 0 ? 
-                                                        <img src={newsItem.images[0].url} alt={newsItem.images[0].name[lang]} />
+                                                        <img src={newsItem.images[0].full} alt={newsItem.images[0].fileName} />
                                                     :
                                                         null
                                                 }

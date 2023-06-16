@@ -6,7 +6,9 @@
     & form {
         margin-top: 70px;
         gap: 30px 40px;
-
+        background-color: var(--main);
+        border-radius: 5px;
+        padding: 40px;
 
         & .input-block, .input-block_header {
             display: grid;
@@ -82,14 +84,6 @@
             }
         }
 
-        button {
-            margin-top: 30px;
-            width: fit-content; 
-
-            &:disabled {
-                opacity: 0.4;
-            }
-        }
 
         & .full-width {
             grid-column: 1 / -1;
@@ -103,7 +97,7 @@
 
 
 
-        & .images {
+        /*& .images {
 
             &__header {
                 text-align: center;
@@ -196,10 +190,78 @@
                 display: grid;
                 place-items: center;
             }
+        }*/
+
+        & .images__header {
+                text-align: center;
+                margin-left: 0;
+                margin-top: 70px;
+            
         }
+
+        & > .drop-area {
+            margin-top: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding: 15px;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 50px;
+
+
+            @include respond-to(sm) {
+                padding: 30px;
+                width: 100%; 
+            }
+
+            @include respond-to(xs) {
+                padding: 20px;
+            }
+
+
+            & > input {
+                display: none;
+            }
+
+            & .link__container {
+
+                & label {
+
+                }
+
+                & span {
+                }
+            }
+
+
+            & .preview-gallery {
+                margin-top: 0;
+                margin-top: 20px;
+                margin-left: 30px;
+                & > div {
+                    width: 110px;
+
+                    & img {
+                        object-fit: contain;
+                    }
+                }
+            }
+        }
+
+
 
         & .post {
             margin-left: auto;
+            background-color: var(--main_vv);
+            color: var(--text_vv);
+            margin-top: 30px;
+            width: fit-content; 
+
+            &:disabled {
+                opacity: 0.4;
+            }
+            
             @include respond-to(xs) {
                 width: 100%;
                 display: grid;

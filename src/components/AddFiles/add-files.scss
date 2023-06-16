@@ -64,6 +64,10 @@
         max-height: 500px;
         overflow-y: auto;
 
+        &:empty {
+            display: none;
+        }
+
         & > div {
             display: flex;
             flex-direction: column;

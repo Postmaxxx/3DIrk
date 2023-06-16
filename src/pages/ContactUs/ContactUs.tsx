@@ -240,7 +240,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
                                     <div className="files-block">
                                         <div className="input-block files">
                                             <label htmlFor="files">{lang === 'en' ? 'Attach files' : 'Прикрепить файлы'}</label>
-                                            <AddFiles saveFiles={saveFiles} lang={lang} ref={addFilesRef}/>
+                                            <AddFiles saveFiles={saveFiles} lang={lang} ref={addFilesRef} multiple={true} id='files'/>
                                         </div>
                                     </div>
 

@@ -1,6 +1,6 @@
 import { Document, Schema, Model, model } from 'mongoose';
 
-interface IColors extends Document {
+interface IColor extends Document {
     name: {
         en: string
         ru: string
@@ -16,7 +16,7 @@ const colorsSchema = new Schema({
     url: {type: Object}
 })
 
-const Colors: Model<IColors> = model<IColors>('Colors', colorsSchema);
+const Colors: Model<IColor> = model<IColor>('Colors', colorsSchema);
 
 module.exports = Colors
-export {IColors}
+export {IColor}

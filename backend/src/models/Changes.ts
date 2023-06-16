@@ -5,6 +5,7 @@ interface IChangesProps {
     news: boolean
     catalog: boolean
     fibers: boolean
+    colors: boolean
 }
 
 interface IChanges extends IChangesProps, Document {}
