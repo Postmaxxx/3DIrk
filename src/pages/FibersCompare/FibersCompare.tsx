@@ -124,16 +124,22 @@ const FibersCompare:React.FC<IProps> = ({lang, fibers, colors, setState}):JSX.El
                                 </div>
                                 {fibersProperties.map((property, i) => {
                                     return (
-                                        <div className="cell row-name fixed-left with-tip padding_no" key={property.id}>
-                                            <NavLink 
-                                                key={property.id}
-                                                to='/fibers'>
-                                                    <span>{property.name[lang]}</span>
-                                                    <div className='tip' title={property.tip[lang]}>
-                                                        <SvgInserter type={'question'}/>
-                                                    </div>
-                                            </NavLink>
-                                        </div>
+                                        <>
+                                            {property.id !== 'priceGr' ? 
+                                                <div className="cell row-name fixed-left with-tip padding_no" key={property.id}>
+                                                    <NavLink 
+                                                        key={property.id}
+                                                        to='/fibers'>
+                                                            <span>{property.name[lang]}</span>
+                                                            <div className='tip' title={property.tip[lang]}>
+                                                                <SvgInserter type={'question'}/>
+                                                            </div>
+                                                    </NavLink>
+                                                </div>
+                                                :
+                                                null
+                                            }
+                                        </>
                                     )
                                 })}
                                 <div className="cell row-name fixed-left row-name_last">
@@ -166,28 +172,33 @@ const FibersCompare:React.FC<IProps> = ({lang, fibers, colors, setState}):JSX.El
                                         </div>
                                         {fibersProperties.map((property, i) => {
                                             return (
-                                                <div className={`cell ${fiber.id === fibers.selected ? 'selected' : ''} ${selectedProperty === property.id ? 'selected' : ''}`} key={`${fiber.id}-${property.id}`}  onClick={e => onCellClick(fiber.id, property.id)}>
-                                                    {property.id === "strength" && <div className="rating__container"><RatingLine colorValue='blue' min={0} max={180} value={fiber.params[property.id]} text={`${fiber.params[property.id]}`} measurment={lang === 'en' ? ' MPa' : ' МПа'}/></div>}
-                                                    {property.id === "stiffnes" && <div className="rating__container"><RatingLine colorValue='red' min={0} max={10} value={fiber.params[property.id]} text={`${fiber.params[property.id]}`} measurment={' / 10'}/></div>}
-                                                    {property.id === "durability" && <div className="rating__container"><RatingLine colorValue='green' min={0} max={10} value={fiber.params[property.id]} text={`${fiber.params[property.id]}`} measurment={' / 10'}/></div>}
-                                                    {property.id === "resistantImpact" && <div className="rating__container"><RatingLine colorValue='lilac' min={0} max={10} value={fiber.params[property.id]} text={`${fiber.params[property.id]}`} measurment={' / 10'}/></div>}
-                                                    {(property.id === "minTemp" || property.id === "maxTemp" || property.id === "thermalExpansion" || property.id === "density") && <span>{fiber.params[property.id]} <span>{property.unit[lang]}</span></span>}
-                                                    {(property.id === "flexible" 
-                                                    || property.id === "elastic"
-                                                    || property.id === "soft"
-                                                    || property.id === "composite"
-                                                    || property.id === "resistantUV"
-                                                    || property.id === "resistantWater"
-                                                    || property.id === "dissolvable"
-                                                    || property.id === "resistantHeat"
-                                                    || property.id === "resistantChemically"
-                                                    || property.id === "resistantFatigue"
-                                                    || property.id === "cutting"
-                                                    || property.id === "grinding"
-                                                    ) && <SvgInserter type={fiber.params[property.id] === 2 ? 'plus' : fiber.params[property.id] === 0 ? 'minus' : 'con'}/>}
-                                                    {property.id === "price" && <RatingMoney value={fiber.params.price} max={5} text={``} measurment={''} />}
-                                                    
-                                                </div>
+                                                <>
+                                                    {property.id !== 'priceGr' ? 
+                                                        <div className={`cell ${fiber.id === fibers.selected ? 'selected' : ''} ${selectedProperty === property.id ? 'selected' : ''}`} key={`${fiber.id}-${property.id}`}  onClick={e => onCellClick(fiber.id, property.id)}>
+                                                            {property.id === "strength" && <div className="rating__container"><RatingLine colorValue='blue' min={0} max={180} value={fiber.params[property.id]} text={`${fiber.params[property.id]}`} measurment={lang === 'en' ? ' MPa' : ' МПа'}/></div>}
+                                                            {property.id === "stiffnes" && <div className="rating__container"><RatingLine colorValue='red' min={0} max={10} value={fiber.params[property.id]} text={`${fiber.params[property.id]}`} measurment={' / 10'}/></div>}
+                                                            {property.id === "durability" && <div className="rating__container"><RatingLine colorValue='green' min={0} max={10} value={fiber.params[property.id]} text={`${fiber.params[property.id]}`} measurment={' / 10'}/></div>}
+                                                            {property.id === "resistantImpact" && <div className="rating__container"><RatingLine colorValue='lilac' min={0} max={10} value={fiber.params[property.id]} text={`${fiber.params[property.id]}`} measurment={' / 10'}/></div>}
+                                                            {(property.id === "minTemp" || property.id === "maxTemp" || property.id === "thermalExpansion" || property.id === "density") && <span>{fiber.params[property.id]} <span>{property.unit[lang]}</span></span>}
+                                                            {(property.id === "flexible" 
+                                                            || property.id === "elastic"
+                                                            || property.id === "soft"
+                                                            || property.id === "composite"
+                                                            || property.id === "resistantUV"
+                                                            || property.id === "resistantWater"
+                                                            || property.id === "dissolvable"
+                                                            || property.id === "resistantHeat"
+                                                            || property.id === "resistantChemically"
+                                                            || property.id === "resistantFatigue"
+                                                            || property.id === "cutting"
+                                                            || property.id === "grinding"
+                                                            ) && <SvgInserter type={fiber.params[property.id] === 2 ? 'plus' : fiber.params[property.id] === 0 ? 'minus' : 'con'}/>}
+                                                            {property.id === "price" && <RatingMoney value={fiber.params.price} max={5} text={``} measurment={''} />}
+                                                        </div>
+                                                    :
+                                                        null
+                                                }
+                                                </>
                                             )
                                         })}
                                         <div className={`cell col-name_last  ${fiber.id === fibers.selected ? "selected" : ""}`} onClick={e => onCellClick(fiber.id, '')}>

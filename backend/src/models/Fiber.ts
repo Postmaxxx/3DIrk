@@ -22,7 +22,7 @@ const fiberSchema = new Schema({
     params: {type: Object}
 })
 
-const Fiber: Model<IFiber> = model<IFiber>('News', fiberSchema);
+const Fiber: Model<IFiber> = model<IFiber>('Fibers', fiberSchema);
 
 module.exports = Fiber
 export {IFiber}

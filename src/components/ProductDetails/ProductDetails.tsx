@@ -93,8 +93,7 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors,produ
                 
                 {product.mods.length > 0 ? 
                     <div className="feature wrap_xs">
-                        <label htmlFor="type">{lang === 'en' ? 'Version' : 'Версия'}: 
-                        </label>
+                        <label htmlFor="type">{lang === 'en' ? 'Version' : 'Версия'}: </label>
                         <select id="type" ref={_type} defaultValue={'-1'} onChange={onChangeType}>
                             <option key={-1} value={'-1'} disabled hidden>{lang === 'en' ? 'Select type' : 'Выберите тип'}</option>
                             {product.mods.map((mod, i) => <option key={i} value={i}>{mod[lang]}</option>)}

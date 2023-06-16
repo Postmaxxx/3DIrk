@@ -42,14 +42,15 @@ export const loadColors = () => {
             }
 
             const result: {colors: IColor[], message: TLangText} = await response.json()
-            
-            setColors(result.colors.map((item) => {
+            const resultProcessed = result.colors.map((item) => {
                 return {
                     _id: item._id,
                     name: item.name,
                     url: item.url
                 }
-            }))
+            })
+
+            dispatch(setColors(resultProcessed))
               
             dispatch(setLoadColors({status: 'success', message: result.message}))
         } catch (e) {

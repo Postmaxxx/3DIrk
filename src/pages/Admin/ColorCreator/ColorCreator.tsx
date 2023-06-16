@@ -83,7 +83,7 @@ const ColorCreator: React.FC<IProps> = ({lang, colorState, setState}): JSX.Eleme
         setFiles(prev => {
                 return {
                     ...prev,
-                    big: file
+                    small: file
                 }
         })
     }
@@ -93,7 +93,7 @@ const ColorCreator: React.FC<IProps> = ({lang, colorState, setState}): JSX.Eleme
         setFiles(prev => {
                 return {
                     ...prev,
-                    small: file
+                    big: file
                 }
         })
     }

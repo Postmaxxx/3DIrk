@@ -1,0 +1,23 @@
+@use "/src/assets/css/variables" as *;
+
+
+.selector {
+    width: 100%;
+    display: flex;
+
+    & > select {
+        flex-grow: 1;   
+        width: fit-content;
+        //height: 30px;
+        margin-left: 10px;
+        font-size: 18px;
+        font-weight: 700;
+        border: 1px solid var(--main_vv);
+        transition: border $transition_theme;
+        outline: none;
+        padding-left: 5px;
+        padding-right: 10px;
+        border-radius: 5px;
+    }
+    
+}

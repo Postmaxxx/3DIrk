@@ -1,7 +1,7 @@
 require('dotenv').config()
 const authRoutes = require('./routes/auth')
 const cartRoutes = require('./routes/cart')
-//import fibersRoutes from './routes/fibers'
+const fibersRoutes = require('./routes/fibers')
 const newsRoutes = require('./routes/news')
 const colorsRoutes = require('./routes/colors')
 const express = require('express')
@@ -26,11 +26,12 @@ app.use('/api/auth', authRoutes)
 app.use('/api/cart', cartRoutes)
 /*
 //fibers
-app.use('/api/fibers', fibersRoutes)
 */
 //admin
 app.use('/api/news', newsRoutes)
 app.use('/api/colors', colorsRoutes)
+
+app.use('/api/fibers', fibersRoutes)
 
 const PORT: number = Number(process.env.PORT) || 5000
 

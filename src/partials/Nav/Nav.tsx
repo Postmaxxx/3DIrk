@@ -210,6 +210,13 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
                                                             {lang === 'en' ? '+ COLOR' : '+ ЦВЕТ'}
                                                         </NavLink>
                                                     </li>
+                                                    <li>
+                                                        <NavLink
+                                                            to='/admin/fiber-create'
+                                                        >
+                                                            {lang === 'en' ? '+ FIBER' : '+ МАТЕРИАЛ'}
+                                                        </NavLink>
+                                                    </li>
                                                 </>
                                             : 
                                                 null

@@ -25,9 +25,10 @@ const LazyNewsDetails = lazy(() => import("./pages/NewsDetails/NewsDetails"));
 const LazyFibersCompare= lazy(() => import("./pages/FibersCompare/FibersCompare"));
 const LazyOffliner= lazy(() => import("./components/Offliner/Offliner"));
 //const LazyUserBlock= lazy(() => import("./components/UserBlock/UserBlock"));
-const LasyNewsCreator = lazy(() => import("./pages/Admin/NewsCreator/NewsCreator"));
-const LasyColorsCreator = lazy(() => import("./pages/Admin/ColorCreator/ColorCreator"));
-const LasyContactUs = lazy(() => import("./pages/ContactUs/ContactUs"));
+const LazyNewsCreator = lazy(() => import("./pages/Admin/NewsCreator/NewsCreator"));
+const LazyColorCreator = lazy(() => import("./pages/Admin/ColorCreator/ColorCreator"));
+const LazyFiberCreator = lazy(() => import("./pages/Admin/FiberCreator/FiberCreator"));
+const LazyContactUs = lazy(() => import("./pages/ContactUs/ContactUs"));
 
 
 
@@ -80,7 +81,7 @@ const App:React.FC<IProps> = ({lang, setState}):JSX.Element => {
 				</Route>
 				
 				<Route path="/order" element={<Suspense fallback={<Preloader />}><LazyOrderPage /></Suspense>} />
-				<Route path="/contact_us" element={<Suspense fallback={<Preloader />}><LasyContactUs /></Suspense>} />
+				<Route path="/contact_us" element={<Suspense fallback={<Preloader />}><LazyContactUs /></Suspense>} />
 
 				<Route path="/catalog">
 					<Route index element={<Suspense fallback={<Preloader />}><LazyCatalogPage /></Suspense>} />
@@ -92,8 +93,9 @@ const App:React.FC<IProps> = ({lang, setState}):JSX.Element => {
 
 
 				<Route path="/admin">
-					<Route path="news-create" element={<Suspense fallback={<Preloader />}><LasyNewsCreator /></Suspense>} />
-					<Route path="color-create" element={<Suspense fallback={<Preloader />}><LasyColorsCreator /></Suspense>} />
+					<Route path="news-create" element={<Suspense fallback={<Preloader />}><LazyNewsCreator /></Suspense>} />
+					<Route path="color-create" element={<Suspense fallback={<Preloader />}><LazyColorCreator /></Suspense>} />
+					<Route path="fiber-create" element={<Suspense fallback={<Preloader />}><LazyFiberCreator /></Suspense>} />
 				</Route>
 			</Routes>
 

@@ -15,7 +15,8 @@ export const fibersProperties = [
         unit: {
             en: 'MPa',
             ru: 'Мпа'
-        }
+        },
+        type: '10'
     },
     {
         id: 'stiffnes',
@@ -30,7 +31,8 @@ export const fibersProperties = [
         unit: {
             en: '',
             ru: ''
-        }
+        },
+        type: '10'
     },
     {
         id: 'durability',
@@ -45,7 +47,8 @@ export const fibersProperties = [
         unit: {
             en: '',
             ru: ''
-        }
+        },
+        type: '10'
     },
     {
         id: 'resistantImpact',
@@ -60,7 +63,8 @@ export const fibersProperties = [
         unit: {
             en: '',
             ru: ''
-        }
+        },
+        type: '10'
     },
     {
         id: 'minTemp',
@@ -75,7 +79,8 @@ export const fibersProperties = [
         unit: {
             en: '°C',
             ru: '°C'
-        }
+        },
+        type: 'string'
     },
     {
         id: 'maxTemp',
@@ -90,7 +95,8 @@ export const fibersProperties = [
         unit: {
             en: '°C',
             ru: '°C'
-        }
+        },
+        type: 'string'
     },
     {
         id: 'thermalExpansion',
@@ -105,7 +111,9 @@ export const fibersProperties = [
         unit: {
             en: 'µm/m-°C',
             ru: 'µm/m-°C'
-        }
+        },
+        type: 'string'
+
     },
     {
         id: 'density',
@@ -120,7 +128,9 @@ export const fibersProperties = [
         unit: {
             en: 'g/cm3',
             ru: 'г/см3'
-        }
+        },
+        type: 'string'
+
     },
     {
         id: 'flexible',
@@ -135,7 +145,8 @@ export const fibersProperties = [
         unit: {
             en: '',
             ru: ''
-        }
+        },
+        type: '3'
     },
     {
         id: 'elastic',
@@ -150,7 +161,9 @@ export const fibersProperties = [
         unit: {
             en: '',
             ru: ''
-        }
+        },
+        type: '3'
+
     },
     {
         id: 'soft',
@@ -165,7 +178,9 @@ export const fibersProperties = [
         unit: {
             en: '',
             ru: ''
-        }
+        },
+        type: '3'
+
     },
     {
         id: 'composite',
@@ -180,7 +195,9 @@ export const fibersProperties = [
         unit: {
             en: '',
             ru: ''
-        }
+        },
+        type: '3'
+
     },
     {
         id: 'resistantUV',
@@ -195,7 +212,9 @@ export const fibersProperties = [
         unit: {
             en: '',
             ru: ''
-        }
+        },
+        type: '3'
+
     },
     {
         id: 'resistantWater',
@@ -210,7 +229,9 @@ export const fibersProperties = [
         unit: {
             en: '',
             ru: ''
-        }
+        },
+        type: '3'
+
     },
     {
         id: 'dissolvable',
@@ -225,7 +246,9 @@ export const fibersProperties = [
         unit: {
             en: '',
             ru: ''
-        }
+        },
+        type: '3'
+
     },
     {
         id: 'resistantHeat',
@@ -238,9 +261,11 @@ export const fibersProperties = [
             ru: 'Максимальная нагрузка, которую материал может выдержать без разрушения.'
         },
         unit: {
-            en: '°C',
-            ru: '°C'
-        }
+            en: '',
+            ru: ''
+        },
+        type: '3'
+
     },
     {
         id: 'resistantChemically',
@@ -255,7 +280,9 @@ export const fibersProperties = [
         unit: {
             en: '',
             ru: ''
-        }
+        },
+        type: '3'
+
     },
     {
         id: 'resistantFatigue',
@@ -270,7 +297,9 @@ export const fibersProperties = [
         unit: {
             en: '',
             ru: ''
-        }
+        },
+        type: '3'
+
     },
     {
         id: 'cutting',
@@ -285,7 +314,9 @@ export const fibersProperties = [
         unit: {
             en: '',
             ru: ''
-        }
+        },
+        type: '3'
+
     },
     {
         id: 'grinding',
@@ -300,7 +331,9 @@ export const fibersProperties = [
         unit: {
             en: '',
             ru: ''
-        }
+        },
+        type: '3'
+
     },
     {
         id: 'price',
@@ -315,6 +348,23 @@ export const fibersProperties = [
         unit: {
             en: 'rub/gr',
             ru: 'руб/гр'
-        }
+        },
+        type: '5'
+    },
+    {
+        id: 'priceGr',
+        name: {
+            en: 'Price for gr.',
+            ru: 'Цена за грамм'
+        },
+        tip: {
+            en: 'Цена за грамм',
+            ru: 'Цена за грам'
+        },
+        unit: {
+            en: 'rub/gr',
+            ru: 'руб/гр'
+        },
+        type: 'string'
     },
 ] satisfies IFiberProperties[]

@@ -179,15 +179,15 @@ export interface IFiber {
     id: TId
     name: TLangText
     text: TLangText
-    proscons: IProsCons
-    colors: TId[] //ids of colors
-    images: IImg[]
-    features: IFeature[]
     short: {
         name: TLangText
         descr: TLangText
     }
+    images: IImgWithThumb[]
     params: IFiberParam
+    proscons: IProsCons
+
+    colors: TId[] //ids of colors
 }
 
 export interface IFibersState {
@@ -406,6 +406,7 @@ export interface IFiberProperties {
     name: TLangText
     tip: TLangText
     unit: TLangText
+    type: string
 }
 
 

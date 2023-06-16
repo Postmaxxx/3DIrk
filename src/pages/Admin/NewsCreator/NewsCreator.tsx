@@ -212,7 +212,6 @@ const NewsCreator: React.FC<IProps> = ({lang, userState, sending, setState}): JS
                         </div>
 
 
-
                         {/*<button className='button_blue add' onClick={e => onAddImage(e)}>{lang === 'en' ? 'Add image' : 'Добавить изображение'}</button>*/}
 
                         <h2 className='images__header full-width'>{lang === 'en' ? 'Images' : 'Изображения'}</h2>           
