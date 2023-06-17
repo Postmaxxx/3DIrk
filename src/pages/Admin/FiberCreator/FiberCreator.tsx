@@ -1,4 +1,4 @@
-import { IColorsState, IFetch, IFiber, IFiberProperties, IFibersState, IFullState, TLang } from 'src/interfaces';
+import { IColorsState, IFetch, IFiber, IFiberParam, IFiberProperties, IFibersState, IFullState, TLang, TLangText } from 'src/interfaces';
 import './fiber-creator.scss'
 import React, {  useRef, useMemo } from "react";
 import { connect } from "react-redux";
@@ -59,6 +59,7 @@ const ColorCreator: React.FC<IProps> = ({lang, fiberState, setState, colorsState
     const _cons = useRef<HTMLDivElement>(null)
     const [selectedColors, setSelectedColors] = useState<{[key: string]: boolean}>({})
     const _spec = useRef<HTMLDivElement>(null)
+    const _descr = useRef<HTMLDivElement>(null)
 
     const data10 = useMemo(() => {
         return selector10
@@ -92,18 +93,30 @@ const ColorCreator: React.FC<IProps> = ({lang, fiberState, setState, colorsState
     const errorsCheck = () => {
         const errors: string[] = []
 
-        const check = (ref:  React.RefObject<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-            if (ref.current?.value === '') {
-                ref.current.classList.add('error')
-                errors.push(ref.current?.dataset[lang] as string)
+        const check = (el:  HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement): boolean => {
+            if (!el.value) {
+                errors.push(el.dataset[lang] as string)
+                if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                    el.parentElement?.classList.add('error')
+                }
+                if (el.tagName === 'SELECT') {
+                    el.parentElement?.parentElement?.classList.add('error')
+                }
+                return true //error exists
             }
+            return false // no error
+        }
+
+
+        const add = (e: string) => {
+            errors.push(e)
         }
 
         const result = () => {
             return errors
         }
 
-        return { check, result }
+        return { check, result, add }
     }
 
    
@@ -258,82 +271,68 @@ const ColorCreator: React.FC<IProps> = ({lang, fiberState, setState, colorsState
 
     const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
         prevent(e)
-        console.log(1);
         
-        if (!_name_en.current || !_name_ru.current || !_name_short_en || !_name_short_ru || !_text_en || !_text_ru || !_text_short_en || !_text_short_ru) return
-        if (!_spec.current ) return
+        if (!_name_en.current || !_name_ru.current || !_name_short_en.current || !_name_short_ru.current || !_text_en.current || 
+            !_text_ru.current || !_text_short_en.current || !_text_short_ru.current || !_spec.current || !_descr.current) return
 
-        const isErrors = errorsCheck(); //check DESCRIPTION
-        isErrors.check(_name_en)
-        isErrors.check(_name_ru)
-        isErrors.check(_name_short_en)
-        isErrors.check(_name_short_ru)
-        isErrors.check(_text_en)
-        isErrors.check(_text_ru)
-        isErrors.check(_text_short_en)
-        isErrors.check(_text_short_ru)
+        const isErrors = errorsCheck(); 
+        
+        _descr.current.querySelectorAll('input').forEach(item => {//check DESCRIPTION
+            isErrors.check(item)
+        })
+        _descr.current.querySelectorAll('textarea').forEach(item => {
+            isErrors.check(item)
+        })
+        
+        const allSpec: {[key: string]: any} = {};
+        _spec.current.querySelectorAll('input').forEach(item => { //check specifications      
+            isErrors.check(item)
+            allSpec[item.id] = item.value         
+        })
+        _spec.current.querySelectorAll('select').forEach(item => {           
+            isErrors.check(item)
+            allSpec[item.id] = item.value         
+        })
 
-        const fileErrors: string[] = []  
+        console.log(allSpec);
+        
+        return
+
+
+
         if (files.length === 0) {//check images
-            fileErrors.push(lang === 'en' ? 'Images missed' : 'Картинки отсутствуют')
+            isErrors.add(lang === 'en' ? 'Images missed' : 'Картинки отсутствуют')
+        }
+
+        if (!Object.values(selectedColors).some(item => item)) { //check at least 1 color selected
+            isErrors.add(lang === 'en' ? 'No color selected' : 'Цвет не выбран')
         }
         
-        _spec.current.querySelectorAll('input').forEach(item => {
-            if (item.value === '') {
-                item.parentElement?.classList.add('error')
-            }
-        })
-
-        _spec.current.querySelectorAll('select').forEach(item => {
-            if (item.value === '') {
-                item.parentElement?.parentElement?.classList.add('error')
-            }
-        })
-        console.log(fileErrors);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        
+       
         if (isErrors.result().length > 0) {
             setMessage({
                 header: lang === 'en' ? 'Errors in fields' : 'Найдены ошибки в полях',
                 status: 'error',
-                text: [...isErrors.result(), ...fileErrors]
+                text: [isErrors.result().join(',\n')]
             })
-            setModal(true)
-            return
+            return setModal(true)
         }
-
-
-
-
-
-
-        //const fileBig = _fileBig.current.files[0]
-
-
-        const color = {
-            name: {
-                en: _name_en.current.value.trim(),
-                ru: _name_ru.current.value.trim(),
+        //create new fiber
+        const newFiber: Omit<IFiber, '_id'> = {
+            name: {en: _name_en.current.value, ru: _name_ru.current.value},
+            text: {en: _text_en.current.value, ru: _text_ru.current.value},
+            short: {
+                name: {en: _name_short_en.current.value, ru: _name_short_ru.current.value},
+                descr: {en: _text_short_en.current.value, ru: _text_short_ru.current.value}
             },
-            files: {
-                big: files.big as File,
-                small: files.small as File,
-            }
-            //file: file as File
+            //params
+ 
         }
+
+
+
+        
 
         // to backend 
         //setState.fibers.sendColor(color)
@@ -352,7 +351,7 @@ const ColorCreator: React.FC<IProps> = ({lang, fiberState, setState, colorsState
                             <h3 className='lang'>EN</h3>
                             <h3 className='lang'>RU</h3>
                         </div>
-                        <div className="descr__container">
+                        <div className="descr__container" ref={_descr}>
                             <div className="input-block">
                                 <label htmlFor="namer_en">{lang === 'en' ? 'Name' : 'Название'}:</label>
                                 <div className="input__wrapper">
@@ -377,7 +376,7 @@ const ColorCreator: React.FC<IProps> = ({lang, fiberState, setState, colorsState
                                     <textarea  id="text_en" ref={_text_en} data-ru="Текст EN" data-en="Text EN"/>
                                 </div>
                                 <div className="input__wrapper">
-                                    <textarea id="text_ru" ref={_text_en} data-ru="Текст RU" data-en="Text RU"/>
+                                    <textarea id="text_ru" ref={_text_ru} data-ru="Текст RU" data-en="Text RU"/>
                                 </div>
                             </div>
                             <div className="input-block">
@@ -386,7 +385,7 @@ const ColorCreator: React.FC<IProps> = ({lang, fiberState, setState, colorsState
                                     <textarea id="text-short_en" ref={_text_short_en} data-ru="Текст кратко EN" data-en="Text short EN"/>
                                 </div>
                                 <div className="input__wrapper">
-                                    <textarea id="text-short_ru" ref={_text_short_en} data-ru="Текст кратко RU" data-en="Text short RU"/>
+                                    <textarea id="text-short_ru" ref={_text_short_ru} data-ru="Текст кратко RU" data-en="Text short RU"/>
                                 </div>
                             </div>
                         </div>
@@ -404,12 +403,14 @@ const ColorCreator: React.FC<IProps> = ({lang, fiberState, setState, colorsState
                                                     label={item.name}
                                                     defaultData={{value: '', name: {en: 'Select', ru: 'Выберете'}}}
                                                     saveValue={saveValues}
-                                                    data={item.type === '10' ? data10 : item.type === '5' ? data5 : data3 }/>
+                                                    data={item.type === '10' ? data10 : item.type === '5' ? data5 : data3 }
+                                                    dataset={item.name}
+                                                    />
                                             </div>
                                         :
                                             <div className="input__wrapper no-info" key={item.id}>
                                                 <label htmlFor={item.id}>{item.name[lang]}, ({item.unit[lang]}):</label>
-                                                <input type="text" id={item.id} ref={_name_en} onChange={(e) => saveValues({id: item.id, e})}/>
+                                                <input type="text" id={item.id} onChange={(e) => saveValues({id: item.id, e})} data-ru={item.name.ru} data-en={item.name.en}/>
                                             </div>
                                         }
                                     </React.Fragment>

@@ -176,7 +176,7 @@ export interface IFiberParam {
 
 
 export interface IFiber {
-    id: TId
+    _id: TId
     name: TLangText
     text: TLangText
     short: {
