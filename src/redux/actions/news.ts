@@ -1,15 +1,16 @@
-import { IAction, IDispatch, IErrRes, IFetch, IFullState, IMsgRes, INewsItem, TLangText } from "src/interfaces"
+import { IAction, IDispatch, IErrRes, IFetch, IFullState, IImgWithThumb, IMsgRes, INewsItem, ISendNews, TLangText } from "src/interfaces"
 import { actionsListNews } from './actionsList'
+import { imageUploader } from "src/assets/js/imageUploader";
 
 
 
-export const setLoadDataStatusNews = <T extends IFetch>(payload: T):IAction<T> => ({
+export const setLoadNews = <T extends IFetch>(payload: T):IAction<T> => ({
     type: actionsListNews.SET_LOAD_DATA_STATUS_NEWS,
     payload: payload
 });
 
 
-export const setSendDataStatusNews = <T extends IFetch>(payload: T):IAction<T> => ({
+export const setSendNews = <T extends IFetch>(payload: T):IAction<T> => ({
     type: actionsListNews.SET_SEND_DATA_STATUS_NEWS,
     payload: payload
 });
@@ -31,7 +32,7 @@ export const loadSomeNews = (from: number, amount: number) => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
         const news = getState().news
         if (news.load.status === 'fetching') return
-        dispatch(setLoadDataStatusNews({status: 'fetching', message: {en: `Loading ${amount} news`, ru: `Загрузка ${amount} новостей`},}))
+        dispatch(setLoadNews({status: 'fetching', message: {en: `Loading ${amount} news`, ru: `Загрузка ${amount} новостей`},}))
         try {
             const response: Response = await fetch(`/api/news/get-some?from=${from}&amount=${amount}`, {
                 method: 'GET',
@@ -41,7 +42,7 @@ export const loadSomeNews = (from: number, amount: number) => {
             })
             if (response.status !== 200) {
                 const result: IErrRes = await response.json() //message, errors
-                return dispatch(setLoadDataStatusNews({
+                return dispatch(setLoadNews({
                     status: 'error', 
                     message: (result as IErrRes).message, 
                     errors: result.errors as TLangText[] || []
@@ -56,58 +57,38 @@ export const loadSomeNews = (from: number, amount: number) => {
                 }
             })]))
             dispatch(setTotalNews(result.total))
-            dispatch(setLoadDataStatusNews({status: 'success', message: {en: `News have been loaded`, ru: 'Новости были загружены успешно'}}))
+            dispatch(setLoadNews({status: 'success', message: {en: `News have been loaded`, ru: 'Новости были загружены успешно'}}))
 
         } catch (e) {
-            dispatch(setLoadDataStatusNews({status: 'error', message: {en: `Error occured while loading news: ${e}`, ru: `Ошибка в процессе загрузки новостей: ${e}`}}))
+            dispatch(setLoadNews({status: 'error', message: {en: `Error occured while loading news: ${e}`, ru: `Ошибка в процессе загрузки новостей: ${e}`}}))
         }
     }
 }
 
 
 
-interface IPostNews {
-    header: TLangText
-    short: TLangText
-    text: TLangText
-    date: Date
-    images: File[]
-}
 
 
-export const postNews = (news: IPostNews) => {
+
+export const sendNews = (news: ISendNews) => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
-        const { user } = getState() //get current user state
-        dispatch(setSendDataStatusNews({status: 'fetching', message: {en: '', ru: ''}}))
+        const token = getState().user.token //get current user state
+        dispatch(setSendNews({status: 'fetching', message: {en: '', ru: ''}}))
         const delayBetweenImagesPost = 300
 
-        const imageUrls: {full: string, medium: string, thumb: string, fileName: string}[] = []
+        const imageUrls: IImgWithThumb[] = []
         // images to imgbb
         await news.images.reduce(async (acc: Promise<string>, image: File, i) => {
             return new Promise(async (res, rej) => {
                 await acc
-                try {
-                    let form = new FormData();
-                    form.append("image", image)
-        
-                    const response: Response = await fetch(`https://api.imgbb.com/1/upload?key=${process.env.REACT_APP_IMGBB}`, {
-                        method: 'POST',
-                        body: form
-                    })
-        
-                    const result = await response.json()
-                    
-                    if (!result.success) {
-                        rej(`Error while uploading image ${image.name}`)
-                        return dispatch(setSendDataStatusNews({status: 'error', message: {en:`Error while deploying images`, ru: `Ошибка при сохранении файлов`}}))
-                    }
-
-                    imageUrls.push({full: result.data.image?.url, medium: result.data.medium?.url, thumb: result.data.thumb?.url, fileName: image.name.split(".").slice(0,-1).join(".") || image.name})
-                    setTimeout(() => res('ok'), delayBetweenImagesPost)
-                   
-                } catch (e) {
-                    return dispatch(setSendDataStatusNews({status: 'error', message: {en:`Error while deploying images: ${e}`, ru: `Ошибка при сохранении файлов: ${e}`}}))
-                }  
+                                
+                const newsImagePost = await imageUploader(image)
+                if (newsImagePost.status !== 'success') {
+                    rej(`Error while uploading image ${image.name}`)
+                    return dispatch(setSendNews(newsImagePost))
+                }
+                imageUrls.push(newsImagePost.urls as IImgWithThumb)
+                setTimeout(() => res('ok'), delayBetweenImagesPost)
             })
             
         }, Promise.resolve('start fetching images'))
@@ -124,14 +105,14 @@ export const postNews = (news: IPostNews) => {
                 method: 'POST',
                 headers: {
                     "Content-Type": 'application/json',
-                    'Authorization': `Bearer ${user.token}`
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(newsToDb)
             })
 
             if (response.status !== 201) {
                 const result: IErrRes = await response.json() //message, errors
-                return dispatch(setSendDataStatusNews({
+                return dispatch(setSendNews({
                     status: 'error', 
                     message: result.message, 
                     errors: result.errors as TLangText[] || []
@@ -139,10 +120,10 @@ export const postNews = (news: IPostNews) => {
             }
             const result: IMsgRes = await response.json() //message, errors
             
-            dispatch(setSendDataStatusNews({status: 'success', message: result.message}))
+            dispatch(setSendNews({status: 'success', message: result.message}))
             
         } catch (e) {           
-            dispatch(setSendDataStatusNews({status: 'error', message: {en: `Error "${e}", try again later`, ru: `Ошибка "${e}", попробуйте позже`}}))
+            dispatch(setSendNews({status: 'error', message: {en: `Error "${e}", try again later`, ru: `Ошибка "${e}", попробуйте позже`}}))
         }
 
     }
@@ -152,7 +133,7 @@ export const postNews = (news: IPostNews) => {
 export const deleteNews = (_id: string) => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
         const { user } = getState() //get current user state
-        dispatch(setSendDataStatusNews({status: 'fetching', message: {en: '', ru: ''}, errors: []}))
+        dispatch(setSendNews({status: 'fetching', message: {en: '', ru: ''}, errors: []}))
         
         try {
             
@@ -167,7 +148,7 @@ export const deleteNews = (_id: string) => {
 
             if (response.status !== 200) {
                 const result: IErrRes = await response.json() //message, errors
-                return dispatch(setSendDataStatusNews({
+                return dispatch(setSendNews({
                     status: 'error', 
                     message: result.message, 
                     errors: result.errors as TLangText[] || []
@@ -175,9 +156,9 @@ export const deleteNews = (_id: string) => {
             }
 
             const result: IMsgRes = await response.json()
-            dispatch(setSendDataStatusNews({status: 'success', message: result.message}))
+            dispatch(setSendNews({status: 'success', message: result.message}))
         } catch (e) {           
-            dispatch(setSendDataStatusNews({status: 'error', message: {en: `Error "${e}", try again later`, ru: `Ошибка "${e}", попробуйте позже`}, errors: []}))
+            dispatch(setSendNews({status: 'error', message: {en: `Error "${e}", try again later`, ru: `Ошибка "${e}", попробуйте позже`}, errors: []}))
         }
 
     }

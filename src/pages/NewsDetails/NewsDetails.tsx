@@ -71,11 +71,11 @@ const NewsDetails: React.FC<IProps> = ({lang, setState, send, isAdmin }): JSX.El
     const closeModal = () => {
 		setModal(false)
         if (send.status === 'success') {
-            setState.news.setSendDataStatusNews({status: 'idle', message: {en: '', ru: ''}})
+            setState.news.setSendNews({status: 'idle', message: {en: '', ru: ''}})
             navigate('/', { replace: true });
             window.location.reload()
         } else {
-            setState.news.setSendDataStatusNews({status: 'idle', message: {en: '', ru: ''}})
+            setState.news.setSendNews({status: 'idle', message: {en: '', ru: ''}})
         }
 	}
 
@@ -111,7 +111,7 @@ const NewsDetails: React.FC<IProps> = ({lang, setState, send, isAdmin }): JSX.El
                                             })}
                                             <div className="images__container">
                                                 {newsItem.images.length > 1 ? 
-                                                    <SpliderCommon images={newsItem.images} lang={lang} imagesPerSlide={2}/>
+                                                    <SpliderCommon images={newsItem.images} imagesPerSlide={2}/>
                                                 :
                                                     newsItem.images.length > 0 ? 
                                                         <img src={newsItem.images[0].full} alt={newsItem.images[0].fileName} />

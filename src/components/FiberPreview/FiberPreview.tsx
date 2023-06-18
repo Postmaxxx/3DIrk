@@ -17,7 +17,7 @@ const FiberPreview = ({fiber, lang, colors}: IProps) => {
             </div>
             <div className="fiber__descr">
                 <span>{fiber.short.name[lang]}</span>
-                <span>{fiber.short.descr[lang]}</span>
+                <span>{fiber.short.text[lang]}</span>
 
             </div>
         </div>

@@ -37,7 +37,7 @@ const FiberItem = ({fiber, lang, colors}: IProps) => {
         <div className="fiber__item">
 			<h2>{fiber.name[lang]}</h2>
             <div className='fiber__splider__container'>
-				<SpliderCommon images={fiber.imgs} lang={lang} imagesPerSlide={3}/>
+				<SpliderCommon images={fiber.images} imagesPerSlide={3}/>
             </div>
             <div className="fiber__descr__container">
 				<div className="block_text">

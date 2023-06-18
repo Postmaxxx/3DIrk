@@ -1,4 +1,4 @@
-import { IColorsState, IFetch, IFiber, IFiberParam, IFiberProperties, IFibersState, IFullState, TLang, TLangText } from 'src/interfaces';
+import { IColorsState, IFetch, IFiber, IFiberParam, IFiberProperties, IFibersState, IFullState, IProsCons, TLang, TLangText } from 'src/interfaces';
 import './fiber-creator.scss'
 import React, {  useRef, useMemo } from "react";
 import { connect } from "react-redux";
@@ -44,17 +44,11 @@ const ColorCreator: React.FC<IProps> = ({lang, fiberState, setState, colorsState
     const _text_ru = useRef<HTMLTextAreaElement>(null)
     const _text_short_en = useRef<HTMLTextAreaElement>(null)
     const _text_short_ru = useRef<HTMLTextAreaElement>(null)
-    //const _fileBig = useRef<File>(null)
-    //const _fileSmall = useRef<File>(null)
-    //const [urls, setUrls] = useState<{big: string, small: string}>({big:'', small: ''})
 	const [modal, setModal] = useState<boolean>(false)
     const [message, setMessage] = useState({header: '', status: '', text: ['']})
-    //const addFileBig = useRef<IAddFilesFunctions>(null)
-    //const addFileSmall = useRef<IAddFilesFunctions>(null)
     const addFiles = useRef<IAddFilesFunctions>(null)
     const [files, setFiles] = useState<File[]>([])
-    //const [file, setFile] = useState<File>()
-    const [spec, setSpec] = useState<{[key: string]: string}>(fibersProperties.reduce((acc, item) => ({...acc, [item.id]: ''}), {}))
+    //const [spec, setSpec] = useState<{[key: string]: string}>(fibersProperties.reduce((acc, item) => ({...acc, [item.id]: ''}), {}))
     const _pros = useRef<HTMLDivElement>(null)
     const _cons = useRef<HTMLDivElement>(null)
     const [selectedColors, setSelectedColors] = useState<{[key: string]: boolean}>({})
@@ -121,13 +115,7 @@ const ColorCreator: React.FC<IProps> = ({lang, fiberState, setState, colorsState
 
    
     const saveFiles = (files: File[]) => {
-        const file = files[0]
-        setFiles(prev => {
-                return {
-                    ...prev,
-                    small: file
-                }
-        })
+        setFiles(files)
     }
 
 
@@ -163,12 +151,12 @@ const ColorCreator: React.FC<IProps> = ({lang, fiberState, setState, colorsState
 
 
     const saveValues = ({id, e}: {id: string, e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>}) => {
-        setSpec((prev) => {
+        /*setSpec((prev) => {
             return {
                 ...prev,
                 [id]: e.target.value
             }
-        })
+        })*/
         if (e.target.tagName === 'INPUT') {
             e.target.parentElement?.classList.remove('error')
         }
@@ -265,8 +253,6 @@ const ColorCreator: React.FC<IProps> = ({lang, fiberState, setState, colorsState
 
 
 
-
-
     
 
     const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -277,65 +263,78 @@ const ColorCreator: React.FC<IProps> = ({lang, fiberState, setState, colorsState
 
         const isErrors = errorsCheck(); 
         
-        _descr.current.querySelectorAll('input').forEach(item => {//check DESCRIPTION
-            isErrors.check(item)
-        })
-        _descr.current.querySelectorAll('textarea').forEach(item => {
-            isErrors.check(item)
+        _descr.current.querySelectorAll('input, textarea').forEach(item => {//check DESCRIPTION
+            isErrors.check(item as HTMLInputElement | HTMLTextAreaElement)
         })
         
-        const allSpec: {[key: string]: any} = {};
-        _spec.current.querySelectorAll('input').forEach(item => { //check specifications      
-            isErrors.check(item)
-            allSpec[item.id] = item.value         
-        })
-        _spec.current.querySelectorAll('select').forEach(item => {           
-            isErrors.check(item)
-            allSpec[item.id] = item.value         
-        })
 
-        console.log(allSpec);
-        
-        return
-
+        const allSpec: {[key: string]: string} = {};
+        _spec.current.querySelectorAll('input, select').forEach(item => { //check specifications      
+            isErrors.check(item as HTMLInputElement | HTMLSelectElement)
+            allSpec[item.id] = (item as HTMLInputElement | HTMLSelectElement).value 
+        })
 
 
         if (files.length === 0) {//check images
             isErrors.add(lang === 'en' ? 'Images missed' : 'Картинки отсутствуют')
         }
+       
 
         if (!Object.values(selectedColors).some(item => item)) { //check at least 1 color selected
             isErrors.add(lang === 'en' ? 'No color selected' : 'Цвет не выбран')
         }
         
+
+
+
+        const proscons = {} as IProsCons
+        proscons.pros = Array.from(_pros.current?.querySelectorAll('input') || []) //
+            .reduce<TLangText[]>((result, current, i) => {
+                i % 2 === 0 ? result.push({en: current.value, ru: ''}) : result[Math.floor(i/2)].ru = current.value
+                return result;
+            }, [])
         
+        proscons.cons = Array.from(_cons.current?.querySelectorAll('input') || []) //
+            .reduce<TLangText[]>((result, current, i) => {
+                i % 2 === 0 ? result.push({en: current.value, ru: ''}) : result[Math.floor(i/2)].ru = current.value
+                return result;
+            }, [])
+
+        if (proscons.pros.some(item => !item.en || !item.ru)) {//proscons error check
+            isErrors.add(lang === 'en' ? 'Empty pro exists' : 'Есть незаполненный плюс')
+        }
+        if (proscons.cons.some(item => !item.en || !item.ru)) {
+            isErrors.add(lang === 'en' ? 'Empty con exists' : 'Есть незаполненный минус')
+        }
+
        
         if (isErrors.result().length > 0) {
             setMessage({
                 header: lang === 'en' ? 'Errors in fields' : 'Найдены ошибки в полях',
                 status: 'error',
-                text: [isErrors.result().join(',\n')]
+                text: [isErrors.result().join(', ')]
             })
             return setModal(true)
         }
-        //create new fiber
-        const newFiber: Omit<IFiber, '_id'> = {
+
+
+        //create new fiberToStore
+        const newFiber: Omit<IFiber, '_id' | 'images'> & {images: File[]} = {
             name: {en: _name_en.current.value, ru: _name_ru.current.value},
             text: {en: _text_en.current.value, ru: _text_ru.current.value},
             short: {
                 name: {en: _name_short_en.current.value, ru: _name_short_ru.current.value},
-                descr: {en: _text_short_en.current.value, ru: _text_short_ru.current.value}
+                text: {en: _text_short_en.current.value, ru: _text_short_ru.current.value}
             },
-            //params
- 
+            params: (allSpec as unknown) as IFiberParam,
+            colors: Object.entries(selectedColors).filter(item => item[1]).map(item => item[0]),
+            images: files,
+            proscons
         }
 
-
-
         
-
         // to backend 
-        //setState.fibers.sendColor(color)
+        setState.fibers.sendFiber(newFiber)
     }
 
     
@@ -401,7 +400,7 @@ const ColorCreator: React.FC<IProps> = ({lang, fiberState, setState, colorsState
                                                     lang={lang} 
                                                     id={item.id} 
                                                     label={item.name}
-                                                    defaultData={{value: '', name: {en: 'Select', ru: 'Выберете'}}}
+                                                    defaultData={{value: data10[0].value, name: {en: 'Select', ru: 'Выберете'}}}
                                                     saveValue={saveValues}
                                                     data={item.type === '10' ? data10 : item.type === '5' ? data5 : data3 }
                                                     dataset={item.name}
@@ -453,7 +452,7 @@ const ColorCreator: React.FC<IProps> = ({lang, fiberState, setState, colorsState
 
 
                         <h2 className='section-header full-width'>{lang === 'en' ? 'Images' : 'Изображения'}</h2>           
-                        <AddFiles saveFiles={saveFiles} lang={lang} ref={addFiles} multiple={true} id='big'/>
+                        <AddFiles saveFiles={(files: File[]) => saveFiles(files)} lang={lang} ref={addFiles} multiple={true} id='big'/>
 
                         <button className='button_blue post' disabled={false} onClick={e => onSubmit(e)}>{lang === 'en' ? 'Add fiber' : "Добавить материал"}</button>
                     </form>

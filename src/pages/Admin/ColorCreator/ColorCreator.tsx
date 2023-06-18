@@ -1,4 +1,4 @@
-import { IColorsState, IFetch, IFullState, TLang } from 'src/interfaces';
+import { IColorsState, IFetch, IFullState, ISendColor, TLang } from 'src/interfaces';
 import './color-creator.scss'
 import React, {  useRef } from "react";
 import { connect } from "react-redux";
@@ -109,9 +109,7 @@ const ColorCreator: React.FC<IProps> = ({lang, colorState, setState}): JSX.Eleme
         isErrors.check(_name_ru)
 
         const fileErrors: string[] = []
-        /*if (!file) {
-            fileErrors.push(lang === 'en' ? 'File is missed' : 'Отсутствует файл')
-        }*/    
+
         if (!files.big) {
             fileErrors.push(lang === 'en' ? 'File full is missed' : 'Отсутствует файл полноразмера')
         }
@@ -128,19 +126,16 @@ const ColorCreator: React.FC<IProps> = ({lang, colorState, setState}): JSX.Eleme
             return
         }
 
-        //const fileBig = _fileBig.current.files[0]
 
-
-        const color = {
+        const color: ISendColor = {
             name: {
                 en: _name_en.current.value.trim(),
                 ru: _name_ru.current.value.trim(),
             },
             files: {
-                big: files.big as File,
+                full: files.big as File,
                 small: files.small as File,
             }
-            //file: file as File
         }
 
         // to backend 

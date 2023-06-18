@@ -6,6 +6,11 @@ const initialFibers = {
         message: {en: '', ru: ''},
         errors: []
     },
+    send: {
+        status: 'idle',
+        message: {en: '', ru: ''},
+        errors: []
+    },
     fibersList: [],
     selected: '',
     showList: []

@@ -12,6 +12,11 @@ const reducerFibers = (state:IFibersState = initialFibersState, action: IAction<
                 ...state, 
                 load: action.payload
             }
+        case actionsListFibers.SET_SEND_DATA_STATUS_FIBERS: 
+            return {
+                ...state, 
+                send: action.payload
+            }
         case actionsListFibers.SET_DATA_FIBERS: 
             return {
                 ...state, 

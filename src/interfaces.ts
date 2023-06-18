@@ -29,6 +29,12 @@ export interface IFetch {
     errors?: TLangText[]
 }
 
+export interface IFetchImage {
+    status: TFetchStatus
+    message: TLangText
+    urls?: IImgWithThumb
+}
+
 export interface IMessageModal {
     header: string
     status: string
@@ -181,12 +187,11 @@ export interface IFiber {
     text: TLangText
     short: {
         name: TLangText
-        descr: TLangText
+        text: TLangText
     }
     images: IImgWithThumb[]
     params: IFiberParam
     proscons: IProsCons
-
     colors: TId[] //ids of colors
 }
 
@@ -194,6 +199,7 @@ export interface IFibersState {
     selected: TId //id
     showList: TId[] //list of id to show
     load: IFetch //receiving data
+    send: IFetch //sending data
     fibersList: Array<IFiber> 
 }
 
@@ -245,6 +251,14 @@ export interface ICatalogState {
 
 
 //================================================news state
+export interface ISendNews {
+    header: TLangText
+    short: TLangText
+    text: TLangText
+    date: Date
+    images: File[]
+}
+
 export interface INewsItem {
     _id: TId
     header: TLangText
@@ -297,6 +311,18 @@ export interface IOrderState {
 }*/
 
 //============================================== Colors state
+export interface ISendColor {
+    name: {
+        ru: string, 
+        en: string
+    }, 
+    files: {
+        full: File, 
+        small: File
+    }
+}
+
+
 
 export interface IColorsState {
     load: IFetch

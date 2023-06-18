@@ -39,7 +39,6 @@ const NewsCreator: React.FC<IProps> = ({lang, userState, sending, setState}): JS
     const _date = useRef<HTMLInputElement>(null)
     const _text_en = useRef<HTMLTextAreaElement>(null)
     const _text_ru = useRef<HTMLTextAreaElement>(null)
-    //const _images = useRef<HTMLDivElement>(null)
 	const [modal, setModal] = useState<boolean>(false)
     const [message, setMessage] = useState({header: '', status: '', text: ['']})
     const [files, setFiles] = useState<File[]>([])
@@ -53,13 +52,6 @@ const NewsCreator: React.FC<IProps> = ({lang, userState, sending, setState}): JS
 
     const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
         prevent(e)
-
-        /*const images = [...document.querySelectorAll('.image-block')].map((el) => {
-            const url = (el.querySelector('[data-content="url"]') as HTMLInputElement).value
-            const en = (el.querySelector('[data-content="en"]') as HTMLInputElement).value
-            const ru = (el.querySelector('[data-content="ru"]') as HTMLInputElement).value
-            return { url, name: {en, ru} }
-        }).filter(image => image.url)*/
         
         const news = {
             header: {
@@ -78,57 +70,10 @@ const NewsCreator: React.FC<IProps> = ({lang, userState, sending, setState}): JS
             images: files
         }
         
-        setState.news.postNews(news)
+        setState.news.sendNews(news)
     }
 
 
-
-
-    /*const onAddImage = (e: React.MouseEvent<HTMLButtonElement>) => {
-        prevent(e)
-        const newImageBlock = document.createElement('div')
-        newImageBlock.classList.add('image-block')
-        newImageBlock.classList.add('full-width')
-
-
-        const wrUrl = document.createElement('div')
-        wrUrl.classList.add('input__wrapper')
-        const inputUrl = document.createElement('input')
-        inputUrl.setAttribute('data-content','url')
-        wrUrl.appendChild(inputUrl)
-
-        const wrEn = document.createElement('div')
-        wrEn.classList.add('input__wrapper')
-        const inputEn = document.createElement('input')
-        inputEn.setAttribute('data-content','en')
-        wrEn.appendChild(inputEn)
-
-        const wrRu = document.createElement('div')
-        wrRu.classList.add('input__wrapper')
-        const inputRu = document.createElement('input')
-        inputRu.setAttribute('data-content','ru')
-        wrRu.appendChild(inputRu)
-
-        const delBtn = document.createElement('button');
-        delBtn.innerHTML = 'X';
-        delBtn.classList.add('button_blue');
-        delBtn.classList.add('del');
-        delBtn.onclick = (e) => onDeleteImage(e as unknown as React.MouseEvent<HTMLButtonElement, MouseEvent>)
-
-        newImageBlock.appendChild(wrUrl)
-        newImageBlock.appendChild(wrEn)
-        newImageBlock.appendChild(wrRu)
-        newImageBlock.appendChild(delBtn)
-        if (!_images.current) return
-        _images.current.appendChild(newImageBlock)
-    }*/
-
-
-    /*const onDeleteImage = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        prevent(e)
-        const parent = e.currentTarget?.parentNode as HTMLElement
-        parent.remove();
-    }*/
 
 
     
@@ -139,7 +84,7 @@ const NewsCreator: React.FC<IProps> = ({lang, userState, sending, setState}): JS
             header: sending.status,
             text: ['']
         })
-        setState.news.setSendDataStatusNews({status: 'idle', message: {en: '', ru: ''}})
+        setState.news.setSendNews({status: 'idle', message: {en: '', ru: ''}})
 	}
 
 
@@ -211,8 +156,6 @@ const NewsCreator: React.FC<IProps> = ({lang, userState, sending, setState}): JS
                             <input type="date" id="date" ref={_date}/>
                         </div>
 
-
-                        {/*<button className='button_blue add' onClick={e => onAddImage(e)}>{lang === 'en' ? 'Add image' : 'Добавить изображение'}</button>*/}
 
                         <h2 className='images__header full-width'>{lang === 'en' ? 'Images' : 'Изображения'}</h2>           
                         <AddFiles saveFiles={saveFiles} lang={lang} ref={addFiles} multiple={true} id='big'/>

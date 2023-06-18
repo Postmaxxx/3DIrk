@@ -59,6 +59,10 @@
                     grid-row-start: 1;
                     grid-row-end: 3;
                 }
+
+                @include respond-to(sm) {
+                    font-size: 14px;
+                }
             }
 
 

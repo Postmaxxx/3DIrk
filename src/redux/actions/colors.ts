@@ -1,4 +1,5 @@
-import { IAction, IDispatch, IColor, IColorsState, IFetch, IFullState, IErrRes, TLangText, IMsgRes } from "../../interfaces"
+import { imageUploader } from "src/assets/js/imageUploader";
+import { IAction, IDispatch, IColor, IColorsState, IFetch, IFullState, IErrRes, TLangText, IMsgRes, ISendColor, IImgWithThumb } from "../../interfaces"
 import { actionsListColors } from './actionsList'
 //import mockColors from "../mocks/colors";
 
@@ -61,83 +62,31 @@ export const loadColors = () => {
 
 
 
-interface ISendColor {
-    name: {
-        ru: string, 
-        en: string
-    }, 
-    files: {
-        big: File, 
-        small: File
-    }
-    //file: File
-}
+
+
 
 export const sendColor = (color: ISendColor) => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
         const token = getState().user.token
-        const temp = getState().colors.send
         dispatch(setSendColors({status: 'fetching', message: {en: `Saving color`, ru: 'Сохранение цвета'}}))
-
-        /*try {
-            await fetch(`https://api.imgbb.com/1/upload?key=${process.env.REACT_APP_IMGBB}`, {
-                method: 'OPTIONS',
-                headers: {
-                    'Access-Control-Request-Method': 'POST',
-                }
-            })
+        
+        const imageUrls = {} as {full:string, small: string}
+        
+        // upload to imgbb imageBig
+        const postFull = await imageUploader(color.files.full)
+        if (postFull.status !== 'success') {
+            return dispatch(setSendColors(postFull))
         }
-        catch(e) {
-            return dispatch(setSendColors({status: 'error', message: {en:`Error while deploying color image: ${e}`, ru: `Ошибка при сохранении файла цвета: ${e}`}}))
-        }*/
+        imageUrls.full = (postFull.urls as IImgWithThumb).full
+
+        // upload to imgbb imageSmall, not thumb, specific size as fullImage
+        const postSmall = await imageUploader(color.files.small)
+        if (postSmall.status !== 'success') {
+            return dispatch(setSendColors(postSmall))
+        }
+        imageUrls.small = (postSmall.urls as IImgWithThumb).full
 
         
-        let fullUrl = ''
-        let smallUrl = ''
-        
-        // to imgbb big
-        try {
-            let form = new FormData();
-            form.append("image", color.files.big)
-
-            const response: Response = await fetch(`https://api.imgbb.com/1/upload?key=${process.env.REACT_APP_IMGBB}`, {
-                method: 'POST',
-                body: form
-            })
-
-            const result = await response.json()
-            
-            if (!result.success) {
-                return dispatch(setSendColors({status: 'error', message: {en:`No file`, ru: `отсутствует файл`}}))
-            }
-            fullUrl = result.data.image.url
-           
-        } catch (e) {
-            return dispatch(setSendColors({status: 'error', message: {en:`Error while deploying color image: ${e}`, ru: `Ошибка при сохранении файла цвета: ${e}`}}))
-        }  
-        
-        
-        // to imgbb small
-        try {
-            let form = new FormData();
-            form.append("image", color.files.small)
-
-            const response: Response = await fetch(`https://api.imgbb.com/1/upload?key=${process.env.REACT_APP_IMGBB}`, {
-                method: 'POST',
-                body: form
-            })
-
-            const result = await response.json()
-
-            if (!result.success) {
-                return dispatch(setSendColors({status: 'error', message: {en:`No file`, ru: `отсутствует файл`}}))
-            }
-            smallUrl = result.data.image.url
-           
-        } catch (e) {
-            return dispatch(setSendColors({status: 'error', message: {en:`Error while deploying color image: ${e}`, ru: `Ошибка при сохранении файла цвета: ${e}`}}))
-        }   
-
 
         // to db
         try {
@@ -150,8 +99,8 @@ export const sendColor = (color: ISendColor) => {
                 body: JSON.stringify({
                     name: color.name,
                     url: {
-                        full: fullUrl,
-                        small: smallUrl
+                        full: imageUrls.full,
+                        small: imageUrls.small
                     }
                 })
             })

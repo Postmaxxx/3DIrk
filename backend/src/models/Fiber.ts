@@ -7,7 +7,6 @@ interface IFiber extends Document {
     colors: {type: Types.ObjectId, ref: 'Order'}
     images: object[]
     short: object
-    features: object
     params: object
 }
 
@@ -15,10 +14,9 @@ const fiberSchema = new Schema({
     name: {type: Object},
     text: {type: Object},
     proscons: {type: Object},
-    colors: {type: Types.ObjectId, ref: 'Colors'},
+    colors: [{type: Types.ObjectId, ref: 'Colors'}],
     images: [{type: Object}],
     short: {type: Object},
-    features: {type: Object},
     params: {type: Object}
 })
 

@@ -43,7 +43,7 @@ router.post('/create',
         try {
             const { header, date, short, text, images} = req.body 
 
-            const news = new News({ header, date, short, text, images: images})
+            const news = new News({ header, date, short, text, images}) 
             
             await news.save()
 

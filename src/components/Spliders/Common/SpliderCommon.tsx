@@ -11,7 +11,6 @@ import { useRef, useState, useEffect, MouseEvent } from 'react'
 
 
 interface IProps {
-	lang: TLang
 	images: IImgWithThumb[]
     imagesPerSlide: number
 }
@@ -24,7 +23,7 @@ interface IContainerSize {
 
 
 
-const SpliderCommon: React.FC<IProps> = ({lang, images, imagesPerSlide=1}): JSX.Element => {
+const SpliderCommon: React.FC<IProps> = ({images, imagesPerSlide=1}): JSX.Element => {
 	
 	const splideCommon = useRef<Splide>();
 	const containerSize = useRef<IContainerSize>();
