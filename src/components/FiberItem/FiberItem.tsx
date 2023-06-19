@@ -25,8 +25,10 @@ const FiberItem = ({fiber, lang, colors, isAdmin, onDelete}: IProps) => {
 
 	
     const onImageClick = (e: React.MouseEvent , color: IColor) => {
+		console.log(color);
+		
         e.stopPropagation()
-		setModalImg({descr: color.name[lang], path: color.url.big})
+		setModalImg({descr: color.name[lang], path: color.url.full})
         setModal(true)
     }
 

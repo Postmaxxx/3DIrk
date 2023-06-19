@@ -89,14 +89,16 @@ const App:React.FC<IProps> = ({lang, setState}):JSX.Element => {
 				</Route>
 
 				<Route path="news/:newsId" element={<Suspense fallback={<Preloader />}><LazyNewsDetails /></Suspense>} />
-				<Route path="/*" element={<Suspense fallback={<Preloader />}><P404 lang={lang}/></Suspense>} />
-
 
 				<Route path="/admin">
 					<Route path="news-create" element={<Suspense fallback={<Preloader />}><LazyNewsCreator /></Suspense>} />
+					<Route path="news-create/:newsId" element={<Suspense fallback={<Preloader />}><LazyNewsCreator /></Suspense>} />
 					<Route path="color-create" element={<Suspense fallback={<Preloader />}><LazyColorCreator /></Suspense>} />
 					<Route path="fiber-create" element={<Suspense fallback={<Preloader />}><LazyFiberCreator /></Suspense>} />
 				</Route>
+
+
+				<Route path="/*" element={<Suspense fallback={<Preloader />}><P404 lang={lang}/></Suspense>} />
 			</Routes>
 
 			<LazyFooter />

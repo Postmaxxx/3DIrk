@@ -34,7 +34,7 @@ const ColorPicker: React.FC<IPropsState> = ({lang, colors, onSelect}): JSX.Eleme
 
     const onImageClick = (e: React.MouseEvent , color: IColor) => {
         e.stopPropagation()
-		setModalImg({descr: color.name[lang], path: color.url.big})
+		setModalImg({descr: color.name[lang], path: color.url.full})
         setModal(true)
     }
 

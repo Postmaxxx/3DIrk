@@ -69,6 +69,10 @@
         align-items: center;
         margin-top: 50px;
 
+        & .button_edit {
+            margin-right: 30px;
+        }
+
 
         & > .button_delete__container {
             width: 30px;

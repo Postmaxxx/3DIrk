@@ -1,4 +1,4 @@
-import { IFetch, IFullState, IUserState, TLang } from 'src/interfaces';
+import { IFetch, IFullState, INewsItem, IUserState, TLang } from 'src/interfaces';
 import './news-creator.scss'
 import React, {  useRef } from "react";
 import { connect } from "react-redux";
@@ -9,6 +9,7 @@ import MessageInfo from 'src/components/MessageInfo/MessageInfo';
 import { useEffect, useState } from "react";
 import { allActions } from "../../../redux/actions/all";
 import AddFiles, { IAddFilesFunctions } from 'src/components/AddFiles/AddFiles';
+import { useParams } from 'react-router-dom';
 
 interface IPropsState {
     lang: TLang
@@ -30,7 +31,7 @@ interface IProps extends IPropsState, IPropsActions {
 
 
 const NewsCreator: React.FC<IProps> = ({lang, userState, sending, setState}): JSX.Element => {
-
+    const paramNewsId = useParams().newsId || ''
     const addFiles = useRef<IAddFilesFunctions>(null)
     const _header_en = useRef<HTMLInputElement>(null)
     const _header_ru = useRef<HTMLInputElement>(null)
@@ -41,39 +42,19 @@ const NewsCreator: React.FC<IProps> = ({lang, userState, sending, setState}): JS
     const _text_ru = useRef<HTMLTextAreaElement>(null)
 	const [modal, setModal] = useState<boolean>(false)
     const [message, setMessage] = useState({header: '', status: '', text: ['']})
-    const [files, setFiles] = useState<File[]>([])
-
+    const [news, setNews] = useState<Omit<INewsItem, "images"> & {images: File[]}>({
+        _id: '', 
+        header: {en: '', ru: ''}, 
+        date: '', 
+        short: {en: '', ru: ''},
+        text: {en: '', ru: ''},
+        images: []
+    })
 
     const prevent = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault()
         e.stopPropagation()
     }
-
-
-    const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
-        prevent(e)
-        
-        const news = {
-            header: {
-                en: _header_en.current?.value || '',
-                ru: _header_ru.current?.value || '',
-            },
-            short: {
-                en: _short_en.current?.value  || '',
-                ru: _short_ru.current?.value  || '',
-            },
-            text: {
-                en: _text_en.current?.value || '',
-                ru: _text_ru.current?.value || '',
-            },
-            date: _date.current?.valueAsDate || new Date(),
-            images: files
-        }
-        
-        setState.news.sendNews(news)
-    }
-
-
 
 
     
@@ -103,7 +84,62 @@ const NewsCreator: React.FC<IProps> = ({lang, userState, sending, setState}): JS
 
 
     const saveFiles = (files: File[]) => {
-        setFiles(files)
+        //setFiles(files)
+        setNews(prev => ({...prev, images: files}))
+    }
+
+
+
+    const loadNewsData = async (_id: string) => {
+        const news = await setState.news.loadOneNews(_id)
+        if (news.status === 'success') {
+            //setNewsItem(news.data)
+        }
+        //setLoaded(true)
+    }
+
+
+
+    const onChangeText = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        e.target.id === 'header_en' &&  setNews(prev => ({...prev, header: {...prev.header, en: e.target.value}}))
+        e.target.id === 'header_ru' &&  setNews(prev => ({...prev, header: {...prev.header, ru: e.target.value}}))
+        e.target.id === 'short_en' &&  setNews(prev => ({...prev, short: {...prev.short, en: e.target.value}}))
+        e.target.id === 'short_ru' &&  setNews(prev => ({...prev, short: {...prev.short, ru: e.target.value}}))
+        e.target.id === 'text_en' &&  setNews(prev => ({...prev, text: {...prev.text, en: e.target.value}}))
+        e.target.id === 'text_ru' &&  setNews(prev => ({...prev, text: {...prev.text, ru: e.target.value}}))
+        e.target.id === 'date' &&  setNews(prev => ({...prev, date: e.target.value}))
+    }
+
+
+    useEffect(() => { //if edit
+        if (!paramNewsId) return
+        loadNewsData(paramNewsId)
+    }, [])
+
+
+
+
+    const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+        prevent(e)
+        
+        const news = {
+            header: {
+                en: _header_en.current?.value || '',
+                ru: _header_ru.current?.value || '',
+            },
+            short: {
+                en: _short_en.current?.value  || '',
+                ru: _short_ru.current?.value  || '',
+            },
+            text: {
+                en: _text_en.current?.value || '',
+                ru: _text_ru.current?.value || '',
+            },
+            date: _date.current?.valueAsDate || new Date(),
+            //images: files
+        }
+        
+        //setState.news.sendNews(news)
     }
 
 
@@ -123,37 +159,37 @@ const NewsCreator: React.FC<IProps> = ({lang, userState, sending, setState}): JS
                         <div className="input-block">
                             <label htmlFor="header_en">{lang === 'en' ? 'Header' : 'Заголовок'}:</label>
                             <div className="input__wrapper">
-                                <input type="text" id="header_en" ref={_header_en}/>
+                                <input type="text" id="header_en" ref={_header_en} onChange={(e) => onChangeText(e)} value={news.header.en}/>
                             </div>
                             <div className="input__wrapper">
-                                <input type="text" id="header_ru" ref={_header_ru}/>
+                                <input type="text" id="header_ru" ref={_header_ru} onChange={(e) => onChangeText(e)} value={news.header.ru}/>
                             </div>
                         </div>
 
                         <div className="input-block">
                             <label htmlFor="short_en">{lang === 'en' ? 'Short text' : 'Краткий текст'}:</label>
                             <div className="input__wrapper">
-                                <textarea id="short_en" ref={_short_en}/>
+                                <textarea id="short_en" ref={_short_en} onChange={(e) => onChangeText(e)} value={news.short.en}/>
                             </div>
                             <div className="input__wrapper">
-                                <textarea id="short_ru" ref={_short_ru}/>
+                                <textarea id="short_ru" ref={_short_ru} onChange={(e) => onChangeText(e)} value={news.short.ru}/>
                             </div>
                         </div>
 
                         <div className="input-block">
-                            <label htmlFor="full_en">{lang === 'en' ? 'Full text' : 'Полный текст'}:</label>
+                            <label htmlFor="text_en">{lang === 'en' ? 'Full text' : 'Полный текст'}:</label>
                             <div className="input__wrapper">
-                                <textarea id="full_en" ref={_text_en}/>
+                                <textarea id="text_en" ref={_text_en} onChange={(e) => onChangeText(e)} value={news.text.en}/>
                             </div>
                             <div className="input__wrapper">
-                                <textarea id="full_ru" ref={_text_ru}/>
+                                <textarea id="text_ru" ref={_text_ru} onChange={(e) => onChangeText(e)} value={news.text.ru}/>
                             </div>
                         </div>
 
 
                         <div className="input-block">
                             <label htmlFor="date">{lang === 'en' ? 'Date' : 'Дата'}:</label>
-                            <input type="date" id="date" ref={_date}/>
+                            <input type="date" id="date" ref={_date} onChange={(e) => onChangeText(e)} value={news.date}/>
                         </div>
 
 

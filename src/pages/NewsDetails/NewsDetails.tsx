@@ -1,6 +1,5 @@
 import { IFetch, IFullState, IMessageModal, INewsItem, INewsState, TLang } from '../../interfaces'
 import './news-details.scss'
-import { loadOneNews } from "../../redux/actions/news"
 import { NavLink, useParams, useNavigate } from 'react-router-dom'
 import Preloader from '../../components/Preloaders/Preloader';
 import { AnyAction, bindActionCreators } from "redux";
@@ -39,9 +38,7 @@ const NewsDetails: React.FC<IProps> = ({lang, setState, send, isAdmin }): JSX.El
     const [message, setMessage] = useState<IMessageModal>({header: '', status: '', text: []})
 
     const loadNews = async (_id: string) => {
-        
-        const news = await loadOneNews(_id)
-        console.log(news);
+        const news = await setState.news.loadOneNews(_id)
         if (news.status === 'success') {
             setNewsItem(news.data)
         }
@@ -95,7 +92,7 @@ const NewsDetails: React.FC<IProps> = ({lang, setState, send, isAdmin }): JSX.El
                             {newsItem ? 
                                 <>
                                     <h1>{newsItem.header[lang]}</h1>
-                                    <span className='date'>{String(newsItem.date.toISOString().slice(0, 10))}</span>
+                                    <span className='date'>{String(newsItem.date)}</span>
                                     <div className="news__details">
                                         <>
                                             {newsItem.text[lang].split('\n').map((text, i) => {
@@ -113,6 +110,15 @@ const NewsDetails: React.FC<IProps> = ({lang, setState, send, isAdmin }): JSX.El
                                 </>
                             }
                             <div className="buttons">
+                                {isAdmin && newsItem ? 
+                                    <NavLink className="button_blue button_edit"
+                                        to={`../../admin/news-create/${newsItem._id}`}
+                                    >
+                                        edit
+                                    </NavLink>
+                                :
+                                    null    
+                                }
                                 <button className="button_blue button_back" onClick={() => navigate(-1)}>
                                     <svg width="24" height="16" viewBox="0 0 24 16" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M23.6875 8.72615C24.0885 8.34643 24.1058 7.71351 23.7261 7.31246L17.5384 0.777062C17.1586 0.376018 16.5257 0.358725 16.1247 0.738437C15.7236 1.11815 15.7063 1.75108 16.086 2.15212L21.5863 7.96137L15.777 13.4616C15.376 13.8413 15.3587 14.4743 15.7384 14.8753C16.1181 15.2763 16.7511 15.2936 17.1521 14.9139L23.6875 8.72615ZM0.342942 8.38133L22.9727 8.99962L23.0273 7.00036L0.397565 6.38207L0.342942 8.38133Z"/>

@@ -77,7 +77,7 @@ const CartContent: React.FC<IProps> = ({lang, order, colors, fibers, setState}):
     const onImageClick = (e: React.MouseEvent , color: IColor | undefined) => {
         if (!color) return
         e.stopPropagation()
-        setModalImg({descr: color.name[lang], path: color.url.big})
+        setModalImg({descr: color.name[lang], path: color.url.full})
         setModal(true)
     }
 

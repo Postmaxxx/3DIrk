@@ -133,7 +133,7 @@ export interface IColor {
     _id: TId
     name: TLangText
     url: {
-        big: string
+        full: string
         small: string
     }
 }
@@ -260,14 +260,14 @@ export interface ISendNews {
     header: TLangText
     short: TLangText
     text: TLangText
-    date: Date
+    date: string
     images: File[]
 }
 
 export interface INewsItem {
     _id: TId
     header: TLangText
-    date: Date
+    date: string
     short: TLangText
     text: TLangText
     images: IImgWithThumb[]

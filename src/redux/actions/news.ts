@@ -48,7 +48,7 @@ export const loadSomeNews = (from: number, amount: number) => {
             const result: {news: INewsItem[], total: number} = await response.json()
             dispatch(setDataNews([...news.newsList, ...result.news.map(item => {
                 return {                    
-                    date: new Date(item.date),
+                    date: item.date,
                     _id: item._id,
                     header: item.header,
                     short: item.short,
