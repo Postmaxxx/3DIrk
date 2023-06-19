@@ -45,7 +45,7 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors,produ
 
     
     const onChangeFiber: React.ChangeEventHandler<HTMLSelectElement> = (e) => {
-        setSelectedFiber(fibers.fibersList.find(fiber => fiber.id === e.target.value))
+        setSelectedFiber(fibers.fibersList.find(fiber => fiber._id === e.target.value))
         setSelectedColor('')        
     }
 
@@ -62,8 +62,8 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors,produ
     useEffect(() => {
         if (colors.load.status === 'success' && fibers.load.status === 'success' && productLoad.status === 'success') {
             setFibersDetailed(product.fibers.map((productFiber) => {
-                return fibers.fibersList.find(fiberItem => fiberItem.id === productFiber)
-            }).filter(fiber => fiber?.id !== undefined) as IFiber[])
+                return fibers.fibersList.find(fiberItem => fiberItem._id === productFiber)
+            }).filter(fiber => fiber?._id !== undefined) as IFiber[])
         }
 
         
@@ -105,7 +105,7 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors,produ
                 <div className="feature wrap_xs">
                 <label htmlFor="fiber">
                     {selectedFiber ? 
-                        <NavLink to={`../../fibers/${selectedFiber.id}`} aria-label={lang === 'en' ? '(About selected fiber)' : ' (О выбранном материале)'}>
+                        <NavLink to={`../../fibers/${selectedFiber._id}`} aria-label={lang === 'en' ? '(About selected fiber)' : ' (О выбранном материале)'}>
                             {lang === 'en' ? 'Fiber' : 'Материал'}:
                         </NavLink>
                         :
@@ -115,7 +115,7 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors,produ
 
                     <select id="fiber" onChange={onChangeFiber} defaultValue={''}>
                         <option key={-1} disabled hidden value={''}>{lang === 'en' ? 'Select fiber' : 'Выберите материал'}</option>
-                        {fibersDetailed.map((fiber, i) => <option key={i} value={fiber.id}>{fiber.short.name[lang]}</option>)}
+                        {fibersDetailed.map((fiber, i) => <option key={i} value={fiber._id}>{fiber.short.name[lang]}</option>)}
                     </select>
                 </div>
                 <div className="colors__container wrap_xs">
@@ -130,7 +130,7 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors,produ
             <AddToCart 
                 product={product} 
                 type={product.mods.length > 0 ? selectedType : {en: '-', ru: '-'}} 
-                fiber={selectedFiber?.id} 
+                fiber={selectedFiber?._id} 
                 color={selectedColor}
                 />
         </div>

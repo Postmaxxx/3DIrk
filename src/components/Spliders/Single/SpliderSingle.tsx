@@ -57,8 +57,8 @@ const SpliderSingle: React.FC<IProps> = ({lang, catalog, setState}): JSX.Element
 
 
 	useEffect(() => {
-		setState.catalog.loadCategory(catalog.category.id)	
-	},[catalog.category.id]);
+		setState.catalog.loadCategory(catalog.category._id)	
+	},[catalog.category._id]);
 
 
 	
@@ -70,7 +70,7 @@ const SpliderSingle: React.FC<IProps> = ({lang, catalog, setState}): JSX.Element
 		}
 		setProductSlides(result)
 		
-	},[catalog.category.loadCategory.status, catalog.category.id]);
+	},[catalog.category.loadCategory.status, catalog.category._id]);
 	
 	
 	

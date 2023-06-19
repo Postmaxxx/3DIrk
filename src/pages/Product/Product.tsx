@@ -38,7 +38,7 @@ const Product: React.FC<IProps> = ({lang, setState, product, colors, fibers, pro
     const [loaded, setLoaded] = useState<boolean>(false)
     
     useEffect(() => {
-        if (paramProductId !== product.id) {
+        if (paramProductId !== product._id) {
             setState.catalog.loadProduct(paramProductId)
             setLoaded(false)
         }

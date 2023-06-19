@@ -38,7 +38,7 @@ export const loadColors = () => {
                 dispatch(setLoadColors({
                     status: 'error', 
                     message: result.message, 
-                    errors: result.errors as TLangText[] || []
+                    errors: result.errors
                 }))
             }
 
@@ -111,7 +111,7 @@ export const sendColor = (color: ISendColor) => {
                 return dispatch(setSendColors({
                         status: 'error', 
                         message: (result as IErrRes).message, 
-                        errors: result.errors as TLangText[] || []
+                        errors: result.errors
                     }
                 ))
             }

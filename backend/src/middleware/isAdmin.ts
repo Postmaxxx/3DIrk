@@ -25,6 +25,5 @@ module.exports = async (req, res, next) => {
         next()  
     } catch (e) {
         return res.status(400).json({ message: { en: `Error while checking permissions: ${e}`, ru: `Ошибка при проверке прав: ${e}`}, errors: []})
-    
     } 
 }

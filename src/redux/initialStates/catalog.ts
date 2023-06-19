@@ -11,7 +11,7 @@ const initialCatalog = {
         list: []
     },
     category: {
-        id: '',
+        _id: '',
         name: {en: '', ru: ''},
         loadCategory: {
             status: 'idle',
@@ -25,7 +25,7 @@ const initialCatalog = {
         },
         products: [],
         product: {
-            id: '',
+            _id: '',
             price: {en: '', ru: ''},
             name: {en: '', ru: ''},
             text: {en: '', ru: ''},

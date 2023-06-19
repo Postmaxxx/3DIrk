@@ -10,7 +10,7 @@ import { IProductBE } from 'src/interfaces'
 const mockProducts = [
     {
         categoryId: 'auto',
-        id: 'canister_1',
+        _id: 'canister_1',
         name: {
             en: 'Attachment for a canister',
             ru: 'Крепление для канистры'

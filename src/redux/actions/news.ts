@@ -1,4 +1,4 @@
-import { IAction, IDispatch, IErrRes, IFetch, IFullState, IImgWithThumb, IMsgRes, INewsItem, ISendNews, TLangText } from "src/interfaces"
+import { IAction, IDispatch, IErrRes, IFetch, IFullState, IImgWithThumb, IMsgRes, INewsItem, ISendNews, IUserState, TLangText } from "src/interfaces"
 import { actionsListNews } from './actionsList'
 import { imageUploader } from "src/assets/js/imageUploader";
 
@@ -42,26 +42,57 @@ export const loadSomeNews = (from: number, amount: number) => {
             })
             if (response.status !== 200) {
                 const result: IErrRes = await response.json() //message, errors
-                return dispatch(setLoadNews({
-                    status: 'error', 
-                    message: (result as IErrRes).message, 
-                    errors: result.errors as TLangText[] || []
-                }))
+                return dispatch(setLoadNews({status: 'error', message: (result as IErrRes).message, errors: result.errors}))
             }
             
             const result: {news: INewsItem[], total: number} = await response.json()
             dispatch(setDataNews([...news.newsList, ...result.news.map(item => {
-                return {
-                    ...item,
+                return {                    
                     date: new Date(item.date),
+                    _id: item._id,
+                    header: item.header,
+                    short: item.short,
+                    text: item.text,
+                    images: item.images
                 }
             })]))
+
+            
             dispatch(setTotalNews(result.total))
             dispatch(setLoadNews({status: 'success', message: {en: `News have been loaded`, ru: 'Новости были загружены успешно'}}))
 
         } catch (e) {
             dispatch(setLoadNews({status: 'error', message: {en: `Error occured while loading news: ${e}`, ru: `Ошибка в процессе загрузки новостей: ${e}`}}))
         }
+    }
+}
+
+
+
+export const loadOneNews = async (_id: string) => {
+    try {
+        const response: Response = await fetch(`/api/news/get-one?_id=${_id}`, {
+            method: 'GET',
+            headers: {
+                "Content-Type": 'application/json',
+            },
+        })
+        
+        if (response.status !== 200) {
+            const result: IErrRes = await response.json()
+            return {status: 'error', message: result.message, errors: result.errors}
+        }
+        const result = await response.json()
+        return {
+            status: 'success', 
+            message: result.message,
+            data: {
+                ...result.news,
+                date: new Date(result.news.date)
+            } 
+        }       
+    } catch (e) {
+        return {status: 'error', message: {en: `Error on server: ${e}`, ru: `Ошибка на сервере: ${e}`}}
     }
 }
 
@@ -115,7 +146,7 @@ export const sendNews = (news: ISendNews) => {
                 return dispatch(setSendNews({
                     status: 'error', 
                     message: result.message, 
-                    errors: result.errors as TLangText[] || []
+                    errors: result.errors
                 }))
             }
             const result: IMsgRes = await response.json() //message, errors
@@ -132,16 +163,16 @@ export const sendNews = (news: ISendNews) => {
 
 export const deleteNews = (_id: string) => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
-        const { user } = getState() //get current user state
+        const token = getState().user.token //get current user state
         dispatch(setSendNews({status: 'fetching', message: {en: '', ru: ''}, errors: []}))
         
         try {
             
             const response: Response = await fetch('/api/news/delete', {
-                method: 'POST',
+                method: 'DELETE',
                 headers: {
                     "Content-Type": 'application/json',
-                    'Authorization': `Bearer ${user.token}`
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({_id})
             })
@@ -151,7 +182,7 @@ export const deleteNews = (_id: string) => {
                 return dispatch(setSendNews({
                     status: 'error', 
                     message: result.message, 
-                    errors: result.errors as TLangText[] || []
+                    errors: result.errors
                 }))
             }
 

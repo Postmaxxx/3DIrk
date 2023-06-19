@@ -1,6 +1,6 @@
 import { IFetch, IFullState, IMessageModal, INewsItem, INewsState, TLang } from '../../interfaces'
 import './news-details.scss'
-import { loadSomeNews } from "../../redux/actions/news"
+import { loadOneNews } from "../../redux/actions/news"
 import { NavLink, useParams, useNavigate } from 'react-router-dom'
 import Preloader from '../../components/Preloaders/Preloader';
 import { AnyAction, bindActionCreators } from "redux";
@@ -39,24 +39,16 @@ const NewsDetails: React.FC<IProps> = ({lang, setState, send, isAdmin }): JSX.El
     const [message, setMessage] = useState<IMessageModal>({header: '', status: '', text: []})
 
     const loadNews = async (_id: string) => {
-        try {
-            const response: Response = await fetch(`/api/news/get-one?_id=${_id}`, {
-                method: 'GET',
-                headers: {
-                    "Content-Type": 'application/json',
-                },
-            })
-            if (response.status === 200) {
-                const result = await response.json()
-                setNewsItem({
-                    ...result.news,
-                    date: new Date(result.news.date)
-                })
-            }
-            setLoaded(true)
-        } catch (e) {
+        
+        const news = await loadOneNews(_id)
+        console.log(news);
+        if (news.status === 'success') {
+            setNewsItem(news.data)
         }
+        setLoaded(true)
     }
+
+
 
     useEffect(() => {
         loadNews(paramNewsId)
@@ -110,14 +102,7 @@ const NewsDetails: React.FC<IProps> = ({lang, setState, send, isAdmin }): JSX.El
                                                 return <p key={i}>{text}</p>
                                             })}
                                             <div className="images__container">
-                                                {newsItem.images.length > 1 ? 
-                                                    <SpliderCommon images={newsItem.images} imagesPerSlide={2}/>
-                                                :
-                                                    newsItem.images.length > 0 ? 
-                                                        <img src={newsItem.images[0].full} alt={newsItem.images[0].fileName} />
-                                                    :
-                                                        null
-                                                }
+                                                <SpliderCommon images={newsItem.images} imagesPerSlide={Math.min(newsItem.images.length, 3)}/>
                                             </div>
                                         </>
                                     </div>

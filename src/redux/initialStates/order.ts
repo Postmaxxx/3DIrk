@@ -1,7 +1,7 @@
 import { IOrderState } from "src/interfaces"
 
 const initialOrder = {
-    id: '',
+    _id: '',
     date: new Date(),
     send: {
         status: 'idle',

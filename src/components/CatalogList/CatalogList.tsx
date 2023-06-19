@@ -45,9 +45,9 @@ const CatalogList: React.FC<IProps> = ({catalog, lang, selectedCategory, setStat
 					{catalog.list.map((category: ICatalogItem, index: number): JSX.Element => {
 						return (
 							<li 
-								key={category.id} 
-								className={category.id === selectedCategory ? "selected" : ""}
-								onClick={():void => loadCategory(category.id)}
+								key={category._id} 
+								className={category._id === selectedCategory ? "selected" : ""}
+								onClick={():void => loadCategory(category._id)}
 							>
 								{category.name[lang]}
 							</li>
@@ -68,7 +68,7 @@ const CatalogList: React.FC<IProps> = ({catalog, lang, selectedCategory, setStat
 const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
 	catalog: state.catalog.catalog,
-	selectedCategory: state.catalog.category.id
+	selectedCategory: state.catalog.category._id
 })
 
 

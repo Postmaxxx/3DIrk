@@ -2,20 +2,23 @@ import { IColor, IFiber, IModalImg, TLang } from '../../interfaces'
 import Proscons from '../Proscons/Proscons'
 import './fiber-item.scss'
 import SpliderCommon from '../Spliders/Common/SpliderCommon';
-import Features from '../Features/Features';
+import Features from '../Features/Params';
 import { NavLink } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react'
 import Modal from '../Modal/Modal';
 import ModalImage from '../MessageImage/MessageImage';
+import Delete from '../Delete/Delete';
 
 
 interface IProps {
 	fiber: IFiber
 	lang: TLang
 	colors: IColor[]
+	isAdmin: boolean
+	onDelete: (item: IFiber) => void
 }
 
-const FiberItem = ({fiber, lang, colors}: IProps) => {
+const FiberItem = ({fiber, lang, colors, isAdmin, onDelete}: IProps) => {
 	const [modal, setModal] = useState<boolean>(false)
 	const [modalImg, setModalImg] = useState<IModalImg>({descr: '', path: ''})
 
@@ -33,11 +36,12 @@ const FiberItem = ({fiber, lang, colors}: IProps) => {
 	}
 
 
+
     return (
         <div className="fiber__item">
 			<h2>{fiber.name[lang]}</h2>
             <div className='fiber__splider__container'>
-				<SpliderCommon images={fiber.images} imagesPerSlide={3}/>
+				<SpliderCommon images={fiber.images} imagesPerSlide={fiber.images.length > 3 ? 3 : 1}/>
             </div>
             <div className="fiber__descr__container">
 				<div className="block_text">
@@ -62,15 +66,22 @@ const FiberItem = ({fiber, lang, colors}: IProps) => {
 						</div>
 					</div>
 					<div className="proscons">
-						<h3>{lang === 'en' ? 'Summary' : '?'}</h3>
+						<h3>{lang === 'en' ? 'Pros and сons' : 'Плюсы и минусы'}</h3>
 						<Proscons {...fiber.proscons} lang={lang}/>
 					</div>
-						
-					<NavLink
-						className="button_blue link_compareList"
-						to="/fibers/compare">
-							{lang === 'en' ? 'Watch in comparasing' : 'Посмотреть в сравнении'}
-					</NavLink>
+					
+					<div className="buttons">
+						<NavLink
+							className="button_blue link_compareList"
+							to="/fibers/compare">
+								{lang === 'en' ? 'Watch in comparasing' : 'Посмотреть в сравнении'}
+						</NavLink>
+						{isAdmin ? 
+							<Delete<IFiber> remove={onDelete} idInstance={fiber} lang={lang} disabled={false}/>
+						:
+							null    
+						}
+					</div>
 				</div>
             </div>
 			<Modal {...{visible: modal, close: closeModal, escExit: true}}>

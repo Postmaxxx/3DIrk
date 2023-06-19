@@ -95,7 +95,7 @@ const Order:React.FC<IProps> = ({lang, order, colors, fibers, setState}): JSX.El
         const textCart = order.cart.items.reduce((text: string, item: ICartItem, i: number) => {
             return text + `${i+1}) ${item.product.name[lang]}
 ${lang === 'en' ? 'Options' : 'Версия'}: ${item.type} 
-${lang === 'en' ? 'Fiber' : 'Материал'}: ${fibers.fibersList.find(fiberItem => fiberItem.id === item.fiber)?.short.name[lang]}
+${lang === 'en' ? 'Fiber' : 'Материал'}: ${fibers.fibersList.find(fiberItem => fiberItem._id === item.fiber)?.short.name[lang]}
 ${lang === 'en' ? 'Color' : 'Цвет'}: ${colors.colors.find(color => color._id === item.color)?.name[lang]}
 ${lang === 'en' ? 'Amount' : 'Количество'}: ${item.amount}\n\n`
         }, '')

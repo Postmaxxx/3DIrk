@@ -93,11 +93,11 @@ const CartContent: React.FC<IProps> = ({lang, order, colors, fibers, setState}):
                 order.cart.items.length > 0 ? 
                 <>
                     {order.cart.items.map((item, i) => {
-                        const fiber = fibers.fibersList.find(fiberItem => fiberItem.id === item.fiber)?.short.name[lang]
+                        const fiber = fibers.fibersList.find(fiberItem => fiberItem._id === item.fiber)?.short.name[lang]
                         const color: IColor | undefined = colors.colors.find(color => color._id === item.color)
                         return(
                             <div className="cart__item" key={i}>
-                                <NavLink className="item__product-link_img" to={`../catalog/${item.product.id}`} onClick={() => onProductClick(item.product)} aria-label={lang === 'en' ? 'Go to product' : 'Перейти к товару'}>
+                                <NavLink className="item__product-link_img" to={`../catalog/${item.product._id}`} onClick={() => onProductClick(item.product)} aria-label={lang === 'en' ? 'Go to product' : 'Перейти к товару'}>
                                     <div className="img__container">
                                         <ImgWithPreloader src={item.product.imgs[0].url} alt={item.product.imgs[0].name[lang]}/>
                                     </div>

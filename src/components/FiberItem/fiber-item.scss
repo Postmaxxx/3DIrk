@@ -31,6 +31,7 @@
         position: relative;
         // border: 2px solid yellow;
         padding-top: 60px;
+        width: 100%;
 
         @include respond-to(sm) {
             padding-top: 40px;
@@ -130,11 +131,24 @@
                 }
             }
 
-            & .link_compareList {
+
+
+            & .buttons {
+                display: flex;
+                width: 100%;
+                justify-content: center;
+                align-items: center;
                 margin-top: 50px;
-                width: fit-content;
-                margin-left: auto;  
-                margin-right: auto;
+
+                & .link_compareList {
+                    width: fit-content;
+                }
+        
+                & > .button_delete__container {
+                    width: 30px;
+                    height: 30px;
+                    margin-left: 30px;
+                }
             }
 
         }

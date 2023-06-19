@@ -5,12 +5,11 @@ module.exports = async (req, res, next) => {
     if (req.method === 'OPTIONS') {
         return next()
     }
-    //console.log(req);
     
     try {
         const receivedToken = req.headers.authorization?.split(' ')?.[1]
         if (!receivedToken) {
-            return res.status(401).json({message: {en: 'No token', ru: 'Нет токена'}, errors: []})
+            return res.status(401).json({message: {en: 'No token (not authorized)', ru: 'Нет токена (не авторизован)'}, errors: []})
         }
         const decoded = jwt.verify(receivedToken, process.env.jwtSecret)
         if (!decoded) {

@@ -30,7 +30,7 @@ interface IPropsActions {
 interface IProps extends IPropsParent, IPropsActions {
     product : IProduct
     type: TLangText | undefined
-    fiber: IFiber['id'] | undefined
+    fiber: IFiber['_id'] | undefined
     color: IColor['_id']
 }
 
@@ -88,7 +88,7 @@ const AddToCart: React.FC<IProps> = ({product, type, fiber, color, lang, order, 
     }
 
 
-    const onAmountChange = (item: IProduct['id'], amount: number) => {
+    const onAmountChange = (item: IProduct['_id'], amount: number) => {
         setAmount(amount)
     }
 
@@ -97,7 +97,7 @@ const AddToCart: React.FC<IProps> = ({product, type, fiber, color, lang, order, 
             <div className="cart-adder">
                 <span>{lang === 'en' ? 'Amount' : 'Количество'}: </span>
                 <div className="amount-changer__container">
-                    <AmountChanger<IProduct['id']> idInstance={product.id} initialAmount={amount} reset={amountChangerReset} lang={lang} onChange={onAmountChange} />
+                    <AmountChanger<IProduct['_id']> idInstance={product._id} initialAmount={amount} reset={amountChangerReset} lang={lang} onChange={onAmountChange} />
                 </div>
                 <button className='button_news' title='Add to cart' onClick={addToCart}>{lang === 'en' ? 'Add to cart' : 'Добавить в корзину'}</button>
             </div>

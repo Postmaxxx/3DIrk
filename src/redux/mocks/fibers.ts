@@ -1,4 +1,4 @@
-import { IFiber } from "src/interfaces";
+/*import { IFiber } from "src/interfaces";
 import pla_1 from '../../assets/img/fibers/pla/pla_1.webp'
 import pla_2 from '../../assets/img/fibers/pla/pla_2.webp'
 import pla_3 from '../../assets/img/fibers/pla/pla_3.webp'
@@ -1282,4 +1282,4 @@ const mockFibers = [
 
 ] satisfies Array<IFiber>
 
-export default mockFibers
+export default mockFibers*/

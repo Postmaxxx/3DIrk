@@ -52,7 +52,7 @@ export type TLangText = {
 export interface IPageItem {
     name: TLangText
     path: string
-    id: TId
+    _id: TId
     notLink?: boolean
     expanded?: boolean
     subMenu?: Array<IPageItem>
@@ -67,7 +67,7 @@ export interface IImg {
 
 export interface IImgWithThumb {
     full: string
-    medium: string
+    medium?: string
     thumb: string
     fileName: string
 }
@@ -155,6 +155,11 @@ export interface IFeature {
 
 
 //==========================================Fibers State
+export interface IFiberToStore extends Omit<IFiber, '_id' | 'images'> {
+    images: File[]
+}
+
+
 export interface IFiberParam {
     strength: number //MPa
     stiffnes: number //1..10
@@ -209,7 +214,7 @@ export interface IFibersState {
 
 //============================================== category state
 export interface IProduct {
-    id: TId
+    _id: TId
     price: TLangText
     name: TLangText
     text: TLangText
@@ -221,7 +226,7 @@ export interface IProduct {
 
 
 export interface ICategory {
-    id: TId
+    _id: TId
     name: TLangText
     products: IProduct[] //part of loaded products, i.e.: 1-9, 10-18, ...
     loadCategory: IFetch //for load products in selected category
@@ -235,7 +240,7 @@ export interface ICategory {
 
 export interface ICatalogItem { //one category name
     name: TLangText
-    id: TId
+    _id: TId
 }
 
 export interface ICatalog{
@@ -290,7 +295,7 @@ export interface IBaseState {
 
 //============================================== order state
 export interface IOrderState {
-    id: TId
+    _id: TId
     send: IFetch
     date: Date
     name: string
@@ -406,7 +411,7 @@ export interface IFullState {
 //////////////////////////////////////////////////////////////////////////////////////  BackEnd
 
 export interface ICategoryReceived {
-    id: TId
+    _id: TId
     name: TLangText
     products: IProduct[]
 }
@@ -414,7 +419,7 @@ export interface ICategoryReceived {
 
 export interface IProductBE {
     categoryId: TId
-    id: TId
+    _id: TId
     price: TLangText
     name: TLangText
     text: TLangText
@@ -428,7 +433,7 @@ export interface IProductBE {
 
 
 export interface IFiberProperties {
-    id: TId
+    _id: TId
     name: TLangText
     tip: TLangText
     unit: TLangText

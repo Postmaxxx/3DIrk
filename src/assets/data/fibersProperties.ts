@@ -3,7 +3,7 @@ import { IFiberProperties } from "src/interfaces"
 
 export const fibersProperties = [
     {
-        id: 'strength',
+        _id: 'strength',
         name: {
             en: 'Strength',
             ru: 'Прочность'
@@ -19,7 +19,7 @@ export const fibersProperties = [
         type: '10'
     },
     {
-        id: 'stiffnes',
+        _id: 'stiffnes',
         name: {
             en: 'Stiffnes',
             ru: 'SПрочность'
@@ -35,7 +35,7 @@ export const fibersProperties = [
         type: '10'
     },
     {
-        id: 'durability',
+        _id: 'durability',
         name: {
             en: 'Durability',
             ru: 'DПрочность'
@@ -51,7 +51,7 @@ export const fibersProperties = [
         type: '10'
     },
     {
-        id: 'resistantImpact',
+        _id: 'resistantImpact',
         name: {
             en: 'Impact resistant',
             ru: 'Прочность'
@@ -67,7 +67,7 @@ export const fibersProperties = [
         type: '10'
     },
     {
-        id: 'minTemp',
+        _id: 'minTemp',
         name: {
             en: 'Min usage temp',
             ru: 'mПрочность'
@@ -83,7 +83,7 @@ export const fibersProperties = [
         type: 'string'
     },
     {
-        id: 'maxTemp',
+        _id: 'maxTemp',
         name: {
             en: 'Max usage temp',
             ru: 'Прочность'
@@ -99,7 +99,7 @@ export const fibersProperties = [
         type: 'string'
     },
     {
-        id: 'thermalExpansion',
+        _id: 'thermalExpansion',
         name: {
             en: 'Thermal expansion',
             ru: 'svПрочность'
@@ -116,7 +116,7 @@ export const fibersProperties = [
 
     },
     {
-        id: 'density',
+        _id: 'density',
         name: {
             en: 'Density',
             ru: 'Прочность'
@@ -133,7 +133,7 @@ export const fibersProperties = [
 
     },
     {
-        id: 'flexible',
+        _id: 'flexible',
         name: {
             en: 'Flexible',
             ru: 'Прочность'
@@ -149,7 +149,7 @@ export const fibersProperties = [
         type: '3'
     },
     {
-        id: 'elastic',
+        _id: 'elastic',
         name: {
             en: 'Elastic',
             ru: 'Прочность'
@@ -166,7 +166,7 @@ export const fibersProperties = [
 
     },
     {
-        id: 'soft',
+        _id: 'soft',
         name: {
             en: 'Soft',
             ru: 'Прочность'
@@ -183,7 +183,7 @@ export const fibersProperties = [
 
     },
     {
-        id: 'composite',
+        _id: 'composite',
         name: {
             en: 'Composite',
             ru: 'Прочность'
@@ -200,7 +200,7 @@ export const fibersProperties = [
 
     },
     {
-        id: 'resistantUV',
+        _id: 'resistantUV',
         name: {
             en: 'UV resistant',
             ru: 'Прочность'
@@ -217,7 +217,7 @@ export const fibersProperties = [
 
     },
     {
-        id: 'resistantWater',
+        _id: 'resistantWater',
         name: {
             en: 'Water resistant',
             ru: 'Прочность'
@@ -234,7 +234,7 @@ export const fibersProperties = [
 
     },
     {
-        id: 'dissolvable',
+        _id: 'dissolvable',
         name: {
             en: 'Dissolvable',
             ru: 'Прочность'
@@ -251,7 +251,7 @@ export const fibersProperties = [
 
     },
     {
-        id: 'resistantHeat',
+        _id: 'resistantHeat',
         name: {
             en: 'Heat resistant',
             ru: 'Прочность'
@@ -268,7 +268,7 @@ export const fibersProperties = [
 
     },
     {
-        id: 'resistantChemically',
+        _id: 'resistantChemically',
         name: {
             en: 'Chemically resistant',
             ru: 'Прочность'
@@ -285,7 +285,7 @@ export const fibersProperties = [
 
     },
     {
-        id: 'resistantFatigue',
+        _id: 'resistantFatigue',
         name: {
             en: 'Fatigue resistant',
             ru: 'Прочность'
@@ -302,7 +302,7 @@ export const fibersProperties = [
 
     },
     {
-        id: 'cutting',
+        _id: 'cutting',
         name: {
             en: 'Cutting',
             ru: 'Прочность'
@@ -319,7 +319,7 @@ export const fibersProperties = [
 
     },
     {
-        id: 'grinding',
+        _id: 'grinding',
         name: {
             en: 'Grinding',
             ru: 'Прочность'
@@ -336,7 +336,7 @@ export const fibersProperties = [
 
     },
     {
-        id: 'price',
+        _id: 'price',
         name: {
             en: 'Price',
             ru: 'Цена'
@@ -352,7 +352,7 @@ export const fibersProperties = [
         type: '5'
     },
     {
-        id: 'priceGr',
+        _id: 'priceGr',
         name: {
             en: 'Price for gr.',
             ru: 'Цена за грамм'

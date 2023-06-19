@@ -1,7 +1,7 @@
 @use '/src/assets/css/variables' as *;
 
 
-.features {
+.params {
     margin-top: 50px;
     width: 100%;
     display: grid;
@@ -14,15 +14,21 @@
 
     }
 
-    & > .feature__container {
+    & > .param__container {
         width: 100%;    
         align-self: end;
         
-        & > .feature {
+        & > .param {
             display: grid;
             grid-template-columns: 169px 1fr auto;
             align-items: end;
             margin-top: 7px;
+            
+            @include respond-to(xs) {
+                grid-template-columns: 130px 1fr auto;
+            }
+
+
     
             & > span:nth-of-type(1) {
                 font-weight: 400;
@@ -31,6 +37,10 @@
                 @include respond-to(sm) {
                     font-size: 16px;
                 }
+
+                @include respond-to(xs) {
+                    font-size: 14px;
+                }
             }
             & > span:nth-of-type(2) {
                 flex-grow: 1;
@@ -38,12 +48,17 @@
                 margin-right: 15px;
                 border-bottom: 1px dotted #FFF;
                 margin-bottom: 3px;
+                min-width: 20px;
             }            
             & > span:nth-of-type(3) {
                 font-weight: 700;
                 font-size: 18px;
+                text-align: end;
                 @include respond-to(sm) {
                     font-size: 16px;
+                }
+                @include respond-to(xs) {
+                       font-size: 14px;
                 }
             }
         }

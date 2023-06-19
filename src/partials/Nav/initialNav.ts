@@ -7,7 +7,7 @@ export const pagesList = [
             en: 'home'
         },
         path: "/",
-        id: 'main_home',
+        _id: 'main_home',
     },
     {
         name: {
@@ -15,7 +15,7 @@ export const pagesList = [
             en: 'Filaments'
         },
         path: "/fibers",
-        id: 'main_fibers',
+        _id: 'main_fibers',
         subMenu : [
             {
                 name: {
@@ -23,7 +23,7 @@ export const pagesList = [
                     en: 'ABOUT'
                 },
                 path: "/fibers",
-                id: 'about',
+                _id: 'about',
 
             },
             {
@@ -32,7 +32,7 @@ export const pagesList = [
                     en: 'COMPARASING'
                 },
                 path: "/fibers/compare",
-                id: 'compare',
+                _id: 'compare',
 
             },
         ]
@@ -43,7 +43,7 @@ export const pagesList = [
             en: 'catalog'
         },
         path: "/catalog",
-        id: 'catalog',
+        _id: 'catalog',
     },
    /* {
         name: {
@@ -51,7 +51,7 @@ export const pagesList = [
             en: 'order',
         },
         path: "/order",
-        id: 'order',
+        _id: 'order',
     },*/
     {
         name: {
@@ -59,7 +59,7 @@ export const pagesList = [
             en: 'Login'
         },
         path: "/auth",
-        id: 'main_auth',
+        _id: 'main_auth',
         notLink: true,
         subMenu : [
             {
@@ -68,7 +68,7 @@ export const pagesList = [
                     en: 'ORDER '
                 },
                 path: "/fibers",
-                id: 'none',
+                _id: 'none',
                 notLink: true
             },
             {
@@ -77,7 +77,7 @@ export const pagesList = [
                     en: 'ORDERS HISTORY'
                 },
                 path: "/fibers",
-                id: 'none',
+                _id: 'none',
                 notLink: true
             },
             {
@@ -86,7 +86,7 @@ export const pagesList = [
                     en: 'LOGOT'
                 },
                 path: "/fibers",
-                id: 'logout',
+                _id: 'logout',
                 notLink: true
             },
         ]

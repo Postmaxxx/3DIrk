@@ -160,7 +160,7 @@ router.get('/get-one',
 
 
 
-router.post('/delete', 
+router.delete('/delete', 
     [authMW, isAdmin,
     check('_id')
         .exists()
@@ -177,25 +177,21 @@ router.post('/delete',
             })
         }
 
+        
         try {
             const { _id } = req.body 
-
-            try {
-                const newsToDelete = await News.findOneAndDelete({_id}) 
-                if (!newsToDelete) {
-                    return res.status(404).json({message: {en: `News has not not found`, ru: `Новость не найдена`}})
-                }
-                await saveChanges('news', true);
-                await loadNews(res)
-            } catch (error) {
-                return res.status(404).json({message: {en: `News has not not found`, ru: `Новость не найдена`}})
+            
+            const newsToDelete = await News.findOneAndDelete({_id}) 
+            if (!newsToDelete) {
+                return res.status(404).json({message: {en: `News has not found`, ru: `Новость не найдена`}})
             }
-
-
+            await saveChanges('news', true);
+            await loadNews(res)
             return res.status(200).json({message: {en: `News  deleted`, ru: `Новость удалена`}})
         } catch (error) {
             return res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})
         }
+
     }
 )
 

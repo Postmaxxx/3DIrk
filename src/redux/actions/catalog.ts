@@ -1,6 +1,5 @@
 import { IAction, ICatalogItem, ICatalogState, ICategory, IDispatch, IFetch, IFullState, IProduct, TId, TLangText } from "../../interfaces"
 import mockProducts from '../mocks/catalogFull'
-import mockFibers from '../mocks/fibers'
 import { actionsListCatalog } from './actionsList'
 import mockCategoriesList from "../mocks/categoriesList"
 
@@ -33,7 +32,7 @@ export const loadCatalog = () => {
             }).then((data) => {
                 dispatch(setCatalog(data as ICatalogItem[]))
                 dispatch(setFetchCatalog({status: 'success', message: {en: `Catalog has been loaded`, ru: 'Каталог загружен'}, errors: []}))
-                loadCategory((data as ICatalogItem[])[0].id)(dispatch)
+                loadCategory((data as ICatalogItem[])[0]._id)(dispatch)
             }).catch(err => {
                 dispatch(setFetchCatalog({status: 'error', message: {en:`Error while loading catalog: ${err}`, ru: `Ошибка при загрузке каталога: ${err}`}, errors: []}))
             })
@@ -60,32 +59,32 @@ export const setCategory = <T extends Omit<ICategory, "loadCategory" | "loadProd
 
 
 
-export const loadCategory = (id: TId) => {    
+export const loadCategory = (_id: TId) => {    
     return async function(dispatch: IDispatch) {
         dispatch(setFetchCategory({status: 'fetching', message: {en: `Loading category`, ru: 'Загрузка категории'}, errors: []}))
         try {
             const receivedProducts: IProduct[] = await new Promise((res, rej) => {
                 setTimeout(() => {
                     const products: IProduct[] = mockProducts.filter(product => 
-                        product.categoryId === id)
-                    products? res(products) : rej(`Category ${id} is empty`)
+                        product.categoryId === _id)
+                    products? res(products) : rej(`Category ${_id} is empty`)
                     //console.log(`category ${id} loaded`);
                 }, 200)
             })
             
-            const categoryName: TLangText = mockCategoriesList.find(category => category.id === id)?.name || {en: 'Other', ru: 'Другое'}
+            const categoryName: TLangText = mockCategoriesList.find(category => category._id === _id)?.name || {en: 'Other', ru: 'Другое'}
             const data: Omit<ICategory, "loadCategory" | "loadProduct" | "product"> = {
-                id,
+                _id,
                 name: categoryName,
                 products: receivedProducts,
                 total: receivedProducts.length, //get all products
                 page: 0,
             }              
             dispatch(setCategory(data))
-            dispatch(setFetchCategory({status: 'success', message: {en: `Category ${id} has been loaded`, ru: `Категория ${id} была загружена`}, errors: []}))
+            dispatch(setFetchCategory({status: 'success', message: {en: `Category ${_id} has been loaded`, ru: `Категория ${_id} была загружена`}, errors: []}))
 
         } catch(err) {
-            dispatch(setFetchCategory({status: 'error', message: {en: `Error occured while loading category: ${id}`, ru: `Произошла ошибка при загрузке категории: ${id}`}, errors: []}))
+            dispatch(setFetchCategory({status: 'error', message: {en: `Error occured while loading category: ${_id}`, ru: `Произошла ошибка при загрузке категории: ${_id}`}, errors: []}))
         }
 
     }
@@ -123,13 +122,13 @@ export const setProduct = <T extends IProduct>(payload: T):IAction<T> => ({
 });
 
 
-export const loadProduct = (id: IProduct["id"]) => {
+export const loadProduct = (id: IProduct["_id"]) => {
     return async function(dispatch: IDispatch) {
         dispatch(setFetchProduct({status: 'fetching', message: {en: `Loading product ${id}`, ru: `Загрузка продукта ${id}`}, errors: []}))
         try {
             new Promise((res, rej) => {
                 setTimeout(() => {
-                    const product = mockProducts.find(product => product.id === id)
+                    const product = mockProducts.find(product => product._id === id)
                     if (product) {
                         res(product)
                     } else (

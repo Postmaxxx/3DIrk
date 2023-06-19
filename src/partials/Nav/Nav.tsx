@@ -36,7 +36,7 @@ interface IProps extends IPropsState, IPropsActions {}
 const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersState, userState}): JSX.Element => {
     const _blur = useRef<HTMLDivElement>(null)
     const [nav, setNav] = useState<IPageItem[]>(pagesList)
-    const [expandedNavItems, setExpandedNavItems] = useState<IPageItem["id"][]>([])
+    const [expandedNavItems, setExpandedNavItems] = useState<IPageItem["_id"][]>([])
 	const [modal, setModal] = useState<boolean>(false)
     
 
@@ -52,11 +52,11 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
 	useEffect(() => {
         if (fibersState.load.status !== 'success' || fibersState.fibersList.length === 0) return
         const newNav = pagesList.map((page) => {
-            if (page.id === "main_fibers") {
+            if (page._id === "main_fibers") {
                 const newSub: IPageItem[] = fibersState.fibersList.map((fiber) => ({
                         name: fiber.short.name,
-                        path: `/fibers/${fiber.id}`,
-                        id: fiber.id,
+                        path: `/fibers/${fiber._id}`,
+                        _id: fiber._id,
                     }))
                 return {
                     ...page, 
@@ -144,9 +144,9 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
                                         </li>
                                         {fibersState.fibersList.map(fiber => {
                                             return (
-                                                <li key={fiber.id}>
+                                                <li key={fiber._id}>
                                                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
-                                                       to={`fibers/${fiber.id}`}
+                                                       to={`fibers/${fiber.short.name.en}`}
                                                    >
                                                        {fiber.short.name[lang]}
                                                    </NavLink>
@@ -283,10 +283,10 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
                                 <ul className="nav__subnav">
                                     {fibersState.fibersList.map((fiber) => {
                                         return (
-                                            <li key={fiber.id}>
+                                            <li key={fiber._id}>
                                                 <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} 
                                                     onClick={navToggleMobile}
-                                                    to={`fibers/${fiber.id}`}
+                                                    to={`fibers/${fiber._id}`}
                                                     end>
                                                     {fiber.short.name[lang]}
                                                     
