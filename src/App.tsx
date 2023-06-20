@@ -24,7 +24,6 @@ const LazyProduct = lazy(() => import("./pages/Product/Product"));
 const LazyNewsDetails = lazy(() => import("./pages/NewsDetails/NewsDetails"));
 const LazyFibersCompare= lazy(() => import("./pages/FibersCompare/FibersCompare"));
 const LazyOffliner= lazy(() => import("./components/Offliner/Offliner"));
-//const LazyUserBlock= lazy(() => import("./components/UserBlock/UserBlock"));
 const LazyNewsCreator = lazy(() => import("./pages/Admin/NewsCreator/NewsCreator"));
 const LazyColorCreator = lazy(() => import("./pages/Admin/ColorCreator/ColorCreator"));
 const LazyFiberCreator = lazy(() => import("./pages/Admin/FiberCreator/FiberCreator"));
@@ -55,7 +54,7 @@ const App:React.FC<IProps> = ({lang, setState}):JSX.Element => {
 
 	useEffect(() => {
 		setState.user.loginWithToken()
-		setState.colors.loadColors()
+		//setState.colors.loadColors()
 		setState.fibers.loadFibers()
 		//cart!!!
 	}, [])
@@ -93,9 +92,9 @@ const App:React.FC<IProps> = ({lang, setState}):JSX.Element => {
 				<Route path="/admin">
 					<Route path="news-create" element={<Suspense fallback={<Preloader />}><LazyNewsCreator /></Suspense>} />
 					<Route path="news-create/:newsId" element={<Suspense fallback={<Preloader />}><LazyNewsCreator /></Suspense>} />
-					<Route path="color-create" element={<Suspense fallback={<Preloader />}><LazyColorCreator /></Suspense>} />
 					<Route path="fiber-create" element={<Suspense fallback={<Preloader />}><LazyFiberCreator /></Suspense>} />
 					<Route path="fiber-create/:fiberId" element={<Suspense fallback={<Preloader />}><LazyFiberCreator /></Suspense>} />
+					<Route path="color-create" element={<Suspense fallback={<Preloader />}><LazyColorCreator /></Suspense>} />
 				</Route>
 
 
