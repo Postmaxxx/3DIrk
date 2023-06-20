@@ -6,20 +6,21 @@ import Delete from "../../components/Delete/Delete";
 
 interface IProps {
     lang: TLang
-    saveFiles: (files: File[], id: string) => void
     multiple: boolean
     id: string
 }
 
 export interface IAddFilesFunctions {
     clearAttachedFiles: () => void;
+    getFiles: () => File[]
 }
 
-const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, saveFiles, multiple, id}, ref) => {
+const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, multiple, id}, ref) => {
     useImperativeHandle(ref, () => ({
         clearAttachedFiles() {
-            setFiles([])
-        }    
+            clearFiles()
+        },
+        getFiles() {return files}
     }));
 
     console.log('addfiles rerender');
@@ -59,22 +60,22 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, saveFiles, multi
     
     const dragDrop = (e: DragEvent) => {
         preventDefaults(e)
+        if (!e.dataTransfer?.files) return 
         _dropArea.current?.classList.remove('active')
         if (multiple) {
             setFiles(prev => [...prev, ...(e.dataTransfer?.files as FileList)])
         } else {
-            const file: File = e.dataTransfer?.files[0] as File
-            setFiles([file])
+            setFiles([e.dataTransfer?.files[0]])
         }
     }
     
-    const onSelectFiles = () => {   
+    const onSelectFiles = () => {  
+        if (!_files.current?.files) return 
         _dropArea.current?.classList.remove('active')
         if (multiple) {
             setFiles(prev => [...prev, ...(_files.current?.files as FileList)])
         } else {
-            const file: File = (_files.current?.files as FileList)[0] as File
-            setFiles([file])
+            setFiles([(_files.current.files)[0]])
         }
     }
 
@@ -131,7 +132,6 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, saveFiles, multi
 
     useEffect(() => {
         previewFiles(files)
-        saveFiles(files, id)
     }, [files])
 
 

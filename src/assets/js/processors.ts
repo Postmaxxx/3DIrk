@@ -44,7 +44,9 @@ const errorsChecker = ({lang = 'en', min = 0, max = 1000}: IErrorsChecker) => {
 
     const result = (): string[] => errors
 
-    return { check, result, add }
+    const clear = () => {errors.splice(0, errors.length)}
+
+    return { check, result, add, clear }
 }
 
 //---------------------------------------------------------------

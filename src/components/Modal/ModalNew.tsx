@@ -1,30 +1,58 @@
 import './modal.scss'
 import { createPortal } from 'react-dom';
-import { useEffect } from 'react';
+import { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
 
 
 interface IProps {
-    visible: boolean
     escExit: boolean
-    close: () => void
+    onClose: () => void
     children: React.ReactNode
 }
 
 
+export interface IModalFunctions {
+    openModal: () => void;
+    closeModal: () => void;
+}
 
-const Modal: React.FC<IProps> = ({visible, escExit, close, children}) => {
+
+const ModalNew = forwardRef<IModalFunctions, IProps>(({escExit, onClose, children}, ref) => {
+    useImperativeHandle(ref, () => ({
+        openModal() {
+            open()
+        },
+        closeModal() {
+            close()
+        },
+    }));
+
+    
     const _modal = document.getElementById('modal') as HTMLElement;
+    const [visible, setVisible] = useState<boolean>(false)
+
 
     const modalKeyListener = (e: KeyboardEvent) => {
         escExit && e.keyCode === 27 && close();
     }
 
+
     useEffect(() => {
         document.addEventListener("keyup", modalKeyListener);
-        return () => {
-            document.removeEventListener("keyup", modalKeyListener);
-        }
+        return () => {document.removeEventListener("keyup", modalKeyListener)}
     }, [])
+
+
+
+    const close = () => {
+        setVisible(false)
+        //onClose()
+    }
+
+    
+    const open = () => {
+        setVisible(true)
+    }
+
 
     return _modal ? createPortal(
         <div className={visible ? "modal-window visible" : "modal-window"}>
@@ -46,7 +74,7 @@ const Modal: React.FC<IProps> = ({visible, escExit, close, children}) => {
         Node for Modal Windows was not found
     </div>
 
-}
+})
 
 
-export default Modal;
+export default ModalNew;
