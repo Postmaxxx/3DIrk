@@ -60,6 +60,10 @@ const App:React.FC<IProps> = ({lang, setState}):JSX.Element => {
 	}, [])
 
 
+	console.log('app rerender');
+	
+
+
 	return (
 		<HashRouter>
 			<Suspense fallback={<Preloader />}><LazyThemeSwitcher /></Suspense>

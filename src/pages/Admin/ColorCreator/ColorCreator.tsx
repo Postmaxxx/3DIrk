@@ -1,20 +1,19 @@
-import { IColorsState, IFetch, IFullState, ISendColor, TLang } from 'src/interfaces';
+import { IColorsState, IFetch, IFullState, IMessageModal, ISendColor, TLang } from 'src/interfaces';
 import './color-creator.scss'
-import React, {  useRef } from "react";
+import {  useRef, useMemo, FC, useEffect, useState, useCallback, memo } from "react";
 import { connect } from "react-redux";
-import { AnyAction, bindActionCreators } from "redux";
-import { Dispatch } from "redux";
+import { AnyAction, bindActionCreators, Dispatch } from "redux";
 import Modal from 'src/components/Modal/Modal';
 import MessageInfo from 'src/components/MessageInfo/MessageInfo';
-import { useEffect, useState } from "react";
 import { allActions } from "../../../redux/actions/all";
 import AddFiles, { IAddFilesFunctions } from 'src/components/AddFiles/AddFiles';
+import { errorsChecker, prevent } from 'src/assets/js/processors';
+import { resetFetch, clearModalMessage } from 'src/assets/js/consts';
 
 interface IPropsState {
     lang: TLang
-    colorsState: IColorsState
+    sendColor: IFetch
 }
-
 
 interface IPropsActions {
     setState: {
@@ -22,85 +21,32 @@ interface IPropsActions {
     }
 }
 
+interface IProps extends IPropsState, IPropsActions {}
 
 
-interface IProps extends IPropsState, IPropsActions {
-}
-
-
-const ColorCreator: React.FC<IProps> = ({lang, colorsState, setState}): JSX.Element => {
+const ColorCreator: FC<IProps> = ({lang, sendColor, setState}): JSX.Element => {
 
     const _name_en = useRef<HTMLInputElement>(null)
     const _name_ru = useRef<HTMLInputElement>(null)
-    //const _fileBig = useRef<File>(null)
-    //const _fileSmall = useRef<File>(null)
-    //const [urls, setUrls] = useState<{big: string, small: string}>({big:'', small: ''})
 	const [modal, setModal] = useState<boolean>(false)
-    const [message, setMessage] = useState({header: '', status: '', text: ['']})
+    const [message, setMessage] = useState<IMessageModal>(clearModalMessage)
     const addFileBig = useRef<IAddFilesFunctions>(null)
     const addFileSmall = useRef<IAddFilesFunctions>(null)
     const [files, setFiles] = useState<{big: File | undefined, small: File | undefined}>({big: undefined, small: undefined})
-    //const [file, setFile] = useState<File>()
 
-    const prevent = (e: React.MouseEvent<HTMLElement>) => {
-        e.preventDefault()
-        e.stopPropagation()
-    }
 
     const closeModal = () => {
 		setModal(false)
-        setMessage({
-            status: '',
-            header: colorsState.send.status,
-            text: ['']
-        })
-        if (colorsState.send.status === 'success') {
-            setState.colors.setSendColors({status: 'idle', message: {en: '', ru: ''}})
+        setMessage(clearModalMessage)
+        if (sendColor.status === 'success') {
             setState.colors.loadColors()
-        } else {
-            setState.colors.setSendColors({status: 'idle', message: {en: '', ru: ''}})
         }
+        setState.colors.setSendColors(resetFetch)// clear fetch status
 	}
 
 
-    const errorsCheck = () => {
-        const errors: string[] = []
-
-        const check = (ref:  React.RefObject<HTMLInputElement>) => {
-            if (ref.current?.value === '') {
-                ref.current.classList.add('error')
-                errors.push(ref.current?.dataset[lang] as string)
-            }
-        }
-
-        const result = () => {
-            return errors
-        }
-
-        return { check, result }
-    }
-
-
-
-
-    const saveFileSmall = (files: File[]) => {
-        const file = files[0]
-        setFiles(prev => {
-                return {
-                    ...prev,
-                    small: file
-                }
-        })
-    }
-
-    const saveFileBig = (files: File[]) => {
-        const file = files[0]
-        setFiles(prev => {
-                return {
-                    ...prev,
-                    big: file
-                }
-        })
+    const saveFile = (files: File[], id: string) => {//mantain just 1 file
+        setFiles(prev => ({...prev, [id]: files[0]}))
     }
 
 
@@ -109,28 +55,26 @@ const ColorCreator: React.FC<IProps> = ({lang, colorsState, setState}): JSX.Elem
         
         if (!_name_en.current || !_name_ru.current) return
 
-        const isErrors = errorsCheck();
-        isErrors.check(_name_en)
-        isErrors.check(_name_ru)
-
-        const fileErrors: string[] = []
+        const isErrors = useMemo(() => errorsChecker({lang, min:0, max: 50}), [lang])
+        isErrors.check(_name_en.current)
+        isErrors.check(_name_ru.current)
 
         if (!files.big) {
-            fileErrors.push(lang === 'en' ? 'File full is missed' : 'Отсутствует файл полноразмера')
+            isErrors.add(lang === 'en' ? 'File fullsize is missed' : 'Отсутствует файл полноразмера')
         }
         if (!files.small) {
-            fileErrors.push(lang === 'en' ? 'File preview is missed' : 'Отсутствует файл предпросмотра')
+            isErrors.add(lang === 'en' ? 'File preview is missed' : 'Отсутствует файл предпросмотра')
         }
+
         if (isErrors.result().length > 0) {
             setMessage({
                 header: lang === 'en' ? 'Errors in fields' : 'Найдены ошибки в полях',
                 status: 'error',
-                text: [...isErrors.result(), ...fileErrors]
+                text: isErrors.result()
             })
             setModal(true)
             return
         }
-
 
         const color: ISendColor = {
             name: {
@@ -142,8 +86,7 @@ const ColorCreator: React.FC<IProps> = ({lang, colorsState, setState}): JSX.Elem
                 small: files.small as File,
             }
         }
-
-        // to backend 
+        
         setState.colors.sendColor(color)
     }
 
@@ -151,64 +94,72 @@ const ColorCreator: React.FC<IProps> = ({lang, colorsState, setState}): JSX.Elem
     
     useEffect(() => {
         if (!_name_en.current || !_name_ru.current) return
-        if (colorsState.send.status === 'success' || colorsState.send.status === 'error') {
-            const errors: string[] = colorsState.send.errors?.map(e => e[lang]) || []
+        if (sendColor.status === 'success' || sendColor.status === 'error') {
+            const errors: string[] = sendColor.errors?.map(e => e[lang]) || []
             setMessage({
-                header: colorsState.send.status === 'success' ? lang === 'en' ? 'Success' : 'Успех' : lang === 'en' ? 'Error' : 'Ошибка',
-                status: colorsState.send.status,
-                text: [colorsState.send.message[lang], ...errors]
+                header: sendColor.status === 'success' ? lang === 'en' ? 'Success' : 'Успех' : lang === 'en' ? 'Errors' : 'Ошибки',
+                status: sendColor.status,
+                text: [sendColor.message[lang], ...errors]
             })
             setModal(true)
-            if (colorsState.send.status === 'success') {
+            if (sendColor.status === 'success') {
                 _name_en.current.value = ''
                 _name_ru.current.value = ''
                 addFileBig.current?.clearAttachedFiles()
                 addFileSmall.current?.clearAttachedFiles()
             }
         }
+    }, [sendColor.status])
 
-    }, [colorsState.send.status])
 
+
+    console.log('color rendered');
     
+    
+    const render = useMemo(() => (
+        <div className="container">
+            <h1>{lang === 'en' ? 'Add new color' : 'Добавление нового цвета'}</h1>
+            <form>
+
+                <div className="input-block_header">
+                    <span></span>
+                    <h3 className='lang'>EN</h3>
+                    <h3 className='lang'>RU</h3>
+                </div>
+                <div className="input-block">
+                    <label htmlFor="header_en">{lang === 'en' ? 'Name' : 'Название'}:</label>
+                    <div className="input__wrapper">
+                        <input type="text" id="header_en" ref={_name_en} data-ru="Название EN" data-en="Name EN"/>
+                    </div>
+                    <div className="input__wrapper">
+                        <input type="text" id="header_ru" ref={_name_ru} data-ru="Название RU" data-en="Name RU"/>
+                    </div>
+                </div>
+                <div className="input-block_header">
+                    <span></span>
+                    <h3 className='lang'>{lang === 'en' ? "FULLSIZE" : "ПОЛНОРАЗМЕР"}</h3>
+                    <h3 className='lang'>{lang === 'en' ? "PREVIEW" : "ПРЕДПРОСМОТР"}</h3>
+                </div>
+                <div className="input-block">
+                    <label htmlFor="url_big">{lang === 'en' ? 'Image' : 'Картинка'}:</label>
+                    <div className="input__wrapper">
+                        <AddFiles saveFiles={saveFile} lang={lang} ref={addFileBig} multiple={false} id='big'/>
+                    </div>
+                    <div className="input__wrapper">
+                        <AddFiles saveFiles={saveFile} lang={lang} ref={addFileSmall} multiple={false} id='small'/>
+                    </div>
+                </div>
+
+                <button className='button_blue post' disabled={false} onClick={e => onSubmit(e)}>{lang === 'en' ? 'Add color' : "Добавить цвет"}</button>
+            </form>
+        </div>)
+    , [lang])
+
+
     return (
         <div className="page page_color-add">
             <div className="container_page">
-                <div className="container">
-                    <h1>{lang === 'en' ? 'Add new color' : 'Добавление нового цвета'}</h1>
-                    <form>
-
-                        <div className="input-block_header">
-                            <span></span>
-                            <h3 className='lang'>EN</h3>
-                            <h3 className='lang'>RU</h3>
-                        </div>
-                        <div className="input-block">
-                            <label htmlFor="header_en">{lang === 'en' ? 'Name' : 'Название'}:</label>
-                            <div className="input__wrapper">
-                                <input type="text" id="header_en" ref={_name_en} data-ru="Название EN" data-en="Name EN"/>
-                            </div>
-                            <div className="input__wrapper">
-                                <input type="text" id="header_ru" ref={_name_ru} data-ru="Название RU" data-en="Name RU"/>
-                            </div>
-                        </div>
-                        <div className="input-block_header">
-                            <span></span>
-                            <h3 className='lang'>{lang === 'en' ? "FULLSIZE" : "ПОЛНОРАЗМЕР"}</h3>
-                            <h3 className='lang'>{lang === 'en' ? "PREVIEW" : "ПРЕДПРОСМОТР"}</h3>
-                        </div>
-                        <div className="input-block">
-                            <label htmlFor="url_big">{lang === 'en' ? 'Image' : 'Картинка'}:</label>
-                            <div className="input__wrapper">
-                                <AddFiles saveFiles={saveFileBig} lang={lang} ref={addFileBig} multiple={false} id='big'/>
-                            </div>
-                            <div className="input__wrapper">
-                                <AddFiles saveFiles={saveFileSmall} lang={lang} ref={addFileSmall} multiple={false} id='small'/>
-                            </div>
-                        </div>
-
-                        <button className='button_blue post' disabled={false} onClick={e => onSubmit(e)}>{lang === 'en' ? 'Add color' : "Добавить цвет"}</button>
-                    </form>
-                </div>
+                {render}
                 <Modal {...{visible: modal, close: closeModal, escExit: true}}>
                     <MessageInfo {...{  
                             status: message.status,
@@ -227,7 +178,7 @@ const ColorCreator: React.FC<IProps> = ({lang, colorsState, setState}): JSX.Elem
 
 const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
-    colorsState: state.colors,
+    sendColor: state.colors.send,
 })
 
 

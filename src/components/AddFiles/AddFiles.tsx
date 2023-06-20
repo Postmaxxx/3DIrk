@@ -6,7 +6,7 @@ import Delete from "../../components/Delete/Delete";
 
 interface IProps {
     lang: TLang
-    saveFiles: (files: File[]) => void
+    saveFiles: (files: File[], id: string) => void
     multiple: boolean
     id: string
 }
@@ -20,7 +20,10 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, saveFiles, multi
         clearAttachedFiles() {
             setFiles([])
         }    
-      }));
+    }));
+
+    console.log('addfiles rerender');
+    
 
     const _dropArea = useRef<HTMLDivElement>(null)
     const _files = useRef<HTMLInputElement>(null)
@@ -128,7 +131,7 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, saveFiles, multi
 
     useEffect(() => {
         previewFiles(files)
-        saveFiles(files)
+        saveFiles(files, id)
     }, [files])
 
 
