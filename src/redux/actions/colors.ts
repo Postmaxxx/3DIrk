@@ -69,7 +69,6 @@ export const sendColor = (color: ISendColor) => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
         const token = getState().user.token
         dispatch(setSendColors({status: 'fetching', message: {en: `Saving color`, ru: 'Сохранение цвета'}}))
-        
         const imageUrls = {} as {full:string, small: string}
         
         // upload to imgbb imageBig

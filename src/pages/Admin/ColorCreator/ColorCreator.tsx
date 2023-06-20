@@ -3,13 +3,11 @@ import './color-creator.scss'
 import {  useRef, useMemo, FC, useEffect, useState, useCallback, memo } from "react";
 import { connect } from "react-redux";
 import { AnyAction, bindActionCreators, Dispatch } from "redux";
-import MessageInfo from 'src/components/MessageInfo/MessageInfo';
+import MessageInfoNew, { IMessageInfoFunctions } from 'src/components/MessageInfo/MessageInfoNew';
 import { allActions } from "../../../redux/actions/all";
 import AddFiles, { IAddFilesFunctions } from 'src/components/AddFiles/AddFiles';
 import { errorsChecker, prevent } from 'src/assets/js/processors';
-import { resetFetch, clearModalMessage } from 'src/assets/js/consts';
-import { modalCreator } from 'src/components/Modal/modalCreator';
-import { messageCreator } from 'src/components/MessageInfo/messageCreator';
+import { resetFetch, clearModalMessage, timeModalClosing } from 'src/assets/js/consts';
 import ModalNew, { IModalFunctions } from 'src/components/Modal/ModalNew';
 
 interface IPropsState {
@@ -27,61 +25,48 @@ interface IProps extends IPropsState, IPropsActions {}
 
 
 const ColorCreator: FC<IProps> = ({lang, sendColor, setState}): JSX.Element => {
-
     const _name_en = useRef<HTMLInputElement>(null)
     const _name_ru = useRef<HTMLInputElement>(null)
     const addFileBig = useRef<IAddFilesFunctions>(null)
     const addFileSmall = useRef<IAddFilesFunctions>(null)
     const modal = useRef<IModalFunctions>(null)
-
+    const message = useRef<IMessageInfoFunctions>(null)
+    
 
     const closeModal = () => {
         modal.current?.closeModal()
-        
-        //message.update(clearModalMessage)
+        setTimeout(() => message.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
         if (sendColor.status === 'success') {
-            setState.colors.loadColors()
+            setState.colors.loadColors() //reload colors if update db was succsessfull
         }
         setState.colors.setSendColors(resetFetch)// clear fetch status
 	}
 
-    const isErrors = useMemo(() => errorsChecker({lang, min:2, max: 50}), [lang])
-
-    //const modal = modalCreator({onClose: closeModal})
-    const message = messageCreator({buttonText: lang === 'en' ? 'Close' : "Закрыть", buttonAction: closeModal})
-    
-    const messageComp = message.create()
-    //const modalComp = modal.create(messageComp)
-
-
+    const errChecker = useMemo(() => errorsChecker({lang, min:2, max: 50}), [lang])
 
     const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
         prevent(e)
-        if (!_name_en.current || !_name_ru.current || !modal.current) return
+        if (!_name_en.current || !_name_ru.current || !modal.current || !message.current) return
         
-        isErrors.check(_name_en.current)
-        isErrors.check(_name_ru.current)
+        errChecker.check(_name_en.current)
+        errChecker.check(_name_ru.current)
         
         if (!addFileBig.current?.getFiles().length) {
-            isErrors.add(lang === 'en' ? 'File fullsize is missed' : 'Отсутствует файл полноразмера')
+            errChecker.add(lang === 'en' ? 'File fullsize is missed' : 'Отсутствует файл полноразмера')
         }
         if (!addFileSmall.current?.getFiles().length) {
-            isErrors.add(lang === 'en' ? 'File preview is missed' : 'Отсутствует файл предпросмотра')
+            errChecker.add(lang === 'en' ? 'File preview is missed' : 'Отсутствует файл предпросмотра')
         }
         
-        if (isErrors.result().length > 0) {
-            /*message.update({                        
+        if (errChecker.result().length > 0) {
+            message.current.update({                        
                 header: lang === 'en' ? 'Errors in fields' : 'Найдены ошибки в полях',
                 status: 'error',
-                text: [...isErrors.result()]
-            })*/
-            
-            //modal.open()
-
+                text: [...errChecker.result()]
+            })
             modal.current.openModal()
-            
+            errChecker.clear()
             return
-            isErrors.clear()
         }
         
         const color: ISendColor = {
@@ -99,28 +84,26 @@ const ColorCreator: FC<IProps> = ({lang, sendColor, setState}): JSX.Element => {
     }
 
 
-    
     useEffect(() => {
-        if (!_name_en.current || !_name_ru.current) return
+        if (!_name_en.current || !_name_ru.current || !message.current || !modal.current) return
         if (sendColor.status === 'success' || sendColor.status === 'error') {
             const errors: string[] = sendColor.errors?.map(e => e[lang]) || []
-            /*message.update({                        
+            message.current?.update({                        
                 header: sendColor.status === 'success' ? lang === 'en' ? 'Success' : 'Успех' : lang === 'en' ? 'Errors' : 'Ошибки',
                 status: sendColor.status,
                 text: [sendColor.message[lang], ...errors]
             })
-            modal.open()
+            modal.current.openModal()
             if (sendColor.status === 'success') {
                 _name_en.current.value = ''
                 _name_ru.current.value = ''
                 addFileBig.current?.clearAttachedFiles()
                 addFileSmall.current?.clearAttachedFiles()
-            }*/
+            }
         }
     }, [sendColor.status])
 
-    console.log('color rendered');
-    
+
     const render = useMemo(() => (
         <div className="container">
             <h1>{lang === 'en' ? 'Add new color' : 'Добавление нового цвета'}</h1>
@@ -153,18 +136,17 @@ const ColorCreator: FC<IProps> = ({lang, sendColor, setState}): JSX.Element => {
                         <AddFiles lang={lang} ref={addFileSmall} multiple={false} id='small'/>
                     </div>
                 </div>
-                <button className='button_blue post' disabled={false} onClick={e => onSubmit(e)}>{lang === 'en' ? 'Add color' : "Добавить цвет"}</button>
+                <button className='button_blue post' disabled={sendColor.status === 'fetching'} onClick={e => onSubmit(e)}>{lang === 'en' ? 'Add color' : "Добавить цвет"}</button>
             </form>
-        </div>)
-    , [lang])
+        </div>), [lang, sendColor.status])
 
 
     return (
         <div className="page page_color-add">
             <div className="container_page">
                 {render}
-                <ModalNew escExit={true} onClose={closeModal} ref={modal}>
-                    {messageComp}
+                <ModalNew escExit={true} ref={modal}>
+                    <MessageInfoNew buttonText={lang === 'en' ? `Close` : `Закрыть`} buttonAction={closeModal} ref={message}/>
                 </ModalNew>
             </div>
         </div>
@@ -185,6 +167,5 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>):IPropsActions => ({
 	}
 })
   
-
     
 export default connect(mapStateToProps, mapDispatchToProps)(ColorCreator)

@@ -2,6 +2,8 @@ import { IFetch, IMessageModal } from "src/interfaces"
 
 const delayBetweenImagesPost = 300
 
+const timeModalClosing = 500
+
 const clearModalMessage: IMessageModal = {
     status: '',
     header: '',
@@ -17,4 +19,4 @@ const resetFetch: IFetch = {
 
 
 
-export {delayBetweenImagesPost, clearModalMessage, resetFetch}
+export {delayBetweenImagesPost, clearModalMessage, resetFetch, timeModalClosing}

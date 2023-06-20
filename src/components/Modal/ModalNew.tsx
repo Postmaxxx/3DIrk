@@ -5,7 +5,7 @@ import { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
 
 interface IProps {
     escExit: boolean
-    onClose: () => void
+    onClose?: () => void
     children: React.ReactNode
 }
 
@@ -64,7 +64,7 @@ const ModalNew = forwardRef<IModalFunctions, IProps>(({escExit, onClose, childre
                 </svg>
             </button>
 			<div className="content">
-                {visible ? children : null}
+                {children}
             </div>
         </div>,
         _modal    

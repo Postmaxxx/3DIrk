@@ -185,9 +185,6 @@
             margin-top: 30px;
             width: fit-content; 
             background-color: var(--main_vv);
-            &:disabled {
-                opacity: 0.4;
-            }
 
             @include respond-to(xs) {
                 width: 100%;
