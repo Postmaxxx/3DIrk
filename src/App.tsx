@@ -95,6 +95,7 @@ const App:React.FC<IProps> = ({lang, setState}):JSX.Element => {
 					<Route path="news-create/:newsId" element={<Suspense fallback={<Preloader />}><LazyNewsCreator /></Suspense>} />
 					<Route path="color-create" element={<Suspense fallback={<Preloader />}><LazyColorCreator /></Suspense>} />
 					<Route path="fiber-create" element={<Suspense fallback={<Preloader />}><LazyFiberCreator /></Suspense>} />
+					<Route path="fiber-create/:fiberId" element={<Suspense fallback={<Preloader />}><LazyFiberCreator /></Suspense>} />
 				</Route>
 
 

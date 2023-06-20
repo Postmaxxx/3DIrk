@@ -21,7 +21,7 @@ const News:React.FC<IProps> = ({newsPiece, lang}):JSX.Element => {
                 }
             </div>
             <div className="news_text">
-                <span>{String(newsPiece.date)}</span>
+                <span>{String(newsPiece.date.toISOString().slice(0, 10))}</span>
                 <h3>{newsPiece.header[lang]}</h3>
             </div>
             <p>{newsPiece.short[lang]}</p>

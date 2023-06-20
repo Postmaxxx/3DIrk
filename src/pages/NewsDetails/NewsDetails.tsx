@@ -11,6 +11,9 @@ import { allActions } from "../../redux/actions/all";
 import Delete from 'src/components/Delete/Delete';
 import Modal from "../../components/Modal/Modal";
 import MessageInfo from 'src/components/MessageInfo/MessageInfo';
+import { loadOneNews } from 'src/redux/actions/news';
+import Edit from 'src/components/tiny/IconEdit/IconEdit';
+import IconEdit from 'src/components/tiny/IconEdit/IconEdit';
 
 
 interface IPropsState {
@@ -38,7 +41,7 @@ const NewsDetails: React.FC<IProps> = ({lang, setState, send, isAdmin }): JSX.El
     const [message, setMessage] = useState<IMessageModal>({header: '', status: '', text: []})
 
     const loadNews = async (_id: string) => {
-        const news = await setState.news.loadOneNews(_id)
+        const news = await loadOneNews(_id)
         if (news.status === 'success') {
             setNewsItem(news.data)
         }
@@ -92,7 +95,7 @@ const NewsDetails: React.FC<IProps> = ({lang, setState, send, isAdmin }): JSX.El
                             {newsItem ? 
                                 <>
                                     <h1>{newsItem.header[lang]}</h1>
-                                    <span className='date'>{String(newsItem.date)}</span>
+                                    <span className='date'>{String(newsItem.date.toISOString().slice(0, 10))}</span>
                                     <div className="news__details">
                                         <>
                                             {newsItem.text[lang].split('\n').map((text, i) => {
@@ -111,10 +114,10 @@ const NewsDetails: React.FC<IProps> = ({lang, setState, send, isAdmin }): JSX.El
                             }
                             <div className="buttons">
                                 {isAdmin && newsItem ? 
-                                    <NavLink className="button_blue button_edit"
+                                    <NavLink className="button_edit"
                                         to={`../../admin/news-create/${newsItem._id}`}
                                     >
-                                        edit
+                                        <IconEdit />
                                     </NavLink>
                                 :
                                     null    

@@ -1,4 +1,4 @@
-import { IColorsState, IFetch, IFiber, IFiberParam, IFiberProperties, IFiberToStore, IFibersState, IFullState, IProsCons, TLang, TLangText } from 'src/interfaces';
+import { IColorsState, IFiberParam, IFibersState, IFullState, IProsCons, ISendFiber, TLang, TLangText } from 'src/interfaces';
 import './fiber-creator.scss'
 import React, {  useRef, useMemo } from "react";
 import { connect } from "react-redux";
@@ -13,6 +13,7 @@ import Selector from 'src/components/tiny/Selector/Selector';
 import { selector10, selector3, selector5 } from 'src/assets/data/selectorValues';
 import { fibersProperties } from 'src/assets/data/fibersProperties';
 import Preloader from 'src/components/Preloaders/Preloader';
+import { useNavigate, useParams } from 'react-router-dom';
 
 interface IPropsState {
     lang: TLang
@@ -33,7 +34,11 @@ interface IProps extends IPropsState, IPropsActions {}
 
 
 const ColorCreator: React.FC<IProps> = ({lang, fibersState, setState, colorsState}): JSX.Element => {
-
+    
+    const navigate = useNavigate()
+    const paramFiberId = useParams().fiberId || ''
+    const _addPro = useRef<HTMLButtonElement>(null)
+    const _addCon = useRef<HTMLButtonElement>(null)
     const _name_en = useRef<HTMLInputElement>(null)
     const _name_ru = useRef<HTMLInputElement>(null)
     const _name_short_en = useRef<HTMLInputElement>(null)
@@ -51,6 +56,7 @@ const ColorCreator: React.FC<IProps> = ({lang, fibersState, setState, colorsStat
     const [selectedColors, setSelectedColors] = useState<{[key: string]: boolean}>({})
     const _spec = useRef<HTMLDivElement>(null)
     const _descr = useRef<HTMLDivElement>(null)
+    const [changeImages, setChangeImages] = useState<boolean>(true)
 
     const data10 = useMemo(() => selector10, [])
     const data5 = useMemo(() => selector5, [])
@@ -72,6 +78,7 @@ const ColorCreator: React.FC<IProps> = ({lang, fibersState, setState, colorsStat
         })
         if (fibersState.send.status === 'success') {
             setState.fibers.setSendFibers({status: 'idle', message: {en: '', ru: ''}})
+            setState.fibers.loadFibers()
             window.location.reload()
         } else {
             setState.fibers.setSendFibers({status: 'idle', message: {en: '', ru: ''}})
@@ -128,15 +135,6 @@ const ColorCreator: React.FC<IProps> = ({lang, fibersState, setState, colorsStat
     }, [fibersState.send.status])
 
 
-
-
-    useEffect(() => {
-        if (colorsState.load.status !== 'fetching' && colorsState.load.status !== 'success') {
-            setState.colors.loadColors()
-        }    
-    }, [colorsState.load.status])
-
-
     const saveValues = ({id, e}: {id: string, e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>}) => {
         if (e.target.tagName === 'INPUT') {
             e.target.parentElement?.classList.remove('error')
@@ -147,11 +145,11 @@ const ColorCreator: React.FC<IProps> = ({lang, fibersState, setState, colorsStat
     }
 
 
-    const onAddPro = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const onAddProCon = (e: React.MouseEvent<HTMLButtonElement>, _target: React.RefObject<HTMLElement>) => {
         prevent(e)
-        const newImageBlock = document.createElement('div')
-        newImageBlock.classList.add('block_procon')
-        newImageBlock.classList.add('full-width')
+        const newProConBlock = document.createElement('div')
+        newProConBlock.classList.add('block_procon')
+        newProConBlock.classList.add('full-width')
 
         const wrEn = document.createElement('div'); wrEn.classList.add('input__wrapper')
         const labelUrlEn = document.createElement('label'); labelUrlEn.innerText = lang === 'en' ? 'Value EN' : 'Значение EN'
@@ -168,49 +166,17 @@ const ColorCreator: React.FC<IProps> = ({lang, fibersState, setState, colorsStat
         delBtn.innerHTML = 'X';
         delBtn.classList.add('button_blue');
         delBtn.classList.add('del');
-        delBtn.onclick = (e) => onDeleteProsCons(e as unknown as React.MouseEvent<HTMLButtonElement, MouseEvent>)
+        delBtn.onclick = (e) => onDeleteProCon(e as unknown as React.MouseEvent<HTMLButtonElement, MouseEvent>)
 
-        newImageBlock.appendChild(wrEn)
-        newImageBlock.appendChild(wrRu)
-        newImageBlock.appendChild(delBtn)
-        if (!_pros.current) return
-        _pros.current.appendChild(newImageBlock)
+        newProConBlock.appendChild(wrEn)
+        newProConBlock.appendChild(wrRu)
+        newProConBlock.appendChild(delBtn)
+        if (!_target.current) return
+        _target.current.appendChild(newProConBlock)
     }
 
 
-
-    const onAddCon = (e: React.MouseEvent<HTMLButtonElement>) => {
-        prevent(e)
-        const newImageBlock = document.createElement('div')
-        newImageBlock.classList.add('block_procon')
-        newImageBlock.classList.add('full-width')
-
-        const wrEn = document.createElement('div'); wrEn.classList.add('input__wrapper')
-        const labelUrlEn = document.createElement('label'); labelUrlEn.innerText = lang === 'en' ? 'Value EN' : 'Значение EN'
-        const inputEn = document.createElement('input'); inputEn.setAttribute('data-content','en')
-        wrEn.appendChild(labelUrlEn); wrEn.appendChild(inputEn)
-
-        const wrRu = document.createElement('div'); wrRu.classList.add('input__wrapper')
-        const labelUrlRu = document.createElement('label'); labelUrlRu.innerText = lang === 'en' ? 'Value RU' : 'Значение RU'
-        const inputEu = document.createElement('input'); inputEu.setAttribute('data-content','ru')
-        wrRu.appendChild(labelUrlRu); wrRu.appendChild(inputEu)
-        
-
-        const delBtn = document.createElement('button');
-        delBtn.innerHTML = 'X';
-        delBtn.classList.add('button_blue');
-        delBtn.classList.add('del');
-        delBtn.onclick = (e) => onDeleteProsCons(e as unknown as React.MouseEvent<HTMLButtonElement, MouseEvent>)
-
-        newImageBlock.appendChild(wrEn)
-        newImageBlock.appendChild(wrRu)
-        newImageBlock.appendChild(delBtn)
-        if (!_cons.current) return
-        _cons.current.appendChild(newImageBlock)
-    }
-
-
-    const onDeleteProsCons = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const onDeleteProCon = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         prevent(e)
         const parent = e.currentTarget?.parentNode as HTMLElement
         parent.remove();
@@ -236,10 +202,20 @@ const ColorCreator: React.FC<IProps> = ({lang, fibersState, setState, colorsStat
 
         const allErrors = errorsChecker(); 
         
+        /*const descr: Pick<IFiber, 'name' | 'text' | 'short'> = {
+            name: {en: '', ru: ''},
+            text: {en: '', ru: ''},
+            short: {
+                name: {en: '', ru: ''},
+                text: {en: '', ru: ''},
+            }
+        }*/
         _descr.current.querySelectorAll('input, textarea').forEach(item => {//check DESCRIPTION
             allErrors.check(item as HTMLInputElement | HTMLTextAreaElement)
+            //if (item.id == 'name_en') {descr.name.en = (item as HTMLInputElement | HTMLTextAreaElement).value}
+
         })
-        
+
 
         const allSpec: {[key: string]: string} = {};
         _spec.current.querySelectorAll('input, select').forEach(item => { //check specifications      
@@ -248,7 +224,7 @@ const ColorCreator: React.FC<IProps> = ({lang, fibersState, setState, colorsStat
         })
 
 
-        if (files.length === 0) {//check images
+        if (files.length === 0 && changeImages) {//check images
             allErrors.add(lang === 'en' ? 'Images missed' : 'Картинки отсутствуют')
         }
        
@@ -291,7 +267,8 @@ const ColorCreator: React.FC<IProps> = ({lang, fibersState, setState, colorsStat
 
 
         //create new fiberToStore
-        const newFiber: IFiberToStore = {
+        const newFiber: ISendFiber = {
+            _id: paramFiberId,
             name: {en: _name_en.current.value, ru: _name_ru.current.value},
             text: {en: _text_en.current.value, ru: _text_ru.current.value},
             short: {
@@ -304,10 +281,94 @@ const ColorCreator: React.FC<IProps> = ({lang, fibersState, setState, colorsStat
             proscons
         }
 
-        
         // to backend 
-        setState.fibers.sendFiber(newFiber)
+        if (paramFiberId) {
+            setState.fibers.editFiber(newFiber, changeImages)
+        } else {
+            setState.fibers.sendFiber(newFiber)
+        }        
     }
+
+
+
+
+
+
+    const fillValues = (_id : string) => {      
+        const sourceFiber = fibersState.fibersList.find(item => item._id === _id)
+        if (!sourceFiber) {
+            alert('Editing fiber was not found, switching to creating mode')
+            navigate('/admin/fiber-create', { replace: true })
+            window.location.reload()
+            return
+        }
+        if (!_name_en.current || !_name_ru.current || !_name_short_en.current || !_name_short_ru.current || !_text_en.current || 
+            !_text_ru.current || !_text_short_en.current || !_text_short_ru.current || !_spec.current || !_descr.current || !_pros.current || !_cons.current) return
+        //description
+        _name_en.current.value = sourceFiber.name.en
+        _name_ru.current.value = sourceFiber.name.ru
+        _text_en.current.value = sourceFiber.text.en
+        _text_ru.current.value = sourceFiber.text.ru
+        _name_short_en.current.value = sourceFiber.short.name.en
+        _name_short_ru.current.value = sourceFiber.short.name.ru
+        _text_short_en.current.value = sourceFiber.short.text.en
+        _text_short_ru.current.value = sourceFiber.short.text.ru
+        //specifications
+        _spec.current.querySelectorAll('input, select').forEach(item => {
+            (item as HTMLInputElement | HTMLSelectElement).value = String(sourceFiber.params[item.id])
+        })
+
+        //proscons
+        _pros.current.innerHTML = '' //clear to avoid duplicate while rerendering
+        _cons.current.innerHTML = ''
+        sourceFiber.proscons.pros.forEach(item => { //first stage - add all inputs
+            if (_addPro.current) {
+                _addPro.current.click()
+            }
+        })
+        sourceFiber.proscons.cons.forEach(item => {
+            if (_addCon.current) {
+                _addCon.current.click()
+            }
+        })
+
+
+        const prosInputs = _pros.current.querySelectorAll('input') //second stage - fill all inputs 
+        sourceFiber.proscons.pros.forEach((item, i) => {
+            prosInputs[i * 2].value = item.en
+            prosInputs[i * 2 + 1].value = item.ru
+        })
+
+        const consInputs = _cons.current.querySelectorAll('input')
+        sourceFiber.proscons.cons.forEach((item, i) => {
+            consInputs[i * 2].value = item.en
+            consInputs[i * 2 + 1].value = item.ru
+        })
+
+        //colors 
+        const initialColors = sourceFiber.colors.reduce((acc, item) => {
+            return {...acc, [item]: true}
+        }, {} as {[key: string]: boolean})
+        setSelectedColors(initialColors)
+        
+
+    }
+
+
+    const onChangeImages = (e: React.MouseEvent<HTMLElement>) => {
+        prevent(e)
+        setChangeImages(prev => !prev)
+    }
+
+
+
+    useEffect(() => { //if edit
+        if (!paramFiberId || fibersState.load.status !== 'success') {
+            return setChangeImages(true)
+        }
+        fillValues(paramFiberId)
+        setChangeImages(false)
+    }, [fibersState.load.status, paramFiberId])
 
     
     return (
@@ -392,11 +453,11 @@ const ColorCreator: React.FC<IProps> = ({lang, fibersState, setState, colorsStat
 
                         <h2 className='section-header full-width'>{lang === 'en' ? 'PROS' : 'ПЛЮСЫ'}</h2>           
                         <div className="proscons pros" ref={_pros}></div>
-                        <button className='button_blue add' onClick={e => onAddPro(e)}>{lang === 'en' ? '+' : '+'}</button>
+                        <button className='button_blue add' ref={_addPro} onClick={e => onAddProCon(e, _pros)}>{lang === 'en' ? '+' : '+'}</button>
                         
                         <h2 className='section-header full-width'>{lang === 'en' ? 'CONS' : 'МИНУСЫ'}</h2>           
                         <div className="proscons cons" ref={_cons}></div>
-                        <button className='button_blue add' onClick={e => onAddCon(e)}>{lang === 'en' ? '+' : '+'}</button>
+                        <button className='button_blue add' ref={_addCon} onClick={e => onAddProCon(e, _cons)}>{lang === 'en' ? '+' : '+'}</button>
 
 
 
@@ -422,11 +483,17 @@ const ColorCreator: React.FC<IProps> = ({lang, fibersState, setState, colorsStat
                         </div>
 
 
+                        {changeImages ? 
+                            <>
+                                <h2 className='section-header full-width'>{lang === 'en' ? 'IMAGES' : 'ИЗОБРАЖЕНИЯ'}</h2>           
+                                <AddFiles saveFiles={(files: File[]) => saveFiles(files)} lang={lang} ref={addFiles} multiple={true} id='big'/>
+                                {paramFiberId && <button className='button_blue change-images' onClick={onChangeImages}>Do not change images</button>}
+                            </>
+                        :
+                            <>{paramFiberId && <button className='button_blue change-images' onClick={onChangeImages}>Change all images</button>}</>
+                        }
 
-                        <h2 className='section-header full-width'>{lang === 'en' ? 'Images' : 'Изображения'}</h2>           
-                        <AddFiles saveFiles={(files: File[]) => saveFiles(files)} lang={lang} ref={addFiles} multiple={true} id='big'/>
-
-                        <button className='button_blue post' disabled={fibersState.send.status === 'fetching'} onClick={e => onSubmit(e)}>{lang === 'en' ? 'Add fiber' : "Добавить материал"}</button>
+                        <button className='button_blue post' disabled={fibersState.send.status === 'fetching'} onClick={e => onSubmit(e)}>{lang === 'en' ? paramFiberId ? 'Save fiber' : 'Post fiber' : paramFiberId ? "Сохранить материал" : "Отправить материал"}</button>
                     </form>
                 </div>
                 <Modal {...{visible: modal, close: closeModal, escExit: true}}>

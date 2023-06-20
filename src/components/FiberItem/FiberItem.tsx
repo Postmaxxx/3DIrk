@@ -8,6 +8,7 @@ import { useState, useEffect, useRef } from 'react'
 import Modal from '../Modal/Modal';
 import ModalImage from '../MessageImage/MessageImage';
 import Delete from '../Delete/Delete';
+import IconEdit from '../tiny/IconEdit/IconEdit';
 
 
 interface IProps {
@@ -73,6 +74,15 @@ const FiberItem = ({fiber, lang, colors, isAdmin, onDelete}: IProps) => {
 					</div>
 					
 					<div className="buttons">
+						{isAdmin ? 
+                            <NavLink className="button_edit"
+                                to={`../../admin/fiber-create/${fiber._id}`}
+                            >
+                                <IconEdit />
+                            </NavLink>
+                            :
+                            null    
+                        }
 						<NavLink
 							className="button_blue link_compareList"
 							to="/fibers/compare">

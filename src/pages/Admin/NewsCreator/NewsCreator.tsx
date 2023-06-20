@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { allActions } from "../../../redux/actions/all";
 import AddFiles, { IAddFilesFunctions } from 'src/components/AddFiles/AddFiles';
 import { useParams } from 'react-router-dom';
+import { loadOneNews } from 'src/redux/actions/news';
 
 interface IPropsState {
     lang: TLang
@@ -33,19 +34,13 @@ interface IProps extends IPropsState, IPropsActions {
 const NewsCreator: React.FC<IProps> = ({lang, userState, sending, setState}): JSX.Element => {
     const paramNewsId = useParams().newsId || ''
     const addFiles = useRef<IAddFilesFunctions>(null)
-    const _header_en = useRef<HTMLInputElement>(null)
-    const _header_ru = useRef<HTMLInputElement>(null)
-    const _short_en = useRef<HTMLTextAreaElement>(null)
-    const _short_ru = useRef<HTMLTextAreaElement>(null)
-    const _date = useRef<HTMLInputElement>(null)
-    const _text_en = useRef<HTMLTextAreaElement>(null)
-    const _text_ru = useRef<HTMLTextAreaElement>(null)
 	const [modal, setModal] = useState<boolean>(false)
     const [message, setMessage] = useState({header: '', status: '', text: ['']})
-    const [news, setNews] = useState<Omit<INewsItem, "images"> & {images: File[]}>({
+    const [changeImages, setChangeImages] = useState<boolean>(true)
+    const [newsItem, setNewsItem] = useState<Omit<INewsItem, "images"> & {images: File[]}>({
         _id: '', 
         header: {en: '', ru: ''}, 
-        date: '', 
+        date: new Date(), 
         short: {en: '', ru: ''},
         text: {en: '', ru: ''},
         images: []
@@ -57,6 +52,10 @@ const NewsCreator: React.FC<IProps> = ({lang, userState, sending, setState}): JS
     }
 
 
+    const onChangeImages = (e: React.MouseEvent<HTMLElement>) => {
+        prevent(e)
+        setChangeImages(prev => !prev)
+    }
     
     const closeModal = () => {
 		setModal(false)
@@ -84,62 +83,49 @@ const NewsCreator: React.FC<IProps> = ({lang, userState, sending, setState}): JS
 
 
     const saveFiles = (files: File[]) => {
-        //setFiles(files)
-        setNews(prev => ({...prev, images: files}))
+        setNewsItem(prev => ({...prev, images: files}))
     }
 
 
 
     const loadNewsData = async (_id: string) => {
-        const news = await setState.news.loadOneNews(_id)
+        const news = await loadOneNews(_id)
         if (news.status === 'success') {
-            //setNewsItem(news.data)
+            setNewsItem(news.data)
         }
-        //setLoaded(true)
     }
 
 
 
     const onChangeText = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        e.target.id === 'header_en' &&  setNews(prev => ({...prev, header: {...prev.header, en: e.target.value}}))
-        e.target.id === 'header_ru' &&  setNews(prev => ({...prev, header: {...prev.header, ru: e.target.value}}))
-        e.target.id === 'short_en' &&  setNews(prev => ({...prev, short: {...prev.short, en: e.target.value}}))
-        e.target.id === 'short_ru' &&  setNews(prev => ({...prev, short: {...prev.short, ru: e.target.value}}))
-        e.target.id === 'text_en' &&  setNews(prev => ({...prev, text: {...prev.text, en: e.target.value}}))
-        e.target.id === 'text_ru' &&  setNews(prev => ({...prev, text: {...prev.text, ru: e.target.value}}))
-        e.target.id === 'date' &&  setNews(prev => ({...prev, date: e.target.value}))
+        e.target.id === 'header_en' &&  setNewsItem(prev => ({...prev, header: {...prev.header, en: e.target.value}}))
+        e.target.id === 'header_ru' &&  setNewsItem(prev => ({...prev, header: {...prev.header, ru: e.target.value}}))
+        e.target.id === 'short_en' &&  setNewsItem(prev => ({...prev, short: {...prev.short, en: e.target.value}}))
+        e.target.id === 'short_ru' &&  setNewsItem(prev => ({...prev, short: {...prev.short, ru: e.target.value}}))
+        e.target.id === 'text_en' &&  setNewsItem(prev => ({...prev, text: {...prev.text, en: e.target.value}}))
+        e.target.id === 'text_ru' &&  setNewsItem(prev => ({...prev, text: {...prev.text, ru: e.target.value}}))
+        e.target.id === 'date' &&  setNewsItem(prev => ({...prev, date: new Date(e.target.value)}))       
     }
 
 
     useEffect(() => { //if edit
-        if (!paramNewsId) return
+        if (!paramNewsId) {
+            return setChangeImages(true)
+        }
         loadNewsData(paramNewsId)
-    }, [])
+        setChangeImages(false)
+    }, [paramNewsId])
 
 
 
 
     const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
         prevent(e)
-        
-        const news = {
-            header: {
-                en: _header_en.current?.value || '',
-                ru: _header_ru.current?.value || '',
-            },
-            short: {
-                en: _short_en.current?.value  || '',
-                ru: _short_ru.current?.value  || '',
-            },
-            text: {
-                en: _text_en.current?.value || '',
-                ru: _text_ru.current?.value || '',
-            },
-            date: _date.current?.valueAsDate || new Date(),
-            //images: files
+        if (paramNewsId) {
+            setState.news.editNews(newsItem, changeImages)
+        } else {
+            setState.news.sendNews(newsItem)
         }
-        
-        //setState.news.sendNews(news)
     }
 
 
@@ -148,7 +134,11 @@ const NewsCreator: React.FC<IProps> = ({lang, userState, sending, setState}): JS
         <div className="page page_news-add">
             <div className="container_page">
                 <div className="container">
-                    <h1>{lang === 'en' ? 'Post news' : 'Добавление новости'}</h1>
+                    {paramNewsId ? 
+                        <h1>{lang === 'en' ? 'Edit news' : 'Редактирование новости'}</h1>
+                    :
+                        <h1>{lang === 'en' ? 'Post news' : 'Добавление новости'}</h1>
+                    }
                     <form>
 
                         <div className="input-block_header">
@@ -159,43 +149,49 @@ const NewsCreator: React.FC<IProps> = ({lang, userState, sending, setState}): JS
                         <div className="input-block">
                             <label htmlFor="header_en">{lang === 'en' ? 'Header' : 'Заголовок'}:</label>
                             <div className="input__wrapper">
-                                <input type="text" id="header_en" ref={_header_en} onChange={(e) => onChangeText(e)} value={news.header.en}/>
+                                <input type="text" id="header_en" onChange={(e) => onChangeText(e)} value={newsItem.header.en}/>
                             </div>
                             <div className="input__wrapper">
-                                <input type="text" id="header_ru" ref={_header_ru} onChange={(e) => onChangeText(e)} value={news.header.ru}/>
+                                <input type="text" id="header_ru"onChange={(e) => onChangeText(e)} value={newsItem.header.ru}/>
                             </div>
                         </div>
 
                         <div className="input-block">
                             <label htmlFor="short_en">{lang === 'en' ? 'Short text' : 'Краткий текст'}:</label>
                             <div className="input__wrapper">
-                                <textarea id="short_en" ref={_short_en} onChange={(e) => onChangeText(e)} value={news.short.en}/>
+                                <textarea id="short_en" onChange={(e) => onChangeText(e)} value={newsItem.short.en}/>
                             </div>
                             <div className="input__wrapper">
-                                <textarea id="short_ru" ref={_short_ru} onChange={(e) => onChangeText(e)} value={news.short.ru}/>
+                                <textarea id="short_ru" onChange={(e) => onChangeText(e)} value={newsItem.short.ru}/>
                             </div>
                         </div>
 
                         <div className="input-block">
                             <label htmlFor="text_en">{lang === 'en' ? 'Full text' : 'Полный текст'}:</label>
                             <div className="input__wrapper">
-                                <textarea id="text_en" ref={_text_en} onChange={(e) => onChangeText(e)} value={news.text.en}/>
+                                <textarea id="text_en" onChange={(e) => onChangeText(e)} value={newsItem.text.en}/>
                             </div>
                             <div className="input__wrapper">
-                                <textarea id="text_ru" ref={_text_ru} onChange={(e) => onChangeText(e)} value={news.text.ru}/>
+                                <textarea id="text_ru" onChange={(e) => onChangeText(e)} value={newsItem.text.ru}/>
                             </div>
                         </div>
 
 
                         <div className="input-block">
                             <label htmlFor="date">{lang === 'en' ? 'Date' : 'Дата'}:</label>
-                            <input type="date" id="date" ref={_date} onChange={(e) => onChangeText(e)} value={news.date}/>
+                            <input type="date" id="date" onChange={(e) => onChangeText(e)} value={newsItem.date.toISOString().slice(0, 10)}/>
                         </div>
 
-
-                        <h2 className='images__header full-width'>{lang === 'en' ? 'Images' : 'Изображения'}</h2>           
-                        <AddFiles saveFiles={saveFiles} lang={lang} ref={addFiles} multiple={true} id='big'/>
-                        <button className='button_blue post' disabled={sending.status === 'fetching'} onClick={e => onSubmit(e)}>{lang === 'en' ? 'Post news' : "Отправить новость"}</button>
+                        {changeImages ? 
+                            <>
+                                <h2 className='section-header full-width'>{lang === 'en' ? 'IMAGES' : 'ИЗОБРАЖЕНИЯ'}</h2>           
+                                <AddFiles saveFiles={saveFiles} lang={lang} ref={addFiles} multiple={true} id='big'/>
+                                {paramNewsId && <button className='button_blue change-images' onClick={onChangeImages}>Do not change images</button>}
+                            </>
+                        :
+                            <>{paramNewsId && <button className='button_blue change-images' onClick={onChangeImages}>Change all images</button>}</>
+                        }
+                        <button className='button_blue post' disabled={sending.status === 'fetching'} onClick={e => onSubmit(e)}>{lang === 'en' ? paramNewsId ? 'Save news' : 'Post news' : paramNewsId ? "Сохранить новость" : "Отправить новость"}</button>
                     </form>
                 </div>
                 <Modal {...{visible: modal, close: closeModal, escExit: true}}>

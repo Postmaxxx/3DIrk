@@ -1,4 +1,4 @@
-import { IAction, IDispatch, IErrRes, IFetch, IFiber, IFiberToStore, IFullState, IImgWithThumb, IMsgRes, TLangText } from "src/interfaces"
+import { IAction, IDispatch, IErrRes, IFetch, IFiber, IFullState, IImgWithThumb, IMsgRes, ISendFiber, TLangText } from "src/interfaces"
 import { actionsListFibers } from './actionsList'
 import { imageUploader } from "src/assets/js/imageUploader";
 import { delayBetweenImagesPost } from "src/assets/js/consts";
@@ -71,7 +71,7 @@ export const loadFibers = () => {
 
 
 
-export const sendFiber = (newFiber: IFiberToStore) => {
+export const sendFiber = (newFiber: ISendFiber) => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
         const token = getState().user.token //get current user state
         dispatch(setSendFibers({status: 'fetching', message: {en: '', ru: ''}}))
@@ -130,6 +130,77 @@ export const sendFiber = (newFiber: IFiberToStore) => {
 
     }
 }
+
+
+
+
+
+
+
+export const editFiber = (fiber: Partial<ISendFiber>, changeImages: boolean) => {
+    return async function(dispatch: IDispatch, getState: () => IFullState) {
+        
+        const token = getState().user.token //get current user state
+        dispatch(setSendFibers({status: 'fetching', message: {en: '', ru: ''}}))
+        const delayBetweenImagesPost = 300
+
+        const imageUrls: IImgWithThumb[] = []
+        // images to imgbb
+        if (changeImages && fiber.images) {
+            
+            await fiber.images.reduce(async (acc: Promise<string>, image: File, i) => {
+                return new Promise(async (res, rej) => {
+                    await acc
+                                    
+                    const fiberImage = await imageUploader(image)
+                    if (fiberImage.status !== 'success') {
+                        rej(`Error while uploading image ${image.name}`)
+                        return dispatch(setSendFibers(fiberImage))
+                    }
+                    imageUrls.push(fiberImage.urls as IImgWithThumb)
+                    setTimeout(() => res('ok'), delayBetweenImagesPost)
+                })
+                
+            }, Promise.resolve('start fetching images'))
+
+        }
+
+            //post to db
+        try {
+            const fiberToDb: Partial<IFiber> = {...fiber, images: imageUrls}
+            if (!changeImages) {
+                delete fiberToDb.images
+            }
+
+            
+            const response: Response = await fetch('/api/fibers/edit', {
+                method: 'PUT',
+                headers: {
+                    "Content-Type": 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(fiberToDb)
+            })
+
+            if (response.status !== 201) {
+                const result: IErrRes = await response.json() //message, errors
+                return dispatch(setSendFibers({
+                    status: 'error', 
+                    message: result.message, 
+                    errors: result.errors
+                }))
+            }
+            const result: IMsgRes = await response.json() //message, errors
+            
+            dispatch(setSendFibers({status: 'success', message: result.message}))
+            
+        } catch (e) {           
+            dispatch(setSendFibers({status: 'error', message: {en: `Error "${e}", try again later`, ru: `Ошибка "${e}", попробуйте позже`}}))
+        }
+    }
+}
+
+
 
 
 

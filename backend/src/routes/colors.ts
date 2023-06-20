@@ -62,7 +62,7 @@ router.post('/create',
             })
             await color.save()
             await saveChanges('colors', true)
-            await saveChanges('fibers', true)
+            await saveChanges('fibers', true)   
             return res.status(201).json({message: {en: 'Color saved', ru: 'Цвет сохранен'}})
         } catch (e) {
             return res.status(500).json({ message:{en: `Something wrong with server ${e}, try again later`, ru: `Ошибка на сервере ${e}, попробуйте позже`}})

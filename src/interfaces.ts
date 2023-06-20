@@ -155,12 +155,13 @@ export interface IFeature {
 
 
 //==========================================Fibers State
-export interface IFiberToStore extends Omit<IFiber, '_id' | 'images'> {
+export interface ISendFiber extends Omit<IFiber, 'images'> {
     images: File[]
 }
 
 
 export interface IFiberParam {
+    [key: string]: number | string
     strength: number //MPa
     stiffnes: number //1..10
     durability: number //1..10
@@ -256,18 +257,23 @@ export interface ICatalogState {
 
 
 //================================================news state
-export interface ISendNews {
+/*export interface ISendNews {
     header: TLangText
     short: TLangText
     text: TLangText
-    date: string
+    date: Date
+    images: File[]
+}*/
+
+export interface ISendNews extends Omit<INewsItem, 'images'> {
     images: File[]
 }
+
 
 export interface INewsItem {
     _id: TId
     header: TLangText
-    date: string
+    date: Date
     short: TLangText
     text: TLangText
     images: IImgWithThumb[]

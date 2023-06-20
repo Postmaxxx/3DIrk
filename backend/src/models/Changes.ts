@@ -15,6 +15,7 @@ const changesSchema = new Schema({
     news: {type: Boolean},
     catalog: {type: Boolean},
     fibers: {type: Boolean},
+    colors: {type: Boolean},
 })
 
 const News: Model<IChanges> = model<IChanges>('Changes', changesSchema);

@@ -48,7 +48,7 @@ export const loadSomeNews = (from: number, amount: number) => {
             const result: {news: INewsItem[], total: number} = await response.json()
             dispatch(setDataNews([...news.newsList, ...result.news.map(item => {
                 return {                    
-                    date: item.date,
+                    date: new Date(item.date),
                     _id: item._id,
                     header: item.header,
                     short: item.short,
@@ -159,6 +159,77 @@ export const sendNews = (news: ISendNews) => {
 
     }
 }
+
+
+
+
+
+
+export const editNews = (news: Partial<ISendNews>, changeImages: boolean) => {
+    return async function(dispatch: IDispatch, getState: () => IFullState) {
+        
+        const token = getState().user.token //get current user state
+        dispatch(setSendNews({status: 'fetching', message: {en: '', ru: ''}}))
+        const delayBetweenImagesPost = 300
+
+        const imageUrls: IImgWithThumb[] = []
+        // images to imgbb
+        if (changeImages && news.images) {
+            
+            await news.images.reduce(async (acc: Promise<string>, image: File, i) => {
+                return new Promise(async (res, rej) => {
+                    await acc
+                                    
+                    const newsImagePost = await imageUploader(image)
+                    if (newsImagePost.status !== 'success') {
+                        rej(`Error while uploading image ${image.name}`)
+                        return dispatch(setSendNews(newsImagePost))
+                    }
+                    imageUrls.push(newsImagePost.urls as IImgWithThumb)
+                    setTimeout(() => res('ok'), delayBetweenImagesPost)
+                })
+                
+            }, Promise.resolve('start fetching images'))
+
+        }
+
+            //post to db
+        try {
+            const newsToDb: Partial<INewsItem> = {...news, images: imageUrls}
+            if (!changeImages) {
+                delete newsToDb.images
+            }
+            
+            const response: Response = await fetch('/api/news/edit', {
+                method: 'PUT',
+                headers: {
+                    "Content-Type": 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(newsToDb)
+            })
+
+            if (response.status !== 201) {
+                const result: IErrRes = await response.json() //message, errors
+                return dispatch(setSendNews({
+                    status: 'error', 
+                    message: result.message, 
+                    errors: result.errors
+                }))
+            }
+            const result: IMsgRes = await response.json() //message, errors
+            
+            dispatch(setSendNews({status: 'success', message: result.message}))
+            
+        } catch (e) {           
+            dispatch(setSendNews({status: 'error', message: {en: `Error "${e}", try again later`, ru: `Ошибка "${e}", попробуйте позже`}}))
+        }
+    }
+}
+
+
+
+
 
 
 export const deleteNews = (_id: string) => {

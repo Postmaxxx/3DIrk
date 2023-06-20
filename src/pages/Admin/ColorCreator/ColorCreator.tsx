@@ -12,7 +12,7 @@ import AddFiles, { IAddFilesFunctions } from 'src/components/AddFiles/AddFiles';
 
 interface IPropsState {
     lang: TLang
-    colorState: IColorsState
+    colorsState: IColorsState
 }
 
 
@@ -28,7 +28,7 @@ interface IProps extends IPropsState, IPropsActions {
 }
 
 
-const ColorCreator: React.FC<IProps> = ({lang, colorState, setState}): JSX.Element => {
+const ColorCreator: React.FC<IProps> = ({lang, colorsState, setState}): JSX.Element => {
 
     const _name_en = useRef<HTMLInputElement>(null)
     const _name_ru = useRef<HTMLInputElement>(null)
@@ -51,10 +51,15 @@ const ColorCreator: React.FC<IProps> = ({lang, colorState, setState}): JSX.Eleme
 		setModal(false)
         setMessage({
             status: '',
-            header: colorState.send.status,
+            header: colorsState.send.status,
             text: ['']
         })
-        setState.colors.setSendColors({status: 'idle', message: {en: '', ru: ''}})
+        if (colorsState.send.status === 'success') {
+            setState.colors.setSendColors({status: 'idle', message: {en: '', ru: ''}})
+            setState.colors.loadColors()
+        } else {
+            setState.colors.setSendColors({status: 'idle', message: {en: '', ru: ''}})
+        }
 	}
 
 
@@ -146,15 +151,15 @@ const ColorCreator: React.FC<IProps> = ({lang, colorState, setState}): JSX.Eleme
     
     useEffect(() => {
         if (!_name_en.current || !_name_ru.current) return
-        if (colorState.send.status === 'success' || colorState.send.status === 'error') {
-            const errors: string[] = colorState.send.errors?.map(e => e[lang]) || []
+        if (colorsState.send.status === 'success' || colorsState.send.status === 'error') {
+            const errors: string[] = colorsState.send.errors?.map(e => e[lang]) || []
             setMessage({
-                header: colorState.send.status === 'success' ? lang === 'en' ? 'Success' : 'Успех' : lang === 'en' ? 'Error' : 'Ошибка',
-                status: colorState.send.status,
-                text: [colorState.send.message[lang], ...errors]
+                header: colorsState.send.status === 'success' ? lang === 'en' ? 'Success' : 'Успех' : lang === 'en' ? 'Error' : 'Ошибка',
+                status: colorsState.send.status,
+                text: [colorsState.send.message[lang], ...errors]
             })
             setModal(true)
-            if (colorState.send.status === 'success') {
+            if (colorsState.send.status === 'success') {
                 _name_en.current.value = ''
                 _name_ru.current.value = ''
                 addFileBig.current?.clearAttachedFiles()
@@ -162,7 +167,7 @@ const ColorCreator: React.FC<IProps> = ({lang, colorState, setState}): JSX.Eleme
             }
         }
 
-    }, [colorState.send.status])
+    }, [colorsState.send.status])
 
     
     return (
@@ -222,7 +227,7 @@ const ColorCreator: React.FC<IProps> = ({lang, colorState, setState}): JSX.Eleme
 
 const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
-    colorState: state.colors,
+    colorsState: state.colors,
 })
 
 

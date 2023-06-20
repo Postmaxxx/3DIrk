@@ -192,11 +192,11 @@
             }
         }*/
 
-        & .images__header {
-                text-align: center;
-                margin-left: 0;
-                margin-top: 70px;
-            
+        & .section-header {
+            text-align: center;
+            margin-left: 0;
+            margin-top: 70px;
+            color: var(--text);
         }
 
         & > .drop-area {
@@ -249,7 +249,13 @@
             }
         }
 
-
+        & .change-images {
+            margin-right: auto;
+            margin-left: auto;
+            margin-top: 40px;
+            background-color: var(--main_vv);
+            color: var(--text_vv);
+        }
 
         & .post {
             margin-left: auto;

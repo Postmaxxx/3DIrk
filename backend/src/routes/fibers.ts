@@ -70,6 +70,80 @@ router.post('/create',
 
 
 
+
+
+
+
+
+router.put('/edit', 
+    [authMW, isAdmin],
+    [
+        check('name.en')
+            .isLength({min: 3})
+            .withMessage({en: 'EN name is too short (<4)', ru: 'EN имя слишком короткое (<4)'})
+            .isLength({max: 51})
+            .withMessage({en: 'EN name is too long (>50)', ru: 'EN имя слишком длинное (>50)'}),
+        check('name.ru')
+            .isLength({min: 3})
+            .withMessage({en: 'RU name is too short (<4)', ru: 'RU имя слишком короткое (<4)'})
+            .isLength({max: 51})
+            .withMessage({en: 'RU name is too long (>50)', ru: 'RU имя слишком длинное (>50)'}),
+        check('text.en')
+            .isLength({min: 15})
+            .withMessage({en: 'EN text is too short (<15)', ru: 'EN текст слишком короткий (<15)'}),
+        check('text.en')
+            .isLength({min: 15})
+            .withMessage({en: 'RU text is too short (<15)', ru: 'RU текст слишком короткий (<15)'}),
+        check('short.name.en')
+            .isLength({min: 1})
+            .withMessage({en: 'EN short-name is too short (<2)', ru: 'EN краткое имя слишком короткое (<2)'}),
+        check('short.name.en')
+            .isLength({min: 1})
+            .withMessage({en: 'RU short-name is too short (<2)', ru: 'RU краткое имя слишком короткое (<2)'}),
+        check('short.text.en')
+            .isLength({min: 5})
+            .withMessage({en: 'EN short text is too short (<5)', ru: 'EN краткий текст слишком короткий (<5)'}),
+        check('short.text.en')
+            .isLength({min: 5})
+            .withMessage({en: 'RU short text is too short (<5)', ru: 'RU краткий текст слишком короткий (<5)'})
+    ],
+    async (req, res) => {
+
+        const errors = validationResult(req)
+        
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                errors: errors.array().map(error => error.msg),
+                message: {en: 'Errors in fiber data', ru: 'Ошибки в данных материала'}
+            })
+        }
+
+        try {
+            const { name, text, short, params, images, proscons, colors, _id } = req.body 
+
+            
+            
+            const editedFiber = images ? {name, short, params, text, proscons, colors, images} : {name, short, params, text, proscons, colors}
+     
+            
+            await Fiber.findOneAndUpdate({_id}, editedFiber) 
+
+            await saveChanges('fibers', true);
+
+            return res.status(201).json({message: {en: 'News edited', ru: 'Новость отредактирована'}})
+        } catch (error) {
+            return res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})
+        }
+    }
+)
+
+
+
+
+
+
+
+
 const loadFibers = async (res): Promise<{loaded: boolean, msg: string}> => {
     const changed = await checkChanges('fibers')
     if (allFibers.length === 0 || changed) {
