@@ -16,10 +16,10 @@ interface IErrorsChecker {
     max?: number
 }
 
-const errorsChecker = ({lang = 'en', min = 0, max = 1000}: IErrorsChecker) => {
+const errorsChecker = ({lang = 'en'}: IErrorsChecker) => {
     const errors: string[] = []
 
-    const check = (el:  HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement): {result: boolean, error: string} => {
+    const check = (el:  HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement, min = 0, max = 1000): {result: boolean, error: string} => {
         const err = {result: false, error: ''}
         if (el.value && el.value.length >= min && el.value.length <= max) return err // no error
         

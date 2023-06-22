@@ -6,7 +6,7 @@ import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import Modal, { IModalFunctions } from 'src/components/Modal/Modal';
 import Message, { IMessageFunctions } from 'src/components/Message/Message';
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { allActions } from "../../../redux/actions/all";
 import AddFiles, { IAddFilesFunctions } from 'src/components/AddFiles/AddFiles';
 import { useParams } from 'react-router-dom';
@@ -33,9 +33,17 @@ interface IProps extends IPropsState, IPropsActions {
 
 const NewsCreator: FC<IProps> = ({lang, sending, newsOne, setState}): JSX.Element => {
     const paramNewsId = useParams().newsId || ''
-    const addFileBig = useRef<IAddFilesFunctions>(null)
+    const addFilesBig = useRef<IAddFilesFunctions>(null)
     const modal = useRef<IModalFunctions>(null)
     const message = useRef<IMessageFunctions>(null)
+
+    const _header_en = useRef<HTMLInputElement>(null)
+    const _header_ru = useRef<HTMLInputElement>(null)
+    const _text_short_en = useRef<HTMLTextAreaElement>(null)
+    const _text_short_ru = useRef<HTMLTextAreaElement>(null)
+    const _text_en = useRef<HTMLTextAreaElement>(null)
+    const _text_ru = useRef<HTMLTextAreaElement>(null)
+    const _date = useRef<HTMLInputElement>(null)
 
 
     const onChangeImages = (e: React.MouseEvent<HTMLElement>) => {
@@ -63,19 +71,6 @@ const NewsCreator: FC<IProps> = ({lang, sending, newsOne, setState}): JSX.Elemen
     }, [sending.status])
 
 
-
-    const onChangeText = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        e.target.parentElement?.classList.remove('error')
-        e.target.id === 'header_en' &&  setState.news.setDataOneNews({...newsOne, header: {...newsOne.header, en: e.target.value.trim()}})
-        e.target.id === 'header_ru' &&  setState.news.setDataOneNews({...newsOne, header: {...newsOne.header, ru: e.target.value.trim()}})
-        e.target.id === 'short_en' &&  setState.news.setDataOneNews({...newsOne, short: {...newsOne.short, en: e.target.value.trim()}})
-        e.target.id === 'short_ru' &&  setState.news.setDataOneNews({...newsOne, short: {...newsOne.short, ru: e.target.value.trim()}})
-        e.target.id === 'text_en' &&  setState.news.setDataOneNews({...newsOne, text: {...newsOne.text, en: e.target.value.trim()}})
-        e.target.id === 'text_ru' &&  setState.news.setDataOneNews({...newsOne, text: {...newsOne.text, ru: e.target.value.trim()}})
-        e.target.id === 'date' &&  setState.news.setDataOneNews({...newsOne, date: e.target.value})
-    }
-
-
     useEffect(() => { //if edit
         if (!paramNewsId) {
             setState.news.setDataOneNews({...newsOne, changeImages: true})
@@ -85,18 +80,54 @@ const NewsCreator: FC<IProps> = ({lang, sending, newsOne, setState}): JSX.Elemen
     }, [paramNewsId])
 
 
+    const errChecker = useMemo(() => errorsChecker({lang}), [lang])
 
     const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
         prevent(e)
-        setState.news.setDataOneNews({...newsOne, files: addFileBig.current?.getFiles()})
-        
+        if (!_header_en.current || !_header_ru.current  || !_text_en.current  || !_text_ru.current  || !_text_short_en.current  || 
+            !_text_short_ru.current || !_date.current) return
 
+        errChecker.check(_header_en.current, 5, 50)
+        errChecker.check(_header_ru.current, 5, 50)
+        errChecker.check(_text_en.current, 40, 5000)
+        errChecker.check(_text_ru.current, 40, 5000)
+        errChecker.check(_text_short_en.current, 20, 150)
+        errChecker.check(_text_short_ru.current, 20, 150)
+        errChecker.check(_date.current, 10, 10)
 
+        if (errChecker.result().length > 0) {
+            message.current?.update({                        
+                header: lang === 'en' ? 'Errors in fields' : 'Найдены ошибки в полях',
+                status: 'error',
+                text: [...errChecker.result()]
+            })
+            modal.current?.openModal()
+            errChecker.clear()
+            return
+        }
+        //if no errors
+        setState.news.setDataOneNews({
+            ...newsOne,
+            header: {
+                en: _header_en.current.value,
+                ru: _header_ru.current.value
+            },
+            short: {
+                en: _text_short_en.current.value,
+                ru: _text_short_ru.current.value
+            },
+            text: {
+                en: _text_en.current.value,
+                ru: _text_ru.current.value
+            },
+            date: new Date(_date.current.value),
+            files: addFilesBig.current?.getFiles()
+        })
 
         if (paramNewsId) {
-            setState.news.editNews(newsOne, newsOne.changeImages)
+            setState.news.editNews()
         } else {
-            setState.news.sendNews(newsOne)
+            setState.news.sendNews()
         }
     }
 
@@ -119,44 +150,44 @@ const NewsCreator: FC<IProps> = ({lang, sending, newsOne, setState}): JSX.Elemen
                             <h3 className='lang'>RU</h3>
                         </div>
                         <div className="input-block">
-                            <label htmlFor="header_en">{lang === 'en' ? 'Header' : 'Заголовок'}:</label>
+                            <label>{lang === 'en' ? 'Header' : 'Заголовок'}:</label>
                             <div className="input__wrapper">
-                                <input type="text" id="header_en" onChange={(e) => onChangeText(e)} value={newsOne.header.en}/>
+                                <input type="text" ref={_header_en} data-en="Header EN" data-ru="Заголовок EN"/>
                             </div>
                             <div className="input__wrapper">
-                                <input type="text" id="header_ru" onChange={(e) => onChangeText(e)} value={newsOne.header.ru}/>
-                            </div>
-                        </div>
-
-                        <div className="input-block">
-                            <label htmlFor="short_en">{lang === 'en' ? 'Short text' : 'Краткий текст'}:</label>
-                            <div className="input__wrapper">
-                                <textarea id="short_en" onChange={(e) => onChangeText(e)} value={newsOne.short.en}/>
-                            </div>
-                            <div className="input__wrapper">
-                                <textarea id="short_ru" onChange={(e) => onChangeText(e)} value={newsOne.short.ru}/>
+                                <input type="text" ref={_header_ru} data-en="Header RU" data-ru="Заголовок RU"/>
                             </div>
                         </div>
 
                         <div className="input-block">
-                            <label htmlFor="text_en">{lang === 'en' ? 'Full text' : 'Полный текст'}:</label>
+                            <label>{lang === 'en' ? 'Short text' : 'Краткий текст'}:</label>
                             <div className="input__wrapper">
-                                <textarea id="text_en" onChange={(e) => onChangeText(e)} value={newsOne.text.en}/>
+                                <textarea ref={_text_short_en} data-en="Short text EN" data-ru="Краткий текст EN"/>
                             </div>
                             <div className="input__wrapper">
-                                <textarea id="text_ru" onChange={(e) => onChangeText(e)} value={newsOne.text.ru}/>
+                                <textarea ref={_text_short_ru} data-en="Short text RU" data-ru="Краткий текст RU"/>
+                            </div>
+                        </div>
+
+                        <div className="input-block">
+                            <label>{lang === 'en' ? 'Full text' : 'Полный текст'}:</label>
+                            <div className="input__wrapper">
+                                <textarea ref={_text_en} data-en="Text EN" data-ru="Tекст EN"/>
+                            </div>
+                            <div className="input__wrapper">
+                                <textarea ref={_text_ru} data-en="Text RU" data-ru="Tекст RU"/>
                             </div>
                         </div>
 
 
                         <div className="input-block">
-                            <label htmlFor="date">{lang === 'en' ? 'Date' : 'Дата'}:</label>
-                            <input type="date" id="date" onChange={(e) => onChangeText(e)} value={newsOne.date.toISOString().slice(0, 10)}/>
+                            <label>{lang === 'en' ? 'Date' : 'Дата'}:</label>
+                            <input type="date" ref={_date} data-en="Date" data-ru="Дата"/>
                         </div>
                         {newsOne.changeImages ? 
                             <>
                                 <h2 className='section-header full-width'>{lang === 'en' ? 'IMAGES' : 'ИЗОБРАЖЕНИЯ'}</h2>           
-                                <AddFiles lang={lang} ref={addFileBig} multiple={true} id='allImages'/>
+                                <AddFiles lang={lang} ref={addFilesBig} multiple={true} id='allImages'/>
                                 {paramNewsId && <button className='button_blue change-images' onClick={onChangeImages}>Do not change images</button>}
                             </>
                         :

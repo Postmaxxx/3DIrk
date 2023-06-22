@@ -42,14 +42,14 @@ const ColorCreator: FC<IProps> = ({lang, send, setState}): JSX.Element => {
         setState.colors.setSendColors(resetFetch)// clear fetch status
 	}
 
-    const errChecker = useMemo(() => errorsChecker({lang, min:2, max: 50}), [lang])
+    const errChecker = useMemo(() => errorsChecker({lang}), [lang])
 
     const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
         prevent(e)
         if (!_name_en.current || !_name_ru.current) return
         
-        errChecker.check(_name_en.current)
-        errChecker.check(_name_ru.current)
+        errChecker.check(_name_en.current, 2, 50)
+        errChecker.check(_name_ru.current, 2, 50)
         
         if (!addFileBig.current?.getFiles().length) {
             errChecker.add(lang === 'en' ? 'File fullsize is missed' : 'Отсутствует файл полноразмера')
@@ -114,12 +114,12 @@ const ColorCreator: FC<IProps> = ({lang, send, setState}): JSX.Element => {
                     <h3 className='lang'>RU</h3>
                 </div>
                 <div className="input-block">
-                    <label htmlFor="header_en">{lang === 'en' ? 'Name' : 'Название'}:</label>
+                    <label>{lang === 'en' ? 'Name' : 'Название'}:</label>
                     <div className="input__wrapper">
-                        <input type="text" id="header_en" ref={_name_en} data-ru="Название EN" data-en="Name EN"/>
+                        <input type="text" id="name_en" ref={_name_en} data-ru="Название EN" data-en="Name EN"/>
                     </div>
                     <div className="input__wrapper">
-                        <input type="text" id="header_ru" ref={_name_ru} data-ru="Название RU" data-en="Name RU"/>
+                        <input type="text" id="name_ru" ref={_name_ru} data-ru="Название RU" data-en="Name RU"/>
                     </div>
                 </div>
                 <div className="input-block_header">
@@ -128,7 +128,7 @@ const ColorCreator: FC<IProps> = ({lang, send, setState}): JSX.Element => {
                     <h3 className='lang'>{lang === 'en' ? "PREVIEW" : "ПРЕДПРОСМОТР"}</h3>
                 </div>
                 <div className="input-block">
-                    <label htmlFor="files_big">{lang === 'en' ? 'Image' : 'Картинка'}:</label>
+                    <label>{lang === 'en' ? 'Image' : 'Картинка'}:</label>
                     <div className="input__wrapper">
                         <AddFiles lang={lang} ref={addFileBig} multiple={false} id='files_big'/>
                     </div>
