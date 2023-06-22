@@ -4,7 +4,7 @@ import { actionsListCatalog } from './actionsList'
 import mockCategoriesList from "../mocks/categoriesList"
 
 export const setFetchCatalog = <T extends IFetch>(payload: T):IAction<T> => ({
-    type: actionsListCatalog.SET_LOAD_DATA_STATUS_CATEGORIES_LIST,
+    type: actionsListCatalog.SET_LOAD_STATUS_CATEGORIES_LIST,
     payload
 });
 
@@ -46,7 +46,7 @@ export const loadCatalog = () => {
 
 
 export const setFetchCategory = <T extends IFetch>(payload: T):IAction<T> => ({
-    type: actionsListCatalog.SET_LOAD_DATA_STATUS_CATEGORY,
+    type: actionsListCatalog.SET_LOAD_STATUS_CATEGORY,
     payload
 });
 
@@ -111,7 +111,7 @@ export const setPage = <T extends ICategory["page"]>(payload: T):IAction<T> => (
 
 
 export const setFetchProduct = <T extends IFetch>(payload: T):IAction<T> => ({
-    type: actionsListCatalog.SET_LOAD_DATA_STATUS_PRODUCT,
+    type: actionsListCatalog.SET_LOAD_STATUS_PRODUCT,
     payload
 });
 

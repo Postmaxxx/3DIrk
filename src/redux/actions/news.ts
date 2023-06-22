@@ -1,26 +1,36 @@
-import { IAction, IDispatch, IErrRes, IFetch, IFullState, IImgWithThumb, IMsgRes, INewsItem, ISendNews, IUserState, TLangText } from "src/interfaces"
+import { IAction, IDispatch, IErrRes, IFetch, IFullState, IImgWithThumb, IMsgRes, INewsItem, INewsItemShort, ISendNews, IUserState, TLangText } from "src/interfaces"
 import { actionsListNews } from './actionsList'
 import { imageUploader } from "src/assets/js/imageUploader";
 
 
 
 export const setLoadNews = <T extends IFetch>(payload: T):IAction<T> => ({
-    type: actionsListNews.SET_LOAD_DATA_STATUS_NEWS,
+    type: actionsListNews.SET_LOAD_STATUS_NEWS,
+    payload: payload
+});
+
+export const setLoadOneNews = <T extends IFetch>(payload: T):IAction<T> => ({
+    type: actionsListNews.SET_LOAD_STATUS_ONE_NEWS,
     payload: payload
 });
 
 
 export const setSendNews = <T extends IFetch>(payload: T):IAction<T> => ({
-    type: actionsListNews.SET_SEND_DATA_STATUS_NEWS,
+    type: actionsListNews.SET_SEND_STATUS_NEWS,
     payload: payload
 });
 
 
-export const setDataNews = <T extends Array<INewsItem>>(payload: T):IAction<T> => ({
+export const setDataNews = <T extends Array<INewsItemShort>>(payload: T):IAction<T> => ({
     type: actionsListNews.SET_DATA_NEWS,
     payload: payload
 });
 
+
+export const setDataOneNews = <T extends INewsItem>(payload: T):IAction<T> => ({
+    type: actionsListNews.SET_DATA_ONE_NEWS,
+    payload: payload
+});
 
 export const setTotalNews = <T extends number>(payload: T):IAction<T> => ({
     type: actionsListNews.SET_TOTAL_NEWS,
@@ -69,34 +79,38 @@ export const loadSomeNews = (from: number, amount: number) => {
 
 
 
-export const loadOneNews = async (_id: string) => {
-    try {
-        const response: Response = await fetch(`/api/news/get-one?_id=${_id}`, {
-            method: 'GET',
-            headers: {
-                "Content-Type": 'application/json',
-            },
-        })
-        
-        if (response.status !== 200) {
-            const result: IErrRes = await response.json()
-            return {status: 'error', message: result.message, errors: result.errors}
+
+
+export const loadOneNews = (_id: string) => {
+    return async function(dispatch: IDispatch, getState: () => IFullState) {
+        const news = getState().news
+        console.log('loaded !!!');
+        if (news.loadOne.status === 'fetching') return
+        dispatch(setLoadOneNews({status: 'fetching', message: {en: `Loading news ${_id}`, ru: `Загрузка новости  ${_id}`},}))
+        try {
+            const response: Response = await fetch(`/api/news/get-one?_id=${_id}`, {
+                method: 'GET',
+                headers: {
+                    "Content-Type": 'application/json',
+                },
+            })
+            if (response.status !== 200) {
+                const result: IErrRes = await response.json()
+                return dispatch(setLoadOneNews({status: 'error', message: (result as IErrRes).message, errors: result.errors}))
+            }
+            
+            const result = await response.json()
+            dispatch(setDataOneNews({
+                    ...result.news,
+                    date: new Date(result.news.date) //changing format, check !!!
+                }
+            ))
+            dispatch(setLoadOneNews({status: 'success', message: {en: `This news has been loaded`, ru: 'Новость была загружена успешно'}}))
+        } catch (e) {
+            dispatch(setLoadOneNews({status: 'error', message: {en: `Error occured while loading this news: ${e}`, ru: `Ошибка в процессе загрузки новости: ${e}`}}))
         }
-        const result = await response.json()
-        return {
-            status: 'success', 
-            message: result.message,
-            data: {
-                ...result.news,
-                date: new Date(result.news.date)
-            } 
-        }       
-    } catch (e) {
-        return {status: 'error', message: {en: `Error on server: ${e}`, ru: `Ошибка на сервере: ${e}`}}
     }
 }
-
-
 
 
 

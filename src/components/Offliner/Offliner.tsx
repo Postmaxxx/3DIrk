@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import './offliner.scss'
 import { TLang } from '../../interfaces'
 
@@ -8,7 +8,7 @@ interface IOffliner {
 }
 
 
-const Offliner: React.FC<IOffliner> =({lang}): JSX.Element => {
+const Offliner: FC<IOffliner> =({lang}): JSX.Element => {
 
     const [offline, setOffline] = useState<boolean>(!navigator.onLine)
 

@@ -38,7 +38,7 @@ export const addFiles = <T extends File[]>(payload: T):IAction<T> => ({
 
 
 export const setSendDataStatus = <T extends IFetch>(payload: T):IAction<T> => ({
-    type: actionsListOrder.SET_SEND_DATA_STATUS_ORDER,
+    type: actionsListOrder.SET_SEND_STATUS_ORDER,
     payload
 });
 
@@ -169,13 +169,13 @@ export const sendOrder = ({lang, text, filesArr, informer}: ISendOrder) => {
 
 //============================================== CART
 export const setLoadDataStatusCart = <T extends IFetch>(payload: T):IAction<T> => ({
-    type: actionsListOrder.SET_LOAD_DATA_STATUS_CART,
+    type: actionsListOrder.SET_LOAD_STATUS_CART,
     payload
 });
 
 
 export const setSendDataStatusCart = <T extends IFetch>(payload: T):IAction<T> => ({
-    type: actionsListOrder.SET_SEND_DATA_STATUS_CART,
+    type: actionsListOrder.SET_SEND_STATUS_CART,
     payload
 });
 

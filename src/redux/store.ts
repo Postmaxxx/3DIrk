@@ -7,7 +7,7 @@ import reducerOrder from './reducers/order';
 import reducerCatalog from './reducers/catalog';
 import reducerColors from './reducers/colors';
 import reducerUser from './reducers/user';
-
+import { composeWithDevTools } from '@redux-devtools/extension';
 
 const rootReducer = combineReducers({
     base: reducerBase,
@@ -20,6 +20,6 @@ const rootReducer = combineReducers({
 });
 
 
-const store = createStore(rootReducer, applyMiddleware(thunk));
+const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)));
  
 export default store; 

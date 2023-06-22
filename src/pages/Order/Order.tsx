@@ -5,7 +5,7 @@ import './order.scss'
 import { ICartItem, ICartState, ICheckErrorItem, IColorsState, IFibersState, IFullState, IOrderState, TLang, TLangText } from "src/interfaces";
 import { useState, useEffect, useRef } from 'react'
 import Modal from "../../components/Modal/Modal";
-import MessageInfo from "../../components/MessageInfo/MessageInfo";
+import Message from "../../components/Message/Message";
 import CartContent from "../../components/CartContent/CartContent";
 import AddFiles, { IAddFilesFunctions } from "../../components/AddFiles/AddFiles";
 import inputChecker from "src/assets/js/inputChecker";
@@ -279,7 +279,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
                 </div>
             </div>
             <Modal {...{visible: modal, close: closeModal, escExit: true}}>
-				<MessageInfo {...{
+				<Message {...{
                     status: message.status,
                     header: message.header,
                     text: message.text, 

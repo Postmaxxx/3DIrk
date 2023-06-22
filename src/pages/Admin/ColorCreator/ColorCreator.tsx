@@ -1,18 +1,18 @@
-import { IFetch, IFullState, IMessageModal, ISendColor, TLang } from 'src/interfaces';
+import { IFetch, IFullState, ISendColor, TLang } from 'src/interfaces';
 import './color-creator.scss'
-import {  useRef, useMemo, FC, useEffect, useState, useCallback, memo } from "react";
+import {  useRef, useMemo, FC, useEffect} from "react";
 import { connect } from "react-redux";
 import { AnyAction, bindActionCreators, Dispatch } from "redux";
-import MessageInfoNew, { IMessageInfoFunctions } from 'src/components/MessageInfo/MessageInfoNew';
+import Message, { IMessageFunctions } from 'src/components/Message/Message';
 import { allActions } from "../../../redux/actions/all";
 import AddFiles, { IAddFilesFunctions } from 'src/components/AddFiles/AddFiles';
 import { errorsChecker, prevent } from 'src/assets/js/processors';
-import { resetFetch, clearModalMessage, timeModalClosing } from 'src/assets/js/consts';
-import ModalNew, { IModalFunctions } from 'src/components/Modal/ModalNew';
+import { headerStatus, resetFetch, timeModalClosing } from 'src/assets/js/consts';
+import Modal, { IModalFunctions } from 'src/components/Modal/Modal';
 
 interface IPropsState {
     lang: TLang
-    sendColor: IFetch
+    send: IFetch
 }
 
 interface IPropsActions {
@@ -24,19 +24,19 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 
-const ColorCreator: FC<IProps> = ({lang, sendColor, setState}): JSX.Element => {
+const ColorCreator: FC<IProps> = ({lang, send, setState}): JSX.Element => {
     const _name_en = useRef<HTMLInputElement>(null)
     const _name_ru = useRef<HTMLInputElement>(null)
     const addFileBig = useRef<IAddFilesFunctions>(null)
     const addFileSmall = useRef<IAddFilesFunctions>(null)
     const modal = useRef<IModalFunctions>(null)
-    const message = useRef<IMessageInfoFunctions>(null)
+    const message = useRef<IMessageFunctions>(null)
     
 
     const closeModal = () => {
         modal.current?.closeModal()
         setTimeout(() => message.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
-        if (sendColor.status === 'success') {
+        if (send.status === 'success') {
             setState.colors.loadColors() //reload colors if update db was succsessfull
         }
         setState.colors.setSendColors(resetFetch)// clear fetch status
@@ -46,7 +46,7 @@ const ColorCreator: FC<IProps> = ({lang, sendColor, setState}): JSX.Element => {
 
     const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
         prevent(e)
-        if (!_name_en.current || !_name_ru.current || !modal.current || !message.current) return
+        if (!_name_en.current || !_name_ru.current) return
         
         errChecker.check(_name_en.current)
         errChecker.check(_name_ru.current)
@@ -59,12 +59,12 @@ const ColorCreator: FC<IProps> = ({lang, sendColor, setState}): JSX.Element => {
         }
         
         if (errChecker.result().length > 0) {
-            message.current.update({                        
+            message.current?.update({                        
                 header: lang === 'en' ? 'Errors in fields' : 'Найдены ошибки в полях',
                 status: 'error',
                 text: [...errChecker.result()]
             })
-            modal.current.openModal()
+            modal.current?.openModal()
             errChecker.clear()
             return
         }
@@ -85,23 +85,23 @@ const ColorCreator: FC<IProps> = ({lang, sendColor, setState}): JSX.Element => {
 
 
     useEffect(() => {
-        if (!_name_en.current || !_name_ru.current || !message.current || !modal.current) return
-        if (sendColor.status === 'success' || sendColor.status === 'error') {
-            const errors: string[] = sendColor.errors?.map(e => e[lang]) || []
+        if (!_name_en.current || !_name_ru.current) return
+        if (send.status === 'success' || send.status === 'error') {
+            const errors: string[] = send.errors?.map(e => e[lang]) || []
             message.current?.update({                        
-                header: sendColor.status === 'success' ? lang === 'en' ? 'Success' : 'Успех' : lang === 'en' ? 'Errors' : 'Ошибки',
-                status: sendColor.status,
-                text: [sendColor.message[lang], ...errors]
+                header: headerStatus[send.status][lang],
+                status: send.status,
+                text: [send.message[lang], ...errors]
             })
-            modal.current.openModal()
-            if (sendColor.status === 'success') {
+            modal.current?.openModal()
+            if (send.status === 'success') { //clear form if success
                 _name_en.current.value = ''
                 _name_ru.current.value = ''
                 addFileBig.current?.clearAttachedFiles()
                 addFileSmall.current?.clearAttachedFiles()
             }
         }
-    }, [sendColor.status])
+    }, [send.status])
 
 
     const render = useMemo(() => (
@@ -128,26 +128,26 @@ const ColorCreator: FC<IProps> = ({lang, sendColor, setState}): JSX.Element => {
                     <h3 className='lang'>{lang === 'en' ? "PREVIEW" : "ПРЕДПРОСМОТР"}</h3>
                 </div>
                 <div className="input-block">
-                    <label htmlFor="url_big">{lang === 'en' ? 'Image' : 'Картинка'}:</label>
+                    <label htmlFor="files_big">{lang === 'en' ? 'Image' : 'Картинка'}:</label>
                     <div className="input__wrapper">
-                        <AddFiles lang={lang} ref={addFileBig} multiple={false} id='big'/>
+                        <AddFiles lang={lang} ref={addFileBig} multiple={false} id='files_big'/>
                     </div>
                     <div className="input__wrapper">
-                        <AddFiles lang={lang} ref={addFileSmall} multiple={false} id='small'/>
+                        <AddFiles lang={lang} ref={addFileSmall} multiple={false} id='files_small'/>
                     </div>
                 </div>
-                <button className='button_blue post' disabled={sendColor.status === 'fetching'} onClick={e => onSubmit(e)}>{lang === 'en' ? 'Add color' : "Добавить цвет"}</button>
+                <button className='button_blue post' disabled={send.status === 'fetching'} onClick={e => onSubmit(e)}>{lang === 'en' ? 'Add color' : "Добавить цвет"}</button>
             </form>
-        </div>), [lang, sendColor.status])
+        </div>), [lang, send.status])
 
 
     return (
         <div className="page page_color-add">
             <div className="container_page">
                 {render}
-                <ModalNew escExit={true} ref={modal}>
-                    <MessageInfoNew buttonText={lang === 'en' ? `Close` : `Закрыть`} buttonAction={closeModal} ref={message}/>
-                </ModalNew>
+                <Modal escExit={true} ref={modal}>
+                    <Message buttonText={lang === 'en' ? `Close` : `Закрыть`} buttonAction={closeModal} ref={message}/>
+                </Modal>
             </div>
         </div>
     )
@@ -157,7 +157,7 @@ const ColorCreator: FC<IProps> = ({lang, sendColor, setState}): JSX.Element => {
 
 const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
-    sendColor: state.colors.send,
+    send: state.colors.send,
 })
 
 

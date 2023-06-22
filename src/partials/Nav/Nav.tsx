@@ -1,24 +1,25 @@
-import { Fragment, useEffect, useState,  useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import { NavLink } from "react-router-dom";
-import { IFibersState, IFullState, IPageItem, IUserState, TLang } from "src/interfaces";
+import { IFiber, IFullState, IPageItem, TLang } from "src/interfaces";
 import "./nav.scss"
 import navLogo from "../../assets/img/nav_logo.png"
 import { connect } from "react-redux";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import CartInformer from "../../components/CartInformer/CartInformer";
-import Modal from "src/components/Modal/Modal";
+import Modal, { IModalFunctions } from "src/components/Modal/Modal";
 import Auth from "src/components/Auth/Auth";
-import { pagesList } from "./initialNav";
 import { allActions } from "../../redux/actions/all";
+import { resetFetch } from "src/assets/js/consts";
 
 
 interface IPropsState {
     lang: TLang
     mobOpened: boolean
     desktopOpened: boolean
-    fibersState: IFibersState
-    userState: IUserState
+    fibersList: IFiber[]
+    isAdmin: boolean
+    token: string
 }
 
 
@@ -33,12 +34,11 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 
-const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersState, userState}): JSX.Element => {
+const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersList, isAdmin, token}): JSX.Element => {
     const _blur = useRef<HTMLDivElement>(null)
-    const [nav, setNav] = useState<IPageItem[]>(pagesList)
     const [expandedNavItems, setExpandedNavItems] = useState<IPageItem["_id"][]>([])
-	const [modal, setModal] = useState<boolean>(false)
-    
+    const modal = useRef<IModalFunctions>(null)
+
 
     const navToggle = () => {
         desktopOpened ? setState.base.setNavCloseDt() : setState.base.setNavOpenDt()
@@ -49,27 +49,7 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
     }
 
 
-	useEffect(() => {
-        if (fibersState.load.status !== 'success' || fibersState.fibersList.length === 0) return
-        const newNav = pagesList.map((page) => {
-            if (page._id === "main_fibers") {
-                const newSub: IPageItem[] = fibersState.fibersList.map((fiber) => ({
-                        name: fiber.short.name,
-                        path: `/fibers/${fiber._id}`,
-                        _id: fiber._id,
-                    }))
-                return {
-                    ...page, 
-                    subMenu: [...page.subMenu as [], ...newSub]
-                }
-            }
-            return page
-        })
-        setNav(newNav)
-	}, [fibersState.load.status, lang])
-
-
-    const onNavWithSubClicked = (navId: string) => {
+    const onNavWithSubClicked = (navId: string) => {       
         if (expandedNavItems.includes(navId)) {
             setExpandedNavItems(expandedNavItems.filter(id => id !== navId))
         } else (
@@ -78,15 +58,14 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
     }
 
 
-       
     const closeModal = () => {
-		setModal(false)
+        modal.current?.closeModal()
 	}
 
 
     const onClickNotLink = (action: string) => {
-        if (action === 'login' && !userState.token) {
-		    setModal(true)
+        if (action === 'login' && !token) {
+            modal.current?.openModal()
         }
         if (action === 'logout') {
             setState.user.setUser({
@@ -96,287 +75,239 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersS
                 token: '', 
                 orders: [], 
                 isAdmin: false,
-                auth: {status: 'idle', message: {en: '', ru: ''}, errors: []}
+                auth: {...resetFetch}
             })
             localStorage.removeItem('user')        
         }
-
         navToggleMobile()
     }
+
+    const desktop = useMemo(() => {
+        return <nav className={desktopOpened ? "nav_desktop opened" : "nav_desktop"}>
+        <div className="nav__container">
+            <ul>
+                <li>
+                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to='/'>
+                        {lang === 'en' ? 'HOME' : 'ГЛАВНАЯ'}
+                    </NavLink>
+                </li>
+
+                <li className="extandable">
+                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to='/fibers'>
+                        {lang === 'en' ? 'FIBERS' : 'МАТЕРИАЛЫ '}
+                    </NavLink>
+                    <ul className="sub_menu">
+                        <li>
+                            <ul className="submenu__content">
+                                <li>
+                                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to={`fibers`} end>
+                                        {lang === 'en' ? 'ABOUT' : 'О ФИЛАМЕНТАХ'}
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to={`/fibers/compare`}>
+                                        {lang === 'en' ? 'COMPARASING' : 'СРАВНЕНИЕ'}
+                                    </NavLink>
+                                </li>
+                                {fibersList.map(fiber => {
+                                    return (
+                                        <li key={fiber._id}>
+                                           <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to={`fibers/${fiber.short.name.en}`}>
+                                               {fiber.short.name[lang]}
+                                           </NavLink>
+                                        </li>
+                                    )
+                                })}
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+
+                <li>
+                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to='/catalog'>
+                        {lang === 'en' ? 'CATALOG' : 'КАТАЛОГ'}
+                    </NavLink>
+                </li>
+
+                <li>
+                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to='/contact_us'>
+                        {lang === 'en' ? 'CONTACT' : 'КОНТАКТЫ'}
+                    </NavLink>
+                </li>
+                
+                {token ? 
+                    <li className="extandable">
+                        <a className="not-link" onClick={() => onClickNotLink('login')}>{lang === 'en' ? 'ACCOUNT' : 'Кабинет'}</a>
+                        <ul className="sub_menu">
+                            <li>
+                                <ul className="submenu__content">
+                                    <li>
+                                        <NavLink to='/order'>
+                                            {lang === 'en' ? 'CART' : 'КОРЗИНА'}
+                                        </NavLink>
+                                    </li> 
+                                    <li>
+                                        <NavLink to='/order'>
+                                            {lang === 'en' ? 'ORDERS HISTORY' : 'ВСЕ ЗАКАЗЫ'}
+                                        </NavLink>
+                                    </li>
+                                    {isAdmin ? 
+                                        <>
+                                            <li>
+                                                <NavLink to='/admin/news-create' >
+                                                    {lang === 'en' ? '+ NEWS' : '+ НОВОСТЬ'}
+                                                </NavLink>
+                                            </li>
+                                            <li>
+                                                <NavLink to='/admin/color-create' >
+                                                    {lang === 'en' ? '+ COLOR' : '+ ЦВЕТ'}
+                                                </NavLink>
+                                            </li>
+                                            <li>
+                                                <NavLink to='/admin/fiber-create' >
+                                                    {lang === 'en' ? '+ FIBER' : '+ МАТЕРИАЛ'}
+                                                </NavLink>
+                                            </li>
+                                        </>
+                                    : 
+                                        null
+                                    }
+                                    <li>
+                                        <a className="not-link" onClick={() => onClickNotLink('logout')}>{lang === 'en' ? 'LOGOUT' : 'ВЫХОД'}</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    :
+                    <li>
+                        <a className="not-link" onClick={() => onClickNotLink('login')}>{lang === 'en' ? 'LOGIN' : 'ВХОД'}</a>
+                    </li>
+                }
+            </ul>
+        </div>
+        <div className="nav__switcher">
+            <div className="text-hider"></div>
+            <label aria-label="open/hide navigation">
+                <input type="checkbox" onClick={navToggle}/>
+                <img src={navLogo} alt="Menu"/>
+                <div className="nav__sign">
+                    <span></span>
+                </div>
+            </label>
+        </div>
+    </nav>}, [isAdmin, token, desktopOpened, lang, fibersList])
+
+
+
+
+
+    const mobile = useMemo(() => {
+        return  <nav className={mobOpened ? "nav_mobile opened" : "nav_mobile"}>
+        <div className="nav__switcher">
+            <label aria-label="open/hide navigation">
+                <input type="checkbox" onClick={navToggleMobile}/>
+                <img src={navLogo} alt="Menu"/>
+                <div className="nav__sign">
+                    <span></span>
+                </div>
+            </label>
+        </div>
+        <div className="blur" ref={_blur}></div>
+        <div className="nav__container">
+            <ul>
+                <li>
+                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to='/' onClick={navToggleMobile}>
+                        {lang === 'en' ? 'HOME' : 'ГЛАВНАЯ'}
+                    </NavLink>
+                </li>
+
+                <li className={`${expandedNavItems.includes('fibers') ? 'expanded' : ''}`}>
+                    <span onClick={() => onNavWithSubClicked('fibers')}>{lang === 'en' ? 'FIBERS' : 'МАТЕРИАЛЫ '}</span>
+                    <div>
+                        <ul className="nav__subnav">
+                            {fibersList.map((fiber) => {
+                                return (
+                                    <li key={fiber._id}>
+                                        <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} 
+                                            onClick={navToggleMobile}
+                                            to={`fibers/${fiber.short.name.en}`}
+                                            end>
+                                            {fiber.short.name[lang]}
+                                        </NavLink>
+                                    </li>
+                                )
+                            })}
+                        </ul>
+                    </div>              
+                </li>
+
+                <li>
+                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to='/catalog' onClick={navToggleMobile}>
+                        {lang === 'en' ? 'CATALOG' : 'КАТАЛОГ'}
+                    </NavLink>
+                </li>
+                {token ? 
+                    <li className="narrow">
+                        <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to='/order' onClick={navToggleMobile}>
+                            {lang === 'en' ? 'CART' : 'КОРЗИНА'}
+                        </NavLink>
+                        <div className="cart-informer__container"><CartInformer /></div>          
+                    </li>
+                :
+                    <li>
+                        <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to='/contacts' onClick={navToggleMobile}>
+                            {lang === 'en' ? 'CONTACTS' : 'КОНТАКТЫ'}
+                        </NavLink>
+                    </li>
+                }
+
+                
+                {token ? 
+                    <li className={`${expandedNavItems.includes('cabinet') ? 'expanded' : ''}`}>
+                        <span onClick={() => onNavWithSubClicked('cabinet')}>{lang === 'en' ? 'ACCOUNT' : 'КАБИНЕТ '}</span>
+                        <div>
+                            <ul className="nav__subnav noscroll">
+                                <li>
+                                    <NavLink to='/order' onClick={navToggleMobile}>
+                                        {lang === 'en' ? 'CART' : 'КОРЗИНА'}
+                                    </NavLink>
+                                    <div className="cart-informer__container"><CartInformer /></div>          
+                                </li> 
+                                <li>
+                                    <NavLink to='/order' onClick={navToggleMobile}>
+                                        {lang === 'en' ? 'ORDERS HISTORY' : 'ЗАКАЗЫ'}
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink to='/order' onClick={navToggleMobile}>
+                                        {lang === 'en' ? 'WRITE US' : 'СООБЩЕНИЕ'}
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <a className="not-link" onClick={() => onClickNotLink('logout')}>{lang === 'en' ? 'LOGOUT' : 'ВЫХОД'}</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                :
+                    <li>
+                        <a className="not-link" onClick={() => onClickNotLink('login')}>{lang === 'en' ? 'LOGIN' : 'ВХОД'}</a>
+                    </li>
+                }
+            </ul>
+        </div>
+        <div className="nav__container_right"></div>
+    </nav>}, [isAdmin, token, mobOpened, lang, fibersList, expandedNavItems])
 
 
     return (
         <>
-            <nav className={desktopOpened ? "nav_desktop opened" : "nav_desktop"}>
-                <div className="nav__container">
-                    <ul>
-                        <li>
-                            <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
-                                to='/'
-                            >
-                                {lang === 'en' ? 'HOME' : 'ГЛАВНАЯ'}
-                            </NavLink>
-                        </li>
-
-                        <li className="extandable">
-                            <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
-                                to='/fibers'
-                            >
-                                {lang === 'en' ? 'FIBERS' : 'МАТЕРИАЛЫ '}
-                            </NavLink>
-                            <ul className="sub_menu">
-                                <li>
-                                    <ul className="submenu__content">
-                                        <li>
-                                            <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
-                                                to={`fibers`}
-                                                end
-                                            >
-                                                {lang === 'en' ? 'ABOUT' : 'О ФИЛАМЕНТАХ'}
-                                            </NavLink>
-                                        </li>
-                                        <li>
-                                            <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
-                                                to={`/fibers/compare`}
-                                            >
-                                                {lang === 'en' ? 'COMPARASING' : 'СРАВНЕНИЕ'}
-                                            </NavLink>
-                                        </li>
-                                        {fibersState.fibersList.map(fiber => {
-                                            return (
-                                                <li key={fiber._id}>
-                                                   <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
-                                                       to={`fibers/${fiber.short.name.en}`}
-                                                   >
-                                                       {fiber.short.name[lang]}
-                                                   </NavLink>
-                                                </li>
-                                            )
-                                        })}
-                                    </ul>
-                                </li>
-                            </ul>
-                        </li>
-
-                        <li>
-                            <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
-                                to='/catalog'
-                            >
-                                {lang === 'en' ? 'CATALOG' : 'КАТАЛОГ'}
-                            </NavLink>
-                        </li>
-
-                        <li>
-                            <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
-                                to='/contact_us'
-                            >
-                                {lang === 'en' ? 'CONTACT' : 'КОНТАКТЫ'}
-                            </NavLink>
-                        </li>
-                        
-                        {userState.token ? 
-                            <li className="extandable">
-                                <a className="not-link" onClick={() => onClickNotLink('login')}>{lang === 'en' ? 'ACCOUNT' : 'Кабинет'}</a>
-                                <ul className="sub_menu">
-                                    <li>
-                                        <ul className="submenu__content">
-                                            <li>
-                                                <NavLink
-                                                    to='/order'
-                                                >
-                                                    {lang === 'en' ? 'CART' : 'КОРЗИНА'}
-                                                </NavLink>
-                                            </li> 
-                                            <li>
-                                                <NavLink
-                                                    to='/order'
-                                                >
-                                                    {lang === 'en' ? 'ORDERS HISTORY' : 'ВСЕ ЗАКАЗЫ'}
-                                                </NavLink>
-                                            </li>
-                                            {userState.isAdmin ? 
-                                                <>
-                                                    <li>
-                                                        <NavLink
-                                                            to='/admin/news-create'
-                                                        >
-                                                            {lang === 'en' ? '+ NEWS' : '+ НОВОСТЬ'}
-                                                        </NavLink>
-                                                    </li>
-                                                    <li>
-                                                        <NavLink
-                                                            to='/admin/color-create'
-                                                        >
-                                                            {lang === 'en' ? '+ COLOR' : '+ ЦВЕТ'}
-                                                        </NavLink>
-                                                    </li>
-                                                    <li>
-                                                        <NavLink
-                                                            to='/admin/fiber-create'
-                                                        >
-                                                            {lang === 'en' ? '+ FIBER' : '+ МАТЕРИАЛ'}
-                                                        </NavLink>
-                                                    </li>
-                                                </>
-                                            : 
-                                                null
-                                            }
-                                            <li>
-                                                <a className="not-link" onClick={() => onClickNotLink('logout')}>{lang === 'en' ? 'LOGOUT' : 'ВЫХОД'}</a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </li>
-                            :
-                            <li>
-                                <a className="not-link" onClick={() => onClickNotLink('login')}>{lang === 'en' ? 'LOGIN' : 'ВХОД'}</a>
-                            </li>
-                        }
-                    </ul>
-                </div>
-                <div className="nav__switcher">
-                    <div className="text-hider"></div>
-                    <label aria-label="open/hide navigation">
-                        <input type="checkbox" onClick={navToggle}/>
-                        <img src={navLogo} alt="Menu"/>
-                        <div className="nav__sign">
-                            <span></span>
-                        </div>
-                    </label>
-                </div>
-            </nav>
-
-
-
-
-
-
-
-
-            <nav className={mobOpened ? "nav_mobile opened" : "nav_mobile"}>
-                <div className="nav__switcher">
-                    <label aria-label="open/hide navigation">
-                        <input type="checkbox" onClick={navToggleMobile}/>
-                        <img src={navLogo} alt="Menu"/>
-                        <div className="nav__sign">
-                            <span></span>
-                        </div>
-                    </label>
-                </div>
-                <div className="blur" ref={_blur}></div>
-                <div className="nav__container">
-                    <ul>
-                        <li>
-                            <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
-                                to='/'
-                                onClick={navToggleMobile}
-                            >
-                                {lang === 'en' ? 'HOME' : 'ГЛАВНАЯ'}
-                            </NavLink>
-                        </li>
-
-
-                        <li className={`${expandedNavItems.includes('fibers') ? 'expanded' : ''}`}>
-                            <span onClick={() => onNavWithSubClicked('fibers')}>{lang === 'en' ? 'FIBERS' : 'МАТЕРИАЛЫ '}</span>
-                            <div>
-                                <ul className="nav__subnav">
-                                    {fibersState.fibersList.map((fiber) => {
-                                        return (
-                                            <li key={fiber._id}>
-                                                <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} 
-                                                    onClick={navToggleMobile}
-                                                    to={`fibers/${fiber._id}`}
-                                                    end>
-                                                    {fiber.short.name[lang]}
-                                                    
-                                                </NavLink>
-                                            </li>
-                                        )
-                                    })}
-                                </ul>
-                            </div>              
-                        </li>
-
-
-                        <li>
-                            <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
-                                to='/catalog'
-                                onClick={navToggleMobile}
-                            >
-                                {lang === 'en' ? 'CATALOG' : 'КАТАЛОГ'}
-                            </NavLink>
-                        </li>
-                        {userState.token ? 
-                            <li className="narrow">
-                                <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
-                                    to='/order'
-                                    onClick={navToggleMobile}
-                                >
-                                    {lang === 'en' ? 'CART' : 'КОРЗИНА'}
-                                </NavLink>
-                                <div className="cart-informer__container"><CartInformer /></div>          
-                            </li>
-                        :
-                            <li>
-                                <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}
-                                    to='/contacts'
-                                    onClick={navToggleMobile}
-                                >
-                                    {lang === 'en' ? 'CONTACTS' : 'КОНТАКТЫ'}
-                                </NavLink>
-                            </li>
-                        }
-
-                        
-                        {userState.token ? 
-                            <li className={`${expandedNavItems.includes('cabinet') ? 'expanded' : ''}`}>
-                                <span onClick={() => onNavWithSubClicked('cabinet')}>{lang === 'en' ? 'ACCOUNT' : 'КАБИНЕТ '}</span>
-                                <div>
-                                    <ul className="nav__subnav noscroll">
-                                        <li>
-                                            <NavLink
-                                                to='/order'
-                                                onClick={navToggleMobile}
-                                            >
-                                                {lang === 'en' ? 'CART' : 'КОРЗИНА'}
-                                            </NavLink>
-                                            <div className="cart-informer__container"><CartInformer /></div>          
-                                        </li> 
-                                        <li>
-                                            <NavLink
-                                                to='/order'
-                                                onClick={navToggleMobile}
-                                            >
-                                                {lang === 'en' ? 'ORDERS HISTORY' : 'ЗАКАЗЫ'}
-                                            </NavLink>
-                                        </li>
-                                        <li>
-                                            <NavLink
-                                                to='/order'
-                                                onClick={navToggleMobile}
-                                            >
-                                                {lang === 'en' ? 'WRITE US' : 'СООБЩЕНИЕ'}
-                                            </NavLink>
-                                        </li>
-                                        <li>
-                                            <a className="not-link" onClick={() => onClickNotLink('logout')}>{lang === 'en' ? 'LOGOUT' : 'ВЫХОД'}</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                        :
-                            <li>
-                                <a className="not-link" onClick={() => onClickNotLink('login')}>{lang === 'en' ? 'LOGIN' : 'ВХОД'}</a>
-                            </li>
-                        }
-                    </ul>
-                </div>
-                <div className="nav__container_right"></div>
-                <Modal {...{visible: modal, close: closeModal, escExit: true}}>
-                    <Auth onCancel={closeModal}/>
-			    </Modal> 
-            </nav>
+            {desktop}
+            {mobile}
+            <Modal escExit={true} ref={modal}>
+                <Auth onCancel={closeModal}/>
+            </Modal> 
         </>
     )
 }
@@ -386,8 +317,9 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
 	lang: state.base.lang,
     mobOpened: state.base.mobOpened,
     desktopOpened: state.base.desktopOpened,
-    fibersState: state.fibers,
-    userState: state.user
+    fibersList: state.fibers.fibersList,
+    isAdmin: state.user.isAdmin,
+    token: state.user.token
 })
   
   

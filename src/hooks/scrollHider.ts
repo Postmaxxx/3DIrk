@@ -2,37 +2,33 @@ import { useCallback, useState, useEffect } from 'react';
 
 
 export const useScrollHider = () => {
-
-    const [_el, setElement] = useState<HTMLElement | null>(null)
-    const [threshold, setThreshold] = useState<number>(0)
-
-    const onScroll = useCallback(() => {
-        if (!_el) return
-        if (document.body.scrollTop > threshold || document.documentElement.scrollTop > threshold) {
-            _el.classList.add('scrolled')
-        } else {
-            _el.classList.remove('scrolled')
-        }
-    }, [_el, threshold])
-
-
-    const add = (_newEl: HTMLElement, threshold: number) => {
-        setElement(_newEl)
-        setThreshold(threshold)
+    const [list, selList] = useState<{el: HTMLElement, threshold: number}[]>([])
+   
+    const onScroll = () => {   
+        list.forEach(item => {
+            if (document.body.scrollTop > item.threshold || document.documentElement.scrollTop > item.threshold) {
+                item.el.classList.add('scrolled')
+            } else {
+                item.el.classList.remove('scrolled')
+            }
+        })
     }
 
-    const remove = () => {
-        setElement(null)
-        setThreshold(0)
-        document.removeEventListener('scroll', onScroll)
+    const add = (newEl: HTMLElement, threshold: number) => {
+        selList(prev => [...prev, {el: newEl, threshold}])
     }
 
-    
-    useEffect(() => {
+    const clear = () => {
+        selList([])
+    }
+
+
+    useEffect(() => {       
         document.addEventListener('scroll', onScroll)
         return () => document.removeEventListener('scroll', onScroll)
-    }, [_el])
+    }, [list])
 
-    return {add, remove}
+    
+    return {add, clear}
 }
 

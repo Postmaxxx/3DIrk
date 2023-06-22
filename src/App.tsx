@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, memo } from "react";
 import { Routes, Route, HashRouter } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import Preloader from "./components/Preloaders/Preloader"; 
@@ -9,6 +9,11 @@ import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import P404 from "./pages/P404/P404";
 import { allActions } from "./redux/actions/all";
+import Footer from "./partials/Footer/Footer";
+import Header from "./partials/Header/Header";
+import Homer from "./components/Homer/Homer";
+import LangSwitcher from "./components/LangSwitcher/LangSwitcher";
+import Offliner from "./components/Offliner/Offliner";
 
 const LazyThemeSwitcher = lazy(() => import("./components/ThemeSwitcher/ThemeSwitcher"));
 const LazyLangSwitcher = lazy(() => import("./components/LangSwitcher/LangSwitcher"));
@@ -46,31 +51,29 @@ interface IPropsActions {
 
 interface IProps extends IPropsState, IPropsActions {}
 
-
-
+const MemoFooter = memo(Footer)
 
 const App:React.FC<IProps> = ({lang, setState}):JSX.Element => {
 	
-
 	useEffect(() => {
 		setState.user.loginWithToken()
 		//setState.colors.loadColors()
 		setState.fibers.loadFibers()
 		//cart!!!
+		console.log('app useEffect re');
+		
 	}, [])
 
-
-	console.log('app rerender');
+	console.log('app re');
 	
-
 
 	return (
 		<HashRouter>
+			<LangSwitcher />
+			<Homer />
+			<Offliner lang={lang}/>
 			<Suspense fallback={<Preloader />}><LazyThemeSwitcher /></Suspense>
-			<Suspense fallback={<Preloader />}><LazyLangSwitcher /></Suspense>
 			<Suspense fallback={<Preloader />}><LazyHeader /></Suspense>
-			<Suspense fallback={<Preloader />}><LazyHomer /></Suspense>
-			<Suspense fallback={<Preloader />}><LazyOffliner lang={lang}/></Suspense>
 			{/*<Suspense fallback={<Preloader />}><LazyUserBlock /></Suspense>*/}
 
 			
@@ -105,12 +108,11 @@ const App:React.FC<IProps> = ({lang, setState}):JSX.Element => {
 				<Route path="/*" element={<Suspense fallback={<Preloader />}><P404 lang={lang}/></Suspense>} />
 			</Routes>
 
-			<LazyFooter />
+			<MemoFooter lang={lang}/>
 		</HashRouter>
 
   );
 } 
-
 
 
 const mapStateToProps = (state: IFullState): IPropsState => ({

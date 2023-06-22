@@ -6,7 +6,9 @@ import { connect } from "react-redux";
 import { ICheckErrorItem, IFullState, ILoggingForm, IUserState, TLang, TLangText } from 'src/interfaces';
 import { setUser, register, login } from "../../redux/actions/user"
 import inputChecker from 'src/assets/js/inputChecker';
-import { isErrored } from 'stream';
+import { resetFetch } from 'src/assets/js/consts';
+import { errorsChecker } from 'src/assets/js/processors';
+import Hider from '../tiny/Hider/Hider';
 
 const actionsListUser = { setUser, register, login }
 
@@ -28,17 +30,12 @@ interface IProps extends IPropsState, IPropsActions {
 }
 
 
-
 const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Element => {
 
     const [register, setRegister] = useState<boolean>(false) //true - register, false - login
-    const _name = useRef<HTMLInputElement>(null)
-    const _email = useRef<HTMLInputElement>(null)
-    const _phone = useRef<HTMLInputElement>(null)
-    const _password = useRef<HTMLInputElement>(null)
-    const _rePassword = useRef<HTMLInputElement>(null)
-
+    const [hide, setHide] = useState<boolean>(true) //true - register, false - login
     const [form, setForm] = useState<ILoggingForm>({name: userState.name, email: userState.email, phone: userState.phone, password: '', repassword: ''})
+
 
     const onChangeText: React.ChangeEventHandler<HTMLInputElement> = (e) => {
         const key = e.target.name as keyof ILoggingForm
@@ -51,15 +48,17 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
 
     const status = useMemo(() => userState.auth.status, [userState.auth.status])
 
-    const focusNext = ({e, target}: {e: KeyboardEvent, target: HTMLInputElement | HTMLTextAreaElement | null}) => {
+
+    const focusNext = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
             e.preventDefault()
-            target?.focus();
+            //!!!
+           // target?.focus();
         }
     }
 
     const clearErrors = () => {
-        setState.user.setUser({...userState, auth: {status: 'idle', message: {en: '', ru: ''}, errors: []}});
+        setState.user.setUser({...userState, auth: resetFetch});
     }
 
 
@@ -69,51 +68,54 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
         onCancel()
     }
     
-
-
+    const errChecker = useMemo(() => errorsChecker({lang, min:2, max: 70}), [lang])
 
     const onSubmit: React.EventHandler<any> = (e) => {
         e.preventDefault()
         e.stopPropagation()
+        const errors = []
+        
         
         if (register) { 
-            const feildsToCheck: Array<ICheckErrorItem> = [
-                {ref: _name, name: {en: 'Your name', ru: 'Ваше имя'}},
-                {ref: _email, name: {en: 'Your email', ru: 'Ваша почта'}},
-                {ref: _phone, name: {en: 'Your phone', ru: 'Ваш телефон'}},
-                {ref: _password, name: {en: 'Your password', ru: 'Ваш пароль'}},
-                {ref: _rePassword, name: {en: 'Repeat your password', ru: 'Повторите ваш пароль'}},
-            ]
-            const {isWrong, header, errors} = inputChecker(feildsToCheck)
-            if (_password.current?.value !== _rePassword.current?.value) {
+            if (form.email.length < 2) {errors.push({en: 'Name is too short', ru: 'Имя слишком короткое'})}
+            if (form.email.length > 30) {errors.push({en: 'Name is too long', ru: 'Имя слишком длинное'})}
+            if (form.phone.length < 6) {errors.push({en: 'Phone is too short', ru: 'Телефон слишком короткий'})}
+            if (form.phone.length > 20) {errors.push({en: 'Phone is too long', ru: 'Телефон слишком длинный'})}
+            if (form.email.length < 6) {errors.push({en: 'Email is too short', ru: 'Почта слишком короткая'})}
+            if (form.email.length > 40) {errors.push({en: 'Email is too long', ru: 'Почта слишком длинная'})}
+            if (form.password.length < 8) {errors.push({en: 'Password is too short', ru: 'Пароль слишком короткий'})}
+
+            if (form.password !== form.repassword) {
                 errors.push({en: 'Passwords do not match', ru: 'Пароли не совпадают'})
             }
 
-            if (isWrong) {
-                setState.user.setUser({...userState, auth: {status: 'error', message: header, errors}})
+            if (errors.length > 0) {
+                setState.user.setUser({...userState, auth: {status: 'error', message: {en: '', ru: ''}, errors: errors}})
                 return
             }
-            setState.user.register({...form})
+            setState.user.register(form)
         } else {
-            const feildsToCheck: Array<ICheckErrorItem> = [
-                {ref: _email, name: {en: 'Your email', ru: 'Ваша почта'}},
-                {ref: _password, name: {en: 'Your password', ru: 'Ваш пароль'}},
-            ]
-            const {isWrong, header, errors} = inputChecker(feildsToCheck)
+            if (form.email.length < 2) {errors.push({en: 'Name is too short', ru: 'Имя слишком короткое'})}
+            if (form.email.length > 30) {errors.push({en: 'Name is too long', ru: 'Имя слишком длинное'})}
+            if (form.password.length < 8) {errors.push({en: 'Password is too short', ru: 'Пароль слишком короткий'})}
 
-            if (isWrong) {
-                setState.user.setUser({...userState, auth: {status: 'error', message: header, errors}})
+            if (errors.length > 0) {
+                setState.user.setUser({...userState, auth: {message: {en: '', ru: ''}, status: 'error', errors: errors}})
                 return
             }
-            setState.user.login({...form})
+            setState.user.login(form)
         }   
     }
 
 
+    const onHiderClick = () => {
+        setHide(prev => !prev)
+    }
 
-    useEffect(() => {
+
+    useEffect(() => {       
         if (userState.auth.status === 'success') {
-            onCancel()
+            onCancel() //exit after successfull authorization
         }
     }, [userState.auth.status])
 
@@ -123,8 +125,8 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
         clearErrors()
     }, [])
 
-   
 
+   
     return (
         <div className="login">
             <div className="form__container">
@@ -146,10 +148,9 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
                                 required 
                                 minLength={2} 
                                 maxLength={25} 
-                                ref={_name} 
                                 onChange={onChangeText}
                                 value={form.name}
-                                onKeyDown={(e:any) => focusNext({e, target: _email.current})}/>
+                                onKeyDown={focusNext}/>
                         </div>}
                     <div className="input-block">
                         <label htmlFor="user_email">
@@ -163,10 +164,9 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
                             required 
                             minLength={5} 
                             maxLength={35} 
-                            ref={_email} 
                             value={form.email}
                             onChange={onChangeText} 
-                            onKeyDown={(e:any) => focusNext({e, target: _phone.current})}/>
+                            onKeyDown={focusNext}/>
                     </div>
                     {register &&
                         <div className="input-block">
@@ -181,10 +181,9 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
                                 required 
                                 minLength={2} 
                                 maxLength={25} 
-                                ref={_phone} 
                                 value={form.phone}
                                 onChange={onChangeText} 
-                                onKeyDown={(e:any) => focusNext({e, target: _password.current})}/>
+                                onKeyDown={focusNext}/>
                         </div>}
                     <div className="input-block">
                         <label htmlFor="user_password">
@@ -194,14 +193,14 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
                             className="input-element" 
                             name="password"
                             id="user_password" 
-                            type="password" 
+                            type={hide ? `password` : 'text'}
                             required 
                             minLength={8} 
                             maxLength={25} 
-                            ref={_password} 
                             value={form.password}
                             onChange={onChangeText} 
-                            onKeyDown={(e:any) => focusNext({e, target: _rePassword.current})}/>
+                            onKeyDown={focusNext}/>
+                            <Hider hidden={hide} onClick={onHiderClick}/>
                     </div>
                     {register &&
                         <div className="input-block">
@@ -212,18 +211,16 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
                                 className="input-element" 
                                 name="repassword"
                                 id="user_repassword" 
-                                type="password" 
+                                type={hide ? `password` : 'text'}
                                 required 
                                 minLength={8} 
                                 maxLength={25} 
                                 value={form.repassword}
-                                ref={_rePassword} 
                                 onChange={onChangeText} />
                         </div>}
                         {userState.auth.status === 'error' ? 
                             <div className="errors__container">
                                 <span className='errors__header'>{lang === 'en' ? 'Errors' : 'Ошибки'}: </span>
-                                <span className='errors__name'>{userState.auth.message[lang]}</span>
                                 <ul className='errors__list'>
                                     {userState.auth.errors && userState.auth.errors.length > 0 && userState.auth.errors.map((error, i) => {
                                         return (
@@ -236,7 +233,7 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
                             null    
                         }
                         <div className="control__container">
-                            <button className={`button_blue ${userState.auth.status === 'fetching' ? 'disabled' : ''}`} type="submit" onClick={onSubmit} disabled={userState.auth.status === 'fetching'}>
+                            <button className='button_blue' type="submit" onClick={onSubmit} disabled={userState.auth.status === 'fetching'}>
                                 {register ? 
                                     lang === 'en' ? 'Register' : 'Регистрация' 
                                     :  

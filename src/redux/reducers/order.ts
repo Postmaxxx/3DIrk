@@ -7,7 +7,7 @@ import { actionsListOrder } from '../actions/actionsList'
 
 const reducerOrder = (state:IOrderState = initialOrderState, action: IAction<any>): IOrderState => {
     switch (action.type) {
-        case actionsListOrder.SET_SEND_DATA_STATUS_ORDER: 
+        case actionsListOrder.SET_SEND_STATUS_ORDER: 
             return {
                 ...state, 
                 send: action.payload
@@ -53,7 +53,7 @@ const reducerOrder = (state:IOrderState = initialOrderState, action: IAction<any
 
 
 
-        case actionsListOrder.SET_LOAD_DATA_STATUS_CART:
+        case actionsListOrder.SET_LOAD_STATUS_CART:
             const categoriesCartLoadStatus = action.payload as IFetch
             return {
                 ...state, 
@@ -63,7 +63,7 @@ const reducerOrder = (state:IOrderState = initialOrderState, action: IAction<any
                 }
             }
 
-        case actionsListOrder.SET_SEND_DATA_STATUS_CART:
+        case actionsListOrder.SET_SEND_STATUS_CART:
             const categoriesCartSendStatus = action.payload as IFetch
             return {
                 ...state, 

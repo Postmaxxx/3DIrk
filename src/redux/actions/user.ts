@@ -1,6 +1,7 @@
 import { IAction, IDispatch, IErrRes, IFullState, ILoggingForm, IUserLoginResOk, IUserState, TLangText } from "src/interfaces";
 import { actionsListUser } from './actionsList'
 import { setName, setEmail, setPhone } from "./order";
+import { resetFetch } from "src/assets/js/consts";
 
 export const setUser = <T extends IUserState>(payload: T):IAction<T> => ({
     type: actionsListUser.SET_USER,
@@ -11,16 +12,18 @@ export const setUser = <T extends IUserState>(payload: T):IAction<T> => ({
 export const loadToken = () => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
         const { user } = getState() //get current user state
-        dispatch(setUser({...user, auth: {status: 'fetching', message: {en: 'Loading token', ru: 'Загрузка токена'}, errors: []}}))
+        dispatch(setUser({...user, auth: {status: 'fetching', message: {en: 'Loading token', ru: 'Загрузка токена'}}}))
         try {
             const savedUser = localStorage.getItem('user')
             
             const currentToken: string = savedUser ? JSON.parse(savedUser).token : null
             if (currentToken) {
-                dispatch(setUser({...user, token: currentToken, auth: {status: 'success', message: {en: 'User token loaded', ru: 'Токен пользователя загружен'}, errors: []}}))
+                dispatch(setUser({...user, token: currentToken, auth: {status: 'success', message: {en: 'User token loaded', ru: 'Токен пользователя загружен'}}}))
             }
+            dispatch(setUser({...user, auth: {...resetFetch}}))
+            
         } catch (e) {   
-            dispatch(setUser({...user,auth: {status: 'error', message: {en: 'Error while token loading', ru: 'Ошибка в процессе загрузки токена'}, errors: []}}))
+            dispatch(setUser({...user,auth: {status: 'error', message: {en: 'Error while token loading', ru: 'Ошибка в процессе загрузки токена'}   }}))
         } 
     }
 };
@@ -59,7 +62,7 @@ export const register = ({name, email, phone, password}: ILoggingForm) => {
 
 
 
-export const login = ({email, password}: ILoggingForm) => {         
+export const login = ({email, password}: Pick<ILoggingForm, "email" | "password">) => {         
     return async function(dispatch: IDispatch, getState: () => IFullState) {              
         const { user, order } = getState() //get current user state
         dispatch(setUser({...user, auth: {status: 'fetching', message: {en: '', ru: ''}, errors: []}}))

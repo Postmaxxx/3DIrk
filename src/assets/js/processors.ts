@@ -59,5 +59,4 @@ const prevent = (e: React.MouseEvent<HTMLElement>) => {
 //---------------------------------------------------------------
 
 
-
 export { ratingNumberToText, errorsChecker, prevent }

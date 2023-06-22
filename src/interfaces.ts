@@ -270,7 +270,18 @@ export interface ISendNews extends Omit<INewsItem, 'images'> {
 }
 
 
-export interface INewsItem {
+export interface INewsItem { //for detail view on news detail page
+    _id: TId
+    header: TLangText
+    date: Date
+    short: TLangText
+    text: TLangText
+    images: IImgWithThumb[]
+    files?: File[]
+    changeImages?: boolean //for editing
+}
+
+export interface INewsItemShort { // for preview news on main page
     _id: TId
     header: TLangText
     date: Date
@@ -281,9 +292,11 @@ export interface INewsItem {
 
 export interface INewsState {
     load: IFetch
+    loadOne: IFetch
+    newsOne: INewsItem
     send: IFetch
     total: number
-    newsList: INewsItem[]
+    newsList: INewsItemShort[]
 }
 
 
@@ -471,9 +484,9 @@ export interface IMsgRes {
 export interface ILoggingForm {
     email: string
     password: string
-    name?: string,
-    phone?: string
-    repassword?: string
+    name: string,
+    phone: string
+    repassword: string
 }
 
 export interface ICheckErrorItem {

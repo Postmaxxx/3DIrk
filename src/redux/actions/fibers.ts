@@ -7,12 +7,12 @@ import { makeDelay } from "src/assets/js/makeDelay";
 
 
 export const setLoadFibers = <T extends IFetch>(payload: T):IAction<T> => ({
-    type: actionsListFibers.SET_LOAD_DATA_STATUS_FIBERS,
+    type: actionsListFibers.SET_LOAD_STATUS_FIBERS,
     payload: payload
 });
 
 export const setSendFibers = <T extends IFetch>(payload: T):IAction<T> => ({
-    type: actionsListFibers.SET_SEND_DATA_STATUS_FIBERS,
+    type: actionsListFibers.SET_SEND_STATUS_FIBERS,
     payload: payload
 });
 

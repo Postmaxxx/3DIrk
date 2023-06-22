@@ -8,6 +8,7 @@ import "./themeSwitcher.scss";
 import { setThemeDark, setThemeLight, setThemeToggle }  from "../../redux/actions/base"
 import { IBaseState, IFullState, TLang } from "../../interfaces";
 import { useScrollHider } from "src/hooks/scrollHider";
+//import { scrollHider } from "src/assets/js/scrollHider";
 
 const actionsList = {setThemeDark, setThemeLight, setThemeToggle}
 
@@ -73,7 +74,8 @@ interface IProps extends IPropsState, IPropsActions {}
 const ThemeSwitcher: React.FC<IProps> = ({mobOpened, lang, setState}): JSX.Element => {
 
 	const _themeSwitcherCont = useRef<HTMLDivElement>(null);
-    const themeHider = useScrollHider()   
+    const {add: addToHider, clear: clearHider} = useScrollHider()
+
 
 
 	const dayLightSwitcher = (switcherProps: Partial<IStateSwitcher>) => {
@@ -481,9 +483,10 @@ const ThemeSwitcher: React.FC<IProps> = ({mobOpened, lang, setState}): JSX.Eleme
 		};		
 		const themeSwitcher = dayLightSwitcher(themeProps);
 		themeSwitcher.create();
+        
 
-        themeHider.add(_themeSwitcherCont.current, 50)
-		return () => themeHider.remove()
+		addToHider(_themeSwitcherCont.current, 50)
+		return () => clearHider()
 	},[]);
 
 

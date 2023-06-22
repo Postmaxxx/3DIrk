@@ -5,12 +5,12 @@ import { actionsListColors } from '../actions/actionsList'
 
 const reducerColors = (state:IColorsState = initialColorsState, action: IAction<any>): IColorsState => {
     switch (action.type) {
-        case actionsListColors.SET_LOAD_DATA_STATUS_COLORS: 
+        case actionsListColors.SET_LOAD_STATUS_COLORS: 
             return {
                 ...state, 
                 load: action.payload
             }
-        case actionsListColors.SET_SEND_DATA_STATUS_COLORS: 
+        case actionsListColors.SET_SEND_STATUS_COLORS: 
             return {
                 ...state, 
                 send: action.payload

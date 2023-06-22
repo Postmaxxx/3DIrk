@@ -5,13 +5,13 @@ import { actionsListColors } from './actionsList'
 
 
 export const setLoadColors = <T extends IFetch>(payload: T):IAction<T> => ({
-    type: actionsListColors.SET_LOAD_DATA_STATUS_COLORS,
+    type: actionsListColors.SET_LOAD_STATUS_COLORS,
     payload
 });
 
 
 export const setSendColors = <T extends IFetch>(payload: T):IAction<T> => ({
-    type: actionsListColors.SET_SEND_DATA_STATUS_COLORS,
+    type: actionsListColors.SET_SEND_STATUS_COLORS,
     payload
 });
 

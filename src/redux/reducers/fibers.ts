@@ -7,12 +7,12 @@ import { actionsListFibers } from '../actions/actionsList'
 
 const reducerFibers = (state:IFibersState = initialFibersState, action: IAction<any>): IFibersState => {
     switch (action.type) {
-        case actionsListFibers.SET_LOAD_DATA_STATUS_FIBERS: 
+        case actionsListFibers.SET_LOAD_STATUS_FIBERS: 
             return {
                 ...state, 
                 load: action.payload
             }
-        case actionsListFibers.SET_SEND_DATA_STATUS_FIBERS: 
+        case actionsListFibers.SET_SEND_STATUS_FIBERS: 
             return {
                 ...state, 
                 send: action.payload

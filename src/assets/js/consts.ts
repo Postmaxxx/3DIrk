@@ -17,6 +17,34 @@ const resetFetch: IFetch = {
     errors: []
 }
 
+const loadFetch: IFetch = {
+    status: 'fetching',
+    message: {en: '', ru: ''},
+    errors: []
+}
+
+const errorFetch: IFetch = {
+    status: 'error',
+    message: {en: '', ru: ''},
+    errors: []
+}
+
+const successFetch: IFetch = {
+    status: 'success',
+    message: {en: '', ru: ''},
+    errors: []
+}
 
 
-export {delayBetweenImagesPost, clearModalMessage, resetFetch, timeModalClosing}
+const headerStatus = {
+    success: {
+        en: 'Success',
+        ru: 'Успех'
+    },
+    error: {
+        en: 'Error',
+        ru: 'Ошибка'
+    }
+}
+
+export {delayBetweenImagesPost, clearModalMessage, resetFetch, timeModalClosing, loadFetch, errorFetch, successFetch, headerStatus}

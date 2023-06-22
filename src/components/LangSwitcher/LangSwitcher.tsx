@@ -1,5 +1,5 @@
 import "./langSwitcher.scss"
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import { connect } from "react-redux";
 import { IFullState, TLang, TTheme } from "../../interfaces";
 import { AnyAction, bindActionCreators } from "redux";
@@ -22,11 +22,10 @@ interface IPropsActions {
 
 interface IProps extends IPropsState, IPropsActions {}
 
-
 const LangSwitcher:React.FC<IProps> = ({lang, mobOpened, setState}): JSX.Element => {
 
     const _lang = useRef<HTMLDivElement>(null)
-    const langHider = useScrollHider()   
+    const {add: addToHider, clear: clearHider} = useScrollHider()
 
     const handleChangeLang = (e: React.MouseEvent<HTMLDivElement>) => {
         if (lang === 'en') {
@@ -41,9 +40,8 @@ const LangSwitcher:React.FC<IProps> = ({lang, mobOpened, setState}): JSX.Element
     useEffect(() => {
         (window.localStorage.getItem('language') as TLang) === 'en' ? setState.base.setLangEn() : setState.base.setLangRu()
         if (!_lang.current) return
-        langHider.add(_lang.current, 50)
-
-		return () => langHider.remove()
+        addToHider(_lang.current, 50)
+		return () => clearHider()
     }, [])
 
 
@@ -66,7 +64,8 @@ const LangSwitcher:React.FC<IProps> = ({lang, mobOpened, setState}): JSX.Element
             <div className="lang-switcher__text lang_ru" data-lang='ru'>EN</div>
             <div className="lang-switcher__text lang_en" data-lang='en'>RU</div>
         </div>
-    )   
+    )
+      
 }
 
 
