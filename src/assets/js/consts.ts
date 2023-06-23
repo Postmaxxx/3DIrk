@@ -1,8 +1,8 @@
-import { IFetch, IMessageModal } from "src/interfaces"
+import { IFetch, IMessageModal, TLangText } from "src/interfaces"
 
-const delayBetweenImagesPost = 300
+const delayBetweenImagesPost: number = 300
 
-const timeModalClosing = 500
+const timeModalClosing: number = 500
 
 const clearModalMessage: IMessageModal = {
     status: '',
@@ -10,14 +10,13 @@ const clearModalMessage: IMessageModal = {
     text: ['']
 }
 
-
 const resetFetch: IFetch = {
     status: 'idle',
     message: {en: '', ru: ''},
     errors: []
 }
 
-const loadFetch: IFetch = {
+const fetchingFetch: IFetch = {
     status: 'fetching',
     message: {en: '', ru: ''},
     errors: []
@@ -47,4 +46,151 @@ const headerStatus = {
     }
 }
 
-export {delayBetweenImagesPost, clearModalMessage, resetFetch, timeModalClosing, loadFetch, errorFetch, successFetch, headerStatus}
+
+const empty: TLangText = {
+    en: '',
+    ru: ''
+}
+
+const selector = {
+    "10": [
+        {   
+            value: '1',
+            name: {
+                en: 'none',
+                ru: 'отсутствует'
+            }
+        },
+        {   
+            value: '2',
+            name: {
+                en: 'extremely low',
+                ru: 'крайне низкая'
+            }
+        },
+        {   
+            value: '3',
+            name: {
+                en: 'low',
+                ru: 'низкая'
+            }
+        },
+        {   
+            value: '4',
+            name: {
+                en: 'poor',
+                ru: 'посредственная'
+            }
+        },
+        {   
+            value: '5',
+            name: {
+                en: 'below average',
+                ru: 'ниже средней'
+            }
+        },
+    
+        {   
+            value: '6',
+            name: {
+                en: 'average',
+                ru: 'средняя'
+            }
+        },
+    
+        {   
+            value: '7',
+            name: {
+                en: 'upper average',
+                ru: 'хорошая'
+            }
+        },
+    
+        {   
+            value: '8',
+            name: {
+                en: 'hign',
+                ru: 'высокая'
+            }
+        },
+    
+        {   
+            value: '9',
+            name: {
+                en: 'very high',
+                ru: 'очень высокая'
+            }
+        },
+    
+        {   
+            value: '10',
+            name: {
+                en: 'exellent',
+                ru: 'отличная'
+            }
+        },
+    ],
+    "5": [
+        {   
+            value: '1',
+            name: {
+                en: 'low',
+                ru: 'низкая'
+            }
+        },
+        {   
+            value: '2',
+            name: {
+                en: 'below average',
+                ru: 'ниже средней'
+            }
+        },
+        {   
+            value: '3',
+            name: {
+                en: 'average',
+                ru: 'средняя'
+            }
+        },
+        {   
+            value: '4',
+            name: {
+                en: 'upper average',
+                ru: 'выше средней'
+            }
+        },
+        {   
+            value: '5',
+            name: {
+                en: 'high',
+                ru: 'высокая'
+            }
+        },
+    ],
+    "3": [
+        {   
+            value: '1',
+            name: {
+                en: 'none',
+                ru: 'отсутствует'
+            }
+        },
+        {   
+            value: '2',
+            name: {
+                en: 'average',
+                ru: 'средняя'
+            }
+        },
+        {   
+            value: '3',
+            name: {
+                en: 'high',
+                ru: 'высокая'
+            }
+        },
+    ]
+    
+}
+
+export {delayBetweenImagesPost, clearModalMessage, resetFetch, timeModalClosing, fetchingFetch, errorFetch, successFetch, headerStatus, empty, selector}

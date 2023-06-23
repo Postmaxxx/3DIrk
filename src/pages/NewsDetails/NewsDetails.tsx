@@ -5,14 +5,14 @@ import Preloader from '../../components/Preloaders/Preloader';
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import { useRef, useEffect, useState, FC, useMemo } from "react";
+import { useRef, useEffect, FC, useMemo } from "react";
 import SpliderCommon from '../../components/Spliders/Common/SpliderCommon';
 import { allActions } from "../../redux/actions/all";
 import Delete from 'src/components/Delete/Delete';
 import Modal, { IModalFunctions } from "../../components/Modal/Modal";
 import Message, { IMessageFunctions } from 'src/components/Message/Message';
 import IconEdit from 'src/components/tiny/IconEdit/IconEdit';
-import { headerStatus, resetFetch,  timeModalClosing } from 'src/assets/js/consts';
+import { headerStatus, resetFetch, timeModalClosing } from 'src/assets/js/consts';
 
 
 interface IPropsState {
@@ -35,6 +35,7 @@ interface IProps extends IPropsState, IPropsActions {}
 
 const NewsDetails: FC<IProps> = ({lang, setState, send, loadOne, newsOne, isAdmin }): JSX.Element => {
     const paramNewsId = useParams().newsId || ''
+    
     const navigate = useNavigate()
     const modal = useRef<IModalFunctions>(null)
     const message = useRef<IMessageFunctions>(null)
@@ -134,7 +135,7 @@ const NewsDetails: FC<IProps> = ({lang, setState, send, loadOne, newsOne, isAdmi
                 }
             </div>
         )
-    }, [newsOne, isAdmin, lang, send.status])
+    }, [newsOne, isAdmin, lang, send.status, loadOne.status])
 
 
 

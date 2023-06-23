@@ -84,7 +84,6 @@ export const loadSomeNews = (from: number, amount: number) => {
 export const loadOneNews = (_id: string) => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
         const news = getState().news
-        console.log('loaded !!!');
         if (news.loadOne.status === 'fetching') return
         dispatch(setLoadOneNews({status: 'fetching', message: {en: `Loading news ${_id}`, ru: `Загрузка новости  ${_id}`},}))
         try {
@@ -115,37 +114,49 @@ export const loadOneNews = (_id: string) => {
 
 
 
-export const sendNews = (news: ISendNews) => {
+export const sendNews = () => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
+        const { newsOne } = getState().news
         const token = getState().user.token //get current user state
         dispatch(setSendNews({status: 'fetching', message: {en: '', ru: ''}}))
         const delayBetweenImagesPost = 300
 
         const imageUrls: IImgWithThumb[] = []
         // images to imgbb
-        await news.images.reduce(async (acc: Promise<string>, image: File, i) => {
-            return new Promise(async (res, rej) => {
-                await acc
-                                
-                const newsImagePost = await imageUploader(image)
-                if (newsImagePost.status !== 'success') {
-                    rej(`Error while uploading image ${image.name}`)
-                    return dispatch(setSendNews(newsImagePost))
-                }
-                imageUrls.push(newsImagePost.urls as IImgWithThumb)
-                setTimeout(() => res('ok'), delayBetweenImagesPost)
-            })
-            
-        }, Promise.resolve('start fetching images'))
-
-
+        if (newsOne.files && newsOne.files?.length > 0) {
+            await newsOne.files.reduce(async (acc: Promise<string>, image: File, i) => {
+                return new Promise(async (res, rej) => {
+                    await acc
+                    const newsImagePost = await imageUploader(image)
+                    if (newsImagePost.status !== 'success') {
+                        rej(`Error while uploading image ${image.name}`)
+                        return dispatch(setSendNews(newsImagePost))
+                    }
+                    imageUrls.push(newsImagePost.urls as IImgWithThumb)
+                    setTimeout(() => res('ok'), delayBetweenImagesPost)
+                })
+            }, Promise.resolve('start fetching images'))
+        }
 
         //post to db
         try {
-            const newsToDb = {
-                ...news,
+            const newsToDb: Partial<INewsItem> = {
+                header: {
+                    en:  newsOne.header.en.trim(),
+                    ru:  newsOne.header.ru.trim()
+                },
+                text: {
+                    en:  newsOne.text.en.trim(),
+                    ru:  newsOne.text.ru.trim()
+                },
+                short: {
+                    en:  newsOne.short.en.trim(),
+                    ru:  newsOne.short.ru.trim()
+                },
+                date: newsOne.date,
                 images: imageUrls
             }
+
             const response: Response = await fetch('/api/news/create', {
                 method: 'POST',
                 headers: {
@@ -179,38 +190,50 @@ export const sendNews = (news: ISendNews) => {
 
 
 
-export const editNews = (news: Partial<ISendNews>, changeImages: boolean) => {
+export const updateNews = () => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
-        
+        const { newsOne } = getState().news
         const token = getState().user.token //get current user state
         dispatch(setSendNews({status: 'fetching', message: {en: '', ru: ''}}))
         const delayBetweenImagesPost = 300
 
         const imageUrls: IImgWithThumb[] = []
         // images to imgbb
-        if (changeImages && news.images) {
-            
-            await news.images.reduce(async (acc: Promise<string>, image: File, i) => {
+        if (newsOne.changeImages && newsOne.files && newsOne.files?.length > 0) {
+            await newsOne.files.reduce(async (acc: Promise<string>, file: File, i) => {
                 return new Promise(async (res, rej) => {
-                    await acc
-                                    
-                    const newsImagePost = await imageUploader(image)
-                    if (newsImagePost.status !== 'success') {
-                        rej(`Error while uploading image ${image.name}`)
-                        return dispatch(setSendNews(newsImagePost))
+                    await acc             
+                    const newsImagePosted = await imageUploader(file)
+                    if (newsImagePosted.status !== 'success') {
+                        rej(`Error while uploading image ${file.name}`)
+                        return dispatch(setSendNews(newsImagePosted))
                     }
-                    imageUrls.push(newsImagePost.urls as IImgWithThumb)
-                    setTimeout(() => res('ok'), delayBetweenImagesPost)
+                    imageUrls.push(newsImagePosted.urls as IImgWithThumb)
+                    setTimeout(() => res('ok'), delayBetweenImagesPost) //wait between request to avoid any issues like ban
                 })
-                
             }, Promise.resolve('start fetching images'))
-
         }
 
-            //post to db
+        //post to db
         try {
-            const newsToDb: Partial<INewsItem> = {...news, images: imageUrls}
-            if (!changeImages) {
+            const newsToDb: Partial<INewsItem> = {
+                header: {
+                    en:  newsOne.header.en.trim(),
+                    ru:  newsOne.header.ru.trim()
+                },
+                text: {
+                    en:  newsOne.text.en.trim(),
+                    ru:  newsOne.text.ru.trim()
+                },
+                short: {
+                    en:  newsOne.short.en.trim(),
+                    ru:  newsOne.short.ru.trim()
+                },
+                date: newsOne.date,
+                _id: newsOne._id,
+                images: imageUrls
+            }
+            if (!newsOne.changeImages) {//if don't need change images => delete field at all,in this case BE will not update images
                 delete newsToDb.images
             }
             

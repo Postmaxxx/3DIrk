@@ -1,5 +1,5 @@
 import { TLang, TLangText } from "src/interfaces";
-import { selector } from "../data/selectorValues";
+import { selector } from "./consts";
 
 //---------------------------------------------------------------
 
@@ -28,7 +28,7 @@ const errorsChecker = ({lang = 'en'}: IErrorsChecker) => {
             err.error = `${el.dataset[lang]} ${lang === 'en' ? `is shorter than ${min} symbols` : `меньше ${min} симв.`}`
         }
         if (el.value.length > max) {
-            err.error = `${el.dataset[lang]} ${lang === 'en' ? `is longer than ${min} symbols` : `больше ${min} симв.`}`
+            err.error = `${el.dataset[lang]} ${lang === 'en' ? `is longer than ${max} symbols` : `больше ${max} симв.`}`
         }
         if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
             el.parentElement?.classList.add('error')
@@ -40,13 +40,29 @@ const errorsChecker = ({lang = 'en'}: IErrorsChecker) => {
         return err //error exists
     }
 
+    const clearError = (el:  HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) => {
+        if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+            el.parentElement?.classList.remove('error')
+        }
+        if (el.tagName === 'SELECT') {
+            el.parentElement?.parentElement?.classList.remove('error')
+        }
+    }
+
+    
     const add = (err: string): void => {errors.push(err)}
 
-    const result = (): string[] => errors
+    const amount = () => errors.length
+
+    const result = () => ({
+        header: lang === 'en' ? 'Errors in fields' : 'Найдены ошибки в полях',
+        status: 'error',
+        text: [...errors]
+    })
 
     const clear = () => {errors.splice(0, errors.length)}
 
-    return { check, result, add, clear }
+    return { check, result, add, clear, clearError, amount }
 }
 
 //---------------------------------------------------------------
@@ -57,6 +73,7 @@ const prevent = (e: React.MouseEvent<HTMLElement>) => {
 }
 
 //---------------------------------------------------------------
+
 
 
 export { ratingNumberToText, errorsChecker, prevent }

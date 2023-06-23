@@ -1,7 +1,7 @@
 import { IAction, IDispatch, IErrRes, IFullState, ILoggingForm, IUserLoginResOk, IUserState, TLangText } from "src/interfaces";
 import { actionsListUser } from './actionsList'
 import { setName, setEmail, setPhone } from "./order";
-import { resetFetch } from "src/assets/js/consts";
+import { fetchingFetch } from "src/assets/js/consts";
 
 export const setUser = <T extends IUserState>(payload: T):IAction<T> => ({
     type: actionsListUser.SET_USER,
@@ -9,30 +9,11 @@ export const setUser = <T extends IUserState>(payload: T):IAction<T> => ({
 });
 
 
-export const loadToken = () => {
-    return async function(dispatch: IDispatch, getState: () => IFullState) {
-        const { user } = getState() //get current user state
-        dispatch(setUser({...user, auth: {status: 'fetching', message: {en: 'Loading token', ru: 'Загрузка токена'}}}))
-        try {
-            const savedUser = localStorage.getItem('user')
-            
-            const currentToken: string = savedUser ? JSON.parse(savedUser).token : null
-            if (currentToken) {
-                dispatch(setUser({...user, token: currentToken, auth: {status: 'success', message: {en: 'User token loaded', ru: 'Токен пользователя загружен'}}}))
-            }
-            dispatch(setUser({...user, auth: {...resetFetch}}))
-            
-        } catch (e) {   
-            dispatch(setUser({...user,auth: {status: 'error', message: {en: 'Error while token loading', ru: 'Ошибка в процессе загрузки токена'}   }}))
-        } 
-    }
-};
-
 
 export const register = ({name, email, phone, password}: ILoggingForm) => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
         const { user } = getState() //get current user state
-        dispatch(setUser({...user, auth: {status: 'fetching', message: {en: '', ru: ''}, errors: []}}))
+        dispatch(setUser({...user, auth: fetchingFetch}))
         try {
             const response = await fetch('/api/auth/register', {
                 method: 'POST',
@@ -54,7 +35,7 @@ export const register = ({name, email, phone, password}: ILoggingForm) => {
             }
             await login({email, password})(dispatch, getState)
         } catch (e) {   
-            dispatch(setUser({...user,auth: {status: 'error', message: (e as IErrRes).message, errors: []}}))
+            dispatch(setUser({...user,auth: {status: 'error', message: (e as IErrRes).message}}))
         } 
     }
 }
@@ -65,7 +46,7 @@ export const register = ({name, email, phone, password}: ILoggingForm) => {
 export const login = ({email, password}: Pick<ILoggingForm, "email" | "password">) => {         
     return async function(dispatch: IDispatch, getState: () => IFullState) {              
         const { user, order } = getState() //get current user state
-        dispatch(setUser({...user, auth: {status: 'fetching', message: {en: '', ru: ''}, errors: []}}))
+        dispatch(setUser({...user, auth: fetchingFetch}))
         try {
             const response: Response = await fetch('/api/auth/login', {
                     method: 'POST',
@@ -98,7 +79,7 @@ export const login = ({email, password}: Pick<ILoggingForm, "email" | "password"
                 phone: result.user.phone,
                 //orders: result.user.orders,
                 token: result.user.token,
-                auth: {status: 'success', message: result.message, errors: []},
+                auth: {status: 'success', message: result.message},
                 isAdmin: result.user.isAdmin
             }))
 
@@ -108,7 +89,7 @@ export const login = ({email, password}: Pick<ILoggingForm, "email" | "password"
 
             localStorage.setItem('user', JSON.stringify({token: result.user.token}))
         } catch (e) {         
-            dispatch(setUser({...user, auth: {status: 'error', message: (e as IErrRes).message, errors: []}}))
+            dispatch(setUser({...user, auth: {status: 'error', message: (e as IErrRes).message}}))
         } 
     }
 }
@@ -119,29 +100,27 @@ export const login = ({email, password}: Pick<ILoggingForm, "email" | "password"
 
 export const loginWithToken = () => {   
     return async function(dispatch: IDispatch, getState: () => IFullState) {
-        const { user } = getState() //get current user state
-        if (!user.token && user.auth.status !== 'fetching') {
-            loadToken()(dispatch, getState);
-        }
+        const { user } = getState() //get current user state        
 
-        if (user.auth.status !== 'success') return
-        
-        dispatch(setUser({...user, auth: {status: 'fetching', message: {en: '', ru: ''}, errors: []}}))
-        if (!user.token) {
+        const savedUser = localStorage.getItem('user')
+        const currentToken: string = savedUser ? JSON.parse(savedUser).token : null
+        if (!currentToken) {
             return dispatch(setUser({...user, auth: {status: 'error', message: {en: 'Token not found', ru: 'Токен не найден'}, errors: []}}))
         }
+
+        dispatch(setUser({...user, auth: fetchingFetch}))
         
         try {
             const response: Response = await fetch('/api/auth/login-token', {
                     method: 'POST',
                     headers: {
                         "Content-Type": 'application/json',
-                        'Authorization': `Bearer ${user.token}`
+                        'Authorization': `Bearer ${currentToken}`
                     },
                 })
-            
-            
+                
             if (response.status !== 200) {
+                
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setUser({
                     ...user, 
@@ -159,14 +138,13 @@ export const loginWithToken = () => {
                 name: result.user.name,
                 email: result.user.email,
                 phone: result.user.phone,
-                //orders: result.user.orders,
                 token: result.user.token,
-                auth: {status: 'success', message: result.message, errors: []},
+                auth: {status: 'success', message: result.message},
                 isAdmin: result.user.isAdmin
             }))
             localStorage.setItem('user', JSON.stringify({token: result.user.token}))
         } catch (e) {         
-            dispatch(setUser({...user, auth: {status: 'error', message: (e as IErrRes).message, errors: []}}))
+            dispatch(setUser({...user, auth: {status: 'error', message: (e as IErrRes).message}}))
         } 
     }
 }

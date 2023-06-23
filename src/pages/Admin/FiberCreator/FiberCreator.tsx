@@ -4,16 +4,17 @@ import React, {  useRef, useMemo } from "react";
 import { connect } from "react-redux";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
-import Modal from 'src/components/Modal/Modal';
-import MessageInfo from 'src/components/MessageInfo/MessageInfo';
+import Modal, { IModalFunctions } from 'src/components/Modal/Modal';
+import Message, { IMessageFunctions } from 'src/components/Message/Message';
 import { useEffect, useState } from "react";
 import { allActions } from "../../../redux/actions/all";
 import AddFiles, { IAddFilesFunctions } from 'src/components/AddFiles/AddFiles';
 import Selector from 'src/components/tiny/Selector/Selector';
-import { selector10, selector3, selector5 } from 'src/assets/data/selectorValues';
 import { fibersProperties } from 'src/assets/data/fibersProperties';
 import Preloader from 'src/components/Preloaders/Preloader';
 import { useNavigate, useParams } from 'react-router-dom';
+import { headerStatus, resetFetch, selector, timeModalClosing } from 'src/assets/js/consts';
+import { errorsChecker, prevent } from 'src/assets/js/processors';
 
 interface IPropsState {
     lang: TLang
@@ -37,6 +38,10 @@ const ColorCreator: React.FC<IProps> = ({lang, fibersState, setState, colorsStat
     
     const navigate = useNavigate()
     const paramFiberId = useParams().fiberId || ''
+    const modal = useRef<IModalFunctions>(null)
+    const modal_missedId = useRef<IModalFunctions>(null)
+    const message = useRef<IMessageFunctions>(null)
+    const message_missedId = useRef<IMessageFunctions>(null)
     const _addPro = useRef<HTMLButtonElement>(null)
     const _addCon = useRef<HTMLButtonElement>(null)
     const _name_en = useRef<HTMLInputElement>(null)
@@ -47,102 +52,58 @@ const ColorCreator: React.FC<IProps> = ({lang, fibersState, setState, colorsStat
     const _text_ru = useRef<HTMLTextAreaElement>(null)
     const _text_short_en = useRef<HTMLTextAreaElement>(null)
     const _text_short_ru = useRef<HTMLTextAreaElement>(null)
-	const [modal, setModal] = useState<boolean>(false)
-    const [message, setMessage] = useState({header: '', status: '', text: ['']})
-    const addFiles = useRef<IAddFilesFunctions>(null)
-    const [files, setFiles] = useState<File[]>([])
+    const addFilesBig = useRef<IAddFilesFunctions>(null)
     const _pros = useRef<HTMLDivElement>(null)
     const _cons = useRef<HTMLDivElement>(null)
-    const [selectedColors, setSelectedColors] = useState<{[key: string]: boolean}>({})
     const _spec = useRef<HTMLDivElement>(null)
     const _descr = useRef<HTMLDivElement>(null)
+    const [selectedColors, setSelectedColors] = useState<{[key: string]: boolean}>({})
     const [changeImages, setChangeImages] = useState<boolean>(true)
 
-    const data10 = useMemo(() => selector10, [])
-    const data5 = useMemo(() => selector5, [])
-    const data3 = useMemo(() => selector3, [])
+    const data10 = useMemo(() => selector["10"], [])
+    const data5 = useMemo(() => selector["5"], [])
+    const data3 = useMemo(() => selector["3"], [])
+    const errChecker = useMemo(() => errorsChecker({lang}), [lang])
 
-
-    const prevent = (e: React.MouseEvent<HTMLElement>) => {
-        e.preventDefault()
-        e.stopPropagation()
-    }
 
 
     const closeModal = () => {
-		setModal(false)
-        setMessage({
-            status: '',
-            header: fibersState.send.status,
-            text: ['']
-        })
+        modal.current?.closeModal()
+        setTimeout(() => message.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal 
+        errChecker.clear()     
         if (fibersState.send.status === 'success') {
-            setState.fibers.setSendFibers({status: 'idle', message: {en: '', ru: ''}})
+            setState.fibers.setSendFibers(resetFetch)
             setState.fibers.loadFibers()
+            navigate('/admin/fiber-create', { replace: true })
             window.location.reload()
         } else {
-            setState.fibers.setSendFibers({status: 'idle', message: {en: '', ru: ''}})
+            setState.fibers.setSendFibers(resetFetch)// clear fetch status
         }
 	}
 
-
-    const errorsChecker = () => {
-        const errors: string[] = []
-
-        const check = (el:  HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement): boolean => {
-            if (!el.value) {
-                errors.push(el.dataset[lang] as string)
-                if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-                    el.parentElement?.classList.add('error')
-                }
-                if (el.tagName === 'SELECT') {
-                    el.parentElement?.parentElement?.classList.add('error')
-                }
-                return true //error exists
-            }
-            return false // no error
-        }
-
-        const add = (e: string) => errors.push(e)
-
-        const result = () => errors
-
-        return { check, result, add }
+    const closeModalAndReturn = () => {
+        modal.current?.closeModal()
+        setTimeout(() => message_missedId.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal 
+        errChecker.clear()     
+        navigate('/admin/fiber-create', { replace: true })
+        window.location.reload()
     }
-   
-
-
-
-    const saveFiles = (files: File[]) => {
-        setFiles(files)
-    }
-
 
 
     
     useEffect(() => {
         if (!_name_en.current || !_name_ru.current || !_name_short_en.current || !_name_short_ru.current || !_text_en.current || 
             !_text_ru.current || !_text_short_en.current || !_text_short_ru.current || !_spec.current || !_descr.current) return
-        if (fibersState.send.status === 'success' || fibersState.send.status === 'error') {
-            const errors: string[] = fibersState.send.errors?.map(e => e[lang]) || []
-            setMessage({
-                header: fibersState.send.status === 'success' ? lang === 'en' ? 'Success' : 'Успех' : lang === 'en' ? 'Error' : 'Ошибка',
-                status: fibersState.send.status,
-                text: [fibersState.send.message[lang], ...errors]
-            })
-            setModal(true)
-        }
+        if (fibersState.send.status === 'idle' || fibersState.send.status === 'fetching')  return
+        const errors: string[] = fibersState.send.errors?.map(e => e[lang]) || []
+        message.current?.update({
+            header: headerStatus[fibersState.send.status][lang],
+            status: fibersState.send.status,
+            text: [fibersState.send.message[lang], ...errors]
+        })
+        modal.current?.openModal()
     }, [fibersState.send.status])
 
-
-    const saveValues = ({id, e}: {id: string, e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>}) => {
-        if (e.target.tagName === 'INPUT') {
-            e.target.parentElement?.classList.remove('error')
-        }
-        if (e.target.tagName === 'SELECT') {
-            e.target.parentElement?.parentElement?.classList.remove('error')
-        }
-    }
 
 
     const onAddProCon = (e: React.MouseEvent<HTMLButtonElement>, _target: React.RefObject<HTMLElement>) => {
@@ -183,8 +144,6 @@ const ColorCreator: React.FC<IProps> = ({lang, fibersState, setState, colorsStat
     }
 
 
-
-
     const onColorClick = (id: string) => {
         setSelectedColors(prev => ({...prev, [id]: !prev[id]}))
     }
@@ -195,45 +154,37 @@ const ColorCreator: React.FC<IProps> = ({lang, fibersState, setState, colorsStat
 
     
 
-    const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {        
         prevent(e)
         if (!_name_en.current || !_name_ru.current || !_name_short_en.current || !_name_short_ru.current || !_text_en.current || 
-            !_text_ru.current || !_text_short_en.current || !_text_short_ru.current || !_spec.current || !_descr.current) return
-
-        const allErrors = errorsChecker(); 
+        !_text_ru.current || !_text_short_en.current || !_text_short_ru.current || !_spec.current || !_descr.current) return
         
-        /*const descr: Pick<IFiber, 'name' | 'text' | 'short'> = {
-            name: {en: '', ru: ''},
-            text: {en: '', ru: ''},
-            short: {
-                name: {en: '', ru: ''},
-                text: {en: '', ru: ''},
-            }
-        }*/
-        _descr.current.querySelectorAll('input, textarea').forEach(item => {//check DESCRIPTION
-            allErrors.check(item as HTMLInputElement | HTMLTextAreaElement)
-            //if (item.id == 'name_en') {descr.name.en = (item as HTMLInputElement | HTMLTextAreaElement).value}
-
-        })
-
+        //check DESCRIPTION
+        errChecker.check(_name_en.current, 1, 30)
+        errChecker.check(_name_ru.current, 1, 30)
+        errChecker.check(_name_short_en.current, 1, 10)
+        errChecker.check(_name_short_ru.current, 1, 10)
+        errChecker.check(_text_short_en.current, 10, 100)
+        errChecker.check(_text_short_ru.current, 10, 100)
+        errChecker.check(_text_en.current, 100, 8000)
+        errChecker.check(_text_ru.current, 100, 8000)
 
         const allSpec: {[key: string]: string} = {};
         _spec.current.querySelectorAll('input, select').forEach(item => { //check specifications      
-            allErrors.check(item as HTMLInputElement | HTMLSelectElement)
+            errChecker.check(item as HTMLInputElement | HTMLSelectElement, 1, 10)
             allSpec[item.id] = (item as HTMLInputElement | HTMLSelectElement).value 
         })
 
 
-        if (files.length === 0 && changeImages) {//check images
-            allErrors.add(lang === 'en' ? 'Images missed' : 'Картинки отсутствуют')
+        if (addFilesBig.current && addFilesBig.current.getFiles().length === 0 && changeImages) {//check images
+            errChecker.add(lang === 'en' ? 'Images missed' : 'Картинки отсутствуют')
         }
        
 
         if (!Object.values(selectedColors).some(item => item)) { //at least 1 color must be selected
-            allErrors.add(lang === 'en' ? 'No color selected' : 'Цвет не выбран')
+            errChecker.add(lang === 'en' ? 'No color selected' : 'Цвет не выбран')
         }
         
-
 
         const proscons = {} as IProsCons
         proscons.pros = Array.from(_pros.current?.querySelectorAll('input') || []) //convert array like [en1, ru1, en2, ru2] -> [{en: en1, ru: ru1}, {en: en2, ru: ru2}]
@@ -249,35 +200,32 @@ const ColorCreator: React.FC<IProps> = ({lang, fibersState, setState, colorsStat
             }, [])
 
         if (proscons.pros.some(item => !item.en || !item.ru)) {//proscons error check
-            allErrors.add(lang === 'en' ? 'Empty pro exists' : 'Есть незаполненный плюс')
+            errChecker.add(lang === 'en' ? 'Empty pro exists' : 'Есть незаполненный плюс')
         }
         if (proscons.cons.some(item => !item.en || !item.ru)) {
-            allErrors.add(lang === 'en' ? 'Empty con exists' : 'Есть незаполненный минус')
+            errChecker.add(lang === 'en' ? 'Empty con exists' : 'Есть незаполненный минус')
         }
 
        
-        if (allErrors.result().length > 0) {
-            setMessage({
-                header: lang === 'en' ? 'Errors in fields' : 'Найдены ошибки в полях',
-                status: 'error',
-                text: [allErrors.result().join(', ')]
-            })
-            return setModal(true)
+        if (errChecker.amount() > 0) {
+            message.current?.update(errChecker.result())
+            modal.current?.openModal()
+            return
         }
 
 
         //create new fiberToStore
         const newFiber: ISendFiber = {
             _id: paramFiberId,
-            name: {en: _name_en.current.value, ru: _name_ru.current.value},
-            text: {en: _text_en.current.value, ru: _text_ru.current.value},
+            name: {en: _name_en.current.value.trim(), ru: _name_ru.current.value.trim()},
+            text: {en: _text_en.current.value.trim(), ru: _text_ru.current.value.trim()},
             short: {
-                name: {en: _name_short_en.current.value, ru: _name_short_ru.current.value},
-                text: {en: _text_short_en.current.value, ru: _text_short_ru.current.value}
+                name: {en: _name_short_en.current.value.trim(), ru: _name_short_ru.current.value.trim()},
+                text: {en: _text_short_en.current.value.trim(), ru: _text_short_ru.current.value.trim()}
             },
             params: (allSpec as unknown) as IFiberParam,
             colors: Object.entries(selectedColors).filter(item => item[1]).map(item => item[0]),
-            images: files,
+            files: addFilesBig.current?.getFiles() || [],
             proscons
         }
 
@@ -297,9 +245,8 @@ const ColorCreator: React.FC<IProps> = ({lang, fibersState, setState, colorsStat
     const fillValues = (_id : string) => {      
         const sourceFiber = fibersState.fibersList.find(item => item._id === _id)
         if (!sourceFiber) {
-            alert('Editing fiber was not found, switching to creating mode')
-            navigate('/admin/fiber-create', { replace: true })
-            window.location.reload()
+            message_missedId.current?.update({header: lang === 'en' ? 'Error' : 'Ошибка', status: 'error', text: lang === 'en' ? ['Editing fiber was not found, switching to creating new fiber'] : ['Материал для редактирования не найден, переход к созданию нового материала']})
+            modal_missedId.current?.openModal()
             return
         }
         if (!_name_en.current || !_name_ru.current || !_name_short_en.current || !_name_short_ru.current || !_text_en.current || 
@@ -370,7 +317,82 @@ const ColorCreator: React.FC<IProps> = ({lang, fibersState, setState, colorsStat
         setChangeImages(false)
     }, [fibersState.load.status, paramFiberId])
 
+
+    useEffect(() => {
+        if (colorsState.load.status !== 'success' && colorsState.load.status !== 'fetching') {
+            setState.colors.loadColors()
+        }
+    }, [])
+
+
+
+    const renderSpec = useMemo(() => {
+        return (
+            fibersProperties.map((item, i) => {
+                return (
+                    <React.Fragment key={item._id}>
+                        {item.type !== 'string' ? 
+                            <div className="input__wrapper no-info" key={item._id}>
+                                <Selector 
+                                    lang={lang} 
+                                    id={item._id} 
+                                    label={item.name}
+                                    defaultData={{value: '', name: {en: 'Select', ru: 'Выберете'}}}
+                                    saveValue={({id, e}:{e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>, id: string}) => errChecker.clearError(e.target)}
+                                    data={item.type === '10' ? data10 : item.type === '5' ? data5 : data3 }
+                                    dataset={item.name}
+                                    />
+                            </div>
+                        :
+                            <div className="input__wrapper no-info" key={item._id}>
+                                <label htmlFor={item._id}>{item.name[lang]}, ({item.unit[lang]}):</label>
+                                <input type="text" id={item._id} onChange={(e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => errChecker.clearError(e.target)} data-ru={item.name.ru} data-en={item.name.en}/>
+                            </div>
+                        }
+                    </React.Fragment>
+                )
+            })
+        )
+    }, [fibersProperties, lang])
+
     
+    const renderColors = useMemo(() => {
+        return (
+            colorsState.load.status === 'success' ? 
+            <>
+                {colorsState.colors.map((color) => {
+                    return (
+                        <div className="color__container" key={color._id}>
+                            <div className={`image__container ${selectedColors[color._id] ? 'selected' : ''}`} onClick={() => onColorClick(color._id)}>
+                                <img src={color.url.small} alt={color.name[lang]} />
+                            </div>
+                            <span>{color.name[lang]}</span>
+                        </div>
+                    )
+                })}
+            </>
+        :
+            <Preloader />
+        
+        )
+    }, [colorsState.load.status, colorsState.colors, lang, selectedColors])
+
+
+    const renderImages = useMemo(() => {
+        return (
+            changeImages ? 
+                <>
+                    <h2 className='section-header full-width'>{lang === 'en' ? 'IMAGES' : 'ИЗОБРАЖЕНИЯ'}</h2>           
+                    <AddFiles lang={lang} ref={addFilesBig} multiple={true} id='allImages'/>
+                    {paramFiberId && <button className='button_blue change-images' onClick={onChangeImages}>Do not change images</button>}
+                </>
+            :
+                <>{paramFiberId && <button className='button_blue change-images' onClick={onChangeImages}>Change all images</button>}</>
+            
+        )
+    }, [changeImages, lang, paramFiberId])
+
+
     return (
         <div className="page page_fiber-add">
             <div className="container_page">
@@ -387,67 +409,44 @@ const ColorCreator: React.FC<IProps> = ({lang, fibersState, setState, colorsStat
                             <div className="input-block">
                                 <label htmlFor="namer_en">{lang === 'en' ? 'Name' : 'Название'}:</label>
                                 <div className="input__wrapper">
-                                    <input type="text" id="name_en" ref={_name_en} data-ru="Название EN" data-en="Name EN"/>
+                                    <input type="text" id="name_en" ref={_name_en} data-ru="Название EN" data-en="Name EN" onChange={(e: React.ChangeEvent<HTMLInputElement>) => errChecker.clearError(e.target)} />
                                 </div>
                                 <div className="input__wrapper">
-                                    <input type="text" id="name_ru" ref={_name_ru} data-ru="Название RU" data-en="Name RU"/>
+                                    <input type="text" id="name_ru" ref={_name_ru} data-ru="Название RU" data-en="Name RU"  onChange={(e: React.ChangeEvent<HTMLInputElement>) => errChecker.clearError(e.target)} />
                                 </div>
                             </div>
                             <div className="input-block">
                                 <label htmlFor="name-short_en">{lang === 'en' ? 'Name short' : 'Назв. кратко'}:</label>
                                 <div className="input__wrapper">
-                                    <input type="text" id="name-short_en" ref={_name_short_en} data-ru="Название кратко EN" data-en="Name short EN"/>
+                                    <input type="text" id="name-short_en" ref={_name_short_en} data-ru="Название кратко EN" data-en="Name short EN"  onChange={(e: React.ChangeEvent<HTMLInputElement>) => errChecker.clearError(e.target)} />
                                 </div>
                                 <div className="input__wrapper">
-                                    <input type="text" id="name-short_ru" ref={_name_short_ru} data-ru="Название кратко RU" data-en="Name short RU"/>
+                                    <input type="text" id="name-short_ru" ref={_name_short_ru} data-ru="Название кратко RU" data-en="Name short RU" onChange={(e: React.ChangeEvent<HTMLInputElement>) => errChecker.clearError(e.target)} />
                                 </div>
                             </div>
                             <div className="input-block">
                                 <label htmlFor="text_en">{lang === 'en' ? 'Text' : 'Текст'}:</label>
                                 <div className="input__wrapper">
-                                    <textarea  id="text_en" ref={_text_en} data-ru="Текст EN" data-en="Text EN"/>
+                                    <textarea id="text_en" ref={_text_en} data-ru="Текст EN" data-en="Text EN" onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => errChecker.clearError(e.target)} />
                                 </div>
                                 <div className="input__wrapper">
-                                    <textarea id="text_ru" ref={_text_ru} data-ru="Текст RU" data-en="Text RU"/>
+                                    <textarea id="text_ru" ref={_text_ru} data-ru="Текст RU" data-en="Text RU" onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => errChecker.clearError(e.target)} />
                                 </div>
                             </div>
                             <div className="input-block">
                                 <label htmlFor="text-short_en">{lang === 'en' ? 'Text short' : 'Текст кратко'}:</label>
                                 <div className="input__wrapper">
-                                    <textarea id="text-short_en" ref={_text_short_en} data-ru="Текст кратко EN" data-en="Text short EN"/>
+                                    <textarea id="text-short_en" ref={_text_short_en} data-ru="Текст кратко EN" data-en="Text short EN" onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => errChecker.clearError(e.target)} />
                                 </div>
                                 <div className="input__wrapper">
-                                    <textarea id="text-short_ru" ref={_text_short_ru} data-ru="Текст кратко RU" data-en="Text short RU"/>
+                                    <textarea id="text-short_ru" ref={_text_short_ru} data-ru="Текст кратко RU" data-en="Text short RU" onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => errChecker.clearError(e.target)} />
                                 </div>
                             </div>
                         </div>
 
                         <h2 className='section-header full-width'>{lang === 'en' ? 'SPECIFICATIONS' : 'ПАРАМЕТРЫ'}</h2>           
                         <div className="input-block multi" ref={_spec}>
-                            {fibersProperties.map((item, i) => {
-                                return (
-                                    <React.Fragment key={item._id}>
-                                        {item.type !== 'string' ? 
-                                            <div className="input__wrapper no-info" key={item._id}>
-                                                <Selector 
-                                                    lang={lang} 
-                                                    id={item._id} 
-                                                    label={item.name}
-                                                    defaultData={{value: '', name: {en: 'Select', ru: 'Выберете'}}}
-                                                    saveValue={saveValues}
-                                                    data={item.type === '10' ? data10 : item.type === '5' ? data5 : data3 }
-                                                    dataset={item.name}
-                                                    />
-                                            </div>
-                                        :
-                                            <div className="input__wrapper no-info" key={item._id}>
-                                                <label htmlFor={item._id}>{item.name[lang]}, ({item.unit[lang]}):</label>
-                                                <input type="text" id={item._id} onChange={(e) => saveValues({id: item._id, e})} data-ru={item.name.ru} data-en={item.name.en}/>
-                                            </div>
-                                        }
-                                    </React.Fragment>
-                                )
-                            })}
+                            {renderSpec}
                         </div>
 
 
@@ -464,47 +463,27 @@ const ColorCreator: React.FC<IProps> = ({lang, fibersState, setState, colorsStat
 
                         <h2 className='section-header full-width'>{lang === 'en' ? 'PICK COLORS' : 'ВЫБЕРЕТЕ ЦВЕТА'}</h2>           
                         <div className="colors-picker">
-                            {colorsState.load.status === 'success' ? 
-                                <>
-                                    {colorsState.colors.map((color) => {
-                                        return (
-                                            <div className="color__container" key={color._id}>
-                                                <div className={`image__container ${selectedColors[color._id] ? 'selected' : ''}`} onClick={() => onColorClick(color._id)}>
-                                                    <img src={color.url.small} alt={color.name[lang]} />
-                                                </div>
-                                                <span>{color.name[lang]}</span>
-                                            </div>
-                                        )
-                                    })}
-                                </>
-                            :
-                                <Preloader />
-                            }
+                            {renderColors}
                         </div>
 
 
-                        {changeImages ? 
-                            <>
-                                <h2 className='section-header full-width'>{lang === 'en' ? 'IMAGES' : 'ИЗОБРАЖЕНИЯ'}</h2>           
-                                <AddFiles saveFiles={(files: File[]) => saveFiles(files)} lang={lang} ref={addFiles} multiple={true} id='big'/>
-                                {paramFiberId && <button className='button_blue change-images' onClick={onChangeImages}>Do not change images</button>}
-                            </>
-                        :
-                            <>{paramFiberId && <button className='button_blue change-images' onClick={onChangeImages}>Change all images</button>}</>
-                        }
+                        {renderImages}
 
-                        <button className='button_blue post' disabled={fibersState.send.status === 'fetching'} onClick={e => onSubmit(e)}>{lang === 'en' ? paramFiberId ? 'Save fiber' : 'Post fiber' : paramFiberId ? "Сохранить материал" : "Отправить материал"}</button>
+                        <button className='button_blue post' disabled={fibersState.send.status === 'fetching'} onClick={e => onSubmit(e)}>
+                            {fibersState.send.status === 'fetching' ? 
+                                <Preloader />
+                            :
+                                <>{lang === 'en' ? paramFiberId ? 'Save fiber' : 'Post fiber' : paramFiberId ? "Сохранить материал" : "Отправить материал"}</>
+                            }
+                        </button>
                     </form>
                 </div>
-                <Modal {...{visible: modal, close: closeModal, escExit: true}}>
-                    <MessageInfo {...{  
-                            status: message.status,
-                            header: message.header,
-                            text: message.text, 
-                            buttonText: lang === 'en' ? 'Close' : "Закрыть", 
-                            buttonAction: closeModal
-                        }}/>
-                </Modal> 
+                <Modal escExit={true} ref={modal} onClose={closeModal}>
+                    <Message buttonText={lang === 'en' ? `Close` : `Закрыть`} buttonAction={closeModal} ref={message}/>
+                </Modal>
+                <Modal escExit={true} ref={modal_missedId} onClose={closeModalAndReturn}>
+                    <Message buttonText={lang === 'en' ? `Close` : `Закрыть`} buttonAction={closeModalAndReturn} ref={message_missedId}/>
+                </Modal>
             </div>
         </div>
     )

@@ -59,13 +59,9 @@ const App:React.FC<IProps> = ({lang, setState}):JSX.Element => {
 		setState.user.loginWithToken()
 		//setState.colors.loadColors()
 		setState.fibers.loadFibers()
-		//cart!!!
-		console.log('app useEffect re');
-		
+		//cart!!!	
 	}, [])
 
-	console.log('app re');
-	
 
 	return (
 		<HashRouter>

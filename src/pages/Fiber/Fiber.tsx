@@ -1,14 +1,16 @@
 import './fiber.scss'
 import { useNavigate, useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { AnyAction, bindActionCreators, Dispatch } from "redux";
 import { connect } from "react-redux";
 import Preloader from '../../components/Preloaders/Preloader';
-import { TLang, IFullState, IFiber, IFibersState, IColorsState, IColor, IMessageModal } from "../../interfaces";
+import { TLang, IFullState, IFiber, IFibersState, IColorsState } from "../../interfaces";
 import FiberItem from '../../components/FiberItem/FiberItem';
 import { allActions } from "../../redux/actions/all";
-import Modal from 'src/components/Modal/Modal';
-import MessageInfo from 'src/components/MessageInfo/MessageInfo';
+import Modal, { IModalFunctions } from 'src/components/Modal/Modal';
+import Message, { IMessageFunctions } from 'src/components/Message/Message';
+import { headerStatus, resetFetch, timeModalClosing } from 'src/assets/js/consts';
+import ErrorMock from 'src/components/tiny/ErrorMock/ErrorMock';
 
 
 interface IPropsState {
@@ -30,25 +32,27 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 
-
-
 const Fiber:React.FC<IProps> = ({lang, fibersState, colorsState, setState, isAdmin}):JSX.Element => {
     const paramFiberNameShortEn = useParams().fiberId || ''
+    const navigate = useNavigate()
     
     const [loaded, setLoaded] = useState<boolean>(false)
     const [fiber, setFiber] = useState<IFiber>()
-    const [modal, setModal] = useState<boolean>(false)
-    const [message, setMessage] = useState<IMessageModal>({header: '', status: '', text: []})
-    const navigate = useNavigate()
+    const modal = useRef<IModalFunctions>(null)
+    const message = useRef<IMessageFunctions>(null)
+
 
     useEffect(() => {
-        if (colorsState.load.status === 'success' && fibersState.load.status === 'success') {
+        /*if (colorsState.load.status === 'success' && fibersState.load.status === 'success') {
             setLoaded(true)
             const fiberFromShortEnName = fibersState.fibersList.find(item => item.short.name.en === paramFiberNameShortEn)
             setFiber(fiberFromShortEnName)
             setState.fibers.setSelectedFiber(fiberFromShortEnName?._id || '')
+        }*/
+        if (fibersState.load.status === 'success') {
+            const fiberId = fibersState.fibersList.find(item => item.short.name.en === paramFiberNameShortEn)
         }
-    }, [colorsState.load.status, fibersState.load.status, paramFiberNameShortEn])
+    }, [fibersState.load.status, paramFiberNameShortEn])
     
 
 
@@ -61,27 +65,33 @@ const Fiber:React.FC<IProps> = ({lang, fibersState, colorsState, setState, isAdm
     useEffect(() => {
         if (fibersState.send.status === 'success' || fibersState.send.status === 'error') {
             const errors: string[] = fibersState.send.errors?.map(e => e[lang]) || []
-            setMessage({
-                header: fibersState.send.status === 'success' ? lang === 'en' ? 'Success' : 'Успех' : lang === 'en' ? 'Error' : 'Ошибка',
+            message.current?.update({
+                header: headerStatus[fibersState.send.status][lang],
                 status: fibersState.send.status,
                 text: [fibersState.send.message[lang], ...errors]
             })
-            setModal(true)
+            modal.current?.openModal()
         }
     }, [fibersState.send.status])
 
 
     const closeModal = () => {
-		setModal(false)
+        modal.current?.closeModal()
+        setTimeout(() => message.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
         if (fibersState.send.status === 'success') {
-            setState.fibers.setSendFibers({status: 'idle', message: {en: '', ru: ''}})
+            setState.fibers.setSendFibers(resetFetch)
             navigate('/fibers', { replace: true });
             window.location.reload()
         } else {
-            setState.fibers.setSendFibers({status: 'idle', message: {en: '', ru: ''}})
+            setState.fibers.setSendFibers(resetFetch)
         }
 	}
 
+    useEffect(() => {
+        if (colorsState.load.status !== 'success' && colorsState.load.status !== 'fetching') {
+            setState.colors.loadColors()
+        }
+    }, [])
 
 
 
@@ -89,21 +99,15 @@ const Fiber:React.FC<IProps> = ({lang, fibersState, colorsState, setState, isAdm
         <div className="page page_fiber">
             <div className="container_page">
                 <div className="container">
-                    {loaded && fiber ? 
-                        <FiberItem {...{fiber}} lang={lang} colors={colorsState.colors} isAdmin={isAdmin} onDelete={onDelete} />
-                    :
-                        <Preloader />}
+                    {fibersState.load.status === 'success' && <FiberItem {...{fiber}} lang={lang} colors={colorsState.colors} isAdmin={isAdmin} onDelete={onDelete} />}
+                    {fibersState.load.status === 'fetching' && <Preloader />}
+                    {fibersState.load.status === 'error' && <ErrorMock lang={lang} comp={{en: 'fiber', ru: 'материала'}} />}
+
                 </div>
             </div>
-            <Modal {...{visible: modal, close: closeModal, escExit: true}}>
-                <MessageInfo {...{  
-                        status: message.status,
-                        header: message.header,
-                        text: message.text, 
-                        buttonText: lang === 'en' ? 'Close' : "Закрыть", 
-                        buttonAction: closeModal
-                    }}/>
-            </Modal> 
+            <Modal escExit={true} ref={modal} onClose={closeModal}>
+                <Message buttonText={lang === 'en' ? `Close` : `Закрыть`} buttonAction={closeModal} ref={message}/>
+            </Modal>
         </div>
     )
 }

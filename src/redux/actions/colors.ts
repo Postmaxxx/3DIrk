@@ -96,7 +96,10 @@ export const sendColor = (color: ISendColor) => {
                     'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({
-                    name: color.name,
+                    name: {
+                        en: color.name.en.trim(),
+                        ru: color.name.ru.trim()
+                    },
                     url: {
                         full: imageUrls.full,
                         small: imageUrls.small

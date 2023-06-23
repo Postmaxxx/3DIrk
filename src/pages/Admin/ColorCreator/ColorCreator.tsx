@@ -58,12 +58,8 @@ const ColorCreator: FC<IProps> = ({lang, send, setState}): JSX.Element => {
             errChecker.add(lang === 'en' ? 'File preview is missed' : 'Отсутствует файл предпросмотра')
         }
         
-        if (errChecker.result().length > 0) {
-            message.current?.update({                        
-                header: lang === 'en' ? 'Errors in fields' : 'Найдены ошибки в полях',
-                status: 'error',
-                text: [...errChecker.result()]
-            })
+        if (errChecker.amount() > 0) {
+            message.current?.update(errChecker.result())
             modal.current?.openModal()
             errChecker.clear()
             return
@@ -71,8 +67,8 @@ const ColorCreator: FC<IProps> = ({lang, send, setState}): JSX.Element => {
         
         const color: ISendColor = {
             name: {
-                en: _name_en.current.value.trim(),
-                ru: _name_ru.current.value.trim(),
+                en: _name_en.current.value,
+                ru: _name_ru.current.value,
             },
             files: {
                 full: addFileBig.current?.getFiles()[0] as File,
@@ -145,7 +141,7 @@ const ColorCreator: FC<IProps> = ({lang, send, setState}): JSX.Element => {
         <div className="page page_color-add">
             <div className="container_page">
                 {render}
-                <Modal escExit={true} ref={modal}>
+                <Modal escExit={true} ref={modal} onClose={closeModal}>
                     <Message buttonText={lang === 'en' ? `Close` : `Закрыть`} buttonAction={closeModal} ref={message}/>
                 </Modal>
             </div>

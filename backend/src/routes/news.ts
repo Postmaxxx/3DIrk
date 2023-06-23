@@ -112,7 +112,7 @@ router.put('/edit',
 
             await saveChanges('news', true);
 
-            return res.status(201).json({message: {en: 'News edited', ru: 'Новость отредактирована'}})
+            return res.status(201).json({message: {en: 'News changed', ru: 'Новость отредактирована'}})
         } catch (error) {
             return res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})
         }

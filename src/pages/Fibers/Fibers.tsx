@@ -1,60 +1,51 @@
 import './fibers.scss'
 import { AnyAction, bindActionCreators, Dispatch } from "redux";
 import { connect } from "react-redux";
-import { TLang, IFullState, IFibersState, IColorsState, IColor } from "../../interfaces";
+import { TLang, IFullState, IFibersState } from "../../interfaces";
 import { useEffect, useState } from 'react';
 import "@splidejs/react-splide/css";    
 import Preloader from '../../components/Preloaders/Preloader';
-import { NavLink, useParams } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import FiberPreview from '../../components/FiberPreview/FiberPreview';
 import { allActions } from "../../redux/actions/all";
+import ErrorMock from 'src/components/tiny/ErrorMock/ErrorMock';
 
 
 interface IPropsState {
     lang: TLang,
     fibers: IFibersState
-    colors: IColorsState
 }
 
 interface IPropsActions {
     setState: {
         fibers: typeof allActions.fibers
-        colors: typeof allActions.colors
     }
 }
 
 interface IProps extends IPropsState, IPropsActions {}
 
-const Fibers:React.FC<IProps> = ({lang, fibers, colors, setState}):JSX.Element => {
-    const paramFiberId = useParams().fiberId || ''    
+const Fibers:React.FC<IProps> = ({lang, fibers, setState}):JSX.Element => { 
     
-    const [loaded, setLoaded] = useState<boolean>(false)
-
     
     useEffect(() => {
-        if (fibers.load.status === 'idle') {
+        if (fibers.load.status !== 'success' && fibers.load.status !== 'fetching' ) {
             setState.fibers.loadFibers()
-            setLoaded(false)
         }
-        if (colors.load.status === 'idle') {
-            setState.colors.loadColors()
-            setLoaded(false)
-        }
-        if (colors.load.status === 'success' && fibers.load.status === 'success') {
-            setLoaded(true)
-        }
-    }, [colors.load.status, fibers.load.status])
+    }, [fibers.load.status])
 
 
-    useEffect(() => {
-        if (!loaded || !paramFiberId) return
-        const fiberToScroll = Array.from(document.querySelectorAll('[data-fiberid]')).find((_fiber) => (_fiber as HTMLElement).dataset.fiberid === paramFiberId)
-        if (!fiberToScroll) return
-        const offset = 100;
-        const targetScrollPosition = fiberToScroll.getBoundingClientRect().top + window.pageYOffset - offset;
-        window.scrollTo({ top: targetScrollPosition, behavior: 'smooth' });
-    }, [loaded])
 
+    const listOfFibers = 
+        <div className="fibers__container">
+            {fibers.fibersList.map((fiber, i) => {
+            return (
+                <NavLink to={`../../fibers/${fiber.short.name.en}`} aria-label={lang === 'en' ? '(About fiber)' : ' (О материале)'} key={fiber._id}>
+                    <FiberPreview {...{fiber}} lang={lang} key={i}/>  
+                </NavLink>
+            )})}
+        </div>
+
+    
 
     return (
         <div className="page page_fibers">
@@ -82,20 +73,9 @@ const Fibers:React.FC<IProps> = ({lang, fibers, colors, setState}):JSX.Element =
                         <p><b>Cпекание:</b> сила склеивания линий и слоёв материала между собой, чем выше эта величина, тем ближе прочность печатной детали к прочности литого изделия.</p>
 
                     </div>}
-                    {loaded  ? (
-                        
-                        <div className="fibers__container">
-                            {fibers.fibersList.map((fiber, i) => {
-                                return (
-                                    <NavLink to={`../../fibers/${fiber.short.name.en}`} aria-label={lang === 'en' ? '(About fiber)' : ' (О материале)'} key={fiber._id}>
-                                        <FiberPreview {...{fiber}} lang={lang} colors={colors.colors} key={i}/>  
-                                    </NavLink>
-                                )})}
-                        </div>
-                    )
-                    :
-                        <Preloader />
-                    }
+                    {fibers.load.status === 'fetching' && <Preloader />}
+                    {fibers.load.status === 'success' && listOfFibers}
+                    {fibers.load.status === 'error' && <ErrorMock lang={lang} comp={{en: 'fibers', ru: 'материалов'}} />}
                 </div>
             </div>
         </div>
@@ -106,16 +86,16 @@ const Fibers:React.FC<IProps> = ({lang, fibers, colors, setState}):JSX.Element =
 const mapStateToProps = (state: IFullState): IPropsState  => ({
     lang: state.base.lang,
     fibers: state.fibers,
-    colors: state.colors
 })
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
     setState: {
 		fibers: bindActionCreators(allActions.fibers, dispatch),
-		colors: bindActionCreators(allActions.colors, dispatch),
 	}
 })
 
   
     
 export default connect(mapStateToProps, mapDispatchToProps)(Fibers)
+
+//done

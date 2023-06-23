@@ -22,8 +22,6 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, multiple, id}, r
         },
         getFiles() {return files}
     }));
-
-    console.log('addfiles rerender');
     
 
     const _dropArea = useRef<HTMLDivElement>(null)

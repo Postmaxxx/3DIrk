@@ -97,6 +97,11 @@
                     }
                 }
 
+
+                &.error {
+                    border: 1px solid red;
+                }
+
             }
 
             &.multi {
@@ -140,20 +145,6 @@
 
         }
 
-/*
-        & .input-block:nth-of-type(4) .input__wrapper::before{
-            @include respond-to(md) {
-                content: 'FULL';
-            }
-        }
-
-
-        & .input-block:nth-of-type(4) .input__wrapper:nth-of-type(2)::before{
-            @include respond-to(md) {
-                content: 'SMALL';
-            }
-        }
-*/
 
 
         & .proscons {
@@ -407,4 +398,7 @@
         
 
     }
+
+
+
 }

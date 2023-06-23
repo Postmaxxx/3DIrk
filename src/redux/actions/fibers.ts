@@ -79,7 +79,7 @@ export const sendFiber = (newFiber: ISendFiber) => {
         // images to imgbb
         const imageUrls: IImgWithThumb[] = []
         
-        await newFiber.images.reduce(async (acc: Promise<string>, image: File, i) => {
+        await newFiber.files.reduce(async (acc: Promise<string>, image: File, i) => {
             return new Promise(async (res, rej) => {
                 await acc
                                 
@@ -146,9 +146,9 @@ export const editFiber = (fiber: Partial<ISendFiber>, changeImages: boolean) => 
 
         const imageUrls: IImgWithThumb[] = []
         // images to imgbb
-        if (changeImages && fiber.images) {
+        if (changeImages && fiber.files && fiber.files.length > 0) {
             
-            await fiber.images.reduce(async (acc: Promise<string>, image: File, i) => {
+            await fiber.files.reduce(async (acc: Promise<string>, image: File, i) => {
                 return new Promise(async (res, rej) => {
                     await acc
                                     

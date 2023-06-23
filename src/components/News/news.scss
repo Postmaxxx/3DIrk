@@ -34,12 +34,14 @@
             color: var(--main_vv);
             //font-size: 24px;
             font-weight: 700;
+            word-break: break-all;
         }
 
         span {
             font-size: 16px;
             font-weight: 600;
             white-space: nowrap;
+
             //align-self: flex-start;
             @include respond-to(sm) {
                 font-size: 24px;
@@ -59,6 +61,7 @@
         //font-size: 17px;
         font-weight: 500;
         margin-bottom: 20px;
+        word-break: break-all;
     }
 
 

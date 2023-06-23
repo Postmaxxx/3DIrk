@@ -156,7 +156,7 @@ export interface IFeature {
 
 //==========================================Fibers State
 export interface ISendFiber extends Omit<IFiber, 'images'> {
-    images: File[]
+    files: File[]
 }
 
 

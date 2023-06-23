@@ -22,7 +22,7 @@ const Message = forwardRef<IMessageFunctions, IProps>(({buttonText, buttonAction
         clear() {
             clear()
         },
-        update(newMessage: IMessageModal) {
+        update(newMessage: IMessageModal) {      
             update(newMessage)
         },
     }));
@@ -35,7 +35,7 @@ const Message = forwardRef<IMessageFunctions, IProps>(({buttonText, buttonAction
     }
 
     const update = (newData: IMessageModal) => {
-        setMessage(newData)
+        setMessage(newData)        
     }
 
 

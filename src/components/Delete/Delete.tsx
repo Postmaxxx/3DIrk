@@ -1,6 +1,6 @@
 import {  TLang } from "../../interfaces"
 import './delete.scss'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 
 interface IProps<T> {
     remove: (idInstance: T) => void
@@ -28,9 +28,9 @@ const Delete = <T,>({remove, idInstance, lang, disabled}: IProps<T>):JSX.Element
     }
 
 
-    return (
-        <>
-            {disabled ? 
+    const render = useMemo(() => {
+        return (
+            disabled ? 
                 null
             :
                 <div className="button_delete__container" onClick={onDelete} aria-label={lang === 'en' ? "Delete" : 'Удалить'}>
@@ -49,9 +49,15 @@ const Delete = <T,>({remove, idInstance, lang, disabled}: IProps<T>):JSX.Element
                         <button onClick={(e) => {e.preventDefault(); e.stopPropagation(); onCancel()} }>{lang === 'en' ? 'Cancel' : 'Отмена'}</button>
                     </div>
                 </div>
-            }
-        </>
-    )
+            
+        )
+    }, [disabled, lang, confirmation])
+
+
+    return <>
+        {render}
+    </>
+    
 }
 
 export default Delete

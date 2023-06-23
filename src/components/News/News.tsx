@@ -10,6 +10,7 @@ interface IProps {
     lang: TLang
 }
 
+
 const News:React.FC<IProps> = ({newsPiece, lang}):JSX.Element => {
     return (
         <div className="news card">

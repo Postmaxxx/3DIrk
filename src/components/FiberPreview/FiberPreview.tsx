@@ -1,4 +1,4 @@
-import { IColor, IFiber, TLang } from '../../interfaces'
+import { IFiber, TLang } from '../../interfaces'
 import './fiber-preview.scss'
 import ImgWithPreloader from '../../assets/js/ImgWithPreloader'
 
@@ -6,10 +6,9 @@ import ImgWithPreloader from '../../assets/js/ImgWithPreloader'
 interface IProps {
 	fiber: IFiber
 	lang: TLang
-	colors: IColor[]
 }
 
-const FiberPreview = ({fiber, lang, colors}: IProps) => {
+const FiberPreview = ({fiber, lang}: IProps) => {
     return (
         <div className="fiber-preview__item card">
             <div className="img__container">
@@ -18,10 +17,10 @@ const FiberPreview = ({fiber, lang, colors}: IProps) => {
             <div className="fiber__descr">
                 <span>{fiber.short.name[lang]}</span>
                 <span>{fiber.short.text[lang]}</span>
-
             </div>
         </div>
     )
 }
 
 export default FiberPreview
+//done
