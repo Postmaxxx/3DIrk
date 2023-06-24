@@ -1,12 +1,13 @@
 import './splider-common.scss'
 import Splide from "@splidejs/splide";
-import { findBestSuitedImg } from "../../../assets/js/findBestSuitedImg";
 import ImgWithPreloader from '../../../assets/js/ImgWithPreloader';
-import { IImg, IImgWithThumb, IModalImg, ISpliderOptions, TLang } from '../../../interfaces';
+import { IImgWithThumb, ISpliderOptions } from '../../../interfaces';
 import "@splidejs/react-splide/css";
-import Modal from '../../../components/Modal/Modal';
-import ModalImage from '../../../components/MessageImage/MessageImage';
-import { useRef, useState, useEffect, MouseEvent } from 'react'
+import Modal, { IModalFunctions } from '../../../components/Modal/Modal';
+import { IImageModalFunctions } from '../../ImageModal/ImageModal';
+import { useRef, useEffect, MouseEvent } from 'react'
+import ImageModal from '../../ImageModal/ImageModal';
+import { timeModalClosing } from 'src/assets/js/consts';
 
 
 
@@ -22,14 +23,13 @@ interface IContainerSize {
 
 
 
-
 const SpliderCommon: React.FC<IProps> = ({images, imagesPerSlide=1}): JSX.Element => {
 	
 	const splideCommon = useRef<Splide>();
 	const containerSize = useRef<IContainerSize>();
 	const _splideFabric = useRef<any>();
-	const [modal, setModal] = useState<boolean>(false)
-	const [modalImg, setModalImg] = useState<IModalImg>({descr: '', path: ''})
+    const modal_image = useRef<IModalFunctions>(null)
+    const image = useRef<IImageModalFunctions>(null)
 
     const options: Partial<ISpliderOptions> = {
         //type   : 'loop',
@@ -61,13 +61,15 @@ const SpliderCommon: React.FC<IProps> = ({images, imagesPerSlide=1}): JSX.Elemen
 	const handleImgClick = (e: MouseEvent<HTMLDivElement>) => {
 		if ((e.target as HTMLImageElement).tagName === 'IMG') {
 			const id = Number(((e.target as HTMLImageElement).id));
-			setModal(true)
-			setModalImg({path: images[id].full, descr: images[id].fileName})
+			image.current?.update({url: images[id].full, text: images[id].fileName})
+			modal_image.current?.openModal()
 		}
 	}
 
-	const closeModal = () => {
-		setModal(false)
+
+    const closeModalImage = () => {
+        modal_image.current?.closeModal()
+        setTimeout(() => image.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
 	}
 
 
@@ -104,16 +106,14 @@ const SpliderCommon: React.FC<IProps> = ({images, imagesPerSlide=1}): JSX.Elemen
                     </ul>
                 </div>
             </div>
-            <Modal {...{visible: modal, close: closeModal, escExit: true}}>
-				<ModalImage props={{path: modalImg.path, descr: modalImg.descr}}/>
-			</Modal> 
+			<Modal escExit={true} ref={modal_image} onClose={closeModalImage}>
+				<ImageModal ref={image} />
+            </Modal>
         </div>
 	)
-
 };
 
 
 
-  
 
 export default SpliderCommon;

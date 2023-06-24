@@ -10,7 +10,7 @@ import AmountChanger from "../AmountChanger/AmountChanger";
 import PreloaderW from "../Preloaders/PreloaderW";
 import ImgWithPreloader from "../../assets/js/ImgWithPreloader";
 import Modal from "../Modal/Modal";
-import ModalImage from "../MessageImage/MessageImage";
+import ModalImage from "../ImageModal/ImageModal";
 import { allActions } from "../../redux/actions/all";
 
 

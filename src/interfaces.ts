@@ -41,6 +41,12 @@ export interface IMessageModal {
     text: string[]
 }
 
+export interface IImageModal {
+    url: string,
+    text: string
+}
+
+
 
 //---------------------------------------------lang text
 export type TLangText = {

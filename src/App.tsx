@@ -79,7 +79,7 @@ const App:React.FC<IProps> = ({lang, setState}):JSX.Element => {
 				<Route path="/fibers">
 					<Route index element={<Suspense fallback={<Preloader />}><LazyFibersPage /></Suspense>} />
 					<Route path="compare" element={<Suspense fallback={<Preloader />}><LazyFibersCompare /></Suspense>} />
-					<Route path=":fiberId" element={<Suspense fallback={<Preloader />}><LazyFiberPage /></Suspense>} />
+					<Route path=":fiberName" element={<Suspense fallback={<Preloader />}><LazyFiberPage /></Suspense>} />
 				</Route>
 				
 				<Route path="/order" element={<Suspense fallback={<Preloader />}><LazyOrderPage /></Suspense>} />

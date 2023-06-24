@@ -47,16 +47,16 @@ export const loadFibers = () => {
             }
             
             const result: {fibers: IFiber[], message: TLangText} = await response.json()
-            dispatch(setDataFibers(result.fibers.map(item => ({ //to not get some redundant fields from item, like _v
-                _id: item._id,
+            dispatch(setDataFibers(result.fibers.map(item => { //to not get some redundant fields from item like _v 
+                return {_id: item._id,
                 name: item.name,
                 text: item.text,
                 short: item.short,
                 images: item.images,
                 proscons: item.proscons,
                 colors: item.colors,
-                params: item.params
-            }))))
+                params: Object.entries(item.params).reduce((acc, [key, value]) => {acc[key] = Number(value); return acc}, {} as {[key: string]: number}) as IFiber["params"]// convert strings to number
+            }})))
             dispatch(setLoadFibers({status: 'success', message: result.message}))
         } catch (e) {
             dispatch(setLoadFibers({status: 'error', message: {en:`Error while loading fibers: ${e}`, ru: `Ошибка при загрузке материалов: ${e}`}}))

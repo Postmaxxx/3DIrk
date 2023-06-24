@@ -8,7 +8,7 @@ import Splide from "@splidejs/splide";
 import ImgWithPreloader from "../../../assets/js/ImgWithPreloader";
 
 import Modal from "../../../components/Modal/Modal";
-import ModalImage from "../../../components/MessageImage/MessageImage";
+import ModalImage from "../../ImageModal/ImageModal";
 import { allActions } from "../../../redux/actions/all";
 
 

@@ -1,16 +1,21 @@
 import './fiber.scss'
-import { useNavigate, useParams } from 'react-router-dom';
-import { useEffect, useState, useRef } from 'react';
+import { NavLink, useNavigate, useParams  } from 'react-router-dom';
+import { useEffect, useRef, useMemo,useCallback } from 'react';
 import { AnyAction, bindActionCreators, Dispatch } from "redux";
 import { connect } from "react-redux";
 import Preloader from '../../components/Preloaders/Preloader';
-import { TLang, IFullState, IFiber, IFibersState, IColorsState } from "../../interfaces";
-import FiberItem from '../../components/FiberItem/FiberItem';
+import { TLang, IFullState, IFiber, IFibersState, IColorsState, IColor } from "../../interfaces";
 import { allActions } from "../../redux/actions/all";
 import Modal, { IModalFunctions } from 'src/components/Modal/Modal';
 import Message, { IMessageFunctions } from 'src/components/Message/Message';
 import { headerStatus, resetFetch, timeModalClosing } from 'src/assets/js/consts';
 import ErrorMock from 'src/components/tiny/ErrorMock/ErrorMock';
+import SpliderCommon from 'src/components/Spliders/Common/SpliderCommon';
+import Features from '../../components/Features/Params';
+import Proscons from 'src/components/Proscons/Proscons';
+import IconEdit from 'src/components/tiny/IconEdit/IconEdit';
+import Delete from 'src/components/Delete/Delete';
+import ImageModal, { IImageModalFunctions } from 'src/components/ImageModal/ImageModal';
 
 
 interface IPropsState {
@@ -33,33 +38,17 @@ interface IProps extends IPropsState, IPropsActions {}
 
 
 const Fiber:React.FC<IProps> = ({lang, fibersState, colorsState, setState, isAdmin}):JSX.Element => {
-    const paramFiberNameShortEn = useParams().fiberId || ''
+    const paramFiberNameShortEn = useParams().fiberName || ''
     const navigate = useNavigate()
-    
-    const [loaded, setLoaded] = useState<boolean>(false)
-    const [fiber, setFiber] = useState<IFiber>()
-    const modal = useRef<IModalFunctions>(null)
+    const modal_message = useRef<IModalFunctions>(null)
+    const modal_image = useRef<IModalFunctions>(null)
     const message = useRef<IMessageFunctions>(null)
-
-
-    useEffect(() => {
-        /*if (colorsState.load.status === 'success' && fibersState.load.status === 'success') {
-            setLoaded(true)
-            const fiberFromShortEnName = fibersState.fibersList.find(item => item.short.name.en === paramFiberNameShortEn)
-            setFiber(fiberFromShortEnName)
-            setState.fibers.setSelectedFiber(fiberFromShortEnName?._id || '')
-        }*/
-        if (fibersState.load.status === 'success') {
-            const fiberId = fibersState.fibersList.find(item => item.short.name.en === paramFiberNameShortEn)
-        }
-    }, [fibersState.load.status, paramFiberNameShortEn])
+    const image = useRef<IImageModalFunctions>(null)
     
 
-
-    const onDelete = (item: IFiber) => { 
+    const onDelete = useCallback((item: IFiber) => { 
         setState.fibers.deleteFiber(item._id)
-    }
-
+    }, [])
 
 
     useEffect(() => {
@@ -70,13 +59,13 @@ const Fiber:React.FC<IProps> = ({lang, fibersState, colorsState, setState, isAdm
                 status: fibersState.send.status,
                 text: [fibersState.send.message[lang], ...errors]
             })
-            modal.current?.openModal()
+            modal_message.current?.openModal()
         }
     }, [fibersState.send.status])
 
 
-    const closeModal = () => {
-        modal.current?.closeModal()
+    const closeModalMessage = useCallback(() => {
+        modal_message.current?.closeModal()
         setTimeout(() => message.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
         if (fibersState.send.status === 'success') {
             setState.fibers.setSendFibers(resetFetch)
@@ -85,13 +74,94 @@ const Fiber:React.FC<IProps> = ({lang, fibersState, colorsState, setState, isAdm
         } else {
             setState.fibers.setSendFibers(resetFetch)
         }
-	}
+	}, [fibersState.send.status])
+
+
+    const closeModalImage = useCallback(() => {
+        modal_image.current?.closeModal()
+        setTimeout(() => image.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
+	}, [])
+
+    
+
+    const onImageClick = useCallback((e: React.MouseEvent , color: IColor) => {
+        e.stopPropagation()
+        image.current?.update({url: color.url.full, text: color.name[lang]})
+        modal_image.current?.openModal()
+    }, [])
+
+
 
     useEffect(() => {
         if (colorsState.load.status !== 'success' && colorsState.load.status !== 'fetching') {
             setState.colors.loadColors()
         }
     }, [])
+    
+
+    useEffect(() => {
+        if (fibersState.load.status === 'success') {
+            setState.fibers.setSelectedFiber(fibersState.fibersList.find(item => item.short.name.en === paramFiberNameShortEn)?._id || '')
+            console.log(fibersState.fibersList.find(item => item.short.name.en === paramFiberNameShortEn)?._id || '');
+        }
+    }, [paramFiberNameShortEn, fibersState.load.status])
+
+
+    const renderFiberItem = useMemo(() => {
+        const fiber = fibersState.fibersList.find(item => item._id === fibersState.selected)  
+        return fiber ? (
+            <div className="fiber__item">
+            <h2>{fiber.name[lang]}</h2>
+            <div className='fiber__splider__container'>
+                <SpliderCommon images={fiber.images} imagesPerSlide={fiber.images.length > 3 ? 3 : 1}/>
+            </div>
+            <div className="fiber__descr__container">
+                <div className="block_text">
+                    {fiber.text[lang].split('\n').map((textItem, i) => <p key={i}>{textItem}</p>)}
+                    <div className="features__container">
+                        <h3>{lang === 'en' ? 'Features' : 'Характеристики'}</h3>
+                        <Features params={fiber.params} fiber={fiber} lang={lang}/>
+                    </div>
+                    <div className="colors">
+                        <h3>{lang === 'en' ? 'Available colors' : 'Доступные цвета'}</h3>
+                        <div className="colors__container">
+                            {fiber.colors.map((color, i) => {
+                                const colorData: IColor | undefined = colorsState.colors.find(colorItem => colorItem._id === color)
+                                if (colorData) {
+                                    return (
+                                        <div key={i} className='color__container' onClick={(e) => onImageClick(e, colorData)}>
+                                            <img src={colorData.url.small} alt={colorData.name[lang]} />
+                                        </div>
+                                    )
+                                }
+                            })}
+                        </div>
+                    </div>
+                    <div className="proscons">
+                        <h3>{lang === 'en' ? 'Pros and сons' : 'Плюсы и минусы'}</h3>
+                        <Proscons {...fiber.proscons} lang={lang}/>
+                    </div>
+                    
+                    <div className="buttons">
+                        {isAdmin && 
+                            <NavLink className="button_edit" to={`../../admin/fiber-create/${fiber._id}`}>
+                                <IconEdit />
+                            </NavLink>}
+                        <NavLink
+                            className="button_blue link_compareList"
+                            to="/fibers/compare">
+                                {lang === 'en' ? 'Watch in comparasing' : 'Посмотреть в сравнении'}
+                        </NavLink>
+                        {isAdmin && <Delete<IFiber> remove={onDelete} idInstance={fiber} lang={lang} disabled={false}/>}
+                    </div>
+                </div>
+            </div>
+        </div>
+        )
+        :
+        <ErrorMock lang={lang} comp={{en: 'fiber, fiber not found', ru: 'материала, данный материал не найден'}} />
+    }, [paramFiberNameShortEn, lang, fibersState.load.status, colorsState.load.status, fibersState.selected])
+
 
 
 
@@ -99,15 +169,18 @@ const Fiber:React.FC<IProps> = ({lang, fibersState, colorsState, setState, isAdm
         <div className="page page_fiber">
             <div className="container_page">
                 <div className="container">
-                    {fibersState.load.status === 'success' && <FiberItem {...{fiber}} lang={lang} colors={colorsState.colors} isAdmin={isAdmin} onDelete={onDelete} />}
+                    {fibersState.load.status === 'success' && renderFiberItem}
                     {fibersState.load.status === 'fetching' && <Preloader />}
-                    {fibersState.load.status === 'error' && <ErrorMock lang={lang} comp={{en: 'fiber', ru: 'материала'}} />}
-
+                    {fibersState.load.status === 'error' && <ErrorMock lang={lang} comp={{en: 'fiber', ru: 'материала'}}/>}
                 </div>
             </div>
-            <Modal escExit={true} ref={modal} onClose={closeModal}>
-                <Message buttonText={lang === 'en' ? `Close` : `Закрыть`} buttonAction={closeModal} ref={message}/>
+            <Modal escExit={true} ref={modal_message} onClose={closeModalMessage}>
+                <Message buttonText={lang === 'en' ? `Close` : `Закрыть`} buttonAction={closeModalMessage} ref={message}/>
             </Modal>
+            <Modal escExit={true} ref={modal_image} onClose={closeModalImage}>
+				<ImageModal ref={image} />
+            </Modal>
+            
         </div>
     )
 }

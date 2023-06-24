@@ -4,6 +4,9 @@ const delayBetweenImagesPost: number = 300
 
 const timeModalClosing: number = 500
 
+const strengthMin = 1
+const strengthMax = 180
+
 const clearModalMessage: IMessageModal = {
     status: '',
     header: '',
@@ -193,4 +196,4 @@ const selector = {
     
 }
 
-export {delayBetweenImagesPost, clearModalMessage, resetFetch, timeModalClosing, fetchingFetch, errorFetch, successFetch, headerStatus, empty, selector}
+export {delayBetweenImagesPost, clearModalMessage, resetFetch, timeModalClosing, fetchingFetch, errorFetch, successFetch, headerStatus, empty, selector, strengthMin, strengthMax}

@@ -130,7 +130,7 @@ router.put('/edit',
 
             await saveChanges('fibers', true);
 
-            return res.status(201).json({message: {en: 'News edited', ru: 'Новость отредактирована'}})
+            return res.status(201).json({message: {en: 'Fiber updated', ru: 'Материал отредактирован'}})
         } catch (error) {
             return res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})
         }

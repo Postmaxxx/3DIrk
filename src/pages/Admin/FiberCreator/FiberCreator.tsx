@@ -74,7 +74,7 @@ const ColorCreator: React.FC<IProps> = ({lang, fibersState, setState, colorsStat
         if (fibersState.send.status === 'success') {
             setState.fibers.setSendFibers(resetFetch)
             setState.fibers.loadFibers()
-            navigate('/admin/fiber-create', { replace: true })
+            navigate('/fibers', { replace: true })
             window.location.reload()
         } else {
             setState.fibers.setSendFibers(resetFetch)// clear fetch status
@@ -85,7 +85,7 @@ const ColorCreator: React.FC<IProps> = ({lang, fibersState, setState, colorsStat
         modal.current?.closeModal()
         setTimeout(() => message_missedId.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal 
         errChecker.clear()     
-        navigate('/admin/fiber-create', { replace: true })
+        navigate('/fibers', { replace: true })
         window.location.reload()
     }
 

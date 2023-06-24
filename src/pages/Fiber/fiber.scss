@@ -3,4 +3,171 @@
 
 .page_fiber {
     padding-bottom: 100px;  
+
+    & .fiber__item {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+    
+    
+        & > .fiber__splider__container {
+            height: 300px;
+            width: 100%;
+            margin-top: 40px;
+    
+            @include respond-to(md) {
+                height: 230px;
+            }
+    
+    
+            @include respond-to(sm) {
+                height: 30vw;
+            }
+    
+            @include respond-to(xs) {
+                height: 60vw;
+            }
+    
+        }
+    
+        & > .fiber__descr__container {
+            position: relative;
+            // border: 2px solid yellow;
+            padding-top: 60px;
+            width: 100%;
+    
+            @include respond-to(sm) {
+                padding-top: 40px;
+            }
+           
+    
+    
+            & > .block_text {
+    
+                & h3 {
+                    text-align: center;
+                    color: var(--main_vv);
+                }
+    
+                & > .features__container {
+                    margin-top: 70px;
+                    width: 100%;
+                    margin-left: auto;
+                    margin-right: auto;
+    
+                    & .proscons__container {
+                        margin-top: 20px;
+                    }
+                    
+    
+                }
+    
+                & > .colors {
+                    margin-top: 70px;
+    
+                    & > .colors__container {
+                        margin-top: 40px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        max-width: 80%;
+                        margin-left: auto;
+                        margin-right: auto;
+                        flex-wrap: wrap;
+                        gap: 25px;
+    
+                        @include respond-to(md) {
+                            max-width: 100%;
+                        }
+                        
+                        @include respond-to(sm) {
+                            gap: 15px;
+                        }
+    
+                        @include respond-to(xs) {
+                            gap: 10px;
+                        }
+        
+                        & > .color__container {
+                            width: 60px;
+                            height: 60px;
+                            cursor: pointer;
+                            box-sizing: border-box;
+                            border-radius: 5px;
+                            overflow: hidden;
+                            
+                            @include respond-to(sm) {
+                                width: 50px;
+                                height: 50px;
+                            }
+                            
+                            
+                            @include respond-to(xs) {
+                                width: 40px;
+                                height: 40px;
+                            }
+    
+                            &:hover > img {
+                                transform: scale(1.2);
+                            }
+                            
+                            
+                            & > img {
+                                transition: transform $transition_fast;
+                                width: 100%;
+                                height: 100%;
+                                object-fit: cover;
+                            }
+                        }
+            
+            
+                    }
+                }
+    
+                & .proscons {
+                    margin-top: 70px;
+    
+    
+                    & .proscons__container {
+                        margin-top: 20px;
+    
+                    }
+                }
+    
+    
+    
+                & .buttons {
+                    display: flex;
+                    width: 100%;
+                    justify-content: center;
+                    align-items: center;
+                    margin-top: 50px;
+    
+                    & .link_compareList {
+                        width: fit-content;
+                    }
+    
+    
+                    & .button_edit {
+                        margin-right: 20px;
+                        height: 40px;
+                        width: 45px;
+                    }
+            
+            
+                    & > .button_delete__container {
+                        width: 30px;
+                        height: 30px;
+                        margin-left: 30px;
+                    }
+                }
+    
+            }
+    
+    
+        }
+    
+    }
+    
 }

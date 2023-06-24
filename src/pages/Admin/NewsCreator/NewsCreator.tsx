@@ -231,7 +231,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, setState}): JSX.Element =
                         </button>
                     </form>
                 </div>
-                <Modal escExit={true} ref={modal}>
+                <Modal escExit={true} ref={modal} onClose={closeModal}>
                     <Message buttonText={lang === 'en' ? `Close` : `Закрыть`} buttonAction={closeModal} ref={message}/>
                 </Modal>
             </div>
