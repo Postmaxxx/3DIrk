@@ -3,15 +3,17 @@ import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import './cart-content.scss'
 import { ICartItem, ICartState, ICatalogState, IColor, IColorsState, IFiber, IFibersState, IFullState, IModalImg, IOrderState, IProduct, TLang } from "src/interfaces";
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { NavLink } from "react-router-dom";
 import Delete from "../Delete/Delete";
 import AmountChanger from "../AmountChanger/AmountChanger";
 import PreloaderW from "../Preloaders/PreloaderW";
 import ImgWithPreloader from "../../assets/js/ImgWithPreloader";
-import Modal from "../Modal/Modal";
-import ModalImage from "../ImageModal/ImageModal";
+import Modal, { IModalFunctions } from "../Modal/Modal";
+import ModalImage, { IImageModalFunctions } from "../ImageModal/ImageModal";
 import { allActions } from "../../redux/actions/all";
+import ImageModal from "../ImageModal/ImageModal";
+import ErrorMock from "../tiny/ErrorMock/ErrorMock";
 
 
 
@@ -19,10 +21,10 @@ import { allActions } from "../../redux/actions/all";
 
 interface IPropsState {
     lang: TLang,
-    order: IOrderState,
     catalog: ICatalogState
     colors: IColorsState
     fibers: IFibersState
+    cart: ICartState
 }
 
 
@@ -31,36 +33,38 @@ interface IPropsActions {
         fibers: typeof allActions.fibers
         catalog: typeof allActions.catalog
         colors: typeof allActions.colors
-		order: typeof allActions.order
+		user: typeof allActions.user
     }
 }
 
 
 interface IProps extends IPropsState, IPropsActions {}
 
-const CartContent: React.FC<IProps> = ({lang, order, colors, fibers, setState}): JSX.Element => {
+const CartContent: React.FC<IProps> = ({lang, cart, colors, fibers, setState}): JSX.Element => {
 
     const [cartReady, setCartReady] = useState<boolean>(false)
-	const [modal, setModal] = useState<boolean>(false)
-	const [modalImg, setModalImg] = useState<IModalImg>({descr: '', path: ''})
-  
+    const modal_image = useRef<IModalFunctions>(null)
+    const image = useRef<IImageModalFunctions>(null)
+
+
+/*
     useEffect(() => {
-        if (order.cart.load.status !== 'fetching'){
+        if (cart.load.status !== 'fetching'){
             //setState.cart.saveCart(cart.items)
         }
-    }, [order.cart.items])
-
+    }, [cart.items])
+*/
 
     const deleteItem = (item: ICartItem) => {
-        setState.order.removeItem(item)
+        setState.user.removeItem(item)
     }
 
 
     useEffect(() => {
-        if (colors.load.status === 'success' && fibers.load.status === 'success' &&  order.cart.load.status === 'success') {
+        if (colors.load.status === 'success' && fibers.load.status === 'success' &&  cart.load.status === 'success') {
             setCartReady(true)
         }
-    }, [colors.load.status, fibers.load.status, order.cart.load.status])
+    }, [colors.load.status, fibers.load.status, cart.load.status])
 
 
     const onProductClick = (product: IProduct) => {
@@ -69,7 +73,7 @@ const CartContent: React.FC<IProps> = ({lang, order, colors, fibers, setState}):
     }
 
     const onAmountChange = (item: ICartItem, amount: number) => {
-        setState.order.changeItem({...item, amount})
+        setState.user.changeItem({...item, amount})
     }
 
 
@@ -77,22 +81,22 @@ const CartContent: React.FC<IProps> = ({lang, order, colors, fibers, setState}):
     const onImageClick = (e: React.MouseEvent , color: IColor | undefined) => {
         if (!color) return
         e.stopPropagation()
-        setModalImg({descr: color.name[lang], path: color.url.full})
-        setModal(true)
+        image.current?.update({url: color.url.full, text: color.name[lang]})
+        modal_image.current?.openModal()
     }
 
     
-    const closeModal = () => {
-		setModal(false)
+    const closeModalImage = () => {
+        modal_image.current?.closeModal()
 	}
 
 
     return (
         <div className="cart-content">
-            {cartReady ? 
-                order.cart.items.length > 0 ? 
+            {cartReady &&
+                cart.items.length > 0 ? 
                 <>
-                    {order.cart.items.map((item, i) => {
+                    {cart.items.map((item, i) => {
                         const fiber = fibers.fibersList.find(fiberItem => fiberItem._id === item.fiber)?.short.name[lang]
                         const color: IColor | undefined = colors.colors.find(color => color._id === item.color)
                         return(
@@ -144,13 +148,14 @@ const CartContent: React.FC<IProps> = ({lang, order, colors, fibers, setState}):
                     })} 
                 </>
                 : 
-                <h3 className="cart_empty__text">{lang === 'en' ? 'Your cart is empty' : 'Ваша корзина пуста'}</h3>
-            :
-            <PreloaderW />
-        } 
-            <Modal {...{visible: modal, close: closeModal, escExit: true}}>
-                    <ModalImage props={{path: modalImg.path, descr: modalImg.descr}}/>
-            </Modal> 
+                <h3 className="cart_empty__text">{lang === 'en' ? 'Your cart is empty' : 'Ваша корзина пуста'}</h3>}
+            
+            {cart.load.status === 'fetching' && <PreloaderW />}
+            {cart.load.status === 'error' && <ErrorMock lang={lang} comp={{en: 'cart', ru: 'корзины'}}/>}
+
+            <Modal escExit={true} ref={modal_image} onClose={closeModalImage}>
+				<ImageModal ref={image} />
+            </Modal>
         </div>
     )
 
@@ -160,7 +165,7 @@ const CartContent: React.FC<IProps> = ({lang, order, colors, fibers, setState}):
 
 
 const mapStateToProps = (state: IFullState): IPropsState => ({
-    order: state.order,
+    cart: state.user.cart,
     lang: state.base.lang,
     catalog: state.catalog,
     colors: state.colors,
@@ -174,7 +179,7 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>):IPropsActions => ({
 		fibers: bindActionCreators(allActions.fibers, dispatch),
 		colors: bindActionCreators(allActions.colors, dispatch),
 		catalog: bindActionCreators(allActions.catalog, dispatch),
-		order: bindActionCreators(allActions.order, dispatch),
+		user: bindActionCreators(allActions.user, dispatch),
 	}
 })
   

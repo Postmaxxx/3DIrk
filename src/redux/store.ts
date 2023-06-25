@@ -13,7 +13,7 @@ const rootReducer = combineReducers({
     base: reducerBase,
     news: reducerNews,
     fibers: reducerFibers,
-    order: reducerOrder,
+    //order: reducerOrder,
     catalog: reducerCatalog,
     colors: reducerColors,
     user: reducerUser

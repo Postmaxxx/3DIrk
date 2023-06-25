@@ -155,40 +155,22 @@ router.post('/login-token',
 
 
 
-
-/*
-router.put('/update-cart',
+router.put('/cart',
     authMW,
     async (req, res) => {       
         try {
-            const {userId} = req.body
-            const user = await User.findOne( {_id: userId} )
-            if (!user) {
-                return res.status(400).json({ message: { en: 'User was not found', ru: "Пользователь не найден"}})
-            }
+            const {userId, newCart } = req.body
 
-            const newToken = jwt.sign(
-                {userId: user.id},
-                process.env.jwtSecret,
-                { expiresIn: "1h"}
-            )
-                
-            const userToFront = {
-                name: user.name,
-                email: user.email,
-                phone: user.phone,
-                //orders: user.orders,
-                token: newToken
-            }
-            
-            res.status(200).json({user: userToFront, message: {en: 'Login success', ru: 'Успешный вход'}})
+            User.findOneAndUpdate( {_id: userId}, newCart )
+
+            res.status(200).json({message: {en: 'Cart has been updated', ru: 'Корзина была обновлена'}})
 
         } catch (error) {
             res.status(500).json({ message:{en: `Something wrong with server (${error}), try again later`, ru: `Ошибка на сервере (${error}), попробуйте позже`}})
         }
     }
 )
-*/
+
 
 module.exports = router
 

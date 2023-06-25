@@ -121,10 +121,7 @@ router.put('/edit',
         try {
             const { name, text, short, params, images, proscons, colors, _id } = req.body 
 
-            
-            
             const editedFiber = images ? {name, short, params, text, proscons, colors, images} : {name, short, params, text, proscons, colors}
-     
             
             await Fiber.findOneAndUpdate({_id}, editedFiber) 
 

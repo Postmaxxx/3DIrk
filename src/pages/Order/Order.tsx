@@ -2,7 +2,7 @@ import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import './order.scss'
-import { IColorsState, IFibersState, IFullState, IOrderState, TLang, TLangText } from "src/interfaces";
+import { ICartState, IColorsState, IFetch, IFibersState, IFullState, IOrderState, TLang, TLangText } from "src/interfaces";
 import { useEffect, useRef, useCallback, useMemo } from 'react'
 import Modal, { IModalFunctions } from "../../components/Modal/Modal";
 import Message, { IMessageFunctions } from "../../components/Message/Message";
@@ -15,14 +15,15 @@ import { errorsChecker, prevent } from "src/assets/js/processors";
 
 interface IPropsState {
     lang: TLang,
-    orderState: IOrderState
     colorsState: IColorsState
     fibersState: IFibersState
+    cart: ICartState
+    sendOrder: IFetch,
 }
 
 interface IPropsActions {
     setState: {
-        order: typeof allActions.order
+        user: typeof allActions.user
         fibers: typeof allActions.fibers
         colors: typeof allActions.colors
     }
@@ -31,7 +32,7 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 
-const Order:React.FC<IProps> = ({lang, orderState, colorsState, fibersState, setState}): JSX.Element => {
+const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState, setState}): JSX.Element => {
 
     const _name = useRef<HTMLInputElement>(null)
     const _email = useRef<HTMLInputElement>(null)
@@ -43,16 +44,17 @@ const Order:React.FC<IProps> = ({lang, orderState, colorsState, fibersState, set
 
 
     const closeModalMessage = useCallback(() => {
+        if (!_message.current) return
         modal_message.current?.closeModal()
         setTimeout(() => message.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
-        if (orderState.send.status === 'success') {
-            setState.order.clearForm();
+        if (sendOrder.status === 'success') {
             addFiles.current?.clearAttachedFiles()
-            setState.order.clearCart()
+            _message.current.value = ''
+            setState.user.setCart([])
         }
-        setState.order.setSendOrder(resetFetch)
+        setState.user.setSendOrder(resetFetch)
         errChecker.clear()
-	}, [orderState.send.status])
+	}, [sendOrder.status])
 
 
     const errChecker = useMemo(() => errorsChecker({lang}), [lang])
@@ -73,9 +75,9 @@ const Order:React.FC<IProps> = ({lang, orderState, colorsState, fibersState, set
     const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
         if (!_name.current || !_email.current || !_phone.current || !_message.current || !message.current || !modal_message.current || !addFiles.current) return
         prevent(e)
-        errChecker.check(_name.current, 2, 40)
+        /*errChecker.check(_name.current, 2, 40)
         errChecker.check(_email.current, 6, 70)
-        errChecker.check(_phone.current, 6, 20)
+        errChecker.check(_phone.current, 6, 20)*/
         errChecker.check(_message.current, 0, 3000)
 
         if (errChecker.amount() > 0) {
@@ -84,8 +86,8 @@ const Order:React.FC<IProps> = ({lang, orderState, colorsState, fibersState, set
             return
         }
 
-        setState.order.setFiles(addFiles.current.getFiles())
-        /*
+        /*setState.order.setFiles(addFiles.current.getFiles())
+        
         const textCart = orderState.cart.items.reduce((text: string, item: ICartItem, i: number) => {
             return text + `${i+1}) ${item.product.name[lang]}
 ${lang === 'en' ? 'Options' : 'Версия'}: ${item.type} 
@@ -107,7 +109,11 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${orderState.message}`;
         const text = `${lang === 'en' ? 'New order' : 'Новый заказ'}:${textOrder}\n\n\n ${lang === 'en' ? 'Cart content' : 'Содержимое корзины'}: \n${textCart}${orderState.files.length > 0 ? (lang==='en' ? '\n\n\nAttached files:' : '\n\n\nПрикрепленные файлы:') : ''}`
     */
         //setState.order.sendOrder({lang, text, filesArr: orderState.files, informer})
-        setState.order.sendOrder(informer)
+        setState.user.sendOrder({
+            message: _message.current.value,
+            files: addFiles.current.getFiles(),
+            informer
+        })
     }
 
 
@@ -116,32 +122,18 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${orderState.message}`;
 
 
     useEffect(() => {
-        if (orderState.send.status === 'success' || orderState.send.status === 'error') {
-            const errors: string[] = orderState.send.errors?.map(e => e[lang]) || []
+        if (sendOrder.status === 'success' || sendOrder.status === 'error') {
+            const errors: string[] = sendOrder.errors?.map(e => e[lang]) || []
             message.current?.update({
-                header: headerStatus[orderState.send.status][lang],
-                status: orderState.send.status,
-                text: [orderState.send.message[lang], ...errors]
+                header: headerStatus[sendOrder.status][lang],
+                status: sendOrder.status,
+                text: [sendOrder.message[lang], ...errors]
             })
             modal_message.current?.openModal()
         }
-    }, [orderState.send.status])
+    }, [sendOrder.status])
 
 
-
-    const focusNext = ({e, target}: {e: KeyboardEvent, target: HTMLInputElement | HTMLTextAreaElement | null}) => {
-        /*prevent(e)
-        if (e.key === 'Enter') {
-            //target?.focus();
-        }*/
-    }
-
-
-    const onChangeText: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (e) => {
-        const key = e.target.id as "name" | "email" | "phone" | "message"
-        setState.order.setText({[key]: e.target.value})
-        errChecker.clearError(e.target)
-    }
 
 
 
@@ -158,52 +150,15 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${orderState.message}`;
                                 <div className="data-block">
 
                                     <div className="inputs-block">
-                                        <div className="input-block">
-                                            <label htmlFor="name">
-                                                {lang === 'en' ? 'Your name*' : 'Ваше имя*'}
-                                            </label>
-                                            <input 
-                                                className="input-element" 
-                                                id="name" 
-                                                type="text" 
-                                                ref={_name} 
-                                                value={orderState.name}
-                                                onChange={onChangeText}/>
-                                        </div>
-                                        <div className="input-block">
-                                            <label htmlFor="phone">
-                                                {lang === 'en' ? 'Your phone' : 'Ваш телефон'}
-                                            </label>
-                                            <input 
-                                                className="input-element" 
-                                                id="phone"
-                                                type="tel" 
-                                                ref={_phone} 
-                                                value={orderState.phone}
-                                                onChange={onChangeText}/>
-                                        </div>
-                                        <div className="input-block">
-                                            <label htmlFor="email">
-                                                {lang === 'en' ? 'Your email*' : 'Ваша почта*'}
-                                            </label>
-                                            <input 
-                                                className="input-element" 
-                                                id="email" 
-                                                type="email" 
-                                                value={orderState.email}
-                                                ref={_email} 
-                                                onChange={onChangeText}/>
-                                        </div>
                                         <div className="input-block message-block">
                                             <label htmlFor="message">
-                                                {lang === 'en' ? 'Information about the order (at least 10 symbols)*' : 'Информация о заказе (минимум 10 символов)*'}
+                                                {lang === 'en' ? 'Information about the order' : 'Информация о заказе'}
                                             </label>
                                             <textarea 
                                                 className="input-element" 
                                                 id="message" 
-                                                ref={_message} 
-                                                value={orderState.message}
-                                                onChange={onChangeText}/>
+                                                ref={_message}
+                                                onChange={(e) => errChecker.clearError(e.target)}/>
                                         </div>
                                     </div>
                                     <div className="files-block">
@@ -222,7 +177,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${orderState.message}`;
 
                                 <button 
                                     type="submit" 
-                                    disabled={orderState.cart.load.status !== 'success' || fibersState.load.status !== 'success' || colorsState.load.status !== 'success' || orderState.send.status === 'fetching'} 
+                                    disabled={cart.load.status !== 'success' || fibersState.load.status !== 'success' || colorsState.load.status !== 'success' || sendOrder.status === 'fetching'} 
                                     className="button_order" 
                                     onClick={onSubmit}>
                                         {lang === 'en' ? 'Order' : "Отправить"}
@@ -245,7 +200,9 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${orderState.message}`;
 
 const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
-    orderState: state.order,
+    cart: state.user.cart,
+    sendOrder: state.user.sendOrder,
+   // message: state.user.message,
     colorsState: state.colors,
     fibersState: state.fibers,
 })
@@ -255,7 +212,7 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>):IPropsActions => ({
     setState: {
 		fibers: bindActionCreators(allActions.fibers, dispatch),
 		colors: bindActionCreators(allActions.colors, dispatch),
-		order: bindActionCreators(allActions.order, dispatch),
+		user: bindActionCreators(allActions.user, dispatch),
 	}
 })
   

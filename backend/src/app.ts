@@ -1,5 +1,5 @@
 require('dotenv').config()
-const authRoutes = require('./routes/auth')
+const userRoutes = require('./routes/user')
 const cartRoutes = require('./routes/cart')
 const fibersRoutes = require('./routes/fibers')
 const newsRoutes = require('./routes/news')
@@ -21,8 +21,8 @@ app.use(cors({
     methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH']
 }));
 
-//auth
-app.use('/api/auth', authRoutes)
+
+app.use('/api/user', userRoutes)
 app.use('/api/cart', cartRoutes)
 /*
 //fibers

@@ -3,7 +3,7 @@ const User = require("../models/User")
 const router = Router()
 const authMW = require('../middleware/auth')
 
-
+/*
 router.put('/set',
     authMW,
     async (req, res) => {             
@@ -17,7 +17,8 @@ router.put('/set',
             if (!req.body?.items) {
                 return res.status(400).json({ message: { en: 'Cart is empty', ru: "Корзина пуста"}})
             }
-            user.cart = req.body?.items
+
+            user.cart = req.body.items
             await user.save()
             
             res.status(200).json({message: {en: 'Cart sent', ru: 'Корзина отправлена'}})
@@ -28,7 +29,7 @@ router.put('/set',
     }
 )
 
-
+*/
 module.exports = router
 
 export {}

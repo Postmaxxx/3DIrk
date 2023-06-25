@@ -410,9 +410,13 @@ export interface IUserState {
     email: string
     phone: string
     token: string
+    message: string
     //orders: TId[]
     auth: IFetch
     isAdmin: boolean
+    //files: File[]
+    cart: ICartState
+    sendOrder: IFetch
 }
 
 
@@ -426,7 +430,7 @@ export interface IFullState {
     catalog: ICatalogState
     colors:  IColorsState
     user: IUserState
-    order: IOrderState
+    //order: IOrderState
     //cart: ICartState
 }
 
@@ -471,7 +475,7 @@ export interface IFiberProperties {
 
 export interface IUserLoginResOk {
     message: TLangText
-    user: Pick<IUserState, 'name' | 'email' | 'phone' | 'token' | 'isAdmin'>
+    user: Pick<IUserState, 'name' | 'email' | 'phone' | 'token' | 'isAdmin'> & {cart: ICartItem[]}
 }
 
 
