@@ -5,7 +5,7 @@ import Preloader from '../../components/Preloaders/Preloader';
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import { useRef, useEffect, FC, useMemo } from "react";
+import { useRef, useEffect, FC, useMemo, useCallback } from "react";
 import SpliderCommon from '../../components/Spliders/Common/SpliderCommon';
 import { allActions } from "../../redux/actions/all";
 import Delete from 'src/components/Delete/Delete';
@@ -51,7 +51,7 @@ const NewsDetails: FC<IProps> = ({lang, setState, send, loadOne, newsOne, isAdmi
     }
 
 
-    const closeModal = () => {
+    const closeModal = useCallback(() => {
         modal.current?.closeModal()
         setTimeout(() => message.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
         if (send.status === 'success') {
@@ -61,7 +61,7 @@ const NewsDetails: FC<IProps> = ({lang, setState, send, loadOne, newsOne, isAdmi
         } else {
             setState.news.setSendNews(resetFetch)
         }
-	}
+	}, [send.status])
 
 
     useEffect(() => { //if admin delete news

@@ -1,6 +1,6 @@
 import { IColorsState, IFiberParam, IFibersState, IFullState, IProsCons, ISendFiber, TLang, TLangText } from 'src/interfaces';
 import './fiber-creator.scss'
-import React, {  useRef, useMemo } from "react";
+import { FC, Fragment, useRef, useMemo, useCallback } from "react";
 import { connect } from "react-redux";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
@@ -34,7 +34,7 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 
-const ColorCreator: React.FC<IProps> = ({lang, fibersState, setState, colorsState}): JSX.Element => {
+const ColorCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): JSX.Element => {
     
     const navigate = useNavigate()
     const paramFiberId = useParams().fiberId || ''
@@ -67,7 +67,7 @@ const ColorCreator: React.FC<IProps> = ({lang, fibersState, setState, colorsStat
 
 
 
-    const closeModal = () => {
+    const closeModal = useCallback(() => {
         modal.current?.closeModal()
         setTimeout(() => message.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal 
         errChecker.clear()     
@@ -79,15 +79,16 @@ const ColorCreator: React.FC<IProps> = ({lang, fibersState, setState, colorsStat
         } else {
             setState.fibers.setSendFibers(resetFetch)// clear fetch status
         }
-	}
+	}, [fibersState.send.status])
 
-    const closeModalAndReturn = () => {
+    
+    const closeModalAndReturn = useCallback(() => {
         modal.current?.closeModal()
         setTimeout(() => message_missedId.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal 
         errChecker.clear()     
         navigate('/fibers', { replace: true })
         window.location.reload()
-    }
+    },[])
 
 
     
@@ -330,7 +331,7 @@ const ColorCreator: React.FC<IProps> = ({lang, fibersState, setState, colorsStat
         return (
             fibersProperties.map((item, i) => {
                 return (
-                    <React.Fragment key={item._id}>
+                    <Fragment key={item._id}>
                         {item.type !== 'string' ? 
                             <div className="input__wrapper no-info" key={item._id}>
                                 <Selector 
@@ -349,7 +350,7 @@ const ColorCreator: React.FC<IProps> = ({lang, fibersState, setState, colorsStat
                                 <input type="text" id={item._id} onChange={(e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => errChecker.clearError(e.target)} data-ru={item.name.ru} data-en={item.name.en}/>
                             </div>
                         }
-                    </React.Fragment>
+                    </Fragment>
                 )
             })
         )

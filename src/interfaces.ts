@@ -321,6 +321,7 @@ export interface IBaseState {
 //============================================== order state
 export interface IOrderState {
     _id: TId
+    load: IFetch
     send: IFetch
     date: Date
     name: string

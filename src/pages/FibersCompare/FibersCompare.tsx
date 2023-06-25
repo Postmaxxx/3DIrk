@@ -2,7 +2,7 @@ import './FibersCompare.scss'
 import { AnyAction, bindActionCreators, Dispatch } from "redux";
 import { connect } from "react-redux";
 import { TLang, IFullState, IFibersState, IFiber } from "../../interfaces";
-import { useEffect, useState, Fragment, useCallback, useMemo } from 'react'; 
+import { useEffect, useState, Fragment, useMemo } from 'react'; 
 import Preloader from '../../components/Preloaders/Preloader';
 import { NavLink } from 'react-router-dom';
 import SvgInserter from '../../components/tiny/SvgInserter/SvgInserter';
@@ -50,12 +50,12 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
    
 
 
-    const clearCheckboxes = useCallback(() => {
+    const clearCheckboxes = () => {
         Array.from(document.querySelectorAll('[data-fiberselect]')).forEach(item => (item as HTMLInputElement).checked = false)
-    }, [])
+    }
 
 
-    const compareSelected = useCallback(() => {       
+    const compareSelected = () => {       
         const selectedFibers:IFiber['_id'][] = Array.from(document.querySelectorAll('[data-fiberselect]'))
             .filter(item => (item as HTMLInputElement).checked)
             .map(input => (input as HTMLInputElement).dataset.fiberselect as IFiber['_id']) 
@@ -67,7 +67,7 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
         setFiltered(true)
         clearCheckboxes()
         setSelectedMore(false)
-    }, [])
+    }
 
 
     useEffect(() => {
@@ -76,7 +76,6 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
 
 
     const clearSelected = () => {
-        console.log(fibersList);
         setFiltered(false)  
         setShowList(fibersState.fibersList.map(fiber => fiber._id))
         clearCheckboxes()
@@ -84,37 +83,48 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
 
 
 
-    const onCheckbox = useCallback(() => {
+    const onCheckbox = () => {
         setSelectError(false)
         if (filtered) {
             setSelectedMore(true)
         }
-    }, [filtered])
+    }
 
 
-    const onCellClick = useCallback((id: IFiber['_id'], propertyName: string) => { 
+    const onCellClick = (id: IFiber['_id'], propertyName: string) => { 
         setState.fibers.setSelectedFiber(id)
         if (propertyName) {
             setSelectedProperty(propertyName)
         }
-    }, [])
+    }
+
+
+    const sortByProperty = (_id: string) => {
+        setFibersList(prev => {
+            let reverse: boolean = true
+            const newFibers = prev.sort((fiberA, fiberB) => { 
+                const delta = (fiberA.params[_id] as number) - (fiberB.params[_id] as number)
+                delta < 0 ? reverse = false : null
+                return delta
+            })
+            return reverse ? [...newFibers.reverse()] : [...newFibers]
+        })
+    }
 
 
     const renderProperties = useMemo(() => 
         fibersProperties.map((property, i) => {
             return property._id !== 'priceGr' && 
                 <div className="cell row-name fixed-left with-tip padding_no" key={property._id}>
-                    <NavLink 
-                        key={property._id}
-                        to='/fibers'>
-                            <span>{property.name[lang]}</span>
-                            <div className='tip' title={property.tip[lang]}>
-                                <SvgInserter type={'question'}/>
-                            </div>
-                    </NavLink>
+                    <button onClick={() => sortByProperty(property._id)}>
+                        <span>{property.name[lang]}</span>
+                        <div className='tip' title={property.tip[lang]}>
+                            <SvgInserter type={'question'}/>
+                        </div>
+                    </button>
                 </div>
         }
-    ), [lang])
+    ), [lang, fibersList])
 
 
     const renderFiberList = useMemo(() => fibersList
@@ -162,7 +172,7 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
                                         || property._id === "resistantFatigue"
                                         || property._id === "cutting"
                                         || property._id === "grinding"
-                                        ) && <SvgInserter type={fiber.params[property._id] === 2 ? 'plus' : fiber.params[property._id] === 0 ? 'minus' : 'con'}/>}
+                                        ) && <SvgInserter type={fiber.params[property._id] === 3 ? 'plus' : fiber.params[property._id] === 1 ? 'minus' : 'question'}/>}
                                         {property._id === "price" && <RatingMoney value={fiber.params.price} max={5} text={``} measurment={''} />}
                                     </div>
                                 :
@@ -188,7 +198,10 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
         <div className="page page_compare">
             <div className="container_page">
                 <div className="container_compare">
-                    <h1>{lang === 'en' ? 'Filaments comparison' : 'Сравнение филаментов'}</h1>
+                    <div className="block_text">
+                        <h1>{lang === 'en' ? 'Filaments comparison' : 'Сравнение филаментов'}</h1>
+                        <p>{lang === 'en' ? 'You can click at the feature on the left to sort fibers in forward or reverse order by this feature' : 'Вы можете кликнуть по свойству слева чтобы отсортировать материалы по данному свойству'}</p>
+                    </div>
                     <div className="table__container">
                         {fibersState.load.status === 'success' && 
                             <div className="table">
@@ -199,7 +212,7 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
                                 <div className="cell row-name fixed-left selectors">
                                     {(filtered && !selectedMore) && <button className='button_blue' onClick={clearSelected}>{lang === 'en' ? 'Show all' : 'Показать все'}</button>}
                                     {(!filtered || selectedMore) && <button className='button_blue' onClick={compareSelected}>{lang === 'en' ? 'Compare' : 'Сравнить'}</button>}
-                                    {selectError && <span className='error-message'>{lang === 'en' ? `select 2 or more` : `выберите 2 или более`}</span>}
+                                    {selectError && <span className='error-message'>{lang === 'en' ? `select > 1` : `выберите > 1`}</span>}
                                 </div>
                                 {renderProperties}
                                 <div className="cell row-name fixed-left row-name_last">

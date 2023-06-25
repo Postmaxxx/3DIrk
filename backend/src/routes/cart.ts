@@ -15,7 +15,7 @@ router.put('/set',
                 return res.status(400).json({ message: { en: 'User was not found', ru: "Пользователь не найден"}})
             }
             if (!req.body?.items) {
-                return res.status(400).json({ message: { en: 'Cart is absent', ru: "Корзина отсутствует"}})
+                return res.status(400).json({ message: { en: 'Cart is empty', ru: "Корзина пуста"}})
             }
             user.cart = req.body?.items
             await user.save()

@@ -8,6 +8,11 @@ const initialOrder = {
         message: {en: '', ru: ''},
         errors: []
     },
+    load: {
+        status: 'idle',
+        message: {en: '', ru: ''},
+        errors: []
+    },
     name: '',
     phone: '',
     email: '',

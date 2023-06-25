@@ -1,6 +1,6 @@
 import { IAction, IDispatch, IErrRes, IFullState, ILoggingForm, IUserLoginResOk, IUserState, TLangText } from "src/interfaces";
 import { actionsListUser } from './actionsList'
-import { setName, setEmail, setPhone } from "./order";
+import { setText } from "./order";
 import { fetchingFetch } from "src/assets/js/consts";
 
 export const setUser = <T extends IUserState>(payload: T):IAction<T> => ({
@@ -82,10 +82,11 @@ export const login = ({email, password}: Pick<ILoggingForm, "email" | "password"
                 auth: {status: 'success', message: result.message},
                 isAdmin: result.user.isAdmin
             }))
+            
+            dispatch(setText({name: result.user.name}))
+            dispatch(setText({phone: result.user.phone}))
+            dispatch(setText({email: result.user.email}))
 
-            dispatch(setName( result.user.name))
-            dispatch(setPhone( result.user.phone))
-            dispatch(setEmail( result.user.email))
 
             localStorage.setItem('user', JSON.stringify({token: result.user.token}))
         } catch (e) {         

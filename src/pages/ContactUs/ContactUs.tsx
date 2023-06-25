@@ -46,11 +46,11 @@ const ContactUs:React.FC<IProps> = ({lang, order, setState}): JSX.Element => {
     const closeModal = () => {
 		setModal(false)
         if (order.send.status === 'success') {
-            setState.order.clearFiles();
+            //setState.order.clearFiles();
             setState.order.clearForm();
             addFilesRef.current?.clearAttachedFiles()
         }
-        setState.order.setSendDataStatus({status: 'idle', message: {en: '', ru: ''}, errors: []})
+        setState.order.setSendStatus({status: 'idle', message: {en: '', ru: ''}, errors: []})
 	}
 
 
@@ -160,7 +160,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
 
 
     const saveFiles = (files: File[]) => {
-        setState.order.clearFiles()
+        //setState.order.clearFiles()
         setState.order.addFiles(files)
     }
 

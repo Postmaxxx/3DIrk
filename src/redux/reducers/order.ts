@@ -12,41 +12,42 @@ const reducerOrder = (state:IOrderState = initialOrderState, action: IAction<any
                 ...state, 
                 send: action.payload
             }
-        case actionsListOrder.SET_ORDER_NAME: 
+        case actionsListOrder.SET_LOAD_STATUS_ORDER: 
             return {
                 ...state, 
-                name: action.payload
+                load: action.payload
             }
-        case actionsListOrder.SET_ORDER_PHONE: 
+        case actionsListOrder.SET_ORDER_TEXT: 
             return {
                 ...state, 
-                phone: action.payload
-            }
-        case actionsListOrder.SET_ORDER_EMAIL: 
-            return {
-                ...state, 
-                email: action.payload
-            }
-        case actionsListOrder.SET_ORDER_MESSAGE: 
-            return {
-                ...state, 
-                message: action.payload
+                ...action.payload as Partial<Pick<IOrderState, "name" | "email" | "message" | "phone">>
             }
         case actionsListOrder.CLEAR_ORDER_FORM: 
             return {
                 ...state, 
                 message: '',
             }
-        case actionsListOrder.CLEAR_ORDER_FILES: 
+        case actionsListOrder.SET_ORDER_FILES: 
             return {
                 ...state, 
-                files: [],
+                files: action.payload as File[],
             }
-        case actionsListOrder.ADD_ORDER_FILES: 
-            return {
-                ...state, 
-                files: state.files.concat(action.payload),
-            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

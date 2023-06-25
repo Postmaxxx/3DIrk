@@ -69,23 +69,23 @@ router.post('/login',
             const {email, password } = req.body
             
             const user  = await User.findOne({ email })
-
+            
             if (!user) {
                 return res.status(400).json({ message: { en: 'User not found', ru: "Пользователь не найден"}})
             }
-
+            
             const passwordsSame = await bcrypt.compare(password, user.password)
-
+            
             if (!passwordsSame) {
                 return res.status(400).json({ message: {en: 'Password is incorrect', ru: "Пароль неверный"}})
             }
-
+            
             const token = jwt.sign(
                 {userId: user.id},
                 process.env.jwtSecret,
                 { expiresIn: "1h"}
             )
-
+                
 
             const userToFront = {
                 name: user.name,
@@ -96,11 +96,13 @@ router.post('/login',
                 token,
                 isAdmin: false
             }
+            
 
             if (user.email === process.env.admEmail) {
                 userToFront.isAdmin = true
             }
-
+            
+            
             res.status(200).json({user: userToFront, message: {en: 'Login success', ru: 'Успешный вход'}})
 
         } catch (error) {

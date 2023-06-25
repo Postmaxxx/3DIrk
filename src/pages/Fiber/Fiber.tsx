@@ -1,6 +1,6 @@
 import './fiber.scss'
 import { NavLink, useNavigate, useParams  } from 'react-router-dom';
-import { useEffect, useRef, useMemo,useCallback } from 'react';
+import { useEffect, useRef, useMemo,useCallback, FC } from 'react';
 import { AnyAction, bindActionCreators, Dispatch } from "redux";
 import { connect } from "react-redux";
 import Preloader from '../../components/Preloaders/Preloader';
@@ -37,7 +37,7 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 
-const Fiber:React.FC<IProps> = ({lang, fibersState, colorsState, setState, isAdmin}):JSX.Element => {
+const Fiber: FC<IProps> = ({lang, fibersState, colorsState, setState, isAdmin}):JSX.Element => {
     const paramFiberNameShortEn = useParams().fiberName || ''
     const navigate = useNavigate()
     const modal_message = useRef<IModalFunctions>(null)
@@ -46,9 +46,9 @@ const Fiber:React.FC<IProps> = ({lang, fibersState, colorsState, setState, isAdm
     const image = useRef<IImageModalFunctions>(null)
     
 
-    const onDelete = useCallback((item: IFiber) => { 
+    const onDelete = (item: IFiber) => { 
         setState.fibers.deleteFiber(item._id)
-    }, [])
+    }
 
 
     useEffect(() => {
@@ -84,11 +84,11 @@ const Fiber:React.FC<IProps> = ({lang, fibersState, colorsState, setState, isAdm
 
     
 
-    const onImageClick = useCallback((e: React.MouseEvent , color: IColor) => {
+    const onImageClick = (e: React.MouseEvent , color: IColor) => {
         e.stopPropagation()
         image.current?.update({url: color.url.full, text: color.name[lang]})
         modal_image.current?.openModal()
-    }, [])
+    }
 
 
 

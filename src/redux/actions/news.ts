@@ -1,6 +1,7 @@
 import { IAction, IDispatch, IErrRes, IFetch, IFullState, IImgWithThumb, IMsgRes, INewsItem, INewsItemShort, ISendNews, IUserState, TLangText } from "src/interfaces"
 import { actionsListNews } from './actionsList'
 import { imageUploader } from "src/assets/js/imageUploader";
+import { delayBetweenImagesPost, fetchingFetch, successFetch } from "src/assets/js/consts";
 
 
 
@@ -42,7 +43,7 @@ export const loadSomeNews = (from: number, amount: number) => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
         const news = getState().news
         if (news.load.status === 'fetching') return
-        dispatch(setLoadNews({status: 'fetching', message: {en: `Loading ${amount} news`, ru: `Загрузка ${amount} новостей`},}))
+        dispatch(setLoadNews(fetchingFetch))
         try {
             const response: Response = await fetch(`/api/news/get-some?from=${from}&amount=${amount}`, {
                 method: 'GET',
@@ -69,7 +70,7 @@ export const loadSomeNews = (from: number, amount: number) => {
 
             
             dispatch(setTotalNews(result.total))
-            dispatch(setLoadNews({status: 'success', message: {en: `News have been loaded`, ru: 'Новости были загружены успешно'}}))
+            dispatch(setLoadNews(successFetch))
 
         } catch (e) {
             dispatch(setLoadNews({status: 'error', message: {en: `Error occured while loading news: ${e}`, ru: `Ошибка в процессе загрузки новостей: ${e}`}}))
@@ -85,7 +86,7 @@ export const loadOneNews = (_id: string) => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
         const news = getState().news
         if (news.loadOne.status === 'fetching') return
-        dispatch(setLoadOneNews({status: 'fetching', message: {en: `Loading news ${_id}`, ru: `Загрузка новости  ${_id}`},}))
+        dispatch(setLoadOneNews(fetchingFetch))
         try {
             const response: Response = await fetch(`/api/news/get-one?_id=${_id}`, {
                 method: 'GET',
@@ -104,7 +105,7 @@ export const loadOneNews = (_id: string) => {
                     date: new Date(result.news.date) //changing format, check !!!
                 }
             ))
-            dispatch(setLoadOneNews({status: 'success', message: {en: `This news has been loaded`, ru: 'Новость была загружена успешно'}}))
+            dispatch(setLoadOneNews(successFetch))
         } catch (e) {
             dispatch(setLoadOneNews({status: 'error', message: {en: `Error occured while loading this news: ${e}`, ru: `Ошибка в процессе загрузки новости: ${e}`}}))
         }
@@ -117,9 +118,8 @@ export const loadOneNews = (_id: string) => {
 export const sendNews = () => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
         const { newsOne } = getState().news
-        const token = getState().user.token //get current user state
-        dispatch(setSendNews({status: 'fetching', message: {en: '', ru: ''}}))
-        const delayBetweenImagesPost = 300
+        const token = getState().user.token
+        dispatch(setSendNews(fetchingFetch))
 
         const imageUrls: IImgWithThumb[] = []
         // images to imgbb
@@ -194,7 +194,7 @@ export const updateNews = () => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
         const { newsOne } = getState().news
         const token = getState().user.token //get current user state
-        dispatch(setSendNews({status: 'fetching', message: {en: '', ru: ''}}))
+        dispatch(setSendNews(fetchingFetch))
         const delayBetweenImagesPost = 300
 
         const imageUrls: IImgWithThumb[] = []
@@ -272,7 +272,7 @@ export const updateNews = () => {
 export const deleteNews = (_id: string) => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
         const token = getState().user.token //get current user state
-        dispatch(setSendNews({status: 'fetching', message: {en: '', ru: ''}, errors: []}))
+        dispatch(setSendNews(fetchingFetch))
         
         try {
             

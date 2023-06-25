@@ -2,7 +2,7 @@ import './fibers.scss'
 import { AnyAction, bindActionCreators, Dispatch } from "redux";
 import { connect } from "react-redux";
 import { TLang, IFullState, IFibersState } from "../../interfaces";
-import { useEffect, useState } from 'react';
+import { useEffect,useMemo } from 'react';
 import "@splidejs/react-splide/css";    
 import Preloader from '../../components/Preloaders/Preloader';
 import { NavLink } from 'react-router-dom';
@@ -35,7 +35,7 @@ const Fibers:React.FC<IProps> = ({lang, fibers, setState}):JSX.Element => {
 
 
 
-    const listOfFibers = 
+    const listOfFibers = useMemo(() => (
         <div className="fibers__container">
             {fibers.fibersList.map((fiber, i) => {
             return (
@@ -44,6 +44,7 @@ const Fibers:React.FC<IProps> = ({lang, fibers, setState}):JSX.Element => {
                 </NavLink>
             )})}
         </div>
+    ), [fibers.fibersList, lang])
 
     
 
@@ -97,5 +98,3 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
   
     
 export default connect(mapStateToProps, mapDispatchToProps)(Fibers)
-
-//done

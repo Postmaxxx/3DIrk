@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router-dom'
 import './p404.scss'
-import React from 'react'
+import {FC} from 'react'
 import { TLang } from '../../interfaces'
 
 
@@ -8,7 +8,7 @@ interface IP404 {
     lang: TLang
 }
 
-const P404: React.FC<IP404> = ({lang}): JSX.Element => {
+const P404: FC<IP404> = ({lang}): JSX.Element => {
     const location = useLocation()
 
     return (

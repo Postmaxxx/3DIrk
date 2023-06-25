@@ -1,6 +1,6 @@
 import { IFetch, IFullState, INewsItem, TLang } from 'src/interfaces';
 import './news-creator.scss'
-import { FC, useRef, useMemo } from "react";
+import { FC, useRef, useMemo, useCallback } from "react";
 import { connect } from "react-redux";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
@@ -54,7 +54,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, setState}): JSX.Element =
     }
 
     
-    const closeModal = () => {
+    const closeModal = useCallback(() => {
         modal.current?.closeModal()
         setTimeout(() => message.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
         errChecker.clear()
@@ -69,7 +69,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, setState}): JSX.Element =
         if (paramNewsId) {
             navigate('/admin/news-create', { replace: true });
         }
-	}
+	}, [send.status, paramNewsId])
 
 
     useEffect(() => {

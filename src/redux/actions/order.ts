@@ -1,28 +1,23 @@
-import { IAction, ICartItem, ICartState, IDispatch, IFetch, IFullState, TLang, TLangText } from "src/interfaces"
+import { IAction, ICartItem, IDispatch, IFetch, IFullState, IOrderState, TLang, TLangText } from "src/interfaces"
 import { actionsListOrder } from './actionsList'
+import { errorFetch, fetchingFetch, minTimeBetweenSendings, successFetch } from "src/assets/js/consts";
 
-export const setName = <T extends string>(payload: T):IAction<T> => ({
-    type: actionsListOrder.SET_ORDER_NAME,
+
+
+export const setSendOrder = <T extends IFetch>(payload: T):IAction<T> => ({
+    type: actionsListOrder.SET_SEND_STATUS_ORDER,
     payload
 });
 
-export const setPhone = <T extends string>(payload: T):IAction<T> => ({
-    type: actionsListOrder.SET_ORDER_PHONE,
+
+export const setLoadOrder = <T extends IFetch>(payload: T):IAction<T> => ({
+    type: actionsListOrder.SET_LOAD_STATUS_ORDER,
     payload
 });
 
-export const setEmail = <T extends string>(payload: T):IAction<T> => ({
-    type: actionsListOrder.SET_ORDER_EMAIL,
+export const setText = <T extends Partial<Pick<IOrderState, "name" | "email" | 'message' | "phone">>>(payload: T):IAction<T> => ({
+    type: actionsListOrder.SET_ORDER_TEXT,
     payload
-});
-
-export const setMessage = <T extends string>(payload: T):IAction<T> => ({
-    type: actionsListOrder.SET_ORDER_MESSAGE,
-    payload
-});
-
-export const clearFiles = <T>():IAction<T> => ({
-    type: actionsListOrder.CLEAR_ORDER_FILES,
 });
 
 
@@ -31,75 +26,76 @@ export const clearForm = <T>():IAction<T> => ({
 });
 
 
-export const addFiles = <T extends File[]>(payload: T):IAction<T> => ({
-    type: actionsListOrder.ADD_ORDER_FILES,
+export const setFiles = <T extends File[]>(payload: T):IAction<T> => ({
+    type: actionsListOrder.SET_ORDER_FILES,
     payload
 });
 
 
-export const setSendDataStatus = <T extends IFetch>(payload: T):IAction<T> => ({
-    type: actionsListOrder.SET_SEND_STATUS_ORDER,
-    payload
-});
 
 
-interface ISendOrder {
-    lang: TLang
-    text: string
-    filesArr: File[]
-    informer: (message: TLangText) => void
-}
 
-const minTimeBetweenSendings = 1000; //in ms
-
-export const sendOrder = ({lang, text, filesArr, informer}: ISendOrder) => {
-    return async function(dispatch: IDispatch) {
+export const sendOrder = (informer: (info: TLangText) => void) => {
+    return async function(dispatch: IDispatch, getState: () => IFullState) {
+        const { order, fibers, colors} = getState()
+        const {lang} = getState().base
         const urlMessage= `https://api.telegram.org/bot${process.env.REACT_APP_TG_TOK}/sendMessage`;
         const urlDocument= `https://api.telegram.org/bot${process.env.REACT_APP_TG_TOK}/sendDocument`;
-        
-        dispatch(setSendDataStatus({status: 'fetching', message: {en: 'Sending message', ru: 'Отправка сообщения'}, errors: []}))
-       
+        dispatch(setSendOrder({...fetchingFetch, message: {en: 'Sending message', ru: 'Отправка сообщения'}}))
+
+        const textCart = order.cart.items.reduce((text: string, item: ICartItem, i: number) => {
+            return text + `${i+1}) ${item.product.name[lang]}
+${lang === 'en' ? 'Options' : 'Версия'}: ${item.type} 
+${lang === 'en' ? 'Fiber' : 'Материал'}: ${fibers.fibersList.find(fiberItem => fiberItem._id === item.fiber)?.short.name[lang]}
+${lang === 'en' ? 'Color' : 'Цвет'}: ${colors.colors.find(color => color._id === item.color)?.name[lang]}
+${lang === 'en' ? 'Amount' : 'Количество'}: ${item.amount}\n\n`
+        }, '')
+
+        const textOrder: string = `
+${lang === 'en' ? 'Date' : 'Дата'}: ${new Date().toISOString().slice(0,10)}
+${lang === 'en' ? 'Time' : 'Время'}: ${new Date().toISOString().slice(11, 19)}
+${lang === 'en' ? 'Name' : 'Имя'}: ${order.name}
+${lang === 'en' ? 'Email' : 'Почта'}: ${order.email}
+${lang === 'en' ? 'Phone' : 'Телефон'}: ${order.phone}
+${lang === 'en' ? 'Message' : 'Сообщение'}: ${order.message}`;
+
+        const text = `${lang === 'en' ? 'New order' : 'Новый заказ'}:${textOrder}\n\n\n ${lang === 'en' ? 'Cart content' : 'Содержимое корзины'}: \n${textCart}${order.files.length > 0 ? (lang==='en' ? '\n\n\nAttached files:' : '\n\n\nПрикрепленные файлы:') : ''}`
+
+
         await fetch(urlMessage, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                chat_id: process.env.REACT_APP_CHT_ID,
-                text
-              })
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: process.env.REACT_APP_CHT_ID, text })
             })
             .then(res => {
                 if (!res.ok) {
-                    dispatch(setSendDataStatus({
-                        status: 'error', 
+                    dispatch(setSendOrder({
+                        ...errorFetch,
                         message: {
-                            en: `Error while sending a message. HTTP error, status: ${res.status}. Try again later.`, 
-                            ru: `Ошибка http при отправке сообщения, статус: ${res.status}. Пожалуйста, попробуйте позже.`
-                        },
-                        errors: []
+                            en: `Error while sending a message. Error: ${res}. Please try again later.`, 
+                            ru: `Ошибка http при отправке сообщения: ${res}. Пожалуйста, попробуйте позже.`
+                        }
                     }))
                     return
                 }
             })
-            .then(data => {})
             .catch(err => {
-                dispatch(setSendDataStatus({
-                    status: 'error', 
+                dispatch(setSendOrder({
+                    ...errorFetch,
                     message: {
                         en: `Error while sending a message: ${err.message}. Please try again later.`,
                         ru: `Ошибка при отправке сообщения: ${err.message}. Пожалуйста, попробуйте позже.`
                     },
-                    errors: []
                 }))
                 return
             });
 
-        filesArr.reduce(async (acc: Promise<string>, file: File, i) => {
+
+        order.files.reduce(async (acc: Promise<string>, file: File, i) => {
             await acc
             const message = {
-                en: `Files to send left: ${filesArr.length - i}`, 
-                ru: `Осталось отправить файлов: ${filesArr.length - i}`
+                en: `Files to send left: ${order.files.length - i}`, 
+                ru: `Осталось отправить файлов: ${order.files.length - i}`
             }
             informer(message)
             return new Promise<string>(async (res, rej) => {
@@ -112,13 +108,12 @@ export const sendOrder = ({lang, text, filesArr, informer}: ISendOrder) => {
                 await fetch(urlDocument, options)
                     .then(res => {
                         if (!res.ok) {
-                            dispatch(setSendDataStatus({
-                                status: 'error', 
+                            dispatch(setSendOrder({
+                                ...errorFetch,
                                 message: {
                                     en: `Error while sending files. HTTP error, status: ${res.status}. Try again later.`,
                                     ru: `Ошибка http при отправке файлов, статус: ${res.status}. Пожалуйста, попробуйте позже.`
-                                },
-                                errors: []
+                                }
                             }))
                             rej(lang === 'en' ? `Error while sending file "${file.name}": ${res.status}. Sending files has been aborted.` : `Error при отправке файла "${file.name}": ${res.status}. Отправка файлов прервана.`)
                         }
@@ -130,51 +125,52 @@ export const sendOrder = ({lang, text, filesArr, informer}: ISendOrder) => {
                         }, minTimeBetweenSendings - transitionSending)
                     })
                     .catch(error => {
-                        dispatch(setSendDataStatus({
-                            status: 'error', 
+                        dispatch(setSendOrder({
+                            ...errorFetch,
                             message: {
                                 en: `Your message has been sent succesfully, but the error has been occured while sending a file:, ${file.name}, error: ${error.message}`,
                                 ru: `Ваше сообщение было успешно отправлено, но возникла ошибка при отправке файла: ${file.name}, ошибка: ${error.message}`
-                            },
-                            errors: []
+                            }
                         }))
                         rej(lang === 'en' ? `Error while sending file "${file.name}": ${error.message}. Sending files has been aborted.` : `Error при отправке файла "${file.name}": ${error.message}. Отправка файлов прервана.`)
                     })
             })
 
-        }, Promise.resolve('Files sending started'))
-            .then(data => {
-                dispatch(setSendDataStatus({
-                    status: 'success', 
+        }, Promise.resolve('Files sending started')).then(data => {
+                dispatch(setSendOrder({
+                    ...successFetch,
                     message: {
-                        en: `Your message ${filesArr.length > 0 ? "and files have" : "has"} been sent`,
-                        ru: `Ваше сообщение ${filesArr.length > 0 ? "и вложения были успешно отправлены" : "было успешно отправлено"}`
+                        en: `Your message ${order.files.length > 0 ? "and files have" : "has"} been sent`,
+                        ru: `Ваше сообщение ${order.files.length > 0 ? "и вложения были успешно отправлены" : "было успешно отправлено"}`
                     },
                     errors: []
                 }))
             })
             .catch(err => {
-                dispatch(setSendDataStatus({
-                    status: 'error', 
+                dispatch(setSendOrder({
+                    ...errorFetch,
                     message: {
                         en: `The error occur while saving files: ${err}`,
                         ru: `Возникла ошибка при отправке файлов: ${err}` 
                     },
-                    errors: []
                 }))
             })
     }
 }
 
 
+
+
+
+
 //============================================== CART
-export const setLoadDataStatusCart = <T extends IFetch>(payload: T):IAction<T> => ({
+export const setLoadCart = <T extends IFetch>(payload: T):IAction<T> => ({
     type: actionsListOrder.SET_LOAD_STATUS_CART,
     payload
 });
 
 
-export const setSendDataStatusCart = <T extends IFetch>(payload: T):IAction<T> => ({
+export const setSendCart = <T extends IFetch>(payload: T):IAction<T> => ({
     type: actionsListOrder.SET_SEND_STATUS_CART,
     payload
 });
@@ -205,9 +201,11 @@ export const removeItem = <T extends ICartItem>(payload: T):IAction<T> => ({
 });
 
 
+
+
 export const loadCart = () => {
     return async function(dispatch: IDispatch) {
-        dispatch(setLoadDataStatusCart({status: 'fetching', message: {en: `Loading cart`, ru: 'Загрузка корзины'}, errors: []}))
+        dispatch(setLoadCart({status: 'fetching', message: {en: `Loading cart`, ru: 'Загрузка корзины'}, errors: []}))
         const receivedData: string = await new Promise((res, rej) => {
             setTimeout(()=> {res(localStorage.getItem('cart') as string)}, 1000)
         })
@@ -215,26 +213,81 @@ export const loadCart = () => {
             console.log('raw cart loaded', receivedData);
             const loadedItems: ICartItem[] = JSON.parse(receivedData) || []
 
-            //const filledItems: ICartItem[] = loadedRawItems
-                /*.map(item => {
-                    const productFull: IProduct | undefined = mockProducts.find(product => product.id === item.product)
-                    return productFull ? {...item, product: productFull } : undefined
-                }).filter((item): item is ICartItem => item !== undefined)*/
-
-            //console.log('cart converted');
             dispatch(setCart(loadedItems))
-            dispatch(setLoadDataStatusCart({status: 'success', message: {en: `Cart has been loaded`, ru: 'Корзина была загружена'}, errors: []}))
+            dispatch(setLoadCart({status: 'success', message: {en: `Cart has been loaded`, ru: 'Корзина была загружена'}, errors: []}))
         } else {
             clearCart()
-            dispatch(setLoadDataStatusCart({status: 'success', message: {en: `Сart is empty`, ru: 'Корзина пуста'}, errors: []}))
+            dispatch(setLoadCart({status: 'success', message: {en: `Сart is empty`, ru: 'Корзина пуста'}, errors: []}))
         }
     }
 }
 
-/*
+
+
+
+
+
+export const sendCart = () => {
+    return async function(dispatch: IDispatch, getState: () => IFullState) {
+        const { cart } = getState().order
+        const token = getState().user.token
+        dispatch(setSendCart({status: 'fetching', message: {en: '', ru: ''}}))
+
+        try {
+            const response: Response = await fetch('/api/cart/set', {
+                method: 'PUT',
+                headers: {
+                    "Content-Type": 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(newsToDb)
+            })
+
+            if (response.status !== 201) {
+                const result: IErrRes = await response.json() //message, errors
+                return dispatch(setSendCart({
+                    status: 'error', 
+                    message: result.message, 
+                    errors: result.errors
+                }))
+            }
+            const result: IMsgRes = await response.json() //message, errors
+            
+            dispatch(setSendCart({status: 'success', message: result.message}))
+            
+        } catch (e) {           
+            dispatch(setSendCart({status: 'error', message: {en: `Error "${e}", try again later`, ru: `Ошибка "${e}", попробуйте позже`}}))
+        }
+
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 export const saveCart = (items: ICartItem[]) => {
     return async function(dispatch: IDispatch) {
-        dispatch(setSendDataStatusCart({status: 'fetching', message: {en: 'Saving cart', ru: 'Сохраняем корзину'}, errors: []}))
+        dispatch(setSendOrderCart({status: 'fetching', message: {en: 'Saving cart', ru: 'Сохраняем корзину'}, errors: []}))
         const dataToSave = items.map(item => {
             return {
                 ...item,
@@ -242,19 +295,19 @@ export const saveCart = (items: ICartItem[]) => {
             }
         })
         localStorage.setItem('cart', JSON.stringify(dataToSave))
-        dispatch(setSendDataStatusCart({status: 'success', message: {en: 'Cart has been saved', ru: 'Корзина сохранена'}, errors: []}))
+        dispatch(setSendOrderCart({status: 'success', message: {en: 'Cart has been saved', ru: 'Корзина сохранена'}, errors: []}))
     }
 }
-*/
 
 
 
 
+/*
 export const sendCart = () => {   
     return async function(dispatch: IDispatch, getState: () => IFullState) {
         const { order, user } = getState() //get current cart state
        
-        dispatch(setSendDataStatusCart({status: 'fetching', message: {en: 'Sending cart', ru: 'Отправка корзины'}, errors: []}))
+        dispatch(setSendCart({status: 'fetching', message: {en: 'Sending cart', ru: 'Отправка корзины'}, errors: []}))
         
         try {
             const cartToSend = order.cart.items.map(item => {
@@ -283,9 +336,9 @@ export const sendCart = () => {
                         message: (result as IErrRes).message, 
                         errors: result.errors as TLangText[] || []
                     }
-                }))*/
+                }))
             }
-            /*const result: IUserLoginResOk = await response.json() //message, errors
+            const result: IUserLoginResOk = await response.json() //message, errors
             dispatch(setUser({
                 ...user, 
                 name: result.user.name,
@@ -295,9 +348,9 @@ export const sendCart = () => {
                 token: result.user.token,
                 auth: {status: 'success', message: result.message, errors: []},
             }))
-            localStorage.setItem('user', JSON.stringify({token: result.user.token}))*/
+            localStorage.setItem('user', JSON.stringify({token: result.user.token}))
         } catch (e) {         
-            //dispatch(setSendDataStatusCart({...user, auth: {status: 'error', message: (e as IErrRes).message, errors: []}}))
+            //dispatch(setSendOrderCart({...user, auth: {status: 'error', message: (e as IErrRes).message, errors: []}}))
         } 
     }
-}
+}*/

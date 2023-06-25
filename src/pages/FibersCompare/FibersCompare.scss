@@ -271,20 +271,31 @@ $k_xs: 0.65;
                     left: 0;
                     width: $col_first;
                     z-index: 2;
+                    
+                    & button:not(.button_blue) {
+                        align-items: center;
+                        display: flex;
+                        height: 100%;
+                        width: 100%;
+                        background-color: transparent;
+                        border: none;
+                        outline: none;
 
-                    & span {
-                        text-align: left;
-                        font-weight: 700;
-                        font-size: 18px;
-                        
-                        @include respond-to(sm) {
-                            font-size: 16px;
-                        }
-
-                        @include respond-to(xs) {
-                            font-size: 14px;
+                        & span {
+                            text-align: left;
+                            font-weight: 700;
+                            font-size: 18px;
+                            
+                            @include respond-to(sm) {
+                                font-size: 16px;
+                            }
+    
+                            @include respond-to(xs) {
+                                font-size: 14px;
+                            }
                         }
                     }
+
                 }
 
                 .padding_no {
@@ -308,6 +319,10 @@ $k_xs: 0.65;
                     flex-direction: row;
                     gap: 10px;
 
+                    @include respond-to(sm) {
+                        flex-direction: column;
+                    }
+
                     & button {
                         white-space: nowrap;
                     }
@@ -317,8 +332,15 @@ $k_xs: 0.65;
                         font-size: 13px;
                         color: var(--error);
                         text-align: center;
+                        margin-right: 10px;
 
-                    }
+                        @include respond-to(sm) {
+                            font-size: 11px;
+                            margin-right: 0;
+                            margin-bottom: 15px;
+                        }
+
+                    }   
                 }
 
 

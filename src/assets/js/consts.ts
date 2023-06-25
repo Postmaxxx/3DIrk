@@ -2,6 +2,8 @@ import { IFetch, IMessageModal, TLangText } from "src/interfaces"
 
 const delayBetweenImagesPost: number = 300
 
+const minTimeBetweenSendings = 1000; //in ms
+
 const timeModalClosing: number = 500
 
 const strengthMin = 1
@@ -196,4 +198,6 @@ const selector = {
     
 }
 
-export {delayBetweenImagesPost, clearModalMessage, resetFetch, timeModalClosing, fetchingFetch, errorFetch, successFetch, headerStatus, empty, selector, strengthMin, strengthMax}
+export {delayBetweenImagesPost, clearModalMessage, resetFetch, timeModalClosing, 
+    fetchingFetch, errorFetch, successFetch, headerStatus, empty, selector, strengthMin, 
+    strengthMax, minTimeBetweenSendings}

@@ -170,6 +170,10 @@ p {
     @include respond-to(xs) {
         width: 100%;
     }
+
+    & > p:first-of-type {
+        margin-top: 40px;
+    }
 }
 
 .no-display {
@@ -181,7 +185,7 @@ section {
     flex-grow: 1;
 }
 */
-
+/*
 .color_mixed {
     background: conic-gradient(
         hsl(360 100% 50%),
@@ -194,13 +198,13 @@ section {
         hsl(45 100% 50%),
         hsl(0 100% 50%)
       );
-}
-
+}*/
+/*
 .color_transparent {
     background: url(../img/color_transparent.jpg);
     background-size: 30%;
 }
-
+*/
 .page {
     background-color: var(--bg);
     transition: background-color 1s;
@@ -211,3 +215,6 @@ section {
 button {
     cursor: pointer;
 }
+
+
+

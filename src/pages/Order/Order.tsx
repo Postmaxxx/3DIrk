@@ -2,21 +2,22 @@ import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import './order.scss'
-import { ICartItem, ICartState, ICheckErrorItem, IColorsState, IFibersState, IFullState, IOrderState, TLang, TLangText } from "src/interfaces";
-import { useState, useEffect, useRef } from 'react'
-import Modal from "../../components/Modal/Modal";
-import Message from "../../components/Message/Message";
+import { IColorsState, IFibersState, IFullState, IOrderState, TLang, TLangText } from "src/interfaces";
+import { useEffect, useRef, useCallback, useMemo } from 'react'
+import Modal, { IModalFunctions } from "../../components/Modal/Modal";
+import Message, { IMessageFunctions } from "../../components/Message/Message";
 import CartContent from "../../components/CartContent/CartContent";
 import AddFiles, { IAddFilesFunctions } from "../../components/AddFiles/AddFiles";
-import inputChecker from "src/assets/js/inputChecker";
 import { allActions } from "src/redux/actions/all";
+import { headerStatus, resetFetch, timeModalClosing } from "src/assets/js/consts";
+import { errorsChecker, prevent } from "src/assets/js/processors";
 
 
 interface IPropsState {
     lang: TLang,
-    order: IOrderState
-    colors: IColorsState
-    fibers: IFibersState
+    orderState: IOrderState
+    colorsState: IColorsState
+    fibersState: IFibersState
 }
 
 interface IPropsActions {
@@ -30,153 +31,118 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 
-interface IMessage {
-    status: string
-    header: string
-    text: string[]
-}
-
-
-const Order:React.FC<IProps> = ({lang, order, colors, fibers, setState}): JSX.Element => {
+const Order:React.FC<IProps> = ({lang, orderState, colorsState, fibersState, setState}): JSX.Element => {
 
     const _name = useRef<HTMLInputElement>(null)
     const _email = useRef<HTMLInputElement>(null)
     const _phone = useRef<HTMLInputElement>(null)
     const _message = useRef<HTMLTextAreaElement>(null)
-	const [modal, setModal] = useState<boolean>(false)
-    const addFilesRef = useRef<IAddFilesFunctions>(null)
-    const [message, setMessage] = useState<IMessage>({status: '', header: '', text: []})
+    const modal_message = useRef<IModalFunctions>(null)
+    const message = useRef<IMessageFunctions>(null)
+    const addFiles = useRef<IAddFilesFunctions>(null)
 
 
-    const closeModal = () => {
-		setModal(false)
-        if (order.send.status === 'success') {
-            setState.order.clearFiles();
+    const closeModalMessage = useCallback(() => {
+        modal_message.current?.closeModal()
+        setTimeout(() => message.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
+        if (orderState.send.status === 'success') {
             setState.order.clearForm();
-            addFilesRef.current?.clearAttachedFiles()
+            addFiles.current?.clearAttachedFiles()
             setState.order.clearCart()
         }
-        setState.order.setSendDataStatus({status: 'idle', message: {en: '', ru: ''}, errors: []})
-	}
+        setState.order.setSendOrder(resetFetch)
+        errChecker.clear()
+	}, [orderState.send.status])
 
 
-    const checkErrors = (): boolean => {
-        const feildsToCheck: Array<ICheckErrorItem> = [
-            {ref: _name, name: {en: 'Your name', ru: 'Ваше имя'}},
-            {ref: _email, name: {en: 'Your email', ru: 'Ваша почта'}},
-            {ref: _phone, name: {en: 'Your phone', ru: 'Ваш телефон'}},
-            {ref: _message, name: {en: 'Information about the order', ru: 'Информация о заказе'}},
-        ]
-        const {isWrong, header, errors} = inputChecker(feildsToCheck)
-        setMessage({status: 'error', header: header[lang], text: errors.map(error => error[lang])})
-        return isWrong
+    const errChecker = useMemo(() => errorsChecker({lang}), [lang])
+
+
+    const informer = (info: TLangText): void => {
+        if (!message.current) return
+        message.current.update({
+            header:  lang === 'en' ? "Sending order..." : "Отправка заказа...",
+            status: '',
+            text: [info[lang]]
+        })
+        modal_message.current?.openModal()
     }
 
-
-        
-    const preventDefaults = (e: DragEvent | React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault()
-        e.stopPropagation()
-    }
-
+    
 
     const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
-        preventDefaults(e)
-        const currentDate: Date = new Date();
-        const name:string =  order.name;
-        const phone:string = order.phone;
-        const email:string = order.email;
-        const message:string = order.message;
-        if (checkErrors()) {
-            setModal(true)
+        if (!_name.current || !_email.current || !_phone.current || !_message.current || !message.current || !modal_message.current || !addFiles.current) return
+        prevent(e)
+        errChecker.check(_name.current, 2, 40)
+        errChecker.check(_email.current, 6, 70)
+        errChecker.check(_phone.current, 6, 20)
+        errChecker.check(_message.current, 0, 3000)
+
+        if (errChecker.amount() > 0) {
+            message.current?.update(errChecker.result())
+            modal_message.current.openModal()
             return
         }
-        
-        const textCart = order.cart.items.reduce((text: string, item: ICartItem, i: number) => {
+
+        setState.order.setFiles(addFiles.current.getFiles())
+        /*
+        const textCart = orderState.cart.items.reduce((text: string, item: ICartItem, i: number) => {
             return text + `${i+1}) ${item.product.name[lang]}
 ${lang === 'en' ? 'Options' : 'Версия'}: ${item.type} 
-${lang === 'en' ? 'Fiber' : 'Материал'}: ${fibers.fibersList.find(fiberItem => fiberItem._id === item.fiber)?.short.name[lang]}
-${lang === 'en' ? 'Color' : 'Цвет'}: ${colors.colors.find(color => color._id === item.color)?.name[lang]}
+${lang === 'en' ? 'Fiber' : 'Материал'}: ${fibersState.fibersList.find(fiberItem => fiberItem._id === item.fiber)?.short.name[lang]}
+${lang === 'en' ? 'Color' : 'Цвет'}: ${colorsState.colors.find(color => color._id === item.color)?.name[lang]}
 ${lang === 'en' ? 'Amount' : 'Количество'}: ${item.amount}\n\n`
         }, '')
 
         const textOrder: string = `
 ${lang === 'en' ? 'Date' : 'Дата'}: ${currentDate.toISOString().slice(0,10)}
 ${lang === 'en' ? 'Time' : 'Время'}: ${currentDate.toISOString().slice(11, 19)}
-${lang === 'en' ? 'Name' : 'Имя'}: ${name}
-${lang === 'en' ? 'Email' : 'Почта'}: ${email}
-${lang === 'en' ? 'Phone' : 'Телефон'}: ${phone}
-${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
+${lang === 'en' ? 'Name' : 'Имя'}: ${orderState.name}
+${lang === 'en' ? 'Email' : 'Почта'}: ${orderState.email}
+${lang === 'en' ? 'Phone' : 'Телефон'}: ${orderState.phone}
+${lang === 'en' ? 'Message' : 'Сообщение'}: ${orderState.message}`;
 
-        const text = `${lang === 'en' ? 'New order' : 'Новый заказ'}:${textOrder}\n\n\n ${lang === 'en' ? 'Cart content' : 'Содержимое корзины'}: \n${textCart}${order.files.length > 0 ? (lang==='en' ? '\n\n\nAttached files:' : '\n\n\nПрикрепленные файлы:') : ''}`
-        
-        setState.order.sendOrder({lang, text, filesArr: order.files, informer})
+
+
+        const text = `${lang === 'en' ? 'New order' : 'Новый заказ'}:${textOrder}\n\n\n ${lang === 'en' ? 'Cart content' : 'Содержимое корзины'}: \n${textCart}${orderState.files.length > 0 ? (lang==='en' ? '\n\n\nAttached files:' : '\n\n\nПрикрепленные файлы:') : ''}`
+    */
+        //setState.order.sendOrder({lang, text, filesArr: orderState.files, informer})
+        setState.order.sendOrder(informer)
     }
 
 
-    const informer = (message: TLangText): void => {
-        setMessage({
-            status: '',
-            header: lang === 'en' ? "Sending order..." : "Отправка заказа...",
-            text: [message[lang]],
-        })
-        setModal(true)
-    }
+
+
 
 
     useEffect(() => {
-        if (order.send.status === 'success' || order.send.status === 'error') {
-            setMessage({
-                status: order.send.status,
-                header: order.send.status === 'success' ? lang === 'en' ? "Success" : "Отправлено" : lang === 'en' ? "Error" : "Ошибка",
-                text: [order.send.message[lang]],
+        if (orderState.send.status === 'success' || orderState.send.status === 'error') {
+            const errors: string[] = orderState.send.errors?.map(e => e[lang]) || []
+            message.current?.update({
+                header: headerStatus[orderState.send.status][lang],
+                status: orderState.send.status,
+                text: [orderState.send.message[lang], ...errors]
             })
-            setModal(true)
+            modal_message.current?.openModal()
         }
-    }, [order.send.status])
+    }, [orderState.send.status])
 
-
-
-
-
-    const clearError = (e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>) => { 
-        (e.target as HTMLElement).parentElement?.classList.remove('error')
-    }
 
 
     const focusNext = ({e, target}: {e: KeyboardEvent, target: HTMLInputElement | HTMLTextAreaElement | null}) => {
+        /*prevent(e)
         if (e.key === 'Enter') {
-            e.preventDefault()
-            target?.focus();
-        }
+            //target?.focus();
+        }*/
     }
 
 
     const onChangeText: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (e) => {
-        switch (e.target.id) {
-            case "name":
-                setState.order.setName(e.target.value)
-                break;
-            case "phone":
-                setState.order.setPhone(e.target.value)
-                break;
-            case "email":
-                setState.order.setEmail(e.target.value)
-                break;
-            case "message":
-                setState.order.setMessage(e.target.value)
-                break;
-            default:
-                break;
-        }
-        clearError(e)
+        const key = e.target.id as "name" | "email" | "phone" | "message"
+        setState.order.setText({[key]: e.target.value})
+        errChecker.clearError(e.target)
     }
 
-
-    const saveFiles = (files: File[]) => {
-        setState.order.clearFiles()
-        setState.order.addFiles(files)
-    }
 
 
     return (
@@ -200,13 +166,9 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
                                                 className="input-element" 
                                                 id="name" 
                                                 type="text" 
-                                                required 
-                                                minLength={2} 
-                                                maxLength={25} 
                                                 ref={_name} 
-                                                value={order.name}
-                                                onChange={onChangeText} 
-                                                onKeyDown={(e:any) => focusNext({e, target: _phone.current})}/>
+                                                value={orderState.name}
+                                                onChange={onChangeText}/>
                                         </div>
                                         <div className="input-block">
                                             <label htmlFor="phone">
@@ -216,12 +178,9 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
                                                 className="input-element" 
                                                 id="phone"
                                                 type="tel" 
-                                                minLength={6} 
-                                                maxLength={25} 
                                                 ref={_phone} 
-                                                value={order.phone}
-                                                onChange={onChangeText} 
-                                                onKeyDown={(e:any) => focusNext({e, target: _email.current})}/>
+                                                value={orderState.phone}
+                                                onChange={onChangeText}/>
                                         </div>
                                         <div className="input-block">
                                             <label htmlFor="email">
@@ -231,11 +190,9 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
                                                 className="input-element" 
                                                 id="email" 
                                                 type="email" 
-                                                required 
-                                                value={order.email}
+                                                value={orderState.email}
                                                 ref={_email} 
-                                                onChange={onChangeText} 
-                                                onKeyDown={(e:any) => focusNext({e, target: _message.current})}/>
+                                                onChange={onChangeText}/>
                                         </div>
                                         <div className="input-block message-block">
                                             <label htmlFor="message">
@@ -244,18 +201,15 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
                                             <textarea 
                                                 className="input-element" 
                                                 id="message" 
-                                                required 
-                                                minLength={10} 
-                                                maxLength={1000} 
                                                 ref={_message} 
-                                                value={order.message}
+                                                value={orderState.message}
                                                 onChange={onChangeText}/>
                                         </div>
                                     </div>
                                     <div className="files-block">
                                         <div className="input-block files">
-                                            <label htmlFor="files">{lang === 'en' ? 'Attach files' : 'Прикрепить файлы'}</label>
-                                            <AddFiles saveFiles={saveFiles} lang={lang} ref={addFilesRef} multiple={true} id='files'/>
+                                            <label htmlFor="allImages">{lang === 'en' ? 'Attach files' : 'Прикрепить файлы'}</label>
+                                            <AddFiles lang={lang} ref={addFiles} multiple={true} id='allImages'/>
                                         </div>
                                     </div>
 
@@ -268,7 +222,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
 
                                 <button 
                                     type="submit" 
-                                    disabled={order.cart.load.status !== 'success' || fibers.load.status !== 'success' || colors.load.status !== 'success' || order.send.status === 'fetching'} 
+                                    disabled={orderState.cart.load.status !== 'success' || fibersState.load.status !== 'success' || colorsState.load.status !== 'success' || orderState.send.status === 'fetching'} 
                                     className="button_order" 
                                     onClick={onSubmit}>
                                         {lang === 'en' ? 'Order' : "Отправить"}
@@ -278,15 +232,9 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
                     </div>
                 </div>
             </div>
-            <Modal {...{visible: modal, close: closeModal, escExit: true}}>
-				<Message {...{
-                    status: message.status,
-                    header: message.header,
-                    text: message.text, 
-                    buttonText: lang === 'en' ? 'Close' : "Закрыть", 
-                    buttonAction: closeModal
-                }}/>
-			</Modal> 
+            <Modal escExit={true} ref={modal_message} onClose={closeModalMessage}>
+                <Message buttonText={lang === 'en' ? `Close` : `Закрыть`} buttonAction={closeModalMessage} ref={message}/>
+            </Modal>
         </div>
     )
 }
@@ -297,9 +245,9 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
 
 const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
-    order: state.order,
-    colors: state.colors,
-    fibers: state.fibers,
+    orderState: state.order,
+    colorsState: state.colors,
+    fibersState: state.fibers,
 })
 
 

@@ -1,6 +1,6 @@
 import { IFetch, IFullState, ISendColor, TLang } from 'src/interfaces';
 import './color-creator.scss'
-import {  useRef, useMemo, FC, useEffect} from "react";
+import {  useRef, useMemo, FC, useEffect, useCallback} from "react";
 import { connect } from "react-redux";
 import { AnyAction, bindActionCreators, Dispatch } from "redux";
 import Message, { IMessageFunctions } from 'src/components/Message/Message';
@@ -33,14 +33,14 @@ const ColorCreator: FC<IProps> = ({lang, send, setState}): JSX.Element => {
     const message = useRef<IMessageFunctions>(null)
     
 
-    const closeModal = () => {
+    const closeModal = useCallback(() => {
         modal.current?.closeModal()
         setTimeout(() => message.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
         if (send.status === 'success') {
             setState.colors.loadColors() //reload colors if update db was succsessfull
         }
         setState.colors.setSendColors(resetFetch)// clear fetch status
-	}
+	}, [send.status])
 
     const errChecker = useMemo(() => errorsChecker({lang}), [lang])
 
