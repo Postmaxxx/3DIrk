@@ -1,13 +1,18 @@
-import { IAction, ICatalogItem, ICatalogState, ICategory, IDispatch, IFetch, IFullState, IProduct, TId, TLangText } from "../../interfaces"
+import { IAction, ICatalogItem, ICategory, IDispatch, IErrRes, IFetch, IFullState, IMsgRes, IProduct, TId, TLangText } from "../../interfaces"
 import mockProducts from '../mocks/catalogFull'
 import { actionsListCatalog } from './actionsList'
 import mockCategoriesList from "../mocks/categoriesList"
+import { resetFetch, successFetch } from "src/assets/js/consts";
 
-export const setFetchCatalog = <T extends IFetch>(payload: T):IAction<T> => ({
+export const setLoadCatalog = <T extends IFetch>(payload: T):IAction<T> => ({
     type: actionsListCatalog.SET_LOAD_STATUS_CATEGORIES_LIST,
     payload
 });
 
+export const setSendCatalog = <T extends IFetch>(payload: T):IAction<T> => ({
+    type: actionsListCatalog.SET_SEND_STATUS_CATEGORIES_LIST,
+    payload
+});
 
 export const setCatalog = <T extends ICatalogItem[]>(payload: T):IAction<T> => ({
     type: actionsListCatalog.SET_DATA_CATEGORIES_LIST,
@@ -16,36 +21,85 @@ export const setCatalog = <T extends ICatalogItem[]>(payload: T):IAction<T> => (
 
 
 export const loadCatalog = () => {
-    return async function(dispatch: IDispatch, getState: () => IFullState) {
-        const {catalog} = getState()
-        dispatch(setFetchCatalog({status: 'fetching', message: {en: `Loading catalog`, ru: 'Загрузка каталога'}, errors: []}))
+    return async function(dispatch: IDispatch) {
+        //const {catalog} = getState()
+        dispatch(setLoadCatalog(resetFetch))
         try {
-            new Promise((res, rej) => {
-                setTimeout(() => {
-                    const categoriesList: ICatalogItem[] = mockCategoriesList;
-                    if (categoriesList) {
-                        res(categoriesList)
-                    } else (
-                        rej({mesasage: `CategoriesList not found`})
-                    )
-                }, 200)
-            }).then((data) => {
-                dispatch(setCatalog(data as ICatalogItem[]))
-                dispatch(setFetchCatalog({status: 'success', message: {en: `Catalog has been loaded`, ru: 'Каталог загружен'}, errors: []}))
-                loadCategory((data as ICatalogItem[])[0]._id)(dispatch)
-            }).catch(err => {
-                dispatch(setFetchCatalog({status: 'error', message: {en:`Error while loading catalog: ${err}`, ru: `Ошибка при загрузке каталога: ${err}`}, errors: []}))
+            const response: Response = await fetch('/api/catalog/list', {
+                method: 'GET',
+                headers: {
+                    "Content-Type": 'application/json',
+                },
             })
-
+            
+            if (response.status !== 200) {
+                const result: IErrRes = await response.json() //message, errors
+                return dispatch(setSendCatalog({
+                    status: 'error', 
+                    message: (result as IErrRes).message, 
+                    errors: result.errors
+                }
+                ))
+            }
+            const result = await response.json() //message, errors
+            dispatch(setCatalog(result.list as ICatalogItem[]))
+            dispatch(setLoadCatalog(successFetch))
+            
+            //loadCategory((data as ICatalogItem[])[0]._id)(dispatch) //load default category
         } catch (e) {
-            dispatch(setFetchCatalog({status: 'error', message: {en:`Error while loading catalog: ${e}`, ru: `Ошибка при загрузке каталога: ${e}`}, errors: []}))
+            dispatch(setLoadCatalog({status: 'error', message: {en:`Error while loading catalog: ${e}`, ru: `Ошибка при загрузке каталога: ${e}`}}))
         }
     }
 }
 
 
 
-export const setFetchCategory = <T extends IFetch>(payload: T):IAction<T> => ({
+export const sendCatalog = (newCatalog: ICatalogItem[]) => {
+    return async function(dispatch: IDispatch, getState: () => IFullState) {
+        const { token } = getState().user
+        dispatch(setSendCatalog(resetFetch))
+        
+        try {
+            const response: Response = await fetch('/api/catalog/list', {
+                method: 'PUT',
+                headers: {
+                    "Content-Type": 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({newCatalog})
+            })
+            
+
+            if (response.status !== 200) {
+                const result: IErrRes = await response.json() //message, errors
+                return dispatch(setSendCatalog({
+                        status: 'error', 
+                        message: (result as IErrRes).message, 
+                        errors: result.errors
+                    }
+                ))
+            }
+            const result = await response.json() //message, errors
+            dispatch(setSendCatalog({status: 'success', message: result.message}))
+        } catch (e) {
+            dispatch(setSendCatalog({status: 'error', message: {en:`Error while sending catalog: ${e}`, ru: `Ошибка при загрузке каталога: ${e}`}}))
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+export const setLoadCategory = <T extends IFetch>(payload: T):IAction<T> => ({
     type: actionsListCatalog.SET_LOAD_STATUS_CATEGORY,
     payload
 });
@@ -61,7 +115,7 @@ export const setCategory = <T extends Omit<ICategory, "loadCategory" | "loadProd
 
 export const loadCategory = (_id: TId) => {    
     return async function(dispatch: IDispatch) {
-        dispatch(setFetchCategory({status: 'fetching', message: {en: `Loading category`, ru: 'Загрузка категории'}, errors: []}))
+        dispatch(setLoadCategory({status: 'fetching', message: {en: `Loading category`, ru: 'Загрузка категории'}, errors: []}))
         try {
             const receivedProducts: IProduct[] = await new Promise((res, rej) => {
                 setTimeout(() => {
@@ -81,10 +135,10 @@ export const loadCategory = (_id: TId) => {
                 page: 0,
             }              
             dispatch(setCategory(data))
-            dispatch(setFetchCategory({status: 'success', message: {en: `Category ${_id} has been loaded`, ru: `Категория ${_id} была загружена`}, errors: []}))
+            dispatch(setLoadCategory({status: 'success', message: {en: `Category ${_id} has been loaded`, ru: `Категория ${_id} была загружена`}, errors: []}))
 
         } catch(err) {
-            dispatch(setFetchCategory({status: 'error', message: {en: `Error occured while loading category: ${_id}`, ru: `Произошла ошибка при загрузке категории: ${_id}`}, errors: []}))
+            dispatch(setLoadCategory({status: 'error', message: {en: `Error occured while loading category: ${_id}`, ru: `Произошла ошибка при загрузке категории: ${_id}`}, errors: []}))
         }
 
     }

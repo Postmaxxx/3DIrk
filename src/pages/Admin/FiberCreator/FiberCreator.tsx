@@ -34,7 +34,7 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 
-const ColorCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): JSX.Element => {
+const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): JSX.Element => {
     
     const navigate = useNavigate()
     const paramFiberId = useParams().fiberId || ''
@@ -70,16 +70,23 @@ const ColorCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
     const closeModal = useCallback(() => {
         modal.current?.closeModal()
         setTimeout(() => message.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal 
-        errChecker.clear()     
-        if (fibersState.send.status === 'success') {
-            setState.fibers.setSendFibers(resetFetch)
-            setState.fibers.loadFibers()
-            navigate('/fibers', { replace: true })
-            window.location.reload()
-        } else {
+        errChecker.clear() 
+        if (modal.current?.getOwner() === 'fiber') {
+            if (fibersState.send.status === 'success') {
+                setState.fibers.loadFibers()
+                navigate('/fibers', { replace: true })
+                window.location.reload()
+            }
             setState.fibers.setSendFibers(resetFetch)// clear fetch status
         }
-	}, [fibersState.send.status])
+
+        if (modal.current?.getOwner() === 'color') {
+            if (colorsState.send.status === 'success') {
+                setState.colors.loadColors()
+            }
+            setState.colors.setSendColors(resetFetch)// clear fetch status
+        }
+	}, [fibersState.send.status, colorsState.send.status])
 
     
     const closeModalAndReturn = useCallback(() => {
@@ -93,8 +100,6 @@ const ColorCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
 
     
     useEffect(() => {
-        if (!_name_en.current || !_name_ru.current || !_name_short_en.current || !_name_short_ru.current || !_text_en.current || 
-            !_text_ru.current || !_text_short_en.current || !_text_short_ru.current || !_spec.current || !_descr.current) return
         if (fibersState.send.status === 'idle' || fibersState.send.status === 'fetching')  return
         const errors: string[] = fibersState.send.errors?.map(e => e[lang]) || []
         message.current?.update({
@@ -102,8 +107,20 @@ const ColorCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
             status: fibersState.send.status,
             text: [fibersState.send.message[lang], ...errors]
         })
-        modal.current?.openModal()
+        modal.current?.openModal('fiber')
     }, [fibersState.send.status])
+
+
+    useEffect(() => {
+        if (colorsState.send.status === 'idle' || colorsState.send.status === 'fetching')  return
+        const errors: string[] = colorsState.send.errors?.map(e => e[lang]) || []
+        message.current?.update({
+            header: headerStatus[colorsState.send.status][lang],
+            status: colorsState.send.status,
+            text: [colorsState.send.message[lang], ...errors]
+        })
+        modal.current?.openModal('color')
+    }, [colorsState.send.status])
 
 
 
@@ -210,7 +227,7 @@ const ColorCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
        
         if (errChecker.amount() > 0) {
             message.current?.update(errChecker.result())
-            modal.current?.openModal()
+            modal.current?.openModal('submit')
             return
         }
 
@@ -239,6 +256,16 @@ const ColorCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
     }
 
 
+    const onDeleteColor = (e: React.MouseEvent<HTMLButtonElement>, _id: string) => {
+        prevent(e)
+        setState.colors.deleteColor(_id)
+    }
+
+    const onEditColor = (e: React.MouseEvent<HTMLButtonElement>, _id: string) => {
+        prevent(e)
+        navigate(`/admin/color-create/${_id}`)
+    }
+
 
 
 
@@ -247,7 +274,7 @@ const ColorCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
         const sourceFiber = fibersState.fibersList.find(item => item._id === _id)
         if (!sourceFiber) {
             message_missedId.current?.update({header: lang === 'en' ? 'Error' : 'Ошибка', status: 'error', text: lang === 'en' ? ['Editing fiber was not found, switching to creating new fiber'] : ['Материал для редактирования не найден, переход к созданию нового материала']})
-            modal_missedId.current?.openModal()
+            modal_missedId.current?.openModal('filling')
             return
         }
         if (!_name_en.current || !_name_ru.current || !_name_short_en.current || !_name_short_ru.current || !_text_en.current || 
@@ -298,8 +325,6 @@ const ColorCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
             return {...acc, [item]: true}
         }, {} as {[key: string]: boolean})
         setSelectedColors(initialColors)
-        
-
     }
 
 
@@ -317,6 +342,7 @@ const ColorCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
         fillValues(paramFiberId)
         setChangeImages(false)
     }, [fibersState.load.status, paramFiberId])
+
 
 
     useEffect(() => {
@@ -368,6 +394,10 @@ const ColorCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
                                 <img src={color.url.small} alt={color.name[lang]} />
                             </div>
                             <span>{color.name[lang]}</span>
+                            <div className="buttons_control">
+                                <button className="button_blue edit" onClick={(e) => onEditColor(e, color._id)}>E</button>
+                                <button className="button_blue delete" onClick={(e) => onDeleteColor(e, color._id)}>X</button>
+                            </div>
                         </div>
                     )
                 })}
@@ -508,4 +538,4 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>):IPropsActions => ({
   
 
     
-export default connect(mapStateToProps, mapDispatchToProps)(ColorCreator)
+export default connect(mapStateToProps, mapDispatchToProps)(FiberCreator)

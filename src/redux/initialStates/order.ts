@@ -1,4 +1,4 @@
-import { IOrderState } from "src/interfaces"
+/*
 
 const initialOrder = {
     _id: '',
@@ -36,4 +36,4 @@ const initialOrder = {
     }
 } satisfies IOrderState
 
-export default initialOrder
+export default initialOrder*/

@@ -1,7 +1,7 @@
 @use '/src/assets/css/variables' as *;
 
 
-.page_color-add {
+.page_fiber-add {
 
     & form {
         margin-top: 70px;
@@ -24,7 +24,7 @@
             grid-template-columns: 100px 1fr 1fr;
             gap: 10px 20px;
             margin-top: 30px;
-            align-content: center;
+            align-content: stretch;
 
 
 
@@ -45,6 +45,7 @@
 
             & span, h3 {
                 text-align: center;
+                color: var(--text);
             }
 
 
@@ -58,13 +59,17 @@
                     grid-row-start: 1;
                     grid-row-end: 3;
                 }
+
+                @include respond-to(sm) {
+                    font-size: 14px;
+                }
             }
 
 
             .input__wrapper {
                 position: relative;
 
-                &::before {
+                &:not(.no-info)::before {
                     @include respond-to(md) {
                         font-size: 14px;
                         content: 'EN';
@@ -79,61 +84,16 @@
                     margin-bottom: 30px;
                 }
 
-                &:nth-of-type(2)::before {
+                &:nth-of-type(2):not(.no-info)::before {
                     @include respond-to(md) {
                         content: 'RU';
                     }
                 }
 
-
-                & > .drop-area {
-                    padding: 15px;
-                    height: 100%;
-
-                    & > svg {
-                        display: none;
-                    }
-
-                    & > input {
-                        display: none;
-                    }
-
-                    & .link__container {
-                        align-items: flex-start;
-
-                        & label {
-
-                        }
-
-                        & span {
-                            text-align: left;
-                            max-width: 80%;
-                            text-align: center;
-                            margin-left: auto;
-                            margin-right: auto;
-                        }
-                    }
-
-
-                    & .preview-gallery {
-                        margin-top: 0;
-                        margin-top: 20px;
-                        //margin-left: 30px;
-                        margin-left: 0;
-
-
-                        & > div {
-                            width: 110px;
-
-                            & img {
-                                object-fit: contain;
-                            }
-                        }
-                    }
-
-                    & .clear-files {
-                        top: auto;
-                        bottom: 20px
+                &.error {
+                    & label::before {
+                        content: '* ';
+                        color: red;
                     }
                 }
 
@@ -144,27 +104,75 @@
 
             }
 
+
         }
 
 
-        & .input-block:nth-of-type(4) .input__wrapper::before{
-            @include respond-to(md) {
-                content: 'FULL';
+
+        & .catalog {
+            & .block_category {
+                display: grid;
+                grid-template-columns: 1fr 1fr 35px;
+                gap: 20px 40px;
+                position: relative;
+                margin-top: 15px;
+
+                span {
+                    text-align: center;
+                }
+                
+                @include respond-to(md) {
+                    grid-template-columns: 1fr 1fr 40px;
+                    gap: 20px 20px;
+                    border-bottom: 1px solid var(--main_vv);
+                    padding-bottom: 20px;
+
+                    &:last-child {
+                        border-bottom: none;
+                    }
+
+
+                }
+
+                @include respond-to(sm) {
+                    .input__wrapper:nth-of-type(1) {
+                        grid-column: 1 / -1;
+                    }
+
+                    .input__wrapper:nth-of-type(2) {
+                        grid-column: 1 / 3;
+                    }
+                }
+
+                
+
+
+                & .del {
+                    margin-top: 0;
+                    padding-left: 10px;
+                    padding-right: 10px;
+                    align-self: self-end;
+                    justify-self: end;
+                    background-color: var(--main_vv);
+                }
             }
         }
 
 
-        & .input-block:nth-of-type(4) .input__wrapper:nth-of-type(2)::before{
-            @include respond-to(md) {
-                content: 'SMALL';
-            }
+
+        & .section-header {
+            text-align: center;
+            margin-left: 0;
+            margin-top: 70px;
+            color: var(--text);
         }
+
 
 
 
 
         & .input-block_header {
-            margin-top: 60px;
+            margin-top: 30px;
             @include respond-to(md) {
                 display: none;
             }
@@ -182,19 +190,31 @@
             }
         }
 
-        & .change-images {
+        & .add {
+            padding-left: 20px;
+            padding-right: 20px;
+            margin-top: 20px;
             margin-right: auto;
             margin-left: auto;
-            margin-top: 40px;
             background-color: var(--main_vv);
+
+            @include respond-to(xs) {
+                width: 100%;
+                display: grid;
+                place-items: center;
+            }
         }
 
 
+        
         & .post {
             margin-left: auto;
             margin-top: 30px;
             width: fit-content; 
             background-color: var(--main_vv);
+            &:disabled {
+                opacity: 0.4;
+            }
 
             @include respond-to(xs) {
                 width: 100%;
@@ -206,17 +226,21 @@
 
 
         & input {
-            color: $black;
+            //color: $black;
             width: 100%;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 600;
             padding: 5px 10px;
             border-radius: 4px;
-            background-color: var(--inputs-bg);
+            //background-color: var(--inputs-bg);
+            border: 1px solid var(--main_vv);
+            background-color: var(--text_contrast);
+            color: var(--text);
             transition: background-color 1s, border 1s;
             outline: none;
-            border: 2px solid transparent;
+            //border: 2px solid transparent;
             position: relative;
+            resize: vertical;
 
             @include respond-to(sm) {
                 font-size: 16px;
@@ -227,7 +251,9 @@
                 padding: 3px 6px;
             }
         }
-        
 
     }
+
+
+
 }

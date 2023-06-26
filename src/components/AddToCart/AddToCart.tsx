@@ -1,18 +1,17 @@
-import { ICartItem, ICartState, IColor, IFiber, IFullState, IMessageModal, IOrderState, IProduct, TLang, TLangText } from '../../interfaces';
+import { ICartItem, ICartState, IColor, IFiber, IFullState, IProduct, TLang, TLangText } from '../../interfaces';
 import './add-to-cart.scss'
-import { useRef, useEffect, useState, useMemo } from "react";
+import { useRef, useEffect, useState, useMemo, useCallback } from "react";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import Modal from "../../components/Modal/Modal";
-import MessageInfo from '../MessageInfo/MessageInfo';
+import Modal, { IModalFunctions } from "../../components/Modal/Modal";
+import Message, { IMessageFunctions } from '../Message/Message';
 import AmountChanger from '../AmountChanger/AmountChanger';
-//var uniqid = require('uniqid');
 import { allActions } from "../../redux/actions/all";
 
 
 interface IPropsState {
-    order: IOrderState
+    cart: ICartState
     lang: TLang
 }
 
@@ -22,7 +21,7 @@ interface IPropsParent extends IPropsState {
 
 interface IPropsActions {
     setState: {
-		order: typeof allActions.order
+		user: typeof allActions.user
     }
 }
 
@@ -38,15 +37,18 @@ interface IProps extends IPropsParent, IPropsActions {
 
 
 
-const AddToCart: React.FC<IProps> = ({product, type, fiber, color, lang, order, setState}): JSX.Element => {
+const AddToCart: React.FC<IProps> = ({product, type, fiber, color, lang, cart, setState}): JSX.Element => {
     const [amount, setAmount] = useState<number>(1)
-	const [modal, setModal] = useState<boolean>(false)
-    const [message, setMessage] = useState<IMessageModal>({header: '', status: '', text: []})
     const [amountChangerReset, setAmountChangerReset] = useState<{amount: number}>({amount: 1})
+    const modal = useRef<IModalFunctions>(null)
+    const message = useRef<IMessageFunctions>(null)
 
-    const closeModal = () => {
-		setModal(false)
-	}
+
+
+
+    const closeModalMessage = useCallback(() => {
+		modal.current?.closeModal()
+	}, [])
 
     
     
@@ -58,7 +60,7 @@ const AddToCart: React.FC<IProps> = ({product, type, fiber, color, lang, order, 
         !amount && errorsList.push(lang === 'en' ? 'Please set the amount' : 'Пожалуйста, укажите количество')
 
         if (!color || !fiber || !type || !amount) {
-            setMessage({
+            message.current?.update({
                 status: 'error',
                 header: lang === 'en' ? 'Error' : 'Ошибка',
                 text: errorsList
@@ -70,27 +72,25 @@ const AddToCart: React.FC<IProps> = ({product, type, fiber, color, lang, order, 
                 color, 
                 amount, 
                 type, 
-                //id: uniqid()
             }
-            setState.order.addItem(newItem)
-            setState.order.sendCart();
+            setState.user.addItem(newItem)
+            //setState.user.sendCart(); // ???
             //setAmount(1)
             setAmountChangerReset({amount: 1})
-            const amountItemsInCart = order.cart.items.reduce((total, item) => total + item.amount, 0) + amount
-            setMessage({
+            const amountItemsInCart = cart.items.reduce((total, item) => total + item.amount, 0) + amount
+            message.current?.update({
                 status: 'success',
                 header: lang === 'en' ? 'Added' : 'Добавлено',
                 text: lang === 'en' ? [`This item has been added to your сart.`, `You now have ${amountItemsInCart} item${amountItemsInCart > 1 ? 's' : ''} in your сart`, ] : [`Этот товар был успешно добавлен в Вашу корзину.`, `Сейчас у Вас товаров в корзине: ${amountItemsInCart}`, ]
             })
         }
-        setModal(true)
-
+        modal.current?.openModal()
     }
 
 
-    const onAmountChange = (item: IProduct['_id'], amount: number) => {
+    const onAmountChange = useCallback((_id: IProduct['_id'], amount: number) => {
         setAmount(amount)
-    }
+    }, [])
 
     return (
         <>
@@ -101,28 +101,22 @@ const AddToCart: React.FC<IProps> = ({product, type, fiber, color, lang, order, 
                 </div>
                 <button className='button_news' title='Add to cart' onClick={addToCart}>{lang === 'en' ? 'Add to cart' : 'Добавить в корзину'}</button>
             </div>
-            <Modal {...{visible: modal, close: closeModal, escExit: true}}>
-                <MessageInfo {...{  
-                        status: message.status,
-                        header: message.header,
-                        text: message.text, 
-                        buttonText: lang === 'en' ? 'Close' : "Закрыть", 
-                        buttonAction: closeModal
-                    }}/>
-            </Modal> 
+            <Modal escExit={true} ref={modal} onClose={closeModalMessage}>
+                <Message buttonText={lang === 'en' ? `Close` : `Закрыть`} buttonAction={closeModalMessage} ref={message}/>
+            </Modal>
         </>
     )
 }
 
 const mapStateToProps = (state: IFullState): IPropsState => ({
-    order: state.order,
+    cart: state.user.cart,
     lang: state.base.lang
 })
 
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
     setState: {
-		order: bindActionCreators(allActions.order, dispatch),
+		user: bindActionCreators(allActions.user, dispatch),
 	}
 })
   

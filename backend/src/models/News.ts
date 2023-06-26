@@ -9,11 +9,11 @@ interface INews extends Document {
 }
 
 const newsSchema = new Schema({
-    date: {type: Date},
-    header: {type: Object},
-    short: {type: Object},
-    text: {type: Object},
-    images: [{type: Object}],
+    date: {type: Date, required: true},
+    header: {type: Object, required: true},
+    short: {type: Object, required: true},
+    text: {type: Object, required: true},
+    images: [{type: Object, required: false}],
 })
 
 const News: Model<INews> = model<INews>('News', newsSchema);

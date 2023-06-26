@@ -168,6 +168,11 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
                                                     {lang === 'en' ? '+ FIBER' : '+ МАТЕРИАЛ'}
                                                 </NavLink>
                                             </li>
+                                            <li>
+                                                <NavLink to='/admin/catalog-change' >
+                                                    {lang === 'en' ? '~ CATALOG' : '~ КАТАЛОГ'}
+                                                </NavLink>
+                                            </li>
                                         </>
                                     : 
                                         null

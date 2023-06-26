@@ -2,7 +2,7 @@ import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import './order.scss'
-import { ICartState, IColorsState, IFetch, IFibersState, IFullState, IOrderState, TLang, TLangText } from "src/interfaces";
+import { ICartState, IColorsState, IFetch, IFibersState, IFullState, TLang, TLangText } from "src/interfaces";
 import { useEffect, useRef, useCallback, useMemo } from 'react'
 import Modal, { IModalFunctions } from "../../components/Modal/Modal";
 import Message, { IMessageFunctions } from "../../components/Message/Message";
@@ -33,10 +33,6 @@ interface IProps extends IPropsState, IPropsActions {}
 
 
 const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState, setState}): JSX.Element => {
-
-    const _name = useRef<HTMLInputElement>(null)
-    const _email = useRef<HTMLInputElement>(null)
-    const _phone = useRef<HTMLInputElement>(null)
     const _message = useRef<HTMLTextAreaElement>(null)
     const modal_message = useRef<IModalFunctions>(null)
     const message = useRef<IMessageFunctions>(null)
@@ -73,11 +69,8 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
     
 
     const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
-        if (!_name.current || !_email.current || !_phone.current || !_message.current || !message.current || !modal_message.current || !addFiles.current) return
+        if (!_message.current || !message.current || !modal_message.current || !addFiles.current) return
         prevent(e)
-        /*errChecker.check(_name.current, 2, 40)
-        errChecker.check(_email.current, 6, 70)
-        errChecker.check(_phone.current, 6, 20)*/
         errChecker.check(_message.current, 0, 3000)
 
         if (errChecker.amount() > 0) {
@@ -86,39 +79,12 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
             return
         }
 
-        /*setState.order.setFiles(addFiles.current.getFiles())
-        
-        const textCart = orderState.cart.items.reduce((text: string, item: ICartItem, i: number) => {
-            return text + `${i+1}) ${item.product.name[lang]}
-${lang === 'en' ? 'Options' : 'Версия'}: ${item.type} 
-${lang === 'en' ? 'Fiber' : 'Материал'}: ${fibersState.fibersList.find(fiberItem => fiberItem._id === item.fiber)?.short.name[lang]}
-${lang === 'en' ? 'Color' : 'Цвет'}: ${colorsState.colors.find(color => color._id === item.color)?.name[lang]}
-${lang === 'en' ? 'Amount' : 'Количество'}: ${item.amount}\n\n`
-        }, '')
-
-        const textOrder: string = `
-${lang === 'en' ? 'Date' : 'Дата'}: ${currentDate.toISOString().slice(0,10)}
-${lang === 'en' ? 'Time' : 'Время'}: ${currentDate.toISOString().slice(11, 19)}
-${lang === 'en' ? 'Name' : 'Имя'}: ${orderState.name}
-${lang === 'en' ? 'Email' : 'Почта'}: ${orderState.email}
-${lang === 'en' ? 'Phone' : 'Телефон'}: ${orderState.phone}
-${lang === 'en' ? 'Message' : 'Сообщение'}: ${orderState.message}`;
-
-
-
-        const text = `${lang === 'en' ? 'New order' : 'Новый заказ'}:${textOrder}\n\n\n ${lang === 'en' ? 'Cart content' : 'Содержимое корзины'}: \n${textCart}${orderState.files.length > 0 ? (lang==='en' ? '\n\n\nAttached files:' : '\n\n\nПрикрепленные файлы:') : ''}`
-    */
-        //setState.order.sendOrder({lang, text, filesArr: orderState.files, informer})
         setState.user.sendOrder({
             message: _message.current.value,
             files: addFiles.current.getFiles(),
             informer
         })
     }
-
-
-
-
 
 
     useEffect(() => {
@@ -134,7 +100,11 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${orderState.message}`;
     }, [sendOrder.status])
 
 
-
+    useEffect(() => {
+        if (colorsState.load.status !== 'success' && colorsState.load.status !== 'fetching') {
+            setState.colors.loadColors()
+        }
+    }, [colorsState.load.status])
 
 
     return (

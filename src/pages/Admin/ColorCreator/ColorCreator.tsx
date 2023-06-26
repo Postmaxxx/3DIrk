@@ -1,6 +1,6 @@
-import { IFetch, IFullState, ISendColor, TLang } from 'src/interfaces';
+import { IColor, IColorsState, IFetch, IFullState, ISendColor, TLang } from 'src/interfaces';
 import './color-creator.scss'
-import {  useRef, useMemo, FC, useEffect, useCallback} from "react";
+import {  useRef, useMemo, FC, useEffect, useCallback, useState} from "react";
 import { connect } from "react-redux";
 import { AnyAction, bindActionCreators, Dispatch } from "redux";
 import Message, { IMessageFunctions } from 'src/components/Message/Message';
@@ -9,10 +9,11 @@ import AddFiles, { IAddFilesFunctions } from 'src/components/AddFiles/AddFiles';
 import { errorsChecker, prevent } from 'src/assets/js/processors';
 import { headerStatus, resetFetch, timeModalClosing } from 'src/assets/js/consts';
 import Modal, { IModalFunctions } from 'src/components/Modal/Modal';
+import { useNavigate, useParams } from 'react-router-dom';
 
 interface IPropsState {
     lang: TLang
-    send: IFetch
+    colorsState: IColorsState
 }
 
 interface IPropsActions {
@@ -24,37 +25,75 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 
-const ColorCreator: FC<IProps> = ({lang, send, setState}): JSX.Element => {
+const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element => {
+    const paramColorId = useParams().colorId || ''
+    const navigate = useNavigate()
     const _name_en = useRef<HTMLInputElement>(null)
     const _name_ru = useRef<HTMLInputElement>(null)
     const addFileBig = useRef<IAddFilesFunctions>(null)
     const addFileSmall = useRef<IAddFilesFunctions>(null)
     const modal = useRef<IModalFunctions>(null)
     const message = useRef<IMessageFunctions>(null)
+    const [changeImages, setChangeImages] = useState<boolean>(true)
     
 
     const closeModal = useCallback(() => {
         modal.current?.closeModal()
         setTimeout(() => message.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
-        if (send.status === 'success') {
+        if (colorsState.send.status === 'success') {
             setState.colors.loadColors() //reload colors if update db was succsessfull
+            if (paramColorId) {
+                navigate('/', { replace: true });
+            }
         }
         setState.colors.setSendColors(resetFetch)// clear fetch status
-	}, [send.status])
+	}, [colorsState.send.status, paramColorId])
+
+
+
+
+    useEffect(() => { 
+        if (paramColorId && colorsState.load.status === 'success') {//if edit
+            setChangeImages(false)
+            fillColor(paramColorId)
+        } 
+    }, [paramColorId, colorsState.load.status])
+
+
+
+    useEffect(() => {
+        if (colorsState.load.status !== 'success' && colorsState.load.status !== 'fetching') {
+            setState.colors.loadColors()
+        }
+    }, [colorsState.load.status])
+
+
+
+
+
+    const fillColor = (_id: string) => {
+        if (!_name_en.current || !_name_ru.current) return
+        const color = colorsState.colors.find(color => color._id === _id)
+        if (!color) return alert('color not found')
+        _name_en.current.value = color.name.en
+        _name_ru.current.value = color.name.ru
+    }
+
+
 
     const errChecker = useMemo(() => errorsChecker({lang}), [lang])
 
-    const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
         prevent(e)
         if (!_name_en.current || !_name_ru.current) return
         
         errChecker.check(_name_en.current, 2, 50)
         errChecker.check(_name_ru.current, 2, 50)
         
-        if (!addFileBig.current?.getFiles().length) {
+        if (!addFileBig.current?.getFiles().length && changeImages) {
             errChecker.add(lang === 'en' ? 'File fullsize is missed' : 'Отсутствует файл полноразмера')
         }
-        if (!addFileSmall.current?.getFiles().length) {
+        if (!addFileSmall.current?.getFiles().length && changeImages) {
             errChecker.add(lang === 'en' ? 'File preview is missed' : 'Отсутствует файл предпросмотра')
         }
         
@@ -66,6 +105,7 @@ const ColorCreator: FC<IProps> = ({lang, send, setState}): JSX.Element => {
         }
         
         const color: ISendColor = {
+            _id: paramColorId,
             name: {
                 en: _name_en.current.value,
                 ru: _name_ru.current.value,
@@ -75,34 +115,61 @@ const ColorCreator: FC<IProps> = ({lang, send, setState}): JSX.Element => {
                 small: addFileBig.current?.getFiles()[0] as File,
             }
         }
+
         
-        setState.colors.sendColor(color)
+        if (paramColorId) {
+            setState.colors.editColor(color, changeImages)
+        } else {
+            setState.colors.sendColor(color)
+        }  
     }
+
+
+
+
+
+
+
+
+
+
 
 
     useEffect(() => {
         if (!_name_en.current || !_name_ru.current) return
-        if (send.status === 'success' || send.status === 'error') {
-            const errors: string[] = send.errors?.map(e => e[lang]) || []
+        if (colorsState.send.status === 'success' || colorsState.send.status === 'error') {
+            const errors: string[] = colorsState.send.errors?.map(e => e[lang]) || []
             message.current?.update({                        
-                header: headerStatus[send.status][lang],
-                status: send.status,
-                text: [send.message[lang], ...errors]
+                header: headerStatus[colorsState.send.status][lang],
+                status: colorsState.send.status,
+                text: [colorsState.send.message[lang], ...errors]
             })
             modal.current?.openModal()
-            if (send.status === 'success') { //clear form if success
+            if (colorsState.send.status === 'success') { //clear form if success
                 _name_en.current.value = ''
                 _name_ru.current.value = ''
                 addFileBig.current?.clearAttachedFiles()
                 addFileSmall.current?.clearAttachedFiles()
             }
         }
-    }, [send.status])
+    }, [colorsState.send.status])
+
+
+
+
+    const onChangeImages = (e: React.MouseEvent<HTMLElement>) => {
+        prevent(e)
+        setChangeImages(prev => !prev)
+    }
+
 
 
     const render = useMemo(() => (
         <div className="container">
-            <h1>{lang === 'en' ? 'Add new color' : 'Добавление нового цвета'}</h1>
+            {paramColorId ? 
+            <h1>{lang === 'en' ? 'Edit color' : 'Изменение цвета'}</h1>
+            :
+            <h1>{lang === 'en' ? 'Add new color' : 'Добавление нового цвета'}</h1>}
             <form>
                 <div className="input-block_header">
                     <span></span>
@@ -118,23 +185,27 @@ const ColorCreator: FC<IProps> = ({lang, send, setState}): JSX.Element => {
                         <input type="text" id="name_ru" ref={_name_ru} data-ru="Название RU" data-en="Name RU"/>
                     </div>
                 </div>
-                <div className="input-block_header">
-                    <span></span>
-                    <h3 className='lang'>{lang === 'en' ? "FULLSIZE" : "ПОЛНОРАЗМЕР"}</h3>
-                    <h3 className='lang'>{lang === 'en' ? "PREVIEW" : "ПРЕДПРОСМОТР"}</h3>
-                </div>
-                <div className="input-block">
-                    <label>{lang === 'en' ? 'Image' : 'Картинка'}:</label>
-                    <div className="input__wrapper">
-                        <AddFiles lang={lang} ref={addFileBig} multiple={false} id='files_big'/>
-                    </div>
-                    <div className="input__wrapper">
-                        <AddFiles lang={lang} ref={addFileSmall} multiple={false} id='files_small'/>
-                    </div>
-                </div>
-                <button className='button_blue post' disabled={send.status === 'fetching'} onClick={e => onSubmit(e)}>{lang === 'en' ? 'Add color' : "Добавить цвет"}</button>
+                    {changeImages &&
+                        <>
+                            <div className="input-block_header">
+                                <span></span>
+                                <h3 className='lang'>{lang === 'en' ? "FULLSIZE" : "ПОЛНОРАЗМЕР"}</h3>
+                                <h3 className='lang'>{lang === 'en' ? "PREVIEW" : "ПРЕДПРОСМОТР"}</h3>
+                            </div>
+                            <div className="input-block">
+                                <label>{lang === 'en' ? 'Image' : 'Картинка'}:</label>
+                                <div className="input__wrapper">
+                                    <AddFiles lang={lang} ref={addFileBig} multiple={false} id='files_big'/>
+                                </div>
+                                <div className="input__wrapper">
+                                    <AddFiles lang={lang} ref={addFileSmall} multiple={false} id='files_small'/>
+                                </div>
+                            </div>
+                        </>}
+                {paramColorId && <button className='button_blue change-images' onClick={onChangeImages}>{changeImages ? 'Do not change images' : 'Change all images'}</button>}
+                <button className='button_blue post' disabled={colorsState.send.status === 'fetching'} onClick={e => onSubmit(e)}>{paramColorId ? lang === 'en' ? 'Edit color' : "Изменить цвет" : lang === 'en' ? 'Add color' : "Добавить цвет"}</button>
             </form>
-        </div>), [lang, send.status])
+        </div>), [lang, colorsState.send.status, changeImages])
 
 
     return (
@@ -153,7 +224,7 @@ const ColorCreator: FC<IProps> = ({lang, send, setState}): JSX.Element => {
 
 const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
-    send: state.colors.send,
+    colorsState: state.colors
 })
 
 

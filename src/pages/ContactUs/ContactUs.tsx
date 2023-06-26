@@ -2,90 +2,76 @@ import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import './contact-us.scss'
-import {  ICheckErrorItem, IFullState, IOrderState, TLang, TLangText } from "src/interfaces";
-import { useState, useEffect, useRef } from 'react'
-import Modal from "../../components/Modal/Modal";
-import MessageInfo from "../../components/MessageInfo/MessageInfo";
+import {  IFullState,  IUserState, TLang, TLangText } from "src/interfaces";
+import {  useEffect, useRef, useMemo, useCallback } from 'react'
+import Modal, { IModalFunctions } from "../../components/Modal/Modal";
 import AddFiles, { IAddFilesFunctions } from "../../components/AddFiles/AddFiles";
-import inputChecker from "src/assets/js/inputChecker";
 import { allActions } from "src/redux/actions/all";
+import Message, { IMessageFunctions } from "src/components/Message/Message";
+import { headerStatus, resetFetch } from "src/assets/js/consts";
+import { errorsChecker, prevent } from "src/assets/js/processors";
 
 
 interface IPropsState {
     lang: TLang,
-    order: IOrderState
+    userState: IUserState
 }
 
 interface IPropsActions {
     setState: {
-        order: typeof allActions.order
+        user: typeof allActions.user
     }
 }
 
 interface IProps extends IPropsState, IPropsActions {}
 
 
-interface IMessage {
-    status: string
-    header: string
-    text: string[]
-}
 
-
-const ContactUs:React.FC<IProps> = ({lang, order, setState}): JSX.Element => {
+const ContactUs:React.FC<IProps> = ({lang, userState, setState}): JSX.Element => {
 
     const _name = useRef<HTMLInputElement>(null)
     const _email = useRef<HTMLInputElement>(null)
     const _phone = useRef<HTMLInputElement>(null)
     const _message = useRef<HTMLTextAreaElement>(null)
-	const [modal, setModal] = useState<boolean>(false)
-    const addFilesRef = useRef<IAddFilesFunctions>(null)
-    const [message, setMessage] = useState<IMessage>({status: '', header: '', text: []})
+    const modal_message = useRef<IModalFunctions>(null)
+    const message = useRef<IMessageFunctions>(null)
+    const addFiles = useRef<IAddFilesFunctions>(null)
 
+    const errChecker = useMemo(() => errorsChecker({lang}), [lang])
 
-    const closeModal = () => {
-		setModal(false)
-        if (order.send.status === 'success') {
-            //setState.order.clearFiles();
-            setState.order.clearForm();
-            addFilesRef.current?.clearAttachedFiles()
+    const closeModalMessage = useCallback(() => {
+        if (!_name.current || !_email.current || !_phone.current || !_message.current || !addFiles.current ) return
+        modal_message.current?.closeModal()
+        if (userState.sendOrder.status === 'success') {
+            _name.current.value = ''
+            _email.current.value = ''
+            _phone.current.value = ''
+            _message.current.value = ''
+            addFiles.current.clearAttachedFiles()
         }
-        setState.order.setSendStatus({status: 'idle', message: {en: '', ru: ''}, errors: []})
-	}
+        errChecker.clear()
+        setState.user.setSendOrder(resetFetch)
+	}, [userState.sendOrder.status])
 
-
-    const checkErrors = (): boolean => {
-        const feildsToCheck: Array<ICheckErrorItem> = [
-            {ref: _name, name: {en: 'Your name', ru: 'Ваше имя'}},
-            {ref: _email, name: {en: 'Your email', ru: 'Ваша почта'}},
-            {ref: _phone, name: {en: 'Your phone', ru: 'Ваш телефон'}},
-            {ref: _message, name: {en: 'Ypur message', ru: 'Ваше сообщение'}},
-        ]
-        const {isWrong, header, errors} = inputChecker(feildsToCheck)
-        setMessage({status: 'error', header: header[lang], text: errors.map(error => error[lang])})
-        return isWrong
-    }
-
-
-    const preventDefaults = (e: DragEvent | React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault()
-        e.stopPropagation()
-    }
 
 
     const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
-        preventDefaults(e)
+        prevent(e)
+        if (!_name.current || !_email.current || !_phone.current || !_message.current || !addFiles.current) return
         const currentDate: Date = new Date();
-        const name:string =  order.name;
-        const phone:string = order.phone;
-        const email:string = order.email;
-        const message:string = order.message;
-        if (checkErrors()) {
-            setModal(true)
+        errChecker.check(_name.current, 2, 50)
+        errChecker.check(_email.current, 6, 60)
+        errChecker.check(_phone.current, 6, 20)
+        errChecker.check(_message.current, 10, 3000)
+        
+        if (errChecker.amount() > 0) {
+            message.current?.update(errChecker.result())
+            modal_message.current?.openModal()
             return
         }
+        const files2 = addFiles.current.getFiles()
         
-
+/*
         const textOrder: string = `
 ${lang === 'en' ? 'Date' : 'Дата'}: ${currentDate.toISOString().slice(0,10)}
 ${lang === 'en' ? 'Time' : 'Время'}: ${currentDate.toISOString().slice(11, 19)}
@@ -96,73 +82,39 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
 
         const text = `${lang === 'en' ? 'New message' : 'Новое сообщение'}:${textOrder}\n\n\n ${order.files.length > 0 ? (lang==='en' ? '\n\n\nAttached files:' : '\n\n\nПрикрепленные файлы:') : ''}`
         
-        setState.order.sendOrder({lang, text, filesArr: order.files, informer})
+        setState.order.sendOrder({lang, text, filesArr: order.files, informer})*/
     }
 
 
-    const informer = (message: TLangText) => {
-        setMessage({
+
+
+    const informer = (info: TLangText): void => {
+        if (!message.current) return
+        message.current.update({
+            header:  lang === 'en' ? "Sending message..." : "Отправка сообщения...",
             status: '',
-            header: lang === 'en' ? "Sending order..." : "Отправка заказа...",
-            text: [message[lang]],
+            text: [info[lang]]
         })
-        setModal(true)
+        modal_message.current?.openModal()
     }
+
+
+
 
 
     useEffect(() => {
-        if (order.send.status === 'success' || order.send.status === 'error') {
-            setMessage({
-                status: order.send.status,
-                header: order.send.status === 'success' ? lang === 'en' ? "Success" : "Отправлено" : lang === 'en' ? "Error" : "Ошибка",
-                text: [order.send.message[lang]],
+        if (userState.sendOrder.status === 'success' || userState.sendOrder.status === 'error') {
+            const errors: string[] = userState.sendOrder.errors?.map(e => e[lang]) || []
+            message.current?.update({                        
+                header: headerStatus[userState.sendOrder.status][lang],
+                status: userState.sendOrder.status,
+                text: [userState.sendOrder.message[lang], ...errors]
             })
-            setModal(true)
+            modal_message.current?.openModal()
         }
-    }, [order.send.status])
+    }, [userState.sendOrder.status])
 
 
-
-
-
-    const clearError = (e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>) => { 
-        (e.target as HTMLElement).parentElement?.classList.remove('error')
-    }
-
-
-    const focusNext = ({e, target}: {e: KeyboardEvent, target: HTMLInputElement | HTMLTextAreaElement | null}) => {
-        if (e.key === 'Enter') {
-            e.preventDefault()
-            target?.focus();
-        }
-    }
-
-
-    const onChangeText: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (e) => {
-        switch (e.target.id) {
-            case "name":
-                setState.order.setName(e.target.value)
-                break;
-            case "phone":
-                setState.order.setPhone(e.target.value)
-                break;
-            case "email":
-                setState.order.setEmail(e.target.value)
-                break;
-            case "message":
-                setState.order.setMessage(e.target.value)
-                break;
-            default:
-                break;
-        }
-        clearError(e)
-    }
-
-
-    const saveFiles = (files: File[]) => {
-        //setState.order.clearFiles()
-        setState.order.addFiles(files)
-    }
 
 
     return (
@@ -185,13 +137,8 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
                                                 className="input-element" 
                                                 id="name" 
                                                 type="text" 
-                                                required 
-                                                minLength={2} 
-                                                maxLength={25} 
                                                 ref={_name} 
-                                                value={order.name}
-                                                onChange={onChangeText} 
-                                                onKeyDown={(e:any) => focusNext({e, target: _phone.current})}/>
+                                                onChange={(e) => errChecker.clearError(e.target)}/>
                                         </div>
                                         <div className="input-block">
                                             <label htmlFor="phone">
@@ -201,12 +148,8 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
                                                 className="input-element" 
                                                 id="phone"
                                                 type="tel" 
-                                                minLength={6} 
-                                                maxLength={25} 
                                                 ref={_phone} 
-                                                value={order.phone}
-                                                onChange={onChangeText} 
-                                                onKeyDown={(e:any) => focusNext({e, target: _email.current})}/>
+                                                onChange={(e) => errChecker.clearError(e.target)}/>
                                         </div>
                                         <div className="input-block">
                                             <label htmlFor="email">
@@ -216,11 +159,8 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
                                                 className="input-element" 
                                                 id="email" 
                                                 type="email" 
-                                                required 
-                                                value={order.email}
                                                 ref={_email} 
-                                                onChange={onChangeText} 
-                                                onKeyDown={(e:any) => focusNext({e, target: _message.current})}/>
+                                                onChange={(e) => errChecker.clearError(e.target)}/>
                                         </div>
                                         <div className="input-block message-block">
                                             <label htmlFor="message">
@@ -229,18 +169,14 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
                                             <textarea 
                                                 className="input-element" 
                                                 id="message" 
-                                                required 
-                                                minLength={10} 
-                                                maxLength={1000} 
                                                 ref={_message} 
-                                                value={order.message}
-                                                onChange={onChangeText}/>
+                                                onChange={(e) => errChecker.clearError(e.target)}/>
                                         </div>
                                     </div>
                                     <div className="files-block">
                                         <div className="input-block files">
                                             <label htmlFor="files">{lang === 'en' ? 'Attach files' : 'Прикрепить файлы'}</label>
-                                            <AddFiles saveFiles={saveFiles} lang={lang} ref={addFilesRef} multiple={true} id='files'/>
+                                            <AddFiles lang={lang} ref={addFiles} multiple={true} id='files'/>
                                         </div>
                                     </div>
 
@@ -248,7 +184,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
 
                                 <button 
                                     type="submit" 
-                                    disabled={order.send.status === 'fetching'} 
+                                    disabled={userState.sendOrder.status === 'fetching'} 
                                     className="button_order" 
                                     onClick={onSubmit}>
                                         {lang === 'en' ? 'Send' : "Отправить"}
@@ -258,15 +194,9 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
                     </div>
                 </div>
             </div>
-            <Modal {...{visible: modal, close: closeModal, escExit: true}}>
-				<MessageInfo {...{
-                    status: message.status,
-                    header: message.header,
-                    text: message.text, 
-                    buttonText: lang === 'en' ? 'Close' : "Закрыть", 
-                    buttonAction: closeModal
-                }}/>
-			</Modal> 
+            <Modal escExit={true} ref={modal_message} onClose={closeModalMessage}>
+                <Message buttonText={lang === 'en' ? `Close` : `Закрыть`} buttonAction={closeModalMessage} ref={message}/>
+            </Modal>
         </div>
     )
 }
@@ -277,13 +207,13 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
 
 const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
-    order: state.order,
+    userState: state.user,
 })
 
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>):IPropsActions => ({
     setState: {
-		order: bindActionCreators(allActions.order, dispatch),
+		user: bindActionCreators(allActions.user, dispatch),
 	}
 })
   

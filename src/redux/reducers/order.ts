@@ -1,4 +1,4 @@
-import { IAction, ICartItem, IFetch, IOrderState } from "src/interfaces"
+/*import { IAction, ICartItem, IFetch, IOrderState } from "src/interfaces"
 import initialOrderState from '../initialStates/order'
 import { actionsListOrder } from '../actions/actionsList'
 
@@ -48,4 +48,4 @@ const reducerOrder = (state:IOrderState = initialOrderState, action: IAction<any
     }
 }
 
-export default reducerOrder
+export default reducerOrder*/

@@ -4,6 +4,7 @@ const cartRoutes = require('./routes/cart')
 const fibersRoutes = require('./routes/fibers')
 const newsRoutes = require('./routes/news')
 const colorsRoutes = require('./routes/colors')
+const catalogRoutes = require('./routes/catalog')
 const express = require('express')
 const mongoose = require("mongoose")
 const cors = require('cors')
@@ -32,6 +33,7 @@ app.use('/api/news', newsRoutes)
 app.use('/api/colors', colorsRoutes)
 
 app.use('/api/fibers', fibersRoutes)
+app.use('/api/catalog', catalogRoutes)
 
 const PORT: number = Number(process.env.PORT) || 5000
 

@@ -3,13 +3,13 @@ import { connect } from "react-redux";
 import { useEffect, useMemo, useRef, useState, } from "react";
 import "@splidejs/react-splide/css";
 import "./splider-preview.scss";
-import { IFullState, IImg, IProduct, ISpliderOptions, TLang } from "../../../interfaces";
+import { IFullState, IImg, IImgWithThumb, IProduct, ISpliderOptions, TLang } from "../../../interfaces";
 import Splide from "@splidejs/splide";
 import ImgWithPreloader from "../../../assets/js/ImgWithPreloader";
 
-import Modal from "../../../components/Modal/Modal";
-import ModalImage from "../../ImageModal/ImageModal";
+import Modal, { IModalFunctions } from "../../../components/Modal/Modal";
 import { allActions } from "../../../redux/actions/all";
+import ImageModal, { IImageModalFunctions } from "../../ImageModal/ImageModal";
 
 
 
@@ -40,7 +40,9 @@ const SpliderPreview: React.FC<IProps> = ({ lang, product, setState}): JSX.Eleme
 	const _splideThumbs = useRef<HTMLDivElement>(null);
 	const splideMain = useRef<Splide>();
 	const splideThumb = useRef<Splide>();
-	const [modal, setModal] = useState<boolean>(false)
+	//const [modal, setModal] = useState<boolean>(false)
+	const modal_image = useRef<IModalFunctions>(null)
+    const imageModal = useRef<IImageModalFunctions>(null)
 		
 	const optionsThumbs: Partial<ISpliderOptions> = {
 		lazyLoad	: false,
@@ -104,14 +106,17 @@ const SpliderPreview: React.FC<IProps> = ({ lang, product, setState}): JSX.Eleme
 		e.keyCode === 39 && showSlide(">");
 	}*/
 
-	const onImageClick = (slide: IImg) => {
-		setModal(true)
-	}
 
+	const onImageClick = (e: React.MouseEvent , slide: IImgWithThumb) => {
+        if (!slide) return
+        e.stopPropagation()
+		/*<Modal {...{visible: modal, close: closeModal, escExit: true}}>
+		<ModalImage props={{path: product.imgs[splideMain.current?.index || 0].url, descr: product.imgs[splideMain.current?.index || 0].name[lang]}}/>
+	</Modal> */
+        imageModal.current?.update({url: slide.full, text: slide.fileName})
+        modal_image.current?.openModal()
+    }
 
-	const closeModal = () => {
-		setModal(false)
-	}
 
 	useEffect(() => {
         if (!_splideThumbs.current || !_splideMain.current) return
@@ -129,41 +134,37 @@ const SpliderPreview: React.FC<IProps> = ({ lang, product, setState}): JSX.Eleme
 		
 	}, []);
 
-	
-	/*useEffect(() => {
-		showSlide(product.selectedImage);
-		document.addEventListener("keyup", modalKeyListener);
-		//document.querySelector("body")?.classList.add("noscroll");
-		return (() => {
-			document.removeEventListener("keyup", modalKeyListener);
-		});
-	}, [product.selectedImage]);*/
 
+	
+
+    const closeModalImage = () => {
+        modal_image.current?.closeModal()
+	}
 
 
 
 	return (
         <div className="splider_preview">
-			<div id="modalMain" className="splide" ref={_splideMain}>
+			<div id="spliderMain" className="splide" ref={_splideMain}>
 				<div className="splide__track">
 					<ul className="splide__list">
 						{product.imgs.map((slide,i) => {
 							return (
-								<li className="splide__slide" key={i} onClick={() => onImageClick(slide)}>
-									<ImgWithPreloader src={slide.url} alt={slide.name[lang]} />
+								<li className="splide__slide" key={i} onClick={(e) => onImageClick(e, slide)}>
+									<ImgWithPreloader src={slide.medium || slide.full} alt={slide.fileName} />
 								</li>
 							);
 						})}
 					</ul>
 				</div>
 			</div>
-			<div id="modalThumbs" className="splide" ref={_splideThumbs}>
+			<div id="spliderThumbs" className="splide" ref={_splideThumbs}>
 				<div className="splide__track">
 					<ul className="splide__list">
 						{product.imgs.map((slide,i ) => {
 							return (
 								<li className="splide__slide" key={i}>
-									<ImgWithPreloader src={slide.url} alt={slide.name[lang]} />
+									<ImgWithPreloader src={slide.thumb} alt={slide.fileName} />
 								</li>
 							);
 		
@@ -171,9 +172,9 @@ const SpliderPreview: React.FC<IProps> = ({ lang, product, setState}): JSX.Eleme
 					</ul>
 				</div>
 			</div>
-			<Modal {...{visible: modal, close: closeModal, escExit: true}}>
-				<ModalImage props={{path: product.imgs[splideMain.current?.index || 0].url, descr: product.imgs[splideMain.current?.index || 0].name[lang]}}/>
-			</Modal> 
+			<Modal escExit={true} ref={modal_image} onClose={closeModalImage}>
+				<ImageModal ref={imageModal} />
+            </Modal>
 
         </div>
 	);

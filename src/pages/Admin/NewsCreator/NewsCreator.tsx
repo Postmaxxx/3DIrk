@@ -36,7 +36,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, setState}): JSX.Element =
     const paramNewsId = useParams().newsId || ''
     const navigate = useNavigate()
     const addFilesBig = useRef<IAddFilesFunctions>(null)
-    const modal = useRef<IModalFunctions>(null)
+    const modal_message = useRef<IModalFunctions>(null)
     const message = useRef<IMessageFunctions>(null)
 
     const _header_en = useRef<HTMLInputElement>(null)
@@ -54,8 +54,8 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, setState}): JSX.Element =
     }
 
     
-    const closeModal = useCallback(() => {
-        modal.current?.closeModal()
+    const closeModalMessage = useCallback(() => {
+        modal_message.current?.closeModal()
         setTimeout(() => message.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
         errChecker.clear()
         if (send.status === 'success') {
@@ -80,7 +80,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, setState}): JSX.Element =
             status: send.status,
             text: [send.message[lang], ...errors]
         })
-		modal.current?.openModal()
+		modal_message.current?.openModal()
     }, [send.status])
 
 
@@ -141,7 +141,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, setState}): JSX.Element =
 
         if (errChecker.amount() > 0) {
             message.current?.update(errChecker.result())
-            modal.current?.openModal()
+            modal_message.current?.openModal()
             //errChecker.clear()
             return
         }
@@ -231,8 +231,8 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, setState}): JSX.Element =
                         </button>
                     </form>
                 </div>
-                <Modal escExit={true} ref={modal} onClose={closeModal}>
-                    <Message buttonText={lang === 'en' ? `Close` : `Закрыть`} buttonAction={closeModal} ref={message}/>
+                <Modal escExit={true} ref={modal_message} onClose={closeModalMessage}>
+                    <Message buttonText={lang === 'en' ? `Close` : `Закрыть`} buttonAction={closeModalMessage} ref={message}/>
                 </Modal>
             </div>
 

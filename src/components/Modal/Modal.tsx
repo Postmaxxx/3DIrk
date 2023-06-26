@@ -11,25 +11,29 @@ interface IProps {
 
 
 export interface IModalFunctions {
-    openModal: () => void;
+    openModal: (owner?: string) => void;
     closeModal: () => void;
+    getOwner: () => string;
 }
 
 
 const Modal = forwardRef<IModalFunctions, IProps>(({escExit, onClose, children}, ref) => {
     useImperativeHandle(ref, () => ({
-        openModal() {
-            open()
+        openModal(owner?) {
+            open(owner || '')
         },
         closeModal() {
             close()
+        },
+        getOwner() {
+            return owner
         },
     }));
 
     
     const _modal = document.getElementById('modal') as HTMLElement;
     const [visible, setVisible] = useState<boolean>(false)
-
+    const [owner, setOwner] = useState<string>('')
 
     const modalKeyListener = (e: KeyboardEvent) => {
         if (onClose) {
@@ -52,8 +56,9 @@ const Modal = forwardRef<IModalFunctions, IProps>(({escExit, onClose, children},
     }
 
     
-    const open = () => {
+    const open = (owner: string) => {
         setVisible(true)
+        setOwner(owner)
     }
 
 

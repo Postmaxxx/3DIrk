@@ -225,7 +225,7 @@ export interface IProduct {
     price: TLangText
     name: TLangText
     text: TLangText
-    imgs: IImg[]
+    imgs: IImgWithThumb[]
     fibers: TId[] //array of fiber ids
     features: IFeature[]
     mods: TLangText[]
@@ -252,6 +252,7 @@ export interface ICatalogItem { //one category name
 
 export interface ICatalog{
     load: IFetch //for load categoriesList
+    send: IFetch //for load categoriesList
     list: ICatalogItem[] //list of all categories
 }
 
@@ -319,7 +320,7 @@ export interface IBaseState {
 
 
 //============================================== order state
-export interface IOrderState {
+/*export interface IOrderState {
     _id: TId
     load: IFetch
     send: IFetch
@@ -331,7 +332,7 @@ export interface IOrderState {
     files: File[]
     cart: ICartState
 }
-
+*/
 
 
 
@@ -343,6 +344,7 @@ export interface IOrderState {
 
 //============================================== Colors state
 export interface ISendColor {
+    _id: string
     name: {
         ru: string, 
         en: string
@@ -509,4 +511,12 @@ export interface ICheckErrorItem {
 export interface IModalImg {
 	descr: string 
 	path: string
+}
+
+
+///////////////////////////// tech
+export interface ICatalogTypes {
+    new: TLangText[]
+    old: TLangText[]
+    changed: TLangText[]
 }

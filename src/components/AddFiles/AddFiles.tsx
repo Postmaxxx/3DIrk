@@ -1,6 +1,6 @@
 import { TLang } from '../../interfaces'
 import './add-files.scss'
-import { useState, useEffect, useRef, forwardRef, useImperativeHandle} from 'react'
+import { useState, useEffect, useRef, forwardRef, useImperativeHandle, useCallback} from 'react'
 import iconFileQuestion from '../../assets/img/icon_file_question.svg'
 import Delete from "../../components/Delete/Delete";
 
@@ -134,9 +134,9 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, multiple, id}, r
 
 
 
-    const remove = () => {
+    const remove = useCallback(() => {
         clearFiles()
-    }
+    }, [])
 
 
     return (
@@ -150,13 +150,10 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, multiple, id}, r
             </div>
             <input id={id} type="file" multiple={multiple} onChange={onSelectFiles} ref={_files}/>
             <div className="preview-gallery" ref={_filesGallery}></div>
-            {files.length > 0 ? 
+            {files.length > 0 &&
                 <div className="clear-files">
                     <Delete<string> remove={remove} idInstance="cartCleaner" lang={lang} disabled={false}/>
-                </div>
-            :
-                null
-            }
+                </div>}
         </div>
     );
 })

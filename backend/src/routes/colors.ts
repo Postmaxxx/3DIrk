@@ -15,12 +15,12 @@ router.post('/create',
     isAdmin,
     check('name.en')
           .isLength({min: 3})
-          .withMessage({en: 'EN name is too short (<4)', ru: 'EN имя слишком короткое (<4)'})
+          .withMessage({en: 'EN name is too short (<3)', ru: 'EN имя слишком короткое (<3)'})
           .isLength({max: 51})
           .withMessage({en: 'EN name is too long (>50)', ru: 'EN имя слишком длинное (>50)'}),
       check('name.ru')
           .isLength({min: 3})
-          .withMessage({en: 'RU name is too short (<4)', ru: 'RU имя слишком короткое (<4)'})
+          .withMessage({en: 'RU name is too short (<3)', ru: 'RU имя слишком короткое (<3)'})
           .isLength({max: 51})
           .withMessage({en: 'RU name is too long (>50)', ru: 'RU имя слишком длинное (>50)'}),
       check('url.full')
@@ -51,19 +51,59 @@ router.post('/create',
             const { name, url } = req.body 
 
             const color = new Colors({ 
-                name: {
-                    en: name.en.trim(),
-                    ru: name.ru.trim()
-                },
-                url: {
-                    full: url.full.trim(),
-                    small: url.small.trim(),
-                }
+                name,
+                url
             })
             await color.save()
             await saveChanges('colors', true)
             await saveChanges('fibers', true)   
             return res.status(201).json({message: {en: 'Color saved', ru: 'Цвет сохранен'}})
+        } catch (e) {
+            return res.status(500).json({ message:{en: `Something wrong with server ${e}, try again later`, ru: `Ошибка на сервере ${e}, попробуйте позже`}})
+        }
+    }
+)
+
+
+
+
+router.put('/edit', 
+    [authMW, 
+    isAdmin,
+    check('name.en')
+          .isLength({min: 3})
+          .withMessage({en: 'EN name is too short (<3)', ru: 'EN имя слишком короткое (<3)'})
+          .isLength({max: 51})
+          .withMessage({en: 'EN name is too long (>50)', ru: 'EN имя слишком длинное (>50)'}),
+      check('name.ru')
+          .isLength({min: 3})
+          .withMessage({en: 'RU name is too short (<3)', ru: 'RU имя слишком короткое (<3)'})
+          .isLength({max: 51})
+          .withMessage({en: 'RU name is too long (>50)', ru: 'RU имя слишком длинное (>50)'}),
+    ],
+    async (req, res) => {
+        
+        const errors = validationResult(req)
+        
+        if (!errors.isEmpty()) {
+            console.log(errors.array().map(error => error.msg));
+            return res.status(400).json({
+                errors: errors.array().map(error => error.msg),
+                message: {en: 'Errors in color data', ru: 'Ошибки в данных цвета'}
+            })
+        }
+        
+        try {
+            const { _id, name, url } = req.body 
+
+            const editedColor = url ? {name, url} : {name}
+
+            await Colors.findOneAndUpdate({_id}, editedColor) 
+
+            await saveChanges('colors', true)
+            await saveChanges('fibers', true)   
+            
+            return res.status(200).json({message: {en: 'Color saved', ru: 'Цвет сохранен'}})
         } catch (e) {
             return res.status(500).json({ message:{en: `Something wrong with server ${e}, try again later`, ru: `Ошибка на сервере ${e}, попробуйте позже`}})
         }
@@ -84,11 +124,45 @@ const loadColors = async (res): Promise<{loaded: boolean, msg: string}> => {
     }
 }
 
+
 router.get('/load-all', 
     async (req, res) => {
         try {
             await loadColors(res)
             return res.status(200).json({colors: allColors, message: {en: 'Colors have been loaded', ru: 'Цвета загружены'}})
+        } catch (e) {
+            return res.status(500).json({ message:{en: `Something wrong with server ${e}, try again later`, ru: `Ошибка на сервере ${e}, попробуйте позже`}})
+        }
+    }
+)
+
+
+
+router.delete('/delete', 
+    [authMW, 
+    isAdmin,
+    check('_id')
+          .exists()
+          .withMessage({en: 'id missed', ru: 'не указан id'})
+    ],
+    async (req, res) => {
+        
+        const errors = validationResult(req)
+        
+        if (!errors.isEmpty()) {
+            console.log(errors.array().map(error => error.msg));
+            return res.status(400).json({
+                errors: errors.array().map(error => error.msg),
+                message: {en: 'Errors in color data', ru: 'Ошибки в данных цвета'}
+            })
+        }
+        
+        try {
+            const { _id } = req.body 
+            await Colors.findOneAndDelete({_id})
+            await saveChanges('colors', true)
+            await saveChanges('fibers', true)   
+            return res.status(200).json({message: {en: 'Color deleted', ru: 'Цвет удален'}})
         } catch (e) {
             return res.status(500).json({ message:{en: `Something wrong with server ${e}, try again later`, ru: `Ошибка на сервере ${e}, попробуйте позже`}})
         }

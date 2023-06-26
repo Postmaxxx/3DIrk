@@ -7,7 +7,7 @@ interface IUser extends Document {
     password: string,
     phone: string,
     name: string,
-    cart: object[]
+    cart: object[] //!!! import 
 }
 
 

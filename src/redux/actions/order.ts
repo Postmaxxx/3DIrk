@@ -1,4 +1,4 @@
-import { IAction, ICartItem, IDispatch, IFetch, IFullState, IOrderState, TLang, TLangText } from "src/interfaces"
+import { IAction, ICartItem, IDispatch, IFetch, IFullState, TLang, TLangText } from "src/interfaces"
 import { actionsListOrder } from './actionsList'
 import { errorFetch, fetchingFetch, minTimeBetweenSendings, successFetch } from "src/assets/js/consts";
 

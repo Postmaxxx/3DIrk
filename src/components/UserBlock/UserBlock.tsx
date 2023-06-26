@@ -62,7 +62,7 @@ const UserBlock: React.FC<IProps> = ({setState, userState, lang}): JSX.Element =
         if (!_userBlock.current) return
         userHider.add(_userBlock.current, 50)
 
-		return () => userHider.remove()
+		//return () => userHider.remove()
     }, [])
     
 

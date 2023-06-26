@@ -1,7 +1,7 @@
 import { IAction, IDispatch, IErrRes, IFetch, IFiber, IFullState, IImgWithThumb, IMsgRes, ISendFiber, TLangText } from "src/interfaces"
 import { actionsListFibers } from './actionsList'
 import { imageUploader } from "src/assets/js/imageUploader";
-import { delayBetweenImagesPost } from "src/assets/js/consts";
+import { delayBetweenImagesPost, fetchingFetch } from "src/assets/js/consts";
 import { makeDelay } from "src/assets/js/makeDelay";
 
 
@@ -31,7 +31,7 @@ export const setSelectedFiber = <T extends IFiber['_id']>(payload: T):IAction<T>
 export const loadFibers = () => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
         const token = getState().user.token
-        dispatch(setLoadFibers({status: 'fetching', message: {en: `Loading fibers`, ru: 'Загрузка материалов'}}))
+        dispatch(setLoadFibers(fetchingFetch))
         try {
             const response = await fetch('/api/fibers/all', {
                 method: "GET",
@@ -141,7 +141,7 @@ export const editFiber = (fiber: Partial<ISendFiber>, changeImages: boolean) => 
     return async function(dispatch: IDispatch, getState: () => IFullState) {
         
         const token = getState().user.token //get current user state
-        dispatch(setSendFibers({status: 'fetching', message: {en: '', ru: ''}}))
+        dispatch(setSendFibers(fetchingFetch))
         const delayBetweenImagesPost = 300
 
         const imageUrls: IImgWithThumb[] = []
@@ -208,7 +208,7 @@ export const editFiber = (fiber: Partial<ISendFiber>, changeImages: boolean) => 
 export const deleteFiber = (_id: string) => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
         const token = getState().user.token //get current user state
-        dispatch(setSendFibers({status: 'fetching', message: {en: '', ru: ''}}))
+        dispatch(setSendFibers(fetchingFetch))
 
         try {
             const response: Response = await fetch(`/api/fibers/delete`,{

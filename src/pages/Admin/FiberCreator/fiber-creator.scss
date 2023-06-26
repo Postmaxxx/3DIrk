@@ -143,6 +143,20 @@
 
             }
 
+
+            &:nth-of-type(3) {
+                & textarea {
+                    height: 250px;
+                }
+            }
+
+            &:nth-of-type(4) {
+                & textarea {
+                    height: 100px;
+                }
+            }
+
+
         }
 
 
@@ -259,10 +273,13 @@
             gap: 30px;
             max-height: 500px;
             overflow-y: auto;
-
-
+            
+            
             & .color__container {
-               max-width: 80px;
+                max-width: 80px;
+                position: relative;
+                display: flex;
+                flex-direction: column;
 
                @include respond-to(sm) {
                     max-width: 50px;
@@ -297,7 +314,41 @@
                    }
                 }
 
+                & .buttons_control {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    margin-top: auto;
+
+                    & .button_blue {
+                        padding: 2px 5px;
+                        min-height: 20px;
+
+                    }
+
+                    & .delete {
+                        /*height: 20px;
+                        width: 20px;
+                        display: flex;
+                        //place-items: center;
+                        align-items: center;
+                        justify-content: center;
+                        border-radius: 50%;
+                        border: 1px solid var(--main);
+                        background-color: var(--main);
+                        position: absolute;
+                        top: -10px;
+                        right: -10px;
+        
+                        & > span {
+                            font-size: 22px;
+                        }*/
+                    }
+                }
+
             }
+
+
         }
 
 

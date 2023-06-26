@@ -8,12 +8,19 @@ import { actionsListCatalog } from '../actions/actionsList'
 const reducerCatalog = (state: ICatalogState = initialCatalogState, action: IAction<unknown>): ICatalogState => {
     switch (action.type) {
         case actionsListCatalog.SET_LOAD_STATUS_CATEGORIES_LIST:
-            const categoriesListStatus = action.payload as IFetch
             return {
                 ...state, 
                 catalog: {
                     ...state.catalog,
-                    load: categoriesListStatus
+                    load: action.payload as IFetch
+                }
+            }
+        case actionsListCatalog.SET_SEND_STATUS_CATEGORIES_LIST:
+            return {
+                ...state, 
+                catalog: {
+                    ...state.catalog,
+                    send: action.payload as IFetch
                 }
             }
         case actionsListCatalog.SET_DATA_CATEGORIES_LIST: 

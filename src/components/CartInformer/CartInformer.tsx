@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import './cart-informer.scss'
-import { ICartState, IFullState, IOrderState, TLang } from "../../interfaces";
+import { ICartState, IFullState, TLang } from "../../interfaces";
 import { useState, useEffect, useRef } from 'react'
 
 

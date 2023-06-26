@@ -30,7 +30,7 @@ const CatalogList: React.FC<IProps> = ({catalog, lang, selectedCategory, setStat
 
 
 	useEffect(() => {
-		if (catalog.load.status === 'idle') {
+		if (catalog.load.status !== 'success' && catalog.load.status !== 'fetching') {
 			setState.catalog.loadCatalog()
 		}
 	}, [])

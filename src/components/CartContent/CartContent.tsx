@@ -2,7 +2,7 @@ import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import './cart-content.scss'
-import { ICartItem, ICartState, ICatalogState, IColor, IColorsState, IFiber, IFibersState, IFullState, IModalImg, IOrderState, IProduct, TLang } from "src/interfaces";
+import { ICartItem, ICartState, ICatalogState, IColor, IColorsState, IFiber, IFibersState, IFullState, IProduct, TLang } from "src/interfaces";
 import { useState, useEffect, useRef } from 'react'
 import { NavLink } from "react-router-dom";
 import Delete from "../Delete/Delete";
@@ -44,7 +44,7 @@ const CartContent: React.FC<IProps> = ({lang, cart, colors, fibers, setState}): 
 
     const [cartReady, setCartReady] = useState<boolean>(false)
     const modal_image = useRef<IModalFunctions>(null)
-    const image = useRef<IImageModalFunctions>(null)
+    const imageModal = useRef<IImageModalFunctions>(null)
 
 
 /*
@@ -81,7 +81,7 @@ const CartContent: React.FC<IProps> = ({lang, cart, colors, fibers, setState}): 
     const onImageClick = (e: React.MouseEvent , color: IColor | undefined) => {
         if (!color) return
         e.stopPropagation()
-        image.current?.update({url: color.url.full, text: color.name[lang]})
+        imageModal.current?.update({url: color.url.full, text: color.name[lang]})
         modal_image.current?.openModal()
     }
 
@@ -103,7 +103,7 @@ const CartContent: React.FC<IProps> = ({lang, cart, colors, fibers, setState}): 
                             <div className="cart__item" key={i}>
                                 <NavLink className="item__product-link_img" to={`../catalog/${item.product._id}`} onClick={() => onProductClick(item.product)} aria-label={lang === 'en' ? 'Go to product' : 'Перейти к товару'}>
                                     <div className="img__container">
-                                        <ImgWithPreloader src={item.product.imgs[0].url} alt={item.product.imgs[0].name[lang]}/>
+                                        <ImgWithPreloader src={item.product.imgs[0].thumb} alt={item.product.imgs[0].fileName}/>
                                     </div>
                                 </NavLink>
 
@@ -154,7 +154,7 @@ const CartContent: React.FC<IProps> = ({lang, cart, colors, fibers, setState}): 
             {cart.load.status === 'error' && <ErrorMock lang={lang} comp={{en: 'cart', ru: 'корзины'}}/>}
 
             <Modal escExit={true} ref={modal_image} onClose={closeModalImage}>
-				<ImageModal ref={image} />
+				<ImageModal ref={imageModal} />
             </Modal>
         </div>
     )

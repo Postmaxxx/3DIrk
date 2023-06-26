@@ -1,9 +1,13 @@
-import { loadCategory } from './../actions/catalog';
 import { ICatalogState } from "src/interfaces"
 
 const initialCatalog = {
     catalog: {
         load: {
+            status: 'idle',
+            message: {en: '', ru: ''},
+            errors: []
+        },
+        send: {
             status: 'idle',
             message: {en: '', ru: ''},
             errors: []

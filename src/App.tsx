@@ -28,11 +28,13 @@ const LazyCatalogPage = lazy(() => import("./pages/Catalog/Catalog"));
 const LazyProduct = lazy(() => import("./pages/Product/Product"));
 const LazyNewsDetails = lazy(() => import("./pages/NewsDetails/NewsDetails"));
 const LazyFibersCompare= lazy(() => import("./pages/FibersCompare/FibersCompare"));
-const LazyOffliner= lazy(() => import("./components/Offliner/Offliner"));
+//const LazyOffliner= lazy(() => import("./components/Offliner/Offliner"));
 const LazyNewsCreator = lazy(() => import("./pages/Admin/NewsCreator/NewsCreator"));
 const LazyColorCreator = lazy(() => import("./pages/Admin/ColorCreator/ColorCreator"));
 const LazyFiberCreator = lazy(() => import("./pages/Admin/FiberCreator/FiberCreator"));
 const LazyContactUs = lazy(() => import("./pages/ContactUs/ContactUs"));
+const LazyCatalogCahnger = lazy(() => import("./pages/Admin/CatalogChanger/CatalogChanger"));
+
 
 
 
@@ -70,7 +72,6 @@ const App:React.FC<IProps> = ({lang, setState}):JSX.Element => {
 			<Offliner lang={lang}/>
 			<Suspense fallback={<Preloader />}><LazyThemeSwitcher /></Suspense>
 			<Suspense fallback={<Preloader />}><LazyHeader /></Suspense>
-			{/*<Suspense fallback={<Preloader />}><LazyUserBlock /></Suspense>*/}
 
 			
 			<Routes>
@@ -98,6 +99,8 @@ const App:React.FC<IProps> = ({lang, setState}):JSX.Element => {
 					<Route path="fiber-create" element={<Suspense fallback={<Preloader />}><LazyFiberCreator /></Suspense>} />
 					<Route path="fiber-create/:fiberId" element={<Suspense fallback={<Preloader />}><LazyFiberCreator /></Suspense>} />
 					<Route path="color-create" element={<Suspense fallback={<Preloader />}><LazyColorCreator /></Suspense>} />
+					<Route path="color-create/:colorId" element={<Suspense fallback={<Preloader />}><LazyColorCreator /></Suspense>} />
+					<Route path="catalog-change" element={<Suspense fallback={<Preloader />}><LazyCatalogCahnger /></Suspense>} />
 				</Route>
 
 
