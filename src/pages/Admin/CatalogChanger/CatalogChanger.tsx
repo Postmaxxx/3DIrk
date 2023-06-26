@@ -46,7 +46,6 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, catalogState}): JSX.Elem
     const message = useRef<IMessageFunctions>(null)
     const _addCategory = useRef<HTMLButtonElement>(null)
     const _catalog = useRef<HTMLDivElement>(null)
-
     const errChecker = useMemo(() => errorsChecker({lang}), [lang])
 
 
@@ -78,6 +77,9 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, catalogState}): JSX.Elem
 
 
 
+
+
+
     const onAddCategory = ({target, _id, values, e}: IOnAddCategory) => {
         if (e) {
             prevent(e)
@@ -103,16 +105,16 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, catalogState}): JSX.Elem
         inputRu.onchange = (e) => onCategoryChanged(e.target as HTMLInputElement);
         
 
-        /*const delBtn = document.createElement('button');
+        const delBtn = document.createElement('button');
         delBtn.innerHTML = 'X';
         delBtn.classList.add('button_blue');
         delBtn.classList.add('del');
-        delBtn.onclick = (e) => onDeleteCategory(e as unknown as React.MouseEvent<HTMLButtonElement, MouseEvent>)*/
-        const delBtn = <Delete<string> remove={onDeleteCategory} idInstance="1" lang={lang} disabled={false}/>
+        delBtn.onclick = (e) => onDeleteCategory(e as unknown as React.MouseEvent<HTMLButtonElement, MouseEvent>)
+        //const delBtn = <Delete<string> remove={onDeleteCategory} idInstance="1" lang={lang} disabled={false}/>
 
         newCatalogBlock.appendChild(wrEn)
         newCatalogBlock.appendChild(wrRu)
-        newCatalogBlock.appendChild(delBtn)
+        newCatalogBlock.append(delBtn)
         if (!target) return
         target.appendChild(newCatalogBlock)
     }
@@ -126,14 +128,12 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, catalogState}): JSX.Elem
     }
 
 
-    const onDeleteCategory = (e: any) => {
-        prevent(e)
-        const parent = e.currentTarget?.parentNode as HTMLElement
-        parent.remove();
-    }
-
 
     
+
+
+
+
 
     const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {        
         prevent(e)
@@ -202,6 +202,31 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, catalogState}): JSX.Elem
    
 
 
+    const onCategoryChange = (e: React.ChangeEvent<HTMLInputElement>, index: number, lang: TLang) => {        
+        setState.catalog.setCatalog(catalogState.list.map((item, i) => {
+            if (index === i) {
+                return {
+                    ...item,
+                    name: {
+                        ...item.name,
+                        [lang]: e.target.value
+                    }
+                }
+            } else return item
+        }))
+    }
+
+
+    const onDeleteCategory = (e: React.MouseEvent<HTMLButtonElement>/*, index: number*/) => {
+        prevent(e)
+        const parent = e.currentTarget?.parentNode as HTMLElement
+        parent.remove();
+        /*const newCatalog = [...catalogState.list]
+        newCatalog.splice(index,1)
+        setState.catalog.setCatalog(newCatalog)*/
+    }
+
+
 
     return (
         <div className="page page_fiber-add">
@@ -212,6 +237,29 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, catalogState}): JSX.Elem
 
                         <h2 className='section-header full-width'>{lang === 'en' ? 'CATEGORIES' : 'КАТЕГОРИИ'}</h2>           
                         <div className="catalog" ref={_catalog}></div>
+
+
+                        {/*<div className="catalog">
+                            {catalogState.list.map((item,i) => {
+                                return (
+                                    <div className="block_category full-width">
+                                    <div className="input__wrapper">
+                                        <label htmlFor="">{lang === 'en' ? 'Value EN' : 'Значение EN'}</label>
+                                        <input type="text" onChange={(e) => onCategoryChange(e, i, 'en')} value={item.name.en}/>
+                                    </div>
+                                    <div className="input__wrapper">
+                                        <label htmlFor="">{lang === 'en' ? 'Value RU' : 'Значение RU'}</label>
+                                        <input type="text" onChange={(e) => onCategoryChange(e, i, 'ru')} value={item.name.ru}/>
+                                    </div>
+                                    <button className="button_blue del" onClick={(e) => onDeleteCategory(e, i)}>X</button>
+                                </div>
+                                )
+                            })}
+                        </div>*/}
+
+
+
+
                         <button 
                             className='button_blue add' 
                             ref={_addCategory} 

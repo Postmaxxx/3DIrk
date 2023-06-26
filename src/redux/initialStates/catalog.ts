@@ -1,41 +1,27 @@
+import { empty, resetFetch } from 'src/assets/js/consts';
 import { ICatalogState } from "src/interfaces"
 
 const initialCatalog = {
     catalog: {
-        load: {
-            status: 'idle',
-            message: {en: '', ru: ''},
-            errors: []
-        },
-        send: {
-            status: 'idle',
-            message: {en: '', ru: ''},
-            errors: []
-        },
+        load: resetFetch,
+        send: resetFetch,
         list: []
     },
     category: {
         _id: '',
-        name: {en: '', ru: ''},
-        loadCategory: {
-            status: 'idle',
-            message: {en: '', ru: ''},
-            errors: []
-        },
-        loadProduct: {
-            status: 'idle',
-            message: {en: '', ru: ''},
-            errors: []
-        },
+        name: empty,
+        loadCategory: resetFetch,
+        loadProduct: resetFetch,
+        sendProduct: resetFetch,
         products: [],
         product: {
             _id: '',
-            price: {en: '', ru: ''},
-            name: {en: '', ru: ''},
-            text: {en: '', ru: ''},
+            price: empty,
+            name: empty,
+            text: empty,
+            text_short: empty,
             imgs: [],
             fibers: [],
-            features: [],
             mods: [],
         }, 
         total: 0,

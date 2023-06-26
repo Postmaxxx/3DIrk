@@ -1,16 +1,9 @@
+import { resetFetch } from "src/assets/js/consts"
 import { IFibersState } from "src/interfaces"
 
 const initialFibers = {
-    load: {
-        status: 'idle',
-        message: {en: '', ru: ''},
-        errors: []
-    },
-    send: {
-        status: 'idle',
-        message: {en: '', ru: ''},
-        errors: []
-    },
+    load: resetFetch,
+    send: resetFetch,
     fibersList: [],
     selected: '',
     showList: []

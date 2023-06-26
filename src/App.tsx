@@ -34,8 +34,7 @@ const LazyColorCreator = lazy(() => import("./pages/Admin/ColorCreator/ColorCrea
 const LazyFiberCreator = lazy(() => import("./pages/Admin/FiberCreator/FiberCreator"));
 const LazyContactUs = lazy(() => import("./pages/ContactUs/ContactUs"));
 const LazyCatalogCahnger = lazy(() => import("./pages/Admin/CatalogChanger/CatalogChanger"));
-
-
+const LazyProductCreator = lazy(() => import("./pages/Admin/ProductCreator/ProductCreator"));
 
 
 interface IPropsState {
@@ -101,6 +100,9 @@ const App:React.FC<IProps> = ({lang, setState}):JSX.Element => {
 					<Route path="color-create" element={<Suspense fallback={<Preloader />}><LazyColorCreator /></Suspense>} />
 					<Route path="color-create/:colorId" element={<Suspense fallback={<Preloader />}><LazyColorCreator /></Suspense>} />
 					<Route path="catalog-change" element={<Suspense fallback={<Preloader />}><LazyCatalogCahnger /></Suspense>} />
+
+					<Route path="product-create" element={<Suspense fallback={<Preloader />}><LazyProductCreator /></Suspense>} />
+					<Route path="product-create/:productId" element={<Suspense fallback={<Preloader />}><LazyProductCreator /></Suspense>} />
 				</Route>
 
 

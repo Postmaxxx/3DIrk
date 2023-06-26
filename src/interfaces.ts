@@ -225,21 +225,31 @@ export interface IProduct {
     price: TLangText
     name: TLangText
     text: TLangText
+    text_short: TLangText
     imgs: IImgWithThumb[]
     fibers: TId[] //array of fiber ids
-    features: IFeature[]
+    //features: IFeature[]
     mods: TLangText[]
+}
+
+export interface IProductShort { //for gallery
+    _id: TId
+    price: TLangText
+    name: TLangText
+    text_short: TLangText
+    img: IImgWithThumb
 }
 
 
 export interface ICategory {
     _id: TId
     name: TLangText
-    products: IProduct[] //part of loaded products, i.e.: 1-9, 10-18, ...
+    products: IProductShort[] //part of loaded products, i.e.: 1-9, 10-18, ...
     loadCategory: IFetch //for load products in selected category
     product: IProduct //current opened product (in case opened from bookmarks)
     loadProduct: IFetch
-    total: number //total amount of products, i.e.: 36
+    sendProduct: IFetch
+    total: number //total amount of products in category, i.e.: 36
     page: number //current open page of products in category, max as total / amountOfItemsPerPage
     //selectedProduct: string //id of selected product in category
 }

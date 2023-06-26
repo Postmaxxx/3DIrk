@@ -1,3 +1,4 @@
+import { resetFetch } from "src/assets/js/consts"
 import { IUserState } from "src/interfaces"
 
 const initialUserState = {
@@ -6,31 +7,12 @@ const initialUserState = {
     phone: '',
     token: '',
     message: '',
-    auth: {
-        status: 'idle',
-        message: {en: '', ru: ''},
-        errors: []
-    },
+    auth: resetFetch,
     isAdmin: false,
-    sendOrder: {
-        status: 'idle',
-        message: {en: '', ru: ''},
-        errors: []
-    },
+    sendOrder: resetFetch,
     cart: {
-        load: {
-            status: 'idle',
-            message: {en: '', ru: ''},
-            errors: []
-        },
-        send: {
-            status: 'idle',
-            message: {
-                en: '',
-                ru: ''
-            },
-            errors: []
-        },
+        load: resetFetch,
+        send: resetFetch,
         items: [],
     }
     //orders: []

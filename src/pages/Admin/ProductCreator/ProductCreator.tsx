@@ -1,5 +1,5 @@
-import { IColorsState, IFiberParam, IFibersState, IFullState, IProsCons, ISendFiber, TLang, TLangText } from 'src/interfaces';
-import './fiber-creator.scss'
+import { ICatalogState, IColorsState, IFiberParam, IFibersState, IFullState, IProsCons, ISendFiber, TLang, TLangText } from 'src/interfaces';
+import './product-creator.scss'
 import { FC, Fragment, useRef, useMemo, useCallback } from "react";
 import { connect } from "react-redux";
 import { AnyAction, bindActionCreators } from "redux";
@@ -9,7 +9,6 @@ import Message, { IMessageFunctions } from 'src/components/Message/Message';
 import { useEffect, useState } from "react";
 import { allActions } from "../../../redux/actions/all";
 import AddFiles, { IAddFilesFunctions } from 'src/components/AddFiles/AddFiles';
-import Selector from 'src/components/tiny/Selector/Selector';
 import { fibersProperties } from 'src/assets/data/fibersProperties';
 import Preloader from 'src/components/Preloaders/Preloader';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -20,6 +19,7 @@ interface IPropsState {
     lang: TLang
     fibersState: IFibersState
     colorsState: IColorsState
+    catalogState: ICatalogState
 }
 
 
@@ -27,6 +27,7 @@ interface IPropsActions {
     setState: {
         fibers: typeof allActions.fibers
         colors: typeof allActions.colors
+        catalog: typeof allActions.catalog
     }
 }
 
@@ -34,35 +35,29 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 
-const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): JSX.Element => {
+const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState, colorsState}): JSX.Element => {
     
     const navigate = useNavigate()
-    const paramFiberId = useParams().fiberId || ''
+    const paramProductId = useParams().productId || ''
     const modal = useRef<IModalFunctions>(null)
-    const modal_missedId = useRef<IModalFunctions>(null)
     const message = useRef<IMessageFunctions>(null)
+    const modal_missedId = useRef<IModalFunctions>(null)
     const message_missedId = useRef<IMessageFunctions>(null)
-    const _addPro = useRef<HTMLButtonElement>(null)
-    const _addCon = useRef<HTMLButtonElement>(null)
+    const _addMod = useRef<HTMLButtonElement>(null)
     const _name_en = useRef<HTMLInputElement>(null)
     const _name_ru = useRef<HTMLInputElement>(null)
-    const _name_short_en = useRef<HTMLInputElement>(null)
-    const _name_short_ru = useRef<HTMLInputElement>(null)
+    const _price_en = useRef<HTMLInputElement>(null)
+    const _price_ru = useRef<HTMLInputElement>(null)
     const _text_en = useRef<HTMLTextAreaElement>(null)
     const _text_ru = useRef<HTMLTextAreaElement>(null)
     const _text_short_en = useRef<HTMLTextAreaElement>(null)
     const _text_short_ru = useRef<HTMLTextAreaElement>(null)
-    const addFilesBig = useRef<IAddFilesFunctions>(null)
-    const _pros = useRef<HTMLDivElement>(null)
-    const _cons = useRef<HTMLDivElement>(null)
-    const _spec = useRef<HTMLDivElement>(null)
+    const addFiles = useRef<IAddFilesFunctions>(null)
+    const _mods = useRef<HTMLDivElement>(null)
     const _descr = useRef<HTMLDivElement>(null)
-    const [selectedColors, setSelectedColors] = useState<{[key: string]: boolean}>({})
+    const [selectedFibers, setSelectedFibers] = useState<{[key: string]: boolean}>({})
     const [changeImages, setChangeImages] = useState<boolean>(true)
 
-    const data10 = useMemo(() => selector["10"], [])
-    const data5 = useMemo(() => selector["5"], [])
-    const data3 = useMemo(() => selector["3"], [])
     const errChecker = useMemo(() => errorsChecker({lang}), [lang])
 
 
@@ -163,7 +158,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
 
 
     const onColorClick = (id: string) => {
-        setSelectedColors(prev => ({...prev, [id]: !prev[id]}))
+        setSelectedFibers(prev => ({...prev, [id]: !prev[id]}))
     }
 
 
@@ -174,54 +169,40 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
 
     const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {        
         prevent(e)
-        if (!_name_en.current || !_name_ru.current || !_name_short_en.current || !_name_short_ru.current || !_text_en.current || 
-        !_text_ru.current || !_text_short_en.current || !_text_short_ru.current || !_spec.current || !_descr.current) return
+        if (!_name_en.current || !_name_ru.current || !_price_en.current || !_price_ru.current || !_text_en.current || 
+        !_text_ru.current || !_text_short_en.current || !_text_short_ru.current || !_descr.current) return
         
         //check DESCRIPTION
         errChecker.check(_name_en.current, 1, 30)
         errChecker.check(_name_ru.current, 1, 30)
-        errChecker.check(_name_short_en.current, 1, 10)
-        errChecker.check(_name_short_ru.current, 1, 10)
+        errChecker.check(_price_en.current, 1, 10)
+        errChecker.check(_price_ru.current, 1, 10)
         errChecker.check(_text_short_en.current, 10, 100)
         errChecker.check(_text_short_ru.current, 10, 100)
         errChecker.check(_text_en.current, 100, 8000)
         errChecker.check(_text_ru.current, 100, 8000)
 
-        const allSpec: {[key: string]: string} = {};
-        _spec.current.querySelectorAll('input, select').forEach(item => { //check specifications      
-            errChecker.check(item as HTMLInputElement | HTMLSelectElement, 1, 10)
-            allSpec[item.id] = (item as HTMLInputElement | HTMLSelectElement).value 
-        })
 
-
-        if (addFilesBig.current && addFilesBig.current.getFiles().length === 0 && changeImages) {//check images
+        if (addFiles.current && addFiles.current.getFiles().length === 0 && changeImages) {//check images
             errChecker.add(lang === 'en' ? 'Images missed' : 'Картинки отсутствуют')
         }
        
 
-        if (!Object.values(selectedColors).some(item => item)) { //at least 1 color must be selected
+        if (!Object.values(selectedFibers).some(item => item)) { //at least 1 color must be selected
             errChecker.add(lang === 'en' ? 'No color selected' : 'Цвет не выбран')
         }
         
 
         const proscons = {} as IProsCons
-        proscons.pros = Array.from(_pros.current?.querySelectorAll('input') || []) //convert array like [en1, ru1, en2, ru2] -> [{en: en1, ru: ru1}, {en: en2, ru: ru2}]
+        proscons.pros = Array.from(_mods.current?.querySelectorAll('input') || []) //convert array like [en1, ru1, en2, ru2] -> [{en: en1, ru: ru1}, {en: en2, ru: ru2}]
             .reduce<TLangText[]>((result, current, i) => {
                 i % 2 === 0 ? result.push({en: current.value, ru: ''}) : result[Math.floor(i/2)].ru = current.value
                 return result;
             }, [])
         
-        proscons.cons = Array.from(_cons.current?.querySelectorAll('input') || []) 
-            .reduce<TLangText[]>((result, current, i) => {
-                i % 2 === 0 ? result.push({en: current.value, ru: ''}) : result[Math.floor(i/2)].ru = current.value
-                return result;
-            }, [])
 
         if (proscons.pros.some(item => !item.en || !item.ru)) {//proscons error check
             errChecker.add(lang === 'en' ? 'Empty pro exists' : 'Есть незаполненный плюс')
-        }
-        if (proscons.cons.some(item => !item.en || !item.ru)) {
-            errChecker.add(lang === 'en' ? 'Empty con exists' : 'Есть незаполненный минус')
         }
 
        
@@ -234,21 +215,20 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
 
         //create new fiberToStore
         const newFiber: ISendFiber = {
-            _id: paramFiberId,
+            _id: paramProductId,
             name: {en: _name_en.current.value.trim(), ru: _name_ru.current.value.trim()},
             text: {en: _text_en.current.value.trim(), ru: _text_ru.current.value.trim()},
             short: {
-                name: {en: _name_short_en.current.value.trim(), ru: _name_short_ru.current.value.trim()},
+                //name: {en: _name_short_en.current.value.trim(), ru: _name_short_ru.current.value.trim()},
                 text: {en: _text_short_en.current.value.trim(), ru: _text_short_ru.current.value.trim()}
             },
-            params: (allSpec as unknown) as IFiberParam,
-            colors: Object.entries(selectedColors).filter(item => item[1]).map(item => item[0]),
-            files: addFilesBig.current?.getFiles() || [],
+            colors: Object.entries(selectedFibers).filter(item => item[1]).map(item => item[0]),
+            files: addFiles.current?.getFiles() || [],
             proscons
         }
 
         // to backend 
-        if (paramFiberId) {
+        if (paramProductId) {
             setState.fibers.editFiber(newFiber, changeImages)
         } else {
             setState.fibers.sendFiber(newFiber)
@@ -277,54 +257,38 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
             modal_missedId.current?.openModal('filling')
             return
         }
-        if (!_name_en.current || !_name_ru.current || !_name_short_en.current || !_name_short_ru.current || !_text_en.current || 
-            !_text_ru.current || !_text_short_en.current || !_text_short_ru.current || !_spec.current || !_descr.current || !_pros.current || !_cons.current) return
+        if (!_name_en.current || !_name_ru.current || !_price_en.current || !_price_ru.current || !_text_en.current || 
+            !_text_ru.current || !_text_short_en.current || !_text_short_ru.current || !_descr.current || !_mods.current) return
         //description
         _name_en.current.value = sourceFiber.name.en
         _name_ru.current.value = sourceFiber.name.ru
         _text_en.current.value = sourceFiber.text.en
         _text_ru.current.value = sourceFiber.text.ru
-        _name_short_en.current.value = sourceFiber.short.name.en
-        _name_short_ru.current.value = sourceFiber.short.name.ru
+        _price_en.current.value = sourceFiber.short.name.en
+        _price_ru.current.value = sourceFiber.short.name.ru
         _text_short_en.current.value = sourceFiber.short.text.en
         _text_short_ru.current.value = sourceFiber.short.text.ru
         //specifications
-        _spec.current.querySelectorAll('input, select').forEach(item => {
-            (item as HTMLInputElement | HTMLSelectElement).value = String(sourceFiber.params[item.id])
-        })
 
         //proscons
-        _pros.current.innerHTML = '' //clear to avoid duplicate while rerendering
-        _cons.current.innerHTML = ''
+        _mods.current.innerHTML = '' //clear to avoid duplicate while rerendering
         sourceFiber.proscons.pros.forEach(item => { //first stage - add all inputs
-            if (_addPro.current) {
-                _addPro.current.click()
-            }
-        })
-        sourceFiber.proscons.cons.forEach(item => {
-            if (_addCon.current) {
-                _addCon.current.click()
+            if (_addMod.current) {
+                _addMod.current.click()
             }
         })
 
-
-        const prosInputs = _pros.current.querySelectorAll('input') //second stage - fill all inputs 
+        const prosInputs = _mods.current.querySelectorAll('input') //second stage - fill all inputs 
         sourceFiber.proscons.pros.forEach((item, i) => {
             prosInputs[i * 2].value = item.en
             prosInputs[i * 2 + 1].value = item.ru
-        })
-
-        const consInputs = _cons.current.querySelectorAll('input')
-        sourceFiber.proscons.cons.forEach((item, i) => {
-            consInputs[i * 2].value = item.en
-            consInputs[i * 2 + 1].value = item.ru
         })
 
         //colors 
         const initialColors = sourceFiber.colors.reduce((acc, item) => {
             return {...acc, [item]: true}
         }, {} as {[key: string]: boolean})
-        setSelectedColors(initialColors)
+        setSelectedFibers(initialColors)
     }
 
 
@@ -336,12 +300,12 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
 
 
     useEffect(() => { //if edit
-        if (!paramFiberId || fibersState.load.status !== 'success') {
+        if (!paramProductId || fibersState.load.status !== 'success') {
             return setChangeImages(true)
         }
-        fillValues(paramFiberId)
+        fillValues(paramProductId)
         setChangeImages(false)
-    }, [fibersState.load.status, paramFiberId])
+    }, [fibersState.load.status, paramProductId])
 
 
 
@@ -351,46 +315,15 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
         }
     }, [])
 
-
-
-    const renderSpec = useMemo(() => {
-        return (
-            fibersProperties.map((item, i) => {
-                return (
-                    <Fragment key={item._id}>
-                        {item.type !== 'string' ? 
-                            <div className="input__wrapper no-info" key={item._id}>
-                                <Selector 
-                                    lang={lang} 
-                                    id={item._id} 
-                                    label={item.name}
-                                    defaultData={{value: '', name: {en: 'Select', ru: 'Выберете'}}}
-                                    saveValue={({id, e}:{e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>, id: string}) => errChecker.clearError(e.target)}
-                                    data={item.type === '10' ? data10 : item.type === '5' ? data5 : data3 }
-                                    dataset={item.name}
-                                    />
-                            </div>
-                        :
-                            <div className="input__wrapper no-info" key={item._id}>
-                                <label htmlFor={item._id}>{item.name[lang]}, ({item.unit[lang]}):</label>
-                                <input type="text" id={item._id} onChange={(e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => errChecker.clearError(e.target)} data-ru={item.name.ru} data-en={item.name.en}/>
-                            </div>
-                        }
-                    </Fragment>
-                )
-            })
-        )
-    }, [fibersProperties, lang])
-
     
-    const renderColors = useMemo(() => {
+    const renderFibers = useMemo(() => {
         return (
             colorsState.load.status === 'success' ? 
             <>
-                {colorsState.colors.map((color) => {
+                {/*colorsState.colors.map((color) => {
                     return (
                         <div className="color__container" key={color._id}>
-                            <div className={`image__container ${selectedColors[color._id] ? 'selected' : ''}`} onClick={() => onColorClick(color._id)}>
+                            <div className={`image__container ${selectedFibers[color._id] ? 'selected' : ''}`} onClick={() => onColorClick(color._id)}>
                                 <img src={color.url.small} alt={color.name[lang]} />
                             </div>
                             <span>{color.name[lang]}</span>
@@ -400,13 +333,13 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
                             </div>
                         </div>
                     )
-                })}
+                })*/}
             </>
         :
             <Preloader />
         
         )
-    }, [colorsState.load.status, colorsState.colors, lang, selectedColors])
+    }, [colorsState.load.status, colorsState.colors, lang, selectedFibers])
 
 
     const renderImages = useMemo(() => {
@@ -414,18 +347,18 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
             changeImages ? 
                 <>
                     <h2 className='section-header full-width'>{lang === 'en' ? 'IMAGES' : 'ИЗОБРАЖЕНИЯ'}</h2>           
-                    <AddFiles lang={lang} ref={addFilesBig} multiple={true} id='allImages'/>
-                    {paramFiberId && <button className='button_blue change-images' onClick={onChangeImages}>Do not change images</button>}
+                    <AddFiles lang={lang} ref={addFiles} multiple={true} id='allImages'/>
+                    {paramProductId && <button className='button_blue change-images' onClick={onChangeImages}>Do not change images</button>}
                 </>
             :
-                <>{paramFiberId && <button className='button_blue change-images' onClick={onChangeImages}>Change all images</button>}</>
+                <>{paramProductId && <button className='button_blue change-images' onClick={onChangeImages}>Change all images</button>}</>
             
         )
-    }, [changeImages, lang, paramFiberId])
+    }, [changeImages, lang, paramProductId])
 
 
     return (
-        <div className="page page_fiber-add">
+        <div className="page page_product-add">
             <div className="container_page">
                 <div className="container">
                     <h1>{lang === 'en' ? 'Add new fiber' : 'Добавление нового материала'}</h1>
@@ -447,12 +380,12 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
                                 </div>
                             </div>
                             <div className="input-block">
-                                <label htmlFor="name-short_en">{lang === 'en' ? 'Name short' : 'Назв. кратко'}:</label>
+                                <label htmlFor="price_en">{lang === 'en' ? 'Price' : 'Цена'}:</label>
                                 <div className="input__wrapper">
-                                    <input type="text" id="name-short_en" ref={_name_short_en} data-ru="Название кратко EN" data-en="Name short EN"  onChange={(e: React.ChangeEvent<HTMLInputElement>) => errChecker.clearError(e.target)} />
+                                    <input type="text" id="price_en" ref={_price_en} data-ru="Цена EN" data-en="Price EN"  onChange={(e: React.ChangeEvent<HTMLInputElement>) => errChecker.clearError(e.target)} />
                                 </div>
                                 <div className="input__wrapper">
-                                    <input type="text" id="name-short_ru" ref={_name_short_ru} data-ru="Название кратко RU" data-en="Name short RU" onChange={(e: React.ChangeEvent<HTMLInputElement>) => errChecker.clearError(e.target)} />
+                                    <input type="text" id="price_ru" ref={_price_ru} data-ru="Цена RU" data-en="Price RU" onChange={(e: React.ChangeEvent<HTMLInputElement>) => errChecker.clearError(e.target)} />
                                 </div>
                             </div>
                             <div className="input-block">
@@ -475,26 +408,17 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
                             </div>
                         </div>
 
-                        <h2 className='section-header full-width'>{lang === 'en' ? 'SPECIFICATIONS' : 'ПАРАМЕТРЫ'}</h2>           
-                        <div className="input-block multi" ref={_spec}>
-                            {renderSpec}
-                        </div>
 
-
-                        <h2 className='section-header full-width'>{lang === 'en' ? 'PROS' : 'ПЛЮСЫ'}</h2>           
-                        <div className="proscons pros" ref={_pros}></div>
-                        <button className='button_blue add' ref={_addPro} onClick={e => onAddProCon(e, _pros)}>{lang === 'en' ? '+' : '+'}</button>
-                        
-                        <h2 className='section-header full-width'>{lang === 'en' ? 'CONS' : 'МИНУСЫ'}</h2>           
-                        <div className="proscons cons" ref={_cons}></div>
-                        <button className='button_blue add' ref={_addCon} onClick={e => onAddProCon(e, _cons)}>{lang === 'en' ? '+' : '+'}</button>
+                        <h2 className='section-header full-width'>{lang === 'en' ? 'MODIFICATIONS' : 'МОДИФИКАЦИИ'}</h2>           
+                        <div className="proscons pros" ref={_mods}></div>
+                        <button className='button_blue add' ref={_addMod} onClick={e => onAddProCon(e, _mods)}>{lang === 'en' ? '+' : '+'}</button>
 
 
 
 
                         <h2 className='section-header full-width'>{lang === 'en' ? 'PICK COLORS' : 'ВЫБЕРЕТЕ ЦВЕТА'}</h2>           
                         <div className="colors-picker">
-                            {renderColors}
+                            {renderFibers}
                         </div>
 
 
@@ -504,7 +428,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
                             {fibersState.send.status === 'fetching' ? 
                                 <Preloader />
                             :
-                                <>{lang === 'en' ? paramFiberId ? 'Save fiber' : 'Post fiber' : paramFiberId ? "Сохранить материал" : "Отправить материал"}</>
+                                <>{lang === 'en' ? paramProductId ? 'Save fiber' : 'Post fiber' : paramProductId ? "Сохранить материал" : "Отправить материал"}</>
                             }
                         </button>
                     </form>
@@ -525,7 +449,8 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
 const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
     fibersState: state.fibers,
-    colorsState : state.colors
+    colorsState : state.colors,
+    catalogState: state.catalog
 })
 
 
@@ -533,9 +458,10 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>):IPropsActions => ({
     setState: {
 		fibers: bindActionCreators(allActions.fibers, dispatch),
 		colors: bindActionCreators(allActions.colors, dispatch),
+		catalog: bindActionCreators(allActions.catalog, dispatch),
 	}
 })
   
 
     
-export default connect(mapStateToProps, mapDispatchToProps)(FiberCreator)
+export default connect(mapStateToProps, mapDispatchToProps)(ProductCreator)

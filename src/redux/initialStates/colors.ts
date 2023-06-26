@@ -1,16 +1,9 @@
+import { resetFetch } from "src/assets/js/consts"
 import { IColorsState } from "src/interfaces"
 
 const initialColors = {
-    load: {
-        status: 'idle',
-        message: {en: '', ru: ''},
-        errors: []
-    },
-    send: {
-        status: 'idle',
-        message: {en: '', ru: ''},
-        errors: []
-    },
+    load: resetFetch,
+    send: resetFetch,
     colors: []
 } satisfies IColorsState
 

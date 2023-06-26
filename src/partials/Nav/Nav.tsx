@@ -173,6 +173,11 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
                                                     {lang === 'en' ? '~ CATALOG' : '~ КАТАЛОГ'}
                                                 </NavLink>
                                             </li>
+                                            <li>
+                                                <NavLink to='/admin/product-create' >
+                                                    {lang === 'en' ? '+ PRODUCT' : '+ ТОВАР'}
+                                                </NavLink>
+                                            </li>
                                         </>
                                     : 
                                         null

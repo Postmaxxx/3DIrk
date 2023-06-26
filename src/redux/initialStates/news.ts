@@ -1,27 +1,16 @@
+import { empty, resetFetch } from "src/assets/js/consts"
 import { INewsState } from "src/interfaces"
 
 const initialNews = {
-    load: {
-        status: 'idle',
-        message: {en: '', ru: ''},
-        errors: []
-    },
-    loadOne: {
-        status: 'idle',
-        message: {en: '', ru: ''},
-        errors: []
-    },
-    send: {
-        status: 'idle',
-        message: {en: '', ru: ''},
-        errors: []
-    },
+    load: resetFetch,
+    loadOne: resetFetch,
+    send: resetFetch,
     newsOne: {
         _id: '',
-        header: {en: '', ru: ''},
+        header: empty,
         date: new Date,
-        short: {en: '', ru: ''},
-        text: {en: '', ru: ''},
+        short: empty,
+        text: empty,
         images: []
     },
     total: 0,

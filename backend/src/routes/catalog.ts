@@ -61,8 +61,18 @@ router.put('/list',
         } catch (error) {
             return res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})
         }
+    }
+)
 
-})
+
+
+router.post('/create',
+    [authMW, 
+    isAdmin],
+    async (req, res) => {
+        
+    }
+)
 
 
 module.exports = router
