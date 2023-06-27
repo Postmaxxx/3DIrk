@@ -36,7 +36,7 @@ const Picker = forwardRef<IPickerFunctions, IProps>(({items, lang, onEditClick, 
             setSelectedItems(initialSelected)
         },
         getSelected() {
-            return Object.keys(selectedItems)
+            return Object.entries(selectedItems).filter(item => item[1]).map(item => item[0])
         },
     }));
 

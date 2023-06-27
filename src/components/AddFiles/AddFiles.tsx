@@ -77,9 +77,9 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, multiple, id}, r
         }
     }
 
-    const clearFiles = () => {
+    const clearFiles = useCallback(() => {
         setFiles([])
-    }
+    }, [])
 
 
     const previewFiles = (arrayOfFiles: File[]) => {

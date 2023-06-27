@@ -16,6 +16,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { headerStatus, resetFetch, selector, timeModalClosing } from 'src/assets/js/consts';
 import { errorsChecker, prevent } from 'src/assets/js/processors';
 import Picker, { IPickerFunctions } from 'src/components/Picker/Picker';
+import Featurer, { IFeaturerFunctions } from 'src/components/Featurer/Featurer';
 
 interface IPropsState {
     lang: TLang
@@ -44,8 +45,6 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
     const message = useRef<IMessageFunctions>(null)
     const message_missedId = useRef<IMessageFunctions>(null)
     const colorPicker = useRef<IPickerFunctions>(null)
-    const _addPro = useRef<HTMLButtonElement>(null)
-    const _addCon = useRef<HTMLButtonElement>(null)
     const _name_en = useRef<HTMLInputElement>(null)
     const _name_ru = useRef<HTMLInputElement>(null)
     const _name_short_en = useRef<HTMLInputElement>(null)
@@ -54,13 +53,14 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
     const _text_ru = useRef<HTMLTextAreaElement>(null)
     const _text_short_en = useRef<HTMLTextAreaElement>(null)
     const _text_short_ru = useRef<HTMLTextAreaElement>(null)
-    const addFilesBig = useRef<IAddFilesFunctions>(null)
+    const addFiles = useRef<IAddFilesFunctions>(null)
     const _pros = useRef<HTMLDivElement>(null)
     const _cons = useRef<HTMLDivElement>(null)
     const _spec = useRef<HTMLDivElement>(null)
     const _descr = useRef<HTMLDivElement>(null)
-    //const [selectedColors, setSelectedColors] = useState<{[key: string]: boolean}>({})
     const [changeImages, setChangeImages] = useState<boolean>(true)
+    const pros = useRef<IFeaturerFunctions>(null)
+    const cons = useRef<IFeaturerFunctions>(null)
 
     const data10 = useMemo(() => selector["10"], [])
     const data5 = useMemo(() => selector["5"], [])
@@ -88,7 +88,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
             }
             setState.colors.setSendColors(resetFetch)// clear fetch status
         }
-	}, [fibersState.send.status, colorsState.send.status])
+	}, [fibersState.send.status, colorsState.send.status, errChecker])
 
     
     const closeModalAndReturn = useCallback(() => {
@@ -97,7 +97,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
         errChecker.clear()     
         navigate('/fibers', { replace: true })
         window.location.reload()
-    },[])
+    },[errChecker])
 
 
     
@@ -126,53 +126,12 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
 
 
 
-    const onAddProCon = (e: React.MouseEvent<HTMLButtonElement>, _target: React.RefObject<HTMLElement>) => {
-        prevent(e)
-        const newProConBlock = document.createElement('div')
-        newProConBlock.classList.add('block_procon')
-        newProConBlock.classList.add('full-width')
-
-        const wrEn = document.createElement('div'); wrEn.classList.add('input__wrapper')
-        const labelUrlEn = document.createElement('label'); labelUrlEn.innerText = lang === 'en' ? 'Value EN' : 'Значение EN'
-        const inputEn = document.createElement('input'); inputEn.setAttribute('data-content','en')
-        wrEn.appendChild(labelUrlEn); wrEn.appendChild(inputEn)
-
-        const wrRu = document.createElement('div'); wrRu.classList.add('input__wrapper')
-        const labelUrlRu = document.createElement('label'); labelUrlRu.innerText = lang === 'en' ? 'Value RU' : 'Значение RU'
-        const inputEu = document.createElement('input'); inputEu.setAttribute('data-content','ru')
-        wrRu.appendChild(labelUrlRu); wrRu.appendChild(inputEu)
-        
-
-        const delBtn = document.createElement('button');
-        delBtn.innerHTML = 'X';
-        delBtn.classList.add('button_blue');
-        delBtn.classList.add('del');
-        delBtn.onclick = (e) => onDeleteProCon(e as unknown as React.MouseEvent<HTMLButtonElement, MouseEvent>)
-
-        newProConBlock.appendChild(wrEn)
-        newProConBlock.appendChild(wrRu)
-        newProConBlock.appendChild(delBtn)
-        if (!_target.current) return
-        _target.current.appendChild(newProConBlock)
-    }
-
-
-    const onDeleteProCon = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        prevent(e)
-        const parent = e.currentTarget?.parentNode as HTMLElement
-        parent.remove();
-    }
-
-
-
-
-
-    
 
     const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {        
         prevent(e)
         if (!_name_en.current || !_name_ru.current || !_name_short_en.current || !_name_short_ru.current || !_text_en.current || 
-        !_text_ru.current || !_text_short_en.current || !_text_short_ru.current || !_spec.current || !_descr.current || !colorPicker.current) return
+        !_text_ru.current || !_text_short_en.current || !_text_short_ru.current || !_spec.current || !_descr.current || 
+        !colorPicker.current || !pros.current || !cons.current) return
         
         //check DESCRIPTION
         errChecker.check(_name_en.current, 1, 30)
@@ -191,37 +150,26 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
         })
 
 
-        if (addFilesBig.current && addFilesBig.current.getFiles().length === 0 && changeImages) {//check images
+        if (addFiles.current && addFiles.current.getFiles().length === 0 && changeImages) {//check images
             errChecker.add(lang === 'en' ? 'Images missed' : 'Картинки отсутствуют')
         }
-       
+
+
+        
 
         if (colorPicker.current.getSelected().length === 0) { //at least 1 color must be selected
             errChecker.add(lang === 'en' ? 'No color selected' : 'Цвет не выбран')
         }
         
 
-        const proscons = {} as IProsCons
-        proscons.pros = Array.from(_pros.current?.querySelectorAll('input') || []) //convert array like [en1, ru1, en2, ru2] -> [{en: en1, ru: ru1}, {en: en2, ru: ru2}]
-            .reduce<TLangText[]>((result, current, i) => {
-                i % 2 === 0 ? result.push({en: current.value, ru: ''}) : result[Math.floor(i/2)].ru = current.value
-                return result;
-            }, [])
-        
-        proscons.cons = Array.from(_cons.current?.querySelectorAll('input') || []) 
-            .reduce<TLangText[]>((result, current, i) => {
-                i % 2 === 0 ? result.push({en: current.value, ru: ''}) : result[Math.floor(i/2)].ru = current.value
-                return result;
-            }, [])
-
-        if (proscons.pros.some(item => !item.en || !item.ru)) {//proscons error check
-            errChecker.add(lang === 'en' ? 'Empty pro exists' : 'Есть незаполненный плюс')
-        }
-        if (proscons.cons.some(item => !item.en || !item.ru)) {
-            errChecker.add(lang === 'en' ? 'Empty con exists' : 'Есть незаполненный минус')
-        }
-
+        _pros.current?.querySelectorAll('input').forEach(item => {           
+            errChecker.check(item, 2, 100)
+        })
        
+        _cons.current?.querySelectorAll('input').forEach(item => {           
+            errChecker.check(item, 2, 100)
+        })
+
         if (errChecker.amount() > 0) {
             message.current?.update(errChecker.result())
             modal.current?.openModal('submit')
@@ -240,8 +188,11 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
             },
             params: (allSpec as unknown) as IFiberParam,
             colors: colorPicker.current.getSelected(),
-            files: addFilesBig.current?.getFiles() || [],
-            proscons
+            files: addFiles.current?.getFiles() || [],
+            proscons : {
+                pros: pros.current.getFeatures().map(item => ({en: item.name.en, ru: item.name.ru})),
+                cons: cons.current.getFeatures().map(item => ({en: item.name.en, ru: item.name.ru}))
+            }
         }
 
         // to backend 
@@ -276,7 +227,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
             return
         }
         if (!_name_en.current || !_name_ru.current || !_name_short_en.current || !_name_short_ru.current || !_text_en.current || 
-            !_text_ru.current || !_text_short_en.current || !_text_short_ru.current || !_spec.current || !_descr.current || !_pros.current || !_cons.current) return
+            !_text_ru.current || !_text_short_en.current || !_text_short_ru.current || !_spec.current || !pros.current || !cons.current) return
         //description
         _name_en.current.value = sourceFiber.name.en
         _name_ru.current.value = sourceFiber.name.ru
@@ -292,34 +243,37 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
         })
 
         //proscons
-        _pros.current.innerHTML = '' //clear to avoid duplicate while rerendering
-        _cons.current.innerHTML = ''
-        sourceFiber.proscons.pros.forEach(item => { //first stage - add all inputs
-            if (_addPro.current) {
-                _addPro.current.click()
-            }
-        })
-        sourceFiber.proscons.cons.forEach(item => {
-            if (_addCon.current) {
-                _addCon.current.click()
-            }
-        })
-
-
-        const prosInputs = _pros.current.querySelectorAll('input') //second stage - fill all inputs 
-        sourceFiber.proscons.pros.forEach((item, i) => {
-            prosInputs[i * 2].value = item.en
-            prosInputs[i * 2 + 1].value = item.ru
-        })
-
-        const consInputs = _cons.current.querySelectorAll('input')
-        sourceFiber.proscons.cons.forEach((item, i) => {
-            consInputs[i * 2].value = item.en
-            consInputs[i * 2 + 1].value = item.ru
-        })
+        pros.current.setFeatures(sourceFiber.proscons.pros.map(item => ({name: item, _id: ''})))
+        cons.current.setFeatures(sourceFiber.proscons.cons.map(item => ({name: item, _id: ''})))
 
         //colors 
         colorPicker.current?.setSelected(sourceFiber.colors)
+    }
+
+
+    const fillBlank = () => {
+        if (!_name_en.current || !_name_ru.current || !_name_short_en.current || !_name_short_ru.current || !_text_en.current || 
+            !_text_ru.current || !_text_short_en.current || !_text_short_ru.current || !_spec.current ||
+            !pros.current || !cons.current) return
+        //description
+        _name_en.current.value = ''
+        _name_ru.current.value = ''
+        _text_en.current.value = ''
+        _text_ru.current.value = ''
+        _name_short_en.current.value = ''
+        _name_short_ru.current.value = ''
+        _text_short_en.current.value = ''
+        _text_short_ru.current.value = ''
+        //specifications
+        _spec.current.querySelectorAll('input, select').forEach(item => {
+            (item as HTMLInputElement | HTMLSelectElement).value = ''
+        })
+        //proscons
+        pros.current.setFeatures([])
+        cons.current.setFeatures([])
+
+        //colors 
+        colorPicker.current?.setSelected([])
     }
 
 
@@ -333,20 +287,23 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
 
 
     useEffect(() => { //if edit
-        if (!paramFiberId || fibersState.load.status !== 'success') {
-            return setChangeImages(true)
-        }
-        fillValues(paramFiberId)
-        setChangeImages(false)
-    }, [fibersState.load.status, paramFiberId])
-
-
-
-    useEffect(() => {
         if (colorsState.load.status !== 'success' && colorsState.load.status !== 'fetching') {
             setState.colors.loadColors()
+            return
         }
-    }, [])
+        if (fibersState.load.status !== 'success' || colorsState.load.status !== 'success') return
+       
+        if (paramFiberId) {
+            fillValues(paramFiberId)
+            setChangeImages(false)
+        } else {
+            fillBlank()
+            setChangeImages(true)
+        }
+
+    }, [fibersState.load.status, colorsState.load.status, paramFiberId])
+
+
 
 
 
@@ -388,7 +345,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
             changeImages ? 
                 <>
                     <h2 className='section-header full-width'>{lang === 'en' ? 'IMAGES' : 'ИЗОБРАЖЕНИЯ'}</h2>           
-                    <AddFiles lang={lang} ref={addFilesBig} multiple={true} id='allImages'/>
+                    <AddFiles lang={lang} ref={addFiles} multiple={true} id='allImages'/>
                     {paramFiberId && <button className='button_blue change-images' onClick={onChangeImages}>Do not change images</button>}
                 </>
             :
@@ -396,6 +353,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
             
         )
     }, [changeImages, lang, paramFiberId])
+    
 
 
     return (
@@ -454,17 +412,15 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
                             {renderSpec}
                         </div>
 
-
                         <h2 className='section-header full-width'>{lang === 'en' ? 'PROS' : 'ПЛЮСЫ'}</h2>           
-                        <div className="proscons pros" ref={_pros}></div>
-                        <button className='button_blue add' ref={_addPro} onClick={e => onAddProCon(e, _pros)}>{lang === 'en' ? '+' : '+'}</button>
-                        
-                        <h2 className='section-header full-width'>{lang === 'en' ? 'CONS' : 'МИНУСЫ'}</h2>           
-                        <div className="proscons cons" ref={_cons}></div>
-                        <button className='button_blue add' ref={_addCon} onClick={e => onAddProCon(e, _cons)}>{lang === 'en' ? '+' : '+'}</button>
+                        <div className="proscons pros" ref={_pros}>
+                            <Featurer lang={lang} ref={pros}/>
+                        </div>
 
-
-
+                        <h2 className='section-header full-width'>{lang === 'en' ? 'CONS' : 'МИНУСЫ'}</h2>                   
+                        <div className="proscons cons" ref={_cons}>
+                            <Featurer lang={lang} ref={cons}/>
+                        </div>
 
                         <h2 className='section-header full-width'>{lang === 'en' ? 'PICK COLORS' : 'ВЫБЕРЕТЕ ЦВЕТА'}</h2>           
                         <div className="colors-picker">

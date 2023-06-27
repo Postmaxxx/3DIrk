@@ -15,6 +15,7 @@ import { headerStatus, resetFetch, timeModalClosing } from 'src/assets/js/consts
 import { errorsChecker, prevent } from 'src/assets/js/processors';
 import Picker, { IPickerFunctions } from 'src/components/Picker/Picker';
 import Featurer from 'src/components/Featurer/Featurer';
+import Selector from 'src/components/tiny/Selector/Selector';
 
 interface IPropsState {
     lang: TLang
@@ -74,7 +75,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState, 
             }
             setState.fibers.setSendFibers(resetFetch)// clear fetch status
         }
-	}, [fibersState.send.status])
+	}, [fibersState.send.status, errChecker])
 
     
     const closeModalAndReturn = useCallback(() => {
@@ -83,7 +84,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState, 
         errChecker.clear()     
         navigate('/catalog', { replace: true })
         window.location.reload()
-    },[])
+    },[errChecker])
 
 
     
@@ -177,9 +178,6 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState, 
 
 
 
-
-
-
     const onDeleteFiber = (_id: string) => {
         setState.fibers.deleteFiber(_id)
     }
@@ -246,6 +244,9 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState, 
         if (colorsState.load.status !== 'success' && colorsState.load.status !== 'fetching') {
             setState.colors.loadColors()
         }
+        if (catalogState.catalog.load.status !== 'success' && catalogState.catalog.load.status !== 'fetching') {
+            setState.catalog.loadCatalog()
+        }
     }, [])
 
     
@@ -311,43 +312,51 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState, 
                             <div className="input-block">
                                 <label htmlFor="namer_en">{lang === 'en' ? 'Name' : 'Название'}:</label>
                                 <div className="input__wrapper">
-                                    <input type="text" id="name_en" ref={_name_en} onChange={onChangeInputs} value={product.name.en}/>
+                                    <input type="text" id="name_en" ref={_name_en}  data-ru="Название EN" data-en="Name EN"onChange={onChangeInputs} value={product.name.en}/>
                                 </div>
                                 <div className="input__wrapper">
-                                    <input type="text" id="name_ru" ref={_name_ru} onChange={onChangeInputs} value={product.name.ru} />
+                                    <input type="text" id="name_ru" ref={_name_ru} data-ru="Название RU" data-en="Name RU" onChange={onChangeInputs} value={product.name.ru} />
                                 </div>
                             </div>
                             <div className="input-block">
                                 <label htmlFor="price_en">{lang === 'en' ? 'Price' : 'Цена'}:</label>
                                 <div className="input__wrapper">
-                                    <input type="text" id="price_en" ref={_price_en} onChange={onChangeInputs} value={product.price.en} />
+                                    <input type="text" id="price_en" ref={_price_en} data-ru="Прайс EN" data-en="Price EN" onChange={onChangeInputs} value={product.price.en} />
                                 </div>
                                 <div className="input__wrapper">
-                                    <input type="text" id="price_ru" ref={_price_ru} onChange={onChangeInputs} value={product.price.ru} />
+                                    <input type="text" id="price_ru" ref={_price_ru}  data-ru="Прайс RU" data-en="Price RU"onChange={onChangeInputs} value={product.price.ru} />
                                 </div>
                             </div>
                             <div className="input-block">
                                 <label htmlFor="text_en">{lang === 'en' ? 'Text' : 'Текст'}:</label>
                                 <div className="input__wrapper">
-                                    <textarea id="text_en" ref={_text_en} onChange={onChangeInputs} value={product.text.en} />
+                                    <textarea id="text_en" ref={_text_en} data-ru="Текст EN" data-en="Text EN"  onChange={onChangeInputs} value={product.text.en} />
                                 </div>
                                 <div className="input__wrapper">
-                                    <textarea id="text_ru" ref={_text_ru} onChange={onChangeInputs} value={product.text.ru} />
+                                    <textarea id="text_ru" ref={_text_ru} data-ru="Текст RU" data-en="Text RU"  onChange={onChangeInputs} value={product.text.ru} />
                                 </div>
                             </div>
                             <div className="input-block">
                                 <label htmlFor="text-short_en">{lang === 'en' ? 'Text short' : 'Текст кратко'}:</label>
                                 <div className="input__wrapper">
-                                    <textarea id="text_short_en" ref={_text_short_en} onChange={onChangeInputs} value={product.text_short.en} />
+                                    <textarea id="text_short_en" ref={_text_short_en} data-ru="Текст кратко EN" data-en="Text short EN"onChange={onChangeInputs} value={product.text_short.en} />
                                 </div>
                                 <div className="input__wrapper">
-                                    <textarea id="text_short_ru" ref={_text_short_ru} onChange={onChangeInputs} value={product.text_short.ru} />
+                                    <textarea id="text_short_ru" ref={_text_short_ru} data-ru="Текст кратко RU" data-en="Text short RU" onChange={onChangeInputs} value={product.text_short.ru} />
                                 </div>
                             </div>
                             <div className="input-block">
                                 <label htmlFor="text-short_en">{lang === 'en' ? 'Category' : 'Категория'}:</label>
                                 <div className="input__wrapper">
-                                    <textarea id="text_short_en" ref={_text_short_en} onChange={onChangeInputs} value={product.text_short.en} />
+                                <Selector 
+                                    lang={lang} 
+                                    id='selector_category' 
+                                    label={{en:'', ru: ''}}
+                                    defaultData={{value: '', name: {en: 'Select', ru: 'Выберете'}}}
+                                    saveValue={({id, e}:{e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>, id: string}) => errChecker.clearError(e.target)}
+                                    data={catalogState.catalog.list.map(item => ({value: item._id, name: item.name}))}
+                                    dataset={{en: 'Category selector', ru: 'Выбор категории'}}
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -355,7 +364,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState, 
 
                         <h2 className='section-header full-width'>{lang === 'en' ? 'MODIFICATIONS' : 'МОДИФИКАЦИИ'}</h2>           
                         <div className="mods">
-                            <Featurer lang={lang} items={[]}/>
+                            <Featurer lang={lang} />
                         </div>
 
 

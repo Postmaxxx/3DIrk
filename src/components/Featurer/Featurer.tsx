@@ -12,19 +12,18 @@ interface IItem {
 
 
 interface IProps {
-    items: IItem[]
     lang: TLang
 }
 
 
-export interface IPickerFunctions {
+export interface IFeaturerFunctions {
     setFeatures: (items: IItem[]) => void;
     getFeatures: () => IItem[];
 }
 
 
 
-const Featurer = forwardRef<IPickerFunctions, IProps>(({items, lang}, ref) => {
+const Featurer = forwardRef<IFeaturerFunctions, IProps>(({lang}, ref) => {
     useImperativeHandle(ref, () => ({
         setFeatures(items) {
             setFeatures(items)
@@ -37,6 +36,7 @@ const Featurer = forwardRef<IPickerFunctions, IProps>(({items, lang}, ref) => {
     const [features, setFeatures] = useState<{_id: string, name: {en: string, ru: string}}[]>([])
 
     const onEditFeature = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+        e.target.parentElement?.classList.remove('error')
         setFeatures(prev => {
             const newFeatures = [...prev];
             newFeatures[index].name[e.target.name as TLang] = e.target.value
@@ -73,7 +73,7 @@ const Featurer = forwardRef<IPickerFunctions, IProps>(({items, lang}, ref) => {
                                 <input name="en" type="text" onChange={(e) => onEditFeature(e, i)} value={item.name.en} />
                             </div>
                             <div className="input__wrapper">
-                                <label>{lang === 'en' ? 'Value EN' : 'Значение EN'}</label>
+                                <label>{lang === 'en' ? 'Value RU' : 'Значение RU'}</label>
                                 <input name="ru" type="text" onChange={(e) => onEditFeature(e, i)} value={item.name.ru}/>
                             </div>
                             <button className="button_blue del" onClick={(e) => {onDeleteFeature(e, i)}}>X</button>

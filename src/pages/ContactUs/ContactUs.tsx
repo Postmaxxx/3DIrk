@@ -51,7 +51,7 @@ const ContactUs:React.FC<IProps> = ({lang, userState, setState}): JSX.Element =>
         }
         errChecker.clear()
         setState.user.setSendOrder(resetFetch)
-	}, [userState.sendOrder.status])
+	}, [userState.sendOrder.status, errChecker])
 
 
 

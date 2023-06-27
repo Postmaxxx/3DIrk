@@ -37,6 +37,7 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
     const modal_message = useRef<IModalFunctions>(null)
     const message = useRef<IMessageFunctions>(null)
     const addFiles = useRef<IAddFilesFunctions>(null)
+    const errChecker = useMemo(() => errorsChecker({lang}), [lang])
 
 
     const closeModalMessage = useCallback(() => {
@@ -50,10 +51,9 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
         }
         setState.user.setSendOrder(resetFetch)
         errChecker.clear()
-	}, [sendOrder.status])
+	}, [sendOrder.status, errChecker])
 
 
-    const errChecker = useMemo(() => errorsChecker({lang}), [lang])
 
 
     const informer = (info: TLangText): void => {

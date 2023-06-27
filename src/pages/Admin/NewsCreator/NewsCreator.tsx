@@ -47,6 +47,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, setState}): JSX.Element =
     const _text_ru = useRef<HTMLTextAreaElement>(null)
     const _date = useRef<HTMLInputElement>(null)
 
+    const errChecker = useMemo(() => errorsChecker({lang}), [lang])
 
     const onChangeImages = (e: React.MouseEvent<HTMLElement>) => {
         prevent(e)
@@ -69,7 +70,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, setState}): JSX.Element =
         if (paramNewsId) {
             navigate('/admin/news-create', { replace: true });
         }
-	}, [send.status, paramNewsId])
+	}, [send.status, paramNewsId, errChecker])
 
 
     useEffect(() => {
@@ -100,7 +101,6 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, setState}): JSX.Element =
 
     
 
-    const errChecker = useMemo(() => errorsChecker({lang}), [lang])
 
     const onChangeText = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         errChecker.clearError(e.target) 
