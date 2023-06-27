@@ -12,6 +12,7 @@ import Preloader from 'src/components/Preloaders/Preloader';
 import { headerStatus, resetFetch, timeModalClosing } from 'src/assets/js/consts';
 import { errorsChecker, prevent } from 'src/assets/js/processors';
 import Delete from 'src/components/Delete/Delete';
+import Featurer from 'src/components/Featurer/Featurer';
 
 
 interface IOnAddCategory {
@@ -271,6 +272,11 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, catalogState}): JSX.Elem
                                 })}>
                                 {lang === 'en' ? '+' : '+'}
                             </button>
+
+                            <div className="catalog" ref={_catalog}>
+                                <Featurer lang={lang} items={[]}/>
+                            </div>
+
 
 
                         <button className='button_blue post' disabled={catalogState.send.status === 'fetching'} onClick={e => onSubmit(e)}>

@@ -220,17 +220,25 @@ export interface IFibersState {
 
 
 //============================================== category state
+export interface ISendProduct extends Omit<IProduct, 'images'> {
+    files: File[]
+}
+
+
 export interface IProduct {
     _id: TId
     price: TLangText
     name: TLangText
     text: TLangText
     text_short: TLangText
-    imgs: IImgWithThumb[]
+    images?: IImgWithThumb[]
     fibers: TId[] //array of fiber ids
     //features: IFeature[]
     mods: TLangText[]
+    files?: File[]
+    category: TId
 }
+
 
 export interface IProductShort { //for gallery
     _id: TId

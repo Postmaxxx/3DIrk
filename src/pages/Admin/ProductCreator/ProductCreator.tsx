@@ -1,4 +1,4 @@
-import { ICatalogState, IColorsState, IFiberParam, IFibersState, IFullState, IProsCons, ISendFiber, TLang, TLangText } from 'src/interfaces';
+import { ICatalogState, IColorsState, IFibersState, IFullState, IProduct, IProsCons, TLang, TLangText } from 'src/interfaces';
 import './product-creator.scss'
 import { FC, Fragment, useRef, useMemo, useCallback } from "react";
 import { connect } from "react-redux";
@@ -9,17 +9,19 @@ import Message, { IMessageFunctions } from 'src/components/Message/Message';
 import { useEffect, useState } from "react";
 import { allActions } from "../../../redux/actions/all";
 import AddFiles, { IAddFilesFunctions } from 'src/components/AddFiles/AddFiles';
-import { fibersProperties } from 'src/assets/data/fibersProperties';
 import Preloader from 'src/components/Preloaders/Preloader';
 import { useNavigate, useParams } from 'react-router-dom';
-import { headerStatus, resetFetch, selector, timeModalClosing } from 'src/assets/js/consts';
+import { headerStatus, resetFetch, timeModalClosing } from 'src/assets/js/consts';
 import { errorsChecker, prevent } from 'src/assets/js/processors';
+import Picker, { IPickerFunctions } from 'src/components/Picker/Picker';
+import Featurer from 'src/components/Featurer/Featurer';
 
 interface IPropsState {
     lang: TLang
     fibersState: IFibersState
     colorsState: IColorsState
     catalogState: ICatalogState
+    product: IProduct
 }
 
 
@@ -35,7 +37,7 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 
-const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState, colorsState}): JSX.Element => {
+const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState, colorsState, product}): JSX.Element => {
     
     const navigate = useNavigate()
     const paramProductId = useParams().productId || ''
@@ -43,7 +45,10 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState, 
     const message = useRef<IMessageFunctions>(null)
     const modal_missedId = useRef<IModalFunctions>(null)
     const message_missedId = useRef<IMessageFunctions>(null)
-    const _addMod = useRef<HTMLButtonElement>(null)
+    const fiberPicker = useRef<IPickerFunctions>(null)
+    const addFiles = useRef<IAddFilesFunctions>(null)
+    const _descr = useRef<HTMLDivElement>(null)
+    const [changeImages, setChangeImages] = useState<boolean>(true)
     const _name_en = useRef<HTMLInputElement>(null)
     const _name_ru = useRef<HTMLInputElement>(null)
     const _price_en = useRef<HTMLInputElement>(null)
@@ -52,11 +57,6 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState, 
     const _text_ru = useRef<HTMLTextAreaElement>(null)
     const _text_short_en = useRef<HTMLTextAreaElement>(null)
     const _text_short_ru = useRef<HTMLTextAreaElement>(null)
-    const addFiles = useRef<IAddFilesFunctions>(null)
-    const _mods = useRef<HTMLDivElement>(null)
-    const _descr = useRef<HTMLDivElement>(null)
-    const [selectedFibers, setSelectedFibers] = useState<{[key: string]: boolean}>({})
-    const [changeImages, setChangeImages] = useState<boolean>(true)
 
     const errChecker = useMemo(() => errorsChecker({lang}), [lang])
 
@@ -74,21 +74,14 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState, 
             }
             setState.fibers.setSendFibers(resetFetch)// clear fetch status
         }
-
-        if (modal.current?.getOwner() === 'color') {
-            if (colorsState.send.status === 'success') {
-                setState.colors.loadColors()
-            }
-            setState.colors.setSendColors(resetFetch)// clear fetch status
-        }
-	}, [fibersState.send.status, colorsState.send.status])
+	}, [fibersState.send.status])
 
     
     const closeModalAndReturn = useCallback(() => {
         modal_missedId.current?.closeModal()
         setTimeout(() => message_missedId.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal 
         errChecker.clear()     
-        navigate('/fibers', { replace: true })
+        navigate('/catalog', { replace: true })
         window.location.reload()
     },[])
 
@@ -106,72 +99,13 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState, 
     }, [fibersState.send.status])
 
 
-    useEffect(() => {
-        if (colorsState.send.status === 'idle' || colorsState.send.status === 'fetching')  return
-        const errors: string[] = colorsState.send.errors?.map(e => e[lang]) || []
-        message.current?.update({
-            header: headerStatus[colorsState.send.status][lang],
-            status: colorsState.send.status,
-            text: [colorsState.send.message[lang], ...errors]
-        })
-        modal.current?.openModal('color')
-    }, [colorsState.send.status])
 
-
-
-    const onAddProCon = (e: React.MouseEvent<HTMLButtonElement>, _target: React.RefObject<HTMLElement>) => {
-        prevent(e)
-        const newProConBlock = document.createElement('div')
-        newProConBlock.classList.add('block_procon')
-        newProConBlock.classList.add('full-width')
-
-        const wrEn = document.createElement('div'); wrEn.classList.add('input__wrapper')
-        const labelUrlEn = document.createElement('label'); labelUrlEn.innerText = lang === 'en' ? 'Value EN' : 'Значение EN'
-        const inputEn = document.createElement('input'); inputEn.setAttribute('data-content','en')
-        wrEn.appendChild(labelUrlEn); wrEn.appendChild(inputEn)
-
-        const wrRu = document.createElement('div'); wrRu.classList.add('input__wrapper')
-        const labelUrlRu = document.createElement('label'); labelUrlRu.innerText = lang === 'en' ? 'Value RU' : 'Значение RU'
-        const inputEu = document.createElement('input'); inputEu.setAttribute('data-content','ru')
-        wrRu.appendChild(labelUrlRu); wrRu.appendChild(inputEu)
-        
-
-        const delBtn = document.createElement('button');
-        delBtn.innerHTML = 'X';
-        delBtn.classList.add('button_blue');
-        delBtn.classList.add('del');
-        delBtn.onclick = (e) => onDeleteProCon(e as unknown as React.MouseEvent<HTMLButtonElement, MouseEvent>)
-
-        newProConBlock.appendChild(wrEn)
-        newProConBlock.appendChild(wrRu)
-        newProConBlock.appendChild(delBtn)
-        if (!_target.current) return
-        _target.current.appendChild(newProConBlock)
-    }
-
-
-    const onDeleteProCon = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        prevent(e)
-        const parent = e.currentTarget?.parentNode as HTMLElement
-        parent.remove();
-    }
-
-
-    const onColorClick = (id: string) => {
-        setSelectedFibers(prev => ({...prev, [id]: !prev[id]}))
-    }
-
-
-
-
-
-    
 
     const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {        
         prevent(e)
         if (!_name_en.current || !_name_ru.current || !_price_en.current || !_price_ru.current || !_text_en.current || 
-        !_text_ru.current || !_text_short_en.current || !_text_short_ru.current || !_descr.current) return
-        
+            !_text_ru.current || !_text_short_en.current || !_text_short_ru.current || !_descr.current || !fiberPicker.current) return
+           
         //check DESCRIPTION
         errChecker.check(_name_en.current, 1, 30)
         errChecker.check(_name_ru.current, 1, 30)
@@ -183,28 +117,34 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState, 
         errChecker.check(_text_ru.current, 100, 8000)
 
 
-        if (addFiles.current && addFiles.current.getFiles().length === 0 && changeImages) {//check images
-            errChecker.add(lang === 'en' ? 'Images missed' : 'Картинки отсутствуют')
+        if (addFiles.current){
+            if (addFiles.current.getFiles().length === 0) {//at least 1 image must be added
+                errChecker.add(lang === 'en' ? 'Images missed' : 'Картинки отсутствуют')
+            } else {
+                setState.catalog.setProduct({...product, files: addFiles.current.getFiles()})
+            }
         }
+
        
-
-        if (!Object.values(selectedFibers).some(item => item)) { //at least 1 color must be selected
-            errChecker.add(lang === 'en' ? 'No color selected' : 'Цвет не выбран')
+        if (fiberPicker.current.getSelected().length === 0) { //at least 1 fiber must be selected
+            errChecker.add(lang === 'en' ? 'No fiber selected' : 'Материал не выбран')
+        } else {
+            setState.catalog.setProduct({...product, fibers: fiberPicker.current.getSelected()})
         }
-        
 
-        const proscons = {} as IProsCons
-        proscons.pros = Array.from(_mods.current?.querySelectorAll('input') || []) //convert array like [en1, ru1, en2, ru2] -> [{en: en1, ru: ru1}, {en: en2, ru: ru2}]
+        
+        /*const features = {} as IProsCons
+        features.pros = Array.from(_mods.current?.querySelectorAll('input') || []) //convert array like [en1, ru1, en2, ru2] -> [{en: en1, ru: ru1}, {en: en2, ru: ru2}]
             .reduce<TLangText[]>((result, current, i) => {
                 i % 2 === 0 ? result.push({en: current.value, ru: ''}) : result[Math.floor(i/2)].ru = current.value
                 return result;
             }, [])
-        
-
-        if (proscons.pros.some(item => !item.en || !item.ru)) {//proscons error check
+        if (features.pros.some(item => !item.en || !item.ru)) {//proscons error check
             errChecker.add(lang === 'en' ? 'Empty pro exists' : 'Есть незаполненный плюс')
-        }
+        }*/
 
+
+        
        
         if (errChecker.amount() > 0) {
             message.current?.update(errChecker.result())
@@ -214,7 +154,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState, 
 
 
         //create new fiberToStore
-        const newFiber: ISendFiber = {
+        /*const newFiber: ISendFiber = {
             _id: paramProductId,
             name: {en: _name_en.current.value.trim(), ru: _name_ru.current.value.trim()},
             text: {en: _text_en.current.value.trim(), ru: _text_ru.current.value.trim()},
@@ -232,43 +172,35 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState, 
             setState.fibers.editFiber(newFiber, changeImages)
         } else {
             setState.fibers.sendFiber(newFiber)
-        }        
+        } */
     }
 
 
-    const onDeleteColor = (e: React.MouseEvent<HTMLButtonElement>, _id: string) => {
-        prevent(e)
-        setState.colors.deleteColor(_id)
+
+
+
+
+    const onDeleteFiber = (_id: string) => {
+        setState.fibers.deleteFiber(_id)
     }
 
-    const onEditColor = (e: React.MouseEvent<HTMLButtonElement>, _id: string) => {
-        prevent(e)
-        navigate(`/admin/color-create/${_id}`)
+    const onEditFiber = (_id: string) => {
+        navigate(`/admin/fiber-create/${_id}`)
     }
-
 
 
 
 
     const fillValues = (_id : string) => {      
-        const sourceFiber = fibersState.fibersList.find(item => item._id === _id)
+       /* const sourceFiber = fibersState.fibersList.find(item => item._id === _id)
         if (!sourceFiber) {
             message_missedId.current?.update({header: lang === 'en' ? 'Error' : 'Ошибка', status: 'error', text: lang === 'en' ? ['Editing fiber was not found, switching to creating new fiber'] : ['Материал для редактирования не найден, переход к созданию нового материала']})
             modal_missedId.current?.openModal('filling')
             return
         }
-        if (!_name_en.current || !_name_ru.current || !_price_en.current || !_price_ru.current || !_text_en.current || 
-            !_text_ru.current || !_text_short_en.current || !_text_short_ru.current || !_descr.current || !_mods.current) return
-        //description
-        _name_en.current.value = sourceFiber.name.en
-        _name_ru.current.value = sourceFiber.name.ru
-        _text_en.current.value = sourceFiber.text.en
-        _text_ru.current.value = sourceFiber.text.ru
-        _price_en.current.value = sourceFiber.short.name.en
-        _price_ru.current.value = sourceFiber.short.name.ru
-        _text_short_en.current.value = sourceFiber.short.text.en
-        _text_short_ru.current.value = sourceFiber.short.text.ru
-        //specifications
+
+        
+
 
         //proscons
         _mods.current.innerHTML = '' //clear to avoid duplicate while rerendering
@@ -285,11 +217,12 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState, 
         })
 
         //colors 
-        const initialColors = sourceFiber.colors.reduce((acc, item) => {
-            return {...acc, [item]: true}
-        }, {} as {[key: string]: boolean})
-        setSelectedFibers(initialColors)
+        fiberPicker.current?.setSelected(sourceFiber.colors)*/
     }
+
+
+
+
 
 
     const onChangeImages = (e: React.MouseEvent<HTMLElement>) => {
@@ -316,30 +249,6 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState, 
     }, [])
 
     
-    const renderFibers = useMemo(() => {
-        return (
-            colorsState.load.status === 'success' ? 
-            <>
-                {/*colorsState.colors.map((color) => {
-                    return (
-                        <div className="color__container" key={color._id}>
-                            <div className={`image__container ${selectedFibers[color._id] ? 'selected' : ''}`} onClick={() => onColorClick(color._id)}>
-                                <img src={color.url.small} alt={color.name[lang]} />
-                            </div>
-                            <span>{color.name[lang]}</span>
-                            <div className="buttons_control">
-                                <button className="button_blue edit" onClick={(e) => onEditColor(e, color._id)}>E</button>
-                                <button className="button_blue delete" onClick={(e) => onDeleteColor(e, color._id)}>X</button>
-                            </div>
-                        </div>
-                    )
-                })*/}
-            </>
-        :
-            <Preloader />
-        
-        )
-    }, [colorsState.load.status, colorsState.colors, lang, selectedFibers])
 
 
     const renderImages = useMemo(() => {
@@ -355,6 +264,35 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState, 
             
         )
     }, [changeImages, lang, paramProductId])
+
+
+
+    const onChangeInputs = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        e.target.id === "name_en" && 
+            setState.catalog.setProduct({...product, name: {...product.name, en: e.target.value}}) &&
+            errChecker.clearError(_name_en.current as HTMLInputElement)
+        e.target.id === "name_ru" && 
+            setState.catalog.setProduct({...product, name: {...product.name, ru: e.target.value}}) &&
+            errChecker.clearError(_name_ru.current as HTMLInputElement)        
+        e.target.id === "price_en" && 
+            setState.catalog.setProduct({...product, price: {...product.price, en: e.target.value}}) &&
+            errChecker.clearError(_price_en.current as HTMLInputElement)     
+        e.target.id === "price_ru" && 
+            setState.catalog.setProduct({...product, price: {...product.price, ru: e.target.value}}) &&
+            errChecker.clearError(_price_ru.current as HTMLInputElement)     
+        e.target.id === "text_en" && 
+            setState.catalog.setProduct({...product, text: {...product.text, en: e.target.value}}) &&
+            errChecker.clearError(_text_en.current as HTMLTextAreaElement)     
+        e.target.id === "text_ru" && 
+            setState.catalog.setProduct({...product, text: {...product.text, ru: e.target.value}}) &&
+            errChecker.clearError(_text_ru.current as HTMLTextAreaElement)  
+        e.target.id === "text_short_en" && 
+            setState.catalog.setProduct({...product, text_short: {...product.text_short, en: e.target.value}}) &&
+            errChecker.clearError(_text_short_en.current as HTMLTextAreaElement)     
+        e.target.id === "text_short_ru" && 
+            setState.catalog.setProduct({...product, text_short: {...product.text_short, ru: e.target.value}}) &&
+            errChecker.clearError(_text_short_ru.current as HTMLTextAreaElement) 
+    }
 
 
     return (
@@ -373,54 +311,64 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState, 
                             <div className="input-block">
                                 <label htmlFor="namer_en">{lang === 'en' ? 'Name' : 'Название'}:</label>
                                 <div className="input__wrapper">
-                                    <input type="text" id="name_en" ref={_name_en} data-ru="Название EN" data-en="Name EN" onChange={(e: React.ChangeEvent<HTMLInputElement>) => errChecker.clearError(e.target)} />
+                                    <input type="text" id="name_en" ref={_name_en} onChange={onChangeInputs} value={product.name.en}/>
                                 </div>
                                 <div className="input__wrapper">
-                                    <input type="text" id="name_ru" ref={_name_ru} data-ru="Название RU" data-en="Name RU"  onChange={(e: React.ChangeEvent<HTMLInputElement>) => errChecker.clearError(e.target)} />
+                                    <input type="text" id="name_ru" ref={_name_ru} onChange={onChangeInputs} value={product.name.ru} />
                                 </div>
                             </div>
                             <div className="input-block">
                                 <label htmlFor="price_en">{lang === 'en' ? 'Price' : 'Цена'}:</label>
                                 <div className="input__wrapper">
-                                    <input type="text" id="price_en" ref={_price_en} data-ru="Цена EN" data-en="Price EN"  onChange={(e: React.ChangeEvent<HTMLInputElement>) => errChecker.clearError(e.target)} />
+                                    <input type="text" id="price_en" ref={_price_en} onChange={onChangeInputs} value={product.price.en} />
                                 </div>
                                 <div className="input__wrapper">
-                                    <input type="text" id="price_ru" ref={_price_ru} data-ru="Цена RU" data-en="Price RU" onChange={(e: React.ChangeEvent<HTMLInputElement>) => errChecker.clearError(e.target)} />
+                                    <input type="text" id="price_ru" ref={_price_ru} onChange={onChangeInputs} value={product.price.ru} />
                                 </div>
                             </div>
                             <div className="input-block">
                                 <label htmlFor="text_en">{lang === 'en' ? 'Text' : 'Текст'}:</label>
                                 <div className="input__wrapper">
-                                    <textarea id="text_en" ref={_text_en} data-ru="Текст EN" data-en="Text EN" onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => errChecker.clearError(e.target)} />
+                                    <textarea id="text_en" ref={_text_en} onChange={onChangeInputs} value={product.text.en} />
                                 </div>
                                 <div className="input__wrapper">
-                                    <textarea id="text_ru" ref={_text_ru} data-ru="Текст RU" data-en="Text RU" onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => errChecker.clearError(e.target)} />
+                                    <textarea id="text_ru" ref={_text_ru} onChange={onChangeInputs} value={product.text.ru} />
                                 </div>
                             </div>
                             <div className="input-block">
                                 <label htmlFor="text-short_en">{lang === 'en' ? 'Text short' : 'Текст кратко'}:</label>
                                 <div className="input__wrapper">
-                                    <textarea id="text-short_en" ref={_text_short_en} data-ru="Текст кратко EN" data-en="Text short EN" onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => errChecker.clearError(e.target)} />
+                                    <textarea id="text_short_en" ref={_text_short_en} onChange={onChangeInputs} value={product.text_short.en} />
                                 </div>
                                 <div className="input__wrapper">
-                                    <textarea id="text-short_ru" ref={_text_short_ru} data-ru="Текст кратко RU" data-en="Text short RU" onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => errChecker.clearError(e.target)} />
+                                    <textarea id="text_short_ru" ref={_text_short_ru} onChange={onChangeInputs} value={product.text_short.ru} />
+                                </div>
+                            </div>
+                            <div className="input-block">
+                                <label htmlFor="text-short_en">{lang === 'en' ? 'Category' : 'Категория'}:</label>
+                                <div className="input__wrapper">
+                                    <textarea id="text_short_en" ref={_text_short_en} onChange={onChangeInputs} value={product.text_short.en} />
                                 </div>
                             </div>
                         </div>
 
 
                         <h2 className='section-header full-width'>{lang === 'en' ? 'MODIFICATIONS' : 'МОДИФИКАЦИИ'}</h2>           
-                        <div className="proscons pros" ref={_mods}></div>
-                        <button className='button_blue add' ref={_addMod} onClick={e => onAddProCon(e, _mods)}>{lang === 'en' ? '+' : '+'}</button>
-
-
-
-
-                        <h2 className='section-header full-width'>{lang === 'en' ? 'PICK COLORS' : 'ВЫБЕРЕТЕ ЦВЕТА'}</h2>           
-                        <div className="colors-picker">
-                            {renderFibers}
+                        <div className="mods">
+                            <Featurer lang={lang} items={[]}/>
                         </div>
 
+
+
+
+
+                        <h2 className='section-header full-width'>{lang === 'en' ? 'SELECT FIBERS' : 'ВЫБЕРЕТЕ МАТЕРИАЛЫ'}</h2>           
+                        <div className="fibers-picker">
+                            {fibersState.load.status === 'success' ? 
+                                <Picker ref={fiberPicker}  items={fibersState.fibersList} lang={lang} onEditClick={(_id) => onEditFiber(_id)} onDeleteClick={(_id) => onDeleteFiber(_id)}/>
+                            :
+                                <Preloader />}
+                        </div>
 
                         {renderImages}
 
@@ -450,7 +398,8 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
     fibersState: state.fibers,
     colorsState : state.colors,
-    catalogState: state.catalog
+    catalogState: state.catalog,
+    product: state.catalog.category.product
 })
 
 

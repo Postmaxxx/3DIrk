@@ -15,6 +15,7 @@ import Preloader from 'src/components/Preloaders/Preloader';
 import { useNavigate, useParams } from 'react-router-dom';
 import { headerStatus, resetFetch, selector, timeModalClosing } from 'src/assets/js/consts';
 import { errorsChecker, prevent } from 'src/assets/js/processors';
+import Picker, { IPickerFunctions } from 'src/components/Picker/Picker';
 
 interface IPropsState {
     lang: TLang
@@ -42,6 +43,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
     const modal_missedId = useRef<IModalFunctions>(null)
     const message = useRef<IMessageFunctions>(null)
     const message_missedId = useRef<IMessageFunctions>(null)
+    const colorPicker = useRef<IPickerFunctions>(null)
     const _addPro = useRef<HTMLButtonElement>(null)
     const _addCon = useRef<HTMLButtonElement>(null)
     const _name_en = useRef<HTMLInputElement>(null)
@@ -57,7 +59,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
     const _cons = useRef<HTMLDivElement>(null)
     const _spec = useRef<HTMLDivElement>(null)
     const _descr = useRef<HTMLDivElement>(null)
-    const [selectedColors, setSelectedColors] = useState<{[key: string]: boolean}>({})
+    //const [selectedColors, setSelectedColors] = useState<{[key: string]: boolean}>({})
     const [changeImages, setChangeImages] = useState<boolean>(true)
 
     const data10 = useMemo(() => selector["10"], [])
@@ -111,7 +113,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
     }, [fibersState.send.status])
 
 
-    useEffect(() => {
+    useEffect(() => { //for delete color
         if (colorsState.send.status === 'idle' || colorsState.send.status === 'fetching')  return
         const errors: string[] = colorsState.send.errors?.map(e => e[lang]) || []
         message.current?.update({
@@ -162,11 +164,6 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
     }
 
 
-    const onColorClick = (id: string) => {
-        setSelectedColors(prev => ({...prev, [id]: !prev[id]}))
-    }
-
-
 
 
 
@@ -175,7 +172,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
     const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {        
         prevent(e)
         if (!_name_en.current || !_name_ru.current || !_name_short_en.current || !_name_short_ru.current || !_text_en.current || 
-        !_text_ru.current || !_text_short_en.current || !_text_short_ru.current || !_spec.current || !_descr.current) return
+        !_text_ru.current || !_text_short_en.current || !_text_short_ru.current || !_spec.current || !_descr.current || !colorPicker.current) return
         
         //check DESCRIPTION
         errChecker.check(_name_en.current, 1, 30)
@@ -199,7 +196,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
         }
        
 
-        if (!Object.values(selectedColors).some(item => item)) { //at least 1 color must be selected
+        if (colorPicker.current.getSelected().length === 0) { //at least 1 color must be selected
             errChecker.add(lang === 'en' ? 'No color selected' : 'Цвет не выбран')
         }
         
@@ -242,7 +239,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
                 text: {en: _text_short_en.current.value.trim(), ru: _text_short_ru.current.value.trim()}
             },
             params: (allSpec as unknown) as IFiberParam,
-            colors: Object.entries(selectedColors).filter(item => item[1]).map(item => item[0]),
+            colors: colorPicker.current.getSelected(),
             files: addFilesBig.current?.getFiles() || [],
             proscons
         }
@@ -256,13 +253,14 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
     }
 
 
-    const onDeleteColor = (e: React.MouseEvent<HTMLButtonElement>, _id: string) => {
-        prevent(e)
+
+
+
+    const onDeleteColor = (_id: string) => {
         setState.colors.deleteColor(_id)
     }
 
-    const onEditColor = (e: React.MouseEvent<HTMLButtonElement>, _id: string) => {
-        prevent(e)
+    const onEditColor = (_id: string) => {
         navigate(`/admin/color-create/${_id}`)
     }
 
@@ -321,11 +319,10 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
         })
 
         //colors 
-        const initialColors = sourceFiber.colors.reduce((acc, item) => {
-            return {...acc, [item]: true}
-        }, {} as {[key: string]: boolean})
-        setSelectedColors(initialColors)
+        colorPicker.current?.setSelected(sourceFiber.colors)
     }
+
+
 
 
     const onChangeImages = (e: React.MouseEvent<HTMLElement>) => {
@@ -382,31 +379,8 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
         )
     }, [fibersProperties, lang])
 
-    
-    const renderColors = useMemo(() => {
-        return (
-            colorsState.load.status === 'success' ? 
-            <>
-                {colorsState.colors.map((color) => {
-                    return (
-                        <div className="color__container" key={color._id}>
-                            <div className={`image__container ${selectedColors[color._id] ? 'selected' : ''}`} onClick={() => onColorClick(color._id)}>
-                                <img src={color.url.small} alt={color.name[lang]} />
-                            </div>
-                            <span>{color.name[lang]}</span>
-                            <div className="buttons_control">
-                                <button className="button_blue edit" onClick={(e) => onEditColor(e, color._id)}>E</button>
-                                <button className="button_blue delete" onClick={(e) => onDeleteColor(e, color._id)}>X</button>
-                            </div>
-                        </div>
-                    )
-                })}
-            </>
-        :
-            <Preloader />
-        
-        )
-    }, [colorsState.load.status, colorsState.colors, lang, selectedColors])
+
+
 
 
     const renderImages = useMemo(() => {
@@ -494,7 +468,10 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
 
                         <h2 className='section-header full-width'>{lang === 'en' ? 'PICK COLORS' : 'ВЫБЕРЕТЕ ЦВЕТА'}</h2>           
                         <div className="colors-picker">
-                            {renderColors}
+                            {colorsState.load.status === 'success' ? 
+                                <Picker ref={colorPicker} items={colorsState.colors} lang={lang} onEditClick={(_id) => onEditColor(_id)} onDeleteClick={(_id) => onDeleteColor(_id)}/>
+                            :
+                                <Preloader />}
                         </div>
 
 
