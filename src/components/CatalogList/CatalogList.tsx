@@ -22,10 +22,13 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 
+
+
 const CatalogList: React.FC<IProps> = ({catalog, lang, selectedCategory, setState}): JSX.Element => {
 
-	const loadCategory = (id: TId) => {
-		setState.catalog.loadCategory(id)
+	const loadCategory = (_id: TId) => {
+		setState.catalog.loadCategory({_id, from: 0, to: 6})
+		//console.log({_id, from: 0, to: 6});
 	};
 
 
@@ -49,7 +52,7 @@ const CatalogList: React.FC<IProps> = ({catalog, lang, selectedCategory, setStat
 								className={category._id === selectedCategory ? "selected" : ""}
 								onClick={():void => loadCategory(category._id)}
 							>
-								{category.name[lang]}
+								{category.name[lang]} ({category.total || 0})
 							</li>
 						);
 					})}

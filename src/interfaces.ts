@@ -163,6 +163,7 @@ export interface IFeature {
 //==========================================Fibers State
 export interface ISendFiber extends Omit<IFiber, 'images'> {
     files: File[]
+    changeImages: boolean
 }
 
 
@@ -222,6 +223,7 @@ export interface IFibersState {
 //============================================== category state
 export interface ISendProduct extends Omit<IProduct, 'images'> {
     files: File[]
+    changeImages: boolean
 }
 
 
@@ -231,11 +233,11 @@ export interface IProduct {
     name: TLangText
     text: TLangText
     text_short: TLangText
-    images?: IImgWithThumb[]
+    images: IImgWithThumb[]
     fibers: TId[] //array of fiber ids
     //features: IFeature[]
     mods: TLangText[]
-    files?: File[]
+    //files?: File[]
     category: TId
 }
 
@@ -257,14 +259,14 @@ export interface ICategory {
     product: IProduct //current opened product (in case opened from bookmarks)
     loadProduct: IFetch
     sendProduct: IFetch
-    total: number //total amount of products in category, i.e.: 36
-    page: number //current open page of products in category, max as total / amountOfItemsPerPage
+    //page: number //current open page of products in category, max as total / amountOfItemsPerPage
     //selectedProduct: string //id of selected product in category
 }
 
 
 export interface ICatalogItem { //one category name
     name: TLangText
+    total: number //total amount of products in category
     _id: TId
 }
 
@@ -370,7 +372,8 @@ export interface ISendColor {
     files: {
         full: File, 
         small: File
-    }
+    },
+    changeImages: boolean
 }
 
 

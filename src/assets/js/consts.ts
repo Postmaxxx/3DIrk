@@ -1,4 +1,4 @@
-import { IFetch, IMessageModal, TLangText } from "src/interfaces"
+import { IFetch, IFiber, IFiberParam, IMessageModal, ISendColor, ISendFiber, ISendProduct, TLangText } from "src/interfaces"
 
 const delayBetweenImagesPost: number = 300
 
@@ -198,6 +198,49 @@ const selector = {
     
 }
 
+const fiberEmpty: ISendFiber = {
+    _id: '',
+    name: {...empty},
+    text: {...empty},
+    short: {
+        name:{...empty},
+        text:{...empty},
+    },
+    proscons: {
+        pros: [],
+        cons: []
+    },
+    colors: [],
+    params: {} as IFiberParam,
+    files: [] as File[],
+    changeImages: true
+}
+
+
+const productEmpty: ISendProduct = {
+    _id: '',
+    name: {...empty},
+    text: {...empty},
+    price: {...empty},
+    text_short:{...empty},
+    fibers: [],
+    mods: [],
+    category: '',
+    files: [] as File[],
+    changeImages: true
+}
+
+
+const colorEmpty: ISendColor = {
+    _id: '', 
+    name: {...empty}, 
+    files: {
+        full: new File([], ""),
+        small: new File([], "")
+    },
+    changeImages: true
+}
+
 export {delayBetweenImagesPost, clearModalMessage, resetFetch, timeModalClosing, 
     fetchingFetch, errorFetch, successFetch, headerStatus, empty, selector, strengthMin, 
-    strengthMax, minTimeBetweenSendings}
+    strengthMax, minTimeBetweenSendings,fiberEmpty, productEmpty, colorEmpty}

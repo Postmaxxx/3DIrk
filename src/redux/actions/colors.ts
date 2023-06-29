@@ -1,7 +1,7 @@
 import { imageUploader } from "src/assets/js/imageUploader";
 import { IAction, IDispatch, IColor, IColorsState, IFetch, IFullState, IErrRes, TLangText, IMsgRes, ISendColor, IImgWithThumb } from "../../interfaces"
 import { actionsListColors } from './actionsList'
-import { resetFetch } from "src/assets/js/consts";
+import { empty, resetFetch } from "src/assets/js/consts";
 //import mockColors from "../mocks/colors";
 
 
@@ -24,7 +24,9 @@ export const setColors = <T extends IColor[]>(payload: T):IAction<T> => ({
 
 
 export const loadColors = () => {
-    return async function(dispatch: IDispatch) {
+    return async function(dispatch: IDispatch, getState: () => IFullState)  {
+        const load = getState().colors.load
+        if (load.status === 'fetching') return
         dispatch(setLoadColors(resetFetch))
         try {
             const response: Response = await fetch('/api/colors/load-all', {
@@ -38,8 +40,8 @@ export const loadColors = () => {
                 const result: IErrRes = await response.json()
                 dispatch(setLoadColors({
                     status: 'error', 
-                    message: result.message, 
-                    errors: result.errors
+                    message: result.message || {...empty}, 
+                    errors: result.errors || []
                 }))
             }
 
@@ -54,7 +56,7 @@ export const loadColors = () => {
 
             dispatch(setColors(resultProcessed))
               
-            dispatch(setLoadColors({status: 'success', message: result.message}))
+            dispatch(setLoadColors({status: 'success', message: result.message || {...empty}}))
         } catch (e) {
             dispatch(setLoadColors({status: 'error', message: {en:`Error while loading colors: ${e}`, ru: `Ошибка при загрузке цветов: ${e}`}}))
         }
@@ -67,7 +69,9 @@ export const loadColors = () => {
 
 
 export const sendColor = (color: ISendColor) => {
-    return async function(dispatch: IDispatch, getState: () => IFullState) {
+    return async function(dispatch: IDispatch, getState: () => IFullState)  {
+        const send = getState().colors.send
+        if (send.status === 'fetching') return
         const token = getState().user.token
         dispatch(setSendColors(resetFetch))
         const imageUrls = {} as {full:string, small: string}
@@ -77,14 +81,14 @@ export const sendColor = (color: ISendColor) => {
         if (postFull.status !== 'success') {
             return dispatch(setSendColors(postFull))
         }
-        imageUrls.full = (postFull.urls as IImgWithThumb).full
+        imageUrls.full = (postFull.urls as IImgWithThumb).full || ''
 
         // upload to imgbb imageSmall, not thumb, specific size as fullImage
         const postSmall = await imageUploader(color.files.small)
         if (postSmall.status !== 'success') {
             return dispatch(setSendColors(postSmall))
         }
-        imageUrls.small = (postSmall.urls as IImgWithThumb).full
+        imageUrls.small = (postSmall.urls as IImgWithThumb).full || ''
         
         
 
@@ -115,15 +119,15 @@ export const sendColor = (color: ISendColor) => {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setSendColors({
                         status: 'error', 
-                        message: (result as IErrRes).message, 
-                        errors: result.errors
+                        message: (result as IErrRes).message || {...empty}, 
+                        errors: result.errors || []
                     }
                 ))
             }
 
             const result: IMsgRes = await response.json() //message, errors
             
-            dispatch(setSendColors({status: 'success', message: result.message}))
+            dispatch(setSendColors({status: 'success', message: result.message || {...empty}}))
 
 
         } catch (e) {
@@ -136,26 +140,28 @@ export const sendColor = (color: ISendColor) => {
 
 
 
-export const editColor = (color: ISendColor, changeImages: boolean) => {
-    return async function(dispatch: IDispatch, getState: () => IFullState) {
+export const editColor = (color: ISendColor) => {
+    return async function(dispatch: IDispatch, getState: () => IFullState)  {
+        const send = getState().colors.send
+        if (send.status === 'fetching') return
         const token = getState().user.token
         dispatch(setSendColors(resetFetch))
         const imageUrls = {} as {full:string, small: string}
         
         // upload to imgbb imageBig
-        if (changeImages) {
+        if (color.changeImages) {
             const postFull = await imageUploader(color.files.full)
             if (postFull.status !== 'success') {
                 return dispatch(setSendColors(postFull))
             }
-            imageUrls.full = (postFull.urls as IImgWithThumb).full
+            imageUrls.full = (postFull.urls as IImgWithThumb).full || ''
     
             // upload to imgbb imageSmall, not thumb, specific size as fullImage
             const postSmall = await imageUploader(color.files.small)
             if (postSmall.status !== 'success') {
                 return dispatch(setSendColors(postSmall))
             }
-            imageUrls.small = (postSmall.urls as IImgWithThumb).full
+            imageUrls.small = (postSmall.urls as IImgWithThumb).full || ''
         }
 
         // to db
@@ -173,7 +179,7 @@ export const editColor = (color: ISendColor, changeImages: boolean) => {
                 }
             }
             
-            if (!changeImages) {
+            if (!color.changeImages) {
                 delete colorToDb.url
             }
 
@@ -190,15 +196,15 @@ export const editColor = (color: ISendColor, changeImages: boolean) => {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setSendColors({
                         status: 'error', 
-                        message: (result as IErrRes).message, 
-                        errors: result.errors
+                        message: (result as IErrRes).message || {...empty}, 
+                        errors: result.errors || []
                     }
                 ))
             }
 
             const result: IMsgRes = await response.json() //message, errors
             
-            dispatch(setSendColors({status: 'success', message: result.message}))
+            dispatch(setSendColors({status: 'success', message: result.message || {...empty}}))
 
 
         } catch (e) {
@@ -212,7 +218,9 @@ export const editColor = (color: ISendColor, changeImages: boolean) => {
 
 
 export const deleteColor = (_id: string) => {
-    return async function(dispatch: IDispatch, getState: () => IFullState) {
+    return async function(dispatch: IDispatch, getState: () => IFullState)  {
+        const send = getState().colors.send
+        if (send.status === 'fetching') return
         const token = getState().user.token
         dispatch(setSendColors(resetFetch))       
         // to db
@@ -231,15 +239,15 @@ export const deleteColor = (_id: string) => {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setSendColors({
                         status: 'error', 
-                        message: (result as IErrRes).message, 
-                        errors: result.errors
+                        message: (result as IErrRes).message || {...empty}, 
+                        errors: result.errors || []
                     }
                 ))
             }
 
             const result: IMsgRes = await response.json() //message, errors
             
-            dispatch(setSendColors({status: 'success', message: result.message}))
+            dispatch(setSendColors({status: 'success', message: result.message || {...empty}}))
 
         } catch (e) {
             dispatch(setSendColors({status: 'error', message: {en:`Error while deleting color from db: ${e}`, ru: `Ошибка при удалении цвета из бд: ${e}`}}))

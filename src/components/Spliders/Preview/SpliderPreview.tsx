@@ -111,7 +111,7 @@ const SpliderPreview: React.FC<IProps> = ({ lang, product, setState}): JSX.Eleme
         if (!slide) return
         e.stopPropagation()
 		/*<Modal {...{visible: modal, close: closeModal, escExit: true}}>
-		<ModalImage props={{path: product.imgs[splideMain.current?.index || 0].url, descr: product.imgs[splideMain.current?.index || 0].name[lang]}}/>
+		<ModalImage props={{path: product.images[splideMain.current?.index || 0].url, descr: product.images[splideMain.current?.index || 0].name[lang]}}/>
 	</Modal> */
         imageModal.current?.update({url: slide.full, text: slide.fileName})
         modal_image.current?.openModal()
@@ -148,7 +148,7 @@ const SpliderPreview: React.FC<IProps> = ({ lang, product, setState}): JSX.Eleme
 			<div id="spliderMain" className="splide" ref={_splideMain}>
 				<div className="splide__track">
 					<ul className="splide__list">
-						{product.imgs.map((slide,i) => {
+						{product.images.map((slide,i) => {
 							return (
 								<li className="splide__slide" key={i} onClick={(e) => onImageClick(e, slide)}>
 									<ImgWithPreloader src={slide.medium || slide.full} alt={slide.fileName} />
@@ -161,7 +161,7 @@ const SpliderPreview: React.FC<IProps> = ({ lang, product, setState}): JSX.Eleme
 			<div id="spliderThumbs" className="splide" ref={_splideThumbs}>
 				<div className="splide__track">
 					<ul className="splide__list">
-						{product.imgs.map((slide,i ) => {
+						{product.images.map((slide,i ) => {
 							return (
 								<li className="splide__slide" key={i}>
 									<ImgWithPreloader src={slide.thumb} alt={slide.fileName} />

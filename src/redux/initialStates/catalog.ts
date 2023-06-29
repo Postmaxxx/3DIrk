@@ -20,12 +20,11 @@ const initialCatalog = {
             name: empty,
             text: empty,
             text_short: empty,
-            imgs: [],
+            images: [],
             fibers: [],
             mods: [],
-        }, 
-        total: 0,
-        page: 0
+            category: ''
+        }
     }
 } satisfies ICatalogState
 

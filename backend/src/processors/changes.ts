@@ -10,7 +10,8 @@ const saveChanges = async (prop: keyof IChangesProps, value: boolean) => {
                 news: true,
                 fibers: true,
                 catalog: true,
-                colors: true
+                colors: true, 
+                products: true
             })
             await newChanges.save()
         } else {
@@ -28,12 +29,15 @@ const checkChanges = async (prop: keyof IChangesProps) => {
     try { // check passed changes
         const changes: IChanges = await Changes.findOne()
         if (!changes) {
-            return {
+            const newChanges: IChanges = new Changes({ 
                 news: true,
                 fibers: true,
                 catalog: true,
-                colors: true
-            }
+                colors: true, 
+                products: true
+            })
+            await newChanges.save()
+            return true
         } else {
             return changes[prop]
         }

@@ -1,4 +1,4 @@
-import { ICatalogItem } from "src/interfaces"
+/*import { ICatalogItem } from "src/interfaces"
 
 const mockCategoriesList = [
     {
@@ -33,4 +33,4 @@ const mockCategoriesList = [
 
 
 
-export default mockCategoriesList
+export default mockCategoriesList*/

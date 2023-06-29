@@ -1,8 +1,8 @@
 import { IAction, IDispatch, IErrRes, IFetch, IFiber, IFullState, IImgWithThumb, IMsgRes, ISendFiber, TLangText } from "src/interfaces"
 import { actionsListFibers } from './actionsList'
-import { imageUploader } from "src/assets/js/imageUploader";
-import { delayBetweenImagesPost, fetchingFetch } from "src/assets/js/consts";
-import { makeDelay } from "src/assets/js/makeDelay";
+import { imagesUploader } from "src/assets/js/imageUploader";
+import { empty, errorFetch, fetchingFetch } from "src/assets/js/consts";
+
 
 
 
@@ -29,7 +29,9 @@ export const setSelectedFiber = <T extends IFiber['_id']>(payload: T):IAction<T>
 
 
 export const loadFibers = () => {
-    return async function(dispatch: IDispatch, getState: () => IFullState) {
+    return async function(dispatch: IDispatch, getState: () => IFullState)  {
+        const load = getState().fibers.load
+        if (load.status === 'fetching') return
         const token = getState().user.token
         dispatch(setLoadFibers(fetchingFetch))
         try {
@@ -43,7 +45,7 @@ export const loadFibers = () => {
 
             if (response.status !== 200) {
                 const result: IErrRes = await response.json()
-                return dispatch(setLoadFibers({status: 'error', message: result.message, errors: result.errors}))
+                return dispatch(setLoadFibers({status: 'error', message: result.message || {...empty}, errors: result.errors || []}))
             }
             
             const result: {fibers: IFiber[], message: TLangText} = await response.json()
@@ -57,7 +59,7 @@ export const loadFibers = () => {
                 colors: item.colors,
                 params: Object.entries(item.params).reduce((acc, [key, value]) => {acc[key] = Number(value); return acc}, {} as {[key: string]: number}) as IFiber["params"]// convert strings to number
             }})))
-            dispatch(setLoadFibers({status: 'success', message: result.message}))
+            dispatch(setLoadFibers({status: 'success', message: result.message || {...empty}}))
         } catch (e) {
             dispatch(setLoadFibers({status: 'error', message: {en:`Error while loading fibers: ${e}`, ru: `Ошибка при загрузке материалов: ${e}`}}))
         }
@@ -72,34 +74,24 @@ export const loadFibers = () => {
 
 
 export const sendFiber = (newFiber: ISendFiber) => {
-    return async function(dispatch: IDispatch, getState: () => IFullState) {
+    return async function(dispatch: IDispatch, getState: () => IFullState)  {
+        const send = getState().fibers.send
+        if (send.status === 'fetching') return
         const token = getState().user.token //get current user state
         dispatch(setSendFibers({status: 'fetching', message: {en: '', ru: ''}}))
 
         // images to imgbb
-        const imageUrls: IImgWithThumb[] = []
-        
-        await newFiber.files.reduce(async (acc: Promise<string>, image: File, i) => {
-            return new Promise(async (res, rej) => {
-                await acc
-                                
-                const fiberImagePost = await imageUploader(image)
-                if (fiberImagePost.status !== 'success') {
-                    rej(`Error while uploading image ${image.name}`)
-                    return dispatch(setSendFibers(fiberImagePost))
-                }
-                imageUrls.push(fiberImagePost.urls as IImgWithThumb)
-                await makeDelay(delayBetweenImagesPost)
-                res('ok')
-            })
-            
-        }, Promise.resolve('start fetching images'))
+        const imageUrls = await imagesUploader({files: newFiber.files, dispatch, errorHandler: setSendFibers})
+        if (imageUrls.err.en) {
+           return dispatch(setSendFibers({...errorFetch, message: imageUrls.err || {...empty}}))
+        }
+
 
         //fetch to db
         try {
             const fiberToDB: Omit<IFiber, "_id"> = {
                 ...newFiber,
-                images: imageUrls
+                images: imageUrls.urls
             }
             
             const response: Response = await fetch('/api/fibers/create', {
@@ -116,13 +108,13 @@ export const sendFiber = (newFiber: ISendFiber) => {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setSendFibers({
                     status: 'error', 
-                    message: result.message, 
+                    message: result.message || {...empty}, 
                     errors: result.errors as TLangText[] || []
                 }))
             }
 
             const result: IMsgRes = await response.json() //message, errors
-            dispatch(setSendFibers({status: 'success', message: result.message}))
+            dispatch(setSendFibers({status: 'success', message: result.message || {...empty}}))
             
         } catch (e) {           
             dispatch(setSendFibers({status: 'error', message: {en: `Error "${e}", try again later`, ru: `Ошибка "${e}", попробуйте позже`}}))
@@ -137,38 +129,27 @@ export const sendFiber = (newFiber: ISendFiber) => {
 
 
 
-export const editFiber = (fiber: Partial<ISendFiber>, changeImages: boolean) => {
-    return async function(dispatch: IDispatch, getState: () => IFullState) {
-        
+export const editFiber = (fiber: Partial<ISendFiber>) => {
+    return async function(dispatch: IDispatch, getState: () => IFullState)  {
+        const send = getState().fibers.send
+        if (send.status === 'fetching') return
         const token = getState().user.token //get current user state
         dispatch(setSendFibers(fetchingFetch))
-        const delayBetweenImagesPost = 300
 
-        const imageUrls: IImgWithThumb[] = []
+        const imageUrls:IImgWithThumb[] = []
         // images to imgbb
-        if (changeImages && fiber.files && fiber.files.length > 0) {
-            
-            await fiber.files.reduce(async (acc: Promise<string>, image: File, i) => {
-                return new Promise(async (res, rej) => {
-                    await acc
-                                    
-                    const fiberImage = await imageUploader(image)
-                    if (fiberImage.status !== 'success') {
-                        rej(`Error while uploading image ${image.name}`)
-                        return dispatch(setSendFibers(fiberImage))
-                    }
-                    imageUrls.push(fiberImage.urls as IImgWithThumb)
-                    setTimeout(() => res('ok'), delayBetweenImagesPost)
-                })
-                
-            }, Promise.resolve('start fetching images'))
-
+        if (fiber.changeImages && fiber.files && fiber.files.length > 0) {
+            const resultUrls = await imagesUploader({files: fiber.files, dispatch, errorHandler: setSendFibers})
+            if (resultUrls.err.en) {
+                return dispatch(setSendFibers({...errorFetch, message: resultUrls.err || {...empty}}))
+            }
+            imageUrls.concat([...resultUrls.urls])
         }
 
             //post to db
         try {
             const fiberToDb: Partial<IFiber> = {...fiber, images: imageUrls}
-            if (!changeImages) {
+            if (!fiber.changeImages) {
                 delete fiberToDb.images
             }
 
@@ -186,13 +167,13 @@ export const editFiber = (fiber: Partial<ISendFiber>, changeImages: boolean) => 
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setSendFibers({
                     status: 'error', 
-                    message: result.message, 
-                    errors: result.errors
+                    message: result.message || {...empty}, 
+                    errors: result.errors || []
                 }))
             }
             const result: IMsgRes = await response.json() //message, errors
             
-            dispatch(setSendFibers({status: 'success', message: result.message}))
+            dispatch(setSendFibers({status: 'success', message: result.message || {...empty}}))
             
         } catch (e) {           
             dispatch(setSendFibers({status: 'error', message: {en: `Error "${e}", try again later`, ru: `Ошибка "${e}", попробуйте позже`}}))
@@ -206,7 +187,9 @@ export const editFiber = (fiber: Partial<ISendFiber>, changeImages: boolean) => 
 
 
 export const deleteFiber = (_id: string) => {
-    return async function(dispatch: IDispatch, getState: () => IFullState) {
+    return async function(dispatch: IDispatch, getState: () => IFullState)  {
+        const send = getState().fibers.send
+        if (send.status === 'fetching') return
         const token = getState().user.token //get current user state
         dispatch(setSendFibers(fetchingFetch))
 
@@ -222,7 +205,7 @@ export const deleteFiber = (_id: string) => {
 
             if (response.status !== 200) {
                 const result: IErrRes = await response.json()
-                dispatch(setSendFibers({status: 'error', message: result.message, errors: result.errors}))
+                dispatch(setSendFibers({status: 'error', message: result.message || {...empty}, errors: result.errors || []}))
             }
 
             const result:IMsgRes = await response.json()

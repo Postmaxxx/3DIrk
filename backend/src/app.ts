@@ -5,11 +5,30 @@ const fibersRoutes = require('./routes/fibers')
 const newsRoutes = require('./routes/news')
 const colorsRoutes = require('./routes/colors')
 const catalogRoutes = require('./routes/catalog')
+const productRoutes = require('./routes/product')
 const express = require('express')
 const mongoose = require("mongoose")
 const cors = require('cors')
 const app = express()
 //var bodyParser = require('body-parser')
+
+interface ICacheStatus {
+    news: boolean
+    catalog: boolean
+    fibers: boolean
+    colors: boolean
+    products: boolean
+}
+
+const cacheStatus: ICacheStatus = { //true - was changed, nedds to be reloaded
+    news: true,
+    catalog: true,
+    fibers: true,
+    colors: true,
+    products: true,
+}
+
+
 
 
 app.use(express.json({ extended: true, }));
@@ -35,6 +54,8 @@ app.use('/api/colors', colorsRoutes)
 app.use('/api/fibers', fibersRoutes)
 app.use('/api/catalog', catalogRoutes)
 
+//app.use('/api/product', productRoutes)
+
 const PORT: number = Number(process.env.PORT) || 5000
 
 
@@ -54,4 +75,8 @@ const start = async () => {
 
 start()
 
+
+
 app.listen(PORT, () => console.log(`Server has been successfully started on port ${PORT}...`))
+
+export {cacheStatus}

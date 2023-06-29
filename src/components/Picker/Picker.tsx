@@ -16,8 +16,8 @@ interface IProps {
         name: TLangText
     }[]
     lang: TLang
-    onEditClick: (_id: string) => void
-    onDeleteClick: (_id: string) => void
+    onEditClick?: (_id: string) => void
+    onDeleteClick?: (_id: string) => void
 }
 
 
@@ -49,12 +49,12 @@ const Picker = forwardRef<IPickerFunctions, IProps>(({items, lang, onEditClick, 
 
     const onDeleteItem = (e: React.MouseEvent<HTMLButtonElement>, _id: string) => {
         prevent(e)
-        onDeleteClick(_id)
+        onDeleteClick && onDeleteClick(_id)
     }
 
     const onEditItem = (e: React.MouseEvent<HTMLButtonElement>, _id: string) => {
         prevent(e)
-        onEditClick(_id)
+        onEditClick && onEditClick(_id)
     }
 
     return (

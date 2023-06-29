@@ -1,11 +1,12 @@
 import { Document, Schema, Model, model } from 'mongoose';
+import { IImgWithThumb, TLangText } from '../../../src/interfaces';
 
 interface INews extends Document {
     date: Date
-    header: object
-    short: object
-    text: object
-    images: object[]
+    header: TLangText
+    short: TLangText
+    text: TLangText
+    images: IImgWithThumb[]
 }
 
 const newsSchema = new Schema({

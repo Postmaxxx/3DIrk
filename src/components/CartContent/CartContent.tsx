@@ -68,7 +68,7 @@ const CartContent: React.FC<IProps> = ({lang, cart, colors, fibers, setState}): 
 
 
     const onProductClick = (product: IProduct) => {
-        setState.catalog.setFetchProduct({status: 'success', message: {en: '', ru: ''}, errors: []})
+        setState.catalog.setLoadProduct({status: 'success', message: {en: '', ru: ''}, errors: []})
         //setState.product.setProduct(product)
     }
 
@@ -103,7 +103,7 @@ const CartContent: React.FC<IProps> = ({lang, cart, colors, fibers, setState}): 
                             <div className="cart__item" key={i}>
                                 <NavLink className="item__product-link_img" to={`../catalog/${item.product._id}`} onClick={() => onProductClick(item.product)} aria-label={lang === 'en' ? 'Go to product' : 'Перейти к товару'}>
                                     <div className="img__container">
-                                        <ImgWithPreloader src={item.product.imgs[0].thumb} alt={item.product.imgs[0].fileName}/>
+                                        <ImgWithPreloader src={item.product.images[0].thumb} alt={item.product.images[0].fileName}/>
                                     </div>
                                 </NavLink>
 

@@ -13,7 +13,7 @@ import Selector from 'src/components/tiny/Selector/Selector';
 import { fibersProperties } from 'src/assets/data/fibersProperties';
 import Preloader from 'src/components/Preloaders/Preloader';
 import { useNavigate, useParams } from 'react-router-dom';
-import { headerStatus, resetFetch, selector, timeModalClosing } from 'src/assets/js/consts';
+import { fiberEmpty, headerStatus, resetFetch, selector, timeModalClosing } from 'src/assets/js/consts';
 import { errorsChecker, prevent } from 'src/assets/js/processors';
 import Picker, { IPickerFunctions } from 'src/components/Picker/Picker';
 import Featurer, { IFeaturerFunctions } from 'src/components/Featurer/Featurer';
@@ -45,27 +45,21 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
     const message = useRef<IMessageFunctions>(null)
     const message_missedId = useRef<IMessageFunctions>(null)
     const colorPicker = useRef<IPickerFunctions>(null)
-    const _name_en = useRef<HTMLInputElement>(null)
-    const _name_ru = useRef<HTMLInputElement>(null)
-    const _name_short_en = useRef<HTMLInputElement>(null)
-    const _name_short_ru = useRef<HTMLInputElement>(null)
-    const _text_en = useRef<HTMLTextAreaElement>(null)
-    const _text_ru = useRef<HTMLTextAreaElement>(null)
-    const _text_short_en = useRef<HTMLTextAreaElement>(null)
-    const _text_short_ru = useRef<HTMLTextAreaElement>(null)
     const addFiles = useRef<IAddFilesFunctions>(null)
     const _pros = useRef<HTMLDivElement>(null)
     const _cons = useRef<HTMLDivElement>(null)
     const _spec = useRef<HTMLDivElement>(null)
     const _descr = useRef<HTMLDivElement>(null)
-    const [changeImages, setChangeImages] = useState<boolean>(true)
+
     const pros = useRef<IFeaturerFunctions>(null)
     const cons = useRef<IFeaturerFunctions>(null)
+    const [fiber, setFiber] = useState<ISendFiber>({...fiberEmpty})
 
     const data10 = useMemo(() => selector["10"], [])
     const data5 = useMemo(() => selector["5"], [])
     const data3 = useMemo(() => selector["3"], [])
     const errChecker = useMemo(() => errorsChecker({lang}), [lang])
+    const [submit, setSubmit] = useState<boolean>(false)
 
 
 
@@ -129,19 +123,18 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
 
     const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {        
         prevent(e)
-        if (!_name_en.current || !_name_ru.current || !_name_short_en.current || !_name_short_ru.current || !_text_en.current || 
-        !_text_ru.current || !_text_short_en.current || !_text_short_ru.current || !_spec.current || !_descr.current || 
+        if (!pros.current|| !cons.current || !_spec.current || !_descr.current || 
         !colorPicker.current || !pros.current || !cons.current) return
         
         //check DESCRIPTION
-        errChecker.check(_name_en.current, 1, 30)
-        errChecker.check(_name_ru.current, 1, 30)
-        errChecker.check(_name_short_en.current, 1, 10)
-        errChecker.check(_name_short_ru.current, 1, 10)
-        errChecker.check(_text_short_en.current, 10, 100)
-        errChecker.check(_text_short_ru.current, 10, 100)
-        errChecker.check(_text_en.current, 100, 8000)
-        errChecker.check(_text_ru.current, 100, 8000)
+        errChecker.check(_descr.current.querySelector('#name_en') as HTMLInputElement, 1, 30)
+        errChecker.check(_descr.current.querySelector('#name_ru') as HTMLInputElement, 1, 30)
+        errChecker.check(_descr.current.querySelector('#name-short_en') as HTMLInputElement, 1, 10)
+        errChecker.check(_descr.current.querySelector('#name-short_ru') as HTMLInputElement, 1, 10)
+        errChecker.check(_descr.current.querySelector('#text-short_en') as HTMLInputElement, 10, 100)
+        errChecker.check(_descr.current.querySelector('#text-short_ru') as HTMLInputElement, 10, 100)
+        errChecker.check(_descr.current.querySelector('#text_en') as HTMLInputElement, 100, 8000)
+        errChecker.check(_descr.current.querySelector('#text_ru') as HTMLInputElement, 100, 8000)
 
         const allSpec: {[key: string]: string} = {};
         _spec.current.querySelectorAll('input, select').forEach(item => { //check specifications      
@@ -150,7 +143,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
         })
 
 
-        if (addFiles.current && addFiles.current.getFiles().length === 0 && changeImages) {//check images
+        if (addFiles.current && addFiles.current.getFiles().length === 0 && fiber.changeImages) {//check images
             errChecker.add(lang === 'en' ? 'Images missed' : 'Картинки отсутствуют')
         }
 
@@ -177,33 +170,32 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
         }
 
 
-        //create new fiberToStore
-        const newFiber: ISendFiber = {
-            _id: paramFiberId,
-            name: {en: _name_en.current.value.trim(), ru: _name_ru.current.value.trim()},
-            text: {en: _text_en.current.value.trim(), ru: _text_ru.current.value.trim()},
-            short: {
-                name: {en: _name_short_en.current.value.trim(), ru: _name_short_ru.current.value.trim()},
-                text: {en: _text_short_en.current.value.trim(), ru: _text_short_ru.current.value.trim()}
-            },
-            params: (allSpec as unknown) as IFiberParam,
-            colors: colorPicker.current.getSelected(),
-            files: addFiles.current?.getFiles() || [],
-            proscons : {
-                pros: pros.current.getFeatures().map(item => ({en: item.name.en, ru: item.name.ru})),
-                cons: cons.current.getFeatures().map(item => ({en: item.name.en, ru: item.name.ru}))
-            }
-        }
-
+        setFiber(prev => ({
+                ...prev,
+                _id: paramFiberId,
+                params: (allSpec as unknown) as IFiberParam,
+                colors: (colorPicker.current as IPickerFunctions).getSelected(),
+                files: addFiles.current?.getFiles() || [],
+                proscons : {
+                    pros: (pros.current as IFeaturerFunctions).getFeatures().map(item => ({en: item.name.en, ru: item.name.ru})),
+                    cons: (cons.current as IFeaturerFunctions).getFeatures().map(item => ({en: item.name.en, ru: item.name.ru}))
+                }
+            })
+        )
+            
         // to backend 
-        if (paramFiberId) {
-            setState.fibers.editFiber(newFiber, changeImages)
-        } else {
-            setState.fibers.sendFiber(newFiber)
-        }        
+        setSubmit(true)     
     }
 
-
+    useEffect(() => {
+        if (!submit) return
+        if (paramFiberId) {
+            setState.fibers.editFiber(fiber)
+        } else {
+            setState.fibers.sendFiber(fiber)
+        }   
+        setSubmit(false)
+    }, [submit])
 
 
 
@@ -221,22 +213,26 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
 
     const fillValues = (_id : string) => {      
         const sourceFiber = fibersState.fibersList.find(item => item._id === _id)
+
         if (!sourceFiber) {
             message_missedId.current?.update({header: lang === 'en' ? 'Error' : 'Ошибка', status: 'error', text: lang === 'en' ? ['Editing fiber was not found, switching to creating new fiber'] : ['Материал для редактирования не найден, переход к созданию нового материала']})
             modal_missedId.current?.openModal('filling')
             return
         }
-        if (!_name_en.current || !_name_ru.current || !_name_short_en.current || !_name_short_ru.current || !_text_en.current || 
-            !_text_ru.current || !_text_short_en.current || !_text_short_ru.current || !_spec.current || !pros.current || !cons.current) return
-        //description
-        _name_en.current.value = sourceFiber.name.en
-        _name_ru.current.value = sourceFiber.name.ru
-        _text_en.current.value = sourceFiber.text.en
-        _text_ru.current.value = sourceFiber.text.ru
-        _name_short_en.current.value = sourceFiber.short.name.en
-        _name_short_ru.current.value = sourceFiber.short.name.ru
-        _text_short_en.current.value = sourceFiber.short.text.en
-        _text_short_ru.current.value = sourceFiber.short.text.ru
+        
+        if (!_spec.current || !pros.current || !cons.current) return
+        //description        
+        setFiber(prev => ({
+            ...prev,
+            name: {...sourceFiber.name},
+            text: {...sourceFiber.text},
+            short: {...sourceFiber.short},
+            colors: {...sourceFiber.colors},
+            _id: sourceFiber._id,
+            changeImages: false
+        }))
+
+
         //specifications
         _spec.current.querySelectorAll('input, select').forEach(item => {
             (item as HTMLInputElement | HTMLSelectElement).value = String(sourceFiber.params[item.id])
@@ -251,19 +247,14 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
     }
 
 
+
+
+
     const fillBlank = () => {
-        if (!_name_en.current || !_name_ru.current || !_name_short_en.current || !_name_short_ru.current || !_text_en.current || 
-            !_text_ru.current || !_text_short_en.current || !_text_short_ru.current || !_spec.current ||
-            !pros.current || !cons.current) return
-        //description
-        _name_en.current.value = ''
-        _name_ru.current.value = ''
-        _text_en.current.value = ''
-        _text_ru.current.value = ''
-        _name_short_en.current.value = ''
-        _name_short_ru.current.value = ''
-        _text_short_en.current.value = ''
-        _text_short_ru.current.value = ''
+        if (!_spec.current || !pros.current || !cons.current) return
+
+        setFiber({...fiberEmpty})
+
         //specifications
         _spec.current.querySelectorAll('input, select').forEach(item => {
             (item as HTMLInputElement | HTMLSelectElement).value = ''
@@ -281,7 +272,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
 
     const onChangeImages = (e: React.MouseEvent<HTMLElement>) => {
         prevent(e)
-        setChangeImages(prev => !prev)
+        setFiber(prev => ({...prev, changeImages: !prev.changeImages}))
     }
 
 
@@ -293,13 +284,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
         }
         if (fibersState.load.status !== 'success' || colorsState.load.status !== 'success') return
        
-        if (paramFiberId) {
-            fillValues(paramFiberId)
-            setChangeImages(false)
-        } else {
-            fillBlank()
-            setChangeImages(true)
-        }
+        paramFiberId ? fillValues(paramFiberId) : fillBlank()
 
     }, [fibersState.load.status, colorsState.load.status, paramFiberId])
 
@@ -342,7 +327,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
 
     const renderImages = useMemo(() => {
         return (
-            changeImages ? 
+            fiber.changeImages ? 
                 <>
                     <h2 className='section-header full-width'>{lang === 'en' ? 'IMAGES' : 'ИЗОБРАЖЕНИЯ'}</h2>           
                     <AddFiles lang={lang} ref={addFiles} multiple={true} id='allImages'/>
@@ -352,8 +337,21 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
                 <>{paramFiberId && <button className='button_blue change-images' onClick={onChangeImages}>Change all images</button>}</>
             
         )
-    }, [changeImages, lang, paramFiberId])
+    }, [fiber.changeImages, lang, paramFiberId])
     
+
+    const onChangeInputs = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        errChecker.clearError(e.target) 
+        e.target.id === "name_en" && setFiber(prev => ({...prev, name: {...prev.name, en: e.target.value}}))
+        e.target.id === "name_ru" && setFiber(prev => ({...prev, name: {...prev.name, ru: e.target.value}}))
+        e.target.id === "text_en" && setFiber(prev => ({...prev, text: {...prev.text, en: e.target.value}}))
+        e.target.id === "text_ru" && setFiber(prev => ({...prev, text: {...prev.text, ru: e.target.value}}))
+
+        e.target.id === "name-short_en" && setFiber(prev => ({...prev, short: {...prev.short, name: {...prev.short.name, en: e.target.value}}}))
+        e.target.id === "name-short_ru" && setFiber(prev => ({...prev, short: {...prev.short, name: {...prev.short.name, ru: e.target.value}}}))
+        e.target.id === "text-short_en" && setFiber(prev => ({...prev, short: {...prev.short, text: {...prev.short.name, en: e.target.value}}}))
+        e.target.id === "text-short_ru" && setFiber(prev => ({...prev, short: {...prev.short, text: {...prev.short.text, ru: e.target.value}}}))
+    }
 
 
     return (
@@ -372,37 +370,37 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
                             <div className="input-block">
                                 <label htmlFor="namer_en">{lang === 'en' ? 'Name' : 'Название'}:</label>
                                 <div className="input__wrapper">
-                                    <input type="text" id="name_en" ref={_name_en} data-ru="Название EN" data-en="Name EN" onChange={(e: React.ChangeEvent<HTMLInputElement>) => errChecker.clearError(e.target)} />
+                                    <input type="text" id="name_en" data-ru="Название EN" data-en="Name EN" onChange={onChangeInputs} value={fiber.name.en}/>
                                 </div>
                                 <div className="input__wrapper">
-                                    <input type="text" id="name_ru" ref={_name_ru} data-ru="Название RU" data-en="Name RU"  onChange={(e: React.ChangeEvent<HTMLInputElement>) => errChecker.clearError(e.target)} />
+                                    <input type="text" id="name_ru" data-ru="Название RU" data-en="Name RU"  onChange={onChangeInputs} value={fiber.name.ru}/>
                                 </div>
                             </div>
                             <div className="input-block">
                                 <label htmlFor="name-short_en">{lang === 'en' ? 'Name short' : 'Назв. кратко'}:</label>
                                 <div className="input__wrapper">
-                                    <input type="text" id="name-short_en" ref={_name_short_en} data-ru="Название кратко EN" data-en="Name short EN"  onChange={(e: React.ChangeEvent<HTMLInputElement>) => errChecker.clearError(e.target)} />
+                                    <input type="text" id="name-short_en" data-ru="Название кратко EN" data-en="Name short EN"  onChange={onChangeInputs} value={fiber.short.name.en}/>
                                 </div>
                                 <div className="input__wrapper">
-                                    <input type="text" id="name-short_ru" ref={_name_short_ru} data-ru="Название кратко RU" data-en="Name short RU" onChange={(e: React.ChangeEvent<HTMLInputElement>) => errChecker.clearError(e.target)} />
+                                    <input type="text" id="name-short_ru" data-ru="Название кратко RU" data-en="Name short RU" onChange={onChangeInputs} value={fiber.short.name.ru}/>
                                 </div>
                             </div>
                             <div className="input-block">
                                 <label htmlFor="text_en">{lang === 'en' ? 'Text' : 'Текст'}:</label>
                                 <div className="input__wrapper">
-                                    <textarea id="text_en" ref={_text_en} data-ru="Текст EN" data-en="Text EN" onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => errChecker.clearError(e.target)} />
+                                    <textarea id="text_en" data-ru="Текст EN" data-en="Text EN" onChange={onChangeInputs} value={fiber.text.en} />
                                 </div>
                                 <div className="input__wrapper">
-                                    <textarea id="text_ru" ref={_text_ru} data-ru="Текст RU" data-en="Text RU" onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => errChecker.clearError(e.target)} />
+                                    <textarea id="text_ru" data-ru="Текст RU" data-en="Text RU" onChange={onChangeInputs} value={fiber.text.ru} />
                                 </div>
                             </div>
                             <div className="input-block">
                                 <label htmlFor="text-short_en">{lang === 'en' ? 'Text short' : 'Текст кратко'}:</label>
                                 <div className="input__wrapper">
-                                    <textarea id="text-short_en" ref={_text_short_en} data-ru="Текст кратко EN" data-en="Text short EN" onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => errChecker.clearError(e.target)} />
+                                    <textarea id="text-short_en" data-ru="Текст кратко EN" data-en="Text short EN" onChange={onChangeInputs} value={fiber.short.text.en} />
                                 </div>
                                 <div className="input__wrapper">
-                                    <textarea id="text-short_ru" ref={_text_short_ru} data-ru="Текст кратко RU" data-en="Text short RU" onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => errChecker.clearError(e.target)} />
+                                    <textarea id="text-short_ru" data-ru="Текст кратко RU" data-en="Text short RU" onChange={onChangeInputs} value={fiber.short.text.ru} />
                                 </div>
                             </div>
                         </div>

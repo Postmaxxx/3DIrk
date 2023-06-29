@@ -26,7 +26,7 @@ export interface IFeaturerFunctions {
 const Featurer = forwardRef<IFeaturerFunctions, IProps>(({lang}, ref) => {
     useImperativeHandle(ref, () => ({
         setFeatures(items) {
-            setFeatures(items)
+            setFeatures(items || [])
         },
         getFeatures() {
             return features

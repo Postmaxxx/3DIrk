@@ -1,5 +1,5 @@
+import { cacheStatus } from "../app";
 import { INews } from "../models/News";
-import { saveChanges, checkChanges } from '../processors/changes'
 const { Router } = require("express")
 const News = require("../models/News")
 const router = Router()
@@ -47,7 +47,7 @@ router.post('/create',
             
             await news.save()
 
-            await saveChanges('news', true);
+            cacheStatus.news = true
 
             return res.status(201).json({message: {en: 'News posted', ru: 'Новость сохранена'}})
         } catch (error) {
@@ -110,7 +110,7 @@ router.put('/edit',
             
             await News.findOneAndUpdate({_id}, editedNews) 
 
-            await saveChanges('news', true);
+            cacheStatus.news = true
 
             return res.status(201).json({message: {en: 'News changed', ru: 'Новость отредактирована'}})
         } catch (error) {
@@ -131,13 +131,11 @@ router.put('/edit',
 
 
 const loadNews = async (res): Promise<{loaded: boolean, msg: string}> => {
-    const changed = await checkChanges('news')
-
-    if (allNews.length === 0 || changed) {
+    if (allNews.length === 0 || cacheStatus.news) {
         try {  
             const newsList: INews[] = await News.find()
             allNews = newsList.sort((a,b) => (a.date > b.date) ? -1 : 1)
-            await saveChanges('news', false);
+            cacheStatus.news = true
         } catch (e) {
             return res.status(400).json({message: {en: `Error while loading news from db: ${e}`, ru: `Ошибка при получении новостей из базы данных: ${e}`}})
         }
@@ -147,8 +145,12 @@ const loadNews = async (res): Promise<{loaded: boolean, msg: string}> => {
 
 
 router.get('/get-amount', async (req, res) => {
-    await loadNews(res)
-    return res.status(200).json({amount: allNews.length, message: {en: '', ru: ''}})
+    try {
+        await loadNews(res)
+        return res.status(200).json({amount: allNews.length, message: {en: '', ru: ''}})
+    } catch (e) {
+        return res.status(500).json({ message:{en: `Something wrong with server ${e}, try again later`, ru: `Ошибка на сервере ${e}, попробуйте позже`}})
+    }
 })
 
 
@@ -170,9 +172,9 @@ router.get('/get-some',
         return res.status(400).json({message: {en: `Wrong params`, ru: `Неправильные параметры`}, errors: validationResult})
     }
 
-    await loadNews(res)
-
+    
     try {
+        await loadNews(res)
         const {from, amount } = req.query;
         const since = Number(from)
         const to = Number(from) + Number(amount)
@@ -206,9 +208,9 @@ router.get('/get-one',
     }
     const {_id } = req.query;
 
-    await loadNews(res)
-
+    
     try {
+        await loadNews(res)
 
         const newsToRes = allNews.find(item => {
             return item._id.valueOf() === _id
@@ -256,7 +258,7 @@ router.delete('/delete',
             if (!newsToDelete) {
                 return res.status(404).json({message: {en: `News has not found`, ru: `Новость не найдена`}})
             }
-            await saveChanges('news', true);
+            cacheStatus.news = true
             await loadNews(res)
             return res.status(200).json({message: {en: `News  deleted`, ru: `Новость удалена`}})
         } catch (error) {

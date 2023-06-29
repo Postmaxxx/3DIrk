@@ -1,7 +1,7 @@
 import { IAction, ICartItem, IDispatch, IErrRes, IFetch, IFullState, ILoggingForm, IMsgRes, IUserLoginResOk, IUserState, TLangText } from "src/interfaces";
 import { actionsListUser } from './actionsList'
 //import { setText } from "./order";
-import { errorFetch, fetchingFetch, minTimeBetweenSendings, successFetch } from "src/assets/js/consts";
+import { empty, errorFetch, fetchingFetch, minTimeBetweenSendings, successFetch } from "src/assets/js/consts";
 
 export const setUser = <T extends Partial<IUserState>>(payload: T):IAction<T> => ({
     type: actionsListUser.SET_USER,
@@ -17,7 +17,9 @@ export const setSendOrder = <T extends IFetch>(payload: T):IAction<T> => ({
 
 
 export const register = ({name, email, phone, password}: ILoggingForm) => {
-    return async function(dispatch: IDispatch, getState: () => IFullState) {
+    return async function(dispatch: IDispatch, getState: () => IFullState)  {
+        const load = getState().user.auth
+        if (load.status === 'fetching') return  
         const { user } = getState() //get current user state
         dispatch(setUser({...user, auth: fetchingFetch}))
         try {
@@ -34,14 +36,14 @@ export const register = ({name, email, phone, password}: ILoggingForm) => {
                     ...user, 
                     auth: {
                         status: 'error', 
-                        message: result.message, 
+                        message: result.message || {...empty}, 
                         errors: result.errors as TLangText[] || []
                     }
                 }))
             }
             await login({email, password})(dispatch, getState)
         } catch (e) {   
-            dispatch(setUser({...user,auth: {status: 'error', message: (e as IErrRes).message}}))
+            dispatch(setUser({...user,auth: {status: 'error', message: (e as IErrRes).message || {...empty}}}))
         } 
     }
 }
@@ -50,7 +52,9 @@ export const register = ({name, email, phone, password}: ILoggingForm) => {
 
 
 export const login = ({email, password}: Pick<ILoggingForm, "email" | "password">) => {         
-    return async function(dispatch: IDispatch, getState: () => IFullState) {              
+    return async function(dispatch: IDispatch, getState: () => IFullState)  {
+        const load = getState().user.auth
+        if (load.status === 'fetching') return             
         const { user } = getState() //get current user state
         dispatch(setUser({...user, auth: fetchingFetch}))
         try {
@@ -70,7 +74,7 @@ export const login = ({email, password}: Pick<ILoggingForm, "email" | "password"
                     ...user, 
                     auth: {
                         status: 'error', 
-                        message: (result as IErrRes).message, 
+                        message: (result as IErrRes).message || {...empty}, 
                         errors: result.errors as TLangText[] || []
                     }
                 }))
@@ -97,7 +101,7 @@ export const login = ({email, password}: Pick<ILoggingForm, "email" | "password"
 
             localStorage.setItem('user', JSON.stringify({token: result.user.token}))
         } catch (e) {         
-            dispatch(setUser({...user, auth: {status: 'error', message: (e as IErrRes).message}}))
+            dispatch(setUser({...user, auth: {status: 'error', message: (e as IErrRes).message || {...empty}}}))
         } 
     }
 }
@@ -107,9 +111,10 @@ export const login = ({email, password}: Pick<ILoggingForm, "email" | "password"
 
 
 export const loginWithToken = () => {   
-    return async function(dispatch: IDispatch, getState: () => IFullState) {
+    return async function(dispatch: IDispatch, getState: () => IFullState)  {
+        const load = getState().user.auth
+        if (load.status === 'fetching') return  
         const { user } = getState() //get current user state        
-
         const savedUser = localStorage.getItem('user')
         const currentToken: string = savedUser ? JSON.parse(savedUser).token : null
         if (!currentToken) {
@@ -128,14 +133,13 @@ export const loginWithToken = () => {
                 })
                 
             if (response.status !== 200) {
-                
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setUser({
                     ...user, 
                     token: '',
                     auth: {
                         status: 'error', 
-                        message: (result as IErrRes).message, 
+                        message: (result as IErrRes).message || {...empty}, 
                         errors: result.errors as TLangText[] || []
                     }
                 }))
@@ -157,7 +161,7 @@ export const loginWithToken = () => {
             }))
             localStorage.setItem('user', JSON.stringify({token: result.user.token}))
         } catch (e) {         
-            dispatch(setUser({...user, auth: {status: 'error', message: (e as IErrRes).message}}))
+            dispatch(setUser({...user, auth: {status: 'error', message: (e as IErrRes).message || {...empty}}}))
         } 
     }
 }
@@ -173,14 +177,17 @@ interface ISendOrder {
 }
 
 
+
 export const sendOrder = ({informer, message, files}: ISendOrder ) => {
-    return async function(dispatch: IDispatch, getState: () => IFullState) {
+    return async function(dispatch: IDispatch, getState: () => IFullState)  {
+        const send = getState().user.sendOrder
+        if (send.status === 'fetching') return
         const { fibers, colors} = getState()
         const { user } = getState()
         const {lang} = getState().base
         const urlMessage= `https://api.telegram.org/bot${process.env.REACT_APP_TG_TOK}/sendMessage`;
         const urlDocument= `https://api.telegram.org/bot${process.env.REACT_APP_TG_TOK}/sendDocument`;
-        dispatch(setSendOrder({...fetchingFetch, message: {en: 'Sending message', ru: 'Отправка сообщения'}}))
+        dispatch(setSendOrder({...fetchingFetch}))
 
         const textCart = user.cart.items.reduce((text: string, item: ICartItem, i: number) => {
             return text + `${i+1}) ${item.product.name[lang]}
@@ -386,8 +393,8 @@ export const updateCart = () => {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setSendCart({
                     status: 'error', 
-                    message: result.message, 
-                    errors: result.errors
+                    message: result.message || {...empty}, 
+                    errors: result.errors || []
                 }))
             }
             const result: IMsgRes = await response.json() //message, errors

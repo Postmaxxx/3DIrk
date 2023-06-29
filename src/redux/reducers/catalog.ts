@@ -51,7 +51,7 @@ const reducerCatalog = (state: ICatalogState = initialCatalogState, action: IAct
                     ...dataCategory
                 }
             }
-        case actionsListCatalog.SET_PAGE: 
+        /*case actionsListCatalog.SET_PAGE: 
             const selectedPage = action.payload as ICategory["page"]
             return {
                 ...state, 
@@ -59,7 +59,7 @@ const reducerCatalog = (state: ICatalogState = initialCatalogState, action: IAct
                     ...state.category,
                     page: selectedPage
                 }
-            }
+            }*/
 
 
 
@@ -67,12 +67,19 @@ const reducerCatalog = (state: ICatalogState = initialCatalogState, action: IAct
 
 
         case actionsListCatalog.SET_LOAD_STATUS_PRODUCT: 
-            const loadProductStatus = action.payload as IFetch
             return {
                 ...state, 
                 category: {
                     ...state.category,
-                    loadProduct: loadProductStatus
+                    loadProduct: action.payload as IFetch
+                }
+            }
+        case actionsListCatalog.SET_SEND_STATUS_PRODUCT: 
+            return {
+                ...state, 
+                category: {
+                    ...state.category,
+                    sendProduct: action.payload as IFetch
                 }
             }
         case actionsListCatalog.SET_DATA_PRODUCT: 

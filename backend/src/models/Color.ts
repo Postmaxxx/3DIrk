@@ -1,19 +1,17 @@
 import { Document, Schema, Model, model } from 'mongoose';
+import { TLang, TLangText } from '../../../src/interfaces';
 
 interface IColor extends Document {
-    name: {
-        en: string
-        ru: string
-    }
+    name: TLangText
     url: {
-        big: string
+        full: string
         small: string
     }
 }
 
 const colorsSchema = new Schema({
-    name: {type: Object},
-    url: {type: Object}
+    name: {type: Object, required: true},
+    url: {type: Object, required: true}
 })
 
 const Colors: Model<IColor> = model<IColor>('Colors', colorsSchema);

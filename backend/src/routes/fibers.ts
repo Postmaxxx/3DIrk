@@ -1,5 +1,5 @@
+import { cacheStatus } from "../app";
 import { IFiber } from "../models/Fiber";
-import { saveChanges, checkChanges } from '../processors/changes'
 const { Router } = require("express")
 const router = Router()
 const isAdmin = require('../middleware/isAdmin')
@@ -58,7 +58,7 @@ router.post('/create',
             const { name, text, short, params, images, proscons, colors } = req.body 
             const fiber = new Fiber({ name, text, proscons, short, params, images,  colors })
             await fiber.save()
-            await saveChanges('fibers', true);
+            cacheStatus.fibers = true
             return res.status(201).json({message: {en: 'Fiber has been saved', ru: 'Материал сохранен'}})
         } catch (error) {
             return res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})
@@ -125,7 +125,7 @@ router.put('/edit',
             
             await Fiber.findOneAndUpdate({_id}, editedFiber) 
 
-            await saveChanges('fibers', true);
+            cacheStatus.fibers = true
 
             return res.status(201).json({message: {en: 'Fiber updated', ru: 'Материал отредактирован'}})
         } catch (error) {
@@ -137,16 +137,11 @@ router.put('/edit',
 
 
 
-
-
-
-
 const loadFibers = async (res): Promise<{loaded: boolean, msg: string}> => {
-    const changed = await checkChanges('fibers')
-    if (allFibers.length === 0 || changed) {
+    if (allFibers.length === 0 || cacheStatus.fibers) {
         try {  
             allFibers = await Fiber.find()           
-            await saveChanges('fibers', false);
+            cacheStatus.fibers = false
         } catch (e) {
             return res.status(400).json({message: {en: `Error while loading fibers from db: ${e}`, ru: `Ошибка при получении материалов из базы данных: ${e}`}})
         }
@@ -156,8 +151,12 @@ const loadFibers = async (res): Promise<{loaded: boolean, msg: string}> => {
 
 
 router.get('/all', async (req, res) => {
-    loadFibers(res)    
-    return res.status(200).json({fibers: allFibers, message: {en: `Fibers loaded`, ru: `Материалы загружены`}})
+    try {
+        await loadFibers(res)    
+        return res.status(200).json({fibers: allFibers, message: {en: `Fibers loaded`, ru: `Материалы загружены`}})
+    } catch (e) {
+        return res.status(500).json({ message:{en: `Something wrong with server ${e}, try again later`, ru: `Ошибка на сервере ${e}, попробуйте позже`}})
+    }
 })
 
 
@@ -186,7 +185,7 @@ router.delete('/delete',
             if (!fiberToDelete) {
                 return res.status(404).json({message: {en: `Fiber was not found`, ru: `Материал не найден`}})
             }
-            await saveChanges('fibers', true);
+            cacheStatus.fibers = true
             await loadFibers(res)
             return res.status(200).json({message: {en: `Fiber has been deleted`, ru: `Материал был удален`}})
         } catch (error) {
