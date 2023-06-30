@@ -1,7 +1,4 @@
-import { cacheStatus } from "../app"
 import { IUser } from "../models/User"
-const products = require('../data/products')
-
 const { Router } = require("express")
 const User = require("../models/User")
 const { check, validationResult } = require('express-validator')
@@ -9,29 +6,19 @@ const bcrypt = require('bcryptjs')
 const router = Router()
 const jwt = require('jsonwebtoken')
 const authMW = require('../middleware/auth')
+import { IAllCache } from '../data/cache'
+const cache: IAllCache = require('../data/cache')
 
-
-const cartToFront = async (res, cart) => {
+const cartToFront = async (res, cart: IUser["cart"]) => {
     if (cart.length === 0 || !cart) {
         return []
     }
-    //await loadProducts(res)
-    //console.log(allProducts.find(product => product._id === item.productId));
-    //console.log(res);
-    await products.loadProducts()
-    //console.log(products.allProducts);
-    //console.log(all);
-    //console.log(all2);
+    await cache.products.control.load(res)
+    //console.log(cache.products.data);
     
-    
-    /*cart.map(item => {
-        //const fullProduct = allProducts.find(product => product._id === item.productId)
-        return item
-    })*/
-    
-    /*
-    cart.map((item) => {
-        const fullProduct = allProducts.find(product => product._id === item.productId)
+    return cart.map((item) => {
+        const fullProduct = cache.products.data.find(product => product._id.toString() === item.productId)
+        
         return fullProduct ? 
         {
             amount: item.amount,
@@ -42,7 +29,7 @@ const cartToFront = async (res, cart) => {
         }
         :
         null
-    }).filter(item => item) || [] //not null, all products with invalid id will be ignored*/
+    }).filter(item => item) || [] //not null, all products with invalid id will be ignored
 
 }
  
@@ -164,12 +151,13 @@ router.post('/login-token',
                 process.env.jwtSecret,
                 { expiresIn: "1h"}
             )
+           
 
             const userToFront = {
                 name: user.name,
                 email: user.email,
                 phone: user.phone,
-                cart: [],//cartToFront(user.cart),
+                cart: await cartToFront(res, user.cart),
                 //orders: user.orders,
                 token: newToken, //auto token prolong
                 isAdmin: false
@@ -178,10 +166,8 @@ router.post('/login-token',
             if (user.email === process.env.admEmail) {
                 userToFront.isAdmin = true
             }
-           
-            res.status(200).json({user: userToFront, message: {en: 'Login success', ru: 'Успешный вход'}})      
             
-            await cartToFront(res, user.cart)
+            res.status(200).json({user: userToFront, message: {en: 'Login success', ru: 'Успешный вход'}})      
         } catch (error) {
             res.status(500).json({ message:{en: `Something wrong with server (${error}), try again later`, ru: `Ошибка на сервере (${error}), попробуйте позже`}})
         }

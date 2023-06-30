@@ -1,4 +1,4 @@
-import { cacheStatus } from "../app";
+
 import { INews } from "../models/News";
 const { Router } = require("express")
 const News = require("../models/News")
@@ -6,8 +6,10 @@ const router = Router()
 const authMW = require('../middleware/auth')
 const { check, validationResult } = require('express-validator')
 const isAdmin = require('../middleware/isAdmin')
+import { IAllCache } from '../data/cache'
+const cache: IAllCache = require('../data/cache')
 
-let allNews: INews[] = [] //for caching news
+//let allNews: INews[] = [] //for caching news
 
 router.post('/create', 
     [authMW, isAdmin],
@@ -47,7 +49,7 @@ router.post('/create',
             
             await news.save()
 
-            cacheStatus.news = true
+            cache.news.obsolete = true
 
             return res.status(201).json({message: {en: 'News posted', ru: 'Новость сохранена'}})
         } catch (error) {
@@ -108,7 +110,7 @@ router.put('/edit',
 
             await News.findOneAndUpdate({_id}, editedNews) 
 
-            cacheStatus.news = true
+            cache.news.obsolete = true
 
             return res.status(200).json({message: {en: 'News changed', ru: 'Новость отредактирована'}})
         } catch (error) {
@@ -127,25 +129,26 @@ router.put('/edit',
 
 
 
-
+/*
 const loadNews = async (res): Promise<{loaded: boolean, msg: string}> => {
     if (allNews.length === 0 || cacheStatus.news) {
         try {  
             const newsList: INews[] = await News.find()
             allNews = newsList.sort((a,b) => (a.date > b.date) ? -1 : 1)
-            cacheStatus.news = false
+            cache.news.obsolete = false
+
         } catch (e) {
             return res.status(400).json({message: {en: `Error while loading news from db: ${e}`, ru: `Ошибка при получении новостей из базы данных: ${e}`}})
         }
     }
 }
 
-
+*/
 
 router.get('/get-amount', async (req, res) => {
     try {
-        await loadNews(res)
-        return res.status(200).json({amount: allNews.length, message: {en: '', ru: ''}})
+        await cache.news.control.load(res)
+        return res.status(200).json({amount: cache.news.data.length, message: {en: '', ru: ''}})
     } catch (e) {
         return res.status(500).json({ message:{en: `Something wrong with server ${e}, try again later`, ru: `Ошибка на сервере ${e}, попробуйте позже`}})
     }
@@ -172,17 +175,17 @@ router.get('/get-some',
 
     
     try {
-        await loadNews(res)
+        await cache.news.control.load(res)
         const {from, amount } = req.query;
         const since = Number(from)
         const to = Number(from) + Number(amount)
-        if (since >= allNews.length) {
+        if (since >=  cache.news.data.length) {
             return res.status(400).json({message: {en: `"From" is more than total amount of news`, ru: `"From" больше чем общее количество новостей`}})
         }
         
-        const newsToRes = allNews.slice(since, to)
+        const newsToRes =  cache.news.data.slice(since, to)
         
-        return res.status(200).json({news: newsToRes, total: allNews.length, message: {en: `${newsToRes.length} news loaded`, ru: `Новостей загружено: ${newsToRes.length}`}})
+        return res.status(200).json({news: newsToRes, message: {en: `${newsToRes.length} news loaded`, ru: `Новостей загружено: ${newsToRes.length}`}})
 
     } catch (error) {
         return res.status(400).json({message: {en: `Error with server while getting news`, ru: `Ошибка при получении новостей с сервера`}})
@@ -208,9 +211,9 @@ router.get('/get-one',
 
     
     try {
-        await loadNews(res)
+        await cache.news.control.load(res)
 
-        const newsToRes = allNews.find(item => {
+        const newsToRes =  cache.news.data.find(item => {
             return item._id.valueOf() === _id
         })
         
@@ -256,8 +259,8 @@ router.delete('/delete',
             if (!newsToDelete) {
                 return res.status(404).json({message: {en: `News has not found`, ru: `Новость не найдена`}})
             }
-            cacheStatus.news = true
-            await loadNews(res)
+            cache.news.obsolete = true
+            await cache.news.control.load(res)
             return res.status(200).json({message: {en: `News  deleted`, ru: `Новость удалена`}})
         } catch (error) {
             return res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})

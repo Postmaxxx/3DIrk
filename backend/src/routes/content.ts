@@ -1,4 +1,3 @@
-import { cacheStatus } from "../app";
 import { IContent } from "../models/Content";
 const { Router } = require("express")
 const Content = require("../models/Content")
@@ -6,8 +5,10 @@ const router = Router()
 const authMW = require('../middleware/auth')
 const { check, validationResult } = require('express-validator')
 const isAdmin = require('../middleware/isAdmin')
+import { IAllCache } from '../data/cache'
+const cache: IAllCache = require('../data/cache')
 
-let allContent = {} as IContent //for caching news
+//let allContent = {} as IContent //for caching news
 
 router.put('/splider', 
     [authMW, isAdmin],
@@ -25,7 +26,7 @@ router.put('/splider',
             await Content.findOneAndUpdate({}, {splider: images})
             //console.log(1);
             
-            cacheStatus.content = true
+            cache.content.obsolete = true
 
             return res.status(200).json({message: {en: 'Content changed', ru: 'Контент отредактирован'}})
         } catch (error) {
@@ -34,7 +35,7 @@ router.put('/splider',
     }
 )
 
-
+/*
 const loadContent = async (res): Promise<{loaded: boolean, msg: string}> => {
     if (Object.keys(allContent).length === 0 || cacheStatus.content) {
         try {  
@@ -48,15 +49,15 @@ const loadContent = async (res): Promise<{loaded: boolean, msg: string}> => {
     }
 }
 
-
+*/
 
 router.get('/splider', 
     async (req, res) => {
         try {
 
-            loadContent(res)
+            cache.content.control.load(res)
 
-            const splider = allContent.splider
+            const splider = cache.content.data.splider
             
             return res.status(200).json(splider)
         } catch (error) {

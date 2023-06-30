@@ -6,7 +6,6 @@ const newsRoutes = require('./routes/news')
 const colorsRoutes = require('./routes/colors')
 const catalogRoutes = require('./routes/catalog')
 const contentRoutes = require('./routes/content')
-const productRoutes = require('./routes/product')
 const express = require('express')
 const mongoose = require("mongoose")
 const cors = require('cors')
@@ -53,7 +52,7 @@ const start = async () => {
         })
         
     } catch (error: unknown) {
-        console.log(error);
+        console.log('APP ERROR:', error);
         process.exit(1)
     }
 }

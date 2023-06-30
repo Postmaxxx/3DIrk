@@ -1,4 +1,5 @@
-import { cacheStatus } from "../app"
+import { IAllCache } from '../data/cache'
+const cache: IAllCache = require('../data/cache')
 import { IColor } from "../models/Color"
 
 const { Router } = require("express")
@@ -8,7 +9,7 @@ const authMW = require('../middleware/auth')
 const { check, validationResult } = require('express-validator')
 const isAdmin = require('../middleware/isAdmin')
 
-let allColors: IColor[] = []
+//let allColors: IColor[] = []
 
 router.post('/create', 
     [authMW, 
@@ -55,8 +56,8 @@ router.post('/create',
                 url
             })
             await color.save()
-            cacheStatus.fibers = true
-            cacheStatus.colors = true 
+            cache.colors.obsolete = true
+            cache.fibers.obsolete = true
             return res.status(201).json({message: {en: 'Color saved', ru: 'Цвет сохранен'}})
         } catch (e) {
             return res.status(500).json({ message:{en: `Something wrong with server ${e}, try again later`, ru: `Ошибка на сервере ${e}, попробуйте позже`}})
@@ -100,8 +101,8 @@ router.put('/edit',
 
             await Colors.findOneAndUpdate({_id}, editedColor) 
 
-            cacheStatus.fibers = true
-            cacheStatus.colors = true  
+            cache.colors.obsolete = true
+            cache.fibers.obsolete = true
             
             return res.status(200).json({message: {en: 'Color saved', ru: 'Цвет сохранен'}})
         } catch (e) {
@@ -111,23 +112,23 @@ router.put('/edit',
 )
 
 
-
+/*
 const loadColors = async (res): Promise<{loaded: boolean, msg: string}> => {
     if (allColors.length === 0 || cacheStatus.colors) {
         try {  
             allColors = await Colors.find()
-            cacheStatus.colors = false
+            cache.colors.obsolete = false
         } catch (e) {
             return res.status(400).json({message: {en: `Error while loading colors from db: ${e}`, ru: `Ошибка при получении цветов из базы данных: ${e}`}})
         }
     }
 }
-
+*/
 
 router.get('/load-all', async (req, res) => {
     try {
-        await loadColors(res)
-        return res.status(200).json({colors: allColors, message: {en: 'Colors have been loaded', ru: 'Цвета загружены'}})
+        await cache.colors.control.load(res)
+        return res.status(200).json({colors: cache.colors.data, message: {en: 'Colors have been loaded', ru: 'Цвета загружены'}})
     } catch (e) {
         return res.status(500).json({ message:{en: `Something wrong with server ${e}, try again later`, ru: `Ошибка на сервере ${e}, попробуйте позже`}})
     }
@@ -157,8 +158,8 @@ router.delete('/delete',
         try {
             const { _id } = req.body 
             await Colors.findOneAndDelete({_id})
-            cacheStatus.fibers = true
-            cacheStatus.colors = true
+            cache.colors.obsolete = true
+            cache.fibers.obsolete = true
             return res.status(200).json({message: {en: 'Color deleted', ru: 'Цвет удален'}})
         } catch (e) {
             return res.status(500).json({ message:{en: `Something wrong with server ${e}, try again later`, ru: `Ошибка на сервере ${e}, попробуйте позже`}})

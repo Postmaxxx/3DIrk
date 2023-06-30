@@ -83,7 +83,6 @@ const loadProducts = async (res): Promise<{loaded: boolean, msg: string}> => {
     if (allProducts.obsolete) {
         try {     
             allProducts.data = await Product.find()
-            console.log('aaa', allProducts.data);
             allProducts.obsolete = false
         } catch (e) {
             return res.status(400).json({message: {en: `Error while loading products from db: ${e}`, ru: `Ошибка при получении товаров из базы данных: ${e}`}})

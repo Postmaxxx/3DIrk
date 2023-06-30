@@ -1,4 +1,3 @@
-import { cacheStatus } from "../app";
 import { IFiber } from "../models/Fiber";
 const { Router } = require("express")
 const router = Router()
@@ -6,10 +5,11 @@ const isAdmin = require('../middleware/isAdmin')
 const authMW = require('../middleware/auth')
 const { check, validationResult } = require('express-validator')
 const Fiber = require("../models/Fiber")
+import { IAllCache } from '../data/cache'
+const cache: IAllCache = require('../data/cache')
 
 
-
-let allFibers: IFiber[] = []
+//let allFibers: IFiber[] = []
 
 
 router.post('/create', 
@@ -58,7 +58,7 @@ router.post('/create',
             const { name, text, short, params, images, proscons, colors } = req.body 
             const fiber = new Fiber({ name, text, proscons, short, params, images,  colors })
             await fiber.save()
-            cacheStatus.fibers = true
+            cache.fibers.obsolete = true
             return res.status(201).json({message: {en: 'Fiber has been saved', ru: 'Материал сохранен'}})
         } catch (error) {
             return res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})
@@ -125,7 +125,8 @@ router.put('/edit',
             
             await Fiber.findOneAndUpdate({_id}, editedFiber) 
 
-            cacheStatus.fibers = true
+            cache.fibers.obsolete = true
+
 
             return res.status(201).json({message: {en: 'Fiber updated', ru: 'Материал отредактирован'}})
         } catch (error) {
@@ -135,7 +136,7 @@ router.put('/edit',
 )
 
 
-
+/*
 
 const loadFibers = async (res): Promise<{loaded: boolean, msg: string}> => {
     if (allFibers.length === 0 || cacheStatus.fibers) {
@@ -148,12 +149,12 @@ const loadFibers = async (res): Promise<{loaded: boolean, msg: string}> => {
     }
 }
 
-
+*/
 
 router.get('/all', async (req, res) => {
     try {
-        await loadFibers(res)    
-        return res.status(200).json({fibers: allFibers, message: {en: `Fibers loaded`, ru: `Материалы загружены`}})
+        await cache.fibers.control.load(res)    
+        return res.status(200).json({fibers: cache.fibers.data, message: {en: `Fibers loaded`, ru: `Материалы загружены`}})
     } catch (e) {
         return res.status(500).json({ message:{en: `Something wrong with server ${e}, try again later`, ru: `Ошибка на сервере ${e}, попробуйте позже`}})
     }
@@ -185,8 +186,9 @@ router.delete('/delete',
             if (!fiberToDelete) {
                 return res.status(404).json({message: {en: `Fiber was not found`, ru: `Материал не найден`}})
             }
-            cacheStatus.fibers = true
-            await loadFibers(res)
+            cache.fibers.obsolete = true
+
+            await cache.fibers.control.load(res)
             return res.status(200).json({message: {en: `Fiber has been deleted`, ru: `Материал был удален`}})
         } catch (error) {
             return res.status(404).json({message: {en: `Fiber was not found`, ru: `Материал не найден`}})

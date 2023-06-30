@@ -19,7 +19,7 @@ const saveChanges = async (prop: keyof IChangesProps, value: boolean) => {
             await changes.save()
         }
     } catch (e) {
-        console.log(`Error while saving changes: ${e}`);
+        //console.log(`Error while saving changes: ${e}`);
     }
 }
 
@@ -42,7 +42,7 @@ const checkChanges = async (prop: keyof IChangesProps) => {
             return changes[prop]
         }
     } catch (e) {
-        console.log(`Error while getting changes: ${e}`);
+        //console.log(`Error while getting changes: ${e}`);
         return true
     }
 }

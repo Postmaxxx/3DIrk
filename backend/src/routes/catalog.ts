@@ -1,8 +1,7 @@
 import { Router } from 'express'
 import { ICatalogItem } from '../../../src/interfaces'
-const cache: IAllCache = require('../data/cache')
-import { IProduct } from '../models/Product'
 import { IAllCache } from '../data/cache'
+const cache: IAllCache = require('../data/cache')
 const Product = require("../models/Product")
 const Catalog = require("../models/Catalog")
 const router = Router()
@@ -92,7 +91,7 @@ router.put('/list',
                 await newCategory.save()
             })
 
-            cacheStatus.catalog = true 
+            cache.catalog.obsolete = true 
 
             return res.status(200).json({message: {en: 'Catalog updated', ru: 'Каталог обновлен'}})
         } catch (error) {
@@ -104,17 +103,17 @@ router.put('/list',
 router.get('/category', async(req, res) => {
     try {
         const { _id, from, to } = req.query
-        await loadProducts(res)
-
+        await cache.products.control.load(res)
+        
         const fromIndex = Number(from)
         const toIndex = Number(to)
-        const catalogItem = allCatalog.find(item => item._id.toString() === _id)
+        const catalogItem = cache.catalog.data.find(item => item._id.toString() === _id)
         
         if (!catalogItem) {
             return res.status(400).json({message: {en: `Category with this ${_id} does not exist`, ru: `Категория с данным ${_id} не найдена`}})
         }
 
-        const products = allProducts.filter(item => item.category.toString() === _id)
+        const products =  cache.products.data.filter(item => item.category.toString() === _id)
         
         if (fromIndex > products.length || fromIndex < 0 || toIndex < fromIndex) {
             return res.status(400).json({message: {en: 'Wrong input range', ru: 'Неправильный входной диапазон'}})
@@ -175,8 +174,8 @@ router.post('/product', //create
             
             await newProduct.save()
 
-            cacheStatus.products = true
-            cacheStatus.catalog = true
+            cache.products.obsolete = true
+            cache.catalog.obsolete = true
 
             return res.status(201).json({message: {en: 'Product created', ru: 'Продукт создан'}})    
         } catch (error) {
@@ -213,8 +212,8 @@ router.put('/product', //create
 
             await Product.findOneAndUpdate({_id}, editedProducts) 
 
-            cacheStatus.products = true
-            cacheStatus.catalog = true
+            cache.products.obsolete = true
+            cache.catalog.obsolete = true
 
             return res.status(200).json({message: {en: 'Product changed', ru: 'Продукт отредактирован'}})    
         } catch (error) {
@@ -229,9 +228,11 @@ router.get('/product', async(req, res) => {
     try {
         const { _id } = req.query
         
-        await loadProducts(res)
+        //await loadProducts(res)
+        await cache.products.control.load(res)
 
-        const product = allProducts.find(item => item._id.toString() === _id)
+
+        const product = cache.products.data.find(item => item._id.toString() === _id)
         
         if (!product) {
             return res.status(404).json({message: {en: `Product with id ${_id} has not been found`, ru: `Продукт с id ${_id} не был найден`}})
@@ -277,12 +278,12 @@ router.delete('/product', //cdelete
         try {
             const { _id } = req.body
 
-            const name = allProducts.find(item => item._id.toString() === _id).name
+            const name = cache.products.data.find(item => item._id.toString() === _id).name
             
             await Product.findOneAndDelete({_id})
 
-            cacheStatus.products = true
-            cacheStatus.catalog = true
+            cache.products.obsolete = true
+            cache.catalog.obsolete = true
 
             return res.status(200).json({message: {en: `Product ${name.en} deleted`, ru: `Продукт ${name.ru} удален`}})    
         } catch (error) {
