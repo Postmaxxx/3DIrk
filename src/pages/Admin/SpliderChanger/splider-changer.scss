@@ -1,0 +1,231 @@
+@use '/src/assets/css/variables' as *;
+
+
+.page_splider-change {
+
+    & form {
+        margin-top: 70px;
+        gap: 30px 40px;
+        background-color: var(--main);
+        border-radius: 5px;
+        padding: 40px;
+        position: relative;
+
+        & .input-block, .input-block_header {
+            display: grid;
+            grid-template-columns: 150px 1fr 1fr;
+            gap: 10px 20px;
+            margin-top: 30px;
+
+
+
+            @include respond-to(md) {
+                grid-template-columns: 150px 1fr;
+                border-bottom: 1px solid var(--main_vv);
+                margin-top: 30px;
+                padding-bottom: 35px;
+
+                &:nth-of-type(5) {
+                    border-bottom: none;
+                }
+            }
+
+            @include respond-to(xs) {
+                grid-template-columns: 1fr;
+            }
+
+            & span, h3 {
+                text-align: center;
+            }
+
+
+
+
+            & label {
+                min-width: 160px;
+                align-self: center;
+                white-space: nowrap;
+                font-size: 18px;
+
+                @include respond-to(md) {
+                    grid-row-start: 1;
+                    grid-row-end: 3;
+                }
+            }
+
+
+            .input__wrapper {
+                position: relative;
+                &::before {
+                    @include respond-to(md) {
+                        font-size: 14px;
+                        content: 'EN';
+                        position: relative; 
+                        left: 0%;
+                        top: 0px;
+                        transform: translate(0, -50%);
+                    }   
+                }
+
+                &:nth-of-type(2)::before {
+                    @include respond-to(md) {
+                        content: 'RU';
+                    }
+                }
+
+                &.error {
+                    border: 1px solid red;
+                }
+            }
+
+        }
+
+
+
+
+        & .input-block_header {
+            @include respond-to(md) {
+                display: none;
+            }
+        }
+
+
+        & .full-width {
+            grid-column: 1 / -1;
+
+            
+            @include respond-to(md) {
+                grid-column: 1 / -1;
+
+            }
+        }
+
+        & .section-header {
+            text-align: center;
+            margin-left: 0;
+            margin-top: 70px;
+            color: var(--text);
+        }
+
+        & > .drop-area {
+            margin-top: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding: 15px;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 50px;
+
+
+            @include respond-to(sm) {
+                padding: 30px;
+                width: 100%; 
+            }
+
+            @include respond-to(xs) {
+                padding: 20px;
+            }
+
+
+            & > input {
+                display: none;
+            }
+
+            & .link__container {
+
+                & label {
+
+                }
+
+                & span {
+                }
+            }
+
+
+            & .preview-gallery {
+                margin-top: 0;
+                margin-top: 20px;
+                margin-left: 30px;
+                & > div {
+                    width: 110px;
+
+                    & img {
+                        object-fit: contain;
+                    }
+                }
+            }
+        }
+
+        & .change-images {
+            margin-right: auto;
+            margin-left: auto;
+            margin-top: 40px;
+            background-color: var(--main_vv);
+            color: var(--text_vv);
+        }
+
+        & .post {
+            margin-left: auto;
+            background-color: var(--main_vv);
+            color: var(--text_vv);
+            margin-top: 30px;
+            width: fit-content; 
+
+            &:disabled {
+                opacity: 0.4;
+            }
+            
+            @include respond-to(xs) {
+                width: 100%;
+                display: grid;
+                place-items: center;
+            }
+        }
+
+
+
+        & input, textarea {
+            color: $black;
+            width: 100%;
+            font-size: 20px;
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 4px;
+            background-color: var(--inputs-bg);
+            transition: background-color 1s, border 1s;
+            outline: none;
+            border: 2px solid transparent;
+            position: relative;
+
+            @include respond-to(sm) {
+                font-size: 16px;
+            }
+
+            @include respond-to(xs) {
+                font-size: 14px;
+                padding: 3px 6px;
+            }
+        }
+        
+        & textarea {
+            resize: vertical;
+            height: 100px;
+
+            @include respond-to(sm) {
+                height: 70px;
+
+            }
+        }
+
+    }
+
+
+    & > .fetching {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+}

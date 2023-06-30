@@ -237,8 +237,8 @@ export interface IProduct {
     fibers: TId[] //array of fiber ids
     //features: IFeature[]
     mods: TLangText[]
-    //files?: File[]
     category: TId
+    //files?: File[]
 }
 
 
@@ -247,13 +247,13 @@ export interface IProductShort { //for gallery
     price: TLangText
     name: TLangText
     text_short: TLangText
-    img: IImgWithThumb
+    image: IImgWithThumb
 }
 
 
 export interface ICategory {
     _id: TId
-    name: TLangText
+    //name: TLangText
     products: IProductShort[] //part of loaded products, i.e.: 1-9, 10-18, ...
     loadCategory: IFetch //for load products in selected category
     product: IProduct //current opened product (in case opened from bookmarks)
@@ -453,6 +453,7 @@ export interface IFullState {
     catalog: ICatalogState
     colors:  IColorsState
     user: IUserState
+    content:  IContentState
     //order: IOrderState
     //cart: ICartState
 }
@@ -535,9 +536,17 @@ export interface IModalImg {
 }
 
 
+export interface IContentState {
+    splider: IImgWithThumb[]
+    send: IFetch
+    load: IFetch
+}
+
 ///////////////////////////// tech
 export interface ICatalogTypes {
     new: TLangText[]
     old: TLangText[]
     changed: TLangText[]
 }
+
+

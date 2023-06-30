@@ -1,5 +1,5 @@
 import './splider-single.scss'
-import { ICatalogState, IFullState, IProduct, ISpliderOptions, TId, TLang,} from "../../../interfaces";
+import { ICatalogState, IFullState, IProduct, IProductShort, ISpliderOptions, TId, TLang,} from "../../../interfaces";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
@@ -12,7 +12,7 @@ import { allActions } from "../../../redux/actions/all";
 
 interface IPropsState {
 	lang: TLang
-	catalog: ICatalogState
+	catalogState: ICatalogState
 }
 
 
@@ -26,12 +26,13 @@ interface IPropsActions {
 
 interface IProps extends IPropsState, IPropsActions {}
 
-const SpliderSingle: React.FC<IProps> = ({lang, catalog, setState}): JSX.Element => {
+const SpliderSingle: React.FC<IProps> = ({lang, catalogState, setState}): JSX.Element => {
 	
 	const spliderSingle = useRef<Splide>();
 	const _splideMain = useRef<HTMLDivElement>(null);
-	const [productSlides, setProductSlides] = useState<IProduct[][]>([[]])
+	const [productSlides, setProductSlides] = useState<IProductShort[][]>([[]])
 	const [productsPerSlide, setProductsPerSlide] = useState<number>(6)
+	const [page, setPage] = useState<number>(0)
 
 	const optionsMain: Partial<ISpliderOptions> = {
 		lazyLoad: false,
@@ -57,20 +58,20 @@ const SpliderSingle: React.FC<IProps> = ({lang, catalog, setState}): JSX.Element
 
 
 	useEffect(() => {
-		setState.catalog.loadCategory(catalog.category._id)	
-	},[catalog.category._id]);
+		//setState.catalog.loadCategory({_id: catalog.category._id, from: 0, to: productsPerSlide})	
+	},[catalogState.category._id]);
 
 
 	
 	useEffect(() => {
-		if (catalog.category.loadCategory.status !== 'success') return
-		const result: IProduct[][] = []
-		for (let i = 0; i < catalog.category.products.length; i += productsPerSlide) {
-			result.push(catalog.category.products.slice(i, i + productsPerSlide))
+		if (catalogState.category.loadCategory.status !== 'success') return
+		const result: IProductShort[][] = []
+		for (let i = 0; i < catalogState.category.products.length; i += productsPerSlide) {
+			result.push(catalogState.category.products.slice(i, i + productsPerSlide))
 		}
 		setProductSlides(result)
 		
-	},[catalog.category.loadCategory.status, catalog.category._id]);
+	},[catalogState.category.loadCategory.status, catalogState.category._id]);
 	
 	
 	
@@ -107,12 +108,12 @@ const SpliderSingle: React.FC<IProps> = ({lang, catalog, setState}): JSX.Element
 		});
 		
 		spliderSingle.current.on("move", () => {
-			setState.catalog.setPage(spliderSingle.current?.index as number)
+			setPage(spliderSingle.current?.index as number)
 		});
 
 		spliderSingle.current.mount();
-
-		spliderSingle.current?.go(catalog.category.page);
+		
+		spliderSingle.current?.go(page);
 
 		
 		return () => {
@@ -125,7 +126,7 @@ const SpliderSingle: React.FC<IProps> = ({lang, catalog, setState}): JSX.Element
 
 	return (
 		<div className="splider_single__container">
-			{catalog.category.loadCategory.status === 'success' ? 
+			{catalogState.category.loadCategory.status === 'success' ? 
 				<div className="splide splider_single" ref={_splideMain} aria-label="">
 					<div className="splide__track">
 						<ul className="splide__list">
@@ -149,7 +150,7 @@ const SpliderSingle: React.FC<IProps> = ({lang, catalog, setState}): JSX.Element
 
 const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
-	catalog: state.catalog
+	catalogState: state.catalog
 })
 
 

@@ -3,7 +3,7 @@ import Preloader from "../../components/Preloaders/Preloader";
 
 interface IProps {
 	src: string
-	alt: string
+	alt?: string
 	id?: string
 }
 

@@ -30,8 +30,7 @@ export const setSelectedFiber = <T extends IFiber['_id']>(payload: T):IAction<T>
 
 export const loadFibers = () => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        const load = getState().fibers.load
-        if (load.status === 'fetching') return
+        if (getState().fibers.load.status === 'fetching') return
         const token = getState().user.token
         dispatch(setLoadFibers(fetchingFetch))
         try {
@@ -75,8 +74,7 @@ export const loadFibers = () => {
 
 export const sendFiber = (newFiber: ISendFiber) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        const send = getState().fibers.send
-        if (send.status === 'fetching') return
+        if (getState().fibers.send.status === 'fetching') return
         const token = getState().user.token //get current user state
         dispatch(setSendFibers({status: 'fetching', message: {en: '', ru: ''}}))
 
@@ -131,8 +129,7 @@ export const sendFiber = (newFiber: ISendFiber) => {
 
 export const editFiber = (fiber: Partial<ISendFiber>) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        const send = getState().fibers.send
-        if (send.status === 'fetching') return
+        if (getState().fibers.send.status === 'fetching') return
         const token = getState().user.token //get current user state
         dispatch(setSendFibers(fetchingFetch))
 
@@ -188,8 +185,7 @@ export const editFiber = (fiber: Partial<ISendFiber>) => {
 
 export const deleteFiber = (_id: string) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        const send = getState().fibers.send
-        if (send.status === 'fetching') return
+        if (getState().fibers.send.status === 'fetching') return
         const token = getState().user.token //get current user state
         dispatch(setSendFibers(fetchingFetch))
 

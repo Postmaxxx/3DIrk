@@ -25,8 +25,7 @@ export const setColors = <T extends IColor[]>(payload: T):IAction<T> => ({
 
 export const loadColors = () => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        const load = getState().colors.load
-        if (load.status === 'fetching') return
+        if (getState().colors.load.status === 'fetching') return
         dispatch(setLoadColors(resetFetch))
         try {
             const response: Response = await fetch('/api/colors/load-all', {
@@ -70,8 +69,7 @@ export const loadColors = () => {
 
 export const sendColor = (color: ISendColor) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        const send = getState().colors.send
-        if (send.status === 'fetching') return
+        if (getState().colors.send.status === 'fetching') return
         const token = getState().user.token
         dispatch(setSendColors(resetFetch))
         const imageUrls = {} as {full:string, small: string}
@@ -142,8 +140,7 @@ export const sendColor = (color: ISendColor) => {
 
 export const editColor = (color: ISendColor) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        const send = getState().colors.send
-        if (send.status === 'fetching') return
+        if (getState().colors.send.status === 'fetching') return
         const token = getState().user.token
         dispatch(setSendColors(resetFetch))
         const imageUrls = {} as {full:string, small: string}
@@ -219,8 +216,7 @@ export const editColor = (color: ISendColor) => {
 
 export const deleteColor = (_id: string) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        const send = getState().colors.send
-        if (send.status === 'fetching') return
+        if (getState().colors.send.status === 'fetching') return
         const token = getState().user.token
         dispatch(setSendColors(resetFetch))       
         // to db

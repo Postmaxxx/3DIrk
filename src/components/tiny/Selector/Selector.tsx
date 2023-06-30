@@ -25,45 +25,57 @@ export interface ISelectorFunctions {
     setData: (elements: IItem[]) => void;
     getValue: () => IItem;
     setValue: (element: IItem) => void;
+    setItem: (value: string) => void;
 }
+
+
 
 const Selector = forwardRef<ISelectorFunctions, IProps>(({lang, id, label, defaultData, dataset, data, saveValue}, ref) => {
     useImperativeHandle(ref, () => ({
         setData(elements) {
-            setItems(elements)     
-            reset()
+            setStore(prev => ({...prev, items: elements, item: {name: {...empty}, value: ''}}))
         },
         getValue() {
-            return item
+            return store.item
         },
-        setValue(element) {
-            setItem(element)
+        setValue(element) { //altough element can be absent in items
+            setStore(prev => ({...prev, item: element}))
+        },
+        setItem(value) { //select item if item.value === value
+            setStore(prev => ({...prev, value: value}))
         },
     }));
 
-    const [items, setItems] = useState<IItem[]>(data || [])
-    const [item, setItem] = useState<IItem>({...defaultData})
+
+    interface IStore {
+        items: IItem[]
+        item: IItem,
+        value: string
+    }
+
+    const [store, setStore] = useState<IStore>({items: data || [], item: defaultData || {value: '', name: {...empty}}, value: ''})
     const select = useRef<HTMLSelectElement>(null)
 
     const onChange = (e: React.ChangeEvent<HTMLSelectElement>) => {        
-        setItem({value: e.target.value, name: (items.find(el => el.value === e.target.value) as IItem).name})
+        setStore(prev => ({...prev, item: {value: e.target.value, name: (prev.items.find(el => el.value === e.target.value) as IItem).name}}))
         saveValue && saveValue({id, e})
     }
+
+    useEffect(() => {
+        if (!select.current) return
+        select.current.selectedIndex = store.items.findIndex(el => el.value === store.value) + 1
+    }, [store.value])
     
-    const reset = () => {
-        if (select.current) {
-            select.current.selectedIndex = -1
-            setItem({value: '', name: {...empty}})
-        }
-    }
+
+
 
 
     return (
         <div className="selector">
             {label && <label htmlFor={id}>{label[lang]}: </label>}
-            <select ref={select} id={id} defaultValue={item.value} onChange={(e) => onChange(e)} data-en={dataset.en} data-ru={dataset.ru}>
-                <option key={-1} value={item.value} disabled hidden>{item.name[lang]}</option>
-                {items.map((el, i) => <option key={i} value={el.value}>{el.name[lang]}</option>)}
+            <select ref={select} id={id} defaultValue={store.item.value} onChange={(e) => onChange(e)} data-en={dataset.en} data-ru={dataset.ru}>
+                <option key={-1} value={store.item.value} disabled hidden>{store.item.name[lang]}</option>
+                {store.items.map((el, i) => <option key={i} value={el.value}>{el.name[lang]}</option>)}
             </select>
         </div>
     )

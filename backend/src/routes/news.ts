@@ -106,13 +106,11 @@ router.put('/edit',
             
             const editedNews = images ? { header, date, short, text, images} : { header, date, short, text}
 
-        
-            
             await News.findOneAndUpdate({_id}, editedNews) 
 
             cacheStatus.news = true
 
-            return res.status(201).json({message: {en: 'News changed', ru: 'Новость отредактирована'}})
+            return res.status(200).json({message: {en: 'News changed', ru: 'Новость отредактирована'}})
         } catch (error) {
             return res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})
         }
@@ -135,7 +133,7 @@ const loadNews = async (res): Promise<{loaded: boolean, msg: string}> => {
         try {  
             const newsList: INews[] = await News.find()
             allNews = newsList.sort((a,b) => (a.date > b.date) ? -1 : 1)
-            cacheStatus.news = true
+            cacheStatus.news = false
         } catch (e) {
             return res.status(400).json({message: {en: `Error while loading news from db: ${e}`, ru: `Ошибка при получении новостей из базы данных: ${e}`}})
         }

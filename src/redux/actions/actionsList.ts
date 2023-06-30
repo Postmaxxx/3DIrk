@@ -87,3 +87,11 @@ export const actionsListUser = {
     CHANGE_AMOUNT_CART: 'CHANGE_AMOUNT_CART', 
     SET_CART: 'SET_CART'
 }
+
+
+export const actionsListContent = {
+    SET_SEND_STATUS_CONTENT: 'SET_SEND_STATUS_CONTENT', 
+    SET_LOAD_STATUS_CONTENT: 'SET_LOAD_STATUS_CONTENT', 
+    //SET_SPLIDER: 'SET_SPLIDER', 
+    SET_CONTENT: 'SET_CONTENT', 
+}

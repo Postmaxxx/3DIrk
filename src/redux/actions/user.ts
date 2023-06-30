@@ -18,8 +18,7 @@ export const setSendOrder = <T extends IFetch>(payload: T):IAction<T> => ({
 
 export const register = ({name, email, phone, password}: ILoggingForm) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        const load = getState().user.auth
-        if (load.status === 'fetching') return  
+        if (getState().user.auth.status === 'fetching') return  
         const { user } = getState() //get current user state
         dispatch(setUser({...user, auth: fetchingFetch}))
         try {
@@ -53,8 +52,7 @@ export const register = ({name, email, phone, password}: ILoggingForm) => {
 
 export const login = ({email, password}: Pick<ILoggingForm, "email" | "password">) => {         
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        const load = getState().user.auth
-        if (load.status === 'fetching') return             
+        if (getState().user.auth.status === 'fetching') return             
         const { user } = getState() //get current user state
         dispatch(setUser({...user, auth: fetchingFetch}))
         try {
@@ -69,7 +67,8 @@ export const login = ({email, password}: Pick<ILoggingForm, "email" | "password"
             
             if (response.status !== 200) {
                 const result: IErrRes = await response.json() //message, errors
-                
+                console.log(result);
+                                
                 return dispatch(setUser({
                     ...user, 
                     auth: {
@@ -112,8 +111,7 @@ export const login = ({email, password}: Pick<ILoggingForm, "email" | "password"
 
 export const loginWithToken = () => {   
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        const load = getState().user.auth
-        if (load.status === 'fetching') return  
+        if (getState().user.auth.status === 'fetching') return  
         const { user } = getState() //get current user state        
         const savedUser = localStorage.getItem('user')
         const currentToken: string = savedUser ? JSON.parse(savedUser).token : null
@@ -180,8 +178,7 @@ interface ISendOrder {
 
 export const sendOrder = ({informer, message, files}: ISendOrder ) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        const send = getState().user.sendOrder
-        if (send.status === 'fetching') return
+        if (getState().user.sendOrder.status === 'fetching') return
         const { fibers, colors} = getState()
         const { user } = getState()
         const {lang} = getState().base
@@ -203,10 +200,9 @@ ${lang === 'en' ? 'Time' : 'Время'}: ${new Date().toISOString().slice(11, 1
 ${lang === 'en' ? 'Name' : 'Имя'}: ${user.name}
 ${lang === 'en' ? 'Email' : 'Почта'}: ${user.email}
 ${lang === 'en' ? 'Phone' : 'Телефон'}: ${user.phone}
-${lang === 'en' ? 'Message' : 'Сообщение'}: ${user.message}`;
+${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
 
         const text = `${lang === 'en' ? 'New order' : 'Новый заказ'}:${textOrder}\n\n\n ${lang === 'en' ? 'Cart content' : 'Содержимое корзины'}: \n${textCart}${files.length > 0 ? (lang==='en' ? '\n\n\nAttached files:' : '\n\n\nПрикрепленные файлы:') : ''}`
-
 
         await fetch(urlMessage, {
                 method: 'POST',

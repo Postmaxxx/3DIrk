@@ -15,7 +15,7 @@ const Catalog = (): JSX.Element => {
                     <CatalogIntro />
                     <div className="splider_catalog__main">
                         <CategoriesList />
-                        {/*<SpliderSingle />*/}
+                        <SpliderSingle />
                     </div>
                 </div>
             </div>

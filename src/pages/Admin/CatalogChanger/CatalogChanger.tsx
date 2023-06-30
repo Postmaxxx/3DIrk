@@ -1,4 +1,4 @@
-import { ICatalog,  ICatalogItem,  ICatalogTypes,  IFullState, TLang, TLangText } from 'src/interfaces';
+import { ICatalog,  ICatalogItem,  ICatalogState,  ICatalogTypes,  IFullState, TLang, TLangText } from 'src/interfaces';
 import './catalog-changer.scss'
 import { FC, Fragment, useRef, useMemo, useCallback } from "react";
 import { connect } from "react-redux";
@@ -27,7 +27,7 @@ interface IOnAddCategory {
 
 interface IPropsState {
     lang: TLang
-    catalogState: ICatalog
+    catalogState: ICatalogState
 }
 
 
@@ -55,24 +55,24 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, catalogState}): JSX.Elem
         errChecker.clear()        
         modal.current?.closeModal()
         setTimeout(() => message.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal 
-        if (catalogState.send.status === 'success') {
+        if (catalogState.catalog.send.status === 'success') {
             setState.catalog.setSendCatalog(resetFetch)// clear fetch status
             setState.catalog.loadCatalog()
         }
-	}, [catalogState.send.status, errChecker])
+	}, [catalogState.catalog.send.status, errChecker])
 
 
 
     useEffect(() => { 
-        if (catalogState.send.status === 'idle' || catalogState.send.status === 'fetching')  return
-        const errors: string[] = catalogState.send.errors?.map(e => e[lang]) || []
+        if (catalogState.catalog.send.status === 'idle' || catalogState.catalog.send.status === 'fetching')  return
+        const errors: string[] = catalogState.catalog.send.errors?.map(e => e[lang]) || []
         message.current?.update({
-            header: headerStatus[catalogState.send.status][lang],
-            status: catalogState.send.status,
-            text: [catalogState.send.message[lang], ...errors]
+            header: headerStatus[catalogState.catalog.send.status][lang],
+            status: catalogState.catalog.send.status,
+            text: [catalogState.catalog.send.message[lang], ...errors]
         })
         modal.current?.openModal()
-    }, [catalogState.send.status])
+    }, [catalogState.catalog.send.status])
 
 
 
@@ -99,19 +99,19 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, catalogState}): JSX.Elem
 
     const fillValues = () => {      
         if (!catalog.current) return
-        catalog.current.setFeatures(catalogState.list)
+        catalog.current.setFeatures(catalogState.catalog.list)
     }
 
 
 
     useEffect(() => {
-        if (catalogState.load.status !== 'success' && catalogState.load.status !== 'fetching') {
+        if (catalogState.catalog.load.status !== 'success' && catalogState.catalog.load.status !== 'fetching') {
             setState.catalog.loadCatalog()
         }
-        if (catalogState.load.status === 'success') {
+        if (catalogState.catalog.load.status === 'success') {
             fillValues()
         }
-    }, [catalogState.load.status])
+    }, [catalogState.catalog.load.status])
 
    
 
@@ -129,8 +129,8 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, catalogState}): JSX.Elem
                             <Featurer lang={lang} ref={catalog}/>
                         </div>
 
-                        <button className='button_blue post' disabled={catalogState.send.status === 'fetching'} onClick={e => onSubmit(e)}>
-                            {catalogState.send.status === 'fetching' ? 
+                        <button className='button_blue post' disabled={catalogState.catalog.send.status === 'fetching'} onClick={e => onSubmit(e)}>
+                            {catalogState.catalog.send.status === 'fetching' ? 
                                 <Preloader />
                             :
                                 <>{lang === 'en' ? 'Save list' : 'Сохранить список'}</>
@@ -150,7 +150,7 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, catalogState}): JSX.Elem
 
 const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
-    catalogState: state.catalog.catalog
+    catalogState: state.catalog
 })
 
 

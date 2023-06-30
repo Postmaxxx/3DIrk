@@ -60,11 +60,11 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, setState}): JSX.Element =
                 ...clearForm
             })
             addFilesBig.current?.clearAttachedFiles()
+            if (paramNewsId) {
+                navigate('/admin/news-create', { replace: true });
+            }
         }
         setState.news.setSendNews(resetFetch)// clear fetch status
-        if (paramNewsId) {
-            navigate('/admin/news-create', { replace: true });
-        }
 	}, [send.status, paramNewsId, errChecker])
 
 
@@ -125,10 +125,10 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, setState}): JSX.Element =
         if (!_form.current) return
         errChecker.check(_form.current.querySelector('#header_en') as HTMLInputElement, 5, 50)
         errChecker.check(_form.current.querySelector('#header_ru') as HTMLInputElement, 5, 50)
-        errChecker.check(_form.current.querySelector('#text_short_en') as HTMLInputElement, 40, 5000)
-        errChecker.check(_form.current.querySelector('#text_short_ru') as HTMLInputElement, 40, 5000)
-        errChecker.check(_form.current.querySelector('#text_en') as HTMLInputElement, 20, 150)
-        errChecker.check(_form.current.querySelector('#text_ru') as HTMLInputElement, 20, 150)
+        errChecker.check(_form.current.querySelector('#text_short_en') as HTMLInputElement, 40, 150)
+        errChecker.check(_form.current.querySelector('#text_short_ru') as HTMLInputElement, 40, 150)
+        errChecker.check(_form.current.querySelector('#text_en') as HTMLInputElement, 20, 5000)
+        errChecker.check(_form.current.querySelector('#text_ru') as HTMLInputElement, 20, 5000)
         errChecker.check(_form.current.querySelector('#date') as HTMLInputElement, 10, 10)
         isNaN(Date.parse((_form.current.querySelector('#date') as HTMLInputElement).value)) && errChecker.add(lang === 'en' ? 'Date is wrong' : 'Дата неверная')
 

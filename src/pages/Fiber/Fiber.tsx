@@ -38,11 +38,12 @@ interface IProps extends IPropsState, IPropsActions {}
 
 
 const Fiber: FC<IProps> = ({lang, fibersState, colorsState, setState, isAdmin}):JSX.Element => {
-    const paramFiberNameShortEn = useParams().fiberName || ''
+    //const paramFiberNameShortEn = useParams().fiberName || ''
+    const paramFiberId = useParams().fiberId || ''
     const navigate = useNavigate()
     const modal_message = useRef<IModalFunctions>(null)
-    const modal_image = useRef<IModalFunctions>(null)
     const message = useRef<IMessageFunctions>(null)
+    const modal_image = useRef<IModalFunctions>(null)
     const image = useRef<IImageModalFunctions>(null)
     
 
@@ -101,19 +102,18 @@ const Fiber: FC<IProps> = ({lang, fibersState, colorsState, setState, isAdmin}):
 
     useEffect(() => {
         if (fibersState.load.status === 'success') {
-            setState.fibers.setSelectedFiber(fibersState.fibersList.find(item => item.short.name.en === paramFiberNameShortEn)?._id || '')
-            console.log(fibersState.fibersList.find(item => item.short.name.en === paramFiberNameShortEn)?._id || '');
+            setState.fibers.setSelectedFiber(paramFiberId)
         }
-    }, [paramFiberNameShortEn, fibersState.load.status])
+    }, [paramFiberId, fibersState.load.status])
 
 
     const renderFiberItem = useMemo(() => {
         const fiber = fibersState.fibersList.find(item => item._id === fibersState.selected)  
         return fiber ? (
             <div className="fiber__item">
-            <h2>{fiber.name[lang]}</h2>
+            <h2>{fiber.short.name[lang]} ({fiber.name[lang]})</h2>
             <div className='fiber__splider__container'>
-                <SpliderCommon images={fiber.images} imagesPerSlide={fiber.images.length > 3 ? 3 : 1}/>
+                <SpliderCommon images={fiber.images} imagesPerSlide={fiber.images.length > 3 ? 3 : fiber.images.length}/>
             </div>
             <div className="fiber__descr__container">
                 <div className="block_text">
@@ -152,7 +152,7 @@ const Fiber: FC<IProps> = ({lang, fibersState, colorsState, setState, isAdmin}):
                             to="/fibers/compare">
                                 {lang === 'en' ? 'Watch in comparasing' : 'Посмотреть в сравнении'}
                         </NavLink>
-                        {isAdmin && <Delete<IFiber> remove={onDelete} idInstance={fiber} lang={lang} disabled={false}/>}
+                        {isAdmin && <Delete<IFiber> remove={onDelete} idInstance={fiber} lang={lang} disabled={fibersState.send.status === 'fetching'}/>}
                     </div>
                 </div>
             </div>
@@ -160,7 +160,7 @@ const Fiber: FC<IProps> = ({lang, fibersState, colorsState, setState, isAdmin}):
         )
         :
         <ErrorMock lang={lang} comp={{en: 'fiber, fiber not found', ru: 'материала, данный материал не найден'}} />
-    }, [paramFiberNameShortEn, lang, fibersState.load.status, colorsState.load.status, fibersState.selected])
+    }, [paramFiberId, lang, fibersState.load.status, colorsState.load.status, fibersState.selected])
 
 
 

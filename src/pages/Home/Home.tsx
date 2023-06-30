@@ -2,20 +2,37 @@ import NewsBlock from '../../components/NewsBlock/NewsBlock';
 import SpliderMax from '../../components/CarouselMax/CarouselMax';
 import './home.scss'
 import { connect } from "react-redux";
-import { IFullState, TLang } from "../../interfaces";
+import { IContentState, IFullState, TLang } from "../../interfaces";
+import { AnyAction, bindActionCreators } from "redux";
+import { Dispatch } from "redux";
+import { allActions } from 'src/redux/actions/all';
+import { FC, useRef, useMemo, useCallback, useState, useEffect } from "react";
+import Preloader from 'src/components/Preloaders/Preloader';
+
 
 interface IPropsState {
     lang: TLang
+    contentState: IContentState
 }
 
 interface IPropsActions {
+    setState: {
+        content: typeof allActions.content
+    }
 }
 
 interface IProps extends IPropsState, IPropsActions {}
 
-const Home:React.FC<IProps> = ({lang} : IProps): JSX.Element => {
-    console.log('home re');
+const Home:React.FC<IProps> = ({lang, contentState, setState} : IProps): JSX.Element => {
+
+    useEffect(() => {
+        if (contentState.load.status !== 'success' && contentState.load.status !== 'fetching') {
+            setState.content.loadSplider()
+        }
+    }, [contentState.load.status])
     
+
+
     return (
         <div className='page page_home'>
             <div className="container_page">
@@ -41,7 +58,9 @@ const Home:React.FC<IProps> = ({lang} : IProps): JSX.Element => {
                             }
                         </div>
                         <div className="slider__container">
-                            <SpliderMax />
+                            {contentState.load.status === 'success' && <SpliderMax initialImages={contentState.splider} />}
+                            {contentState.load.status === 'fetching' && <Preloader />}
+                            
                         </div>
                         <NewsBlock />
                     </div>
@@ -54,6 +73,15 @@ const Home:React.FC<IProps> = ({lang} : IProps): JSX.Element => {
 
 const mapStateToProps = (state: IFullState):IPropsState => ({
     lang: state.base.lang,
+    contentState: state.content
+})
+
+
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>):IPropsActions => ({
+    setState: {
+		content: bindActionCreators(allActions.content, dispatch),
+	}
 })
   
-export default connect(mapStateToProps)(Home)
+  
+export default connect(mapStateToProps, mapDispatchToProps)(Home)

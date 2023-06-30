@@ -6,6 +6,7 @@ import * as actionsListNews from "./news"
 import * as actionsListOrder from "./order"
 //import * as actionsListProduct from "./product"
 import * as actionsListBase from "./base"
+import * as actionsListContent from "./content"
 
 
 const allActions = {
@@ -15,7 +16,8 @@ const allActions = {
     catalog: {...actionsListCatalog},
     news: {...actionsListNews},
     order: {...actionsListOrder},
-    base: {...actionsListBase}
+    base: {...actionsListBase},
+    content: {...actionsListContent}
 }
 
 export { allActions }

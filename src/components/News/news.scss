@@ -22,47 +22,66 @@
         }
     }
 
-
-    & > .news_text {
-        margin-top: 20px;
-        width: 100%;
+    & .news__content {
         display: flex;
         flex-direction: column;
+        padding-top: 20px;
+        flex-grow: 1;
 
-        h3 {
-            align-self: flex-start;
-            color: var(--main_vv);
-            //font-size: 24px;
-            font-weight: 700;
-            word-break: break-all;
+
+        & > .news_text {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+    
+            h3 {
+                align-self: flex-start;
+                color: var(--main_vv);
+                //font-size: 24px;
+                font-weight: 700;
+                word-break: break-all;
+            }
+
+    
+            span {
+                font-size: 16px;
+                font-weight: 600;
+                white-space: nowrap;
+    
+                //align-self: flex-start;
+                @include respond-to(sm) {
+                    font-size: 24px;
+                }
+            
+                @include respond-to(xs) {
+                    font-size: 12px;
+                }
+            }
+
+
+            p {
+                margin-top: 20px;
+                text-indent: 0;
+                //font-size: 17px;
+                font-weight: 500;
+                margin-bottom: 20px;
+                word-break: break-all;
+            }
+    
+    
         }
 
-        span {
-            font-size: 16px;
-            font-weight: 600;
-            white-space: nowrap;
 
-            //align-self: flex-start;
-            @include respond-to(sm) {
-                font-size: 24px;
-            }
-        
-            @include respond-to(xs) {
-                font-size: 12px;
-            }
+        & .button_news {
+            margin-top: auto;
         }
 
 
     }
 
-    p {
-        margin-top: 20px;
-        text-indent: 0;
-        //font-size: 17px;
-        font-weight: 500;
-        margin-bottom: 20px;
-        word-break: break-all;
-    }
+
+
+
 
 
 

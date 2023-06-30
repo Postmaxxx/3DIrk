@@ -5,6 +5,7 @@ const fibersRoutes = require('./routes/fibers')
 const newsRoutes = require('./routes/news')
 const colorsRoutes = require('./routes/colors')
 const catalogRoutes = require('./routes/catalog')
+const contentRoutes = require('./routes/content')
 const productRoutes = require('./routes/product')
 const express = require('express')
 const mongoose = require("mongoose")
@@ -18,6 +19,7 @@ interface ICacheStatus {
     fibers: boolean
     colors: boolean
     products: boolean
+    content: boolean
 }
 
 const cacheStatus: ICacheStatus = { //true - was changed, nedds to be reloaded
@@ -26,6 +28,7 @@ const cacheStatus: ICacheStatus = { //true - was changed, nedds to be reloaded
     fibers: true,
     colors: true,
     products: true,
+    content: true
 }
 
 
@@ -53,6 +56,7 @@ app.use('/api/colors', colorsRoutes)
 
 app.use('/api/fibers', fibersRoutes)
 app.use('/api/catalog', catalogRoutes)
+app.use('/api/content', contentRoutes)
 
 //app.use('/api/product', productRoutes)
 

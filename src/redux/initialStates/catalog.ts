@@ -9,7 +9,6 @@ const initialCatalog = {
     },
     category: {
         _id: '',
-        name: empty,
         loadCategory: resetFetch,
         loadProduct: resetFetch,
         sendProduct: resetFetch,

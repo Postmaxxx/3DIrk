@@ -39,7 +39,7 @@ const Fibers:React.FC<IProps> = ({lang, fibers, setState}):JSX.Element => {
         <div className="fibers__container">
             {fibers.fibersList.map((fiber, i) => {
             return (
-                <NavLink to={`../../fibers/${fiber.short.name.en}`} aria-label={lang === 'en' ? '(About fiber)' : ' (О материале)'} key={fiber._id}>
+                <NavLink to={`../../fibers/${fiber._id}`} aria-label={lang === 'en' ? '(About fiber)' : ' (О материале)'} key={fiber._id}>
                     <FiberPreview {...{fiber}} lang={lang} key={i}/>  
                 </NavLink>
             )})}
@@ -52,9 +52,9 @@ const Fibers:React.FC<IProps> = ({lang, fibers, setState}):JSX.Element => {
         <div className="page page_fibers">
             <div className="container_page">
                 <div className="container">
-                    <h1>{lang === 'en' ? 'Materials using for 3D printing' : 'Материалы, используемые в печати'}</h1>
                     {lang === 'en' ? 
                     <div className="block_text">
+                        <h1>Materials using for 3D printing</h1>
                         <p>In modern 3D printing, a variety of different materials are used to obtain products with different properties for various operating conditions. The physical characteristics of the printed object as well as its cost will differ, which is why it is crucial to choose the right material for printing.</p>
                         <p>Our company offers you a wide selection of printing materials for various types of products. Below are the materials we currently offer for manufacturing your desired products. We also invite you to familiarize yourself with the list of terms used to describe the materials for a more comfortable and comprehensive understanding of their features.</p> 
                         <p><b>Strength:</b> the specific load that a part can withstand without breaking.</p>
@@ -65,6 +65,7 @@ const Fibers:React.FC<IProps> = ({lang, fibers, setState}):JSX.Element => {
                     </div>
                     : 
                     <div className="block_text">
+                        <h1>Материалы, используемые в печати</h1>
                         <p>В современной 3D печати используется множество различных материалов, позволяющих получить продукт с различными свойствами для разных условий эксплуатации. Отличаться будут как физическте характеристики печатаемого образца, так и его стоимость, вот почему так важно правильно выбрать материал для печати. </p>
                         <p>Наша кампания предлагае Вам широкий выбор материалов для печати для самых различных видов продукции. Ниже представлены материалы, из которых на данный момент мы предлагаем вам изготовить желаемую продукцию. Также мы предлагаем Вам ознакомиться со списком терминов, используемых в описании к материалам, для бьолее комфортного и полного понимания особенностей материалов.</p> 
                         <p><b>Прочность:</b> удельная нагрузка, которую может воспринять деталь без разрушения.</p>

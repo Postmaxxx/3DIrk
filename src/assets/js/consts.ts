@@ -6,6 +6,8 @@ const minTimeBetweenSendings = 1000; //in ms
 
 const timeModalClosing: number = 500
 
+
+
 const strengthMin = 1
 const strengthMax = 180
 
@@ -243,4 +245,5 @@ const colorEmpty: ISendColor = {
 
 export {delayBetweenImagesPost, clearModalMessage, resetFetch, timeModalClosing, 
     fetchingFetch, errorFetch, successFetch, headerStatus, empty, selector, strengthMin, 
-    strengthMax, minTimeBetweenSendings,fiberEmpty, productEmpty, colorEmpty}
+    strengthMax, minTimeBetweenSendings,fiberEmpty, productEmpty, colorEmpty,
+     }

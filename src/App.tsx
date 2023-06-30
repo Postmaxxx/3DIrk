@@ -35,6 +35,7 @@ const LazyFiberCreator = lazy(() => import("./pages/Admin/FiberCreator/FiberCrea
 const LazyContactUs = lazy(() => import("./pages/ContactUs/ContactUs"));
 const LazyCatalogCahnger = lazy(() => import("./pages/Admin/CatalogChanger/CatalogChanger"));
 const LazyProductCreator = lazy(() => import("./pages/Admin/ProductCreator/ProductCreator"));
+const LazySpliderChanger = lazy(() => import("./pages/Admin/SpliderChanger/SpliderChanger"));
 
 
 interface IPropsState {
@@ -79,7 +80,7 @@ const App:React.FC<IProps> = ({lang, setState}):JSX.Element => {
 				<Route path="/fibers">
 					<Route index element={<Suspense fallback={<Preloader />}><LazyFibersPage /></Suspense>} />
 					<Route path="compare" element={<Suspense fallback={<Preloader />}><LazyFibersCompare /></Suspense>} />
-					<Route path=":fiberName" element={<Suspense fallback={<Preloader />}><LazyFiberPage /></Suspense>} />
+					<Route path=":fiberId" element={<Suspense fallback={<Preloader />}><LazyFiberPage /></Suspense>} />
 				</Route>
 				
 				<Route path="/order" element={<Suspense fallback={<Preloader />}><LazyOrderPage /></Suspense>} />
@@ -103,6 +104,8 @@ const App:React.FC<IProps> = ({lang, setState}):JSX.Element => {
 
 					<Route path="product-create" element={<Suspense fallback={<Preloader />}><LazyProductCreator /></Suspense>} />
 					<Route path="product-create/:productId" element={<Suspense fallback={<Preloader />}><LazyProductCreator /></Suspense>} />
+
+					<Route path="splider-change" element={<Suspense fallback={<Preloader />}><LazySpliderChanger /></Suspense>} />
 				</Route>
 
 

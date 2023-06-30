@@ -1,49 +1,11 @@
 import './carouselmax.scss'
 import { useEffect,useRef, useState } from 'react';
 import ImgWithPreloader from '../../assets/js/ImgWithPreloader'
-import { findBestSuitedImgHeight } from '../../assets/js/findBestSuitedImg'
-import { TLangText } from 'src/interfaces';
+import { IImgWithThumb } from 'src/interfaces';
 
 
-interface ISize {
-    height: number
-    url: string
-}
 
-interface IImage {
-    name: TLangText
-    sizes: ISize[]
-}
 
-const initialImages = Array(13).fill('').map((image, i) => ({
-    name: {
-        en: `Image ${i}`,
-        ru: `Изображение ${i}`
-    },
-            sizes: [
-            {
-                height: 250,
-                url: `./static/img/carouselMax/carousel_${i}_250.webp`
-            },
-            {
-                height: 400,
-                url: `./static/img/carouselMax/carousel_${i}_400.webp`
-
-            },
-            {
-                height: 5000,
-                url: `./static/img/carouselMax/carousel_${i}.webp`
-
-            },
-        ]
-})) satisfies IImage[]
-
-/*
-interface ICarouselSize {
-    height: number
-    width: number
-}
-*/
 interface IOptions {
     imageContainerWidth: number
     innerContainerWidth :number
@@ -77,16 +39,19 @@ const options: IOptions = {
     speed: 6
 }
 
-const SliderMax = () => {
+interface ISliderMax {
+    initialImages: IImgWithThumb[]
+}
+
+const SliderMax = ({initialImages}: ISliderMax) => {
     
     const _carouselRef = useRef<HTMLDivElement>(null)
     const [ribbonPos, setRibbonPos] = useState<number>(0)
-    const [images, setImages] = useState<string[]>([])
     const [state, setState] = useState<IOptions>({...options})
     const [ribbonDx, setRibbonDx] = useState<number>(0)
     const [firstRender, setFirstRender] = useState<boolean>(true)
     const [isAutoMoving, setIsAutoMoving] = useState<number>(1)
-
+    const [images, setImages] = useState<{url: string, fileName: string}[]>(initialImages.map(item => ({url: item.medium || item.full, fileName: item.fileName})))
 
     const mouseDown =(e: Event) => {
         //console.log('add el');
@@ -119,9 +84,9 @@ const SliderMax = () => {
             return
         }
         const innerContainerWidth = state.imageContainerWidth
-        const abc = initialImages.map(image => findBestSuitedImgHeight({height: _carouselRef.current?.clientHeight, images: image.sizes}))
-
-        setImages(abc)
+        if (_carouselRef.current.clientWidth < 200) {
+            setImages(initialImages.map(image => ({url: image.thumb, fileName: image.fileName})))
+        }
 
 
         const imagesPerContainer = Math.ceil(_carouselRef.current.offsetWidth / state.imageContainerWidth);
@@ -139,11 +104,11 @@ const SliderMax = () => {
         const changeRibbonDx = (value: number) => {
             setRibbonDx(prev => {
                 let newDx: number = prev + value
-                if (newDx < -initialImages.length * state.imageContainerWidth) {
-                    newDx += initialImages.length * state.imageContainerWidth 
+                if (newDx < -images.length * state.imageContainerWidth) {
+                    newDx += images.length * state.imageContainerWidth 
                 }
                 if (newDx > 0) {
-                    newDx -= initialImages.length * state.imageContainerWidth 
+                    newDx -= images.length * state.imageContainerWidth 
                 }
                 return newDx
             })
@@ -164,7 +129,7 @@ const SliderMax = () => {
             clearInterval(ribbonMoveInterval)
             _carouselRef.current?.removeEventListener('click', mouseDown)
         })
-    },[firstRender])
+    },[firstRender, ])
 
 
 
@@ -178,7 +143,7 @@ const SliderMax = () => {
                         <div className="img-wrapper" key={index} style={{width: `${state.imageContainerWidth}px`, paddingLeft: state.paddings, paddingRight: state.paddings}}>
                             <div className="img__outer-container" style={{width: `${state.imageContainerWidth - state.gap}px`}}>
                                 <div className="img__inner-container" style={{width: `${state.imageWidth}px`, left: `${dx}px`}}>
-                                    <ImgWithPreloader src={image} alt="" />
+                                    <ImgWithPreloader src={image.url} alt={image.fileName} />
                                 </div>
                             </div>
                         </div>

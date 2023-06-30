@@ -35,7 +35,6 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState}): JSX.Element => {
-    
     const navigate = useNavigate()
     const paramProductId = useParams().productId || ''
     const modal = useRef<IModalFunctions>(null)
@@ -57,7 +56,8 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
         setTimeout(() => message.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal 
         errChecker.clear() 
         if (catalogState.category.sendProduct.status === 'success') {
-            fillBlank()
+            setProduct({...productEmpty})
+            setState.catalog.loadCatalog()
         }
         setState.catalog.setSendProduct(resetFetch)// clear fetch status
 	}, [catalogState.category.sendProduct.status, errChecker])
@@ -90,7 +90,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
     const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {                     
         prevent(e)
         if (!_descr.current || !fiberPicker.current) return
-           
+
         //check DESCRIPTION
         errChecker.check(_descr.current.querySelector('#name_en') as HTMLInputElement, 1, 30)
         errChecker.check(_descr.current.querySelector('#name_ru') as HTMLInputElement, 1, 30)
@@ -127,20 +127,18 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
         })
         
        
-        /*if (errChecker.amount() > 0) {
+        if (errChecker.amount() > 0) {
             message.current?.update(errChecker.result())
             modal.current?.openModal('submit')
             return
-        }*/
-
-        // to backend 
+        }
         setSubmit(true)
     }
 
     useEffect(() => {
         if (!submit) return
         if (paramProductId) {
-            //setState.catalog.editProduct(product)
+            setState.catalog.editProduct(product)
         } else {
             setState.catalog.sendProduct(product)
         } 
@@ -163,45 +161,42 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
 
 
 
-    const fillValues = (_id : string) => {      
-       /* const sourceFiber = fibersState.fibersList.find(item => item._id === _id)
-        if (!sourceFiber) {
-            message_missedId.current?.update({header: lang === 'en' ? 'Error' : 'Ошибка', status: 'error', text: lang === 'en' ? ['Editing fiber was not found, switching to creating new fiber'] : ['Материал для редактирования не найден, переход к созданию нового материала']})
-            modal_missedId.current?.openModal('filling')
-            return
+    const fillValues = () => {      
+        setProduct({
+            ...catalogState.category.product,
+            files: [],
+            changeImages: false,
+        })
+        selector.current?.setItem(catalogState.category.product.category)
+        //selector.current?.setValue({value: 'dfd', name: {en: 'dsfsd', ru: 'sdf'}})
+    }
+
+
+    useEffect(() => {
+        fiberPicker.current?.setSelected(product.fibers)
+    }, [product.fibers])
+
+    useEffect(() => {
+        mods.current?.setFeatures(product.mods.map((item, i) => ({_id: String(i), name: item})))
+    }, [product.mods])
+
+    useEffect(() => {
+        if (product.files.length === 0) {
+            addFiles.current?.clearAttachedFiles()
         }
+    }, [product.files])
 
-        //proscons
-        _mods.current.innerHTML = '' //clear to avoid duplicate while rerendering
-        sourceFiber.proscons.pros.forEach(item => { //first stage - add all inputs
-            if (_addMod.current) {
-                _addMod.current.click()
-            }
-        })
-
-        const prosInputs = _mods.current.querySelectorAll('input') //second stage - fill all inputs 
-        sourceFiber.proscons.pros.forEach((item, i) => {
-            prosInputs[i * 2].value = item.en
-            prosInputs[i * 2 + 1].value = item.ru
-        })
-
-        //colors 
-        fiberPicker.current?.setSelected(sourceFiber.colors)*/
-    }
-
-
-
-    const fillBlank = () => {
-        setProduct({...productEmpty})
-        //fibers
-        fiberPicker.current?.setSelected([])
-        //mods 
-        mods.current?.setFeatures([])
-        //files
-        addFiles.current?.clearAttachedFiles()
-        //selector
+    useEffect(() => {
         selector.current?.setData(catalogState.catalog.list.map(item => ({value: item._id, name: item.name})))
-    }
+    }, [catalogState.catalog.list])
+
+
+    
+    useEffect(() => {
+        if (catalogState.category.loadProduct.status === 'success' && paramProductId) {
+            fillValues()
+        }
+    }, [catalogState.category.loadProduct.status])
 
 
 
@@ -221,7 +216,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
         }
         if (fibersState.load.status !== 'success' || fibersState.load.status !== 'success') return //loadFibers in App
        
-        paramProductId ? fillValues(paramProductId) : fillBlank()       
+        paramProductId ? setState.catalog.loadProduct(paramProductId) : setProduct({...productEmpty})
 
     }, [catalogState.catalog.load.status, fibersState.load.status, paramProductId])
 
@@ -339,8 +334,8 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
                         </div>
 
                         {renderImages}
-
-                        <button className='button_blue post' disabled={fibersState.send.status === 'fetching'} onClick={e => onSubmit(e)}>
+                        
+                        <button className='button_blue post' disabled={catalogState.category.sendProduct.status === 'fetching'} onClick={e => onSubmit(e)}>
                             {catalogState.category.sendProduct.status === 'fetching' ? 
                                 <Preloader />
                             :

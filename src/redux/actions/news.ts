@@ -41,10 +41,8 @@ export const setTotalNews = <T extends number>(payload: T):IAction<T> => ({
 
 export const loadSomeNews = (from: number, amount: number) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        const load = getState().news.load
-        if (load.status === 'fetching') return
+        if (getState().news.load.status === 'fetching') return
         const news = getState().news
-        if (news.load.status === 'fetching') return
         dispatch(setLoadNews(fetchingFetch))
         try {
             const response: Response = await fetch(`/api/news/get-some?from=${from}&amount=${amount}`, {
@@ -86,10 +84,7 @@ export const loadSomeNews = (from: number, amount: number) => {
 
 export const loadOneNews = (_id: string) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        const load = getState().news.loadOne
-        if (load.status === 'fetching') return
-        const news = getState().news
-        if (news.loadOne.status === 'fetching') return
+        if (getState().news.loadOne.status === 'fetching') return
         dispatch(setLoadOneNews(fetchingFetch))
         try {
             const response: Response = await fetch(`/api/news/get-one?_id=${_id}`, {
@@ -121,8 +116,7 @@ export const loadOneNews = (_id: string) => {
 
 export const sendNews = () => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        const send = getState().news.send
-        if (send.status === 'fetching') return
+        if (getState().news.send.status === 'fetching') return
         const { newsOne } = getState().news
         const token = getState().user.token
         dispatch(setSendNews(fetchingFetch))
@@ -193,8 +187,7 @@ export const sendNews = () => {
 
 export const updateNews = () => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        const send = getState().news.send
-        if (send.status === 'fetching') return
+        if (getState().news.send.status === 'fetching') return
         const { newsOne } = getState().news
         const token = getState().user.token //get current user state
         dispatch(setSendNews(fetchingFetch))
@@ -242,7 +235,7 @@ export const updateNews = () => {
                 body: JSON.stringify(newsToDb)
             })
 
-            if (response.status !== 201) {
+            if (response.status !== 200) {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setSendNews({
                     status: 'error', 
@@ -267,8 +260,7 @@ export const updateNews = () => {
 
 export const deleteNews = (_id: string) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        const send = getState().news.send
-        if (send.status === 'fetching') return
+        if (getState().news.send.status === 'fetching') return
         const token = getState().user.token //get current user state
         dispatch(setSendNews(fetchingFetch))
         

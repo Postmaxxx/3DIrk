@@ -235,7 +235,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
 
         //specifications
         _spec.current.querySelectorAll('input, select').forEach(item => {
-            (item as HTMLInputElement | HTMLSelectElement).value = String(sourceFiber.params[item.id])
+            (item as HTMLInputElement | HTMLSelectElement).value = String(sourceFiber.params[item.id])   
         })
 
         //proscons

@@ -77,14 +77,7 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors,produ
                     <span>{lang === 'en' ? 'Description' : 'Описание'}: </span>
                     {product.text[lang].split('\n').map((text, i) => <p key={i}>{text}</p>)}
                 </div>
-                {product.features.map((feature, i) => {
-                    return (
-                        <div className="feature" key={i}>
-                            <span>{feature.name[lang]}: </span>
-                            <span>{feature.value[lang]}</span>
-                        </div>
-                    )
-                })}
+
 
                 <div className="feature">
                     <span>{lang === 'en' ? 'Price' : 'Цена'}: </span>

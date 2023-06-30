@@ -17,11 +17,12 @@ interface IPropsState {
 const CatalogIntro:React.FC<IPropsState> = ({lang}): JSX.Element => {
     return (
         <div className="catalog-intro">
-            <h1>{lang === 'en' ? 'Our catalog' : 'Наш каталог'}</h1>
+            <div className="block_text">
+                <h1>{lang === 'en' ? 'Our catalog' : 'Наш каталог'}</h1>
+                </div>
             <div className="descr">
                 <div className="img__container">
                     <ImgWithPreloader src={catalogPhoto1} alt={lang === 'en' ? 'Catalog image' : 'Фото каталога'}/>
-
                 </div>
                 <div className="descr__text">
                     <h2>{lang === 'en' ? 'Subheader' : 'Подзаголовок'}</h2>

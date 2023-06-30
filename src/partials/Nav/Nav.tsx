@@ -112,7 +112,7 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
                                 {fibersList.map(fiber => {
                                     return (
                                         <li key={fiber._id}>
-                                           <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to={`fibers/${fiber.short.name.en}`}>
+                                           <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to={`fibers/${fiber._id}`}>
                                                {fiber.short.name[lang]}
                                            </NavLink>
                                         </li>
@@ -176,6 +176,11 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
                                             <li>
                                                 <NavLink to='/admin/product-create' >
                                                     {lang === 'en' ? '+ PRODUCT' : '+ ТОВАР'}
+                                                </NavLink>
+                                            </li>
+                                            <li>
+                                                <NavLink to='/admin/splider-change' >
+                                                    {lang === 'en' ? '~ SPLIDER' : '~ ГАЛЕРЕЯ'}
                                                 </NavLink>
                                             </li>
                                         </>

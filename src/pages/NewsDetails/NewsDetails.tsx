@@ -91,13 +91,17 @@ const NewsDetails: FC<IProps> = ({lang, setState, send, loadOne, newsOne, isAdmi
         return (
             newsOne && loadOne.status === 'success' ? 
                 <>
-                    <h1>{newsOne.header[lang]}</h1>
-                    <span className='date'>{String(newsOne.date.toISOString().slice(0, 10))}</span>
+                    <div className="block_text">
+                        <h1>{newsOne.header[lang]}</h1>
+                        <span className='date'>{String(newsOne.date.toISOString().slice(0, 10))}</span>
+                    </div>
                     <div className="news__details">
                         <>
-                            {newsOne.text[lang].split('\n').map((text, i) => {
-                                return <p key={i}>{text}</p>
-                            })}
+                            <div className="block_text">
+                                {newsOne.text[lang].split('\n').map((text, i) => {
+                                    return <p key={i}>{text}</p>
+                                })}
+                            </div>
                             <div className="images__container">
                                 <SpliderCommon images={newsOne.images} imagesPerSlide={Math.min(newsOne.images.length, 3)}/>
                             </div>

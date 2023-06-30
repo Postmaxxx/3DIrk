@@ -2,7 +2,7 @@ import './gallery.scss'
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import { IFibersState, IFullState, IProduct, TLang } from "../../interfaces";
+import { IFibersState, IFullState, IProduct, IProductShort, TId, TLang } from "../../interfaces";
 import ImgWithPreloader from '../../assets/js/ImgWithPreloader';
 import { NavLink } from 'react-router-dom';
 import { allActions } from "../../redux/actions/all";
@@ -19,16 +19,17 @@ interface IPropsActions {
 }
 
 interface IProps extends IPropsState, IPropsActions {
-    products: IProduct[]
+    products: IProductShort[]
 }
 
 
 const Gallery: React.FC<IProps> = ({lang, products, setState}):JSX.Element => {
 
-    const onClicked = (product: IProduct) => {
+    const onClicked = (_id: TId) => {
         //setState.catalog.setSelectedProduct(product.id)
         /*setState.product.setLoadDataStatusProduct({status: 'success', message: ''})
         setState.product.setProduct(product)*/
+        //setState.catalog.loadProduct(_id)
     }
 
     return (
@@ -38,11 +39,11 @@ const Gallery: React.FC<IProps> = ({lang, products, setState}):JSX.Element => {
                     <NavLink
                         to={product._id}
                         key={product._id}
-                        onClick={() => onClicked(product)}
+                        onClick={() => onClicked(product._id)}
                         >
                         <div className='gallery__item' >
                             <div className="img__container">
-                                <ImgWithPreloader src={product.images[0].thumb} alt={product.images[0].fileName}/>
+                                <ImgWithPreloader src={product.image.thumb} alt={product.image.fileName}/>
                             </div>
                             <div className="descr__container">
                                 <span className='name'>{product.name[lang]}</span>
