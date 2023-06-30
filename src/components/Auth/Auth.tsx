@@ -73,34 +73,33 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
     const onSubmit: React.EventHandler<any> = (e) => {
         e.preventDefault()
         e.stopPropagation()
-        const errors = []
         
         
         if (register) { 
-            if (form.email.length < 2) {errors.push({en: 'Name is too short', ru: 'Имя слишком короткое'})}
-            if (form.email.length > 30) {errors.push({en: 'Name is too long', ru: 'Имя слишком длинное'})}
-            if (form.phone.length < 6) {errors.push({en: 'Phone is too short', ru: 'Телефон слишком короткий'})}
-            if (form.phone.length > 20) {errors.push({en: 'Phone is too long', ru: 'Телефон слишком длинный'})}
-            if (form.email.length < 6) {errors.push({en: 'Email is too short', ru: 'Почта слишком короткая'})}
-            if (form.email.length > 40) {errors.push({en: 'Email is too long', ru: 'Почта слишком длинная'})}
-            if (form.password.length < 8) {errors.push({en: 'Password is too short', ru: 'Пароль слишком короткий'})}
+            if (form.email.length < 2) {errChecker.add({en: 'Name is too short', ru: 'Имя слишком короткое'})}
+            if (form.email.length > 30) {errChecker.add({en: 'Name is too long', ru: 'Имя слишком длинное'})}
+            if (form.phone.length < 6) {errChecker.add({en: 'Phone is too short', ru: 'Телефон слишком короткий'})}
+            if (form.phone.length > 20) {errChecker.add({en: 'Phone is too long', ru: 'Телефон слишком длинный'})}
+            if (form.email.length < 6) {errChecker.add({en: 'Email is too short', ru: 'Почта слишком короткая'})}
+            if (form.email.length > 40) {errChecker.add({en: 'Email is too long', ru: 'Почта слишком длинная'})}
+            if (form.password.length < 8) {errChecker.add({en: 'Password is too short', ru: 'Пароль слишком короткий'})}
 
             if (form.password !== form.repassword) {
-                errors.push({en: 'Passwords do not match', ru: 'Пароли не совпадают'})
+                errChecker.add({en: 'Passwords do not match', ru: 'Пароли не совпадают'})
             }
 
-            if (errors.length > 0) {
-                setState.user.setUser({...userState, auth: {status: 'error', message: {en: '', ru: ''}, errors: errors}})
+            if (errChecker.amount() > 0) {
+                setState.user.setUser({...userState, auth: {status: 'error', message: {en: '', ru: ''}, errors: errChecker.result().text}})
                 return
             }
             setState.user.register(form)
         } else {
-            if (form.email.length < 2) {errors.push({en: 'Name is too short', ru: 'Имя слишком короткое'})}
-            if (form.email.length > 30) {errors.push({en: 'Name is too long', ru: 'Имя слишком длинное'})}
-            if (form.password.length < 8) {errors.push({en: 'Password is too short', ru: 'Пароль слишком короткий'})}
+            if (form.email.length < 2) {errChecker.add({en: 'Name is too short', ru: 'Имя слишком короткое'})}
+            if (form.email.length > 30) {errChecker.add({en: 'Name is too long', ru: 'Имя слишком длинное'})}
+            if (form.password.length < 8) {errChecker.add({en: 'Password is too short', ru: 'Пароль слишком короткий'})}
 
-            if (errors.length > 0) {
-                setState.user.setUser({...userState, auth: {message: {en: '', ru: ''}, status: 'error', errors: errors}})
+            if (errChecker.amount() > 0) {
+                setState.user.setUser({...userState, auth: {message: {en: '', ru: ''}, status: 'error', errors: errChecker.result().text}})
                 return
             }
             setState.user.login(form)

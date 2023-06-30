@@ -59,7 +59,7 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
     const informer = (info: TLangText): void => {
         if (!message.current) return
         message.current.update({
-            header:  lang === 'en' ? "Sending order..." : "Отправка заказа...",
+            header:  {en: "Sending order..." , ru: "Отправка заказа..."}
             status: '',
             text: [info[lang]]
         })
