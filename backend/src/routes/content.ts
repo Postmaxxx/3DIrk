@@ -23,7 +23,7 @@ router.put('/splider',
                 return res.status(200).json({message: {en: 'Content changed', ru: 'Контент отредактирован'}})
             }
             await Content.findOneAndUpdate({}, {splider: images})
-            console.log(1);
+            //console.log(1);
             
             cacheStatus.content = true
 
@@ -36,7 +36,6 @@ router.put('/splider',
 
 
 const loadContent = async (res): Promise<{loaded: boolean, msg: string}> => {
-    
     if (Object.keys(allContent).length === 0 || cacheStatus.content) {
         try {  
             const content: IContent = await Content.findOne({})

@@ -13,25 +13,6 @@ const cors = require('cors')
 const app = express()
 //var bodyParser = require('body-parser')
 
-interface ICacheStatus {
-    news: boolean
-    catalog: boolean
-    fibers: boolean
-    colors: boolean
-    products: boolean
-    content: boolean
-}
-
-const cacheStatus: ICacheStatus = { //true - was changed, nedds to be reloaded
-    news: true,
-    catalog: true,
-    fibers: true,
-    colors: true,
-    products: true,
-    content: true
-}
-
-
 
 
 app.use(express.json({ extended: true, }));
@@ -83,4 +64,4 @@ start()
 
 app.listen(PORT, () => console.log(`Server has been successfully started on port ${PORT}...`))
 
-export {cacheStatus}
+export {}

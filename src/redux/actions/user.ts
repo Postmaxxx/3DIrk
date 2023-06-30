@@ -1,4 +1,4 @@
-import { IAction, ICartItem, IDispatch, IErrRes, IFetch, IFullState, ILoggingForm, IMsgRes, IUserLoginResOk, IUserState, TLangText } from "src/interfaces";
+import { IAction, ICartItem, ICartState, IDispatch, IErrRes, IFetch, IFullState, ILoggingForm, IMsgRes, IUserLoginResOk, IUserState, TLangText } from "src/interfaces";
 import { actionsListUser } from './actionsList'
 //import { setText } from "./order";
 import { empty, errorFetch, fetchingFetch, minTimeBetweenSendings, successFetch } from "src/assets/js/consts";
@@ -18,8 +18,8 @@ export const setSendOrder = <T extends IFetch>(payload: T):IAction<T> => ({
 
 export const register = ({name, email, phone, password}: ILoggingForm) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        if (getState().user.auth.status === 'fetching') return  
         const { user } = getState() //get current user state
+        if (user.auth.status === 'fetching') return  
         dispatch(setUser({...user, auth: fetchingFetch}))
         try {
             const response = await fetch('/api/user/register', {
@@ -52,8 +52,8 @@ export const register = ({name, email, phone, password}: ILoggingForm) => {
 
 export const login = ({email, password}: Pick<ILoggingForm, "email" | "password">) => {         
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        if (getState().user.auth.status === 'fetching') return             
         const { user } = getState() //get current user state
+        if (user.auth.status === 'fetching') return             
         dispatch(setUser({...user, auth: fetchingFetch}))
         try {
             const response: Response = await fetch('/api/user/login', {
@@ -111,8 +111,8 @@ export const login = ({email, password}: Pick<ILoggingForm, "email" | "password"
 
 export const loginWithToken = () => {   
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        if (getState().user.auth.status === 'fetching') return  
         const { user } = getState() //get current user state        
+        if (user.auth.status === 'fetching') return  
         const savedUser = localStorage.getItem('user')
         const currentToken: string = savedUser ? JSON.parse(savedUser).token : null
         if (!currentToken) {
@@ -178,9 +178,9 @@ interface ISendOrder {
 
 export const sendOrder = ({informer, message, files}: ISendOrder ) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        if (getState().user.sendOrder.status === 'fetching') return
-        const { fibers, colors} = getState()
         const { user } = getState()
+        if (user.sendOrder.status === 'fetching') return
+        const { fibers, colors} = getState()
         const {lang} = getState().base
         const urlMessage= `https://api.telegram.org/bot${process.env.REACT_APP_TG_TOK}/sendMessage`;
         const urlDocument= `https://api.telegram.org/bot${process.env.REACT_APP_TG_TOK}/sendDocument`;
@@ -278,7 +278,8 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
                     })
             })
 
-        }, Promise.resolve('Files sending started')).then(data => {
+        }, Promise.resolve('Files sending started'))
+            .then(data => {
                 dispatch(setSendOrder({
                     ...successFetch,
                     message: {
@@ -287,6 +288,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
                     },
                     errors: []
                 }))
+                setCart({items: [], updated: true})                
             })
             .catch(err => {
                 dispatch(setSendOrder({
@@ -323,7 +325,7 @@ export const addItem = <T extends ICartItem>(payload: T):IAction<T> => ({
     payload
 });
 
-export const setCart = <T extends ICartItem[]>(payload: T):IAction<T> => ({
+export const setCart = <T extends Partial<ICartState>>(payload: T):IAction<T> => ({
     type: actionsListUser.SET_CART,
     payload
 });
@@ -344,37 +346,21 @@ export const removeItem = <T extends ICartItem>(payload: T):IAction<T> => ({
 
 
 
-/*
-export const loadCart = () => {
-    return async function(dispatch: IDispatch) {
-        dispatch(setLoadCart({status: 'fetching', message: {en: `Loading cart`, ru: 'Загрузка корзины'}, errors: []}))
-        const receivedData: string = await new Promise((res, rej) => {
-            setTimeout(()=> {res(localStorage.getItem('cart') as string)}, 1000)
-        })
-        if (receivedData) {
-            console.log('raw cart loaded', receivedData);
-            const loadedItems: ICartItem[] = JSON.parse(receivedData) || []
-
-            dispatch(setCart(loadedItems))
-            dispatch(setLoadCart({status: 'success', message: {en: `Cart has been loaded`, ru: 'Корзина была загружена'}, errors: []}))
-        } else {
-            clearCart()
-            dispatch(setLoadCart({status: 'success', message: {en: `Сart is empty`, ru: 'Корзина пуста'}, errors: []}))
-        }
-    }
-}
-*/
 
 
-
-
-
-export const updateCart = () => {
+export const sendCart = () => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
         const { cart } = getState().user
+        //if (cart.send.status === 'fetching') return  
         const token = getState().user.token
         dispatch(setSendCart(fetchingFetch))
-
+        const cartToSend = cart.items.map(item => ({
+           amount: item.amount,
+           type: item.type,
+           colorId: item.color,
+           fiberId: item.fiber,
+           productId: item.product._id,
+        }))
         try {
             const response: Response = await fetch('/api/user/cart', {
                 method: 'PUT',
@@ -382,7 +368,7 @@ export const updateCart = () => {
                     "Content-Type": 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(cart)
+                body: JSON.stringify({newCart: cartToSend})
             })
 
             if (response.status !== 200) {
@@ -394,7 +380,9 @@ export const updateCart = () => {
                 }))
             }
             const result: IMsgRes = await response.json() //message, errors
+            console.log('sent');
             
+            dispatch(setCart({shouldUpdate: false}))
             dispatch(setSendCart({status: 'success', message: result.message}))
             
         } catch (e) {           
@@ -403,96 +391,3 @@ export const updateCart = () => {
 
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-export const saveCart = (items: ICartItem[]) => {
-    return async function(dispatch: IDispatch) {
-        dispatch(setSendOrderCart({status: 'fetching', message: {en: 'Saving cart', ru: 'Сохраняем корзину'}, errors: []}))
-        const dataToSave = items.map(item => {
-            return {
-                ...item,
-                product: item.product
-            }
-        })
-        localStorage.setItem('cart', JSON.stringify(dataToSave))
-        dispatch(setSendOrderCart({status: 'success', message: {en: 'Cart has been saved', ru: 'Корзина сохранена'}, errors: []}))
-    }
-}
-*/
-
-
-
-/*
-export const sendCart = () => {   
-    return async function(dispatch: IDispatch, getState: () => IFullState) {
-        const { order, user } = getState() //get current cart state
-       
-        dispatch(setSendCart({status: 'fetching', message: {en: 'Sending cart', ru: 'Отправка корзины'}, errors: []}))
-        
-        try {
-            const cartToSend = order.cart.items.map(item => {
-                return {
-                    fiber: item.fiber,
-                    color: item.color,
-                    type: item.type,
-                    amount: item.amount
-                }
-            })
-            const response: Response = await fetch('/api/cart/set', {
-                    method: 'PUT',
-                    headers: {
-                        "Content-Type": 'application/json',
-                        'Authorization': `Bearer ${user.token}`
-                    },
-                    body: JSON.stringify({items: cartToSend}),
-                })
-            
-            if (response.status !== 200) {
-                /*const result: IErrRes = await response.json() //message, errors
-                return dispatch(setUser({
-                    ...user, 
-                    auth: {
-                        status: 'error', 
-                        message: (result as IErrRes).message, 
-                        errors: result.errors as TLangText[] || []
-                    }
-                }))
-            }
-            const result: IUserLoginResOk = await response.json() //message, errors
-            dispatch(setUser({
-                ...user, 
-                name: result.user.name,
-                email: result.user.email,
-                phone: result.user.phone,
-                //orders: result.user.orders,
-                token: result.user.token,
-                auth: {status: 'success', message: result.message, errors: []},
-            }))
-            localStorage.setItem('user', JSON.stringify({token: result.user.token}))
-        } catch (e) {         
-            //dispatch(setSendOrderCart({...user, auth: {status: 'error', message: (e as IErrRes).message, errors: []}}))
-        } 
-    }
-}*/

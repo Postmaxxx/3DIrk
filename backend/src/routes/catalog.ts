@@ -1,7 +1,8 @@
 import { Router } from 'express'
 import { ICatalogItem } from '../../../src/interfaces'
-import { cacheStatus } from '../app'
+const cache: IAllCache = require('../data/cache')
 import { IProduct } from '../models/Product'
+import { IAllCache } from '../data/cache'
 const Product = require("../models/Product")
 const Catalog = require("../models/Catalog")
 const router = Router()
@@ -9,6 +10,7 @@ const authMW = require('../middleware/auth')
 const { check, validationResult } = require('express-validator')
 const isAdmin = require('../middleware/isAdmin')
 
+/*
 let allCatalog: ICatalogItem[] = [] //wo __v
 let allProducts: ({__v: string} & IProduct)[]  = [] //with __V
 
@@ -40,12 +42,12 @@ const loadCatalog = async (res): Promise<{loaded: boolean, msg: string}> => {
     }
 }
 
-
+*/
 
 router.get('/list', async (req, res) => { 
     try {
-        await loadCatalog(res)      
-        res.status(200).json({allCatalog, message: {en: 'Catalog has been loaded', ru: 'Каталог был загружены'}})
+        await cache.catalog.control.load(res)      
+        res.status(200).json({allCatalog: cache.catalog.data , message: {en: 'Catalog has been loaded', ru: 'Каталог был загружены'}})
     } catch (error) {
         res.status(500).json({message: {en: 'Error reading catalog from db', ru: 'Ошибка при чтении каталога из БД'}})
     }
@@ -134,7 +136,7 @@ router.get('/category', async(req, res) => {
 })
 
 //-------------------------------------------------------------------------------------
-
+/*
 const loadProducts = async (res): Promise<{loaded: boolean, msg: string}> => {
     if (allProducts.length === 0 || cacheStatus.products) {
         try {     
@@ -147,7 +149,7 @@ const loadProducts = async (res): Promise<{loaded: boolean, msg: string}> => {
     }
 }
 
-
+*/
 router.post('/product', //create
     [authMW, isAdmin,
         check('name.en')
@@ -291,5 +293,5 @@ router.delete('/product', //cdelete
 
 
 
-module.exports = router
 export {};
+module.exports = router

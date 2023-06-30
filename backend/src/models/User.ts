@@ -1,4 +1,5 @@
 import { Document, Schema, Model, model } from 'mongoose';
+import { TLangText } from '../../../src/interfaces';
 
 
 interface IUser extends Document {
@@ -7,7 +8,13 @@ interface IUser extends Document {
     password: string,
     phone: string,
     name: string,
-    cart: object[] //!!! import 
+    cart: {
+        productId: string
+        fiberId: string //id
+        colorId: string  //id
+        type: TLangText
+        amount: number
+    }[]
 }
 
 

@@ -92,6 +92,10 @@ const AddToCart: React.FC<IProps> = ({product, type, fiber, color, lang, cart, s
         setAmount(amount)
     }, [])
 
+
+
+
+
     return (
         <>
             <div className="cart-adder">

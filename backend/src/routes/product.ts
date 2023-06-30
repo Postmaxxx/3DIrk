@@ -4,7 +4,7 @@ import { IProduct } from "../models/Product"
 const { Router } = require("express")
 const router = Router()
 const authMW = require('../middleware/auth')
-const { check, validationResult } = require('express-validator')
+/*const { check, validationResult } = require('express-validator')
 const isAdmin = require('../middleware/isAdmin')
 const Product = require("../models/Product")
 
@@ -12,7 +12,7 @@ const Product = require("../models/Product")
 let allProducts:IProduct[] = []
 
 
-const loadProducts = async (res): Promise<{loaded: boolean, msg: string}> => {
+const loadProducts = async (res): Promise<{msg: string}> => {
     if (allProducts.length === 0 || cacheStatus.products) {
         try {  
             const productList: IProduct[] = await Product.find()
@@ -42,7 +42,7 @@ router.post('/item', //create
                 errors: errors.array().map(error => error.msg),
                 message: {en: 'Errors in product data', ru: 'Ошибки в данных продукта'}
             })
-        }*/
+        }
         try {
             const { images, price, name, text, text_short, fibers, mods, category } = req.body.product
             
@@ -81,5 +81,6 @@ router.get('/item', async(req, res) => {
 
 
 
-export {}
+export {allProducts, loadProducts}
 module.exports = router
+*/

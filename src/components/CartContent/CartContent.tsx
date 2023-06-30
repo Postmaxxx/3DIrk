@@ -14,6 +14,7 @@ import ModalImage, { IImageModalFunctions } from "../ImageModal/ImageModal";
 import { allActions } from "../../redux/actions/all";
 import ImageModal from "../ImageModal/ImageModal";
 import ErrorMock from "../tiny/ErrorMock/ErrorMock";
+import { empty, resetFetch, successFetch } from "src/assets/js/consts";
 
 
 
@@ -21,9 +22,8 @@ import ErrorMock from "../tiny/ErrorMock/ErrorMock";
 
 interface IPropsState {
     lang: TLang,
-    catalog: ICatalogState
-    colors: IColorsState
-    fibers: IFibersState
+    colorsState: IColorsState
+    fibersState: IFibersState
     cart: ICartState
 }
 
@@ -40,7 +40,7 @@ interface IPropsActions {
 
 interface IProps extends IPropsState, IPropsActions {}
 
-const CartContent: React.FC<IProps> = ({lang, cart, colors, fibers, setState}): JSX.Element => {
+const CartContent: React.FC<IProps> = ({lang, cart, colorsState, fibersState, setState}): JSX.Element => {
 
     const [cartReady, setCartReady] = useState<boolean>(false)
     const modal_image = useRef<IModalFunctions>(null)
@@ -61,18 +61,19 @@ const CartContent: React.FC<IProps> = ({lang, cart, colors, fibers, setState}): 
 
 
     useEffect(() => {
-        if (colors.load.status === 'success' && fibers.load.status === 'success' &&  cart.load.status === 'success') {
+        if (colorsState.load.status === 'success' && fibersState.load.status === 'success' &&  cart.load.status === 'success') {
             setCartReady(true)
         }
-    }, [colors.load.status, fibers.load.status, cart.load.status])
+    }, [colorsState.load.status, fibersState.load.status, cart.load.status])
 
 
     const onProductClick = (product: IProduct) => {
-        setState.catalog.setLoadProduct({status: 'success', message: {en: '', ru: ''}, errors: []})
+        //setState.catalog.setLoadProduct(resetFetch)
         //setState.product.setProduct(product)
     }
 
     const onAmountChange = (item: ICartItem, amount: number) => {
+        console.log(cart.items);
         setState.user.changeItem({...item, amount})
     }
 
@@ -90,6 +91,8 @@ const CartContent: React.FC<IProps> = ({lang, cart, colors, fibers, setState}): 
         modal_image.current?.closeModal()
 	}
 
+    console.log(cart.items);
+    
 
     return (
         <div className="cart-content">
@@ -97,8 +100,8 @@ const CartContent: React.FC<IProps> = ({lang, cart, colors, fibers, setState}): 
                 cart.items.length > 0 ? 
                 <>
                     {cart.items.map((item, i) => {
-                        const fiber = fibers.fibersList.find(fiberItem => fiberItem._id === item.fiber)?.short.name[lang]
-                        const color: IColor | undefined = colors.colors.find(color => color._id === item.color)
+                        const fiber = fibersState.fibersList.find(fiberItem => fiberItem._id === item.fiber)?.short.name[lang]
+                        const color: IColor | undefined = colorsState.colors.find(color => color._id === item.color)
                         return(
                             <div className="cart__item" key={i}>
                                 <NavLink className="item__product-link_img" to={`../catalog/${item.product._id}`} onClick={() => onProductClick(item.product)} aria-label={lang === 'en' ? 'Go to product' : 'Перейти к товару'}>
@@ -167,9 +170,8 @@ const CartContent: React.FC<IProps> = ({lang, cart, colors, fibers, setState}): 
 const mapStateToProps = (state: IFullState): IPropsState => ({
     cart: state.user.cart,
     lang: state.base.lang,
-    catalog: state.catalog,
-    colors: state.colors,
-    fibers: state.fibers,
+    colorsState: state.colors,
+    fibersState: state.fibers,
 })
 
 

@@ -6,7 +6,7 @@ import navLogo from "../../assets/img/nav_logo.png"
 import { connect } from "react-redux";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
-import CartInformer from "../../components/CartInformer/CartInformer";
+import CartInformer from "../../components/CartInformer/CartInformerUpdater";
 import Modal, { IModalFunctions } from "src/components/Modal/Modal";
 import Auth from "src/components/Auth/Auth";
 import { allActions } from "../../redux/actions/all";
@@ -143,14 +143,16 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
                                 <ul className="submenu__content">
                                     <li>
                                         <NavLink to='/order'>
-                                            {lang === 'en' ? 'CART' : 'КОРЗИНА'}
-                                        </NavLink>
-                                    </li> 
-                                    <li>
-                                        <NavLink to='/order'>
                                             {lang === 'en' ? 'ORDERS HISTORY' : 'ВСЕ ЗАКАЗЫ'}
                                         </NavLink>
                                     </li>
+                                    <li>
+                                        <NavLink to='/order'>
+                                            {lang === 'en' ? 'CART' : 'КОРЗИНА'}
+                                            <div className="cart-informer__container"><CartInformer /></div>          
+                                        </NavLink>
+
+                                    </li> 
                                     {isAdmin ? 
                                         <>
                                             <li>

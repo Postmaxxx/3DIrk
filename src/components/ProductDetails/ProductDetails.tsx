@@ -63,10 +63,8 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors,produ
         if (colors.load.status === 'success' && fibers.load.status === 'success' && productLoad.status === 'success') {
             setFibersDetailed(product.fibers.map((productFiber) => {
                 return fibers.fibersList.find(fiberItem => fiberItem._id === productFiber)
-            }).filter(fiber => fiber?._id !== undefined) as IFiber[])
+            }).map(item => ({_id: item?._id, short: {name: item?.short.name}})) as IFiber[])
         }
-
-        
     },[fibers.load.status, colors.load.status, productLoad.status])
         
     return (
@@ -96,27 +94,28 @@ const ProductDetails: React.FC<IProps> = ({lang, setState, product, colors,produ
                     null
                 }
                 <div className="feature wrap_xs">
-                <label htmlFor="fiber">
-                    {selectedFiber ? 
-                        <NavLink to={`../../fibers/${selectedFiber._id}`} aria-label={lang === 'en' ? '(About selected fiber)' : ' (О выбранном материале)'}>
-                            {lang === 'en' ? 'Fiber' : 'Материал'}:
-                        </NavLink>
-                        :
-                        <>{lang === 'en' ? 'Fiber' : 'Материал'}:</>    
-                    }
-                </label>
-
+                    <label htmlFor="fiber">
+                        {selectedFiber ? 
+                            <NavLink to={`../../fibers/${selectedFiber._id}`} aria-label={lang === 'en' ? '(About selected fiber)' : ' (О выбранном материале)'}>
+                                {lang === 'en' ? 'Fiber' : 'Материал'}:
+                            </NavLink>
+                            :
+                            <>{lang === 'en' ? 'Fiber' : 'Материал'}:</>    
+                        }
+                    </label>
                     <select id="fiber" onChange={onChangeFiber} defaultValue={''}>
                         <option key={-1} disabled hidden value={''}>{lang === 'en' ? 'Select fiber' : 'Выберите материал'}</option>
                         {fibersDetailed.map((fiber, i) => <option key={i} value={fiber._id}>{fiber.short.name[lang]}</option>)}
                     </select>
                 </div>
-                <div className="colors__container wrap_xs">
-                    <span>{lang === 'en' ? 'Available colors' : 'Доступные цвета'}: </span>
-                    <div className="colors__wrapper">
-                        <ColorPicker lang={lang} colors={colors.colors.filter(color => selectedFiber?.colors.includes(color._id))} onSelect={onSelectColor}/>
+                {selectedFiber &&
+                    <div className="colors__container wrap_xs">
+                        <span>{lang === 'en' ? 'Available colors' : 'Доступные цвета'}: </span>
+                        <div className="colors__wrapper">
+                            <ColorPicker lang={lang} colors={colors.colors.filter(color => selectedFiber?.colors.includes(color._id))} onSelect={onSelectColor}/>
+                        </div>
                     </div>
-                </div>
+                }
     
                 
             </div>

@@ -1,3 +1,7 @@
+import { cacheStatus } from "../app"
+import { IUser } from "../models/User"
+const products = require('../data/products')
+
 const { Router } = require("express")
 const User = require("../models/User")
 const { check, validationResult } = require('express-validator')
@@ -5,6 +9,43 @@ const bcrypt = require('bcryptjs')
 const router = Router()
 const jwt = require('jsonwebtoken')
 const authMW = require('../middleware/auth')
+
+
+const cartToFront = async (res, cart) => {
+    if (cart.length === 0 || !cart) {
+        return []
+    }
+    //await loadProducts(res)
+    //console.log(allProducts.find(product => product._id === item.productId));
+    //console.log(res);
+    await products.loadProducts()
+    //console.log(products.allProducts);
+    //console.log(all);
+    //console.log(all2);
+    
+    
+    /*cart.map(item => {
+        //const fullProduct = allProducts.find(product => product._id === item.productId)
+        return item
+    })*/
+    
+    /*
+    cart.map((item) => {
+        const fullProduct = allProducts.find(product => product._id === item.productId)
+        return fullProduct ? 
+        {
+            amount: item.amount,
+            fiber: item.fiberId,
+            color: item.colorId,
+            type: item.type,
+            product: fullProduct
+        }
+        :
+        null
+    }).filter(item => item) || [] //not null, all products with invalid id will be ignored*/
+
+}
+ 
 
 //api/outh/register
 router.post('/register', 
@@ -47,10 +88,6 @@ router.post('/register',
 
 
 
-
-
-
-
 router.post('/login',
     [
         check('email', {en: 'Wrong email', ru: 'Неправильная почта'}).isEmail(),
@@ -68,7 +105,7 @@ router.post('/login',
         try {
             const {email, password } = req.body
             
-            const user  = await User.findOne({ email })
+            const user: IUser = await User.findOne({ email })
             
             if (!user) {
                 return res.status(400).json({ message: { en: 'User not found', ru: "Пользователь не найден"},  errors: { en: 'User not found', ru: "Пользователь не найден"}})
@@ -86,13 +123,11 @@ router.post('/login',
                 { expiresIn: "1h"}
             )
                 
-
             const userToFront = {
                 name: user.name,
                 email: user.email,
                 phone: user.phone,
-                cart: user.cart,
-                //orders: user.orders,
+                cart: [],//cart: cartToFront(user.cart),
                 token,
                 isAdmin: false
             }
@@ -134,19 +169,19 @@ router.post('/login-token',
                 name: user.name,
                 email: user.email,
                 phone: user.phone,
-                cart: user.cart,
+                cart: [],//cartToFront(user.cart),
                 //orders: user.orders,
                 token: newToken, //auto token prolong
                 isAdmin: false
-
             }
-
+            
             if (user.email === process.env.admEmail) {
                 userToFront.isAdmin = true
             }
            
-            res.status(200).json({user: userToFront, message: {en: 'Login success', ru: 'Успешный вход'}})
-
+            res.status(200).json({user: userToFront, message: {en: 'Login success', ru: 'Успешный вход'}})      
+            
+            await cartToFront(res, user.cart)
         } catch (error) {
             res.status(500).json({ message:{en: `Something wrong with server (${error}), try again later`, ru: `Ошибка на сервере (${error}), попробуйте позже`}})
         }
@@ -155,14 +190,17 @@ router.post('/login-token',
 
 
 
+
+
+
 router.put('/cart',
     authMW,
     async (req, res) => {       
-        try {
-            const {userId, newCart } = req.body
-
-            User.findOneAndUpdate( {_id: userId}, newCart )
-
+        try {            
+            const { newCart } = req.body
+            const { id } = req.user
+            await User.findOneAndUpdate( {_id: id}, {cart: newCart})
+            
             res.status(200).json({message: {en: 'Cart has been updated', ru: 'Корзина была обновлена'}})
 
         } catch (error) {
@@ -171,6 +209,25 @@ router.put('/cart',
     }
 )
 
+/*
+router.get('/cart',
+    authMW,
+    async (req, res) => {       
+        try {
+            const { id } = req.user
+            const user = await User.findOne({_id: id})
+            if (!user) {
+                return res.status(400).json({ message: {en: 'User not found', ru: "Пользователь не найден"}})
+            }
+           
+            res.status(200).json({cart: user.cart})
+
+        } catch (error) {
+            res.status(500).json({ message:{en: `Something wrong with server (${error}), try again later`, ru: `Ошибка на сервере (${error}), попробуйте позже`}})
+        }
+    }
+)
+*/
 
 module.exports = router
 

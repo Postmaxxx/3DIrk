@@ -413,6 +413,7 @@ export interface ICartState {
     load: IFetch
     send: IFetch
     items: ICartItem[]
+    shouldUpdate: boolean
 }
 
 

@@ -1,4 +1,4 @@
-import { IAction, ICartItem, IUserState } from "src/interfaces"
+import { IAction, ICartItem, ICartState, IUserState } from "src/interfaces"
 import initialUserState from '../initialStates/user'
 import { actionsListUser } from '../actions/actionsList'
 
@@ -45,7 +45,7 @@ const reducerUser = (state:IUserState = initialUserState, action: IAction<any>):
                 ...state, 
                 cart: {
                     ...state.cart,
-                    items:  action.payload as ICartItem[]
+                    ...action.payload as Partial<ICartState>
                 }
             }
 
@@ -69,22 +69,25 @@ const reducerUser = (state:IUserState = initialUserState, action: IAction<any>):
                 ...state, 
                 cart: {
                     ...state.cart,
+                    shouldUpdate: true,
                     items:  newItems
                 }
             } 
 
         case actionsListUser.CHANGE_AMOUNT_CART:
             const itemToChange = action.payload as ICartItem;
-            const changedItems = state.cart.items.map(item => {
-                return (itemToChange.product === item.product && 
-                        itemToChange.fiber === item.fiber &&
-                        itemToChange.color === item.color &&
-                        JSON.stringify(itemToChange.type.en) !== JSON.stringify(itemToChange.type.en)) ? itemToChange : item
-            })
+            const changedItems = state.cart.items.map(item =>  
+                itemToChange.product._id === item.product._id && 
+                itemToChange.fiber === item.fiber &&
+                itemToChange.color === item.color &&
+                itemToChange.type.en === item.type.en &&
+                itemToChange.type.ru === item.type.ru ? itemToChange : item
+            )
             return {
                 ...state, 
                 cart: {
                     ...state.cart,
+                    shouldUpdate: true,
                     items:  changedItems
                 }
                 
@@ -96,6 +99,7 @@ const reducerUser = (state:IUserState = initialUserState, action: IAction<any>):
                 ...state, 
                 cart: {
                     ...state.cart,
+                    shouldUpdate: true,
                     items:  state.cart.items.filter(item => itemId !== item)
                 }
             } 

@@ -59,7 +59,7 @@ const ColorPicker: React.FC<IPropsState> = ({lang, colors, onSelect}): JSX.Eleme
                         <span>{currentColor.name[lang]}</span>
                     </>
                     :
-                    <span>{lang === 'en' ? 'Choose the fiber before' : 'Сначала выберите материал'} </span>
+                    <span>{lang === 'en' ? 'Choose the color' : 'Выберите цвет'} </span>
                 }
             </div>
             <div className='list'>
