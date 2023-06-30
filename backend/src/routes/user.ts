@@ -60,7 +60,7 @@ router.post('/login',
         const errors = validationResult(req)
         if (!errors.isEmpty()) {
             return res.status(400).json({
-                errors: errors.array(),
+                errors: errors.array().map(item => (item.msg)),
                 message: {en: "Wrong data to login", ru: "Неправильные данные для входа"}
             })
         }
@@ -71,13 +71,13 @@ router.post('/login',
             const user  = await User.findOne({ email })
             
             if (!user) {
-                return res.status(400).json({ message: { en: 'User not found', ru: "Пользователь не найден"}})
+                return res.status(400).json({ message: { en: 'User not found', ru: "Пользователь не найден"},  errors: { en: 'User not found', ru: "Пользователь не найден"}})
             }
             
             const passwordsSame = await bcrypt.compare(password, user.password)
             
             if (!passwordsSame) {
-                return res.status(400).json({ message: {en: 'Password is incorrect', ru: "Пароль неверный"}})
+                return res.status(400).json({ message: {en: 'Password is incorrect', ru: "Пароль неверный"}, errors: [{en: 'Password is incorrect', ru: "Пароль неверный"}]})
             }
             
             const token = jwt.sign(

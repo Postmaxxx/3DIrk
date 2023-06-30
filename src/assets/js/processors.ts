@@ -1,5 +1,5 @@
 import { TLang, TLangText } from "src/interfaces";
-import { empty, selector } from "./consts";
+import { selector } from "./consts";
 
 //---------------------------------------------------------------
 
@@ -17,18 +17,18 @@ interface IErrorsChecker {
 }
 
 const errorsChecker = ({lang = 'en'}: IErrorsChecker) => {
-    const errors: TLangText[] = []
+    const errors: string[] = []
 
-    const check = (el:  HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | HTMLSelectElement, min = 0, max = 1000): {result: boolean, error: TLangText} => {
-        const err = {result: false, error: {...empty}}
+    const check = (el:  HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | HTMLSelectElement, min = 0, max = 1000): {result: boolean, error: string} => {
+        const err = {result: false, error: ''}
         if (el.value && el.value.length >= min && el.value.length <= max) return err // no error
         
         err.result = true
         if (el.value.length < min) {
-            err.error = {en: `${el.dataset[lang]} is shorter than ${min} symbols`, ru: `${el.dataset[lang]} меньше ${min} симв.`}
+            err.error = `${el.dataset[lang]} ${lang === 'en' ? `is shorter than ${min} symbols` : `меньше ${min} симв.`}`
         }
         if (el.value.length > max) {
-            err.error =  {en: `${el.dataset[lang]} is longer than ${min} symbols`, ru: `${el.dataset[lang]} больше ${min} симв.`}
+            err.error = `${el.dataset[lang]} ${lang === 'en' ? `is longer than ${max} symbols` : `больше ${max} симв.`}`
         }
         if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
             el.parentElement?.classList.add('error')
@@ -50,7 +50,7 @@ const errorsChecker = ({lang = 'en'}: IErrorsChecker) => {
     }
 
     
-    const add = (err: TLangText): void => {errors.push(err)}
+    const add = (err: string): void => {errors.push(err)}
 
     const amount = () => errors.length
 
