@@ -1,5 +1,3 @@
-
-import { INews } from "../models/News";
 const { Router } = require("express")
 const News = require("../models/News")
 const router = Router()
@@ -8,8 +6,6 @@ const { check, validationResult } = require('express-validator')
 const isAdmin = require('../middleware/isAdmin')
 import { IAllCache } from '../data/cache'
 const cache: IAllCache = require('../data/cache')
-
-//let allNews: INews[] = [] //for caching news
 
 router.post('/create', 
     [authMW, isAdmin],
@@ -127,23 +123,6 @@ router.put('/edit',
 
 
 
-
-
-/*
-const loadNews = async (res): Promise<{loaded: boolean, msg: string}> => {
-    if (allNews.length === 0 || cacheStatus.news) {
-        try {  
-            const newsList: INews[] = await News.find()
-            allNews = newsList.sort((a,b) => (a.date > b.date) ? -1 : 1)
-            cache.news.obsolete = false
-
-        } catch (e) {
-            return res.status(400).json({message: {en: `Error while loading news from db: ${e}`, ru: `Ошибка при получении новостей из базы данных: ${e}`}})
-        }
-    }
-}
-
-*/
 
 router.get('/get-amount', async (req, res) => {
     try {

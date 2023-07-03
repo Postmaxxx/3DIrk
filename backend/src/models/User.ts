@@ -2,19 +2,21 @@ import { Document, Schema, Model, model } from 'mongoose';
 import { TLangText } from '../../../src/interfaces';
 
 
+interface ICartItem {
+    productId: string
+    fiberId: string //id
+    colorId: string  //id
+    type: TLangText
+    amount: number
+}
+
 interface IUser extends Document {
     date: Date
     email: string,
     password: string,
     phone: string,
     name: string,
-    cart: {
-        productId: string
-        fiberId: string //id
-        colorId: string  //id
-        type: TLangText
-        amount: number
-    }[]
+    cart: ICartItem[]
 }
 
 
@@ -32,4 +34,4 @@ const userSchema = new Schema({
 const User: Model<IUser> = model<IUser>('User', userSchema);
 
 module.exports = User
-export { IUser }
+export { IUser, ICartItem }

@@ -136,20 +136,6 @@ router.put('/edit',
 )
 
 
-/*
-
-const loadFibers = async (res): Promise<{loaded: boolean, msg: string}> => {
-    if (allFibers.length === 0 || cacheStatus.fibers) {
-        try {  
-            allFibers = await Fiber.find()           
-            cacheStatus.fibers = false
-        } catch (e) {
-            return res.status(400).json({message: {en: `Error while loading fibers from db: ${e}`, ru: `Ошибка при получении материалов из базы данных: ${e}`}})
-        }
-    }
-}
-
-*/
 
 router.get('/all', async (req, res) => {
     try {

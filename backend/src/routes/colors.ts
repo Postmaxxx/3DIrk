@@ -112,18 +112,6 @@ router.put('/edit',
 )
 
 
-/*
-const loadColors = async (res): Promise<{loaded: boolean, msg: string}> => {
-    if (allColors.length === 0 || cacheStatus.colors) {
-        try {  
-            allColors = await Colors.find()
-            cache.colors.obsolete = false
-        } catch (e) {
-            return res.status(400).json({message: {en: `Error while loading colors from db: ${e}`, ru: `Ошибка при получении цветов из базы данных: ${e}`}})
-        }
-    }
-}
-*/
 
 router.get('/load-all', async (req, res) => {
     try {

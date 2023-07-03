@@ -71,7 +71,7 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
     const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
         if (!_message.current || !message.current || !modal_message.current || !addFiles.current) return
         prevent(e)
-        errChecker.check(_message.current, 0, 3000)
+        //errChecker.check(_message.current, 0, 3000)
 
         if (errChecker.amount() > 0) {
             message.current?.update(errChecker.result())

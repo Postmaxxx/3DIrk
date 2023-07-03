@@ -1,18 +1,17 @@
 require('dotenv').config()
 const userRoutes = require('./routes/user')
-const cartRoutes = require('./routes/cart')
 const fibersRoutes = require('./routes/fibers')
 const newsRoutes = require('./routes/news')
 const colorsRoutes = require('./routes/colors')
 const catalogRoutes = require('./routes/catalog')
 const contentRoutes = require('./routes/content')
+const filesRoutes = require('./routes/files')
+//const ordersRoutes = require('./routes/orders')
 const express = require('express')
 const mongoose = require("mongoose")
 const cors = require('cors')
 const app = express()
 //var bodyParser = require('body-parser')
-
-
 
 app.use(express.json({ extended: true, }));
 //app.use(bodyParser.json({strict: false}))
@@ -25,8 +24,14 @@ app.use(cors({
 }));
 
 
+
+
+app.use('/api/files', filesRoutes)
+
+
+
+
 app.use('/api/user', userRoutes)
-app.use('/api/cart', cartRoutes)
 /*
 //fibers
 */
@@ -38,7 +43,7 @@ app.use('/api/fibers', fibersRoutes)
 app.use('/api/catalog', catalogRoutes)
 app.use('/api/content', contentRoutes)
 
-//app.use('/api/product', productRoutes)
+//app.use('/api/order', ordersRoutes)
 
 const PORT: number = Number(process.env.PORT) || 5000
 

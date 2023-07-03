@@ -1,4 +1,4 @@
-import { IChangesProps, IChanges } from "../models/Changes";
+/*import { IChangesProps, IChanges } from "../models/Changes";
 const Changes = require("../models/Changes")
 
 
@@ -46,4 +46,4 @@ const checkChanges = async (prop: keyof IChangesProps) => {
         return true
     }
 }
- export {saveChanges, checkChanges}
+ export {saveChanges, checkChanges}*/

@@ -2,6 +2,7 @@ import { IAction, ICartItem, ICartState, IDispatch, IErrRes, IFetch, IFullState,
 import { actionsListUser } from './actionsList'
 //import { setText } from "./order";
 import { empty, errorFetch, fetchingFetch, minTimeBetweenSendings, successFetch } from "src/assets/js/consts";
+import { Form } from "react-router-dom";
 
 export const setUser = <T extends Partial<IUserState>>(payload: T):IAction<T> => ({
     type: actionsListUser.SET_USER,
@@ -165,7 +166,7 @@ export const loginWithToken = () => {
 }
 
 
-
+//////////////////////////////////////////////////////////////////////////////
 
 
 interface ISendOrder {
@@ -175,17 +176,41 @@ interface ISendOrder {
 }
 
 
-
 export const sendOrder = ({informer, message, files}: ISendOrder ) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
         const { user } = getState()
         if (user.sendOrder.status === 'fetching') return
-        const { fibers, colors} = getState()
         const {lang} = getState().base
-        const urlMessage= `https://api.telegram.org/bot${process.env.REACT_APP_TG_TOK}/sendMessage`;
-        const urlDocument= `https://api.telegram.org/bot${process.env.REACT_APP_TG_TOK}/sendDocument`;
+        //const urlMessage= `https://api.telegram.org/bot${process.env.REACT_APP_TG_TOK}/sendMessage`;
+        //const urlDocument= `https://api.telegram.org/bot${process.env.REACT_APP_TG_TOK}/sendDocument`;
         dispatch(setSendOrder({...fetchingFetch}))
-
+        
+        const sendForm = new FormData()
+        console.log(files.length);
+        
+        files.forEach(item => {
+            console.log('file', item);
+            sendForm.append('files', item, item.name)
+        })
+        sendForm.append('fileType', 'userFiles')
+        console.log(sendForm);
+        
+        try {
+            const response = await fetch('/api/files/upload', {
+                method: 'POST',
+                headers: {
+                    'enctype': "multipart/form-data",
+                   // 'Content-Type': '"multipart/form-data',
+                    'Authorization': `Bearer ${user.token}`
+                },
+                body: sendForm
+            })
+            console.log(response.status);
+            
+        } catch (error) {
+            
+        }
+/*
         const textCart = user.cart.items.reduce((text: string, item: ICartItem, i: number) => {
             return text + `${i+1}) ${item.product.name[lang]}
 ${lang === 'en' ? 'Options' : 'Версия'}: ${item.type} 
@@ -298,7 +323,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
                         ru: `Возникла ошибка при отправке файлов: ${err}` 
                     },
                 }))
-            })
+            })*/
     }
 }
 

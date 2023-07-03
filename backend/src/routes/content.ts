@@ -8,7 +8,6 @@ const isAdmin = require('../middleware/isAdmin')
 import { IAllCache } from '../data/cache'
 const cache: IAllCache = require('../data/cache')
 
-//let allContent = {} as IContent //for caching news
 
 router.put('/splider', 
     [authMW, isAdmin],
@@ -35,21 +34,6 @@ router.put('/splider',
     }
 )
 
-/*
-const loadContent = async (res): Promise<{loaded: boolean, msg: string}> => {
-    if (Object.keys(allContent).length === 0 || cacheStatus.content) {
-        try {  
-            const content: IContent = await Content.findOne({})
-            //console.log(content.splider);
-            allContent.splider = content.splider
-            cacheStatus.content = false
-        } catch (e) {
-            return res.status(400).json({message: {en: `Error while loading cщntent from db: ${e}`, ru: `Ошибка при получении контента из базы данных: ${e}`}})
-        }
-    }
-}
-
-*/
 
 router.get('/splider', 
     async (req, res) => {

@@ -11,45 +11,6 @@ const Fiber = require("../models/Fiber")
 const Colors = require("../models/Color")
 const Content = require("../models/Content")
 
-/*
-interface ICacheStatus {
-    news: boolean
-    catalog: boolean
-    fibers: boolean
-    colors: boolean
-    products: boolean
-    content: boolean
-}
-
-const cacheStatus: ICacheStatus = { //true - cache was changed, nedds to be reloaded
-    news: true,
-    catalog: true,
-    fibers: true,
-    colors: true,
-    products: true,
-    content: true
-}
-*/
-/*
-interface ICached {
-    allProducts: ({__v: string} & IProduct)[] //with __V
-    allColors: IColor[]
-    allContent: IContent
-    allFibers: IFiber[]
-    allNews: INews[]
-    catalog: ICatalogItem[]
-}
-
-const cached: ICached = {
-    allProducts: [],
-    allColors: [],
-    allContent: {} as IContent,
-    allFibers: [],
-    allNews: [],
-    catalog: []
-}
-*/
-
 
 const loadCatalog = async (res): Promise<{loaded: boolean, msg: string}> => {
     if (allCatalog.obsolete) {
