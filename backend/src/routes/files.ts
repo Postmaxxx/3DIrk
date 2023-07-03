@@ -1,28 +1,37 @@
 const { Router } = require("express")
 const router = Router()
 const multer = require('multer');
+const sharp = require('sharp')
+
+
+
+
+const storageUser = multer.diskStorage({
+	destination: (req, file, cb) => {
+	  cb(null, process.env.pathToTemp); // Set the destination folder for uploaded files
+	},
+	filename: (req, file, cb) => {
+	  cb(null, file.originalname); // Keep the original file name
+	}
+}); 
+
+const uploadUser = multer({ storage: storageUser }).array('files');
+
+
+
 
 
 const storageImages = multer.diskStorage({
-    destination: (req, file, cb) => {
-		console.log('fileType', req.body.fileType);
-        cb(null, process.env.pathToUploads); // Set the destination folder for uploaded files
-    },
-    filename: (req, file, cb) => {
-        cb(null, file.originalname); // Keep the original file name
-    },
-	/*fileFilter: (req, res, cb) => {
-
-	}*/
+	destination: (req, file, cb) => {
+	  cb(null, process.env.pathToTemp); // Set the destination folder for uploaded files
+	},
+	filename: (req, file, cb) => {
+	  cb(null, file.originalname); // Keep the original file name
+	}
 });
+  
 
-const uploadImages = multer({ storageImages });
-
-
-
-const uploadImages2 = uploadImages.fields([
-	{ name: 'colors', maxCount: 2 }, 
-])
+const uploadImages = multer({ storage: storageImages }).array('files');
 
 
 
@@ -30,12 +39,60 @@ const uploadImages2 = uploadImages.fields([
 
 
 
-router.post('/upload', uploadImages.array('files'), (req, res) => {
-	console.log('body: ', req.body);
-    res.status(200).json({msg: 'File uploaded!'}); 
+
+/*
+const storage = multer.diskStorage({
+	destination: (req, file, cb) => {
+	  cb(null, process.env.pathToUploadsImages); // Set the destination folder for uploaded files
+	},
+	filename: (req, file, cb) => {
+	  cb(null, file.originalname); // Keep the original file name
+	}
+  });
+  
+
+
+const upload = multer({ storage });
+
+*/
+/*
+router.post('/upload', upload.array('files'), async (req, res) => {
+
+	const filesDest =  req.body.filesDest;
+	const files = req.files;
+
+	try {
+		for (const file of files) {
+			const { path: imagePath, filename } = file;
+			console.log( imagePath, filename );
+			const outputPath = `uploads/resized-${filename}`; // Replace 'uploads/' with your desired output directory
+			
+		    await sharp(imagePath)
+			.resize(100, 100) // Replace with your desired dimensions
+			.toFile(outputPath);
+		}
+	
+		res.status(200).send('Images uploaded, resized, and saved successfully.');
+	} catch (err) {
+		console.error('Error:', err);
+		res.status(500).send('An error occurred while processing the images.');
+	}
+
+
 });
+*/
 
 
+const uploaders = {
+	user: uploadUser,
+	images: uploadImages
+}
 
-module.exports = router
-export {}
+interface IUploaders {
+	user: typeof uploadUser
+	images: typeof uploadImages
+}
+
+
+module.exports = uploaders
+export {IUploaders}

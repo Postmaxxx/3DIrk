@@ -7,7 +7,12 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const authMW = require('../middleware/auth')
 import { IAllCache } from '../data/cache'
+import { IUploaders } from "./files"
 const cache: IAllCache = require('../data/cache')
+const uploaders: IUploaders = require('../routes/files')
+const mkdirp = require('mkdirp')
+
+
 
 const cartToFront = async (res, cart: IUser["cart"]) => {
     if (cart.length === 0 || !cart) {
@@ -196,19 +201,44 @@ router.put('/cart',
 )
 
 
+const multer = require('multer');
 
 
+
+
+const storageUser = multer.diskStorage({
+	destination: (req, file, cb) => {
+	  cb(null, process.env.pathToTemp); // Set the destination folder for uploaded files
+	},
+	filename: (req, file, cb) => {
+	  cb(null, file.originalname); // Keep the original file name
+	}
+});
+
+const uploadUser = multer({ storage: storageUser });
 
 router.post('/orders', 
-    [authMW],
-    
-    /*check('header.en')
-        .isLength({min: 3})
-        .withMessage({en: 'EN header is too short (<4)', ru: 'EN заголовок слишком короткий (<4)'})
-
-],*/
+    [authMW,],
+    uploadUser.array('files'),
     async (req, res) => {
+        const userId = req.user.id
         
+        const dir = process.env.pathToUserFiles + userId + '/'
+       // mkdirp(dir, err => console.log(err, dir));
+        const filesDest =  req.body.filesDest;
+        const files = req.files;
+        try {
+            for (const file of files) {
+                const { path: imagePath, filename } = file;
+                console.log( imagePath, filename );
+
+            }
+        
+            //res.status(200).send('Images uploaded, resized, and saved successfully.');
+        } catch (err) {
+            //console.error('Error:', err);
+            //res.status(500).send('An error occurred while processing the images.');
+        }
         /*const errors = validationResult(req)
         
         if (!errors.isEmpty()) {
@@ -236,27 +266,6 @@ router.post('/orders',
 
 
 
-
-
-/*
-router.get('/cart',
-    authMW,
-    async (req, res) => {       
-        try {
-            const { id } = req.user
-            const user = await User.findOne({_id: id})
-            if (!user) {
-                return res.status(400).json({ message: {en: 'User not found', ru: "Пользователь не найден"}})
-            }
-           
-            res.status(200).json({cart: user.cart})
-
-        } catch (error) {
-            res.status(500).json({ message:{en: `Something wrong with server (${error}), try again later`, ru: `Ошибка на сервере (${error}), попробуйте позже`}})
-        }
-    }
-)
-*/
 
 module.exports = router
 

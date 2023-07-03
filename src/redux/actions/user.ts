@@ -192,11 +192,10 @@ export const sendOrder = ({informer, message, files}: ISendOrder ) => {
             console.log('file', item);
             sendForm.append('files', item, item.name)
         })
-        sendForm.append('fileType', 'userFiles')
         console.log(sendForm);
         
         try {
-            const response = await fetch('/api/files/upload', {
+            const response = await fetch('/api/user/orders', {
                 method: 'POST',
                 headers: {
                     'enctype': "multipart/form-data",
