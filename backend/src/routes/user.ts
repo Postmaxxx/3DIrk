@@ -3,6 +3,7 @@ import { IAllCache } from '../data/cache'
 import { IUploaders } from "./files"
 import { ICartItem } from "../models/Cart"
 import { TLang } from "../../../src/interfaces"
+import { IOrder } from "../models/Orders"
 const { Router } = require("express")
 const router = Router()
 const User = require("../models/User")
@@ -283,6 +284,7 @@ router.put('/cart',
     }
 )
 
+
 interface IMulterFile {
     fieldname: string
     originalname: string
@@ -294,16 +296,22 @@ interface IMulterFile {
     size: number
 }
 
+
+
+
+
 router.post('/orders', 
-    [authMW,],
+    [authMW],
     uploaders.user,
     async (req, res) => {
         const userId = req.user.id
         const { message, lang } = req.body
         const files = req.files as IMulterFile[] || []
-        
+        const fullDate = new Date().toISOString()
+        const orderDate = fullDate.slice(0,10).replaceAll(':', '-')
+        const orderTime = fullDate.slice(11,19).replaceAll(':', '-')
 
-        const dir = process.env.pathToUserFiles + userId + '/'+new Date().toISOString().slice(0,10)+'/'+new Date().toISOString().slice(11,19).replaceAll(':', '-') + '/'  //create unique folder for every user using user._id
+        const dir = process.env.pathToUserFiles + userId + '/' + orderDate + '/' + orderTime + '/'  //create unique folder for every user using user._id
   
         
         mkdirp(dir, e => { 
@@ -343,14 +351,15 @@ router.post('/orders',
             })) || []
             
             try {
-                const order = new Order({
+                const order:IOrder = new Order({
                     date: new Date(),
                     status: 'new',
                     user: user._id,
                     cart: cartToSave,
                     info: {
                         message: message,
-                        files: files.map(file => dir + file.filename)
+                        path: orderDate + '/' + orderTime,
+                        files: files.map(file => file.filename)
                     }
                 }) 
                 await order.save()
@@ -362,6 +371,7 @@ router.post('/orders',
             //send data to TG
             orderToTg({lang, user, message, files, dir, res})
 
+            await User.findOneAndUpdate( {_id: user._id}, {cart: []})
             return res.status(201).json({message: {en: 'Order created', ru: 'Заказ создан'}})
 
         } catch (e) {
@@ -374,6 +384,33 @@ router.post('/orders',
 
 
 
+router.get('/orders', 
+    [authMW,
+    
+    ],
+    async (req, res) => {
+        try {
+            const {from, to, userId} = req.query
+            console.log('f', from, to, userId);
+            
+            /*const { header, date, short, text, images} = req.body 
+
+            const news = new News({ header, date, short, text, images}) 
+            
+            await news.save()
+
+            cache.news.obsolete = true*/
+
+            return res.status(200).json()
+        } catch (error) {
+            return res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})
+        }
+    }
+)
+
+
+
+
 module.exports = router
 
-export {router}
+export {IMulterFile}

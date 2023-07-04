@@ -210,7 +210,6 @@ export const sendOrder = ({informer, message, files}: ISendOrder ) => {
 
             const result: IMsgRes = await response.json() //message, errors
             dispatch(setSendOrder({status: 'success', message: result.message}))
-            console.log(999);
             
         } catch (e) {           
             dispatch(setSendOrder({status: 'error', message: {en: `Error "${e}", try again later`, ru: `Ошибка "${e}", попробуйте позже`}}))

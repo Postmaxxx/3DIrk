@@ -24,6 +24,7 @@ const LazyHomePage = lazy(() => import("./pages/Home/Home"));
 const LazyFibersPage = lazy(() => import("./pages/Fibers/Fibers"));
 const LazyFiberPage = lazy(() => import("./pages/Fiber/Fiber"));
 const LazyOrderPage = lazy(() => import("./pages/Order/Order"));
+const LazyOrdersPage = lazy(() => import("./pages/Orders/Orders"));
 const LazyCatalogPage = lazy(() => import("./pages/Catalog/Catalog"));
 const LazyProduct = lazy(() => import("./pages/Product/Product"));
 const LazyNewsDetails = lazy(() => import("./pages/NewsDetails/NewsDetails"));
@@ -84,6 +85,7 @@ const App:React.FC<IProps> = ({lang, setState}):JSX.Element => {
 				</Route>
 				
 				<Route path="/order" element={<Suspense fallback={<Preloader />}><LazyOrderPage /></Suspense>} />
+				<Route path="/orders" element={<Suspense fallback={<Preloader />}><LazyOrdersPage /></Suspense>} />
 				<Route path="/contact_us" element={<Suspense fallback={<Preloader />}><LazyContactUs /></Suspense>} />
 
 				<Route path="/catalog">

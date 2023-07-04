@@ -399,16 +399,6 @@ export interface ICartItem {
 }
 
 
-/*
-export interface ICartItemSave { //format for saving cart, BE
-    product: string //id
-    amount: number
-    fiber: string //id
-    color: string //id
-    type: TLangText
-}
-*/
-
 export interface ICartState {
     load: IFetch
     send: IFetch
@@ -446,6 +436,59 @@ export interface IUserState {
 
 
 
+
+
+
+//--------------------------------- ORDERS----------------------------------------------------------
+
+type OrderType = 'finished' | 'new' | 'working' | 'canceled'
+
+export interface IFilterUser {
+    name: string
+    phone: string
+    email: string
+    _id: string
+}
+
+export interface IOrdersCartItem {
+    productName: TLangText
+    fiberName: TLangText
+    colorName: TLangText
+    amount: number
+    type: TLangText
+}
+
+export interface IAttachedFile {
+    name: string
+    url: string
+}
+
+export interface IOrdersItem {
+    date: Date
+    status: OrderType
+    cart: IOrdersCartItem[]
+    attachedFiles: IAttachedFile[]
+}
+
+
+export interface IOrdersUser {
+    info: IFilterUser
+    orders: IOrdersItem[]
+}
+
+interface IUserList {
+    load: IFetch
+    list: IFilterUser[]
+}
+
+export interface IOrdersState {
+    users: IOrdersUser[]
+    userList: IUserList
+    load: IFetch
+    send: IFetch
+}
+
+
 //============================================== full state
 export interface IFullState {
     base: IBaseState
@@ -455,6 +498,7 @@ export interface IFullState {
     colors:  IColorsState
     user: IUserState
     content:  IContentState
+    orders: IOrdersState
     //order: IOrderState
     //cart: ICartState
 }

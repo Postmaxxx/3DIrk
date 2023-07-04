@@ -142,8 +142,8 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
                             <li>
                                 <ul className="submenu__content">
                                     <li>
-                                        <NavLink to='/order'>
-                                            {lang === 'en' ? 'ORDERS HISTORY' : 'ВСЕ ЗАКАЗЫ'}
+                                        <NavLink to='/orders'>
+                                            {lang === 'en' ? 'ORDERS' : 'ЗАКАЗЫ'}
                                         </NavLink>
                                     </li>
                                     <li>

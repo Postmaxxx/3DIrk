@@ -7,6 +7,7 @@ import reducerCatalog from './reducers/catalog';
 import reducerColors from './reducers/colors';
 import reducerUser from './reducers/user';
 import reducerContent from './reducers/content';
+import reducerOrders from './reducers/orders';
 import { composeWithDevTools } from '@redux-devtools/extension';
 
 const rootReducer = combineReducers({
@@ -16,7 +17,8 @@ const rootReducer = combineReducers({
     catalog: reducerCatalog,
     colors: reducerColors,
     user: reducerUser,
-    content: reducerContent
+    content: reducerContent,
+    orders: reducerOrders
 });
 
 

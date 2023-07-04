@@ -18,7 +18,7 @@ interface IPropsState {
     colorsState: IColorsState
     fibersState: IFibersState
     cart: ICartState
-    sendOrder: IFetch,
+    sendOrder: IFetch
 }
 
 interface IPropsActions {
@@ -111,49 +111,47 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
         <div className="page_order">
             <div className='container_page'>
                 <div className="container">
-                    <div className="page_order">
-                        <h1>{lang === 'en' ? 'Order 3D printing' : 'Заказать 3D печать'}</h1>
-                        <div className="order__block">
+                    <h1>{lang === 'en' ? 'Order 3D printing' : 'Заказать 3D печать'}</h1>
+                    <div className="order__block">
 
-                            <form className="order__container">
-                                <h2>{lang === 'en' ? 'Additional information' : 'Дополнительная информация'}</h2>
-                                <div className="data-block">
+                        <form className="order__container">
+                            <h2>{lang === 'en' ? 'Additional information' : 'Дополнительная информация'}</h2>
+                            <div className="data-block">
 
-                                    <div className="inputs-block">
-                                        <div className="input-block message-block">
-                                            <label htmlFor="message">
-                                                {lang === 'en' ? 'Information about the order' : 'Информация о заказе'}
-                                            </label>
-                                            <textarea 
-                                                className="input-element" 
-                                                id="message" 
-                                                ref={_message}
-                                                onChange={(e) => errChecker.clearError(e.target)}/>
-                                        </div>
+                                <div className="inputs-block">
+                                    <div className="input-block message-block">
+                                        <label htmlFor="message">
+                                            {lang === 'en' ? 'Information about the order' : 'Информация о заказе'}
+                                        </label>
+                                        <textarea 
+                                            className="input-element" 
+                                            id="message" 
+                                            ref={_message}
+                                            onChange={(e) => errChecker.clearError(e.target)}/>
                                     </div>
-                                    <div className="files-block">
-                                        <div className="input-block files">
-                                            <label htmlFor="allImages">{lang === 'en' ? 'Attach files' : 'Прикрепить файлы'}</label>
-                                            <AddFiles lang={lang} ref={addFiles} multiple={true} id='allImages'/>
-                                        </div>
+                                </div>
+                                <div className="files-block">
+                                    <div className="input-block files">
+                                        <label htmlFor="allImages">{lang === 'en' ? 'Attach files' : 'Прикрепить файлы'}</label>
+                                        <AddFiles lang={lang} ref={addFiles} multiple={true} id='allImages'/>
                                     </div>
-
                                 </div>
 
-                                <div className="cart-content__container">
-                                    <h3>{lang === 'en' ? 'Your cart' : 'Ваша корзина'}</h3>
-                                    <CartContent />
-                                </div>
+                            </div>
 
-                                <button 
-                                    type="submit" 
-                                    disabled={cart.load.status !== 'success' || fibersState.load.status !== 'success' || colorsState.load.status !== 'success' || sendOrder.status === 'fetching'} 
-                                    className="button_order" 
-                                    onClick={onSubmit}>
-                                        {lang === 'en' ? 'Order' : "Отправить"}
-                                    </button>
-                            </form>
-                        </div>
+                            <div className="cart-content__container">
+                                <h3>{lang === 'en' ? 'Your cart' : 'Ваша корзина'}</h3>
+                                <CartContent />
+                            </div>
+
+                            <button 
+                                type="submit" 
+                                disabled={cart.load.status !== 'success' || fibersState.load.status !== 'success' || colorsState.load.status !== 'success' || sendOrder.status === 'fetching'} 
+                                className="button_order" 
+                                onClick={onSubmit}>
+                                    {lang === 'en' ? 'Order' : "Отправить"}
+                                </button>
+                        </form>
                     </div>
                 </div>
             </div>

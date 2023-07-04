@@ -7,16 +7,19 @@ const CartItem = require("../models/Cart")
 type OrderType = 'finished' | 'new' | 'working' | 'canceled'
 
 
+interface InfoType {
+    message: string
+    path: string
+    files: string[] //urls to files
+}
+
 
 interface IOrder extends Document {
     date: Date
     status: OrderType
     cart: ICartItem[]
     user: string //userId
-    info: {
-        message: string
-        files: string[] //urls to files
-    }
+    info: InfoType
 }
 
 

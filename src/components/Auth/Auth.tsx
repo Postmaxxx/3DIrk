@@ -73,7 +73,7 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
     const onSubmit: React.EventHandler<any> = (e) => {
         e.preventDefault()
         e.stopPropagation()
-        
+        errChecker.clear()
         
         if (register) { 
             if (form.email.length < 2) {errChecker.add(lang === 'en' ? 'Name is too short' : 'Имя слишком короткое')}

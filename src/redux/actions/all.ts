@@ -3,10 +3,10 @@ import * as actionsListColors from "./colors"
 import * as actionsListUser from "./user"
 import * as actionsListCatalog from "./catalog"
 import * as actionsListNews from "./news"
-import * as actionsListOrder from "./order"
-//import * as actionsListProduct from "./product"
+import * as actionsListOrder from "./orders"
 import * as actionsListBase from "./base"
 import * as actionsListContent from "./content"
+import * as actionsListOrders from "./orders"
 
 
 const allActions = {
@@ -17,7 +17,8 @@ const allActions = {
     news: {...actionsListNews},
     order: {...actionsListOrder},
     base: {...actionsListBase},
-    content: {...actionsListContent}
+    content: {...actionsListContent},
+    orders: {...actionsListOrders}
 }
 
 export { allActions }
