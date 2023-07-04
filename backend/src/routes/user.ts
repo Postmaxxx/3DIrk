@@ -2,6 +2,7 @@ import { IUser } from "../models/User"
 import { IAllCache } from '../data/cache'
 import { IUploaders } from "./files"
 import { ICartItem } from "../models/Cart"
+import { TLang } from "../../../src/interfaces"
 const { Router } = require("express")
 const router = Router()
 const User = require("../models/User")
@@ -44,9 +45,78 @@ const cartToFront = async (res, cart: IUser["cart"]) => {
  
 
 
+interface IOrderToTg {
+    lang: TLang
+    user : any
+    message: string
+    dir: string
+    files: IMulterFile[]
+    res: Response
+}
 
-const orderToTg = async () => {
 
+const orderToTg = async ({lang, user, message, files, dir, res}: IOrderToTg) => {
+    const urlMessage= `https://api.telegram.org/bot${process.env.tgToken}/sendMessage`;
+    const urlDocument= `https://api.telegram.org/bot${process.env.tgToken}/sendDocument`;
+    const textOrder: string = `
+    ${lang === 'en' ? 'Date' : 'Дата'}: ${new Date().toISOString().slice(0,10)}
+    ${lang === 'en' ? 'Time' : 'Время'}: ${new Date().toISOString().slice(11, 19)}
+    ${lang === 'en' ? 'Name' : 'Имя'}: ${user.name}
+    ${lang === 'en' ? 'Email' : 'Почта'}: ${user.email}
+    ${lang === 'en' ? 'Phone' : 'Телефон'}: ${user.phone}
+    ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
+    
+    
+    
+    const cartToTg = await cartToFront(res, user.cart)
+    const textCart = cartToTg.reduce((text: string, item: typeof cartToTg[number], i: number) => {
+        return text + `${i+1}) ${item.product.name[lang]}
+    ${lang === 'en' ? 'Options' : 'Версия'}: ${item.type[lang]} 
+    ${lang === 'en' ? 'Fiber' : 'Материал'}: ${cache.fibers.data.find(fiberItem => fiberItem._id.toString() === item.fiber)?.short.name[lang]}
+    ${lang === 'en' ? 'Color' : 'Цвет'}: ${cache.colors.data.find(color => color._id.toString() === item.color)?.name[lang]}
+    ${lang === 'en' ? 'Amount' : 'Количество'}: ${item.amount}\n\n`
+    }, '')
+    
+    const text = `${lang === 'en' ? 'New order' : 'Новый заказ'}:${textOrder}\n\n\n ${lang === 'en' ? 'Cart content' : 'Содержимое корзины'}: \n${textCart}${files.length > 0 ? (lang==='en' ? '\n\n\nAttached files ('+files.length+'):' : '\n\n\nПрикрепленные файлы ('+files.length+'):') : '---'}`
+    
+    try { //send text to TG
+        const response = await fetch(urlMessage, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chat_id: process.env.chatId, text })
+        })
+        if (!response.ok) {
+            console.log('Error while sending message using TG.', response);
+        }
+    } catch (e) {
+        console.log(`Something wrong while sending message to TG, try again later. Error: ${e}`)
+    }
+
+
+    files.reduce(async (acc: Promise<string>, file, i) => {//send files to TG
+        const filePathName = dir+file.filename                
+        await acc
+        return new Promise<string>(async (resolve, rej) => {
+            const timeStart = Date.now()
+            const form = new FormData();
+            //const stats = fs.statSync(filePathName);
+            //const fileSizeInBytes = stats.size;
+            const fileStream = fs.createReadStream(filePathName);
+            form.append('document', fileStream, file.filename);
+            form.append('chat_id', process.env.chatId || '');
+            const options = {method: 'POST', body: form};
+            try {   
+                const response = await fetch(urlDocument, options)
+                if (!response.ok) console.log(`error while sending file: ${file.filename}`);
+                const transitionSending = Date.now() - timeStart
+                // if (sendingTime < minTimeBetweenSendings) => wait until (sendingTime >= minTimeBetweenSendings)
+                setTimeout(() => {resolve(`File ${file.filename} has been sent successfully`)}, Number(process.env.minTimeBetweenSendings) - transitionSending)
+            } catch (error) {
+                console.log(`Error while sending file: ${file.filename}, error: ${error}`);
+            }
+        })
+    }, Promise.resolve('Files sending started'))
+            
 }
 
 
@@ -213,6 +283,16 @@ router.put('/cart',
     }
 )
 
+interface IMulterFile {
+    fieldname: string
+    originalname: string
+    encoding: string
+    mimetype: string
+    destination: string
+    filename: string
+    path: string
+    size: number
+}
 
 router.post('/orders', 
     [authMW,],
@@ -220,9 +300,8 @@ router.post('/orders',
     async (req, res) => {
         const userId = req.user.id
         const { message, lang } = req.body
-        const files = req.files;
-        const urlMessage= `https://api.telegram.org/bot${process.env.tgToken}/sendMessage`;
-        const urlDocument= `https://api.telegram.org/bot${process.env.tgToken}/sendDocument`;
+        const files = req.files as IMulterFile[] || []
+        
 
         const dir = process.env.pathToUserFiles + userId + '/'+new Date().toISOString().slice(0,10)+'/'+new Date().toISOString().slice(11,19).replaceAll(':', '-') + '/'  //create unique folder for every user using user._id
   
@@ -251,11 +330,11 @@ router.post('/orders',
             await cache.products.control.load()
 
 
-            const user = await User.findOne({ _id: userId})
+            const user: IUser = await User.findOne({ _id: userId})
             
             //!!! SAVE DATA IN ORDERS
             //send data to DB 
-            const cartToSave = (user.cart as ICartItem[]).map(item => ({//convert string ids to ObjectIDs
+            const cartToSave: ICartItem[] = (user.cart as ICartItem[]).map(item => ({//convert string ids to ObjectIDs
                 productId: new ObjectId(item.productId),
                 colorId: new ObjectId(item.colorId),
                 fiberId: new ObjectId(item.fiberId),
@@ -281,65 +360,7 @@ router.post('/orders',
 
 
             //send data to TG
-            const textOrder: string = `
-${lang === 'en' ? 'Date' : 'Дата'}: ${new Date().toISOString().slice(0,10)}
-${lang === 'en' ? 'Time' : 'Время'}: ${new Date().toISOString().slice(11, 19)}
-${lang === 'en' ? 'Name' : 'Имя'}: ${user.name}
-${lang === 'en' ? 'Email' : 'Почта'}: ${user.email}
-${lang === 'en' ? 'Phone' : 'Телефон'}: ${user.phone}
-${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
-
-
-
-            const cartToTg = await cartToFront(res, user.cart)
-            const textCart = cartToTg.reduce((text: string, item: typeof cartToTg[number], i: number) => {
-    return text + `${i+1}) ${item.product.name[lang]}
-${lang === 'en' ? 'Options' : 'Версия'}: ${item.type[lang]} 
-${lang === 'en' ? 'Fiber' : 'Материал'}: ${cache.fibers.data.find(fiberItem => fiberItem._id.toString() === item.fiber)?.short.name[lang]}
-${lang === 'en' ? 'Color' : 'Цвет'}: ${cache.colors.data.find(color => color._id.toString() === item.color)?.name[lang]}
-${lang === 'en' ? 'Amount' : 'Количество'}: ${item.amount}\n\n`
-}, '')
-
-            const text = `${lang === 'en' ? 'New order' : 'Новый заказ'}:${textOrder}\n\n\n ${lang === 'en' ? 'Cart content' : 'Содержимое корзины'}: \n${textCart}${files.length > 0 ? (lang==='en' ? '\n\n\nAttached files ('+files.length+'):' : '\n\n\nПрикрепленные файлы ('+files.length+'):') : '---'}`
-            
-            try { //send text to TG
-                const response = await fetch(urlMessage, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ chat_id: process.env.chatId, text })
-                })
-                if (!response.ok) {
-                    console.log('Error while sending message using TG.', response);
-                }
-            } catch (e) {
-                console.log(`Something wrong while sending message to TG, try again later. Error: ${e}`)
-            }
-
-
-            files.reduce(async (acc: Promise<string>, file, i) => {//send files to TG
-                const filePathName = dir+file.filename                
-                await acc
-                return new Promise<string>(async (resolve, rej) => {
-                    const timeStart = Date.now()
-                    const form = new FormData();
-                    //const stats = fs.statSync(filePathName);
-                    //const fileSizeInBytes = stats.size;
-                    const fileStream = fs.createReadStream(filePathName);
-                    form.append('document', fileStream, file.filename);
-                    form.append('chat_id', process.env.chatId || '');
-                    const options = {method: 'POST', body: form};
-                    try {   
-                        const response = await fetch(urlDocument, options)
-                        if (!response.ok) console.log(`error while sending file: ${file.filename}`);
-                        const transitionSending = Date.now() - timeStart
-                        // if (sendingTime < minTimeBetweenSendings) => wait until (sendingTime >= minTimeBetweenSendings)
-                        setTimeout(() => {resolve(`File ${file.filename} has been sent successfully`)}, Number(process.env.minTimeBetweenSendings) - transitionSending)
-                    } catch (error) {
-                        console.log(`Error while sending file: ${file.filename}, error: ${error}`);
-                    }
-                })
-            }, Promise.resolve('Files sending started'))
-        
+            orderToTg({lang, user, message, files, dir, res})
 
             return res.status(201).json({message: {en: 'Order created', ru: 'Заказ создан'}})
 

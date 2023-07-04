@@ -47,7 +47,7 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
         if (sendOrder.status === 'success') {
             addFiles.current?.clearAttachedFiles()
             _message.current.value = ''
-            //setState.user.setCart({items: []})
+            setState.user.setCart({items: []})
         }
         setState.user.setSendOrder(resetFetch)
         errChecker.clear()
