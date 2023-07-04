@@ -1,0 +1,1 @@
+const minTimeBetweenSendings = 500 //in ms

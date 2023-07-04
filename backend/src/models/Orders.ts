@@ -1,5 +1,7 @@
 import { Document, Schema, Model, model, Types } from 'mongoose';
-import { ICartItem } from './User';
+import { TLangText } from '../../../src/interfaces';
+import { ICartItem } from './Cart';
+const CartItem = require("../models/Cart")
 
 
 type OrderType = 'finished' | 'new' | 'working' | 'canceled'
@@ -10,7 +12,7 @@ interface IOrder extends Document {
     date: Date
     status: OrderType
     cart: ICartItem[]
-    user: object //userId
+    user: string //userId
     info: {
         message: string
         files: string[] //urls to files
@@ -20,9 +22,9 @@ interface IOrder extends Document {
 
 const orderSchema = new Schema({
     date: {type: Date, required: true},
-    status: {type: String, required: false},
-    cart: {type: Date, required: true},
-    user: {type: Types.ObjectId, required: true},
+    status: {type: String, required: true},
+    cart: [{type: CartItem, required: true}],
+    user: {type: Types.ObjectId, ref: 'User', required: true},
     info: {type: Object, required: true},
 })
 

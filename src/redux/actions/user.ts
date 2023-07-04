@@ -179,20 +179,15 @@ interface ISendOrder {
 export const sendOrder = ({informer, message, files}: ISendOrder ) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
         const { user } = getState()
-        if (user.sendOrder.status === 'fetching') return
         const {lang} = getState().base
-        //const urlMessage= `https://api.telegram.org/bot${process.env.REACT_APP_TG_TOK}/sendMessage`;
-        //const urlDocument= `https://api.telegram.org/bot${process.env.REACT_APP_TG_TOK}/sendDocument`;
+        if (user.sendOrder.status === 'fetching') return
+        await sendCart()(dispatch, getState)
+      
         dispatch(setSendOrder({...fetchingFetch}))
-        
-        const sendForm = new FormData()
-        console.log(files.length);
-        
-        files.forEach(item => {
-            console.log('file', item);
-            sendForm.append('files', item, item.name)
-        })
-        console.log(sendForm);
+        const sendForm = new FormData()       
+        files.forEach(item => {sendForm.append('files', item, item.name)})
+        sendForm.append('lang', lang)
+        sendForm.append('message', message)
         
         try {
             const response = await fetch('/api/user/orders', {
@@ -204,11 +199,22 @@ export const sendOrder = ({informer, message, files}: ISendOrder ) => {
                 },
                 body: sendForm
             })
-            console.log(response.status);
-            
-        } catch (error) {
-            
+            if (response.status !== 201) {
+                const result: IErrRes = await response.json() //message, errors
+                return dispatch(setSendOrder({
+                    status: 'error', 
+                    message: result.message || {...empty}, 
+                    errors: result.errors || []
+                }))
+            }
+
+            const result: IMsgRes = await response.json() //message, errors
+            dispatch(setSendOrder({status: 'success', message: result.message}))
+        } catch (e) {           
+            dispatch(setSendOrder({status: 'error', message: {en: `Error "${e}", try again later`, ru: `Ошибка "${e}", попробуйте позже`}}))
         }
+
+
 /*
         const textCart = user.cart.items.reduce((text: string, item: ICartItem, i: number) => {
             return text + `${i+1}) ${item.product.name[lang]}
@@ -378,6 +384,7 @@ export const sendCart = () => {
         //if (cart.send.status === 'fetching') return  
         const token = getState().user.token
         dispatch(setSendCart(fetchingFetch))
+        
         const cartToSend = cart.items.map(item => ({
            amount: item.amount,
            type: item.type,
@@ -404,7 +411,6 @@ export const sendCart = () => {
                 }))
             }
             const result: IMsgRes = await response.json() //message, errors
-            console.log('sent');
             
             dispatch(setCart({shouldUpdate: false}))
             dispatch(setSendCart({status: 'success', message: result.message}))

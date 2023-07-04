@@ -10,9 +10,9 @@ const News = require("../models/News")
 const Fiber = require("../models/Fiber")
 const Colors = require("../models/Color")
 const Content = require("../models/Content")
+import {Request, Response} from 'express';
 
-
-const loadCatalog = async (res): Promise<{loaded: boolean, msg: string}> => {
+const loadCatalog = async (res?: Response)=> {
     if (allCatalog.obsolete) {
         try {  
             await loadProducts(res)
@@ -34,50 +34,56 @@ const loadCatalog = async (res): Promise<{loaded: boolean, msg: string}> => {
             allCatalog.obsolete = false
 
         } catch (e) {
-            return res.status(400).json({message: {en: `Error while loading catalog from db: ${e}`, ru: `Ошибка при получении каталога из базы данных: ${e}`}})
+            if (res)  {
+                return res.status(400).json({message: {en: `Error while loading catalog from db: ${e}`, ru: `Ошибка при получении каталога из базы данных: ${e}`}})
+            }
         }
     }
 }
 
 
-const loadProducts = async (res): Promise<{loaded: boolean, msg: string}> => {
+const loadProducts = async (res?: Response)=> {
     if (allProducts.obsolete) {
         try {     
             allProducts.data = await Product.find()
             allProducts.obsolete = false
         } catch (e) {
-            return res.status(400).json({message: {en: `Error while loading products from db: ${e}`, ru: `Ошибка при получении товаров из базы данных: ${e}`}})
+            if (res) {
+                return res.status(400).json({message: {en: `Error while loading products from db: ${e}`, ru: `Ошибка при получении товаров из базы данных: ${e}`}})
+            }
         }
     }
 }
 
 
-const loadColors = async (res): Promise<{loaded: boolean, msg: string}> => {
+const loadColors = async (res?: Response) => {
     if (allColors.obsolete) {
         try {  
             allColors.data = await Colors.find()
             allColors.obsolete = false
         } catch (e) {
-            return res.status(400).json({message: {en: `Error while loading colors from db: ${e}`, ru: `Ошибка при получении цветов из базы данных: ${e}`}})
+            if (res) {
+                return res.status(400).json({message: {en: `Error while loading colors from db: ${e}`, ru: `Ошибка при получении цветов из базы данных: ${e}`}})
+            } 
         }
     }
 }
 
 
-const loadNews = async (res): Promise<{loaded: boolean, msg: string}> => {
+const loadNews = async (res?: Response) => {
     if (allNews.obsolete) {
         try {  
             const newsList: INews[] = await News.find()
             allNews.data = newsList.sort((a,b) => (a.date > b.date) ? -1 : 1)
             allNews.obsolete = false
         } catch (e) {
-            return res.status(400).json({message: {en: `Error while loading news from db: ${e}`, ru: `Ошибка при получении новостей из базы данных: ${e}`}})
+            if (res) return res.status(400).json({message: {en: `Error while loading news from db: ${e}`, ru: `Ошибка при получении новостей из базы данных: ${e}`}})
         }
     }
 }
 
 
-const loadContent = async (res): Promise<{loaded: boolean, msg: string}> => {
+const loadContent = async (res?: Response) => {
     if (allContent.obsolete) {
         try {  
             const content: IContent = await Content.findOne({})
@@ -85,19 +91,23 @@ const loadContent = async (res): Promise<{loaded: boolean, msg: string}> => {
             allContent.data.splider = content.splider
             allContent.obsolete = false
         } catch (e) {
-            return res.status(400).json({message: {en: `Error while loading cщntent from db: ${e}`, ru: `Ошибка при получении контента из базы данных: ${e}`}})
+            if (res) { 
+                return res.status(400).json({message: {en: `Error while loading cщntent from db: ${e}`, ru: `Ошибка при получении контента из базы данных: ${e}`}})
+            }
         }
     }
 }
 
 
-const loadFibers = async (res): Promise<{loaded: boolean, msg: string}> => {
+const loadFibers = async (res?: Response) => {
     if (allFibers.obsolete) {
         try {  
             allFibers.data = await Fiber.find()           
             allFibers.obsolete = false
         } catch (e) {
-            return res.status(400).json({message: {en: `Error while loading fibers from db: ${e}`, ru: `Ошибка при получении материалов из базы данных: ${e}`}})
+            if (res) { 
+                return res.status(400).json({message: {en: `Error while loading fibers from db: ${e}`, ru: `Ошибка при получении материалов из базы данных: ${e}`}})
+            }
         }
     }
 }

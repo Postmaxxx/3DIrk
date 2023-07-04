@@ -1,14 +1,11 @@
-import { Document, Schema, Model, model } from 'mongoose';
+import { Document, Schema, Model, model, Types } from 'mongoose';
 import { TLangText } from '../../../src/interfaces';
+import { ICartItem } from './Cart';
+const CartItem = require("../models/Cart")
 
 
-interface ICartItem {
-    productId: string
-    fiberId: string //id
-    colorId: string  //id
-    type: TLangText
-    amount: number
-}
+
+
 
 interface IUser extends Document {
     date: Date
@@ -26,7 +23,7 @@ const userSchema = new Schema({
     password: {type: String, required: true},
     phone: {type: String, required: true},
     name: {type: String, required: true},
-    cart: [{type: Object, required: false}]
+    cart: [{type: CartItem, required: false}]
     //orders: [{type: Types.ObjectId, ref: 'Order'}]
 })
 
@@ -34,4 +31,4 @@ const userSchema = new Schema({
 const User: Model<IUser> = model<IUser>('User', userSchema);
 
 module.exports = User
-export { IUser, ICartItem }
+export { IUser }

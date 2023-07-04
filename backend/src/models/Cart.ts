@@ -1,17 +1,27 @@
-import { Document, Schema, Model, model } from 'mongoose';
+import { Document, Schema, Model, model, Types } from 'mongoose';
+import { TLangText } from '../../../src/interfaces';
 
-/*
 
-interface ICart extends Document{
-    items: Object
+
+interface ICartItem {
+    productId: string
+    fiberId: string //id
+    colorId: string  //id
+    type: TLangText
+    amount: number
 }
 
-const CartSchema = new Schema({
-    items: [{type: Object, required: true}]
-})
-
-const Cart: Model<ICart> = model<ICart>('Cart', CartSchema)
 
 
-module.exports = Cart
-export {ICart}*/
+const CartItem = new Schema({
+    productId: {type: Types.ObjectId, ref: "Product", required: true},
+    fiberId: {type: Types.ObjectId, ref: "Fiber", required: true},
+    colorId: {type: Types.ObjectId, ref: "Color", required: true},
+    type: {type: Object, required: true},
+    amount: {type: Number, required: true},
+});
+
+
+
+module.exports = CartItem
+export { ICartItem }

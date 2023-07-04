@@ -1,17 +1,22 @@
 import { IUser } from "../models/User"
+import { IAllCache } from '../data/cache'
+import { IUploaders } from "./files"
+import { ICartItem } from "../models/Cart"
 const { Router } = require("express")
 const router = Router()
 const User = require("../models/User")
+const Order = require("../models/Orders")
 const { check, validationResult } = require('express-validator')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const authMW = require('../middleware/auth')
-import { IAllCache } from '../data/cache'
-import { IUploaders } from "./files"
 const cache: IAllCache = require('../data/cache')
 const uploaders: IUploaders = require('../routes/files')
 const mkdirp = require('mkdirp')
-
+var fs = require('fs');
+const FormData = require('form-data');
+const fetch = require('node-fetch');
+const { ObjectId } = require('mongodb');
 
 
 const cartToFront = async (res, cart: IUser["cart"]) => {
@@ -19,25 +24,33 @@ const cartToFront = async (res, cart: IUser["cart"]) => {
         return []
     }
     await cache.products.control.load(res)
-    //console.log(cache.products.data);
     
     return cart.map((item) => {
-        const fullProduct = cache.products.data.find(product => product._id.toString() === item.productId)
+        const fullProduct = cache.products.data.find(product => product._id.toString() === item.productId.toString())
         
         return fullProduct ? 
-        {
-            amount: item.amount,
-            fiber: item.fiberId,
-            color: item.colorId,
-            type: item.type,
-            product: fullProduct
-        }
+            {
+                amount: item.amount,
+                fiber: item.fiberId.toString(),
+                color: item.colorId.toString(),
+                type: item.type,
+                product: fullProduct
+            }
         :
-        null
-    }).filter(item => item) || [] //not null, all products with invalid id will be ignored
+            null
+    }).filter(item => item.product) || [] //not null, all products with invalid id will be ignored
 
 }
  
+
+
+
+const orderToTg = async () => {
+
+}
+
+
+
 
 //api/outh/register
 router.post('/register', 
@@ -119,7 +132,7 @@ router.post('/login',
                 name: user.name,
                 email: user.email,
                 phone: user.phone,
-                cart: [],//cart: cartToFront(user.cart),
+                cart: await cartToFront(res, user.cart),
                 token,
                 isAdmin: false
             }
@@ -201,66 +214,139 @@ router.put('/cart',
 )
 
 
-const multer = require('multer');
-
-
-
-
-const storageUser = multer.diskStorage({
-	destination: (req, file, cb) => {
-	  cb(null, process.env.pathToTemp); // Set the destination folder for uploaded files
-	},
-	filename: (req, file, cb) => {
-	  cb(null, file.originalname); // Keep the original file name
-	}
-});
-
-const uploadUser = multer({ storage: storageUser });
-
 router.post('/orders', 
     [authMW,],
-    uploadUser.array('files'),
+    uploaders.user,
     async (req, res) => {
         const userId = req.user.id
-        
-        const dir = process.env.pathToUserFiles + userId + '/'
-       // mkdirp(dir, err => console.log(err, dir));
-        const filesDest =  req.body.filesDest;
+        const { message, lang } = req.body
         const files = req.files;
-        try {
-            for (const file of files) {
-                const { path: imagePath, filename } = file;
-                console.log( imagePath, filename );
+        const urlMessage= `https://api.telegram.org/bot${process.env.tgToken}/sendMessage`;
+        const urlDocument= `https://api.telegram.org/bot${process.env.tgToken}/sendDocument`;
 
+        const dir = process.env.pathToUserFiles + userId + '/'+new Date().toISOString().slice(0,10)+'/'+new Date().toISOString().slice(11,19).replaceAll(':', '-') + '/'  //create unique folder for every user using user._id
+  
+        
+        mkdirp(dir, e => { 
+            if (e) {
+                console.log(e, dir)
+                return res.status(500).json({message: {en: `Error while creating folder for files, please try again later. Error ${e}`, ru: `Ошибка при создании папки пользователя, пожалуйста, попробуйте позже. Ошибка ${e}`}})
             }
-        
-            //res.status(200).send('Images uploaded, resized, and saved successfully.');
-        } catch (err) {
-            //console.error('Error:', err);
-            //res.status(500).send('An error occurred while processing the images.');
-        }
-        /*const errors = validationResult(req)
-        
-        if (!errors.isEmpty()) {
-            return res.status(400).json({
-                errors: errors.array().map(error => error.msg),
-                message: {en: 'Errors in news data', ru: 'Ошибки в данных новости'}
+        });
+        files.forEach(file => {//transfer all received files to user._id folder
+            const { path: imagePath, filename } = file;
+            fs.rename(imagePath, dir + filename, e => {
+                if (e) {
+                    console.log('Error occured while transfer files to folder:', e);
+                    return res.status(500).json({message: {en: `Error while developing files, please try again later. Error ${e}`, ru: `Ошибка при обработке файлов, пожалуйста, попробуйте позже. Ошибка ${e}`}})
+                }
             })
-        }*/
+        });
 
+
+       
         try {
-            /*const { header, date, short, text, images} = req.body 
+            await cache.colors.control.load()
+            await cache.fibers.control.load()
+            await cache.products.control.load()
 
-            const news = new News({ header, date, short, text, images}) 
+
+            const user = await User.findOne({ _id: userId})
             
-            await news.save()
+            //!!! SAVE DATA IN ORDERS
+            //send data to DB 
+            const cartToSave = (user.cart as ICartItem[]).map(item => ({//convert string ids to ObjectIDs
+                productId: new ObjectId(item.productId),
+                colorId: new ObjectId(item.colorId),
+                fiberId: new ObjectId(item.fiberId),
+                amount: item.amount,
+                type: item.type
+            })) || []
+            
+            try {
+                const order = new Order({
+                    date: new Date(),
+                    status: 'new',
+                    user: user._id,
+                    cart: cartToSave,
+                    info: {
+                        message: message,
+                        files: files.map(file => dir + file.filename)
+                    }
+                }) 
+                await order.save()
+            } catch (e) {
+                return res.status(503).json({ message:{en: `Something wrong with server while saving data in DB, try again later. Error: ${e}`, ru: `Ошибка на сервере при сохранении в БД, попробуйте позже. Ошибка: ${e}`}})
+            }
 
-            cache.news.obsolete = true*/
 
-            return res.status(200).json({message: {en: 'News posted', ru: 'Новость сохранена'}})
-        } catch (error) {
-            return res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})
+            //send data to TG
+            const textOrder: string = `
+${lang === 'en' ? 'Date' : 'Дата'}: ${new Date().toISOString().slice(0,10)}
+${lang === 'en' ? 'Time' : 'Время'}: ${new Date().toISOString().slice(11, 19)}
+${lang === 'en' ? 'Name' : 'Имя'}: ${user.name}
+${lang === 'en' ? 'Email' : 'Почта'}: ${user.email}
+${lang === 'en' ? 'Phone' : 'Телефон'}: ${user.phone}
+${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
+
+
+
+            const cartToTg = await cartToFront(res, user.cart)
+            const textCart = cartToTg.reduce((text: string, item: typeof cartToTg[number], i: number) => {
+    return text + `${i+1}) ${item.product.name[lang]}
+${lang === 'en' ? 'Options' : 'Версия'}: ${item.type[lang]} 
+${lang === 'en' ? 'Fiber' : 'Материал'}: ${cache.fibers.data.find(fiberItem => fiberItem._id.toString() === item.fiber)?.short.name[lang]}
+${lang === 'en' ? 'Color' : 'Цвет'}: ${cache.colors.data.find(color => color._id.toString() === item.color)?.name[lang]}
+${lang === 'en' ? 'Amount' : 'Количество'}: ${item.amount}\n\n`
+}, '')
+
+            const text = `${lang === 'en' ? 'New order' : 'Новый заказ'}:${textOrder}\n\n\n ${lang === 'en' ? 'Cart content' : 'Содержимое корзины'}: \n${textCart}${files.length > 0 ? (lang==='en' ? '\n\n\nAttached files ('+files.length+'):' : '\n\n\nПрикрепленные файлы ('+files.length+'):') : '---'}`
+            
+            try { //send text to TG
+                const response = await fetch(urlMessage, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: process.env.chatId, text })
+                })
+                if (!response.ok) {
+                    console.log('Error while sending message using TG.', response);
+                }
+            } catch (e) {
+                console.log(`Something wrong while sending message to TG, try again later. Error: ${e}`)
+            }
+
+
+            files.reduce(async (acc: Promise<string>, file, i) => {//send files to TG
+                const filePathName = dir+file.filename                
+                await acc
+                return new Promise<string>(async (resolve, rej) => {
+                    const timeStart = Date.now()
+                    const form = new FormData();
+                    //const stats = fs.statSync(filePathName);
+                    //const fileSizeInBytes = stats.size;
+                    const fileStream = fs.createReadStream(filePathName);
+                    form.append('document', fileStream, file.filename);
+                    form.append('chat_id', process.env.chatId || '');
+                    const options = {method: 'POST', body: form};
+                    try {   
+                        const response = await fetch(urlDocument, options)
+                        if (!response.ok) console.log(`error while sending file: ${file.filename}`);
+                        const transitionSending = Date.now() - timeStart
+                        // if (sendingTime < minTimeBetweenSendings) => wait until (sendingTime >= minTimeBetweenSendings)
+                        setTimeout(() => {resolve(`File ${file.filename} has been sent successfully`)}, Number(process.env.minTimeBetweenSendings) - transitionSending)
+                    } catch (error) {
+                        console.log(`Error while sending file: ${file.filename}, error: ${error}`);
+                    }
+                })
+            }, Promise.resolve('Files sending started'))
+        
+
+            return res.status(201).json({message: {en: 'Order created', ru: 'Заказ создан'}})
+
+        } catch (e) {
+            return res.status(500).json({ message:{en: `Something wrong with server, try again later. Error: ${e}`, ru: `Ошибка на сервере, попробуйте позже. Ошибка: ${e}`}})
         }
+
     }
 )
 
@@ -269,4 +355,4 @@ router.post('/orders',
 
 module.exports = router
 
-export {}
+export {router}
