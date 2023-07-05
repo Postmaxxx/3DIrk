@@ -13,9 +13,9 @@ module.exports = async (req, res, next) => {
             return res.status(400).json({ message: { en: 'UserId was not found', ru: "ID пользователя не найден"}, errors: []})
         }
         const user = await User.findOne({_id: id})
-        if (!user) {
+       /* if (!user) {
             return res.status(400).json({ message: { en: 'User was not found', ru: "Пользователь не найден"}, errors: []})
-        }
+        }*/
         
         if (user.email !== process.env.admEmail) {
             req.user.isAdmin = false

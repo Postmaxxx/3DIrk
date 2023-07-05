@@ -3,6 +3,7 @@ import { actionsListUser } from './actionsList'
 //import { setText } from "./order";
 import { empty, errorFetch, fetchingFetch, minTimeBetweenSendings, successFetch } from "src/assets/js/consts";
 import { Form } from "react-router-dom";
+import moment from "moment";
 
 export const setUser = <T extends Partial<IUserState>>(payload: T):IAction<T> => ({
     type: actionsListUser.SET_USER,
@@ -22,13 +23,14 @@ export const register = ({name, email, phone, password}: ILoggingForm) => {
         const { user } = getState() //get current user state
         if (user.auth.status === 'fetching') return  
         dispatch(setUser({...user, auth: fetchingFetch}))
+        const localDate = moment().format('YYYY-MM-DD')
         try {
             const response = await fetch('/api/user/register', {
                 method: 'POST',
                 headers: {
                     "Content-Type": 'application/json'
                 },
-                body: JSON.stringify({name, email, phone, password})
+                body: JSON.stringify({name, email, phone, password, localDate})
             })    
             const result: IErrRes = await response.json() //message, errors
             if (response.status !== 201) {
@@ -188,6 +190,7 @@ export const sendOrder = ({informer, message, files}: ISendOrder ) => {
         files.forEach(item => {sendForm.append('files', item, item.name)})
         sendForm.append('lang', lang)
         sendForm.append('message', message)
+        sendForm.append('localOrderDate', moment().format('YYYY-MM-DD'))
         
         try {
             const response = await fetch('/api/user/orders', {

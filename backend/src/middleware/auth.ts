@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const User = require("../models/User")
 
 module.exports = async (req, res, next) => {
     
@@ -18,8 +19,13 @@ module.exports = async (req, res, next) => {
         if (decoded.iat > decoded.exp) {
             return res.status(400).json({ message: { en: 'Token is expired', ru: "Токен истек"}, errors: []})
         }
+        const user = await User.findOne({_id: decoded.userId})       
+        if (!user) {
+            return res.status(400).json({ message: { en: 'User was not found', ru: "Пользователь не найден"}, errors: []})
+        }
         req.user ? req.user.id = decoded.userId : req.user = {id: decoded.userId}
-        
+        req.user.isAdmin = user.email === process.env.admEmail
+
         next()
 
     } catch (error) {
@@ -27,3 +33,5 @@ module.exports = async (req, res, next) => {
     }
 
 }
+
+export {}

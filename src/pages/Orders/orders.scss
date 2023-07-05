@@ -37,6 +37,72 @@
     .orders__container {
         margin-top: 30px;
 
+
+        & .block_user {
+            margin-top: 40px;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            padding-left: 10px;
+            padding-right: 10px;
+            width: 100%;
+            border: 1px solid red;
+
+            & .user__header {
+                text-align: center;
+            }
+
+            & .user__subheader {
+                display: inline-block;
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+
+        & .block_order {
+            //border: 1px solid red;
+
+            & .order__date-status {
+                margin-top: 40px;
+                grid-column: 1/-1;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            & .order__cart {
+                display: grid;
+                margin-top: 10px;
+                grid-template-columns: 1fr 1fr 1fr 1fr auto;
+            }
+            
+
+            & .cell {
+                border-right: 1px solid black;
+                border-bottom: 1px solid black;
+                padding: 5px 10px;
+
+                &.head {
+                    text-align: center;
+                    border-top: 1px solid black;
+                }
+                
+                &.first {
+                    border-left: 1px solid #000;
+                }
+
+                &.center {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+            }
+
+
+
+
+
+        }
     }
 
 }

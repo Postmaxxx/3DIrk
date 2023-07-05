@@ -2,8 +2,9 @@ import { IUser } from "../models/User"
 import { IAllCache } from '../data/cache'
 import { IUploaders } from "./files"
 import { ICartItem } from "../models/Cart"
-import { TLang } from "../../../src/interfaces"
-import { IOrder } from "../models/Orders"
+import { TLang, TLangText } from "../../../src/interfaces"
+import { IOrder, OrderType } from "../models/Orders"
+const moment = require('moment');
 const { Router } = require("express")
 const router = Router()
 const User = require("../models/User")
@@ -60,8 +61,8 @@ const orderToTg = async ({lang, user, message, files, dir, res}: IOrderToTg) => 
     const urlMessage= `https://api.telegram.org/bot${process.env.tgToken}/sendMessage`;
     const urlDocument= `https://api.telegram.org/bot${process.env.tgToken}/sendDocument`;
     const textOrder: string = `
-    ${lang === 'en' ? 'Date' : 'Дата'}: ${new Date().toISOString().slice(0,10)}
-    ${lang === 'en' ? 'Time' : 'Время'}: ${new Date().toISOString().slice(11, 19)}
+    ${lang === 'en' ? 'Date' : 'Дата'}: ${moment().format('YYYY-MM-DD')}
+    ${lang === 'en' ? 'Time' : 'Время'}: ${moment().format('hh:mm')}
     ${lang === 'en' ? 'Name' : 'Имя'}: ${user.name}
     ${lang === 'en' ? 'Email' : 'Почта'}: ${user.email}
     ${lang === 'en' ? 'Phone' : 'Телефон'}: ${user.phone}
@@ -119,7 +120,7 @@ const orderToTg = async ({lang, user, message, files, dir, res}: IOrderToTg) => 
     }, Promise.resolve('Files sending started'))
             
 }
-
+ 
 
 
 
@@ -142,7 +143,7 @@ router.post('/register',
             })
         }
         try {
-            const {email, password, name, phone} = req.body
+            const {email, password, name, phone, localDate} = req.body
             
             const candidate = await User.findOne({ email })
             if (candidate) {
@@ -150,7 +151,7 @@ router.post('/register',
             }
         
             const hashedPassword = await bcrypt.hash(password, 12);
-            const user = new User({ email, password: hashedPassword, name, phone, date: new Date(), cart: [] })
+            const user = new User({ email, password: hashedPassword, name, phone, date: localDate, cart: [] })
         
             await user.save()
 
@@ -305,11 +306,11 @@ router.post('/orders',
     uploaders.user,
     async (req, res) => {
         const userId = req.user.id
-        const { message, lang } = req.body
+        const { message, lang, localOrderDate} = req.body
         const files = req.files as IMulterFile[] || []
         const fullDate = new Date().toISOString()
-        const orderDate = fullDate.slice(0,10).replaceAll(':', '-')
-        const orderTime = fullDate.slice(11,19).replaceAll(':', '-')
+        const orderDate = fullDate.slice(0,10).replaceAll(':', '-') //for folder
+        const orderTime = fullDate.slice(11,19).replaceAll(':', '-') // for folder
 
         const dir = process.env.pathToUserFiles + userId + '/' + orderDate + '/' + orderTime + '/'  //create unique folder for every user using user._id
   
@@ -340,7 +341,7 @@ router.post('/orders',
 
             const user: IUser = await User.findOne({ _id: userId})
             
-            //!!! SAVE DATA IN ORDERS
+            // SAVE DATA IN ORDERS
             //send data to DB 
             const cartToSave: ICartItem[] = (user.cart as ICartItem[]).map(item => ({//convert string ids to ObjectIDs
                 productId: new ObjectId(item.productId),
@@ -352,7 +353,7 @@ router.post('/orders',
             
             try {
                 const order:IOrder = new Order({
-                    date: new Date(),
+                    date: localOrderDate,
                     status: 'new',
                     user: user._id,
                     cart: cartToSave,
@@ -362,14 +363,17 @@ router.post('/orders',
                         files: files.map(file => file.filename)
                     }
                 }) 
-                await order.save()
+                await order.save() 
+                const orderId = order._id
+                const newOrders = [...user.orders, orderId.toString()]
+                await User.findOneAndUpdate({ _id: userId}, {orders: newOrders})
             } catch (e) {
                 return res.status(503).json({ message:{en: `Something wrong with server while saving data in DB, try again later. Error: ${e}`, ru: `Ошибка на сервере при сохранении в БД, попробуйте позже. Ошибка: ${e}`}})
             }
 
 
             //send data to TG
-            orderToTg({lang, user, message, files, dir, res})
+            //orderToTg({lang, user, message, files, dir, res})
 
             await User.findOneAndUpdate( {_id: user._id}, {cart: []})
             return res.status(201).json({message: {en: 'Order created', ru: 'Заказ создан'}})
@@ -381,27 +385,139 @@ router.post('/orders',
     }
 )
 
+interface IFilterUser {
+    name: string
+    phone: string
+    email: string
+    _id: string
+}
+
+
+interface IOrdersCartItem {
+    productName: TLangText
+    fiberName: TLangText
+    colorName: TLangText
+    amount: number
+    type: TLangText
+}
+
+
+
+interface IOrdersItem {
+    _id: string
+    date: Date
+    message: string
+    status: OrderType | 'all'
+    cart: IOrdersCartItem[]
+    pathToFiles: string
+    attachedFiles: string[]
+}
+
+interface IOrdersUser {
+    info: IFilterUser
+    orders: IOrdersItem[]
+}
 
 
 
 router.get('/orders', 
-    [authMW,
-    
-    ],
+    [authMW],
     async (req, res) => {
         try {
-            const {from, to, userId} = req.query
-            console.log('f', from, to, userId);
+            const {from, to, userId, status} = req.query
             
-            /*const { header, date, short, text, images} = req.body 
+            const { id, isAdmin } = req.user 
+            await cache.fibers.control.load()
+            await cache.colors.control.load()
+            await cache.products.control.load()
 
-            const news = new News({ header, date, short, text, images}) 
+ 
+            const userList: IUser[] = !isAdmin ? 
+            await User.find({user: id}) || [] 
+            : userId === 'all' ? await User.find() || [] : await User.find({_id: userId}) || []
             
-            await news.save()
 
-            cache.news.obsolete = true*/
+            const usersToFront: IOrdersUser[] = []
+            await userList.reduce(async (accum: Promise<string>, user) => {
+                await accum
+                
+                return new Promise<string>(async (resolve, reject) => {
+                    
+                    const orders = []
+                    await user.orders.reduce(async (acc: Promise<string>, orderId) => {
+                        await acc
 
-            return res.status(200).json()
+                        return new Promise<string>(async (res, rej) => {
+                            const order: IOrder = await Order.findOne({_id: orderId})                      
+                            if (!order) return res('')
+
+                            if (order.date < from || order.date > to || ((order.status !== status) && (status !== 'all'))) { //if outdated
+                                return resolve('')
+                            }
+                            
+                            const cart = order.cart.map(cartItem => ({
+                                productName: cache.products.data.find(el => el._id.toString() === cartItem.productId.toString()).name,
+                                fiberName: cache.fibers.data.find(el => el._id.toString() === cartItem.fiberId.toString()).name,
+                                colorName: cache.colors.data.find(el => el._id.toString() === cartItem.colorId.toString()).name,
+                                amount: cartItem.amount,
+                                type:cartItem.type
+                            }))
+                            
+                            orders.push({
+                                _id: order._id,
+                                date: order.date,
+                                message: order.info.message,
+                                status: order.status,
+                                attachedFiles: order.info.files,
+                                pathToFiles: order.info.path,
+                                cart: cart
+                            })
+                            res('')
+                        })
+                    }, Promise.resolve('start'))
+
+                    
+
+                    usersToFront.push({
+                        info: {
+                            _id: user._id,
+                            name: user.name,
+                            phone: user.phone,
+                            email: user.email
+                        },
+                        orders: orders
+                    })
+
+                    resolve('')
+                }) 
+            }, Promise.resolve('start'))
+
+
+            return res.status(200).json({users: usersToFront})
+        } catch (error) {
+            return res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})
+        }
+    }
+)
+
+
+  
+
+
+router.get('/users', 
+    [authMW],
+    async (req, res) => {
+        try {           
+            const { id, isAdmin } = req.user                  
+            const userListRaw: IUser[] = isAdmin ? await User.find() : await User.find({_id: id})
+            const userList = userListRaw.map(item => ({
+                email: item.email,
+                phone: item.phone,
+                name: item.name,
+                _id: item._id
+            }))
+
+            return res.status(200).json({userList})
         } catch (error) {
             return res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})
         }

@@ -15,7 +15,7 @@ interface InfoType {
 
 
 interface IOrder extends Document {
-    date: Date
+    date: string
     status: OrderType
     cart: ICartItem[]
     user: string //userId
@@ -24,7 +24,7 @@ interface IOrder extends Document {
 
 
 const orderSchema = new Schema({
-    date: {type: Date, required: true},
+    date: {type: String, required: true},
     status: {type: String, required: true},
     cart: [{type: CartItem, required: true}],
     user: {type: Types.ObjectId, ref: 'User', required: true},
@@ -35,4 +35,4 @@ const Order: Model<IOrder> = model<IOrder>("Order", orderSchema)
 
 
 module.exports = Order
-export {IOrder}
+export {IOrder, OrderType}

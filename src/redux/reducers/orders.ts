@@ -35,7 +35,10 @@ const reducerOrders = (state:IOrdersState = initialOrderState, action: IAction<a
         case actionsListOrders.SET_USERLIST: 
             return {
                 ...state, 
-                users: action.payload
+                userList: {
+                    ...state.userList,
+                    list: action.payload
+                }
             }
 
 

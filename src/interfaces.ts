@@ -441,7 +441,7 @@ export interface IUserState {
 
 //--------------------------------- ORDERS----------------------------------------------------------
 
-type OrderType = 'finished' | 'new' | 'working' | 'canceled'
+export type OrderType = 'finished' | 'new' | 'working' | 'canceled'
 
 export interface IFilterUser {
     name: string
@@ -458,16 +458,15 @@ export interface IOrdersCartItem {
     type: TLangText
 }
 
-export interface IAttachedFile {
-    name: string
-    url: string
-}
 
 export interface IOrdersItem {
-    date: Date
+    _id: string
+    date: string
+    message: string
     status: OrderType
     cart: IOrdersCartItem[]
-    attachedFiles: IAttachedFile[]
+    pathToFiles: string
+    attachedFiles: string[]
 }
 
 
