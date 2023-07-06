@@ -91,8 +91,6 @@ const CartContent: React.FC<IProps> = ({lang, cart, colorsState, fibersState, se
         modal_image.current?.closeModal()
 	}
 
-    console.log(cart.items);
-    
 
     return (
         <div className="cart-content">

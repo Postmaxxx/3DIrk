@@ -1,4 +1,4 @@
-import { IAction, ICartItem, IDispatch, IErrRes, IFetch, IFilterUser, IFullState, IOrdersState, OrderType, TLang, TLangText } from "src/interfaces"
+import { IAction, ICartItem, IDispatch, IErrRes, IFetch, IFilterUser, IFullState, IMsgRes, IOrdersState, OrderType, TLang, TLangText } from "src/interfaces"
 import { actionsListOrders } from './actionsList'
 import { empty, errorFetch, fetchingFetch, minTimeBetweenSendings, successFetch } from "src/assets/js/consts";
 
@@ -48,9 +48,7 @@ export const loadOrders = ({from, to, userId, status}: ILoadOrders) => {
             }
             
             const result = await response.json() //message, errors
-
-            console.log(result.users);
-            
+           
             dispatch(setOrders(result.users))
 
             dispatch(setLoadOrders(successFetch))
@@ -63,6 +61,32 @@ export const loadOrders = ({from, to, userId, status}: ILoadOrders) => {
 
 
 
+export const changeOrderStatus = (orderId: string, newStatus: OrderType) => {
+    return async function(dispatch: IDispatch, getState: () => IFullState)  {
+        
+        if (getState().orders.send.status === 'fetching') return
+        dispatch(setSendOrders(fetchingFetch))
+        try {
+            const response: Response = await fetch(`/api/user/orders`, {
+                method: 'PATCH',
+                headers: {
+                    "Content-Type": 'application/json',
+                    'Authorization': `Bearer ${getState().user.token}`
+                },
+                body: JSON.stringify({orderId, newStatus})
+            })
+
+            if (response.status !== 200) {
+                const result: IErrRes = await response.json() //message, errors
+                return dispatch(setSendOrders({status: 'error', message: (result as IErrRes).message || {...empty}, errors: result.errors || []}))
+            }
+            const result: IMsgRes = await response.json() //message, errors
+            dispatch(setSendOrders({...successFetch, message: result.message}))
+        } catch (e) {
+            dispatch(setSendOrders({status: 'error', message: {en: `Error occured while loading orders: ${e}`, ru: `Ошибка в процессе загрузки заказов: ${e}`}}))
+        }
+    }
+}
 
 
 

@@ -4,6 +4,7 @@ import { IUploaders } from "./files"
 import { ICartItem } from "../models/Cart"
 import { TLang, TLangText } from "../../../src/interfaces"
 import { IOrder, OrderType } from "../models/Orders"
+import { orderStatus, sendNotificationsInTG } from "../data/consts"
 const moment = require('moment');
 const { Router } = require("express")
 const router = Router()
@@ -15,11 +16,13 @@ const jwt = require('jsonwebtoken')
 const authMW = require('../middleware/auth')
 const cache: IAllCache = require('../data/cache')
 const uploaders: IUploaders = require('../routes/files')
-const mkdirp = require('mkdirp')
 var fs = require('fs');
 const FormData = require('form-data');
 const fetch = require('node-fetch');
 const { ObjectId } = require('mongodb');
+const isAdmin = require('../middleware/isAdmin')
+
+
 
 
 const cartToFront = async (res, cart: IUser["cart"]) => {
@@ -96,7 +99,7 @@ const orderToTg = async ({lang, user, message, files, dir, res}: IOrderToTg) => 
 
 
     files.reduce(async (acc: Promise<string>, file, i) => {//send files to TG
-        const filePathName = dir+file.filename                
+        const filePathName = dir+'/'+file.filename                
         await acc
         return new Promise<string>(async (resolve, rej) => {
             const timeStart = Date.now()
@@ -221,7 +224,7 @@ router.post('/login',
             res.status(500).json({ message:{en: `Something wrong with server (${error}), try again later`, ru: `Ошибка на сервере (${error}), попробуйте позже`}})
         }
     }
-)
+) 
 
 
 
@@ -306,42 +309,18 @@ router.post('/orders',
     uploaders.user,
     async (req, res) => {
         const userId = req.user.id
-        const { message, lang, localOrderDate} = req.body
+        const { message, lang } = req.body
         const files = req.files as IMulterFile[] || []
         const fullDate = new Date().toISOString()
-        const orderDate = fullDate.slice(0,10).replaceAll(':', '-') //for folder
-        const orderTime = fullDate.slice(11,19).replaceAll(':', '-') // for folder
-
-        const dir = process.env.pathToUserFiles + userId + '/' + orderDate + '/' + orderTime + '/'  //create unique folder for every user using user._id
-  
-        
-        mkdirp(dir, e => { 
-            if (e) {
-                console.log(e, dir)
-                return res.status(500).json({message: {en: `Error while creating folder for files, please try again later. Error ${e}`, ru: `Ошибка при создании папки пользователя, пожалуйста, попробуйте позже. Ошибка ${e}`}})
-            }
-        });
-        files.forEach(file => {//transfer all received files to user._id folder
-            const { path: imagePath, filename } = file;
-            fs.rename(imagePath, dir + filename, e => {
-                if (e) {
-                    console.log('Error occured while transfer files to folder:', e);
-                    return res.status(500).json({message: {en: `Error while developing files, please try again later. Error ${e}`, ru: `Ошибка при обработке файлов, пожалуйста, попробуйте позже. Ошибка ${e}`}})
-                }
-            })
-        });
-
-
+        let orderId = ''
        
         try {
             await cache.colors.control.load()
             await cache.fibers.control.load()
             await cache.products.control.load()
-
-
+         
             const user: IUser = await User.findOne({ _id: userId})
             
-            // SAVE DATA IN ORDERS
             //send data to DB 
             const cartToSave: ICartItem[] = (user.cart as ICartItem[]).map(item => ({//convert string ids to ObjectIDs
                 productId: new ObjectId(item.productId),
@@ -349,34 +328,76 @@ router.post('/orders',
                 fiberId: new ObjectId(item.fiberId),
                 amount: item.amount,
                 type: item.type
-            })) || []
-            
+            })) || [] 
+             
             try {
                 const order:IOrder = new Order({
-                    date: localOrderDate,
+                    date: fullDate,
                     status: 'new',
                     user: user._id,
                     cart: cartToSave,
                     info: {
                         message: message,
-                        path: orderDate + '/' + orderTime,
+                        path: '',
                         files: files.map(file => file.filename)
                     }
                 }) 
+                orderId = order._id.toString()
+                order.info.path = orderId
                 await order.save() 
-                const orderId = order._id
-                const newOrders = [...user.orders, orderId.toString()]
+                const newOrders = [...user.orders, orderId]
                 await User.findOneAndUpdate({ _id: userId}, {orders: newOrders})
             } catch (e) {
                 return res.status(503).json({ message:{en: `Something wrong with server while saving data in DB, try again later. Error: ${e}`, ru: `Ошибка на сервере при сохранении в БД, попробуйте позже. Ошибка: ${e}`}})
             }
 
+    
+            const dir = `${process.env.pathToUserFiles}/${userId}/${orderId}/` //create unique folder for every user using user._id
+      
+            if (!fs.existsSync(dir)){// create all folders/subfolders for files
+                await fs.mkdirSync(dir, { recursive: true });
+            }
+        
+            files.forEach(file => {//transfer all received files to user._id folder
+                fs.rename(file.path, dir + file.filename, e => {
+                    if (e) {
+                        console.log('Error occured while transfer files to folder:', e);
+                        return res.status(500).json({message: {en: `Error while developing files, please try again later. Error ${e}`, ru: `Ошибка при обработке файлов, пожалуйста, попробуйте позже. Ошибка ${e}`}})
+                    }
+                })
+            });
+
 
             //send data to TG
-            //orderToTg({lang, user, message, files, dir, res})
+            if (sendNotificationsInTG) orderToTg({lang, user, message, files, dir: orderId, res})
 
-            await User.findOneAndUpdate( {_id: user._id}, {cart: []})
+            await User.findOneAndUpdate( {_id: user._id}, {cart: []}) //clear user's cart if order successfully created
             return res.status(201).json({message: {en: 'Order created', ru: 'Заказ создан'}})
+        } catch (e) {
+            return res.status(500).json({ message:{en: `Something wrong with server, try again later. Error: ${e}`, ru: `Ошибка на сервере, попробуйте позже. Ошибка: ${e}`}})
+        }
+
+    }
+)
+
+
+
+
+router.patch('/orders', 
+    [authMW, isAdmin],
+    async (req, res) => {
+        const {orderId, newStatus} = req.body
+        
+        if (newStatus !== 'new' && newStatus !== 'working' && newStatus !== 'finished' && newStatus !== 'canceled') {
+            return res.status(406).json({message:{en: `Order was not found`, ru: `Заказ не найден`}})
+        }
+
+        try {         
+            const order = await Order.findOneAndUpdate({ _id: orderId}, {status: newStatus})
+            if (!order) {
+                return res.status(404).json({message:{en: `Order was not found`, ru: `Заказ не найден`}})
+            }
+            return res.status(200).json({message: {en: 'Status changed', ru: 'Статус изменен'}})
 
         } catch (e) {
             return res.status(500).json({ message:{en: `Something wrong with server, try again later. Error: ${e}`, ru: `Ошибка на сервере, попробуйте позже. Ошибка: ${e}`}})
@@ -431,12 +452,61 @@ router.get('/orders',
             await cache.colors.control.load()
             await cache.products.control.load()
 
- 
+            
             const userList: IUser[] = !isAdmin ? 
             await User.find({user: id}) || [] 
             : userId === 'all' ? await User.find() || [] : await User.find({_id: userId}) || []
             
+            const statusList: string[] = status !== 'all' ? [status] : [...orderStatus]
 
+            const orders = await Order.find({ //search all applied orders
+                user: {$in: userList},
+                status: {$in: statusList},
+                date: {$gte: new Date(from), $lte: new Date(to) }
+            })
+                .populate('user') // field name in Order referencing to User is 'user'
+                .exec() //merge
+
+            
+            const usersToFront = orders.reduce((acc, order) => {//using {} instead of [] to increase the speed
+                const userId = order.user._id.toString()
+                if (!acc[userId]) {
+                    const {name, email, phone, _id} = order.user
+                    acc[userId] = {
+                        userInfo: {name, email, phone, _id: _id.toString()},
+                        orders: []
+                    }
+                }
+                const cart = order.cart.map(cartItem => ({ //fill cart with the text using cache
+                    productName: cache.products.data.find(el => el._id.toString() === cartItem.productId.toString()).name,
+                    fiberName: cache.fibers.data.find(el => el._id.toString() === cartItem.fiberId.toString()).name,
+                    colorName: cache.colors.data.find(el => el._id.toString() === cartItem.colorId.toString()).name,
+                    amount: cartItem.amount,
+                    type:cartItem.type
+                }))
+                acc[userId].orders.push({
+                    _id: order._id,
+                    date: order.date,
+                    message: order.info.message,
+                    status: order.status,
+                    attachedFiles: order.info.files,
+                    pathToFiles: order.info.path,
+                    cart: cart
+                })
+                return acc
+            }, {})
+            
+            return res.status(200).json({users: Object.values(usersToFront)})
+
+            /*_id: order._id,
+            date: order.date,
+            message: order.info.message,
+            status: order.status,
+            attachedFiles: order.info.files,
+            pathToFiles: order.info.path,
+            cart: cart*/
+
+            /*
             const usersToFront: IOrdersUser[] = []
             await userList.reduce(async (accum: Promise<string>, user) => {
                 await accum
@@ -452,7 +522,7 @@ router.get('/orders',
                             if (!order) return res('')
 
                             if (order.date < from || order.date > to || ((order.status !== status) && (status !== 'all'))) { //if outdated
-                                return resolve('')
+                                return res('')
                             }
                             
                             const cart = order.cart.map(cartItem => ({
@@ -477,6 +547,7 @@ router.get('/orders',
                     }, Promise.resolve('start'))
 
                     
+                    if (orders.length === 0) return resolve('')
 
                     usersToFront.push({
                         info: {
@@ -490,10 +561,10 @@ router.get('/orders',
 
                     resolve('')
                 }) 
-            }, Promise.resolve('start'))
+            }, Promise.resolve('start'))*/
 
-
-            return res.status(200).json({users: usersToFront})
+            
+            //return res.status(200).json({users: usersToFront})
         } catch (error) {
             return res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})
         }

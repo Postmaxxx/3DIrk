@@ -471,7 +471,7 @@ export interface IOrdersItem {
 
 
 export interface IOrdersUser {
-    info: IFilterUser
+    userInfo: IFilterUser
     orders: IOrdersItem[]
 }
 

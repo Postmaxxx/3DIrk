@@ -15,7 +15,7 @@ interface InfoType {
 
 
 interface IOrder extends Document {
-    date: string
+    date: Date
     status: OrderType
     cart: ICartItem[]
     user: string //userId
@@ -24,7 +24,7 @@ interface IOrder extends Document {
 
 
 const orderSchema = new Schema({
-    date: {type: String, required: true},
+    date: {type: Date, required: true},
     status: {type: String, required: true},
     cart: [{type: CartItem, required: true}],
     user: {type: Types.ObjectId, ref: 'User', required: true},

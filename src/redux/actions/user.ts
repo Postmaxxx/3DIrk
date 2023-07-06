@@ -2,7 +2,6 @@ import { IAction, ICartItem, ICartState, IDispatch, IErrRes, IFetch, IFullState,
 import { actionsListUser } from './actionsList'
 //import { setText } from "./order";
 import { empty, errorFetch, fetchingFetch, minTimeBetweenSendings, successFetch } from "src/assets/js/consts";
-import { Form } from "react-router-dom";
 import moment from "moment";
 
 export const setUser = <T extends Partial<IUserState>>(payload: T):IAction<T> => ({
@@ -43,6 +42,7 @@ export const register = ({name, email, phone, password}: ILoggingForm) => {
                     }
                 }))
             }
+            dispatch(setUser({...user, auth: successFetch}))
             await login({email, password})(dispatch, getState)
         } catch (e) {   
             dispatch(setUser({...user,auth: {status: 'error', message: (e as IErrRes).message || {...empty}}}))
@@ -172,13 +172,12 @@ export const loginWithToken = () => {
 
 
 interface ISendOrder {
-    informer: (info: TLangText) => void
     message: string
     files: File[]
 }
 
 
-export const sendOrder = ({informer, message, files}: ISendOrder ) => {
+export const sendOrder = ({message, files}: ISendOrder ) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
         const { user } = getState()
         const {lang} = getState().base
@@ -187,10 +186,11 @@ export const sendOrder = ({informer, message, files}: ISendOrder ) => {
       
         dispatch(setSendOrder({...fetchingFetch}))
         const sendForm = new FormData()       
-        files.forEach(item => {sendForm.append('files', item, item.name)})
+        files.forEach(item => {
+            sendForm.append('files', item, item.name)
+        })
         sendForm.append('lang', lang)
         sendForm.append('message', message)
-        sendForm.append('localOrderDate', moment().format('YYYY-MM-DD'))
         
         try {
             const response = await fetch('/api/user/orders', {

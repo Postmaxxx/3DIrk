@@ -2,7 +2,6 @@
 
 
 
-
 .page_orders {
     background-color: var(--bg);
     transition: background-color $transition-theme;
@@ -39,11 +38,8 @@
 
 
         & .block_user {
-            margin-top: 40px;
-            padding-top: 20px;
-            padding-bottom: 20px;
-            padding-left: 10px;
-            padding-right: 10px;
+            margin-top: 60px;
+            padding: 10px;
             width: 100%;
             border: 1px solid red;
 
@@ -63,7 +59,7 @@
             //border: 1px solid red;
 
             & .order__date-status {
-                margin-top: 40px;
+                margin-top: 60px;
                 grid-column: 1/-1;
                 display: flex;
                 justify-content: space-between;
@@ -74,35 +70,63 @@
                 display: grid;
                 margin-top: 10px;
                 grid-template-columns: 1fr 1fr 1fr 1fr auto;
+                
+                & .cell {
+                    border-right: 1px solid black;
+                    border-bottom: 1px solid black;
+                    padding: 5px 10px;
+    
+                    &.head {
+                        text-align: center;
+                        border-top: 1px solid black;
+                    }
+                    
+                    &.first {
+                        border-left: 1px solid #000;
+                    }
+    
+                    &.center {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+                }
+
+                & .order__message-container {
+                    margin-top: 10px;
+                    grid-column: 1/-1;
+
+                }
             }
             
 
-            & .cell {
-                border-right: 1px solid black;
-                border-bottom: 1px solid black;
-                padding: 5px 10px;
-
-                &.head {
-                    text-align: center;
-                    border-top: 1px solid black;
-                }
-                
-                &.first {
-                    border-left: 1px solid #000;
-                }
-
-                &.center {
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                }
-            }
-
-
-
-
 
         }
+
+        & .pagination__container {
+            margin-top: 20px;
+            width: 80%;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-left: auto;
+            margin-right: auto;
+
+            & .pagination__page-number {
+                background-color: transparent;
+                outline: none;
+                border: none;
+                font-size: 18px;
+                padding: 5px;
+                
+                &.selected {
+                    color: red;
+                }
+            }
+        }
+
+
     }
 
 }

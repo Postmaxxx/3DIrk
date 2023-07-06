@@ -75,5 +75,10 @@ const prevent = (e: React.MouseEvent<HTMLElement>) => {
 //---------------------------------------------------------------
 
 
+const filenameChanger = (filename: string) => {
+    return filename
+        .replaceAll('_','-')
+}
 
-export { ratingNumberToText, errorsChecker, prevent }
+
+export { ratingNumberToText, errorsChecker, prevent, filenameChanger }

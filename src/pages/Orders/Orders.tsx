@@ -3,9 +3,9 @@ import { allActions } from "src/redux/actions/all";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import { IColorsState, IFetch, IFibersState, IFilterUser, IFullState, IOrdersState, IUserState, TLang, TLangText } from 'src/interfaces';
-import { useEffect, useRef, useCallback, useMemo, useState } from 'react'
-import { gapBetweenRequests } from 'src/assets/js/consts';
+import { IColorsState, IFetch, IFibersState, IFilterUser, IFullState, IOrdersState, IUserState, OrderType, TLang, TLangText } from 'src/interfaces';
+import {Fragment, useEffect, useRef, useCallback, useMemo, useState } from 'react'
+import { gapBetweenRequests, orderStatus, timeOffset, usersPerPage } from 'src/assets/js/consts';
 import moment from "moment";
 import Preloader from 'src/components/Preloaders/Preloader';
 
@@ -38,9 +38,16 @@ const Orders = ({lang, colorsState, fibersState, ordersState, userState, setStat
     const _dateTo = useRef<HTMLInputElement>(null)
     const _user = useRef<HTMLSelectElement>(null)
     const _status = useRef<HTMLSelectElement>(null)
-    
+    const [page, setPage] = useState<number>(0)
+    const [totalPages, setTotalPages] = useState<string[]>([])
+
     const [loaded, setLoaded] = useState<boolean>(false)
 
+
+    useEffect(() => {
+        setTotalPages(new Array(Math.ceil(ordersState.users.length / usersPerPage)).fill('').map((item, i) => String(i+1)))
+        setPage(0)
+    }, [ordersState.users])
 
 
     useEffect(() => { //initial load data
@@ -63,7 +70,7 @@ const Orders = ({lang, colorsState, fibersState, ordersState, userState, setStat
         if (colorsState.load.status === 'success' && fibersState.load.status === 'success') {
             setLoaded(true)
             if (!_user.current || !_dateFrom.current || !_dateTo.current) return
-            _dateFrom.current.value = moment().format('YYYY-MM-DD')
+            _dateFrom.current.value = moment().subtract(1, 'months').format('YYYY-MM-DD')
             _dateTo.current.value = moment().format('YYYY-MM-DD')
         }
     }, [colorsState.load, fibersState.load, ordersState.userList.load, userState.auth.status])
@@ -78,11 +85,89 @@ const Orders = ({lang, colorsState, fibersState, ordersState, userState, setStat
         if (!_dateTo.current.value) {
             return alert('Wrong date to')
         }    
-        const dateFrom: string = _dateFrom.current.value
-        const dateTo: string = _dateTo.current.value
-        setState.orders.loadOrders({userId: _user.current.value, status: _status.current.value, from: dateFrom, to: dateTo})
+
+        const dateFrom: string = new Date(_dateFrom.current.value).toISOString()
+        const dateTo: string = moment(_dateTo.current.value).add('day', 1).format("YYYY-MM-DDT00:00:00.000") + "Z";
+        
+
+        const dateTimeFrom = moment(dateFrom).add(timeOffset, 'hours').toISOString();
+        const dateTimeTo = moment(dateTo).add(timeOffset, 'hours').toISOString();
+        
+        setState.orders.loadOrders({userId: _user.current.value, status: _status.current.value, from: dateTimeFrom, to: dateTimeTo})
     }
 
+
+    interface IOnStatusChange {
+        e: React.ChangeEvent<HTMLSelectElement> 
+        orderId: string
+    }
+
+    const onStatusChange = ({e, orderId}: IOnStatusChange) => {
+        setState.orders.changeOrderStatus(orderId, e.target.value as OrderType)
+    }
+
+
+    const onPageClick = (pageNumber: number) => {
+        setPage(pageNumber)
+    }
+   
+
+    const userTable = ordersState.users.map((user, i: number) => {
+        if (i >= page*usersPerPage && i < (page+1)*usersPerPage) {
+            return (
+                <div className="block_user" key={user.userInfo._id}>
+                    <h3 className='user__header'>{user.userInfo.name}</h3>
+                    <span className='user__subheader'>
+                        <a href={`mailto: ${user.userInfo.email}`} type="email">{user.userInfo.email}</a> / 
+                        <a href={`tel: ${user.userInfo.phone}`} type="email"> {user.userInfo.phone}</a>
+                    </span>
+                    <div className="block_order">
+                        {user.orders.map((order) => {
+                            return (
+                                <Fragment key={order._id}>
+                                    <div className='order__date-status'>
+                                        <h4>Date: {moment(order.date).add(-timeOffset, 'hours').format('YYYY-MM-DD')}</h4>
+                                        <label>Status: 
+                                            <select name="" defaultValue={order.status} onChange={(e) => {onStatusChange({e, orderId: order._id})}}>
+                                                {orderStatus.map(status => {
+                                                    return <option key={status.name} value={status.value}>{status.name}</option>
+                                                })}
+                                            </select>
+                                        </label>
+                                    </div>
+    
+                                    <div className="order__cart">
+                                        <div className="cell head first">Product</div>
+                                        <div className="cell head">Fiber</div>
+                                        <div className="cell head">Color</div>
+                                        <div className="cell head">Type</div>
+                                        <div className="cell head">Amount</div>
+                                        
+                                        {order.cart.map((cartItem, i) => {
+                                            return (
+                                                <Fragment key={i}>
+                                                    <div className="cell first">{cartItem.productName[lang]}</div>
+                                                    <div className="cell">{cartItem.fiberName[lang]}</div>
+                                                    <div className="cell">{cartItem.colorName[lang]}</div>
+                                                    <div className="cell">{cartItem.type[lang]}</div>
+                                                    <div className="cell center">{cartItem.amount}</div>
+                                                </Fragment>
+                                            )
+                                        })}
+                                        <div className="order__message-container">
+                                            <p className='order__message'>Message: {order.message}</p>
+                                        </div>
+    
+                                    </div>
+    
+                                </Fragment>
+                            )
+                        })}
+                    </div>
+                </div>
+            )
+        }
+    })
 
     return (
         <div className="page_orders">
@@ -110,10 +195,9 @@ const Orders = ({lang, colorsState, fibersState, ordersState, userState, setStat
                                 <label htmlFor="status">Select status
                                     <select name="status" id="status" ref={_status}>
                                         <option value="all" defaultValue='all'>All</option>
-                                        <option value='new'>New</option>
-                                        <option value='working'>In progress</option>
-                                        <option value='fonished'>Finished</option>
-                                        <option value='canceled'>Canceled</option>
+                                        {orderStatus.map(status => {
+                                            return <option key={status.name} value={status.value}>{status.name}</option>
+                                        })}
                                     </select>
                                 </label>
                             </div>
@@ -130,62 +214,20 @@ const Orders = ({lang, colorsState, fibersState, ordersState, userState, setStat
                             <button className='button_blue' onClick={loadOrders}>Load Orders</button>
                         </div>
                         <div className="orders__container">
-                            {ordersState.users.map((user) => {
-                                return (
-                                    <div className="block_user" key={user.info._id}>
-                                        <h3 className='user__header'>{user.info.name}</h3>
-                                        <span className='user__subheader'>
-                                            <a href={`mailto: ${user.info.email}`} type="email">{user.info.email}</a> / 
-                                            <a href={`tel: ${user.info.phone}`} type="email"> {user.info.phone}</a>
-                                        </span>
-                                        <div className="block_order">
-
-                                            {user.orders.map((order) => {
-                                                return (
-                                                    <>
-                                                        <div className='order__date-status'>
-                                                            <h4>Date: {order.date}</h4>
-                                                            <label>Status: 
-                                                                <select name="" defaultValue={order.status}>
-                                                                    <option value="working">In progress</option>
-                                                                    <option value="new">New</option>
-                                                                    <option value="finished">Finished</option>
-                                                                    <option value="canceled">Canceled</option>
-                                                                </select>
-                                                            </label>
-                                                        </div>
-
-                                                        <div className="order__cart">
-                                                            <div className="cell head first">Product</div>
-                                                            <div className="cell head">Fiber</div>
-                                                            <div className="cell head">Color</div>
-                                                            <div className="cell head">Type</div>
-                                                            <div className="cell head">Amount</div>
-                                                            
-                                                            {order.cart.map((cartItem) => {
-                                                                return (
-                                                                    <>
-                                                                        <div className="cell first">{cartItem.productName[lang]}</div>
-                                                                        <div className="cell">{cartItem.fiberName[lang]}</div>
-                                                                        <div className="cell">{cartItem.colorName[lang]}</div>
-                                                                        <div className="cell">{cartItem.type[lang]}</div>
-                                                                        <div className="cell center">{cartItem.amount}</div>
-                                                                    </>
-                                                                )
-                                                            })}
-
-                                                        </div>
-
-                                                    </>
-                                                )
-                                            })}
-                                        </div>
-                                    </div>
-                                )
-                            })}
+                            {ordersState.users.length > 0 ? 
+                                userTable 
+                             : 
+                                ordersState.load.status === 'success' && <div className="">Nothing found</div>
+                            }
+                            <div className="pagination__container">
+                                {totalPages.map((item, i) => {
+                                    return <button className={`pagination__page-number ${i === page ? 'selected' : null}`} key={item} onClick={(e) => onPageClick(i)}>{item}</button>
+                                })}
+                            </div>
                         </div>
                     </>}
                     {ordersState.load.status === 'fetching' && <Preloader />}
+                    
                 </div>
             </div>
         </div>

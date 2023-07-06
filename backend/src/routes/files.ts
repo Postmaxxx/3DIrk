@@ -1,5 +1,5 @@
-const { Router } = require("express")
-const router = Router()
+import { filenameChanger } from "../processors/filenameChanger";
+
 const multer = require('multer');
 const sharp = require('sharp')
 
@@ -8,10 +8,11 @@ const sharp = require('sharp')
 
 const storageUser = multer.diskStorage({
 	destination: (req, file, cb) => {
-	  cb(null, process.env.pathToTemp); // Set the destination folder for uploaded files
+	  	cb(null, `${process.env.pathToTemp}/`); // Set the destination folder for uploaded files
 	},
 	filename: (req, file, cb) => {
-	  cb(null, file.originalname); // Keep the original file name
+		file.originalname = filenameChanger(Buffer.from(file.originalname, 'latin1').toString('utf8'))
+	  	cb(null, file.originalname); // Keep the original file name
 	}
 }); 
 
@@ -23,10 +24,10 @@ const uploadUser = multer({ storage: storageUser }).array('files');
 
 const storageImages = multer.diskStorage({
 	destination: (req, file, cb) => {
-	  cb(null, process.env.pathToTemp); // Set the destination folder for uploaded files
+	  	cb(null, `${process.env.pathToTemp}/`); // Set the destination folder for uploaded files
 	},
 	filename: (req, file, cb) => {
-	  cb(null, file.originalname); // Keep the original file name
+	  	cb(null, filenameChanger(file.originalname)); // Keep the original file name
 	}
 });
   

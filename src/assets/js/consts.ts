@@ -11,6 +11,8 @@ const gapBetweenRequests: number = 2000 //time between requests in case of error
 const strengthMin = 1
 const strengthMax = 180
 
+const usersPerPage = 2
+
 const clearModalMessage: IMessageModal = {
     status: '',
     header: '',
@@ -241,9 +243,34 @@ const colorEmpty: ISendColor = {
         small: new File([], "")
     },
     changeImages: true
+
 }
+
+const orderStatus = [
+    {
+        value: 'new',
+        name: 'New'
+    },
+    {
+        value: 'working',
+        name: 'In progress'
+    },
+    {
+        value: 'finished',
+        name: 'Finished'
+    },
+    {
+        value: 'canceled',
+        name: 'Canceled'
+    },
+]
+
+
+const timeOffset = (new Date()).getTimezoneOffset() / 60
+
+
 
 export {delayBetweenImagesPost, clearModalMessage, resetFetch, timeModalClosing, 
     fetchingFetch, errorFetch, successFetch, headerStatus, empty, selector, strengthMin, 
-    strengthMax, minTimeBetweenSendings,fiberEmpty, productEmpty, colorEmpty, gapBetweenRequests
-     }
+    strengthMax, minTimeBetweenSendings,fiberEmpty, productEmpty, colorEmpty, gapBetweenRequests,
+    orderStatus, usersPerPage, timeOffset}

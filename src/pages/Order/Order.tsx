@@ -82,7 +82,7 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
         setState.user.sendOrder({
             message: _message.current.value,
             files: addFiles.current.getFiles(),
-            informer
+            //informer
         })
     }
 
