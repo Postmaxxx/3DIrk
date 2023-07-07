@@ -8,33 +8,31 @@ const sharp = require('sharp')
 
 const storageUser = multer.diskStorage({
 	destination: (req, file, cb) => {
-	  	cb(null, `${process.env.pathToTemp}/`); // Set the destination folder for uploaded files
+	  	cb(null, `${process.env.pathToTemp}`); // Set the destination folder for uploaded files
 	},
 	filename: (req, file, cb) => {
 		file.originalname = filenameChanger(Buffer.from(file.originalname, 'latin1').toString('utf8'))
-	  	cb(null, file.originalname); // Keep the original file name
+	  	cb(null, file.originalname); 
 	}
 }); 
 
-const uploadUser = multer({ storage: storageUser }).array('files');
+const fileSaver = multer({ storage: storageUser }).array('files');
 
 
-
-
-
+/*
 const storageImages = multer.diskStorage({
 	destination: (req, file, cb) => {
-	  	cb(null, `${process.env.pathToTemp}/`); // Set the destination folder for uploaded files
+	  	cb(null, `${process.env.pathToTemp}/`); 
 	},
 	filename: (req, file, cb) => {
-	  	cb(null, filenameChanger(file.originalname)); // Keep the original file name
+		file.originalname = filenameChanger(Buffer.from(file.originalname, 'latin1').toString('utf8'))
+	  	cb(null, file.originalname); 
 	}
-});
-  
+}); 
 
 const uploadImages = multer({ storage: storageImages }).array('files');
 
-
+*/
 
 
 
@@ -50,11 +48,11 @@ const storage = multer.diskStorage({
 	  cb(null, file.originalname); // Keep the original file name
 	}
   });
-  
+   
 
 
 const upload = multer({ storage });
-
+ 
 */
 /*
 router.post('/upload', upload.array('files'), async (req, res) => {
@@ -82,18 +80,19 @@ router.post('/upload', upload.array('files'), async (req, res) => {
 
 });
 */
-
+/*
 
 const uploaders = {
 	user: uploadUser,
-	images: uploadImages
+	//images: uploadImages
 }
 
 interface IUploaders {
 	user: typeof uploadUser
-	images: typeof uploadImages
+	//images: typeof uploadImages
 }
+*/
 
-
-module.exports = uploaders
-export {IUploaders}
+module.exports = fileSaver
+export {}
+//export {IUploaders}

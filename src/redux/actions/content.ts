@@ -32,24 +32,28 @@ export const sendSplider = (files: File[]) => {
         dispatch(setSendContent(fetchingFetch))
 
         // images to imgbb
-        const resultUrls = await imagesUploader({files: files, dispatch, errorHandler: setSendContent})
+        /*const resultUrls = await imagesUploader({files: files, dispatch, errorHandler: setSendContent})
         if (resultUrls.err.en) {
             return dispatch(setSendContent({...errorFetch, message: resultUrls.err || {...empty}}))
         }
-        const imageUrls:IImgWithThumb[] = resultUrls.urls
-        
+        const imageUrls:IImgWithThumb[] = resultUrls.urls*/
+        const sendForm = new FormData()       
+        files.forEach(item => {
+            sendForm.append('files', item, item.name)
+        })
 
         //post to db
         try {
             const response: Response = await fetch('/api/content/splider', {
                 method: 'PUT',
                 headers: {
-                    "Content-Type": 'application/json',
+                    'enctype': "multipart/form-data",
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({images: imageUrls})
+                body: sendForm
+                //body: JSON.stringify({images: imageUrls})
             })
-
+            
             if (response.status !== 200) {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setSendContent({

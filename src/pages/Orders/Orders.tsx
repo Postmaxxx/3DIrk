@@ -8,6 +8,7 @@ import {Fragment, useEffect, useRef, useCallback, useMemo, useState } from 'reac
 import { gapBetweenRequests, orderStatus, timeOffset, usersPerPage } from 'src/assets/js/consts';
 import moment from "moment";
 import Preloader from 'src/components/Preloaders/Preloader';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -34,6 +35,7 @@ interface IProps extends IPropsState, IPropsActions {}
 
 
 const Orders = ({lang, colorsState, fibersState, ordersState, userState, setState}: IProps): JSX.Element => {
+    const updater = useNavigate()
     const _dateFrom = useRef<HTMLInputElement>(null)
     const _dateTo = useRef<HTMLInputElement>(null)
     const _user = useRef<HTMLSelectElement>(null)
@@ -73,8 +75,7 @@ const Orders = ({lang, colorsState, fibersState, ordersState, userState, setStat
             _dateFrom.current.value = moment().subtract(1, 'months').format('YYYY-MM-DD')
             _dateTo.current.value = moment().format('YYYY-MM-DD')
         }
-    }, [colorsState.load, fibersState.load, ordersState.userList.load, userState.auth.status])
-
+    }, [colorsState.load, fibersState.load, ordersState.userList.load, userState.auth.status, loaded])
 
 
     const loadOrders = () => {
@@ -121,10 +122,10 @@ const Orders = ({lang, colorsState, fibersState, ordersState, userState, setStat
                         <a href={`mailto: ${user.userInfo.email}`} type="email">{user.userInfo.email}</a> / 
                         <a href={`tel: ${user.userInfo.phone}`} type="email"> {user.userInfo.phone}</a>
                     </span>
-                    <div className="block_order">
+                    <div className="orders">
                         {user.orders.map((order) => {
                             return (
-                                <Fragment key={order._id}>
+                                <div className='order' key={order._id}>
                                     <div className='order__date-status'>
                                         <h4>Date: {moment(order.date).add(-timeOffset, 'hours').format('YYYY-MM-DD')}</h4>
                                         <label>Status: 
@@ -154,13 +155,29 @@ const Orders = ({lang, colorsState, fibersState, ordersState, userState, setStat
                                                 </Fragment>
                                             )
                                         })}
-                                        <div className="order__message-container">
-                                            <p className='order__message'>Message: {order.message}</p>
-                                        </div>
     
                                     </div>
+
+                                    {order.message.length > 0 &&
+                                        <div className="order__message-container">
+                                            <p className='order__message'>Message: {order.message}</p>
+                                        </div>}
+                                    {order.attachedFiles.length > 0 &&
+                                        <>
+                                            <h4 className='files__header'>attached files</h4>
+                                            <div className="files-container">
+                                                {order.attachedFiles.map(file => {
+                                                    return (
+                                                        <div className="cell" key={file}>
+                                                            <a download href={`${order.pathToFiles}/${file}`}>{file}</a>
+                                                        </div>
+                                                    )
+                                                })}
+                                            </div>
+                                        </>
+                                    }
     
-                                </Fragment>
+                                </div>
                             )
                         })}
                     </div>
@@ -178,8 +195,7 @@ const Orders = ({lang, colorsState, fibersState, ordersState, userState, setStat
                     :
                         <h1>{lang === 'en' ? 'All your orders' : 'Все ваши заказы'}</h1>
                     }
-                    {loaded && 
-                    <>
+                    {loaded && <>
                         <div className="filters">
                             <div className="filter__item">
                                 <label htmlFor="user">Select user

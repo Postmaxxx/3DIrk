@@ -1,6 +1,5 @@
 import { IUser } from "../models/User"
 import { IAllCache } from '../data/cache'
-import { IUploaders } from "./files"
 import { ICartItem } from "../models/Cart"
 import { TLang, TLangText } from "../../../src/interfaces"
 import { IOrder, OrderType } from "../models/Orders"
@@ -15,7 +14,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const authMW = require('../middleware/auth')
 const cache: IAllCache = require('../data/cache')
-const uploaders: IUploaders = require('../routes/files')
+const fileSaver = require('../routes/files')
 var fs = require('fs');
 const FormData = require('form-data');
 const fetch = require('node-fetch');
@@ -306,7 +305,7 @@ interface IMulterFile {
 
 router.post('/orders', 
     [authMW],
-    uploaders.user,
+    fileSaver,
     async (req, res) => {
         const userId = req.user.id
         const { message, lang } = req.body
@@ -352,7 +351,7 @@ router.post('/orders',
             }
 
     
-            const dir = `${process.env.pathToUserFiles}/${userId}/${orderId}/` //create unique folder for every user using user._id
+            const dir = `${process.env.pathToBase}/${process.env.pathToUserFiles}/${userId}/${orderId}/` //create unique folder for every user using user._id
       
             if (!fs.existsSync(dir)){// create all folders/subfolders for files
                 await fs.mkdirSync(dir, { recursive: true });
@@ -482,7 +481,7 @@ router.get('/orders',
                     fiberName: cache.fibers.data.find(el => el._id.toString() === cartItem.fiberId.toString()).name,
                     colorName: cache.colors.data.find(el => el._id.toString() === cartItem.colorId.toString()).name,
                     amount: cartItem.amount,
-                    type:cartItem.type
+                    type: cartItem.type
                 }))
                 acc[userId].orders.push({
                     _id: order._id,
@@ -490,7 +489,7 @@ router.get('/orders',
                     message: order.info.message,
                     status: order.status,
                     attachedFiles: order.info.files,
-                    pathToFiles: order.info.path,
+                    pathToFiles: `${process.env.pathToBase}/${process.env.pathToUserFiles}/${order.info.path}`,
                     cart: cart
                 })
                 return acc
@@ -498,73 +497,6 @@ router.get('/orders',
             
             return res.status(200).json({users: Object.values(usersToFront)})
 
-            /*_id: order._id,
-            date: order.date,
-            message: order.info.message,
-            status: order.status,
-            attachedFiles: order.info.files,
-            pathToFiles: order.info.path,
-            cart: cart*/
-
-            /*
-            const usersToFront: IOrdersUser[] = []
-            await userList.reduce(async (accum: Promise<string>, user) => {
-                await accum
-                
-                return new Promise<string>(async (resolve, reject) => {
-                    
-                    const orders = []
-                    await user.orders.reduce(async (acc: Promise<string>, orderId) => {
-                        await acc
-
-                        return new Promise<string>(async (res, rej) => {
-                            const order: IOrder = await Order.findOne({_id: orderId})                      
-                            if (!order) return res('')
-
-                            if (order.date < from || order.date > to || ((order.status !== status) && (status !== 'all'))) { //if outdated
-                                return res('')
-                            }
-                            
-                            const cart = order.cart.map(cartItem => ({
-                                productName: cache.products.data.find(el => el._id.toString() === cartItem.productId.toString()).name,
-                                fiberName: cache.fibers.data.find(el => el._id.toString() === cartItem.fiberId.toString()).name,
-                                colorName: cache.colors.data.find(el => el._id.toString() === cartItem.colorId.toString()).name,
-                                amount: cartItem.amount,
-                                type:cartItem.type
-                            }))
-                            
-                            orders.push({
-                                _id: order._id,
-                                date: order.date,
-                                message: order.info.message,
-                                status: order.status,
-                                attachedFiles: order.info.files,
-                                pathToFiles: order.info.path,
-                                cart: cart
-                            })
-                            res('')
-                        })
-                    }, Promise.resolve('start'))
-
-                    
-                    if (orders.length === 0) return resolve('')
-
-                    usersToFront.push({
-                        info: {
-                            _id: user._id,
-                            name: user.name,
-                            phone: user.phone,
-                            email: user.email
-                        },
-                        orders: orders
-                    })
-
-                    resolve('')
-                }) 
-            }, Promise.resolve('start'))*/
-
-            
-            //return res.status(200).json({users: usersToFront})
         } catch (error) {
             return res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})
         }
