@@ -1,4 +1,6 @@
+import { allPaths } from "../data/consts";
 import { filenameChanger } from "../processors/filenameChanger";
+import { IMulterFile } from "./user";
 
 const multer = require('multer');
 const sharp = require('sharp')
@@ -7,12 +9,12 @@ const sharp = require('sharp')
 
 
 const storageUser = multer.diskStorage({
-	destination: (req, file, cb) => {
-	  	cb(null, `${process.env.pathToTemp}`); // Set the destination folder for uploaded files
+	destination: (req, file: IMulterFile, cb) => {
+	  	cb(null, `${allPaths.pathToTemp}`); // Set the destination folder for uploaded files
 	},
 	filename: (req, file, cb) => {
-		file.originalname = filenameChanger(Buffer.from(file.originalname, 'latin1').toString('utf8'))
-	  	cb(null, file.originalname); 
+		file.filename = filenameChanger(Buffer.from(file.originalname, 'latin1').toString('utf8'))
+	  	cb(null, file.filename); 
 	}
 }); 
 
@@ -22,11 +24,11 @@ const fileSaver = multer({ storage: storageUser }).array('files');
 /*
 const storageImages = multer.diskStorage({
 	destination: (req, file, cb) => {
-	  	cb(null, `${process.env.pathToTemp}/`); 
+	  	cb(null, `${allPaths.pathToTemp}/`); 
 	},
 	filename: (req, file, cb) => {
-		file.originalname = filenameChanger(Buffer.from(file.originalname, 'latin1').toString('utf8'))
-	  	cb(null, file.originalname); 
+		file.filename = filenameChanger(Buffer.from(file.filename, 'latin1').toString('utf8'))
+	  	cb(null, file.filename); 
 	}
 }); 
 
@@ -42,10 +44,10 @@ const uploadImages = multer({ storage: storageImages }).array('files');
 /*
 const storage = multer.diskStorage({
 	destination: (req, file, cb) => {
-	  cb(null, process.env.pathToUploadsImages); // Set the destination folder for uploaded files
+	  cb(null, allPaths.pathToUploadsImages); // Set the destination folder for uploaded files
 	},
 	filename: (req, file, cb) => {
-	  cb(null, file.originalname); // Keep the original file name
+	  cb(null, file.filename); // Keep the original file name
 	}
   });
    

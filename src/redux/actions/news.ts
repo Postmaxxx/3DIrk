@@ -121,17 +121,13 @@ export const sendNews = () => {
         const token = getState().user.token
         dispatch(setSendNews(fetchingFetch))
 
-
-        const imageUrls:IImgWithThumb[] = []
-        // images to imgbb
+        const sendForm = new FormData()   
         if (newsOne.files && newsOne.files?.length > 0) {
-            const resultUrls = await imagesUploader({files: newsOne.files, dispatch, errorHandler: setSendNews})
-            if (resultUrls.err.en) {
-                return dispatch(setSendNews({...errorFetch, message: resultUrls.err || {...empty}}))
-            }
-            imageUrls.concat([...resultUrls.urls])
+            newsOne.files.forEach(item => {
+                sendForm.append('files', item, item.name)
+            })
         }
-
+        const imageUrls:IImgWithThumb[] = []
 
         //post to db
         try {
@@ -151,14 +147,15 @@ export const sendNews = () => {
                 date: newsOne.date,
                 images: imageUrls
             }
+            sendForm.append('newsToDb', JSON.stringify(newsToDb))
 
             const response: Response = await fetch('/api/news/create', {
                 method: 'POST',
                 headers: {
-                    "Content-Type": 'application/json',
+                    'enctype': "multipart/form-data",
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(newsToDb)
+                body: sendForm
             })
 
             if (response.status !== 201) {

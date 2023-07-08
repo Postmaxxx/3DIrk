@@ -4,7 +4,13 @@ import { IContentState } from "src/interfaces"
 const initialContentState = {
     send: resetFetch,
     load: resetFetch,
-    splider: []
+    splider: {
+        paths: {
+            full: '',
+            spliderMain: ''
+        },
+        files: []
+    }
 } satisfies IContentState
 
 export default initialContentState

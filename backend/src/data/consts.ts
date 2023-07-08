@@ -1,6 +1,16 @@
 const minTimeBetweenSendings: number = 500 //in ms
 const sendNotificationsInTG: boolean = false
+const delayForFS = 1000
 
+
+const allPaths = {
+    pathToServer: "http://localhost/data",
+    pathToTemp: "C:/Projects/3D/3dprint/backend/uploads/temp",
+    pathToBase: "C:/Projects/3D/3dprint/backend/data",
+    pathToImages:"images",
+    pathToSplider:"splider",
+    pathToUserFiles: "userfiles"
+}
 
 const orderStatus: string[] = [
     'new',
@@ -15,19 +25,18 @@ interface ISizesItem {
     w: number
 }
 
-interface ISizes {
+interface IImageSizes {
     thumb: ISizesItem
     preview: ISizesItem
     small: ISizesItem
     medium: ISizesItem
+    full: ISizesItem
     //big: ISizesItem
-    special: {
-        spliderMain: ISizesItem
-    }
+    spliderMain: ISizesItem
 }
 
 
-const sizes: ISizes = {//in px
+const sizes: IImageSizes = {//in px
     thumb: {
         h: 40,
         w: 40
@@ -44,16 +53,15 @@ const sizes: ISizes = {//in px
         h: 600,
         w: 600
     },
-    /*big: {
-        h: 900,
-        w: 900
-    },*/
-    special: {
-        spliderMain: {
-            w: 800,
-            h: 400
-        }
+    full: {
+        h: 5000,
+        w: 5000
+    },
+    spliderMain: {
+        w: 720,
+        h: 400
     }
+    
 }
 
-export {minTimeBetweenSendings, sendNotificationsInTG, orderStatus, sizes, ISizes, ISizesItem}
+export {minTimeBetweenSendings, sendNotificationsInTG, orderStatus, sizes, delayForFS, allPaths, ISizesItem, IImageSizes}

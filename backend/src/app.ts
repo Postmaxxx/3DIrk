@@ -1,3 +1,6 @@
+import { allPaths } from "./data/consts"
+import { foldersCleaner } from "./processors/fsTools"
+
 require('dotenv').config()
 const userRoutes = require('./routes/user')
 const fibersRoutes = require('./routes/fibers')
@@ -12,6 +15,10 @@ const mongoose = require("mongoose")
 const cors = require('cors')
 const app = express()
 //var bodyParser = require('body-parser')
+
+
+
+foldersCleaner([allPaths.pathToTemp])
 
 app.use(express.json({ extended: true, }));
 //app.use(bodyParser.json({strict: false}))

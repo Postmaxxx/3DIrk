@@ -580,8 +580,16 @@ export interface IModalImg {
 }
 
 
+export interface ISplider {
+    paths: {
+        full: string
+        spliderMain: string
+    },
+    files: string[]
+}
+
 export interface IContentState {
-    splider: IImgWithThumb[]
+    splider: ISplider
     send: IFetch
     load: IFetch
 }

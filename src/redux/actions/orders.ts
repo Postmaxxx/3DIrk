@@ -48,6 +48,7 @@ export const loadOrders = ({from, to, userId, status}: ILoadOrders) => {
             }
             
             const result = await response.json() //message, errors
+           console.log(result.users);
            
             dispatch(setOrders(result.users))
 

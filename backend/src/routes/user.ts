@@ -3,7 +3,8 @@ import { IAllCache } from '../data/cache'
 import { ICartItem } from "../models/Cart"
 import { TLang, TLangText } from "../../../src/interfaces"
 import { IOrder, OrderType } from "../models/Orders"
-import { orderStatus, sendNotificationsInTG } from "../data/consts"
+import { allPaths, orderStatus, sendNotificationsInTG } from "../data/consts"
+import { foldersCreator } from "../processors/fsTools"
 const moment = require('moment');
 const { Router } = require("express")
 const router = Router()
@@ -103,7 +104,7 @@ const orderToTg = async ({lang, user, message, files, dir, res}: IOrderToTg) => 
         return new Promise<string>(async (resolve, rej) => {
             const timeStart = Date.now()
             const form = new FormData();
-            //const stats = fs.statSync(filePathName);
+            //const stats = fs.stat(filePathName);
             //const fileSizeInBytes = stats.size;
             const fileStream = fs.createReadStream(filePathName);
             form.append('document', fileStream, file.filename);
@@ -342,7 +343,7 @@ router.post('/orders',
                     }
                 }) 
                 orderId = order._id.toString()
-                order.info.path = orderId
+                order.info.path = `${allPaths.pathToUserFiles}/${user._id}/${orderId}`
                 await order.save() 
                 const newOrders = [...user.orders, orderId]
                 await User.findOneAndUpdate({ _id: userId}, {orders: newOrders})
@@ -351,12 +352,10 @@ router.post('/orders',
             }
 
     
-            const dir = `${process.env.pathToBase}/${process.env.pathToUserFiles}/${userId}/${orderId}/` //create unique folder for every user using user._id
+            const dir = `${allPaths.pathToBase}/${allPaths.pathToUserFiles}/${userId}/${orderId}/` //create unique folder for every user using user._id
       
-            if (!fs.existsSync(dir)){// create all folders/subfolders for files
-                await fs.mkdirSync(dir, { recursive: true });
-            }
-        
+            await foldersCreator([dir])// create all folders/subfolders for files
+
             files.forEach(file => {//transfer all received files to user._id folder
                 fs.rename(file.path, dir + file.filename, e => {
                     if (e) {
@@ -489,7 +488,7 @@ router.get('/orders',
                     message: order.info.message,
                     status: order.status,
                     attachedFiles: order.info.files,
-                    pathToFiles: `${process.env.pathToBase}/${process.env.pathToUserFiles}/${order.info.path}`,
+                    pathToFiles: `${allPaths.pathToServer}/${order.info.path}`,
                     cart: cart
                 })
                 return acc

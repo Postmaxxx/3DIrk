@@ -1,7 +1,7 @@
 import './carouselmax.scss'
 import { useEffect,useRef, useState } from 'react';
 import ImgWithPreloader from '../../assets/js/ImgWithPreloader'
-import { IImgWithThumb } from 'src/interfaces';
+import { IImgWithThumb, ISplider } from 'src/interfaces';
 
 
 
@@ -40,10 +40,10 @@ const options: IOptions = {
 }
 
 interface ISliderMax {
-    initialImages: IImgWithThumb[]
+    content: ISplider
 }
 
-const SliderMax = ({initialImages}: ISliderMax) => {
+const SliderMax = ({content}: ISliderMax) => {
     
     const _carouselRef = useRef<HTMLDivElement>(null)
     const [ribbonPos, setRibbonPos] = useState<number>(0)
@@ -51,7 +51,7 @@ const SliderMax = ({initialImages}: ISliderMax) => {
     const [ribbonDx, setRibbonDx] = useState<number>(0)
     const [firstRender, setFirstRender] = useState<boolean>(true)
     const [isAutoMoving, setIsAutoMoving] = useState<number>(1)
-    const [images, setImages] = useState<{url: string, fileName: string}[]>(initialImages.map(item => ({url: item.medium || item.full, fileName: item.fileName})))
+    const [images, setImages] = useState<{url: string, fileName: string}[]>(content.files.map(filename => ({url: `${content.paths.spliderMain}/${filename}`, fileName: filename})))
 
     const mouseDown =(e: Event) => {
         //console.log('add el');
@@ -85,7 +85,7 @@ const SliderMax = ({initialImages}: ISliderMax) => {
         }
         const innerContainerWidth = state.imageContainerWidth
         if (_carouselRef.current.clientWidth < 200) {
-            setImages(initialImages.map(image => ({url: image.thumb, fileName: image.fileName})))
+            setImages(content.files.map(filename => ({url: `${content.paths.spliderMain}/${filename}`, fileName: filename})))
         }
 
 

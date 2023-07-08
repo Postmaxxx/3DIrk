@@ -5,10 +5,13 @@ const authMW = require('../middleware/auth')
 const { check, validationResult } = require('express-validator')
 const isAdmin = require('../middleware/isAdmin')
 import { IAllCache } from '../data/cache'
+import { IMulterFile } from './user'
 const cache: IAllCache = require('../data/cache')
+const fileSaver = require('../routes/files')
 
 router.post('/create', 
     [authMW, isAdmin],
+    fileSaver,
     [
         check('header.en')
             .isLength({min: 3})
@@ -28,18 +31,17 @@ router.post('/create',
             .withMessage({en: 'RU text is too short (<15)', ru: 'RU текст слишком короткий (<15)'})
     ],
     async (req, res) => {
-
         const errors = validationResult(req)
-        
         if (!errors.isEmpty()) {
             return res.status(400).json({
                 errors: errors.array().map(error => error.msg),
                 message: {en: 'Errors in news data', ru: 'Ошибки в данных новости'}
             })
         }
-
+        
         try {
             const { header, date, short, text, images} = req.body 
+            const files = req.files as IMulterFile[] || []
 
             const news = new News({ header, date, short, text, images}) 
             

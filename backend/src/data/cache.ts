@@ -178,23 +178,21 @@ const allNews:IAllNews = {
 
 
 interface IAllContent {
-    data: {
-        splider: IImgWithThumb[]
-    }
+    data: IContent
     obsolete: boolean
     control: {
         load: typeof loadContent
     }
 }
-const allContent:IAllContent = {
+const allContent = {
     data: {
-        splider: []
+        splider: {}
     },
     obsolete: true,
     control: {
         load: loadContent
     }
-}
+} as IAllContent
 
 interface IAllFibers {
     data: IFiber[]

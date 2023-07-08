@@ -58,7 +58,7 @@ const Home:React.FC<IProps> = ({lang, contentState, setState} : IProps): JSX.Ele
                             }
                         </div>
                         <div className="slider__container">
-                            {contentState.load.status === 'success' && <SpliderMax initialImages={contentState.splider} />}
+                            {contentState.load.status === 'success' && <SpliderMax content={contentState.splider} />}
                             {contentState.load.status === 'fetching' && <Preloader />}
                             
                         </div>

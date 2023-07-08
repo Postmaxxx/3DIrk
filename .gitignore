@@ -16,6 +16,7 @@
 /backend/node_modules
 backend/.env
 backend/uploads
+backend/data
 backend/userFiles
 
 

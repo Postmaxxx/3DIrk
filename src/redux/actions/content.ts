@@ -31,12 +31,6 @@ export const sendSplider = (files: File[]) => {
         const token = getState().user.token
         dispatch(setSendContent(fetchingFetch))
 
-        // images to imgbb
-        /*const resultUrls = await imagesUploader({files: files, dispatch, errorHandler: setSendContent})
-        if (resultUrls.err.en) {
-            return dispatch(setSendContent({...errorFetch, message: resultUrls.err || {...empty}}))
-        }
-        const imageUrls:IImgWithThumb[] = resultUrls.urls*/
         const sendForm = new FormData()       
         files.forEach(item => {
             sendForm.append('files', item, item.name)
@@ -51,7 +45,6 @@ export const sendSplider = (files: File[]) => {
                     'Authorization': `Bearer ${token}`
                 },
                 body: sendForm
-                //body: JSON.stringify({images: imageUrls})
             })
             
             if (response.status !== 200) {
