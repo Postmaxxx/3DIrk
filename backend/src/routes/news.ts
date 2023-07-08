@@ -5,6 +5,11 @@ const authMW = require('../middleware/auth')
 const { check, validationResult } = require('express-validator')
 const isAdmin = require('../middleware/isAdmin')
 import { IAllCache } from '../data/cache'
+import { allPaths, delayForFS } from '../data/consts'
+import { INews } from '../models/News'
+import { foldersCleaner, foldersCreator } from '../processors/fsTools'
+import { makeDelay } from '../processors/makeDelay'
+import { imagesResizer } from '../processors/sharp'
 import { IMulterFile } from './user'
 const cache: IAllCache = require('../data/cache')
 const fileSaver = require('../routes/files')
@@ -12,43 +17,48 @@ const fileSaver = require('../routes/files')
 router.post('/create', 
     [authMW, isAdmin],
     fileSaver,
-    [
-        check('header.en')
-            .isLength({min: 3})
-            .withMessage({en: 'EN header is too short (<4)', ru: 'EN заголовок слишком короткий (<4)'})
-            .isLength({max: 51})
-            .withMessage({en: 'EN header is too long (>50)', ru: 'EN заголовок слишком длинный (>50)'}),
-        check('header.ru')
-            .isLength({min: 3})
-            .withMessage({en: 'RU header is too short (<4)', ru: 'RU заголовок слишком короткий (<4)'})
-            .isLength({max: 51})
-            .withMessage({en: 'RU header is too long (>50)', ru: 'RU заголовок слишком длинный (>50)'}),
-        check('text.en')
-            .isLength({min: 15})
-            .withMessage({en: 'EN text is too short (<15)', ru: 'EN текст слишком короткий (<15)'}),
-        check('text.en')
-            .isLength({min: 15})
-            .withMessage({en: 'RU text is too short (<15)', ru: 'RU текст слишком короткий (<15)'})
-    ],
-    async (req, res) => {
-        const errors = validationResult(req)
-        if (!errors.isEmpty()) {
-            return res.status(400).json({
-                errors: errors.array().map(error => error.msg),
-                message: {en: 'Errors in news data', ru: 'Ошибки в данных новости'}
-            })
-        }
-        
+    async (req, res) => {       
         try {
-            const { header, date, short, text, images} = req.body 
-            const files = req.files as IMulterFile[] || []
-
-            const news = new News({ header, date, short, text, images}) 
+            const newsRaw: string = req.body.news
+            const { header, date, short, text } = JSON.parse(newsRaw)
+            const files = req.files as IMulterFile[] || []           
             
+            const news = new News({ header, date, short, text }) 
+            const newsId = news._id
+
+            const dirFull = `${allPaths.pathToImages}/${allPaths.pathToNews}/${newsId}` //images/news/{news_id}
+            const dirMedium = `${dirFull}/medium` //images/news/{news_id}/medium
+            const dirSmall = `${dirFull}/small` //images/news/{news_id}/small
+            await foldersCreator([`${allPaths.pathToBase}/${dirFull}`, `${allPaths.pathToBase}/${dirMedium}`, `${allPaths.pathToBase}/${dirSmall}`])
+            await makeDelay(delayForFS)
+
+            const paths = await imagesResizer({
+                files,
+                format: 'webp',
+                sizesConvertTo: [
+                    {
+                        type: 'full',
+                        path: dirFull
+                    },
+                    {
+                        type: 'medium',
+                        path: dirMedium
+                    },
+                    {
+                        type: 'small',
+                        path: dirSmall
+                    }
+                ]
+            })
+
+            news.images = {
+                paths,
+                files: files.map(item => item.filename)
+            }
+
+            await foldersCleaner([allPaths.pathToTemp])
             await news.save()
-
             cache.news.obsolete = true
-
             return res.status(201).json({message: {en: 'News posted', ru: 'Новость сохранена'}})
         } catch (error) {
             return res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})
@@ -60,54 +70,53 @@ router.post('/create',
 
 
 
-
-
-
-
-
-
-
-
-
 router.put('/edit', 
     [authMW, isAdmin],
-    [
-        check('header.en')
-            .isLength({min: 3})
-            .withMessage({en: 'EN header is too short (<4)', ru: 'EN заголовок слишком короткий (<4)'})
-            .isLength({max: 51})
-            .withMessage({en: 'EN header is too long (>50)', ru: 'EN заголовок слишком длинный (>50)'}),
-        check('header.ru')
-            .isLength({min: 3})
-            .withMessage({en: 'RU header is too short (<4)', ru: 'RU заголовок слишком короткий (<4)'})
-            .isLength({max: 51})
-            .withMessage({en: 'RU header is too long (>50)', ru: 'RU заголовок слишком длинный (>50)'}),
-        check('text.en')
-            .isLength({min: 15})
-            .withMessage({en: 'EN text is too short (<15)', ru: 'EN текст слишком короткий (<15)'}),
-        check('text.en')
-            .isLength({min: 15})
-            .withMessage({en: 'RU text is too short (<15)', ru: 'RU текст слишком короткий (<15)'})
-    ],
+    fileSaver, 
     async (req, res) => {
-
-        const errors = validationResult(req)
-        
-        if (!errors.isEmpty()) {
-            return res.status(400).json({
-                errors: errors.array().map(error => error.msg),
-                message: {en: 'Errors in news data', ru: 'Ошибки в данных новости'}
-            })
-        }
-
         try {
-            const { header, date, short, text, images, _id } = req.body 
+            const newsRaw: string = req.body.news
+            const { header, date, short, text, _id } = JSON.parse(newsRaw)
+            const files = req.files as IMulterFile[] || []           
             
+            if (files.length === 0) { //if images was not sent save old images
+                await News.findOneAndUpdate({_id}, { header, date, short, text})
+                cache.news.obsolete = true
+                return res.status(200).json({message: {en: 'News changed', ru: 'Новость отредактирована'}})
+            }
+
+ 
+            const dirFull = `${allPaths.pathToImages}/${allPaths.pathToNews}/${_id}` //images/news/{news_id}
+            const dirMedium = `${dirFull}/medium` //images/news/{news_id}/medium
+            const dirSmall = `${dirFull}/small` //images/news/{news_id}/small
+            await foldersCleaner([`${allPaths.pathToBase}/${dirFull}`, `${allPaths.pathToBase}/${dirMedium}`, `${allPaths.pathToBase}/${dirSmall}`])
+            await makeDelay(delayForFS)
+            const paths = await imagesResizer({
+                files,
+                format: 'webp',
+                sizesConvertTo: [
+                    {
+                        type: 'full',
+                        path: dirFull
+                    },
+                    {
+                        type: 'medium',
+                        path: dirMedium
+                    },
+                    {
+                        type: 'small',
+                        path: dirSmall
+                    }
+                ]
+            })
+
+            const images = {
+                paths,
+                files: files.map(item => item.filename)
+            }
+
+            await News.findOneAndUpdate({_id}, { header, date, short, text, images})
             
-            const editedNews = images ? { header, date, short, text, images} : { header, date, short, text}
-
-            await News.findOneAndUpdate({_id}, editedNews) 
-
             cache.news.obsolete = true
 
             return res.status(200).json({message: {en: 'News changed', ru: 'Новость отредактирована'}})
@@ -122,10 +131,6 @@ router.put('/edit',
 
 
 
-
-
-
-
 router.get('/get-amount', async (req, res) => {
     try {
         await cache.news.control.load(res)
@@ -134,7 +139,6 @@ router.get('/get-amount', async (req, res) => {
         return res.status(500).json({ message:{en: `Something wrong with server ${e}, try again later`, ru: `Ошибка на сервере ${e}, попробуйте позже`}})
     }
 })
-
 
 
 
@@ -209,8 +213,6 @@ router.get('/get-one',
     }
 
 })
-
-
 
 
 

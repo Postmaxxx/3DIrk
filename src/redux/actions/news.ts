@@ -127,8 +127,6 @@ export const sendNews = () => {
                 sendForm.append('files', item, item.name)
             })
         }
-        const imageUrls:IImgWithThumb[] = []
-
         //post to db
         try {
             const newsToDb: Partial<INewsItem> = {
@@ -145,9 +143,8 @@ export const sendNews = () => {
                     ru:  newsOne.short.ru.trim()
                 },
                 date: newsOne.date,
-                images: imageUrls
             }
-            sendForm.append('newsToDb', JSON.stringify(newsToDb))
+            sendForm.append('news', JSON.stringify(newsToDb))
 
             const response: Response = await fetch('/api/news/create', {
                 method: 'POST',
@@ -189,16 +186,12 @@ export const updateNews = () => {
         const token = getState().user.token //get current user state
         dispatch(setSendNews(fetchingFetch))
 
-        const imageUrls:IImgWithThumb[] = []
-        // images to imgbb
+        const sendForm = new FormData()   
         if (newsOne.files && newsOne.files?.length > 0) {
-            const resultUrls = await imagesUploader({files: newsOne.files, dispatch, errorHandler: setSendNews})
-            if (resultUrls.err.en) {
-                return dispatch(setSendNews({...errorFetch, message: resultUrls.err || {...empty}}))
-            }
-            imageUrls.concat([...resultUrls.urls])
+            newsOne.files.forEach(item => {
+                sendForm.append('files', item, item.name)
+            })
         }
-
 
         //post to db
         try {
@@ -217,19 +210,16 @@ export const updateNews = () => {
                 },
                 date: newsOne.date,
                 _id: newsOne._id,
-                images: imageUrls
             }
-            if (!newsOne.changeImages) {//if don't need change images => delete field at all,in this case BE will not update images
-                delete newsToDb.images
-            }
+            sendForm.append('news', JSON.stringify(newsToDb))
             
             const response: Response = await fetch('/api/news/edit', {
                 method: 'PUT',
                 headers: {
-                    "Content-Type": 'application/json',
+                    'enctype': "multipart/form-data",
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(newsToDb)
+                body: sendForm
             })
 
             if (response.status !== 200) {

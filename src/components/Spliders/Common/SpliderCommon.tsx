@@ -1,7 +1,7 @@
 import './splider-common.scss'
 import Splide from "@splidejs/splide";
 import ImgWithPreloader from '../../../assets/js/ImgWithPreloader';
-import { IImgWithThumb, ISpliderOptions } from '../../../interfaces';
+import { IImgWithThumb, ISpliderOptions, TImageSizes } from '../../../interfaces';
 import "@splidejs/react-splide/css";
 import Modal, { IModalFunctions } from '../../../components/Modal/Modal';
 import { IImageModalFunctions } from '../../ImageModal/ImageModal';
@@ -12,8 +12,16 @@ import { timeModalClosing } from 'src/assets/js/consts';
 
 
 interface IProps {
-	images: IImgWithThumb[]
+	images: {
+		paths: {
+            full: string
+            medium: string
+            small: string
+        }
+        files: string[]
+	}
     imagesPerSlide: number
+	defaultSize: TImageSizes //!!!
 }
 
 interface IContainerSize {
@@ -23,7 +31,7 @@ interface IContainerSize {
 
 
 
-const SpliderCommon: React.FC<IProps> = ({images, imagesPerSlide=1}): JSX.Element => {
+const SpliderCommon: React.FC<IProps> = ({images, defaultSize='full', imagesPerSlide=1}): JSX.Element => {
 	
 	const splideCommon = useRef<Splide>();
 	const containerSize = useRef<IContainerSize>();
@@ -61,7 +69,7 @@ const SpliderCommon: React.FC<IProps> = ({images, imagesPerSlide=1}): JSX.Elemen
 	const handleImgClick = (e: MouseEvent<HTMLDivElement>) => {
 		if ((e.target as HTMLImageElement).tagName === 'IMG') {
 			const id = Number(((e.target as HTMLImageElement).id));
-			image.current?.update({url: images[id].full, text: images[id].fileName})
+			image.current?.update({url: `${images.paths.full}/${images.files[id]}`, text: images.files[id]})
 			modal_image.current?.openModal()
 		}
 	}
@@ -93,11 +101,11 @@ const SpliderCommon: React.FC<IProps> = ({images, imagesPerSlide=1}): JSX.Elemen
             <div className="splide" ref={_splideFabric} aria-label="The carousel">
                 <div className="splide__track">
                     <ul className="splide__list">
-                        {images.map((img, i) => {
+                        {images.files.map((file, i) => {
                             return (
-                                <li className="splide__slide" key={i} data-path={img.full}>
+                                <li className="splide__slide" key={i} data-path={images.paths.full}>
                                     <div className="splide__slide-container">
-										<ImgWithPreloader src={img.medium || img.thumb} alt={img.fileName} id={String(i)}/>
+										<ImgWithPreloader src={images.paths.medium ? `${images.paths.medium}/${file}` : `${images.paths.full}/${file}`} alt={file} id={String(i)}/>
                                     </div>
                                 </li>
                             );

@@ -303,7 +303,14 @@ export interface INewsItem { //for detail view on news detail page
     date: Date
     short: TLangText
     text: TLangText
-    images: IImgWithThumb[]
+    images: {
+        paths: {
+            full: string
+            medium: string
+            small: string
+        }
+        files: string[]
+    }
     files?: File[]
     changeImages?: boolean //for editing
 }
@@ -314,7 +321,14 @@ export interface INewsItemShort { // for preview news on main page
     date: Date
     short: TLangText
     text: TLangText
-    images: IImgWithThumb[]
+    images: {
+        paths: {
+            full: string
+            medium: string
+            small: string
+        }
+        files: string[]
+    }
 }
 
 export interface INewsState {
@@ -602,3 +616,4 @@ export interface ICatalogTypes {
 }
 
 
+export type TImageSizes = 'thumb' | 'small' | 'medium' | 'full' | 'spliderMain'

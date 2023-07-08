@@ -103,7 +103,7 @@ const NewsDetails: FC<IProps> = ({lang, setState, send, loadOne, newsOne, isAdmi
                                 })}
                             </div>
                             <div className="images__container">
-                                <SpliderCommon images={newsOne.images} imagesPerSlide={Math.min(newsOne.images.length, 3)}/>
+                                <SpliderCommon images={newsOne.images} defaultSize='medium' imagesPerSlide={Math.min(newsOne.images.files.length, 3)}/>
                             </div>
                         </>
                     </div>

@@ -11,7 +11,14 @@ const initialNews = {
         date: new Date,
         short: empty,
         text: empty,
-        images: []
+        images: {
+            paths: {
+                full: '',
+                medium: '',
+                small: '',
+            },
+            files: []
+        }
     },
     total: 0,
     newsList: []

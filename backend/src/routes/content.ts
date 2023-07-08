@@ -27,7 +27,6 @@ router.put('/splider',
             const files: IMulterFile[] = req.files
             const dirFull = `${allPaths.pathToImages}/${allPaths.pathToSplider}` //images/splider
             const dirSmall = `${dirFull}/small` //images/splider/small
-            console.log(dirFull, dirSmall);
             await foldersCleaner([`${allPaths.pathToBase}/${dirFull}`, `${allPaths.pathToBase}/${dirSmall}`])
             await makeDelay(delayForFS)
 
@@ -79,6 +78,7 @@ router.get('/splider',
         try {
             cache.content.control.load(res)
             const splider = cache.content.data.splider
+            
             return res.status(200).json(splider)
         } catch (error) {
             return res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})
@@ -92,28 +92,3 @@ router.get('/splider',
 export {};
 
 module.exports = router
-
-/*
-            for (const file of files) {
-                const { path, filename } = file;
-                const outputPathThumb = `${dirThumb}/${filename}`;
-                const outputPathFull = `${dir}/${filename}`;
-                try {
-                    await sharp(path)
-                        .resize({
-                            width: sizes.thumb.w,
-                            height: sizes.thumb.h,
-                            fit: 'outside' 
-                        }) 
-                        .toFormat("webp")
-                        .toFile(outputPathThumb)
-
-                    await sharp(path)
-                        .toFormat("webp")
-                        .toFile(outputPathFull)
-
-                } catch (error) {
-                    console.log(error);
-                }
-            }
-            */

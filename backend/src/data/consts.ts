@@ -8,6 +8,7 @@ const allPaths = {
     pathToTemp: "C:/Projects/3D/3dprint/backend/uploads/temp",
     pathToBase: "C:/Projects/3D/3dprint/backend/data",
     pathToImages:"images",
+    pathToNews:"news",
     pathToSplider:"splider",
     pathToUserFiles: "userfiles"
 }

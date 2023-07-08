@@ -15,8 +15,8 @@ const News:React.FC<IProps> = ({newsPiece, lang}):JSX.Element => {
     return (
         <div className="news card">
             <div className="img__container">
-                {newsPiece.images[0]?.thumb ? 
-                    <ImgWithPreloader src={newsPiece.images[0].thumb} alt={newsPiece.header[lang]} />
+                {newsPiece.images.files.length > 0 ? 
+                    <ImgWithPreloader src={`${newsPiece.images.paths.small}/${newsPiece.images.files[0]}`} alt={newsPiece.header[lang]} />
                 :
                     null
                 }

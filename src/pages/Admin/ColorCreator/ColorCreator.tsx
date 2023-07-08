@@ -83,6 +83,7 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
     const errChecker = useMemo(() => errorsChecker({lang}), [lang])
 
     const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
+        errChecker.clear()
         prevent(e)
         if (!_form.current) return
         errChecker.check(_form.current.querySelector('#name_en') as HTMLInputElement, 2, 50)
@@ -98,7 +99,6 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
         if (errChecker.amount() > 0) {
             message.current?.update(errChecker.result())
             modal.current?.openModal()
-            errChecker.clear()
             return
         }
         

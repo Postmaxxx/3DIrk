@@ -54,6 +54,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, setState}): JSX.Element =
         modal_message.current?.closeModal()
         setTimeout(() => message.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
         errChecker.clear()
+        
         if (send.status === 'success') {
             setState.news.setDataOneNews({
                 ...newsOne,
@@ -98,7 +99,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, setState}): JSX.Element =
 
 
     const onChangeText = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        errChecker.clearError(e.target) 
+        errChecker.clearError(e.target)
         e.target.id === 'header_en' && setState.news.setDataOneNews({...newsOne, header: {...newsOne.header, en: e.target.value}})
         e.target.id === 'header_ru' && setState.news.setDataOneNews({...newsOne, header: {...newsOne.header, ru: e.target.value}})
         e.target.id === 'text_short_en' && setState.news.setDataOneNews({...newsOne, short: {...newsOne.short, en: e.target.value}})
@@ -115,14 +116,15 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, setState}): JSX.Element =
         _id: '',
         files: [],
         date: new Date(),
-        images: [],
     }), [])
 
 
 
     const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
         prevent(e)   
+        
         if (!_form.current) return
+        console.log(errChecker.amount());
         errChecker.check(_form.current.querySelector('#header_en') as HTMLInputElement, 5, 50)
         errChecker.check(_form.current.querySelector('#header_ru') as HTMLInputElement, 5, 50)
         errChecker.check(_form.current.querySelector('#text_short_en') as HTMLInputElement, 40, 150)
@@ -131,19 +133,20 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, setState}): JSX.Element =
         errChecker.check(_form.current.querySelector('#text_ru') as HTMLInputElement, 20, 5000)
         errChecker.check(_form.current.querySelector('#date') as HTMLInputElement, 10, 10)
         isNaN(Date.parse((_form.current.querySelector('#date') as HTMLInputElement).value)) && errChecker.add(lang === 'en' ? 'Date is wrong' : 'Дата неверная')
-
-        if (errChecker.amount() > 0) {
+        console.log(errChecker.amount());
+        
+        
+        /*if (errChecker.amount() > 0) { 
             message.current?.update(errChecker.result())
             modal_message.current?.openModal()
-            //errChecker.clear()
             return
-        }
+        }*/
         //if no errors
         setState.news.setDataOneNews({
             ...newsOne,
             files: addFilesBig.current?.getFiles()
         })
-
+        
         setSubmit(true)
     }
 
@@ -221,11 +224,11 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, setState}): JSX.Element =
                             <>{paramNewsId && <button className='button_blue change-images' onClick={onChangeImages}>Change all images</button>}</>
                         }
                         <button className='button_blue post' disabled={send.status === 'fetching'} onClick={e => onSubmit(e)}>
-                        {send.status === 'fetching' ? 
-                            <Preloader />
-                        :
-                            <>{lang === 'en' ? paramNewsId ? 'Save news' : 'Post news' : paramNewsId ? "Сохранить новость" : "Отправить новость"}</>
-                        }
+                            {send.status === 'fetching' ? 
+                                <Preloader />
+                            :
+                                <>{lang === 'en' ? paramNewsId ? 'Save news' : 'Post news' : paramNewsId ? "Сохранить новость" : "Отправить новость"}</>
+                            }
                         </button>
                     </form>
                 </div>

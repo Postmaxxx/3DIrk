@@ -6,7 +6,14 @@ interface INews extends Document {
     header: TLangText
     short: TLangText
     text: TLangText
-    images: IImgWithThumb[]
+    images: {
+        paths: {
+            full: string
+            medium: string
+            small: string
+        },
+        files: string[]
+    }
 }
 
 const newsSchema = new Schema({
@@ -14,7 +21,7 @@ const newsSchema = new Schema({
     header: {type: Object, required: true},
     short: {type: Object, required: true},
     text: {type: Object, required: true},
-    images: [{type: Object, required: false}],
+    images: {type: Object, required: false},
 })
 
 const News: Model<INews> = model<INews>('News', newsSchema);
