@@ -10,7 +10,8 @@ const allPaths = {
     pathToImages:"images",
     pathToNews:"news",
     pathToSplider:"splider",
-    pathToUserFiles: "userfiles"
+    pathToUserFiles: "userfiles",
+    pathToColors: "colors"
 }
 
 const orderStatus: string[] = [

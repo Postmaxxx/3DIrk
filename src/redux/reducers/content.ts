@@ -16,8 +16,6 @@ const reducerContent = (state:IContentState = initialContentState, action: IActi
                 load: action.payload
             }
         case actionsListContent.SET_CONTENT: 
-        console.log(action.payload);
-        
             return {
                 ...state, 
                 ...action.payload as IContentState

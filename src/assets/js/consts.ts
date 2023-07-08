@@ -240,7 +240,7 @@ const colorEmpty: ISendColor = {
     name: {...empty}, 
     files: {
         full: new File([], ""),
-        small: new File([], "")
+        thumb: new File([], "")
     },
     changeImages: true
 

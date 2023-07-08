@@ -23,6 +23,21 @@ export const setColors = <T extends IColor[]>(payload: T):IAction<T> => ({
 });
 
 
+interface IImages {
+    images: {
+        files: {
+            full: string
+            thumb: string
+        },
+        paths: {
+            full: string
+            thumb: string
+        }
+    },
+    name: TLangText,
+    _id: string
+}
+
 export const loadColors = () => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
         if (getState().colors.load.status === 'fetching') return
@@ -44,17 +59,20 @@ export const loadColors = () => {
                 }))
             }
 
-            const result: {colors: IColor[], message: TLangText} = await response.json()
+            const result: {colors: IImages[], message: TLangText} = await response.json()
+            
             const resultProcessed = result.colors.map((item) => {
                 return {
                     _id: item._id,
                     name: item.name,
-                    url: item.url
+                    url: {
+                        full: `${item.images.paths.full}/${item.images.files.full}`,
+                        thumb: `${item.images.paths.thumb}/${item.images.files.thumb}`
+                    }
                 }
             })
-
+            
             dispatch(setColors(resultProcessed))
-              
             dispatch(setLoadColors({status: 'success', message: result.message || {...empty}}))
         } catch (e) {
             dispatch(setLoadColors({status: 'error', message: {en:`Error while loading colors: ${e}`, ru: `Ошибка при загрузке цветов: ${e}`}}))
@@ -72,44 +90,23 @@ export const sendColor = (color: ISendColor) => {
         if (getState().colors.send.status === 'fetching') return
         const token = getState().user.token
         dispatch(setSendColors(resetFetch))
-        const imageUrls = {} as {full:string, small: string}
-        
-        // upload to imgbb imageBig
-        const postFull = await imageUploader(color.files.full)
-        if (postFull.status !== 'success') {
-            return dispatch(setSendColors(postFull))
-        }
-        imageUrls.full = (postFull.urls as IImgWithThumb).full || ''
+        const colorFiles = [color.files.full, color.files.thumb]
 
-        // upload to imgbb imageSmall, not thumb, specific size as fullImage
-        const postSmall = await imageUploader(color.files.small)
-        if (postSmall.status !== 'success') {
-            return dispatch(setSendColors(postSmall))
-        }
-        imageUrls.small = (postSmall.urls as IImgWithThumb).full || ''
-        
-        
+        const sendForm = new FormData()   
+        colorFiles.forEach(item => {
+            sendForm.append('files', item, item.name)
+        })
+        sendForm.append('data', JSON.stringify({name: color.name}))
 
         // to db
         try {
-            const colorToDb = {
-                name: {
-                    en: color.name.en.trim(),
-                    ru: color.name.ru.trim()
-                },
-                url: {
-                    full: imageUrls.full,
-                    small: imageUrls.small
-                }
-            }
-
             const response: Response = await fetch('/api/colors/create', {
                 method: 'POST',
                 headers: {
-                    "Content-Type": 'application/json',
+                    'enctype': "multipart/form-data",
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(colorToDb)
+                body: sendForm
             })
         
         
@@ -143,50 +140,25 @@ export const editColor = (color: ISendColor) => {
         if (getState().colors.send.status === 'fetching') return
         const token = getState().user.token
         dispatch(setSendColors(resetFetch))
-        const imageUrls = {} as {full:string, small: string}
-        
-        // upload to imgbb imageBig
-        if (color.changeImages) {
-            const postFull = await imageUploader(color.files.full)
-            if (postFull.status !== 'success') {
-                return dispatch(setSendColors(postFull))
-            }
-            imageUrls.full = (postFull.urls as IImgWithThumb).full || ''
-    
-            // upload to imgbb imageSmall, not thumb, specific size as fullImage
-            const postSmall = await imageUploader(color.files.small)
-            if (postSmall.status !== 'success') {
-                return dispatch(setSendColors(postSmall))
-            }
-            imageUrls.small = (postSmall.urls as IImgWithThumb).full || ''
-        }
 
+        const colorFiles = [color.files.full, color.files.thumb]
+        const sendForm = new FormData()   
+        sendForm.append('data', JSON.stringify({name: color.name, _id: color._id}))
+        if (color.files.full && color.files.thumb) {
+            colorFiles.forEach(item => {
+                sendForm.append('files', item, item.name)
+            })
+        }
+        
         // to db
         try {
-
-            const colorToDb: Partial<IColor> = {
-                _id: color._id,
-                name: {
-                    en: color.name.en.trim(),
-                    ru: color.name.ru.trim()
-                },
-                url: {
-                    full: imageUrls.full,
-                    small: imageUrls.small
-                }
-            }
-            
-            if (!color.changeImages) {
-                delete colorToDb.url
-            }
-
             const response: Response = await fetch('/api/colors/edit', {
                 method: 'PUT',
                 headers: {
-                    "Content-Type": 'application/json',
+                    "enctype": 'multipart/form-data',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(colorToDb)
+                body: sendForm
             })
         
             if (response.status !== 200) {

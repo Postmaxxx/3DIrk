@@ -128,7 +128,7 @@ const CartContent: React.FC<IProps> = ({lang, cart, colorsState, fibersState, se
                                         <span>{lang === 'en' ? 'Color' : 'Цвет'}:</span>
                                         <div className="colors__container" onClick={(e) => onImageClick(e, color)}> 
                                             <div className="color__container">
-                                                <img src={color?.url.small} alt={color?.name[lang]} />
+                                                <img src={color?.url.thumb} alt={color?.name[lang]} />
                                             </div>
                                             <span className="color__name">({color?.name[lang]})</span>
                                         </div>

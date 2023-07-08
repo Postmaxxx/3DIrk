@@ -72,7 +72,6 @@ router.put('/splider',
 
 
 
-
 router.get('/splider', 
     async (req, res) => {
         try {

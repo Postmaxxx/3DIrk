@@ -1,60 +1,65 @@
 import { IAllCache } from '../data/cache'
+import { allPaths, delayForFS } from '../data/consts'
 const cache: IAllCache = require('../data/cache')
 import { IColor } from "../models/Color"
-
+import { foldersCleaner, foldersCreator } from '../processors/fsTools'
+import { makeDelay } from '../processors/makeDelay'
+import { imagesResizer } from '../processors/sharp'
+import { IMulterFile } from './user'
 const { Router } = require("express")
 const Colors = require("../models/Color")
 const router = Router()
 const authMW = require('../middleware/auth')
 const { check, validationResult } = require('express-validator')
 const isAdmin = require('../middleware/isAdmin')
+const fileSaver = require('../routes/files')
 
-//let allColors: IColor[] = []
 
 router.post('/create', 
     [authMW, 
-    isAdmin,
-    check('name.en')
-          .isLength({min: 3})
-          .withMessage({en: 'EN name is too short (<3)', ru: 'EN имя слишком короткое (<3)'})
-          .isLength({max: 51})
-          .withMessage({en: 'EN name is too long (>50)', ru: 'EN имя слишком длинное (>50)'}),
-      check('name.ru')
-          .isLength({min: 3})
-          .withMessage({en: 'RU name is too short (<3)', ru: 'RU имя слишком короткое (<3)'})
-          .isLength({max: 51})
-          .withMessage({en: 'RU name is too long (>50)', ru: 'RU имя слишком длинное (>50)'}),
-      check('url.full')
-          .exists()
-          .withMessage({en: 'No URL full ', ru: 'Отсутствует URL full'})
-          .isURL()
-          .withMessage({en: 'URL full is wrong', ru: 'URL full неправильный'}),
-      check('url.small')
-          .exists()
-          .withMessage({en: 'No URL small ', ru: 'Отсутствует URL small'})
-          .isURL()
-          .withMessage({en: 'URL small is wrong', ru: 'URL small неправильный'}),
-
-    ],
+    isAdmin],
+    fileSaver,
     async (req, res) => {
-        
-        const errors = validationResult(req)
-        
-        if (!errors.isEmpty()) {
-            //console.log(errors.array().map(error => error.msg));
-            return res.status(400).json({
-                errors: errors.array().map(error => error.msg),
-                message: {en: 'Errors in color data', ru: 'Ошибки в данных цвета'}
-            })
-        }
-        
         try {
-            const { name, url } = req.body 
+            const dataRaw: string = req.body.data           
+            const { name } = JSON.parse(dataRaw)
+            const files = req.files as IMulterFile[] || []
 
-            const color = new Colors({ 
-                name,
-                url
+            const color: IColor = new Colors({ name })
+            const colorId = color._id
+
+            const dirFull = `${allPaths.pathToImages}/${allPaths.pathToColors}/${colorId}` //images/colors/{color_id}
+            const dirThumb = `${dirFull}/thumb` //images/colors/{colors_id}/thumb
+            await foldersCreator([`${allPaths.pathToBase}/${dirFull}`, `${allPaths.pathToBase}/${dirThumb}`])
+            await makeDelay(delayForFS)
+
+            const paths = await imagesResizer({
+                files : files,
+                format: 'webp',
+                sizesConvertTo: [
+                    {
+                        type: 'full',
+                        path: dirFull
+                    },
+                    {
+                        type: 'thumb',
+                        path: dirThumb
+                    },
+                ]
             })
+
+            color.images = {
+                paths: {
+                    full: paths.full,
+                    thumb: paths.thumb
+                },
+                files: {
+                   full: files[0].filename,
+                   thumb: files[1].filename 
+                }
+            }
+
+            
             await color.save()
             cache.colors.obsolete = true
             cache.fibers.obsolete = true
@@ -70,36 +75,52 @@ router.post('/create',
 
 router.put('/edit', 
     [authMW, 
-    isAdmin,
-    check('name.en')
-          .isLength({min: 3})
-          .withMessage({en: 'EN name is too short (<3)', ru: 'EN имя слишком короткое (<3)'})
-          .isLength({max: 51})
-          .withMessage({en: 'EN name is too long (>50)', ru: 'EN имя слишком длинное (>50)'}),
-      check('name.ru')
-          .isLength({min: 3})
-          .withMessage({en: 'RU name is too short (<3)', ru: 'RU имя слишком короткое (<3)'})
-          .isLength({max: 51})
-          .withMessage({en: 'RU name is too long (>50)', ru: 'RU имя слишком длинное (>50)'}),
-    ],
+    isAdmin],
+    fileSaver,
     async (req, res) => {
-        
-        const errors = validationResult(req)
-        
-        if (!errors.isEmpty()) {
-            //console.log(errors.array().map(error => error.msg));
-            return res.status(400).json({
-                errors: errors.array().map(error => error.msg),
-                message: {en: 'Errors in color data', ru: 'Ошибки в данных цвета'}
-            })
-        }
-        
         try {
-            const { _id, name, url } = req.body 
+            const dataRaw: string = req.body.data           
+            const { name, _id } = JSON.parse(dataRaw)
+            const files = req.files as IMulterFile[] || []  
+            
+            if (files.length === 0) { //if images was not sent save old images
+                await Colors.findOneAndUpdate({_id}, {name})
+                cache.colors.obsolete = true
+                return res.status(200).json({message: {en: 'Color saved', ru: 'Цвет сохранен'}})
+            }
 
-            const editedColor = url ? {name, url} : {name}
+            const dirFull = `${allPaths.pathToImages}/${allPaths.pathToColors}/${_id}` //images/colors/{color_id}
+            const dirThumb = `${dirFull}/thumb` //images/colors/{colors_id}/thumb
+            await foldersCleaner([`${allPaths.pathToBase}/${dirFull}`, `${allPaths.pathToBase}/${dirThumb}`])
+            await makeDelay(delayForFS)
 
-            await Colors.findOneAndUpdate({_id}, editedColor) 
+            const paths = await imagesResizer({
+                files : files,
+                format: 'webp',
+                sizesConvertTo: [
+                    {
+                        type: 'full',
+                        path: dirFull
+                    },
+                    {
+                        type: 'thumb',
+                        path: dirThumb
+                    },
+                ]
+            })
+
+            const images = {
+                paths: {
+                    full: paths.full,
+                    thumb: paths.thumb
+                },
+                files: {
+                   full: files[0].filename,
+                   thumb: files[1].filename 
+                }
+            }
+
+            await Colors.findOneAndUpdate({_id}, {name, images}) 
 
             cache.colors.obsolete = true
             cache.fibers.obsolete = true

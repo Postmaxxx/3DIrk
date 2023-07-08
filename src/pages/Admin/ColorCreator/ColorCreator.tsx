@@ -108,7 +108,7 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
             _id: paramColorId,
             files: {
                 full: addFileBig.current?.getFiles()[0] as File,
-                small: addFileSmall.current?.getFiles()[0] as File,
+                thumb: addFileSmall.current?.getFiles()[0] as File,
             }
         }))
         

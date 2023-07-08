@@ -14,6 +14,8 @@ import { IMulterFile } from './user'
 const cache: IAllCache = require('../data/cache')
 const fileSaver = require('../routes/files')
 
+
+
 router.post('/create', 
     [authMW, isAdmin],
     fileSaver,
@@ -24,6 +26,7 @@ router.post('/create',
             const files = req.files as IMulterFile[] || []           
             
             const news = new News({ header, date, short, text }) 
+            
             const newsId = news._id
 
             const dirFull = `${allPaths.pathToImages}/${allPaths.pathToNews}/${newsId}` //images/news/{news_id}

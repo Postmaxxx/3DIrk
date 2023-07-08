@@ -113,7 +113,7 @@ const Fiber: FC<IProps> = ({lang, fibersState, colorsState, setState, isAdmin}):
             <div className="fiber__item">
             <h2>{fiber.short.name[lang]} ({fiber.name[lang]})</h2>
             <div className='fiber__splider__container'>
-                <SpliderCommon images={fiber.images} imagesPerSlide={fiber.images.length > 3 ? 3 : fiber.images.length}/>
+                <SpliderCommon images={fiber.images} defaultSize='medium' imagesPerSlide={fiber.images.length > 3 ? 3 : fiber.images.length}/>
             </div>
             <div className="fiber__descr__container">
                 <div className="block_text">
@@ -130,7 +130,7 @@ const Fiber: FC<IProps> = ({lang, fibersState, colorsState, setState, isAdmin}):
                                 if (colorData) {
                                     return (
                                         <div key={i} className='color__container' onClick={(e) => onImageClick(e, colorData)}>
-                                            <img src={colorData.url.small} alt={colorData.name[lang]} />
+                                            <img src={colorData.url.thumb} alt={colorData.name[lang]} />
                                         </div>
                                     )
                                 }

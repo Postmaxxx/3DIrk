@@ -140,7 +140,7 @@ export interface IColor {
     name: TLangText
     url: {
         full: string
-        small: string
+        thumb: string
     }
 }
 
@@ -385,7 +385,7 @@ export interface ISendColor {
     }, 
     files: {
         full: File, 
-        small: File
+        thumb: File
     },
     changeImages: boolean
 }

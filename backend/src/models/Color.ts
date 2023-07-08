@@ -3,15 +3,21 @@ import { TLang, TLangText } from '../../../src/interfaces';
 
 interface IColor extends Document {
     name: TLangText
-    url: {
-        full: string
-        small: string
+    images: {
+        paths: {
+            full: string
+            thumb: string
+        },
+        files: {
+            full: string
+            thumb: string
+        }
     }
 }
 
 const colorsSchema = new Schema({
     name: {type: Object, required: true},
-    url: {type: Object, required: true}
+    images: {type: Object, required: true}
 })
 
 const Colors: Model<IColor> = model<IColor>('Colors', colorsSchema);
