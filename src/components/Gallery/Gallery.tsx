@@ -43,7 +43,7 @@ const Gallery: React.FC<IProps> = ({lang, products, setState}):JSX.Element => {
                         >
                         <div className='gallery__item' >
                             <div className="img__container">
-                                <ImgWithPreloader src={product.image.thumb} alt={product.image.fileName}/>
+                                <ImgWithPreloader src={`${product.images.paths.small}/${product.images.files[0]}`} alt={product.images.files[0]}/>
                             </div>
                             <div className="descr__container">
                                 <span className='name'>{product.name[lang]}</span>

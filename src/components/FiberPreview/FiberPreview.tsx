@@ -12,7 +12,7 @@ const FiberPreview = ({fiber, lang}: IProps) => {
     return (
         <div className="fiber-preview__item card">
             <div className="img__container">
-                <ImgWithPreloader src={fiber.images[0].thumb} alt={fiber.images[0].fileName} />
+                <ImgWithPreloader src={`${fiber.images.paths.small}/${fiber.images.files[0]}`} alt={fiber.images.files[0]} />
             </div>
             <div className="fiber__descr">
                 <span>{fiber.short.name[lang]}</span>

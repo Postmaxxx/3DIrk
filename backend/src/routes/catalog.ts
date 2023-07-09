@@ -1,12 +1,17 @@
 import { Router } from 'express'
 import { ICatalogItem } from '../../../src/interfaces'
 import { IAllCache } from '../data/cache'
+import { IMulterFile } from './user'
+import { IProduct } from '../models/Product'
+import { resizeAndSave } from '../processors/sharp'
+import { allPaths } from '../data/consts'
 const cache: IAllCache = require('../data/cache')
 const Product = require("../models/Product")
 const Catalog = require("../models/Catalog")
 const router = Router()
 const authMW = require('../middleware/auth')
 const { check, validationResult } = require('express-validator')
+const fileSaver = require('../routes/files')
 const isAdmin = require('../middleware/isAdmin')
 
 /*
@@ -100,6 +105,7 @@ router.put('/list',
     }
 )
 //-------------------------------------------------------------------------------------
+
 router.get('/category', async(req, res) => {
     try {
         const { _id, from, to } = req.query
@@ -125,7 +131,7 @@ router.get('/category', async(req, res) => {
                 name: item.name,
                 price: item.price,
                 text_short: item.text_short,
-                image: item.images[0]
+                images: item.images
             }))
         })
 
@@ -149,30 +155,31 @@ const loadProducts = async (res): Promise<{loaded: boolean, msg: string}> => {
 }
 
 */
+
+
+
 router.post('/product', //create
-    [authMW, isAdmin,
-        check('name.en')
-        .isLength({min: 2})
-        .withMessage({en: 'EN name is too short (<2)', ru: 'EN имя слишком короткое (<2)'})
-        .isLength({max: 40})
-        .withMessage({en: 'EN name is too long (>40)', ru: 'EN имя слишком длинное (>40)'})
-    ], //!!!add Validation
+    [authMW, isAdmin],
+    fileSaver,
     async(req, res) => { 
-
-        /*const errors = validationResult(req)
-
-        if (!errors.isEmpty()) {
-            return res.status(400).json({
-                errors: errors.array().map(error => error.msg),
-                message: {en: 'Errors in product data', ru: 'Ошибки в данных продукта'}
-            })
-        }*/
         try {
-            const { images, price, name, text, text_short, fibers, mods, category } = req.body.product
-            
-            const newProduct = new Product({images, price, name, text, text_short, fibers, mods, category})
-            
-            await newProduct.save()
+            const { price, name, text, text_short, fibers, mods, category } = JSON.parse(req.body.data)
+            const files = req.files as IMulterFile[] || []  
+            const product: IProduct = new Product({ price, name, text, text_short, fibers, mods, category })
+            const paths = await resizeAndSave({
+                files,
+                clearDir: true,
+                saveFormat: 'webp',
+                baseFolder: `${allPaths.pathToImages}/${allPaths.pathToProducts}/${product._id}`,
+                formats: ['full', 'small', 'medium', 'preview']
+            })
+
+            product.images = {
+                paths,
+                files: files.map(item => item.filename)
+            }
+
+            await product.save()
 
             cache.products.obsolete = true
             cache.catalog.obsolete = true
@@ -188,29 +195,34 @@ router.post('/product', //create
 
 
 router.put('/product', //create
-    [authMW, isAdmin,
-        check('name.en')
-        .isLength({min: 2})
-        .withMessage({en: 'EN name is too short (<2)', ru: 'EN имя слишком короткое (<2)'})
-        .isLength({max: 40})
-        .withMessage({en: 'EN name is too long (>40)', ru: 'EN имя слишком длинное (>40)'})
-    ], //!!!add Validation
+    [authMW, isAdmin],
+    fileSaver,
     async(req, res) => { 
-
-        /*const errors = validationResult(req)
-
-        if (!errors.isEmpty()) {
-            return res.status(400).json({
-                errors: errors.array().map(error => error.msg),
-                message: {en: 'Errors in product data', ru: 'Ошибки в данных продукта'}
-            })
-        }*/
         try {
-            const { _id, images, price, name, text, text_short, fibers, mods, category } = req.body.product
+            const { price, name, text, text_short, fibers, mods, category, _id } = JSON.parse(req.body.data)
+            const files = req.files as IMulterFile[] || [] 
             
-            const editedProducts = images ? { images, price, name, text, text_short, fibers, mods, category } : {price, name, text, text_short, fibers, mods, category}
+            if (files.length === 0) {
+                await Product.findOneAndUpdate({_id}, { price, name, text, text_short, fibers, mods, category, _id })
+                cache.products.obsolete = true
+                cache.catalog.obsolete = true
+                return res.status(201).json({message: {en: 'Product updated', ru: 'Продукт отредактирован'}})
+            }
 
-            await Product.findOneAndUpdate({_id}, editedProducts) 
+            const paths = await resizeAndSave({
+                files,
+                clearDir: true,
+                saveFormat: 'webp',
+                baseFolder: `${allPaths.pathToImages}/${allPaths.pathToProducts}/${_id}`,
+                formats: ['full', 'small', 'medium', 'preview']
+            })
+
+            const images = {
+                paths,
+                files: files.map(item => item.filename)
+            }
+
+            await Product.findOneAndUpdate({_id}, { price, name, text, text_short, fibers, mods, category, _id, images })
 
             cache.products.obsolete = true
             cache.catalog.obsolete = true

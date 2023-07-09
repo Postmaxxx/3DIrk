@@ -19,7 +19,15 @@ const initialCatalog = {
             name: empty,
             text: empty,
             text_short: empty,
-            images: [],
+            images: {
+                paths: {
+                    full: '',
+                    small: '',
+                    medium: '',
+                    preview: '',
+                },
+                files: []
+            },
             fibers: [],
             mods: [],
             category: ''

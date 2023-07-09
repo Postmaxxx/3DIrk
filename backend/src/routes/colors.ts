@@ -4,7 +4,7 @@ const cache: IAllCache = require('../data/cache')
 import { IColor } from "../models/Color"
 import { foldersCleaner, foldersCreator } from '../processors/fsTools'
 import { makeDelay } from '../processors/makeDelay'
-import { imagesResizer } from '../processors/sharp'
+import { imagesResizer, resizeAndSave } from '../processors/sharp'
 import { IMulterFile } from './user'
 const { Router } = require("express")
 const Colors = require("../models/Color")
@@ -28,24 +28,12 @@ router.post('/create',
             const color: IColor = new Colors({ name })
             const colorId = color._id
 
-            const dirFull = `${allPaths.pathToImages}/${allPaths.pathToColors}/${colorId}` //images/colors/{color_id}
-            const dirThumb = `${dirFull}/thumb` //images/colors/{colors_id}/thumb
-            await foldersCreator([`${allPaths.pathToBase}/${dirFull}`, `${allPaths.pathToBase}/${dirThumb}`])
-            await makeDelay(delayForFS)
-
-            const paths = await imagesResizer({
-                files : files,
-                format: 'webp',
-                sizesConvertTo: [
-                    {
-                        type: 'full',
-                        path: dirFull
-                    },
-                    {
-                        type: 'thumb',
-                        path: dirThumb
-                    },
-                ]
+            const paths = await resizeAndSave({
+                files,
+                clearDir: true,
+                saveFormat: 'webp',
+                baseFolder: `${allPaths.pathToImages}/${allPaths.pathToColors}/${colorId}`,
+                formats: ['full', 'thumb']
             })
 
             color.images = {
@@ -58,7 +46,6 @@ router.post('/create',
                    thumb: files[1].filename 
                 }
             }
-
             
             await color.save()
             cache.colors.obsolete = true
@@ -89,24 +76,12 @@ router.put('/edit',
                 return res.status(200).json({message: {en: 'Color saved', ru: 'Цвет сохранен'}})
             }
 
-            const dirFull = `${allPaths.pathToImages}/${allPaths.pathToColors}/${_id}` //images/colors/{color_id}
-            const dirThumb = `${dirFull}/thumb` //images/colors/{colors_id}/thumb
-            await foldersCleaner([`${allPaths.pathToBase}/${dirFull}`, `${allPaths.pathToBase}/${dirThumb}`])
-            await makeDelay(delayForFS)
-
-            const paths = await imagesResizer({
-                files : files,
-                format: 'webp',
-                sizesConvertTo: [
-                    {
-                        type: 'full',
-                        path: dirFull
-                    },
-                    {
-                        type: 'thumb',
-                        path: dirThumb
-                    },
-                ]
+            const paths = await resizeAndSave({
+                files,
+                clearDir: true,
+                saveFormat: 'webp',
+                baseFolder: `${allPaths.pathToImages}/${allPaths.pathToColors}/${_id}`,
+                formats: ['full', 'thumb']
             })
 
             const images = {

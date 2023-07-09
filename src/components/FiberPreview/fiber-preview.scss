@@ -8,6 +8,7 @@
     & > .img__container {
         height: 200px;
         width: 100%;
+        position: relative;
 
         @include respond-to(sm) {
             height: 170px;

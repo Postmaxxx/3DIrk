@@ -39,6 +39,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, setState}): JSX.Element =
     const modal_message = useRef<IModalFunctions>(null)
     const message = useRef<IMessageFunctions>(null)
     const _form = useRef<HTMLFormElement>(null)
+    const [changeImages, setChangeImages] = useState<boolean>(true)
     const [submit, setSubmit] = useState<boolean>(false)
 
     
@@ -46,7 +47,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, setState}): JSX.Element =
 
     const onChangeImages = (e: React.MouseEvent<HTMLElement>) => {
         prevent(e)
-        setState.news.setDataOneNews({...newsOne, changeImages: !newsOne.changeImages})
+        setChangeImages(prev => !prev)
     }
 
     
@@ -84,13 +85,13 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, setState}): JSX.Element =
     useEffect(() => { 
         if (paramNewsId) {//if edit
             setState.news.loadOneNews(paramNewsId)
-            setState.news.setDataOneNews({...newsOne, changeImages: false})
+            setChangeImages(false)
         } else {
             setState.news.setDataOneNews({
                 ...newsOne,
                 ...clearForm,
-                changeImages: true
             })
+            setChangeImages(true)
             addFilesBig.current?.clearAttachedFiles()
         }
     }, [paramNewsId])
@@ -214,7 +215,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, setState}): JSX.Element =
                                 <input type="date" id="date" data-en="Date" data-ru="Дата" onChange={(e) => onChangeText(e)} value={newsOne.date.toISOString().slice(0, 10)}/>
                             </div>
                         </div>
-                        {newsOne.changeImages ? 
+                        {changeImages ? 
                             <>
                                 <h2 className='section-header full-width'>{lang === 'en' ? 'IMAGES' : 'ИЗОБРАЖЕНИЯ'}</h2>           
                                 <AddFiles lang={lang} ref={addFilesBig} multiple={true} id='allImages'/>

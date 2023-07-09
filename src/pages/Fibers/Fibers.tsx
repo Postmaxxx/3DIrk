@@ -13,7 +13,7 @@ import ErrorMock from 'src/components/tiny/ErrorMock/ErrorMock';
 
 interface IPropsState {
     lang: TLang,
-    fibers: IFibersState
+    fibersState: IFibersState
 }
 
 interface IPropsActions {
@@ -24,27 +24,27 @@ interface IPropsActions {
 
 interface IProps extends IPropsState, IPropsActions {}
 
-const Fibers:React.FC<IProps> = ({lang, fibers, setState}):JSX.Element => { 
+const Fibers:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Element => { 
     
     
     useEffect(() => {
-        if (fibers.load.status !== 'success' && fibers.load.status !== 'fetching' ) {
+        if (fibersState.load.status !== 'success' && fibersState.load.status !== 'fetching' ) {
             setState.fibers.loadFibers()
         }
-    }, [fibers.load.status])
+    }, [fibersState.load.status])
 
 
 
     const listOfFibers = useMemo(() => (
         <div className="fibers__container">
-            {fibers.fibersList.map((fiber, i) => {
-            return (
-                <NavLink to={`../../fibers/${fiber._id}`} aria-label={lang === 'en' ? '(About fiber)' : ' (О материале)'} key={fiber._id}>
-                    <FiberPreview {...{fiber}} lang={lang} key={i}/>  
-                </NavLink>
-            )})}
+            {fibersState.fibersList.map((fiber, i) => {
+                return (
+                    <NavLink to={`../../fibers/${fiber._id}`} aria-label={lang === 'en' ? '(About fiber)' : ' (О материале)'} key={fiber._id}>
+                        <FiberPreview {...{fiber}} lang={lang} key={i}/>  
+                    </NavLink>
+                )})}
         </div>
-    ), [fibers.fibersList, lang])
+    ), [fibersState.fibersList, lang, fibersState.load.status])
 
     
 
@@ -75,9 +75,9 @@ const Fibers:React.FC<IProps> = ({lang, fibers, setState}):JSX.Element => {
                         <p><b>Cпекание:</b> сила склеивания линий и слоёв материала между собой, чем выше эта величина, тем ближе прочность печатной детали к прочности литого изделия.</p>
 
                     </div>}
-                    {fibers.load.status === 'fetching' && <Preloader />}
-                    {fibers.load.status === 'success' && listOfFibers}
-                    {fibers.load.status === 'error' && <ErrorMock lang={lang} comp={{en: 'fibers', ru: 'материалов'}} />}
+                    {fibersState.load.status === 'fetching' && <Preloader />}
+                    {fibersState.load.status === 'success' && listOfFibers}
+                    {fibersState.load.status === 'error' && <ErrorMock lang={lang} comp={{en: 'fibers', ru: 'материалов'}} />}
                 </div>
             </div>
         </div>
@@ -87,7 +87,7 @@ const Fibers:React.FC<IProps> = ({lang, fibers, setState}):JSX.Element => {
 
 const mapStateToProps = (state: IFullState): IPropsState  => ({
     lang: state.base.lang,
-    fibers: state.fibers,
+    fibersState: state.fibers,
 })
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({

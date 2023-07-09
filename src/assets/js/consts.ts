@@ -217,7 +217,6 @@ const fiberEmpty: ISendFiber = {
     colors: [],
     params: {} as IFiberParam,
     files: [] as File[],
-    changeImages: true
 }
 
 
@@ -231,7 +230,6 @@ const productEmpty: ISendProduct = {
     mods: [],
     category: '',
     files: [] as File[],
-    changeImages: true
 }
 
 
@@ -242,8 +240,6 @@ const colorEmpty: ISendColor = {
         full: new File([], ""),
         thumb: new File([], "")
     },
-    changeImages: true
-
 }
 
 const orderStatus = [

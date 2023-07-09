@@ -49,6 +49,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
     const errChecker = useMemo(() => errorsChecker({lang}), [lang])
     const [product, setProduct] = useState<ISendProduct>({...productEmpty})
     const [submit, setSubmit] = useState<boolean>(false)
+    const [changeImages, setChangeImages] = useState<boolean>(true)
 
 
     const closeModal = useCallback(() => {
@@ -165,8 +166,8 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
         setProduct({
             ...catalogState.category.product,
             files: [],
-            changeImages: false,
         })
+        setChangeImages(false)
         selector.current?.setItem(catalogState.category.product.category)
         //selector.current?.setValue({value: 'dfd', name: {en: 'dsfsd', ru: 'sdf'}})
     }
@@ -203,7 +204,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
 
     const onChangeImages = useCallback((e: React.MouseEvent<HTMLElement>) => {
         prevent(e)
-        setProduct(prev => ({...prev, changeImages: !prev.changeImages}))
+        setChangeImages(prev => !prev)
     }, [])
 
 
@@ -226,7 +227,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
 
     const renderImages = useMemo(() => {
         return (
-            product.changeImages ? 
+            changeImages ? 
                 <>
                     <h2 className='section-header full-width'>{lang === 'en' ? 'IMAGES' : 'ИЗОБРАЖЕНИЯ'}</h2>           
                     <AddFiles lang={lang} ref={addFiles} multiple={true} id='allImages'/>
@@ -235,7 +236,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
             :
                 <>{paramProductId && <button className='button_blue change-images' onClick={onChangeImages}>Change all images</button>}</>
         )
-    }, [product.changeImages, lang, paramProductId, onChangeImages])
+    }, [changeImages, lang, paramProductId, onChangeImages])
 
 
 
@@ -328,7 +329,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
                         <h2 className='section-header full-width'>{lang === 'en' ? 'SELECT FIBERS' : 'ВЫБЕРЕТЕ МАТЕРИАЛЫ'}</h2>           
                         <div className="fibers-picker">
                             {fibersState.load.status === 'success' ? 
-                                <Picker ref={fiberPicker}  items={fibersState.fibersList} lang={lang} onEditClick={(_id) => onEditFiber(_id)} onDeleteClick={(_id) => onDeleteFiber(_id)}/>
+                                <Picker ref={fiberPicker} items={fibersState.fibersList} lang={lang} onEditClick={(_id) => onEditFiber(_id)} onDeleteClick={(_id) => onDeleteFiber(_id)}/>
                             :
                                 <Preloader />}
                         </div>

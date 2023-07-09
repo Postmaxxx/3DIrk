@@ -10,6 +10,7 @@ import { errorsChecker, prevent } from 'src/assets/js/processors';
 import { colorEmpty, empty, headerStatus, resetFetch, timeModalClosing } from 'src/assets/js/consts';
 import Modal, { IModalFunctions } from 'src/components/Modal/Modal';
 import { useNavigate, useParams } from 'react-router-dom';
+import Preloader from 'src/components/Preloaders/Preloader';
 
 interface IPropsState {
     lang: TLang
@@ -35,6 +36,7 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
     const message = useRef<IMessageFunctions>(null)
     const [color, setColor] = useState<ISendColor>({...colorEmpty})
     const [submit, setSubmit] = useState<boolean>(false)
+    const [changeImages, setChangeImages] = useState<boolean>(true)
 
 
 
@@ -55,7 +57,7 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
 
     useEffect(() => { 
         if (paramColorId && colorsState.load.status === 'success') {//if edit
-            setColor(prev => ({...prev, changeImages: false}))
+            setChangeImages(false)
             fillColor(paramColorId)
         } 
     }, [paramColorId, colorsState.load.status])
@@ -89,10 +91,10 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
         errChecker.check(_form.current.querySelector('#name_en') as HTMLInputElement, 2, 50)
         errChecker.check(_form.current.querySelector('#name_en') as HTMLInputElement, 2, 50)
         
-        if (!addFileBig.current?.getFiles().length && color.changeImages) {
+        if (!addFileBig.current?.getFiles().length && changeImages) {
             errChecker.add(lang === 'en' ? 'File fullsize is missed' : 'Отсутствует файл полноразмера')
         }
-        if (!addFileSmall.current?.getFiles().length && color.changeImages) {
+        if (!addFileSmall.current?.getFiles().length && changeImages) {
             errChecker.add(lang === 'en' ? 'File preview is missed' : 'Отсутствует файл предпросмотра')
         }
         
@@ -151,7 +153,7 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
 
     const onChangeImages = (e: React.MouseEvent<HTMLElement>) => {
         prevent(e)
-        setColor(prev => ({...prev, changeImages: !prev.changeImages}))
+        setChangeImages(prev => !prev)
     }
 
 
@@ -185,7 +187,7 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
                                 <input type="text" id="name_ru" data-ru="Название RU" data-en="Name RU" onChange={onChangeInputs} value={color.name.ru} />
                             </div>
                         </div>
-                            {color.changeImages &&
+                            {changeImages &&
                                 <>
                                     <div className="input-block_header">
                                         <span></span>
@@ -202,8 +204,14 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
                                         </div>
                                     </div>
                                 </>}
-                        {paramColorId && <button className='button_blue change-images' onClick={onChangeImages}>{color.changeImages ? 'Do not change images' : 'Change all images'}</button>}
-                        <button className='button_blue post' disabled={colorsState.send.status === 'fetching'} onClick={e => onSubmit(e)}>{paramColorId ? lang === 'en' ? 'Edit color' : "Изменить цвет" : lang === 'en' ? 'Add color' : "Добавить цвет"}</button>
+                        {paramColorId && <button className='button_blue change-images' onClick={onChangeImages}>{changeImages ? 'Do not change images' : 'Change all images'}</button>}
+                        <button className='button_blue post' disabled={colorsState.send.status === 'fetching'} onClick={e => onSubmit(e)}>
+                            {colorsState.send.status === 'fetching' ?
+                                <Preloader />
+                            :
+                                paramColorId ? lang === 'en' ? 'Edit color' : "Изменить цвет" : lang === 'en' ? 'Add color' : "Добавить цвет"
+                            }
+                        </button>
                     </form>
                 </div>
                 <Modal escExit={true} ref={modal} onClose={closeModal}>
@@ -218,7 +226,7 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
 
 const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
-    colorsState: state.colors
+    colorsState: state.colors,
 })
 
 

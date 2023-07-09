@@ -16,6 +16,7 @@ import Proscons from 'src/components/Proscons/Proscons';
 import IconEdit from 'src/components/tiny/IconEdit/IconEdit';
 import Delete from 'src/components/Delete/Delete';
 import ImageModal, { IImageModalFunctions } from 'src/components/ImageModal/ImageModal';
+import ImgWithPreloader from 'src/assets/js/ImgWithPreloader';
 
 
 interface IPropsState {
@@ -113,7 +114,7 @@ const Fiber: FC<IProps> = ({lang, fibersState, colorsState, setState, isAdmin}):
             <div className="fiber__item">
             <h2>{fiber.short.name[lang]} ({fiber.name[lang]})</h2>
             <div className='fiber__splider__container'>
-                <SpliderCommon images={fiber.images} defaultSize='medium' imagesPerSlide={fiber.images.length > 3 ? 3 : fiber.images.length}/>
+                <SpliderCommon images={fiber.images} defaultSize='medium' imagesPerSlide={fiber.images.files?.length > 3 ? 3 : fiber.images.files?.length}/>
             </div>
             <div className="fiber__descr__container">
                 <div className="block_text">
@@ -130,7 +131,10 @@ const Fiber: FC<IProps> = ({lang, fibersState, colorsState, setState, isAdmin}):
                                 if (colorData) {
                                     return (
                                         <div key={i} className='color__container' onClick={(e) => onImageClick(e, colorData)}>
-                                            <img src={colorData.url.thumb} alt={colorData.name[lang]} />
+                                            <div className="img-container">
+                                                <ImgWithPreloader src={colorData.url.thumb} alt={colorData.name[lang]}/>
+                                            </div>
+                                            <span className='color__descr'>{colorData.name[lang]}</span>
                                         </div>
                                     )
                                 }
@@ -160,7 +164,7 @@ const Fiber: FC<IProps> = ({lang, fibersState, colorsState, setState, isAdmin}):
         )
         :
         <ErrorMock lang={lang} comp={{en: 'fiber, fiber not found', ru: 'материала, данный материал не найден'}} />
-    }, [paramFiberId, lang, fibersState.load.status, colorsState.load.status, fibersState.selected])
+    }, [paramFiberId, lang, fibersState.load.status, colorsState.load.status, fibersState.selected, isAdmin])
 
 
 

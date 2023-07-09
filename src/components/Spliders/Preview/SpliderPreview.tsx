@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { useEffect, useMemo, useRef, useState, } from "react";
 import "@splidejs/react-splide/css";
 import "./splider-preview.scss";
-import { IFullState, IImg, IImgWithThumb, IProduct, ISpliderOptions, TLang } from "../../../interfaces";
+import { IFullState, IImg, IImgWithThumb, IProduct, ISpliderOptions, TImageSizes, TLang } from "../../../interfaces";
 import Splide from "@splidejs/splide";
 import ImgWithPreloader from "../../../assets/js/ImgWithPreloader";
 
@@ -16,7 +16,7 @@ import ImageModal, { IImageModalFunctions } from "../../ImageModal/ImageModal";
 
 interface IPropsState {
 	lang: TLang,
-	product: IProduct
+
 }
 
 
@@ -27,15 +27,22 @@ interface IPropsActions {
 }
 
 
-interface IProps extends IPropsState, IPropsActions {}
-
+interface IProps extends IPropsState, IPropsActions {
+	images: {
+		paths: Partial<Record<TImageSizes, string>>
+		files: string[]
+	}
+	sizePreview?: TImageSizes
+	sizeMain?: TImageSizes
+}
+/*
 interface IContainerSize {
 	width: number
 	height: number
 }
+*/
 
-
-const SpliderPreview: React.FC<IProps> = ({ lang, product, setState}): JSX.Element => {
+const SpliderPreview: React.FC<IProps> = ({ lang, images, setState, sizePreview='preview', sizeMain='medium'}): JSX.Element => {
 	const _splideMain = useRef<HTMLDivElement>(null);
 	const _splideThumbs = useRef<HTMLDivElement>(null);
 	const splideMain = useRef<Splide>();
@@ -107,13 +114,10 @@ const SpliderPreview: React.FC<IProps> = ({ lang, product, setState}): JSX.Eleme
 	}*/
 
 
-	const onImageClick = (e: React.MouseEvent , slide: IImgWithThumb) => {
-        if (!slide) return
+	const onImageClick = (e: React.MouseEvent , filename: string) => {
+        if (!filename) return
         e.stopPropagation()
-		/*<Modal {...{visible: modal, close: closeModal, escExit: true}}>
-		<ModalImage props={{path: product.images[splideMain.current?.index || 0].url, descr: product.images[splideMain.current?.index || 0].name[lang]}}/>
-	</Modal> */
-        imageModal.current?.update({url: slide.full, text: slide.fileName})
+        imageModal.current?.update({url: `${images.paths.full}/${filename}`, text: filename})
         modal_image.current?.openModal()
     }
 
@@ -129,18 +133,15 @@ const SpliderPreview: React.FC<IProps> = ({ lang, product, setState}): JSX.Eleme
 		return () => {
 			splideThumb.current?.destroy();
 			splideMain.current?.destroy();
-            //setState.product.setSelectedImage(splideMain.current?.index || 0)
 		};
 		
 	}, []);
 
 
 	
-
     const closeModalImage = () => {
         modal_image.current?.closeModal()
 	}
-
 
 
 	return (
@@ -148,10 +149,10 @@ const SpliderPreview: React.FC<IProps> = ({ lang, product, setState}): JSX.Eleme
 			<div id="spliderMain" className="splide" ref={_splideMain}>
 				<div className="splide__track">
 					<ul className="splide__list">
-						{product.images.map((slide,i) => {
+						{images.files.map((filename,i) => {
 							return (
-								<li className="splide__slide" key={i} onClick={(e) => onImageClick(e, slide)}>
-									<ImgWithPreloader src={slide.medium || slide.full} alt={slide.fileName} />
+								<li className="splide__slide" key={filename} onClick={(e) => onImageClick(e, filename)}>
+									<ImgWithPreloader src={`${images.paths[sizeMain]}/${filename}`} alt={filename} />
 								</li>
 							);
 						})}
@@ -161,10 +162,10 @@ const SpliderPreview: React.FC<IProps> = ({ lang, product, setState}): JSX.Eleme
 			<div id="spliderThumbs" className="splide" ref={_splideThumbs}>
 				<div className="splide__track">
 					<ul className="splide__list">
-						{product.images.map((slide,i ) => {
+						{images.files.map((filename, i) => {
 							return (
-								<li className="splide__slide" key={i}>
-									<ImgWithPreloader src={slide.thumb} alt={slide.fileName} />
+								<li className="splide__slide" key={filename}>
+									<ImgWithPreloader src={`${images.paths[sizePreview]}/${filename}`} alt={filename} />
 								</li>
 							);
 		
@@ -184,7 +185,6 @@ const SpliderPreview: React.FC<IProps> = ({ lang, product, setState}): JSX.Eleme
 
 const mapStateToProps = (state: IFullState): IPropsState  => {
 	return {
-		product: state.catalog.category.product,
 		lang: state.base.lang
 	};
 };

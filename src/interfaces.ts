@@ -32,7 +32,7 @@ export interface IFetch {
 export interface IFetchImage {
     status: TFetchStatus
     message: TLangText
-    urls?: IImgWithThumb
+    //urls?: IImgWithThumb
 }
 
 export interface IMessageModal {
@@ -73,7 +73,7 @@ export interface IImg {
 
 export interface IImgWithThumb {
     full: string
-    medium?: string
+    medium: string
     thumb: string
     fileName: string
 }
@@ -163,7 +163,6 @@ export interface IFeature {
 //==========================================Fibers State
 export interface ISendFiber extends Omit<IFiber, 'images'> {
     files: File[]
-    changeImages: boolean
 }
 
 
@@ -202,7 +201,13 @@ export interface IFiber {
         name: TLangText
         text: TLangText
     }
-    images: IImgWithThumb[]
+    images: {
+        paths: {
+            full: string
+            small: string
+        }
+        files: string[]
+    }
     params: IFiberParam
     proscons: IProsCons
     colors: TId[] //ids of colors
@@ -213,7 +218,7 @@ export interface IFibersState {
     showList: TId[] //list of id to show
     load: IFetch //receiving data
     send: IFetch //sending data
-    fibersList: Array<IFiber> 
+    fibersList: IFiber[]
 }
 
 
@@ -223,7 +228,6 @@ export interface IFibersState {
 //============================================== category state
 export interface ISendProduct extends Omit<IProduct, 'images'> {
     files: File[]
-    changeImages: boolean
 }
 
 
@@ -233,7 +237,15 @@ export interface IProduct {
     name: TLangText
     text: TLangText
     text_short: TLangText
-    images: IImgWithThumb[]
+    images: {
+        paths: {
+            full: string
+            small: string
+            medium: string
+            preview: string
+        }
+        files: string[]
+    }
     fibers: TId[] //array of fiber ids
     //features: IFeature[]
     mods: TLangText[]
@@ -247,14 +259,22 @@ export interface IProductShort { //for gallery
     price: TLangText
     name: TLangText
     text_short: TLangText
-    image: IImgWithThumb
+    images: {
+        paths: {
+            full: string
+            small: string
+            medium: string
+            preview: string
+        }
+        files: string[]
+    }
 }
 
 
 export interface ICategory {
     _id: TId
     //name: TLangText
-    products: IProductShort[] //part of loaded products, i.e.: 1-9, 10-18, ...
+    products: IProductShort[] // loaded products,
     loadCategory: IFetch //for load products in selected category
     product: IProduct //current opened product (in case opened from bookmarks)
     loadProduct: IFetch
@@ -312,7 +332,6 @@ export interface INewsItem { //for detail view on news detail page
         files: string[]
     }
     files?: File[]
-    changeImages?: boolean //for editing
 }
 
 export interface INewsItemShort { // for preview news on main page
@@ -387,7 +406,6 @@ export interface ISendColor {
         full: File, 
         thumb: File
     },
-    changeImages: boolean
 }
 
 
@@ -616,4 +634,4 @@ export interface ICatalogTypes {
 }
 
 
-export type TImageSizes = 'thumb' | 'small' | 'medium' | 'full' | 'spliderMain'
+export type TImageSizes = 'thumb' | 'small' | 'medium' | 'full' | 'spliderMain' | 'preview'

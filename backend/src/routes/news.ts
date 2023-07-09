@@ -7,9 +7,8 @@ const isAdmin = require('../middleware/isAdmin')
 import { IAllCache } from '../data/cache'
 import { allPaths, delayForFS } from '../data/consts'
 import { INews } from '../models/News'
-import { foldersCleaner, foldersCreator } from '../processors/fsTools'
-import { makeDelay } from '../processors/makeDelay'
-import { imagesResizer } from '../processors/sharp'
+import { foldersCleaner } from '../processors/fsTools'
+import { resizeAndSave } from '../processors/sharp'
 import { IMulterFile } from './user'
 const cache: IAllCache = require('../data/cache')
 const fileSaver = require('../routes/files')
@@ -21,37 +20,17 @@ router.post('/create',
     fileSaver,
     async (req, res) => {       
         try {
-            const newsRaw: string = req.body.news
-            const { header, date, short, text } = JSON.parse(newsRaw)
+            const { header, date, short, text } = JSON.parse(req.body.news)
             const files = req.files as IMulterFile[] || []           
-            
+
             const news = new News({ header, date, short, text }) 
-            
-            const newsId = news._id
 
-            const dirFull = `${allPaths.pathToImages}/${allPaths.pathToNews}/${newsId}` //images/news/{news_id}
-            const dirMedium = `${dirFull}/medium` //images/news/{news_id}/medium
-            const dirSmall = `${dirFull}/small` //images/news/{news_id}/small
-            await foldersCreator([`${allPaths.pathToBase}/${dirFull}`, `${allPaths.pathToBase}/${dirMedium}`, `${allPaths.pathToBase}/${dirSmall}`])
-            await makeDelay(delayForFS)
-
-            const paths = await imagesResizer({
+            const paths = await resizeAndSave({
                 files,
-                format: 'webp',
-                sizesConvertTo: [
-                    {
-                        type: 'full',
-                        path: dirFull
-                    },
-                    {
-                        type: 'medium',
-                        path: dirMedium
-                    },
-                    {
-                        type: 'small',
-                        path: dirSmall
-                    }
-                ]
+                clearDir: true,
+                saveFormat: 'webp',
+                baseFolder: `${allPaths.pathToImages}/${allPaths.pathToNews}/${news._id}`,
+                formats: ['full', 'medium', 'small']
             })
 
             news.images = {
@@ -78,8 +57,7 @@ router.put('/edit',
     fileSaver, 
     async (req, res) => {
         try {
-            const newsRaw: string = req.body.news
-            const { header, date, short, text, _id } = JSON.parse(newsRaw)
+            const { header, date, short, text, _id } = JSON.parse(req.body.news)
             const files = req.files as IMulterFile[] || []           
             
             if (files.length === 0) { //if images was not sent save old images
@@ -88,29 +66,12 @@ router.put('/edit',
                 return res.status(200).json({message: {en: 'News changed', ru: 'Новость отредактирована'}})
             }
 
- 
-            const dirFull = `${allPaths.pathToImages}/${allPaths.pathToNews}/${_id}` //images/news/{news_id}
-            const dirMedium = `${dirFull}/medium` //images/news/{news_id}/medium
-            const dirSmall = `${dirFull}/small` //images/news/{news_id}/small
-            await foldersCleaner([`${allPaths.pathToBase}/${dirFull}`, `${allPaths.pathToBase}/${dirMedium}`, `${allPaths.pathToBase}/${dirSmall}`])
-            await makeDelay(delayForFS)
-            const paths = await imagesResizer({
+            const paths = await resizeAndSave({
                 files,
-                format: 'webp',
-                sizesConvertTo: [
-                    {
-                        type: 'full',
-                        path: dirFull
-                    },
-                    {
-                        type: 'medium',
-                        path: dirMedium
-                    },
-                    {
-                        type: 'small',
-                        path: dirSmall
-                    }
-                ]
+                clearDir: true,
+                saveFormat: 'webp',
+                baseFolder: `${allPaths.pathToImages}/${allPaths.pathToNews}/${_id}`,
+                formats: ['full', 'medium', 'small']
             })
 
             const images = {

@@ -1,6 +1,5 @@
 import { IAction, IDispatch, IErrRes, IFetch, IFullState, IImgWithThumb, IMsgRes, INewsItem, INewsItemShort, ISendNews, IUserState, TLangText } from "src/interfaces"
 import { actionsListNews } from './actionsList'
-import { imageUploader, imagesUploader } from "src/assets/js/imageUploader";
 import { delayBetweenImagesPost, empty, errorFetch, fetchingFetch, successFetch } from "src/assets/js/consts";
 
 

@@ -13,15 +13,11 @@ import { timeModalClosing } from 'src/assets/js/consts';
 
 interface IProps {
 	images: {
-		paths: {
-            full: string
-            medium: string
-            small: string
-        }
+		paths: Partial<Record<TImageSizes, string>>
         files: string[]
 	}
     imagesPerSlide: number
-	defaultSize: TImageSizes //!!!
+	defaultSize?: TImageSizes
 }
 
 interface IContainerSize {
@@ -101,11 +97,11 @@ const SpliderCommon: React.FC<IProps> = ({images, defaultSize='full', imagesPerS
             <div className="splide" ref={_splideFabric} aria-label="The carousel">
                 <div className="splide__track">
                     <ul className="splide__list">
-                        {images.files.map((file, i) => {
+                        {images.files?.map((file, i) => {
                             return (
                                 <li className="splide__slide" key={i} data-path={images.paths.full}>
                                     <div className="splide__slide-container">
-										<ImgWithPreloader src={images.paths.medium ? `${images.paths.medium}/${file}` : `${images.paths.full}/${file}`} alt={file} id={String(i)}/>
+										<ImgWithPreloader src={images.paths[defaultSize] ? `${images.paths[defaultSize]}/${file}` : `${images.paths.full}/${file}`} alt={file} id={String(i)}/>
                                     </div>
                                 </li>
                             );

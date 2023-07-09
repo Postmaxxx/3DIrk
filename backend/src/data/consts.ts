@@ -11,7 +11,9 @@ const allPaths = {
     pathToNews:"news",
     pathToSplider:"splider",
     pathToUserFiles: "userfiles",
-    pathToColors: "colors"
+    pathToColors: "colors",
+    pathToFibers: "fibers",
+    pathToProducts: "products"
 }
 
 const orderStatus: string[] = [

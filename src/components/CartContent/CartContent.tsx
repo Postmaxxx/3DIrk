@@ -104,7 +104,7 @@ const CartContent: React.FC<IProps> = ({lang, cart, colorsState, fibersState, se
                             <div className="cart__item" key={i}>
                                 <NavLink className="item__product-link_img" to={`../catalog/${item.product._id}`} onClick={() => onProductClick(item.product)} aria-label={lang === 'en' ? 'Go to product' : 'Перейти к товару'}>
                                     <div className="img__container">
-                                        <ImgWithPreloader src={item.product.images[0].thumb} alt={item.product.images[0].fileName}/>
+                                        <ImgWithPreloader src={`${item.product.images.paths.preview}/${item.product.images.files[0]}`} alt={item.product.images.files[0]}/>
                                     </div>
                                 </NavLink>
 

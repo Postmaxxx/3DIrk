@@ -9,7 +9,13 @@ interface IFiber extends Document {
     cons: TLangText[]
     }
     colors: [string]
-    images: IImgWithThumb[]
+    images: {
+        paths: {
+            full: string
+            small: string
+        },
+        files: string[]
+    }
     short: {
         name: TLangText
         text: TLangText
@@ -45,7 +51,7 @@ const fiberSchema = new Schema({
     text: {type: Object, required: true},
     proscons: {type: Object, required: false},
     colors: [{type: Types.ObjectId, ref: 'Colors', required: true}],
-    images: [{type: Object, required: true}],
+    images: {type: Object, required: true},
     short: {type: Object, required: true},
     params: {type: Object, required: true}
 })

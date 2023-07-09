@@ -9,7 +9,7 @@ import { IAllCache } from '../data/cache'
 import { makeDelay } from "../processors/makeDelay";
 import { allPaths, delayForFS } from "../data/consts";
 import { foldersCleaner} from "../processors/fsTools";
-import { imagesResizer } from "../processors/sharp";
+import { imagesResizer, resizeAndSave } from "../processors/sharp";
 import { IMulterFile } from "./user";
 const cache: IAllCache = require('../data/cache')
 var fs = require('fs');
@@ -25,24 +25,13 @@ router.put('/splider',
     async (req, res) => {
         try {           
             const files: IMulterFile[] = req.files
-            const dirFull = `${allPaths.pathToImages}/${allPaths.pathToSplider}` //images/splider
-            const dirSmall = `${dirFull}/small` //images/splider/small
-            await foldersCleaner([`${allPaths.pathToBase}/${dirFull}`, `${allPaths.pathToBase}/${dirSmall}`])
-            await makeDelay(delayForFS)
 
-            const paths = await imagesResizer({
+            const paths = await resizeAndSave({
                 files,
-                format: 'webp',
-                sizesConvertTo: [
-                    {
-                        type: 'full',
-                        path: dirFull
-                    },
-                    {
-                        type: 'spliderMain',
-                        path: dirSmall
-                    }
-                ]
+                clearDir: true,
+                saveFormat: 'webp',
+                baseFolder: `${allPaths.pathToImages}/${allPaths.pathToSplider}`,
+                formats: ['full', 'spliderMain']
             })
 
             await foldersCleaner([allPaths.pathToTemp])

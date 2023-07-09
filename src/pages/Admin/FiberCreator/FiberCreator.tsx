@@ -60,7 +60,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
     const data3 = useMemo(() => selector["3"], [])
     const errChecker = useMemo(() => errorsChecker({lang}), [lang])
     const [submit, setSubmit] = useState<boolean>(false)
-
+    const [changeImages, setChangeImages] = useState<boolean>(true)
 
 
     const closeModal = useCallback(() => {
@@ -143,7 +143,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
         })
 
 
-        if (addFiles.current && addFiles.current.getFiles().length === 0 && fiber.changeImages) {//check images
+        if (addFiles.current && addFiles.current.getFiles().length === 0 && changeImages) {//check images
             errChecker.add(lang === 'en' ? 'Images missed' : 'Картинки отсутствуют')
         }
 
@@ -163,11 +163,11 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
             errChecker.check(item, 2, 100)
         })
 
-        if (errChecker.amount() > 0) {
+        /*if (errChecker.amount() > 0) {
             message.current?.update(errChecker.result())
             modal.current?.openModal('submit')
             return
-        }
+        }*/
 
 
         setFiber(prev => ({
@@ -229,8 +229,8 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
             short: {...sourceFiber.short},
             colors: {...sourceFiber.colors},
             _id: sourceFiber._id,
-            changeImages: false
         }))
+        setChangeImages(false)
 
 
         //specifications
@@ -272,7 +272,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
 
     const onChangeImages = (e: React.MouseEvent<HTMLElement>) => {
         prevent(e)
-        setFiber(prev => ({...prev, changeImages: !prev.changeImages}))
+        setChangeImages(prev => !prev)
     }
 
 
@@ -327,7 +327,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
 
     const renderImages = useMemo(() => {
         return (
-            fiber.changeImages ? 
+            changeImages ? 
                 <>
                     <h2 className='section-header full-width'>{lang === 'en' ? 'IMAGES' : 'ИЗОБРАЖЕНИЯ'}</h2>           
                     <AddFiles lang={lang} ref={addFiles} multiple={true} id='allImages'/>
@@ -337,7 +337,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
                 <>{paramFiberId && <button className='button_blue change-images' onClick={onChangeImages}>Change all images</button>}</>
             
         )
-    }, [fiber.changeImages, lang, paramFiberId])
+    }, [changeImages, lang, paramFiberId])
     
 
     const onChangeInputs = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -349,7 +349,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
 
         e.target.id === "name-short_en" && setFiber(prev => ({...prev, short: {...prev.short, name: {...prev.short.name, en: e.target.value}}}))
         e.target.id === "name-short_ru" && setFiber(prev => ({...prev, short: {...prev.short, name: {...prev.short.name, ru: e.target.value}}}))
-        e.target.id === "text-short_en" && setFiber(prev => ({...prev, short: {...prev.short, text: {...prev.short.name, en: e.target.value}}}))
+        e.target.id === "text-short_en" && setFiber(prev => ({...prev, short: {...prev.short, text: {...prev.short.text, en: e.target.value}}}))
         e.target.id === "text-short_ru" && setFiber(prev => ({...prev, short: {...prev.short, text: {...prev.short.text, ru: e.target.value}}}))
     }
 

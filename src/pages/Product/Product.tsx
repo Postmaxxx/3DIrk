@@ -101,7 +101,7 @@ const Product: React.FC<IProps> = ({lang, setState, catalogState, colorsState, f
                         <>
                             <div className="details__block">
                                 <div className="details__splider">
-                                    <SpliderPreview />
+                                    <SpliderPreview images={catalogState.category.product.images} sizePreview='preview' sizeMain="medium"  />
                                 </div>
                                 <div className="details__descr-order">
                                     <ProductDetails />

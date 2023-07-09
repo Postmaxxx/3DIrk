@@ -2,7 +2,6 @@ import { IAction, ICatalogItem, ICategory, IDispatch, IErrRes, IFetch, IFullStat
 import { actionsListCatalog } from './actionsList'
 
 import { empty, errorFetch, fetchingFetch, resetFetch, successFetch } from "src/assets/js/consts";
-import {  imagesUploader } from "src/assets/js/imageUploader";
 
 export const setLoadCatalog = <T extends IFetch>(payload: T):IAction<T> => ({
     type: actionsListCatalog.SET_LOAD_STATUS_CATEGORIES_LIST,
@@ -58,7 +57,6 @@ export const sendCatalog = (newCatalog: (Omit<ICatalogItem, "total">)[]) => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
         if (getState().catalog.catalog.send.status === 'fetching') return
 
-
         const { token } = getState().user
         dispatch(setSendCatalog(resetFetch))
         
@@ -89,8 +87,6 @@ export const sendCatalog = (newCatalog: (Omit<ICatalogItem, "total">)[]) => {
         }
     }
 }
-
-
 
 
 
@@ -194,35 +190,23 @@ export const sendProduct = (product: ISendProduct) => {
         const { token } = getState().user
         dispatch(setSendProduct(fetchingFetch))
 
-        const imageUrls:IImgWithThumb[] = []
-        // images to imgbb
-        if (product.files && product.files?.length > 0) {
-            const resultUrls = await imagesUploader({files: product.files, dispatch, errorHandler: setSendProduct})
-            if (resultUrls.err.en) {
-                return dispatch(setSendProduct({...errorFetch, message: resultUrls.err || {...empty}}))
-            }
-            imageUrls.concat([...resultUrls.urls])
+        const sendForm = new FormData()   
+        if (product.files && product.files.length > 0) {
+            product.files.forEach(item => {
+                sendForm.append('files', item, item.name)
+            })
         }
+        const {files, ...productToSend}  = product //except files from data
+        sendForm.append('data', JSON.stringify(productToSend))
         
         try {
-            const productToDb: Omit<IProduct, "_id"> = {
-                name: product.name,
-                price: product.price,
-                text: product.text,
-                text_short: product.text_short,
-                fibers: product.fibers,
-                mods: product.mods,
-                category: product.category,
-                images: imageUrls
-            }
-
             const response: Response = await fetch('/api/catalog/product', {
                 method: 'POST',
                 headers: {
-                    "Content-Type": 'application/json',
+                    "enctype": 'multipart/form-data',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({product: productToDb})
+                body: sendForm
             })
             
 
@@ -254,38 +238,24 @@ export const editProduct = (product: ISendProduct) => {
         const { token } = getState().user
         dispatch(setSendProduct(fetchingFetch))
 
-        const imageUrls:IImgWithThumb[] = []
-        if (product.files && product.files?.length > 0) {
-            const imageUrls = await imagesUploader({files: product.files, dispatch, errorHandler: setSendProduct})
-            if (imageUrls.err.en) {
-               return dispatch(setSendProduct({...errorFetch, message: imageUrls.err || {...empty}}))
-            }
+        const sendForm = new FormData()   
+        if (product.files && product.files.length > 0) {
+            product.files.forEach(item => {
+                sendForm.append('files', item, item.name)
+            })
         }
-        
-        try {
-            const productToDb: Partial<IProduct> = {
-                _id: product._id,
-                name: product.name,
-                price: product.price,
-                text: product.text,
-                text_short: product.text_short,
-                fibers: product.fibers,
-                mods: product.mods,
-                category: product.category,
-                images: imageUrls
-            }
+        const {files, ...productToSend}  = product //except files from data
+        sendForm.append('data', JSON.stringify(productToSend))
 
-            if (!product.changeImages) {//if don't need change images => delete field at all,in this case BE will not update images
-                delete productToDb.images
-            }
+        try {
 
             const response: Response = await fetch('/api/catalog/product', {
                 method: 'PUT',
                 headers: {
-                    "Content-Type": 'application/json',
+                    "enctype": 'multipart/form-data',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({product: productToDb})
+                body: sendForm
             })
             
 
@@ -340,7 +310,6 @@ export const loadProduct = (_id: string) => {
             if (!result.product) {
                 return dispatch(setLoadProduct({status: 'error', message: {en: `ERROR while loading product, result.product undefined`, ru: `Ошибка при загрузке продукта, result.product undefined`}}))
             }
-            console.log(result.product);
 
             dispatch(setProduct(result.product))
             dispatch(setLoadProduct(successFetch))

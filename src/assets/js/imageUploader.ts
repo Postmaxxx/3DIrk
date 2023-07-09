@@ -2,7 +2,7 @@ import { IAction, IDispatch, IFetch, IFetchImage, IImgWithThumb, TLangText } fro
 import { makeDelay } from "./makeDelay";
 import { delayBetweenImagesPost } from "./consts";
 
-
+/*
 const imageUploader = async (image: File): Promise<IFetchImage> => {
     try {
         let form = new FormData();
@@ -25,15 +25,6 @@ const imageUploader = async (image: File): Promise<IFetchImage> => {
         return {status: 'error', message: {en:`Error while deploying image ${image.name}: ${e}`, ru: `Ошибка при выгрузке файла ${image.name}: ${e}`}}
     }  
 }
-
-
-
-
-
-
-
-
-
 
 
 
@@ -74,4 +65,4 @@ const imagesUploader = async({files, dispatch, errorHandler}: IImagesUploader): 
 }
 
 
-export { imageUploader, imagesUploader }
+export { imageUploader, imagesUploader }*/

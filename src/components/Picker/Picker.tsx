@@ -1,4 +1,4 @@
-import { IImgWithThumb, TLang, TLangText } from 'src/interfaces';
+import { IImgWithThumb, TImageSizes, TLang, TLangText } from 'src/interfaces';
 import './picker.scss'
 import { useEffect, useState, forwardRef, useImperativeHandle  } from "react";
 import { prevent } from 'src/assets/js/processors';
@@ -8,10 +8,13 @@ import { prevent } from 'src/assets/js/processors';
 interface IProps {
     items: {
         _id: string
-        images?: IImgWithThumb[]
+        images?: {
+            paths: Partial<Record<TImageSizes, string>>
+            files: string[]
+        }
         url?: {
             full: string
-            small: string
+            thumb: string
         }
         name: TLangText
     }[]
@@ -63,8 +66,8 @@ const Picker = forwardRef<IPickerFunctions, IProps>(({items, lang, onEditClick, 
                 return (
                     <div className="item__container" key={item._id}>
                         <div className={`image__container ${selectedItems[item._id] ? 'selected' : ''}`} onClick={() => onItemClick(item._id)}>
-                            {item.images && <img src={item.images[0].thumb} alt={item.name[lang]} />} {/*for fibers*/}
-                            {item.url && <img src={item.url.small} alt={item.name[lang]} />} {/*for colors*/}
+                            {item.images && <img src={`${item.images.paths.small}/${item.images.files[0]}`} alt={item.name[lang]} />} {/*for fibers*/}
+                            {item.url && <img src={item.url.thumb} alt={item.name[lang]} />} {/*for colors*/}
                         </div>
                         <span>{item.name[lang]}</span>
                         <div className="buttons_control">

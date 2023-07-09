@@ -1,7 +1,6 @@
-import { imageUploader } from "src/assets/js/imageUploader";
 import { IAction, IDispatch, IColor, IColorsState, IFetch, IFullState, IErrRes, TLangText, IMsgRes, ISendColor, IImgWithThumb } from "../../interfaces"
 import { actionsListColors } from './actionsList'
-import { empty, resetFetch } from "src/assets/js/consts";
+import { empty, fetchingFetch } from "src/assets/js/consts";
 //import mockColors from "../mocks/colors";
 
 
@@ -41,7 +40,7 @@ interface IImages {
 export const loadColors = () => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
         if (getState().colors.load.status === 'fetching') return
-        dispatch(setLoadColors(resetFetch))
+        dispatch(setLoadColors(fetchingFetch))
         try {
             const response: Response = await fetch('/api/colors/load-all', {
                 method: 'GET',
@@ -71,7 +70,6 @@ export const loadColors = () => {
                     }
                 }
             })
-            
             dispatch(setColors(resultProcessed))
             dispatch(setLoadColors({status: 'success', message: result.message || {...empty}}))
         } catch (e) {
@@ -89,7 +87,7 @@ export const sendColor = (color: ISendColor) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
         if (getState().colors.send.status === 'fetching') return
         const token = getState().user.token
-        dispatch(setSendColors(resetFetch))
+        dispatch(setSendColors(fetchingFetch))
         const colorFiles = [color.files.full, color.files.thumb]
 
         const sendForm = new FormData()   
@@ -123,8 +121,6 @@ export const sendColor = (color: ISendColor) => {
             const result: IMsgRes = await response.json() //message, errors
             
             dispatch(setSendColors({status: 'success', message: result.message || {...empty}}))
-
-
         } catch (e) {
             dispatch(setSendColors({status: 'error', message: {en:`Error while saving color to db: ${e}`, ru: `Ошибка при сохранении цвета в бд: ${e}`}}))
         }
@@ -139,7 +135,7 @@ export const editColor = (color: ISendColor) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
         if (getState().colors.send.status === 'fetching') return
         const token = getState().user.token
-        dispatch(setSendColors(resetFetch))
+        dispatch(setSendColors(fetchingFetch))
 
         const colorFiles = [color.files.full, color.files.thumb]
         const sendForm = new FormData()   
@@ -190,7 +186,7 @@ export const deleteColor = (_id: string) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
         if (getState().colors.send.status === 'fetching') return
         const token = getState().user.token
-        dispatch(setSendColors(resetFetch))       
+        dispatch(setSendColors(fetchingFetch))       
         // to db
         try {
             const response: Response = await fetch('/api/colors/delete', {

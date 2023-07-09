@@ -12,6 +12,7 @@ import { fibersProperties } from '../../assets/data/fibersProperties';
 import { allActions } from "../../redux/actions/all";
 import ErrorMock from 'src/components/tiny/ErrorMock/ErrorMock';
 import { strengthMax, strengthMin } from 'src/assets/js/consts';
+import ImgWithPreloader from 'src/assets/js/ImgWithPreloader';
 
 
 
@@ -112,11 +113,11 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
     }
 
 
-    const renderProperties = useMemo(() => 
-        fibersProperties.map((property, i) => {
+    const renderProperties = useMemo(() => {
+        return fibersProperties.map((property, i) => {
             return property._id !== 'priceGr' && 
                 <div className="cell row-name fixed-left with-tip padding_no" key={property._id}>
-                    <button onClick={() => sortByProperty(property._id)}>
+                    <button onClick={() => sortByProperty(property._id)} title={`${lang === 'en' ? 'Sort fibers by' : 'Отсортировать материалы по свойству '} ${property.name[lang]}`}>
                         <span>{property.name[lang]}</span>
                         <div className='tip' title={property.tip[lang]}>
                             <SvgInserter type={'question'}/>
@@ -124,7 +125,7 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
                     </button>
                 </div>
         }
-    ), [lang, fibersList])
+    )}, [lang, fibersList, lang])
 
 
     const renderFiberList = useMemo(() => fibersList
@@ -134,11 +135,11 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
                 <Fragment key={fiber._id}>
                     <div className={`cell col-name ${fiber._id === fibersState.selected ? "selected" : ""}`} onClick={e => onCellClick(fiber._id, '')} >
                         <div className="img__container">
-                            <img src={fiber.images[0].thumb} alt={fiber.images[0].fileName} />
+                            <ImgWithPreloader src={`${fiber.images.paths.small}/${fiber.images.files[0]}`} alt={fiber.images.files[0]}  />
                             <span>{fiber.short.name[lang]}</span>
                         </div>
                         <NavLink 
-                            to={`../${fiber.short.name.en}`}
+                            to={`../${fiber._id}`}
                             className='button_blue'
                             >
                                 {lang === 'en' ? 'Learn more' : 'Подробнее'}

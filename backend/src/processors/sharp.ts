@@ -1,4 +1,7 @@
-import { IImageSizes, allPaths, sizes } from "../data/consts"
+import { IImageSizes, allPaths, delayForFS, sizes } from "../data/consts"
+import { IMulterFile } from "../routes/user"
+import { foldersCleaner } from "./fsTools"
+import { makeDelay } from "./makeDelay"
 
 const sharp = require('sharp')
 //sharp.cache(false);
@@ -63,4 +66,29 @@ const imagesResizer = async ({files = [], format = 'webp', sizesConvertTo = []}:
 }
 
 
-export { imagesResizer }
+
+interface IResizeAndSave {
+    baseFolder: string
+    formats: (keyof IImageSizes)[] // ["medium", "full", "thumb", "spliderMain"]
+    saveFormat?: string
+    clearDir?: boolean
+    files: IMulterFile[]
+}
+
+const resizeAndSave = async ({files=[], clearDir = false, baseFolder = allPaths.pathToTemp, saveFormat = 'webp', formats = []}: IResizeAndSave) => {
+    if (clearDir) {
+        await foldersCleaner(formats.map(format => `${allPaths.pathToBase}/${baseFolder}/${format}`))
+    }
+    await makeDelay(delayForFS)
+    const sizesConvertTo = formats.map(format => ({type: format, path: `${baseFolder}/${format}`}))
+    const paths = await imagesResizer({
+        files,
+        format: saveFormat,
+        sizesConvertTo
+    })
+
+    return paths
+}
+
+
+export { imagesResizer, resizeAndSave }
