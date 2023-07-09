@@ -2,6 +2,7 @@ import { Document, Schema, Model, model } from 'mongoose';
 import { TLang, TLangText } from '../../../src/interfaces';
 
 interface IColor extends Document {
+    _id: string
     name: TLangText
     images: {
         paths: {

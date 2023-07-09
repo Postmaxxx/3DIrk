@@ -46,8 +46,12 @@
     "deploy_old": "gh-pages -d build",
     "serverfe": "webpack serve --mode development",
     "buildfe": "webpack --mode production",
+
     "startbe": "npm run start --prefix backend",
     "serverbe": "npm run server --prefix backend",
+
+    "serverbeprod": "npm run serverprod --prefix backend",
+
     "dev": "concurrently \"npm run serverfe\" \"npm run serverbe\"",
     "predeploy": "webpack --mode production",
     "deploy": "gh-pages -d dist"

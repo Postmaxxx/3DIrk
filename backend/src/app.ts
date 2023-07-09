@@ -33,6 +33,9 @@ app.use(cors({
 
 //app.use('/api/files', filesRoutes)
 
+app.use('/api/test', async (req, res) => {
+    res.status(200).json({response: 'OK'})
+})
 
 app.use('/api/user', userRoutes)
 app.use('/api/news', newsRoutes)

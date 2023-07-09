@@ -2,6 +2,7 @@ import { Document, Schema, Model, model } from 'mongoose';
 import { IImgWithThumb, TLangText } from '../../../src/interfaces';
 
 interface INews extends Document {
+    _id: string
     date: Date
     header: TLangText
     short: TLangText

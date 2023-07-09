@@ -15,6 +15,7 @@ interface InfoType {
 
 
 interface IOrder extends Document {
+    _id: string
     date: Date
     status: OrderType
     cart: ICartItem[]

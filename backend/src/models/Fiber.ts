@@ -2,6 +2,7 @@ import { Document, Schema, Model, model, Types } from 'mongoose';
 import { IFiberParam, IImgWithThumb, TLang, TLangText } from '../../../src/interfaces';
 
 interface IFiber extends Document {
+    _id: string
     name: TLangText
     text: TLangText
     proscons: {

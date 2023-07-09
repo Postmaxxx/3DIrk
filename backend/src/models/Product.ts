@@ -3,6 +3,7 @@ import { IImgWithThumb, TLangText } from '../../../src/interfaces'
 
 
 interface IProduct extends Document {
+    _id: string
     name: TLangText
     text: TLangText
     text_short: TLangText
