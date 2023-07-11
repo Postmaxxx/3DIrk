@@ -1,5 +1,5 @@
-import { TLang, TLangText } from "src/interfaces";
-import { selector } from "./consts";
+import { IFetch, TLang, TLangText } from "src/interfaces";
+import { gapBetweenRequests, selector } from "./consts";
 
 //---------------------------------------------------------------
 
@@ -81,4 +81,15 @@ const filenameChanger = (filename: string) => {
 }
 
 
-export { ratingNumberToText, errorsChecker, prevent, filenameChanger }
+
+const checkAndLoad = (checkValue: IFetch["status"], loadFunc: () => void) => {
+    if (checkValue === 'idle') {
+        loadFunc()
+    }
+    if (checkValue === 'error') {            
+        setTimeout(() => {loadFunc()}, gapBetweenRequests)
+    }
+}
+
+
+export { ratingNumberToText, errorsChecker, prevent, filenameChanger, checkAndLoad }

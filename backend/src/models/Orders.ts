@@ -1,5 +1,4 @@
 import { Document, Schema, Model, model, Types } from 'mongoose';
-import { TLangText } from '../../../src/interfaces';
 import { ICartItem } from './Cart';
 const CartItem = require("../models/Cart")
 

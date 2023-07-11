@@ -1,7 +1,6 @@
 import { IAction, IDispatch, IErrRes, IFetch, IFiber, IFullState, IImgWithThumb, IMsgRes, ISendFiber, TLangText } from "src/interfaces"
 import { actionsListFibers } from './actionsList'
 import { empty, errorFetch, fetchingFetch } from "src/assets/js/consts";
-import { makeDelay } from "src/assets/js/makeDelay";
 
 
 

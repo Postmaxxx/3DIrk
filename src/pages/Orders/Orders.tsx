@@ -9,6 +9,7 @@ import { gapBetweenRequests, orderStatus, timeOffset, usersPerPage } from 'src/a
 import moment from "moment";
 import Preloader from 'src/components/Preloaders/Preloader';
 import { useNavigate } from 'react-router-dom';
+import { checkAndLoad } from 'src/assets/js/processors';
 
 
 
@@ -55,19 +56,29 @@ const Orders = ({lang, colorsState, fibersState, ordersState, userState, setStat
     useEffect(() => { //initial load data
         if (userState.auth.status !== 'success') return //!!!
 
-        if (colorsState.load.status === 'idle') {
+        /*if (colorsState.load.status === 'idle') {
             setState.colors.loadColors()
         }
         if (colorsState.load.status === 'error') { //!!!
             setTimeout(() => setState.colors.loadColors(), gapBetweenRequests)
-        }
-        
+        }*/
+        checkAndLoad(colorsState.load.status, setState.colors.loadColors)
+        checkAndLoad(ordersState.userList.load.status, setState.orders.loadUsers)
+
+/*
+        checkAndLoad(fibersState.load.status, setState.fibers.loadFibers)
+        checkAndLoad(catalogState.catalog.load.status, setState.catalog.loadCatalog)
+
+
+*/
+
+        /*
         if (ordersState.userList.load.status === 'idle') {
             setState.orders.loadUsers()
         }
         if (ordersState.userList.load.status === 'error') {            
             setTimeout(() => {setState.orders.loadUsers()}, gapBetweenRequests)
-        }
+        }*/
 
         if (colorsState.load.status === 'success' && fibersState.load.status === 'success') {
             setLoaded(true)

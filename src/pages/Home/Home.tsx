@@ -8,6 +8,8 @@ import { Dispatch } from "redux";
 import { allActions } from 'src/redux/actions/all';
 import { FC, useRef, useMemo, useCallback, useState, useEffect } from "react";
 import Preloader from 'src/components/Preloaders/Preloader';
+import { gapBetweenRequests } from 'src/assets/js/consts';
+import { checkAndLoad } from 'src/assets/js/processors';
 
 
 interface IPropsState {
@@ -26,9 +28,13 @@ interface IProps extends IPropsState, IPropsActions {}
 const Home:React.FC<IProps> = ({lang, contentState, setState} : IProps): JSX.Element => {
 
     useEffect(() => {
-        if (contentState.load.status !== 'success' && contentState.load.status !== 'fetching') {
+        /*if (contentState.load.status === 'idle') {
             setState.content.loadSplider()
         }
+        if (contentState.load.status === 'error') {            
+            setTimeout(() => {setState.content.loadSplider()}, gapBetweenRequests)
+        }*/
+        checkAndLoad(contentState.load.status, setState.content.loadSplider)
     }, [contentState.load.status])
     
 

@@ -6,7 +6,7 @@ import { AnyAction, bindActionCreators, Dispatch } from "redux";
 import Message, { IMessageFunctions } from 'src/components/Message/Message';
 import { allActions } from "../../../redux/actions/all";
 import AddFiles, { IAddFilesFunctions } from 'src/components/AddFiles/AddFiles';
-import { errorsChecker, prevent } from 'src/assets/js/processors';
+import { checkAndLoad, errorsChecker, prevent } from 'src/assets/js/processors';
 import { colorEmpty, empty, headerStatus, resetFetch, timeModalClosing } from 'src/assets/js/consts';
 import Modal, { IModalFunctions } from 'src/components/Modal/Modal';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -65,9 +65,11 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
 
 
     useEffect(() => {
-        if (colorsState.load.status !== 'success' && colorsState.load.status !== 'fetching') {
+        /*if (colorsState.load.status !== 'success' && colorsState.load.status !== 'fetching') {
             setState.colors.loadColors()
-        }
+        }*/
+        checkAndLoad(colorsState.load.status, setState.colors.loadColors)
+
     }, [colorsState.load.status])
 
 

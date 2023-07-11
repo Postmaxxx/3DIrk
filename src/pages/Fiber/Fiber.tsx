@@ -17,6 +17,7 @@ import IconEdit from 'src/components/tiny/IconEdit/IconEdit';
 import Delete from 'src/components/Delete/Delete';
 import ImageModal, { IImageModalFunctions } from 'src/components/ImageModal/ImageModal';
 import ImgWithPreloader from 'src/assets/js/ImgWithPreloader';
+import { checkAndLoad } from 'src/assets/js/processors';
 
 
 interface IPropsState {
@@ -95,9 +96,10 @@ const Fiber: FC<IProps> = ({lang, fibersState, colorsState, setState, isAdmin}):
 
 
     useEffect(() => {
-        if (colorsState.load.status !== 'success' && colorsState.load.status !== 'fetching') {
+       /*if (colorsState.load.status !== 'success' && colorsState.load.status !== 'fetching') {
             setState.colors.loadColors()
-        }
+        }*/
+        checkAndLoad(colorsState.load.status, setState.colors.loadColors)
     }, [])
     
 

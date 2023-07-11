@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { allActions } from "../../redux/actions/all";
 import Preloader from "../Preloaders/Preloader";
 import ErrorMock from "../tiny/ErrorMock/ErrorMock";
+import { checkAndLoad } from "src/assets/js/processors";
 
 
 interface IPropsState {
@@ -33,9 +34,11 @@ const CatalogList: React.FC<IProps> = ({catalog, lang, selectedCategory, setStat
 
 
 	useEffect(() => {
-		if (catalog.load.status !== 'success' && catalog.load.status !== 'fetching') {
+		/*if (catalog.load.status !== 'success' && catalog.load.status !== 'fetching') {
 			setState.catalog.loadCatalog()
-		}
+		}*/
+        checkAndLoad(catalog.load.status, setState.catalog.loadCatalog)
+
 		if (catalog.load.status === 'success') {
 			loadCategory(catalog.list[0]._id, catalog.list[0].total)
 		}

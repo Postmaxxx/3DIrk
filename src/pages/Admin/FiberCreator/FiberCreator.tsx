@@ -14,7 +14,7 @@ import { fibersProperties } from 'src/assets/data/fibersProperties';
 import Preloader from 'src/components/Preloaders/Preloader';
 import { useNavigate, useParams } from 'react-router-dom';
 import { fiberEmpty, headerStatus, resetFetch, selector, timeModalClosing } from 'src/assets/js/consts';
-import { errorsChecker, prevent } from 'src/assets/js/processors';
+import { checkAndLoad, errorsChecker, prevent } from 'src/assets/js/processors';
 import Picker, { IPickerFunctions } from 'src/components/Picker/Picker';
 import Featurer, { IFeaturerFunctions } from 'src/components/Featurer/Featurer';
 
@@ -278,10 +278,12 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
 
 
     useEffect(() => { //if edit
-        if (colorsState.load.status !== 'success' && colorsState.load.status !== 'fetching') {
+        /*if (colorsState.load.status !== 'success' && colorsState.load.status !== 'fetching') {
             setState.colors.loadColors()
             return
-        }
+        }*/
+        checkAndLoad(colorsState.load.status, setState.colors.loadColors)
+
         if (fibersState.load.status !== 'success' || colorsState.load.status !== 'success') return
        
         paramFiberId ? fillValues(paramFiberId) : fillBlank()

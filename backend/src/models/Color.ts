@@ -1,5 +1,5 @@
 import { Document, Schema, Model, model } from 'mongoose';
-import { TLang, TLangText } from '../../../src/interfaces';
+import { TLangText } from '../interfaces';
 
 interface IColor extends Document {
     _id: string

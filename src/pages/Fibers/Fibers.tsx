@@ -9,6 +9,7 @@ import { NavLink } from 'react-router-dom';
 import FiberPreview from '../../components/FiberPreview/FiberPreview';
 import { allActions } from "../../redux/actions/all";
 import ErrorMock from 'src/components/tiny/ErrorMock/ErrorMock';
+import { checkAndLoad } from 'src/assets/js/processors';
 
 
 interface IPropsState {
@@ -28,9 +29,11 @@ const Fibers:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Element => {
     
     
     useEffect(() => {
-        if (fibersState.load.status !== 'success' && fibersState.load.status !== 'fetching' ) {
+        /*if (fibersState.load.status !== 'success' && fibersState.load.status !== 'fetching' ) {
             setState.fibers.loadFibers()
-        }
+        }*/
+        checkAndLoad(fibersState.load.status, setState.fibers.loadFibers)
+
     }, [fibersState.load.status])
 
 

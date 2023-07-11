@@ -1,5 +1,4 @@
 import { Document, Schema, Model, model } from 'mongoose';
-import { IImgWithThumb } from '../../../src/interfaces';
 
 interface IContent extends Document {
     splider: {

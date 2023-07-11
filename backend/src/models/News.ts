@@ -1,5 +1,5 @@
 import { Document, Schema, Model, model } from 'mongoose';
-import { IImgWithThumb, TLangText } from '../../../src/interfaces';
+import { TLangText } from '../interfaces';
 
 interface INews extends Document {
     _id: string

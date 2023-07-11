@@ -1,4 +1,4 @@
-import { TLangText } from '../../../src/interfaces';
+import { TLangText } from '../interfaces';
 import {Document, Schema, Model, model} from 'mongoose'
 
 interface ICatalog extends Document {

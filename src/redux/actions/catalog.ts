@@ -24,7 +24,7 @@ export const loadCatalog = () => {
         if ( getState().catalog.catalog.load.status === 'fetching') return
         dispatch(setLoadCatalog(resetFetch))
         try {
-            const response: Response = await fetch('/api/catalog/list', {
+            const response: Response = await fetch(`${process.env.REACT_SITE_URL}/api/catalog/list`, {
                 method: 'GET',
                 headers: {
                     "Content-Type": 'application/json',

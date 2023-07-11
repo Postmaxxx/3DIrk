@@ -1,4 +1,4 @@
-import { ICatalogItem, IImgWithThumb } from "../../../src/interfaces"
+import { ICatalogItem } from "../interfaces"
 import { IColor } from "../models/Color"
 import { IContent } from "../models/Content"
 import { IFiber } from "../models/Fiber"

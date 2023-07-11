@@ -13,7 +13,8 @@ import IconEdit from "src/components/tiny/IconEdit/IconEdit";
 import Delete from "src/components/Delete/Delete";
 import Modal, { IModalFunctions } from "src/components/Modal/Modal";
 import Message, { IMessageFunctions } from "src/components/Message/Message";
-import { headerStatus, resetFetch, timeModalClosing } from "src/assets/js/consts";
+import { gapBetweenRequests, headerStatus, resetFetch, timeModalClosing } from "src/assets/js/consts";
+import { checkAndLoad } from "src/assets/js/processors";
 
 
 
@@ -75,12 +76,26 @@ const Product: React.FC<IProps> = ({lang, setState, catalogState, colorsState, f
         if (colorsState.load.status === 'success' && fibersState.load.status === 'success' && catalogState.category.loadProduct.status === 'success' && paramProductId === catalogState.category.product._id) {
             setLoaded(true)
         } else {
-            if (colorsState.load.status !== 'success' && colorsState.load.status !== 'fetching') {
+            checkAndLoad(colorsState.load.status, setState.colors.loadColors)
+
+            /*if (colorsState.load.status === 'idle') {
                 setState.colors.loadColors()
             }
-            if (paramProductId !== catalogState.category.product._id && catalogState.category.loadProduct.status !== 'fetching') {
-                setState.catalog.loadProduct(paramProductId)
-            }
+            if (colorsState.load.status === 'error') {            
+                setTimeout(() => {setState.colors.loadColors()}, gapBetweenRequests)
+            }*/
+
+
+            if (paramProductId !== catalogState.category.product._id) {
+                checkAndLoad(catalogState.category.loadProduct.status, () => setState.catalog.loadProduct(paramProductId))
+
+                /*if (catalogState.category.loadProduct.status === 'idle') {
+                    setState.catalog.loadProduct(paramProductId)
+                }
+                if (colorsState.load.status === 'error') {            
+                    setTimeout(() => {setState.catalog.loadProduct(paramProductId)}, gapBetweenRequests)
+                }*/
+            } 
             setLoaded(false)
         }
     },[fibersState.load.status, colorsState.load.status, catalogState.category.loadProduct.status, paramProductId])

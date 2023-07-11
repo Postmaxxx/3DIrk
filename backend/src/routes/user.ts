@@ -1,7 +1,7 @@
 import { IUser } from "../models/User"
 import { IAllCache } from '../data/cache'
 import { ICartItem } from "../models/Cart"
-import { TLang, TLangText } from "../../../src/interfaces"
+import { TLang, TLangText } from "../interfaces"
 import { IOrder, OrderType } from "../models/Orders"
 import { allPaths, orderStatus, sendNotificationsInTG } from "../data/consts"
 import { foldersCreator } from "../processors/fsTools"

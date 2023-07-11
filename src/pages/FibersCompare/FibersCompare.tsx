@@ -13,6 +13,7 @@ import { allActions } from "../../redux/actions/all";
 import ErrorMock from 'src/components/tiny/ErrorMock/ErrorMock';
 import { strengthMax, strengthMin } from 'src/assets/js/consts';
 import ImgWithPreloader from 'src/assets/js/ImgWithPreloader';
+import { checkAndLoad } from 'src/assets/js/processors';
 
 
 
@@ -39,9 +40,11 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
     const [fibersList, setFibersList] = useState<IFiber[]>([]) //for sort fibers
 
     useEffect(() => {
-        if (fibersState.load.status !== 'success' && fibersState.load.status !== 'fetching') {
+        /*if (fibersState.load.status !== 'success' && fibersState.load.status !== 'fetching') {
             setState.fibers.loadFibers()
-        }
+        }*/
+        checkAndLoad(fibersState.load.status, setState.fibers.loadFibers)
+
         if (fibersState.load.status === 'success') {
             setFibersList(fibersState.fibersList)
             clearSelected()

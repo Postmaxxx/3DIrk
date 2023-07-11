@@ -10,7 +10,7 @@ import CartContent from "../../components/CartContent/CartContent";
 import AddFiles, { IAddFilesFunctions } from "../../components/AddFiles/AddFiles";
 import { allActions } from "src/redux/actions/all";
 import { headerStatus, resetFetch, timeModalClosing } from "src/assets/js/consts";
-import { errorsChecker, prevent } from "src/assets/js/processors";
+import { checkAndLoad, errorsChecker, prevent } from "src/assets/js/processors";
 
 
 interface IPropsState {
@@ -55,7 +55,7 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
 
 
 
-
+/*
     const informer = (info: TLangText): void => {
         if (!message.current) return
         message.current.update({
@@ -65,7 +65,7 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
         })
         modal_message.current?.openModal()
     }
-
+*/
     
 
     const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -101,9 +101,11 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
 
 
     useEffect(() => {
-        if (colorsState.load.status !== 'success' && colorsState.load.status !== 'fetching') {
+        /*if (colorsState.load.status !== 'success' && colorsState.load.status !== 'fetching') {
             setState.colors.loadColors()
-        }
+        }*/
+        checkAndLoad(colorsState.load.status, setState.colors.loadColors)
+        
     }, [colorsState.load.status])
 
 

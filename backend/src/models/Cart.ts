@@ -1,5 +1,5 @@
 import { Document, Schema, Model, model, Types } from 'mongoose';
-import { TLangText } from '../../../src/interfaces';
+import { TLangText } from '../interfaces';
 
 
 

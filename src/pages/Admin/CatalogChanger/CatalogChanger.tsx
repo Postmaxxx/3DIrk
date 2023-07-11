@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { allActions } from "../../../redux/actions/all";
 import Preloader from 'src/components/Preloaders/Preloader';
 import { headerStatus, resetFetch, timeModalClosing } from 'src/assets/js/consts';
-import { errorsChecker, prevent } from 'src/assets/js/processors';
+import { checkAndLoad, errorsChecker, prevent } from 'src/assets/js/processors';
 import Delete from 'src/components/Delete/Delete';
 import Featurer, { IFeaturerFunctions } from 'src/components/Featurer/Featurer';
 
@@ -105,9 +105,11 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, catalogState}): JSX.Elem
 
 
     useEffect(() => {
-        if (catalogState.catalog.load.status !== 'success' && catalogState.catalog.load.status !== 'fetching') {
+       /* if (catalogState.catalog.load.status !== 'success' && catalogState.catalog.load.status !== 'fetching') {
             setState.catalog.loadCatalog()
-        }
+        }*/
+        checkAndLoad(catalogState.catalog.load.status, setState.catalog.loadCatalog)
+
         if (catalogState.catalog.load.status === 'success') {
             fillValues()
         }

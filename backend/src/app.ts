@@ -33,7 +33,7 @@ app.use(cors({
 
 //app.use('/api/files', filesRoutes)
 
-app.use('/api/test', async (req, res) => {
+app.use('/test', async (req, res) => {
     res.status(200).json({response: 'OK'})
 })
 
@@ -49,7 +49,7 @@ const PORT: number = Number(process.env.PORT) || 5000
 
 const start = async () => {
     try {
-        await mongoose.connect(process.env.mongoUri, {
+        await mongoose.connect(process.env.mongoUri || '', {
             useNewUrlParser: true,
             useUnifiedTopology: true,
             dbName: "allData"

@@ -87,7 +87,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
 
 
 
-
+/*
     const informer = (info: TLangText): void => {
         if (!message.current) return
         message.current.update({
@@ -98,7 +98,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
         modal_message.current?.openModal()
     }
 
-
+*/
 
 
 

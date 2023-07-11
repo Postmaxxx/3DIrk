@@ -1,5 +1,5 @@
 import {Schema, Document, model, Model, Types} from 'mongoose'
-import { IImgWithThumb, TLangText } from '../../../src/interfaces'
+import { TLangText } from '../interfaces'
 
 
 interface IProduct extends Document {

@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { ICatalogItem } from '../../../src/interfaces'
+import { ICatalogItem } from '../interfaces'
 import { IAllCache } from '../data/cache'
 import { IMulterFile } from './user'
 import { IProduct } from '../models/Product'

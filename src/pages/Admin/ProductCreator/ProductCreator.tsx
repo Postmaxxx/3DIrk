@@ -12,7 +12,7 @@ import AddFiles, { IAddFilesFunctions } from 'src/components/AddFiles/AddFiles';
 import Preloader from 'src/components/Preloaders/Preloader';
 import { useNavigate, useParams } from 'react-router-dom';
 import { empty, headerStatus, productEmpty, resetFetch, selector, timeModalClosing } from 'src/assets/js/consts';
-import { errorsChecker, prevent } from 'src/assets/js/processors';
+import { checkAndLoad, errorsChecker, prevent } from 'src/assets/js/processors';
 import Picker, { IPickerFunctions } from 'src/components/Picker/Picker';
 import Featurer, { IFeaturerFunctions } from 'src/components/Featurer/Featurer';
 import Selector, { ISelectorFunctions } from 'src/components/tiny/Selector/Selector';
@@ -211,10 +211,13 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
 
 
     useEffect(() => { 
-        if (catalogState.catalog.load.status !== 'success' && catalogState.catalog.load.status !== 'fetching') {
+        /*if (catalogState.catalog.load.status !== 'success' && catalogState.catalog.load.status !== 'fetching') {
             setState.catalog.loadCatalog()
             return
-        }
+        }*/
+        checkAndLoad(catalogState.catalog.load.status, setState.catalog.loadCatalog)
+
+
         if (fibersState.load.status !== 'success' || fibersState.load.status !== 'success') return //loadFibers in App
        
         paramProductId ? setState.catalog.loadProduct(paramProductId) : setProduct({...productEmpty})
