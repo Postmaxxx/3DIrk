@@ -1,4 +1,4 @@
-import { IBaseState } from "src/interfaces"
+import { IBaseState } from "../../interfaces"
 
 const initialBase = {
     theme: 'light',

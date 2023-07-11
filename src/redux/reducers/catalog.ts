@@ -1,4 +1,4 @@
-import { IAction, ICatalogItem, ICatalogState, ICategory, IFetch, IProduct } from "src/interfaces"
+import { IAction, ICatalogItem, ICatalogState, ICategory, IFetch, IProduct } from "../../interfaces"
 import initialCatalogState from '../initialStates/catalog'
 import { actionsListCatalog } from '../actions/actionsList'
 

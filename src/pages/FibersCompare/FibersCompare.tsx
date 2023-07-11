@@ -10,10 +10,10 @@ import RatingLine from '../../components/tiny/RatingLine/RatingLine';
 import RatingMoney from '../../components/tiny/RatingMoney/RatingMoney';
 import { fibersProperties } from '../../assets/data/fibersProperties';
 import { allActions } from "../../redux/actions/all";
-import ErrorMock from 'src/components/tiny/ErrorMock/ErrorMock';
-import { strengthMax, strengthMin } from 'src/assets/js/consts';
-import ImgWithPreloader from 'src/assets/js/ImgWithPreloader';
-import { checkAndLoad } from 'src/assets/js/processors';
+import ErrorMock from '../../components/tiny/ErrorMock/ErrorMock';
+import { strengthMax, strengthMin } from '../../assets/js/consts';
+import ImgWithPreloader from '../../assets/js/ImgWithPreloader';
+import { checkAndLoad } from '../../assets/js/processors';
 
 
 

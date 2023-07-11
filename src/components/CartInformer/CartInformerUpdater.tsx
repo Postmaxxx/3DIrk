@@ -4,7 +4,7 @@ import { ICartState, IFullState, TLang } from "../../interfaces";
 import { useState, useEffect, useRef, useCallback, FC } from 'react'
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
-import { allActions } from "src/redux/actions/all";
+import { allActions } from "../../redux/actions/all";
 
 interface IPropsState {
     cart: ICartState

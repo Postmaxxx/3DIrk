@@ -1,4 +1,4 @@
-import { ICheckErrorItem, TLangText } from "src/interfaces"
+import { ICheckErrorItem, TLangText } from "../../interfaces"
 
 
 //{ref: _name, name: {en: 'Your name', ru: 'Ваше имя'}}, //receive format

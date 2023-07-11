@@ -1,21 +1,21 @@
-import { ICatalogState, IColorsState, IFibersState, IFullState, IProduct, IProsCons, ISendProduct, TLang, TLangText } from 'src/interfaces';
+import { ICatalogState, IColorsState, IFibersState, IFullState, IProduct, IProsCons, ISendProduct, TLang, TLangText } from '../../../interfaces';
 import './product-creator.scss'
 import { FC, Fragment, useRef, useMemo, useCallback } from "react";
 import { connect } from "react-redux";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
-import Modal, { IModalFunctions } from 'src/components/Modal/Modal';
-import Message, { IMessageFunctions } from 'src/components/Message/Message';
+import Modal, { IModalFunctions } from '../../../components/Modal/Modal';
+import Message, { IMessageFunctions } from '../../../components/Message/Message';
 import { useEffect, useState } from "react";
 import { allActions } from "../../../redux/actions/all";
-import AddFiles, { IAddFilesFunctions } from 'src/components/AddFiles/AddFiles';
-import Preloader from 'src/components/Preloaders/Preloader';
+import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFiles';
+import Preloader from '../../../components/Preloaders/Preloader';
 import { useNavigate, useParams } from 'react-router-dom';
-import { empty, headerStatus, productEmpty, resetFetch, selector, timeModalClosing } from 'src/assets/js/consts';
-import { checkAndLoad, errorsChecker, prevent } from 'src/assets/js/processors';
-import Picker, { IPickerFunctions } from 'src/components/Picker/Picker';
-import Featurer, { IFeaturerFunctions } from 'src/components/Featurer/Featurer';
-import Selector, { ISelectorFunctions } from 'src/components/tiny/Selector/Selector';
+import { empty, headerStatus, productEmpty, resetFetch, selector, timeModalClosing } from '../../../assets/js/consts';
+import { checkAndLoad, errorsChecker, prevent } from '../../../assets/js/processors';
+import Picker, { IPickerFunctions } from '../../../components/Picker/Picker';
+import Featurer, { IFeaturerFunctions } from '../../../components/Featurer/Featurer';
+import Selector, { ISelectorFunctions } from '../../../components/tiny/Selector/Selector';
 
 interface IPropsState {
     lang: TLang

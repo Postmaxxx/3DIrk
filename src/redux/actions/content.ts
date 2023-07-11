@@ -1,6 +1,6 @@
-import { IAction, IContentState, IDispatch, IErrRes, IFetch, IFullState, IImgWithThumb, IMsgRes, INewsItem, INewsItemShort, ISendNews, IUserState, TLangText } from "src/interfaces"
+import { IAction, IContentState, IDispatch, IErrRes, IFetch, IFullState, IImgWithThumb, IMsgRes, INewsItem, INewsItemShort, ISendNews, IUserState, TLangText } from "../../interfaces"
 import { actionsListContent } from './actionsList'
-import { empty, errorFetch, fetchingFetch, successFetch } from "src/assets/js/consts";
+import { empty, errorFetch, fetchingFetch, successFetch } from "../../assets/js/consts";
 
 
 
@@ -37,7 +37,7 @@ export const sendSplider = (files: File[]) => {
 
         //post to db
         try {
-            const response: Response = await fetch('/api/content/splider', {
+            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/content/splider`, {
                 method: 'PUT',
                 headers: {
                     'enctype': "multipart/form-data",
@@ -78,7 +78,7 @@ export const loadSplider = () => {
 
         //get from db
         try {
-            const response: Response = await fetch('/api/content/splider', {
+            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/content/splider`, {
                 method: 'GET',
                 headers: {
                     "Content-Type": 'application/json',

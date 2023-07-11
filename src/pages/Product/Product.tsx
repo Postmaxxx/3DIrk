@@ -5,16 +5,16 @@ import Preloader from '../../components/Preloaders/Preloader';
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import { ICatalogState, IColorsState, IFetch, IFiber, IFibersState, IFullState, IProduct, TId, TLang } from "src/interfaces";
+import { ICatalogState, IColorsState, IFetch, IFiber, IFibersState, IFullState, IProduct, TId, TLang } from "../../interfaces";
 import SpliderPreview from "../../components/Spliders/Preview/SpliderPreview";
 import ProductDetails from "../../components/ProductDetails/ProductDetails";
 import { allActions } from "../../redux/actions/all";
-import IconEdit from "src/components/tiny/IconEdit/IconEdit";
-import Delete from "src/components/Delete/Delete";
-import Modal, { IModalFunctions } from "src/components/Modal/Modal";
-import Message, { IMessageFunctions } from "src/components/Message/Message";
-import { gapBetweenRequests, headerStatus, resetFetch, timeModalClosing } from "src/assets/js/consts";
-import { checkAndLoad } from "src/assets/js/processors";
+import IconEdit from "../../components/tiny/IconEdit/IconEdit";
+import Delete from "../../components/Delete/Delete";
+import Modal, { IModalFunctions } from "../../components/Modal/Modal";
+import Message, { IMessageFunctions } from "../../components/Message/Message";
+import { gapBetweenRequests, headerStatus, resetFetch, timeModalClosing } from "../../assets/js/consts";
+import { checkAndLoad } from "../../assets/js/processors";
 
 
 

@@ -1,8 +1,8 @@
-import { IImgWithThumb, TLang, TLangText } from 'src/interfaces';
+import { IImgWithThumb, TLang, TLangText } from '../../interfaces';
 import './featurer.scss'
 import { useEffect, useState, forwardRef, useImperativeHandle  } from "react";
-import { prevent } from 'src/assets/js/processors';
-import { empty } from 'src/assets/js/consts';
+import { prevent } from '../../assets/js/processors';
+import { empty } from '../../assets/js/consts';
 
 
 interface IItem {

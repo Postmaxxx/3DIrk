@@ -2,15 +2,15 @@ import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import './order.scss'
-import { ICartState, IColorsState, IFetch, IFibersState, IFullState, TLang, TLangText } from "src/interfaces";
+import { ICartState, IColorsState, IFetch, IFibersState, IFullState, TLang, TLangText } from "../../interfaces";
 import { useEffect, useRef, useCallback, useMemo } from 'react'
 import Modal, { IModalFunctions } from "../../components/Modal/Modal";
 import Message, { IMessageFunctions } from "../../components/Message/Message";
 import CartContent from "../../components/CartContent/CartContent";
 import AddFiles, { IAddFilesFunctions } from "../../components/AddFiles/AddFiles";
-import { allActions } from "src/redux/actions/all";
-import { headerStatus, resetFetch, timeModalClosing } from "src/assets/js/consts";
-import { checkAndLoad, errorsChecker, prevent } from "src/assets/js/processors";
+import { allActions } from "../../redux/actions/all";
+import { headerStatus, resetFetch, timeModalClosing } from "../../assets/js/consts";
+import { checkAndLoad, errorsChecker, prevent } from "../../assets/js/processors";
 
 
 interface IPropsState {

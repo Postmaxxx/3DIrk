@@ -4,7 +4,7 @@ import iconWhatsapp from "../../assets/img/logo_whatsapp.svg"
 import iconTelegram from "../../assets/img/logo_telegram.svg"
 import iconYoutube from "../../assets/img/logo_youtube.svg"
 import { useMemo, FC } from 'react'
-import { TLang } from 'src/interfaces'
+import { TLang } from '../../interfaces'
 
 
 interface IFooter {

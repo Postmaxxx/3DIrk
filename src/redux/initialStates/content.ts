@@ -1,5 +1,5 @@
-import { resetFetch } from "src/assets/js/consts"
-import { IContentState } from "src/interfaces"
+import { resetFetch } from "../../assets/js/consts"
+import { IContentState } from "../../interfaces"
 
 const initialContentState = {
     send: resetFetch,

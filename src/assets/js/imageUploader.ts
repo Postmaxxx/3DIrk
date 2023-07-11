@@ -1,4 +1,3 @@
-import { IAction, IDispatch, IFetch, IFetchImage, IImgWithThumb, TLangText } from "src/interfaces";
 import { makeDelay } from "./makeDelay";
 import { delayBetweenImagesPost } from "./consts";
 

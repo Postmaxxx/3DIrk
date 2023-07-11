@@ -7,8 +7,7 @@ import star from "./theme_nigth__star.svg";
 import "./themeSwitcher.scss";
 import { setThemeDark, setThemeLight, setThemeToggle }  from "../../redux/actions/base"
 import { IBaseState, IFullState, TLang } from "../../interfaces";
-import { useScrollHider } from "src/hooks/scrollHider";
-//import { scrollHider } from "src/assets/js/scrollHider";
+import { useScrollHider } from "../../hooks/scrollHider";
 
 const actionsList = {setThemeDark, setThemeLight, setThemeToggle}
 

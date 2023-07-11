@@ -1,5 +1,5 @@
-import { resetFetch } from "src/assets/js/consts"
-import { IFibersState } from "src/interfaces"
+import { resetFetch } from "../../assets/js/consts"
+import { IFibersState } from "../../interfaces"
 
 const initialFibers = {
     load: resetFetch,

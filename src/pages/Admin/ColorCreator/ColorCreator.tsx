@@ -1,16 +1,16 @@
-import { IColor, IColorsState, IFetch, IFullState, ISendColor, TLang } from 'src/interfaces';
+import { IColor, IColorsState, IFetch, IFullState, ISendColor, TLang } from '../../../interfaces';
 import './color-creator.scss'
 import {  useRef, useMemo, FC, useEffect, useCallback, useState} from "react";
 import { connect } from "react-redux";
 import { AnyAction, bindActionCreators, Dispatch } from "redux";
-import Message, { IMessageFunctions } from 'src/components/Message/Message';
+import Message, { IMessageFunctions } from '../../../components/Message/Message';
 import { allActions } from "../../../redux/actions/all";
-import AddFiles, { IAddFilesFunctions } from 'src/components/AddFiles/AddFiles';
-import { checkAndLoad, errorsChecker, prevent } from 'src/assets/js/processors';
-import { colorEmpty, empty, headerStatus, resetFetch, timeModalClosing } from 'src/assets/js/consts';
-import Modal, { IModalFunctions } from 'src/components/Modal/Modal';
+import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFiles';
+import { checkAndLoad, errorsChecker, prevent } from '../../../assets/js/processors';
+import { colorEmpty, empty, headerStatus, resetFetch, timeModalClosing } from '../../../assets/js/consts';
+import Modal, { IModalFunctions } from '../../../components/Modal/Modal';
 import { useNavigate, useParams } from 'react-router-dom';
-import Preloader from 'src/components/Preloaders/Preloader';
+import Preloader from '../../../components/Preloaders/Preloader';
 
 interface IPropsState {
     lang: TLang

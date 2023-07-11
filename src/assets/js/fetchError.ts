@@ -1,4 +1,3 @@
-import { IFetch } from "src/interfaces"
 
 
 

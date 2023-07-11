@@ -5,11 +5,11 @@ import { connect } from "react-redux";
 import { IContentState, IFullState, TLang } from "../../interfaces";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
-import { allActions } from 'src/redux/actions/all';
+import { allActions } from '../../redux/actions/all';
 import { FC, useRef, useMemo, useCallback, useState, useEffect } from "react";
-import Preloader from 'src/components/Preloaders/Preloader';
-import { gapBetweenRequests } from 'src/assets/js/consts';
-import { checkAndLoad } from 'src/assets/js/processors';
+import Preloader from '../../components/Preloaders/Preloader';
+import { gapBetweenRequests } from '../../assets/js/consts';
+import { checkAndLoad } from '../../assets/js/processors';
 
 
 interface IPropsState {

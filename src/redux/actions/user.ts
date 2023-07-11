@@ -1,7 +1,7 @@
-import { IAction, ICartItem, ICartState, IDispatch, IErrRes, IFetch, IFullState, ILoggingForm, IMsgRes, IUserLoginResOk, IUserState, TLangText } from "src/interfaces";
+import { IAction, ICartItem, ICartState, IDispatch, IErrRes, IFetch, IFullState, ILoggingForm, IMsgRes, IUserLoginResOk, IUserState, TLangText } from "../../interfaces";
 import { actionsListUser } from './actionsList'
 //import { setText } from "./order";
-import { empty, errorFetch, fetchingFetch, minTimeBetweenSendings, successFetch } from "src/assets/js/consts";
+import { empty, errorFetch, fetchingFetch, minTimeBetweenSendings, successFetch } from "../../assets/js/consts";
 import moment from "moment";
 
 export const setUser = <T extends Partial<IUserState>>(payload: T):IAction<T> => ({
@@ -24,7 +24,7 @@ export const register = ({name, email, phone, password}: ILoggingForm) => {
         dispatch(setUser({...user, auth: fetchingFetch}))
         const localDate = moment().format('YYYY-MM-DD')
         try {
-            const response = await fetch('/api/user/register', {
+            const response = await fetch(`${process.env.REACT_BACK_URL}/api/user/register`, {
                 method: 'POST',
                 headers: {
                     "Content-Type": 'application/json'
@@ -59,7 +59,7 @@ export const login = ({email, password}: Pick<ILoggingForm, "email" | "password"
         if (user.auth.status === 'fetching') return             
         dispatch(setUser({...user, auth: fetchingFetch}))
         try {
-            const response: Response = await fetch('/api/user/login', {
+            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/user/login`, {
                     method: 'POST',
                     headers: {
                         "Content-Type": 'application/json',
@@ -125,7 +125,7 @@ export const loginWithToken = () => {
         dispatch(setUser({...user, auth: fetchingFetch}))
         
         try {
-            const response: Response = await fetch('/api/user/login-token', {
+            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/user/login-token`, {
                     method: 'POST',
                     headers: {
                         "Content-Type": 'application/json',
@@ -193,7 +193,7 @@ export const sendOrder = ({message, files}: ISendOrder ) => {
         sendForm.append('message', message)
         
         try {
-            const response = await fetch('/api/user/orders', {
+            const response = await fetch(`${process.env.REACT_BACK_URL}/api/user/orders`, {
                 method: 'POST',
                 headers: {
                     'enctype': "multipart/form-data",
@@ -281,7 +281,7 @@ export const sendCart = () => {
            productId: item.product._id,
         }))
         try {
-            const response: Response = await fetch('/api/user/cart', {
+            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/user/cart`, {
                 method: 'PUT',
                 headers: {
                     "Content-Type": 'application/json',

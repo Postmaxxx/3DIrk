@@ -1,7 +1,7 @@
 import { useState, forwardRef, useImperativeHandle } from 'react';
 import "./message.scss"
-import { IMessageModal } from 'src/interfaces'
-import { clearModalMessage } from 'src/assets/js/consts'
+import { IMessageModal } from '../../interfaces'
+import { clearModalMessage } from '../../assets/js/consts'
 
 
 

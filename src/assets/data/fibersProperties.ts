@@ -1,4 +1,4 @@
-import { IFiberProperties } from "src/interfaces"
+import { IFiberProperties } from "../../interfaces"
 
 
 export const fibersProperties = [

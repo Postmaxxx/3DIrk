@@ -1,5 +1,5 @@
-import { resetFetch } from "src/assets/js/consts"
-import { IUserState } from "src/interfaces"
+import { resetFetch } from "../../assets/js/consts"
+import { IUserState } from "../../interfaces"
 
 const initialUserState = {
     name: '',

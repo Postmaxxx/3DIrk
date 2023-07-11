@@ -1,7 +1,7 @@
 import { IAction, ICatalogItem, ICategory, IDispatch, IErrRes, IFetch, IFullState, IImgWithThumb, IMsgRes, IProduct, ISendProduct, TId, TLangText } from "../../interfaces"
 import { actionsListCatalog } from './actionsList'
 
-import { empty, errorFetch, fetchingFetch, resetFetch, successFetch } from "src/assets/js/consts";
+import { empty, errorFetch, fetchingFetch, resetFetch, successFetch } from "../../assets/js/consts";
 
 export const setLoadCatalog = <T extends IFetch>(payload: T):IAction<T> => ({
     type: actionsListCatalog.SET_LOAD_STATUS_CATEGORIES_LIST,
@@ -24,7 +24,7 @@ export const loadCatalog = () => {
         if ( getState().catalog.catalog.load.status === 'fetching') return
         dispatch(setLoadCatalog(resetFetch))
         try {
-            const response: Response = await fetch(`${process.env.REACT_SITE_URL}/api/catalog/list`, {
+            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/catalog/list`, {
                 method: 'GET',
                 headers: {
                     "Content-Type": 'application/json',
@@ -61,7 +61,7 @@ export const sendCatalog = (newCatalog: (Omit<ICatalogItem, "total">)[]) => {
         dispatch(setSendCatalog(resetFetch))
         
         try {
-            const response: Response = await fetch('/api/catalog/list', {
+            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/catalog/list`, {
                 method: 'PUT',
                 headers: {
                     "Content-Type": 'application/json',
@@ -119,7 +119,7 @@ export const loadCategory = ({_id, from, to}: ILoadCategory) => {
         if (getState().catalog.category.loadCategory.status === 'fetching') return
         dispatch(setLoadCategory(fetchingFetch))
         try {
-            const response = await fetch(`/api/catalog/category?_id=${_id}&from=${from}&to=${to}`, {
+            const response = await fetch(`${process.env.REACT_BACK_URL}/api/catalog/category?_id=${_id}&from=${from}&to=${to}`, {
                 method: 'GET',
                 headers: {
                     "Content-Type": 'application/json',
@@ -200,7 +200,7 @@ export const sendProduct = (product: ISendProduct) => {
         sendForm.append('data', JSON.stringify(productToSend))
         
         try {
-            const response: Response = await fetch('/api/catalog/product', {
+            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/catalog/product`, {
                 method: 'POST',
                 headers: {
                     "enctype": 'multipart/form-data',
@@ -249,7 +249,7 @@ export const editProduct = (product: ISendProduct) => {
 
         try {
 
-            const response: Response = await fetch('/api/catalog/product', {
+            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/catalog/product`, {
                 method: 'PUT',
                 headers: {
                     "enctype": 'multipart/form-data',
@@ -288,7 +288,7 @@ export const loadProduct = (_id: string) => {
         dispatch(setLoadProduct(fetchingFetch))
         
         try {
-            const response: Response = await fetch(`/api/catalog/product?_id=${_id}`, {
+            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/catalog/product?_id=${_id}`, {
                 method: 'GET',
                 headers: {
                     "Content-Type": 'application/json',
@@ -327,7 +327,7 @@ export const deleteProduct = (_id: TId) => {
         dispatch(setSendProduct(fetchingFetch))
 
         try {
-            const response: Response = await fetch('/api/catalog/product', {
+            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/catalog/product`, {
                 method: 'DELETE',
                 headers: {
                     "Content-Type": 'application/json',

@@ -1,4 +1,4 @@
-import { TLangText } from "src/interfaces";
+import { TLangText } from "../../interfaces";
 
 export const msgDecoder = (error: string): TLangText => {
     switch (error) {

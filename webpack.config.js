@@ -1,4 +1,3 @@
-const Dotenv = require('dotenv-webpack');
 const {InjectManifest} = require("workbox-webpack-plugin");
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require("path");
@@ -7,10 +6,11 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const TerserPlugin = require('terser-webpack-plugin')
 const webpack = require('webpack');
-
+const Dotenv = require('dotenv-webpack');
 
 module.exports = (env, argv) => {
-
+	const mode = argv.mode || 'development';
+	const dotenvPath = `.env.${mode}`.trim();
 	return {
 		entry: path.join(__dirname, "src", "index.tsx"), 
 		output: {
@@ -26,7 +26,9 @@ module.exports = (env, argv) => {
 			new MiniCssExtractPlugin({
 				filename: 'assets/css/[name].css', //to put all css files to specified path
 			}),
-			new Dotenv(), //use .env
+			new Dotenv({//use .env
+				path: dotenvPath,
+			  }),
 			new InjectManifest({ //injecting precache to sw
 				swSrc: './src/sw.ts', //source file
 				swDest: 'sw.js', //destanation file, root: build folder (dist)

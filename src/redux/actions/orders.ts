@@ -1,6 +1,6 @@
-import { IAction, ICartItem, IDispatch, IErrRes, IFetch, IFilterUser, IFullState, IMsgRes, IOrdersState, OrderType, TLang, TLangText } from "src/interfaces"
+import { IAction, ICartItem, IDispatch, IErrRes, IFetch, IFilterUser, IFullState, IMsgRes, IOrdersState, OrderType, TLang, TLangText } from "../../interfaces"
 import { actionsListOrders } from './actionsList'
-import { empty, errorFetch, fetchingFetch, minTimeBetweenSendings, successFetch } from "src/assets/js/consts";
+import { empty, errorFetch, fetchingFetch, minTimeBetweenSendings, successFetch } from "../../assets/js/consts";
 
 
 
@@ -35,7 +35,7 @@ export const loadOrders = ({from, to, userId, status}: ILoadOrders) => {
         if (getState().orders.load.status === 'fetching') return
         dispatch(setLoadOrders(fetchingFetch))
         try {
-            const response: Response = await fetch(`/api/user/orders?from=${from}&to=${to}&userId=${userId}&status=${status}`, {
+            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/user/orders?from=${from}&to=${to}&userId=${userId}&status=${status}`, {
                 method: 'GET',
                 headers: {
                     "Content-Type": 'application/json',
@@ -68,7 +68,7 @@ export const changeOrderStatus = (orderId: string, newStatus: OrderType) => {
         if (getState().orders.send.status === 'fetching') return
         dispatch(setSendOrders(fetchingFetch))
         try {
-            const response: Response = await fetch(`/api/user/orders`, {
+            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/user/orders`, {
                 method: 'PATCH',
                 headers: {
                     "Content-Type": 'application/json',
@@ -112,7 +112,7 @@ export const loadUsers = () => {
         if (getState().orders.userList.load.status === 'fetching') return
         dispatch(setLoadUsers(fetchingFetch))
         try {
-            const response: Response = await fetch(`/api/user/users`, {
+            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/user/users`, {
                 method: 'GET',
                 headers: {
                     "Content-Type": 'application/json',

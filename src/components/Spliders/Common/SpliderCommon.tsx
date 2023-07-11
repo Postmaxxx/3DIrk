@@ -7,7 +7,7 @@ import Modal, { IModalFunctions } from '../../../components/Modal/Modal';
 import { IImageModalFunctions } from '../../ImageModal/ImageModal';
 import { useRef, useEffect, MouseEvent } from 'react'
 import ImageModal from '../../ImageModal/ImageModal';
-import { timeModalClosing } from 'src/assets/js/consts';
+import { timeModalClosing } from '../../../assets/js/consts';
 
 
 

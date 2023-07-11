@@ -1,4 +1,4 @@
-import { TLang, TLangText } from "src/interfaces"
+import { TLang, TLangText } from "../../../interfaces"
 
 interface IProps {
     lang: TLang

@@ -1,6 +1,6 @@
-import { IAction, IDispatch, IErrRes, IFetch, IFullState, IImgWithThumb, IMsgRes, INewsItem, INewsItemShort, ISendNews, IUserState, TLangText } from "src/interfaces"
+import { IAction, IDispatch, IErrRes, IFetch, IFullState, IImgWithThumb, IMsgRes, INewsItem, INewsItemShort, ISendNews, IUserState, TLangText } from "../../interfaces"
 import { actionsListNews } from './actionsList'
-import { delayBetweenImagesPost, empty, errorFetch, fetchingFetch, successFetch } from "src/assets/js/consts";
+import { delayBetweenImagesPost, empty, errorFetch, fetchingFetch, successFetch } from "../../assets/js/consts";
 
 
 
@@ -44,7 +44,7 @@ export const loadSomeNews = (from: number, amount: number) => {
         const news = getState().news
         dispatch(setLoadNews(fetchingFetch))
         try {
-            const response: Response = await fetch(`/api/news/get-some?from=${from}&amount=${amount}`, {
+            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/news/get-some?from=${from}&amount=${amount}`, {
                 method: 'GET',
                 headers: {
                     "Content-Type": 'application/json',
@@ -86,7 +86,7 @@ export const loadOneNews = (_id: string) => {
         if (getState().news.loadOne.status === 'fetching') return
         dispatch(setLoadOneNews(fetchingFetch))
         try {
-            const response: Response = await fetch(`/api/news/get-one?_id=${_id}`, {
+            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/news/get-one?_id=${_id}`, {
                 method: 'GET',
                 headers: {
                     "Content-Type": 'application/json',
@@ -145,7 +145,7 @@ export const sendNews = () => {
             }
             sendForm.append('news', JSON.stringify(newsToDb))
 
-            const response: Response = await fetch('/api/news/create', {
+            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/news/create`, {
                 method: 'POST',
                 headers: {
                     'enctype': "multipart/form-data",
@@ -212,7 +212,7 @@ export const updateNews = () => {
             }
             sendForm.append('news', JSON.stringify(newsToDb))
             
-            const response: Response = await fetch('/api/news/edit', {
+            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/news/edit`, {
                 method: 'PUT',
                 headers: {
                     'enctype': "multipart/form-data",
@@ -252,7 +252,7 @@ export const deleteNews = (_id: string) => {
         
         try {
             
-            const response: Response = await fetch('/api/news/delete', {
+            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/news/delete`, {
                 method: 'DELETE',
                 headers: {
                     "Content-Type": 'application/json',

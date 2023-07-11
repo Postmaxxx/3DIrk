@@ -1,5 +1,5 @@
-import { empty, resetFetch } from 'src/assets/js/consts';
-import { ICatalogState } from "src/interfaces"
+import { empty, resetFetch } from '../../assets/js/consts';
+import { ICatalogState } from "../../interfaces"
 
 const initialCatalog = {
     catalog: {

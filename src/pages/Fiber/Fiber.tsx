@@ -6,18 +6,18 @@ import { connect } from "react-redux";
 import Preloader from '../../components/Preloaders/Preloader';
 import { TLang, IFullState, IFiber, IFibersState, IColorsState, IColor } from "../../interfaces";
 import { allActions } from "../../redux/actions/all";
-import Modal, { IModalFunctions } from 'src/components/Modal/Modal';
-import Message, { IMessageFunctions } from 'src/components/Message/Message';
-import { headerStatus, resetFetch, timeModalClosing } from 'src/assets/js/consts';
-import ErrorMock from 'src/components/tiny/ErrorMock/ErrorMock';
-import SpliderCommon from 'src/components/Spliders/Common/SpliderCommon';
+import Modal, { IModalFunctions } from '../../components/Modal/Modal';
+import Message, { IMessageFunctions } from '../../components/Message/Message';
+import { headerStatus, resetFetch, timeModalClosing } from '../../assets/js/consts';
+import ErrorMock from '../../components/tiny/ErrorMock/ErrorMock';
+import SpliderCommon from '../../components/Spliders/Common/SpliderCommon';
 import Features from '../../components/Features/Params';
-import Proscons from 'src/components/Proscons/Proscons';
-import IconEdit from 'src/components/tiny/IconEdit/IconEdit';
-import Delete from 'src/components/Delete/Delete';
-import ImageModal, { IImageModalFunctions } from 'src/components/ImageModal/ImageModal';
-import ImgWithPreloader from 'src/assets/js/ImgWithPreloader';
-import { checkAndLoad } from 'src/assets/js/processors';
+import Proscons from '../../components/Proscons/Proscons';
+import IconEdit from '../../components/tiny/IconEdit/IconEdit';
+import Delete from '../../components/Delete/Delete';
+import ImageModal, { IImageModalFunctions } from '../../components/ImageModal/ImageModal';
+import ImgWithPreloader from '../../assets/js/ImgWithPreloader';
+import { checkAndLoad } from '../../assets/js/processors';
 
 
 interface IPropsState {

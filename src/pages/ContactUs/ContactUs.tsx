@@ -2,14 +2,14 @@ import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import './contact-us.scss'
-import {  IFullState,  IUserState, TLang, TLangText } from "src/interfaces";
+import {  IFullState,  IUserState, TLang, TLangText } from "../../interfaces";
 import {  useEffect, useRef, useMemo, useCallback } from 'react'
 import Modal, { IModalFunctions } from "../../components/Modal/Modal";
 import AddFiles, { IAddFilesFunctions } from "../../components/AddFiles/AddFiles";
-import { allActions } from "src/redux/actions/all";
-import Message, { IMessageFunctions } from "src/components/Message/Message";
-import { headerStatus, resetFetch } from "src/assets/js/consts";
-import { errorsChecker, prevent } from "src/assets/js/processors";
+import { allActions } from "../../redux/actions/all";
+import Message, { IMessageFunctions } from "../../components/Message/Message";
+import { headerStatus, resetFetch } from "../../assets/js/consts";
+import { errorsChecker, prevent } from "../../assets/js/processors";
 
 
 interface IPropsState {

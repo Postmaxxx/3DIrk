@@ -1,18 +1,18 @@
-import { IFetch, IFullState, INewsItem, TLang } from 'src/interfaces';
+import { IFetch, IFullState, INewsItem, TLang } from '../../../interfaces';
 import './splider-changer.scss'
 import { FC, useRef, useMemo, useCallback, useState } from "react";
 import { connect } from "react-redux";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
-import Modal, { IModalFunctions } from 'src/components/Modal/Modal';
-import Message, { IMessageFunctions } from 'src/components/Message/Message';
+import Modal, { IModalFunctions } from '../../../components/Modal/Modal';
+import Message, { IMessageFunctions } from '../../../components/Message/Message';
 import { useEffect } from "react";
 import { allActions } from "../../../redux/actions/all";
-import AddFiles, { IAddFilesFunctions } from 'src/components/AddFiles/AddFiles';
-import { empty, headerStatus, resetFetch, timeModalClosing } from 'src/assets/js/consts';
-import { errorsChecker, prevent } from 'src/assets/js/processors';
+import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFiles';
+import { empty, headerStatus, resetFetch, timeModalClosing } from '../../../assets/js/consts';
+import { errorsChecker, prevent } from '../../../assets/js/processors';
 import { useNavigate, useParams } from 'react-router-dom';
-import Preloader from 'src/components/Preloaders/Preloader';
+import Preloader from '../../../components/Preloaders/Preloader';
 
 interface IPropsState {
     lang: TLang

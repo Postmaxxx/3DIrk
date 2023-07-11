@@ -1,16 +1,16 @@
 import { useState, useRef, useMemo } from "react";
 import { NavLink } from "react-router-dom";
-import { IFiber, IFullState, IPageItem, TLang } from "src/interfaces";
+import { IFiber, IFullState, IPageItem, TLang } from "../../interfaces";
 import "./nav.scss"
 import navLogo from "../../assets/img/nav_logo.png"
 import { connect } from "react-redux";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import CartInformer from "../../components/CartInformer/CartInformerUpdater";
-import Modal, { IModalFunctions } from "src/components/Modal/Modal";
-import Auth from "src/components/Auth/Auth";
+import Modal, { IModalFunctions } from "../../components/Modal/Modal";
+import Auth from "../../components/Auth/Auth";
 import { allActions } from "../../redux/actions/all";
-import { resetFetch } from "src/assets/js/consts";
+import { resetFetch } from "../../assets/js/consts";
 
 
 interface IPropsState {

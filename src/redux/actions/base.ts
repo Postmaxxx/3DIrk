@@ -1,4 +1,4 @@
-import { IAction } from "src/interfaces"
+import { IAction } from "../../interfaces"
 import { actionsListBase } from './actionsList'
 
 

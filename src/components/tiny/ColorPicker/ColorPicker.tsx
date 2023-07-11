@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import Modal, { IModalFunctions } from '../../../components/Modal/Modal';
 import ModalImage, { IImageModalFunctions } from '../../ImageModal/ImageModal';
 import ImageModal from '../../ImageModal/ImageModal';
-import { timeModalClosing } from 'src/assets/js/consts';
+import { timeModalClosing } from '../../../assets/js/consts';
 
 
 interface IPropsState {

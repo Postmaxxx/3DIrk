@@ -1,4 +1,4 @@
-import { IAction, IContentState } from "src/interfaces"
+import { IAction, IContentState } from "../../interfaces"
 import initialContentState from '../initialStates/content'
 import { actionsListContent } from '../actions/actionsList'
 

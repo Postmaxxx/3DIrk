@@ -38,21 +38,23 @@
     "workbox-webpack-plugin": "^7.0.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "startdev": "set NODE_ENV=development && react-scripts start",
+    "startprod": "set NODE_ENV=production && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy_old": "npm run build && npx workbox injectManifest workbox-config.js",
     "deploy_old": "gh-pages -d build",
-    "serverfe": "webpack serve --mode development",
+    "serverfedev": "webpack serve --mode development",
+    "serverfeprod": "webpack serve --mode production",
     "buildfe": "webpack --mode production",
 
     "startbe": "npm run start --prefix backend",
-    "serverbe": "npm run serverdev --prefix backend",
+    "serverbedev": "npm run serverdev --prefix backend",
 
     "serverbeprod": "npm run serverprod --prefix backend",
 
-    "dev": "concurrently \"npm run serverfe\" \"npm run serverbe\"",
+    "dev": "concurrently \"npm run serverfedev\" \"npm run serverbedev\"",
     "predeploy": "webpack --mode production",
     "deploy": "gh-pages -d dist"
   },

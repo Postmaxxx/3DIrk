@@ -1,7 +1,7 @@
 import './carouselmax.scss'
 import { useEffect,useRef, useState } from 'react';
 import ImgWithPreloader from '../../assets/js/ImgWithPreloader'
-import { IImgWithThumb, ISplider } from 'src/interfaces';
+import { IImgWithThumb, ISplider } from '../../interfaces';
 
 
 

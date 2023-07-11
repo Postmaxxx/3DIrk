@@ -8,11 +8,11 @@ import { connect } from "react-redux";
 import { useRef, useEffect, FC, useMemo, useCallback } from "react";
 import SpliderCommon from '../../components/Spliders/Common/SpliderCommon';
 import { allActions } from "../../redux/actions/all";
-import Delete from 'src/components/Delete/Delete';
+import Delete from '../../components/Delete/Delete';
 import Modal, { IModalFunctions } from "../../components/Modal/Modal";
-import Message, { IMessageFunctions } from 'src/components/Message/Message';
-import IconEdit from 'src/components/tiny/IconEdit/IconEdit';
-import { headerStatus, resetFetch, timeModalClosing } from 'src/assets/js/consts';
+import Message, { IMessageFunctions } from '../../components/Message/Message';
+import IconEdit from '../../components/tiny/IconEdit/IconEdit';
+import { headerStatus, resetFetch, timeModalClosing } from '../../assets/js/consts';
 
 
 interface IPropsState {

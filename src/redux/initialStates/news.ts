@@ -1,5 +1,5 @@
-import { empty, resetFetch } from "src/assets/js/consts"
-import { INewsState } from "src/interfaces"
+import { empty, resetFetch } from "../../assets/js/consts"
+import { INewsState } from "../../interfaces"
 
 const initialNews = {
     load: resetFetch,

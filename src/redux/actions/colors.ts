@@ -1,6 +1,6 @@
 import { IAction, IDispatch, IColor, IColorsState, IFetch, IFullState, IErrRes, TLangText, IMsgRes, ISendColor, IImgWithThumb } from "../../interfaces"
 import { actionsListColors } from './actionsList'
-import { empty, fetchingFetch } from "src/assets/js/consts";
+import { empty, fetchingFetch } from "../../assets/js/consts";
 //import mockColors from "../mocks/colors";
 
 
@@ -42,7 +42,7 @@ export const loadColors = () => {
         if (getState().colors.load.status === 'fetching') return
         dispatch(setLoadColors(fetchingFetch))
         try {
-            const response: Response = await fetch('/api/colors/load-all', {
+            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/colors/load-all`, {
                 method: 'GET',
                 headers: {
                     "Content-Type": 'application/json',
@@ -98,7 +98,7 @@ export const sendColor = (color: ISendColor) => {
 
         // to db
         try {
-            const response: Response = await fetch('/api/colors/create', {
+            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/colors/create`, {
                 method: 'POST',
                 headers: {
                     'enctype': "multipart/form-data",
@@ -148,7 +148,7 @@ export const editColor = (color: ISendColor) => {
         
         // to db
         try {
-            const response: Response = await fetch('/api/colors/edit', {
+            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/colors/edit`, {
                 method: 'PUT',
                 headers: {
                     "enctype": 'multipart/form-data',
@@ -189,7 +189,7 @@ export const deleteColor = (_id: string) => {
         dispatch(setSendColors(fetchingFetch))       
         // to db
         try {
-            const response: Response = await fetch('/api/colors/delete', {
+            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/colors/delete`, {
                 method: 'DELETE',
                 headers: {
                     "Content-Type": 'application/json',

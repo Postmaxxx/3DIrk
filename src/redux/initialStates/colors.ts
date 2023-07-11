@@ -1,6 +1,5 @@
-import { resetFetch } from "src/assets/js/consts"
-import { IColorsState } from "src/interfaces"
-
+import { resetFetch } from "../../assets/js/consts"
+import { IColorsState } from "../../interfaces"
 const initialColors = {
     load: resetFetch,
     send: resetFetch,

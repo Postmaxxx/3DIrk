@@ -1,15 +1,15 @@
 import './orders.scss'
-import { allActions } from "src/redux/actions/all";
+import { allActions } from "../../redux/actions/all";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import { IColorsState, IFetch, IFibersState, IFilterUser, IFullState, IOrdersState, IUserState, OrderType, TLang, TLangText } from 'src/interfaces';
+import { IColorsState, IFetch, IFibersState, IFilterUser, IFullState, IOrdersState, IUserState, OrderType, TLang, TLangText } from '../../interfaces';
 import {Fragment, useEffect, useRef, useCallback, useMemo, useState } from 'react'
-import { gapBetweenRequests, orderStatus, timeOffset, usersPerPage } from 'src/assets/js/consts';
+import { gapBetweenRequests, orderStatus, timeOffset, usersPerPage } from '../../assets/js/consts';
 import moment from "moment";
-import Preloader from 'src/components/Preloaders/Preloader';
+import Preloader from '../../components/Preloaders/Preloader';
 import { useNavigate } from 'react-router-dom';
-import { checkAndLoad } from 'src/assets/js/processors';
+import { checkAndLoad } from '../../assets/js/processors';
 
 
 

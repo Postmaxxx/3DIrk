@@ -1,4 +1,4 @@
-import { IAction, IColorsState } from "src/interfaces"
+import { IAction, IColorsState } from "../../interfaces"
 import initialColorsState from '../initialStates/colors'
 import { actionsListColors } from '../actions/actionsList'
 

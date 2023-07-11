@@ -1,4 +1,4 @@
-import { IFetch, IFiber, IFiberParam, IMessageModal, ISendColor, ISendFiber, ISendProduct, TLangText } from "src/interfaces"
+import { IFetch, IFiber, IFiberParam, IMessageModal, ISendColor, ISendFiber, ISendProduct, TLangText } from "../../interfaces"
 
 const delayBetweenImagesPost: number = 300
 

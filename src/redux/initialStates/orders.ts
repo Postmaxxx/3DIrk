@@ -1,5 +1,5 @@
-import { resetFetch } from "src/assets/js/consts"
-import { IOrdersState } from "src/interfaces"
+import { resetFetch } from "../../assets/js/consts"
+import { IOrdersState } from "../../interfaces"
 
 const initialOrders = {
     load: {...resetFetch},

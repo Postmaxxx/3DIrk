@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react'
 import "./image-modal.scss"
 import Preloader from '../Preloaders/Preloader'
-import { IImageModal } from 'src/interfaces'
+import { IImageModal } from '../../interfaces'
 
 
 export interface IImageModalFunctions {

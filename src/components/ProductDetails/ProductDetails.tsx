@@ -1,4 +1,4 @@
-import {  ICatalog, IColor, IColorsState, IFetch, IFiber, IFibersState, IFullState,  IProduct,  TId, TLang, } from 'src/interfaces'
+import {  ICatalog, IColor, IColorsState, IFetch, IFiber, IFibersState, IFullState,  IProduct,  TId, TLang, } from '../../interfaces'
 import './product-details.scss'
 import { useRef, useEffect, useState, useMemo } from "react";
 import { AnyAction, bindActionCreators } from "redux";

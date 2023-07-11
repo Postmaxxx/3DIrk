@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { IFullState, TLang, TTheme } from "../../interfaces";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
-import { useScrollHider } from "src/hooks/scrollHider";
+import { useScrollHider } from "../../hooks/scrollHider";
 import { allActions } from "../../redux/actions/all";
 
 

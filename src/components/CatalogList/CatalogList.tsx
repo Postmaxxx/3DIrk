@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { allActions } from "../../redux/actions/all";
 import Preloader from "../Preloaders/Preloader";
 import ErrorMock from "../tiny/ErrorMock/ErrorMock";
-import { checkAndLoad } from "src/assets/js/processors";
+import { checkAndLoad } from "../../assets/js/processors"
 
 
 interface IPropsState {

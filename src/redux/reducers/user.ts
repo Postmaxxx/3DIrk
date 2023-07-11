@@ -1,4 +1,4 @@
-import { IAction, ICartItem, ICartState, IUserState } from "src/interfaces"
+import { IAction, ICartItem, ICartState, IUserState } from "../../interfaces"
 import initialUserState from '../initialStates/user'
 import { actionsListUser } from '../actions/actionsList'
 

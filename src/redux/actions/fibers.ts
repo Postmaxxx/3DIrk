@@ -1,6 +1,6 @@
-import { IAction, IDispatch, IErrRes, IFetch, IFiber, IFullState, IImgWithThumb, IMsgRes, ISendFiber, TLangText } from "src/interfaces"
+import { IAction, IDispatch, IErrRes, IFetch, IFiber, IFullState, IImgWithThumb, IMsgRes, ISendFiber, TLangText } from "../../interfaces"
 import { actionsListFibers } from './actionsList'
-import { empty, errorFetch, fetchingFetch } from "src/assets/js/consts";
+import { empty, errorFetch, fetchingFetch } from "../../assets/js/consts";
 
 
 
@@ -33,7 +33,7 @@ export const loadFibers = () => {
         const token = getState().user.token
         dispatch(setLoadFibers(fetchingFetch))
         try {
-            const response = await fetch('/api/fibers/all', {
+            const response = await fetch(`${process.env.REACT_BACK_URL}/api/fibers/all`, {
                 method: "GET",
                 headers: {
                     'Content-type': 'application/json',
@@ -90,7 +90,7 @@ export const sendFiber = (newFiber: ISendFiber) => {
 
         //fetch to db
         try { 
-            const response: Response = await fetch('/api/fibers/create', {
+            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/fibers/create`, {
                 method: 'POST',
                 headers: {
                     'enctype': "multipart/form-data",
@@ -145,7 +145,7 @@ export const editFiber = (fiber: ISendFiber) => {
         try {
 
             
-            const response: Response = await fetch('/api/fibers/edit', {
+            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/fibers/edit`, {
                 method: 'PUT',
                 headers: {
                     "enctype": 'multipart/fomr-data',
@@ -184,7 +184,7 @@ export const deleteFiber = (_id: string) => {
         dispatch(setSendFibers(fetchingFetch))
 
         try {
-            const response: Response = await fetch(`/api/fibers/delete`,{
+            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/fibers/delete`,{
                 method: 'DELETE',
                 headers: {
                     "Content-Type": 'application/json',

@@ -1,4 +1,4 @@
-import { IAction, ICartItem, IFetch, IOrdersState } from "src/interfaces"
+import { IAction, ICartItem, IFetch, IOrdersState } from "../../interfaces"
 import initialOrderState from '../initialStates/orders'
 import { actionsListOrders } from '../actions/actionsList'
 

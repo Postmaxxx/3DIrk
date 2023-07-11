@@ -1,4 +1,4 @@
-import { IFullState, IUserState, TLang } from 'src/interfaces'
+import { IFullState, IUserState, TLang } from '../../interfaces'
 import Modal from '../Modal/Modal'
 import './user-block.scss'
 import { useState, useRef, useEffect } from 'react'
@@ -6,7 +6,7 @@ import Auth from '../Auth/Auth'
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import { useScrollHider } from 'src/hooks/scrollHider'
+import { useScrollHider } from '../../hooks/scrollHider'
 import { allActions } from "../../redux/actions/all";
 
 

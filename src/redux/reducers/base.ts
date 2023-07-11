@@ -1,4 +1,4 @@
-import { IAction, IBaseState } from "src/interfaces"
+import { IAction, IBaseState } from "../../interfaces"
 import initialBaseState from '../initialStates/base'
 import { actionsListBase } from '../actions/actionsList'
 

@@ -1,7 +1,7 @@
-import { TLang, TLangText } from "src/interfaces"
+import { TLang, TLangText } from "../../../interfaces"
 import { useRef, useEffect, useState, useMemo, forwardRef, useImperativeHandle } from "react";
 import './selector.scss'
-import { empty } from "src/assets/js/consts";
+import { empty } from "../../../assets/js/consts";
 
 
 interface IItem {

@@ -3,11 +3,11 @@ import './auth.scss'
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import { ICheckErrorItem, IFullState, ILoggingForm, IUserState, TLang, TLangText } from 'src/interfaces';
+import { ICheckErrorItem, IFullState, ILoggingForm, IUserState, TLang, TLangText } from '../../interfaces';
 import { setUser, register, login } from "../../redux/actions/user"
-import inputChecker from 'src/assets/js/inputChecker';
-import { empty, resetFetch } from 'src/assets/js/consts';
-import { errorsChecker } from 'src/assets/js/processors';
+import inputChecker from '../../assets/js/inputChecker';
+import { empty, resetFetch } from '../../assets/js/consts';
+import { errorsChecker } from '../../assets/js/processors';
 import Hider from '../tiny/Hider/Hider';
 
 const actionsListUser = { setUser, register, login }

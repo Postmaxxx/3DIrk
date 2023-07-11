@@ -2,7 +2,7 @@ import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import './cart-content.scss'
-import { ICartItem, ICartState, ICatalogState, IColor, IColorsState, IFiber, IFibersState, IFullState, IProduct, TLang } from "src/interfaces";
+import { ICartItem, ICartState, ICatalogState, IColor, IColorsState, IFiber, IFibersState, IFullState, IProduct, TLang } from "../../interfaces";
 import { useState, useEffect, useRef } from 'react'
 import { NavLink } from "react-router-dom";
 import Delete from "../Delete/Delete";
@@ -14,7 +14,6 @@ import ModalImage, { IImageModalFunctions } from "../ImageModal/ImageModal";
 import { allActions } from "../../redux/actions/all";
 import ImageModal from "../ImageModal/ImageModal";
 import ErrorMock from "../tiny/ErrorMock/ErrorMock";
-import { empty, resetFetch, successFetch } from "src/assets/js/consts";
 
 
 

@@ -1,4 +1,4 @@
-import { IFetch, TLang, TLangText } from "src/interfaces";
+import { IFetch, TLang, TLangText } from "../../interfaces";
 import { gapBetweenRequests, selector } from "./consts";
 
 //---------------------------------------------------------------

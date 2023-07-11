@@ -1,4 +1,4 @@
-import { IAction, IFibersState } from "src/interfaces"
+import { IAction, IFibersState } from "../../interfaces"
 import initialFibersState from '../initialStates/fibers'
 import { actionsListFibers } from '../actions/actionsList'
 

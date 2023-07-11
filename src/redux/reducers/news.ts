@@ -1,4 +1,4 @@
-import { IAction, INewsState } from "src/interfaces"
+import { IAction, INewsState } from "../../interfaces"
 import initialNewsState from '../initialStates/news'
 import { actionsListNews } from '../actions/actionsList'
 

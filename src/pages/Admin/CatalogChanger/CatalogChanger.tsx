@@ -1,18 +1,18 @@
-import { ICatalog,  ICatalogItem,  ICatalogState,  ICatalogTypes,  IFullState, TLang, TLangText } from 'src/interfaces';
+import { ICatalog,  ICatalogItem,  ICatalogState,  ICatalogTypes,  IFullState, TLang, TLangText } from '../../../interfaces';
 import './catalog-changer.scss'
 import { FC, Fragment, useRef, useMemo, useCallback } from "react";
 import { connect } from "react-redux";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
-import Modal, { IModalFunctions } from 'src/components/Modal/Modal';
-import Message, { IMessageFunctions } from 'src/components/Message/Message';
+import Modal, { IModalFunctions } from '../../../components/Modal/Modal';
+import Message, { IMessageFunctions } from '../../../components/Message/Message';
 import { useEffect, useState } from "react";
 import { allActions } from "../../../redux/actions/all";
-import Preloader from 'src/components/Preloaders/Preloader';
-import { headerStatus, resetFetch, timeModalClosing } from 'src/assets/js/consts';
-import { checkAndLoad, errorsChecker, prevent } from 'src/assets/js/processors';
-import Delete from 'src/components/Delete/Delete';
-import Featurer, { IFeaturerFunctions } from 'src/components/Featurer/Featurer';
+import Preloader from '../../../components/Preloaders/Preloader';
+import { headerStatus, resetFetch, timeModalClosing } from '../../../assets/js/consts';
+import { checkAndLoad, errorsChecker, prevent } from '../../../assets/js/processors';
+import Delete from '../../../components/Delete/Delete';
+import Featurer, { IFeaturerFunctions } from '../../../components/Featurer/Featurer';
 
 
 interface IOnAddCategory {
