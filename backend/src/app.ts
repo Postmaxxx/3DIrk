@@ -1,7 +1,13 @@
 import { allPaths } from "./data/consts"
 import { foldersCleaner } from "./processors/fsTools"
+const mode = process.env.NODE_ENV || 'development';
 
-require('dotenv').config()
+const pathToEnv = `.env.${mode}`.trim()
+require('dotenv').config({
+    path: pathToEnv,
+})
+
+
 const userRoutes = require('./routes/user')
 const fibersRoutes = require('./routes/fibers')
 const newsRoutes = require('./routes/news')

@@ -48,7 +48,7 @@
     "buildfe": "webpack --mode production",
 
     "startbe": "npm run start --prefix backend",
-    "serverbe": "npm run server --prefix backend",
+    "serverbe": "npm run serverdev --prefix backend",
 
     "serverbeprod": "npm run serverprod --prefix backend",
 
