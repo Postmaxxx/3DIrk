@@ -62,7 +62,7 @@ const imagesResizer = async ({files = [], format = 'webp', sizesConvertTo = []}:
         }
     }
     
-    return sizesConvertTo.reduce((acc, size) => ({...acc, [size.type]: `${allPaths.pathToServer}/${size.path}`}), {}) as Record<keyof IImageSizes, string>
+    return sizesConvertTo.reduce((acc, size) => ({...acc, [size.type]: `${process.env.pathToStorage}/${size.path}`}), {}) as Record<keyof IImageSizes, string>
 }
 
 

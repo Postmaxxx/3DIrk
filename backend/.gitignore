@@ -1,5 +1,8 @@
 node_modules
+dist/
+data/
+uploads/
+.aws/
 .env
-dist
 .env.production
 .env.development

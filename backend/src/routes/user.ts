@@ -488,7 +488,7 @@ router.get('/orders',
                     message: order.info.message,
                     status: order.status,
                     attachedFiles: order.info.files,
-                    pathToFiles: `${allPaths.pathToServer}/${order.info.path}`,
+                    pathToFiles: `${process.env.pathToStorage}/${order.info.path}`,
                     cart: cart
                 })
                 return acc
