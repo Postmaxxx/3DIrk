@@ -10,7 +10,23 @@ const Dotenv = require('dotenv-webpack');
 
 module.exports = (env, argv) => {
 	const mode = argv.mode || 'development';
-	const dotenvPath = `.env.${mode}`.trim();
+	const dotenvPath = `./.env.${mode}`.trim();
+	console.log(`Env: `, dotenvPath);
+
+	const optimization = {};
+	if (mode === 'production') {
+		optimization.minimizer = [
+			new CssMinimizerPlugin(),//minimize css file, remove duplicates
+			new TerserPlugin({//minimize js file
+				terserOptions: {
+					compress: {
+						drop_console: true,// remove console statement
+					},
+				},
+			}),
+		];
+		optimization.minimize = true;
+	}
 	return {
 		entry: path.join(__dirname, "src", "index.tsx"), 
 		output: {
@@ -26,9 +42,9 @@ module.exports = (env, argv) => {
 			new MiniCssExtractPlugin({
 				filename: 'assets/css/[name].css', //to put all css files to specified path
 			}),
-			new Dotenv({//use .env
+			new Dotenv({
 				path: dotenvPath,
-			  }),
+			}),
 			new InjectManifest({ //injecting precache to sw
 				swSrc: './src/sw.ts', //source file
 				swDest: 'sw.js', //destanation file, root: build folder (dist)
@@ -49,22 +65,9 @@ module.exports = (env, argv) => {
 			}),
 
 		], 
-		optimization: { //works for build mode
-			minimizer: [
-				new CssMinimizerPlugin(), //minimize css file, remove duplicates
-				new TerserPlugin({ //minimize js file
-					terserOptions: {
-					  compress: {
-						drop_console: true, // remove console statement
-					  },
-					},
-				  }),
-			],
-			minimize: true,
-		},
-
+		optimization: optimization,
 		devServer: {
-			port: 80, // change the port if neccessary
+			port: argv.mode === 'development' ? 80 : 80, // change the port if neccessary
 		},
 		resolve: {
 			extensions: [ ".tsx", ".ts", ".jsx", ".js", ""], //to add extensions for import, to use './components/Preloaders/Preloader' <- Preloader.tsx
@@ -86,7 +89,7 @@ module.exports = (env, argv) => {
 					},
 				},
 				{
-					test: /\.(sa|sc|c)ss$/, // processing styles files, right to left, MiniCssExtractPlugin.loader for move files in cpecified folder, can be replaced by "style-loader"
+					test: /\.(sa|sc|c)ss$/, // processing styles files, right to left, MiniCssExtractPlugin.loader for move files in specified folder, can be replaced by "style-loader"
 					use: [
 						{
 							loader: MiniCssExtractPlugin.loader,

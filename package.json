@@ -40,7 +40,7 @@
   "scripts": {
     "startdev": "set NODE_ENV=development && react-scripts start",
     "startprod": "set NODE_ENV=production && react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build 2",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy_old": "npm run build && npx workbox injectManifest workbox-config.js",

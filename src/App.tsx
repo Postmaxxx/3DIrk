@@ -58,9 +58,6 @@ const MemoFooter = memo(Footer)
 
 const App:React.FC<IProps> = ({lang, setState}):JSX.Element => {
 	
-
-	
-	
 	useEffect(() => {
 		setState.user.loginWithToken()
 		setState.fibers.loadFibers()

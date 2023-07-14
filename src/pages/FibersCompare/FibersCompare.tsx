@@ -108,7 +108,7 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
             let reverse: boolean = true
             const newFibers = prev.sort((fiberA, fiberB) => { 
                 const delta = (fiberA.params[_id] as number) - (fiberB.params[_id] as number)
-                delta < 0 ? reverse = false : null
+                delta < 0 && (reverse = false)
                 return delta
             })
             return reverse ? [...newFibers.reverse()] : [...newFibers]

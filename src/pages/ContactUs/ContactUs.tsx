@@ -57,11 +57,14 @@ const ContactUs:React.FC<IProps> = ({lang, userState, setState}): JSX.Element =>
 
     const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
         prevent(e)
-        if (!_name.current || !_email.current || !_phone.current || !_message.current || !addFiles.current) return
-        const currentDate: Date = new Date();
-        errChecker.check(_name.current, 2, 50)
-        errChecker.check(_email.current, 6, 60)
-        errChecker.check(_phone.current, 6, 20)
+        
+        if (!_message.current || !addFiles.current) return
+        if (userState.auth.status !== 'success') {
+            if (!_name.current || !_email.current || !_phone.current) return
+            errChecker.check(_name.current, 2, 50)
+            errChecker.check(_email.current, 6, 60)
+            errChecker.check(_phone.current, 6, 20)
+        }
         errChecker.check(_message.current, 10, 3000)
         
         if (errChecker.amount() > 0) {
