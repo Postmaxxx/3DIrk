@@ -8,7 +8,8 @@ const Fiber = require("../models/Fiber")
 import { IAllCache } from '../data/cache'
 import { IMulterFile } from "./user";
 import { allPaths } from "../data/consts";
-import { resizeAndSave } from "../processors/sharp";
+import { resizeAndSaveS3 } from "../processors/sharp";
+import { folderCleanerS3 } from "../processors/aws";
 const cache: IAllCache = require('../data/cache')
 const fileSaver = require('../routes/files')
 
@@ -23,7 +24,7 @@ router.post('/create',
             const { name, text, short, params, images, proscons, colors } = JSON.parse(req.body.data)
             const files = req.files as IMulterFile[] || []  
             const fiber: IFiber = new Fiber({ name, text, proscons, short, params, images,  colors })
-            const paths = await resizeAndSave({
+            const paths = await resizeAndSaveS3({
                 files,
                 clearDir: true,
                 saveFormat: 'webp',
@@ -104,7 +105,7 @@ router.put('/edit',
             }
 
 
-            const paths = await resizeAndSave({
+            const paths = await resizeAndSaveS3({
                 files,
                 clearDir: true,
                 saveFormat: 'webp',
@@ -131,7 +132,10 @@ router.put('/edit',
 
 router.get('/all', async (req, res) => {
     try {
-        await cache.fibers.control.load(res)    
+        const err = await cache.fibers.control.load()
+        if (err) {
+            return res.status(500).json(err)
+        }  
         return res.status(200).json({fibers: cache.fibers.data, message: {en: `Fibers loaded`, ru: `Материалы загружены`}})
     } catch (e) {
         return res.status(500).json({ message:{en: `Something wrong with server ${e}, try again later`, ru: `Ошибка на сервере ${e}, попробуйте позже`}})
@@ -165,8 +169,13 @@ router.delete('/delete',
                 return res.status(404).json({message: {en: `Fiber was not found`, ru: `Материал не найден`}})
             }
             cache.fibers.obsolete = true
+            
+            const err = await cache.fibers.control.load()
+            if (err) {
+                return res.status(500).json(err)
+            } 
+            await folderCleanerS3(process.env.s3BucketName, `${allPaths.pathToImages}/${allPaths.pathToFibers}/${_id}/`)
 
-            await cache.fibers.control.load(res)
             return res.status(200).json({message: {en: `Fiber has been deleted`, ru: `Материал был удален`}})
         } catch (error) {
             return res.status(404).json({message: {en: `Fiber was not found`, ru: `Материал не найден`}})

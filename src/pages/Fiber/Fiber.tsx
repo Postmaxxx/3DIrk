@@ -107,7 +107,7 @@ const Fiber: FC<IProps> = ({lang, fibersState, colorsState, setState, isAdmin}):
         if (fibersState.load.status === 'success') {
             setState.fibers.setSelectedFiber(paramFiberId)
         }
-    }, [paramFiberId, fibersState.load.status])
+    }, [paramFiberId, fibersState.load.status]) 
 
 
     const renderFiberItem = useMemo(() => {
@@ -116,7 +116,7 @@ const Fiber: FC<IProps> = ({lang, fibersState, colorsState, setState, isAdmin}):
             <div className="fiber__item">
             <h2>{fiber.short.name[lang]} ({fiber.name[lang]})</h2>
             <div className='fiber__splider__container'>
-                <SpliderCommon images={fiber.images} defaultSize='medium' imagesPerSlide={fiber.images.files?.length > 3 ? 3 : fiber.images.files?.length}/>
+                <SpliderCommon images={fiber.images} defaultSize='small' imagesPerSlide={fiber.images.files?.length > 3 ? 3 : fiber.images.files?.length}/>
             </div>
             <div className="fiber__descr__container">
                 <div className="block_text">

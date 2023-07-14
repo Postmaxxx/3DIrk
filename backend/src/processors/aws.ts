@@ -1,9 +1,7 @@
-import { IMulterFile } from "../routes/user";
-
 const AWS = require('aws-sdk');
+
 var credentials = new AWS.SharedIniFileCredentials({profile: 'default'});
 AWS.config.credentials = credentials;
-
 
 AWS.config.update({
   accessKeyId: process.env.awsAC,
@@ -14,84 +12,132 @@ AWS.config.update({
 const s3 = new AWS.S3();
 
 
-const checkAndCreateFolder = async (bucketName, folderName): Promise<string> => { //return error
-    try {
-        // Append a trailing slash to the folder name
-        if (!folderName.endsWith('/')) {
-            folderName += '/';
-        } 
-        const params = {
-            Bucket: bucketName,
-            Prefix: folderName,
-            MaxKeys: 1
-          };
-        await s3.listObjectsV2(params, (err, data) => {
-            if (err) {
-                return `Error creating folder S3: ${err}`
-            }
-    
-            const folderExists = data.Contents.length > 0;
-    
-            if (!folderExists) {
-                // Create the folder
-                s3.putObject({
-                    Bucket: bucketName,
-                    Key: folderName
-                }, (err) => {
-                    return err
-                });//Folder was created
-            } else {
-                return ''; // Folder already exists
-            }
-        });
-    } catch (error) {
-        return error
-    }
-    /*return new Promise((resolve, reject) => {
-      // Append a trailing slash to the folder name
-      if (!folderName.endsWith('/')) {
+
+const checkAndCreateFolderS3 = async (bucketName, folderName) => { //return error
+    if (!folderName.endsWith('/')) {
         folderName += '/';
-      }
-  
-      const params = {
+    } 
+    const params = {
         Bucket: bucketName,
         Prefix: folderName,
         MaxKeys: 1
-      };
-  
-      s3.listObjectsV2(params, (err, data) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-  
+    };
+    try {
+        const data = await s3.listObjectsV2(params).promise()
         const folderExists = data.Contents.length > 0;
-  
+    
         if (!folderExists) {
-          // Create the folder
-          s3.putObject({
-            Bucket: bucketName,
-            Key: folderName
-          }, (err) => {err ? reject(err) : resolve(false); });//Folder was created
+            // Create the folder
+            await s3.putObject({Bucket: bucketName, Key: folderName}).promise()
+            return false    // Folder created
         } else {
-          resolve(true); // Folder already exists
+            return true // Folder already exists
         }
-      });
-    });*/
+    } catch (error) {
+        throw error
+    }
+}
+
+const getListObjectsS3 = async (bucketName, folderName) => {
+    if (!folderName.endsWith('/')) {
+        folderName += '/';
+    }
+    
+    const params = {
+        Bucket: bucketName,
+        Prefix: folderName
+    };
+    
+    try {
+        const data = await s3.listObjectsV2(params).promise();
+        return data.Contents.map(item => ({...item, Bucket: bucketName}));
+    } catch (error) {
+        throw error;
+    }
 }
 
 
-interface IFileUploader {
+
+const deleteObjectsS3 = async (objects) => {    
+    try {
+        const deletePromises = objects.map((object) => {
+            const params = {
+                Bucket: object.Bucket,
+                Key: object.Key
+            };           
+            return s3.deleteObject(params).promise();
+        });
+        await Promise.all(deletePromises);
+        console.log(`Deleted all objects in the folder.`);
+    } catch (error) {
+        throw error;
+    }
+}
+
+
+const folderCleanerS3 = async (bucketName, folderName) => {
+    console.log(`Deleting folder in ${bucketName}: ${folderName}`);
+    if (!folderName.endsWith('/')) {
+        folderName += '/';
+    }
+    try {
+        const objects = await getListObjectsS3(bucketName, folderName)
+        if (objects.length === 0) return
+        await deleteObjectsS3(objects)
+    } catch (error) {
+        throw error       
+    }
+}
+
+
+
+
+
+interface IFileUploaderS3 {
     bucketName: string
     folderName: string
-    files: IMulterFile[]
+    files: {
+        content: any
+        fileName: string
+    }[]
+    checkFolder: boolean
 }
 
 
-const fileUploader = ({bucketName, folderName, files}: IFileUploader) => {
-    checkAndCreateFolder(bucketName, folderName)
+
+
+
+
+const filesUploaderS3 = async ({bucketName = '3di', folderName = 'temp/', files = [], checkFolder = true}: IFileUploaderS3) => {
+    if (!folderName.endsWith('/')) {
+        folderName += '/';
+    }
+    if (checkFolder) {
+        await checkAndCreateFolderS3(bucketName, folderName)
+    }
+
+
+    for (const file of files) {
+        const targetKey = folderName + file.fileName; // Specify the target S3 key by combining the folder name and file name
+
+        const params = {
+          Bucket: bucketName,
+          Key: targetKey,
+          Body: file.content
+        };
+        
+        try {
+            await s3.upload(params).promise()
+            console.log(`File ${file.fileName} uploaded to '${folderName}' successfully.`);
+        } catch (error) {
+            throw error            
+        }
+    }
 }
 
 
 
-export { checkAndCreateFolder }
+
+
+
+export { checkAndCreateFolderS3, filesUploaderS3, folderCleanerS3, getListObjectsS3, deleteObjectsS3 }

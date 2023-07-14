@@ -1,5 +1,4 @@
 import { makeDelay } from "./makeDelay";
-import { delayBetweenImagesPost } from "./consts";
 
 /*
 const imageUploader = async (image: File): Promise<IFetchImage> => {
@@ -38,7 +37,7 @@ interface IImagesUploader {
 
 
 interface IImagesUploaderReturn {
-    urls: IImgWithThumb[]
+    urls: IImgWithThumb[] 
     err: TLangText
 }
 

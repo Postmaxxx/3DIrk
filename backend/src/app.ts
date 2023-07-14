@@ -1,7 +1,6 @@
 import { allPaths } from "./data/consts"
 import { foldersCleaner } from "./processors/fsTools"
 const mode = process.env.NODE_ENV || 'undefined';
-import { checkAndCreateFolder } from './processors/aws'
 
 
 const pathToEnv = `.env.${mode}`.trim()

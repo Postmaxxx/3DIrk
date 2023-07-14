@@ -1,6 +1,6 @@
 import { IAction, IDispatch, IErrRes, IFetch, IFullState, IImgWithThumb, IMsgRes, INewsItem, INewsItemShort, ISendNews, IUserState, TLangText } from "../../interfaces"
 import { actionsListNews } from './actionsList'
-import { delayBetweenImagesPost, empty, errorFetch, fetchingFetch, successFetch } from "../../assets/js/consts";
+import { empty, fetchingFetch, successFetch } from "../../assets/js/consts";
 
 
 

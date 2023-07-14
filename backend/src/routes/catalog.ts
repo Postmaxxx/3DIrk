@@ -3,8 +3,9 @@ import { ICatalogItem } from '../interfaces'
 import { IAllCache } from '../data/cache'
 import { IMulterFile } from './user'
 import { IProduct } from '../models/Product'
-import { resizeAndSave } from '../processors/sharp'
+import { resizeAndSaveS3 } from '../processors/sharp'
 import { allPaths } from '../data/consts'
+import { folderCleanerS3 } from '../processors/aws'
 const cache: IAllCache = require('../data/cache')
 const Product = require("../models/Product")
 const Catalog = require("../models/Catalog")
@@ -50,7 +51,10 @@ const loadCatalog = async (res): Promise<{loaded: boolean, msg: string}> => {
 
 router.get('/list', async (req, res) => { 
     try {
-        await cache.catalog.control.load(res)      
+        const err = await cache.catalog.control.load()
+        if (err) {
+            return res.status(500).json(err)
+        }  
         res.status(200).json({allCatalog: cache.catalog.data , message: {en: 'Catalog has been loaded', ru: 'Каталог был загружены'}})
     } catch (error) {
         res.status(500).json({message: {en: 'Error reading catalog from db', ru: 'Ошибка при чтении каталога из БД'}})
@@ -109,8 +113,10 @@ router.put('/list',
 router.get('/category', async(req, res) => {
     try {
         const { _id, from, to } = req.query
-        await cache.products.control.load(res)
-        
+        const err = await cache.products.control.load()
+        if (err) {
+            return res.status(500).json(err)
+        }  
         const fromIndex = Number(from)
         const toIndex = Number(to)
         const catalogItem = cache.catalog.data.find(item => item._id.toString() === _id)
@@ -166,7 +172,7 @@ router.post('/product', //create
             const { price, name, text, text_short, fibers, mods, category } = JSON.parse(req.body.data)
             const files = req.files as IMulterFile[] || []  
             const product: IProduct = new Product({ price, name, text, text_short, fibers, mods, category })
-            const paths = await resizeAndSave({
+            const paths = await resizeAndSaveS3({
                 files,
                 clearDir: true,
                 saveFormat: 'webp',
@@ -209,7 +215,7 @@ router.put('/product', //create
                 return res.status(201).json({message: {en: 'Product updated', ru: 'Продукт отредактирован'}})
             }
 
-            const paths = await resizeAndSave({
+            const paths = await resizeAndSaveS3({
                 files,
                 clearDir: true,
                 saveFormat: 'webp',
@@ -240,9 +246,10 @@ router.get('/product', async(req, res) => {
     try {
         const { _id } = req.query
         
-        //await loadProducts(res)
-        await cache.products.control.load(res)
-
+        const err = await cache.products.control.load()
+        if (err) {
+            return res.status(500).json(err)
+        }  
 
         const product = cache.products.data.find(item => item._id.toString() === _id)
         
@@ -296,7 +303,7 @@ router.delete('/product', //cdelete
 
             cache.products.obsolete = true
             cache.catalog.obsolete = true
-
+            await folderCleanerS3(process.env.s3BucketName, `${allPaths.pathToImages}/${allPaths.pathToProducts}/${_id}/`)
             return res.status(200).json({message: {en: `Product ${name.en} deleted`, ru: `Продукт ${name.ru} удален`}})    
         } catch (error) {
             res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})

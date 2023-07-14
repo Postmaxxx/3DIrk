@@ -5,10 +5,10 @@ const authMW = require('../middleware/auth')
 const { check, validationResult } = require('express-validator')
 const isAdmin = require('../middleware/isAdmin')
 import { IAllCache } from '../data/cache'
-import { allPaths, delayForFS } from '../data/consts'
-import { INews } from '../models/News'
+import { allPaths } from '../data/consts'
+import { folderCleanerS3 } from '../processors/aws'
 import { foldersCleaner } from '../processors/fsTools'
-import { resizeAndSave } from '../processors/sharp'
+import { resizeAndSaveS3 } from '../processors/sharp'
 import { IMulterFile } from './user'
 const cache: IAllCache = require('../data/cache')
 const fileSaver = require('../routes/files')
@@ -22,10 +22,9 @@ router.post('/create',
         try {
             const { header, date, short, text } = JSON.parse(req.body.news)
             const files = req.files as IMulterFile[] || []           
-
             const news = new News({ header, date, short, text }) 
 
-            const paths = await resizeAndSave({
+            const paths = await resizeAndSaveS3({
                 files,
                 clearDir: true,
                 saveFormat: 'webp',
@@ -39,6 +38,7 @@ router.post('/create',
             }
 
             await foldersCleaner([allPaths.pathToTemp])
+            
             await news.save()
             cache.news.obsolete = true
             return res.status(201).json({message: {en: 'News posted', ru: 'Новость сохранена'}})
@@ -66,7 +66,7 @@ router.put('/edit',
                 return res.status(200).json({message: {en: 'News changed', ru: 'Новость отредактирована'}})
             }
 
-            const paths = await resizeAndSave({
+            const paths = await resizeAndSaveS3({
                 files,
                 clearDir: true,
                 saveFormat: 'webp',
@@ -97,7 +97,10 @@ router.put('/edit',
 
 router.get('/get-amount', async (req, res) => {
     try {
-        await cache.news.control.load(res)
+        const err = await cache.news.control.load()
+        if (err) {
+            return res.status(500).json(err)
+        }
         return res.status(200).json({amount: cache.news.data.length, message: {en: '', ru: ''}})
     } catch (e) {
         return res.status(500).json({ message:{en: `Something wrong with server ${e}, try again later`, ru: `Ошибка на сервере ${e}, попробуйте позже`}})
@@ -124,10 +127,18 @@ router.get('/get-some',
 
     
     try {
-        await cache.news.control.load(res)
+        const err = await cache.news.control.load()
+        if (err) {
+            return res.status(500).json(err)
+        }
+        if (cache.news.data.length === 0) {
+            return res.status(200).json({news: [], message: {en: `No news in db`, ru: `Новостей в базе нет`}})
+        }
+        
         const {from, amount } = req.query;
         const since = Number(from)
         const to = Number(from) + Number(amount)
+        
         if (since >=  cache.news.data.length) {
             return res.status(400).json({message: {en: `"From" is more than total amount of news`, ru: `"From" больше чем общее количество новостей`}})
         }
@@ -160,7 +171,10 @@ router.get('/get-one',
 
     
     try {
-        await cache.news.control.load(res)
+        const err = await cache.news.control.load()
+        if (err) {
+            return res.status(500).json(err)
+        }
 
         const newsToRes =  cache.news.data.find(item => {
             return item._id.valueOf() === _id
@@ -177,9 +191,9 @@ router.get('/get-one',
     }
 
 })
+ 
 
-
-
+ 
 
 router.delete('/delete', 
     [authMW, isAdmin,
@@ -203,11 +217,19 @@ router.delete('/delete',
             const { _id } = req.body 
             
             const newsToDelete = await News.findOneAndDelete({_id}) 
+            console.log(newsToDelete);
+            console.log(`${process.env.pathToStorage}/${allPaths.pathToImages}/${allPaths.pathToNews}/${newsToDelete._id}/`);
+            
             if (!newsToDelete) {
                 return res.status(404).json({message: {en: `News has not found`, ru: `Новость не найдена`}})
             }
             cache.news.obsolete = true
-            await cache.news.control.load(res)
+            const err = await cache.news.control.load()
+            if (err) {
+                return res.status(500).json(err)
+            }
+
+            await folderCleanerS3(process.env.s3BucketName, `${allPaths.pathToImages}/${allPaths.pathToNews}/${_id}/`)
             return res.status(200).json({message: {en: `News  deleted`, ru: `Новость удалена`}})
         } catch (error) {
             return res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})

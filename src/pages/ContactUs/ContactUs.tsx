@@ -70,6 +70,8 @@ const ContactUs:React.FC<IProps> = ({lang, userState, setState}): JSX.Element =>
             return
         }
         const files2 = addFiles.current.getFiles()
+
+
         
 /*
         const textOrder: string = `
@@ -129,39 +131,46 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
                                 <div className="data-block">
 
                                     <div className="inputs-block">
-                                        <div className="input-block">
-                                            <label htmlFor="name">
-                                                {lang === 'en' ? 'Your name*' : 'Ваше имя*'}
-                                            </label>
-                                            <input 
-                                                className="input-element" 
-                                                id="name" 
-                                                type="text" 
-                                                ref={_name} 
-                                                onChange={(e) => errChecker.clearError(e.target)}/>
-                                        </div>
-                                        <div className="input-block">
-                                            <label htmlFor="phone">
-                                                {lang === 'en' ? 'Your phone' : 'Ваш телефон'}
-                                            </label>
-                                            <input 
-                                                className="input-element" 
-                                                id="phone"
-                                                type="tel" 
-                                                ref={_phone} 
-                                                onChange={(e) => errChecker.clearError(e.target)}/>
-                                        </div>
-                                        <div className="input-block">
-                                            <label htmlFor="email">
-                                                {lang === 'en' ? 'Your email*' : 'Ваша почта*'}
-                                            </label>
-                                            <input 
-                                                className="input-element" 
-                                                id="email" 
-                                                type="email" 
-                                                ref={_email} 
-                                                onChange={(e) => errChecker.clearError(e.target)}/>
-                                        </div>
+                                        {userState.auth.status !== 'success' && 
+                                            <div className="input-block">
+                                                <label htmlFor="name">
+                                                    {lang === 'en' ? 'Your name*' : 'Ваше имя*'}
+                                                </label>
+                                                <input 
+                                                    className="input-element" 
+                                                    id="name" 
+                                                    type="text" 
+                                                    ref={_name} 
+                                                    onChange={(e) => errChecker.clearError(e.target)}/>
+                                            </div>}
+                                            
+                                        {userState.auth.status !== 'success' && 
+                                            <div className="input-block">
+                                                <label htmlFor="phone">
+                                                    {lang === 'en' ? 'Your phone' : 'Ваш телефон'}
+                                                </label>
+                                                <input 
+                                                    className="input-element" 
+                                                    id="phone"
+                                                    type="tel" 
+                                                    ref={_phone} 
+                                                    onChange={(e) => errChecker.clearError(e.target)}/>
+                                            </div>
+                                        }
+
+                                        {userState.auth.status !== 'success' && 
+                                            <div className="input-block">
+                                                <label htmlFor="email">
+                                                    {lang === 'en' ? 'Your email*' : 'Ваша почта*'}
+                                                </label>
+                                                <input 
+                                                    className="input-element" 
+                                                    id="email" 
+                                                    type="email" 
+                                                    ref={_email} 
+                                                    onChange={(e) => errChecker.clearError(e.target)}/>
+                                            </div>
+                                        }
                                         <div className="input-block message-block">
                                             <label htmlFor="message">
                                                 {lang === 'en' ? 'Your message (at least 10 symbols)*' : 'Ваше сообщение (минимум 10 символов)*'}

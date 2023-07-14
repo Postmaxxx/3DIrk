@@ -58,8 +58,8 @@ const sizes: IImageSizes = {//in px
         w: 600
     },
     full: {
-        h: 5000,
-        w: 5000
+        h: 1920,
+        w: 1080
     },
     spliderMain: {
         w: 720,

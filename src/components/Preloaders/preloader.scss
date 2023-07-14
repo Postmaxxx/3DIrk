@@ -4,17 +4,16 @@
     width: 20%;
     aspect-ratio: 1;
     //width: min(20cqw, 20cqh);
-    aspect-ratio: 1;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     border-right-color: transparent;
     border-left-color: transparent;
-    animation: spin 1s linear infinite;
+    animation: spiner 1s linear infinite;
 }
 
-@keyframes spin {
+@keyframes spiner {
 	0% {
 		transform: translate(-50%, -50%) rotate(0deg);
 	}

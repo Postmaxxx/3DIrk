@@ -1,9 +1,9 @@
 import { IFetch, IFiber, IFiberParam, IMessageModal, ISendColor, ISendFiber, ISendProduct, TLangText } from "../../interfaces"
-
+/*
 const delayBetweenImagesPost: number = 300
 
 const minTimeBetweenSendings = 1000; //in ms
-
+*/
 const timeModalClosing: number = 500
 
 const gapBetweenRequests: number = 2000 //time between requests in case of error
@@ -266,7 +266,7 @@ const timeOffset = (new Date()).getTimezoneOffset() / 60
 
 
 
-export {delayBetweenImagesPost, clearModalMessage, resetFetch, timeModalClosing, 
+export { clearModalMessage, resetFetch, timeModalClosing, 
     fetchingFetch, errorFetch, successFetch, headerStatus, empty, selector, strengthMin, 
-    strengthMax, minTimeBetweenSendings,fiberEmpty, productEmpty, colorEmpty, gapBetweenRequests,
+    strengthMax, fiberEmpty, productEmpty, colorEmpty, gapBetweenRequests,
     orderStatus, usersPerPage, timeOffset}

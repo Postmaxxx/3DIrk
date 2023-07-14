@@ -101,9 +101,6 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
 
 
     useEffect(() => {
-        /*if (colorsState.load.status !== 'success' && colorsState.load.status !== 'fetching') {
-            setState.colors.loadColors()
-        }*/
         checkAndLoad(colorsState.load.status, setState.colors.loadColors)
         
     }, [colorsState.load.status])

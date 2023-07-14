@@ -2,9 +2,10 @@ import { IAllCache } from '../data/cache'
 import { allPaths, delayForFS } from '../data/consts'
 const cache: IAllCache = require('../data/cache')
 import { IColor } from "../models/Color"
+import { folderCleanerS3 } from '../processors/aws'
 import { foldersCleaner, foldersCreator } from '../processors/fsTools'
 import { makeDelay } from '../processors/makeDelay'
-import { imagesResizer, resizeAndSave } from '../processors/sharp'
+import { resizeAndSaveS3 } from '../processors/sharp'
 import { IMulterFile } from './user'
 const { Router } = require("express")
 const Colors = require("../models/Color")
@@ -28,7 +29,7 @@ router.post('/create',
             const color: IColor = new Colors({ name })
             const colorId = color._id
 
-            const paths = await resizeAndSave({
+            const paths = await resizeAndSaveS3({
                 files,
                 clearDir: true,
                 saveFormat: 'webp',
@@ -76,7 +77,7 @@ router.put('/edit',
                 return res.status(200).json({message: {en: 'Color saved', ru: 'Цвет сохранен'}})
             }
 
-            const paths = await resizeAndSave({
+            const paths = await resizeAndSaveS3({
                 files,
                 clearDir: true,
                 saveFormat: 'webp',
@@ -111,7 +112,10 @@ router.put('/edit',
 
 router.get('/load-all', async (req, res) => {
     try {
-        await cache.colors.control.load(res)
+        const err = await cache.colors.control.load()
+        if (err) {
+            return res.status(500).json(err)
+        }  
         return res.status(200).json({colors: cache.colors.data, message: {en: 'Colors have been loaded', ru: 'Цвета загружены'}})
     } catch (e) {
         return res.status(500).json({ message:{en: `Something wrong with server ${e}, try again later`, ru: `Ошибка на сервере ${e}, попробуйте позже`}})
@@ -144,6 +148,7 @@ router.delete('/delete',
             await Colors.findOneAndDelete({_id})
             cache.colors.obsolete = true
             cache.fibers.obsolete = true
+            await folderCleanerS3(process.env.s3BucketName, `${allPaths.pathToImages}/${allPaths.pathToColors}/${_id}/`)
             return res.status(200).json({message: {en: 'Color deleted', ru: 'Цвет удален'}})
         } catch (e) {
             return res.status(500).json({ message:{en: `Something wrong with server ${e}, try again later`, ru: `Ошибка на сервере ${e}, попробуйте позже`}})

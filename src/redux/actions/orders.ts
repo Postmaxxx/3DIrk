@@ -1,6 +1,6 @@
-import { IAction, ICartItem, IDispatch, IErrRes, IFetch, IFilterUser, IFullState, IMsgRes, IOrdersState, OrderType, TLang, TLangText } from "../../interfaces"
+import { IAction, IDispatch, IErrRes, IFetch, IFilterUser, IFullState, IMsgRes, IOrdersState, OrderType, TLang, TLangText } from "../../interfaces"
 import { actionsListOrders } from './actionsList'
-import { empty, errorFetch, fetchingFetch, minTimeBetweenSendings, successFetch } from "../../assets/js/consts";
+import { empty, fetchingFetch, successFetch } from "../../assets/js/consts";
 
 
 

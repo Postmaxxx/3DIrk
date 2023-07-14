@@ -1,7 +1,7 @@
 import { IAction, ICartItem, ICartState, IDispatch, IErrRes, IFetch, IFullState, ILoggingForm, IMsgRes, IUserLoginResOk, IUserState, TLangText } from "../../interfaces";
 import { actionsListUser } from './actionsList'
 //import { setText } from "./order";
-import { empty, errorFetch, fetchingFetch, minTimeBetweenSendings, successFetch } from "../../assets/js/consts";
+import { empty, fetchingFetch, successFetch } from "../../assets/js/consts";
 import moment from "moment";
 
 export const setUser = <T extends Partial<IUserState>>(payload: T):IAction<T> => ({
@@ -222,7 +222,48 @@ export const sendOrder = ({message, files}: ISendOrder ) => {
 
 
 
+export const sendMessafe = ({message, files}: ISendOrder ) => {
+    return async function(dispatch: IDispatch, getState: () => IFullState)  {
+        const { user } = getState()
+        const {lang} = getState().base
+        if (user.sendOrder.status === 'fetching') return
+        await sendCart()(dispatch, getState)
+      
+        dispatch(setSendOrder({...fetchingFetch}))
+        const sendForm = new FormData()       
+        files.forEach(item => {
+            sendForm.append('files', item, item.name)
+        })
+        sendForm.append('lang', lang)
+        sendForm.append('message', message)
+        
+        try {
+            const response = await fetch(`${process.env.REACT_BACK_URL}/api/user/orders`, {
+                method: 'POST',
+                headers: {
+                    'enctype': "multipart/form-data",
+                   // 'Content-Type': '"multipart/form-data',
+                    'Authorization': `Bearer ${user.token}`
+                },
+                body: sendForm
+            })
+            if (response.status !== 201) {
+                const result: IErrRes = await response.json() //message, errors
+                return dispatch(setSendOrder({
+                    status: 'error', 
+                    message: result.message || {...empty}, 
+                    errors: result.errors || []
+                }))
+            }
 
+            const result: IMsgRes = await response.json() //message, errors
+            dispatch(setSendOrder({status: 'success', message: result.message}))
+            
+        } catch (e) {           
+            dispatch(setSendOrder({status: 'error', message: {en: `Error "${e}", try again later`, ru: `Ошибка "${e}", попробуйте позже`}}))
+        }
+    }
+}
 
 
 //============================================== CART

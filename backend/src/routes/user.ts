@@ -4,7 +4,8 @@ import { ICartItem } from "../models/Cart"
 import { TLang, TLangText } from "../interfaces"
 import { IOrder, OrderType } from "../models/Orders"
 import { allPaths, orderStatus, sendNotificationsInTG } from "../data/consts"
-import { foldersCreator } from "../processors/fsTools"
+import { foldersCleaner, foldersCreator } from "../processors/fsTools"
+import { filesUploaderS3 } from "../processors/aws"
 const moment = require('moment');
 const { Router } = require("express")
 const router = Router()
@@ -16,7 +17,7 @@ const jwt = require('jsonwebtoken')
 const authMW = require('../middleware/auth')
 const cache: IAllCache = require('../data/cache')
 const fileSaver = require('../routes/files')
-var fs = require('fs');
+var fse = require('fs-extra');
 const FormData = require('form-data');
 const fetch = require('node-fetch');
 const { ObjectId } = require('mongodb');
@@ -29,7 +30,10 @@ const cartToFront = async (res, cart: IUser["cart"]) => {
     if (cart.length === 0 || !cart) {
         return []
     }
-    await cache.products.control.load(res)
+    const err = await cache.products.control.load()
+    if (err) {
+        return res.status(500).json(err)
+    }  
     
     return cart.map((item) => {
         const fullProduct = cache.products.data.find(product => product._id.toString() === item.productId.toString())
@@ -106,7 +110,7 @@ const orderToTg = async ({lang, user, message, files, dir, res}: IOrderToTg) => 
             const form = new FormData();
             //const stats = fs.stat(filePathName);
             //const fileSizeInBytes = stats.size;
-            const fileStream = fs.createReadStream(filePathName);
+            const fileStream = fse.createReadStream(filePathName);
             form.append('document', fileStream, file.filename);
             form.append('chat_id', process.env.chatId || '');
             const options = {method: 'POST', body: form};
@@ -352,24 +356,31 @@ router.post('/orders',
             }
 
     
-            const dir = `${allPaths.pathToBase}/${allPaths.pathToUserFiles}/${userId}/${orderId}/` //create unique folder for every user using user._id
+            const dir = `${allPaths.pathToUserFiles}/${userId}/${orderId}/` //create unique folder for every user using user._id
       
-            await foldersCreator([dir])// create all folders/subfolders for files
 
-            files.forEach(file => {//transfer all received files to user._id folder
-                fs.rename(file.path, dir + file.filename, e => {
-                    if (e) {
-                        console.log('Error occured while transfer files to folder:', e);
-                        return res.status(500).json({message: {en: `Error while developing files, please try again later. Error ${e}`, ru: `Ошибка при обработке файлов, пожалуйста, попробуйте позже. Ошибка ${e}`}})
-                    }
+            const filesToUpload = []
+            for (const file of files) {
+                const content = await fse.readFile(file.path)
+                filesToUpload.push({
+                    content,
+                    fileName: file.filename
                 })
-            });
+            }
+            
 
-
+            filesUploaderS3({
+                bucketName: process.env.s3BucketName,
+                folderName: dir,
+                files: filesToUpload,
+                checkFolder: true
+            })
+            
             //send data to TG
             if (sendNotificationsInTG) orderToTg({lang, user, message, files, dir: orderId, res})
 
             await User.findOneAndUpdate( {_id: user._id}, {cart: []}) //clear user's cart if order successfully created
+            await foldersCleaner([allPaths.pathToTemp])
             return res.status(201).json({message: {en: 'Order created', ru: 'Заказ создан'}})
         } catch (e) {
             return res.status(500).json({ message:{en: `Something wrong with server, try again later. Error: ${e}`, ru: `Ошибка на сервере, попробуйте позже. Ошибка: ${e}`}})
