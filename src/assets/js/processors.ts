@@ -21,7 +21,7 @@ const errorsChecker = ({lang = 'en'}: IErrorsChecker) => {
 
     const check = (el:  HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | HTMLSelectElement, min = 0, max = 1000): {result: boolean, error: string} => {
         const err = {result: false, error: ''}
-        if (el.value && el.value.length >= min && el.value.length <= max) return err // no error
+        if (el.value.length >= min && el.value.length <= max) return err // no error
         
         err.result = true
         if (el.value.length < min) {

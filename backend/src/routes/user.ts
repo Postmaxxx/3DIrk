@@ -3,7 +3,7 @@ import { IAllCache } from '../data/cache'
 import { ICartItem } from "../models/Cart"
 import { TLang, TLangText } from "../interfaces"
 import { IOrder, OrderType } from "../models/Orders"
-import { allPaths, orderStatus, sendNotificationsInTG } from "../data/consts"
+import { allPaths, orderStatus, sendNotificationsInTG, timeZoneDelta } from "../data/consts"
 import { foldersCleaner, foldersCreator } from "../processors/fsTools"
 import { filesUploaderS3 } from "../processors/aws"
 const moment = require('moment');
@@ -26,13 +26,13 @@ const isAdmin = require('../middleware/isAdmin')
 
 
 
-const cartToFront = async (res, cart: IUser["cart"]) => {
+const cartToFront = async (cart: IUser["cart"]) => {
     if (cart.length === 0 || !cart) {
         return []
     }
     const err = await cache.products.control.load()
     if (err) {
-        return res.status(500).json(err)
+        throw new Error('Errors while loading products', {cause: err})
     }  
     
     return cart.map((item) => {
@@ -64,7 +64,7 @@ interface IOrderToTg {
 }
 
 
-const orderToTg = async ({lang, user, message, files, dir, res}: IOrderToTg) => {
+const orderToTg = async ({lang, user, message, files, dir}: IOrderToTg) => {
     const urlMessage= `https://api.telegram.org/bot${process.env.tgToken}/sendMessage`;
     const urlDocument= `https://api.telegram.org/bot${process.env.tgToken}/sendDocument`;
     const textOrder: string = `
@@ -77,7 +77,7 @@ const orderToTg = async ({lang, user, message, files, dir, res}: IOrderToTg) => 
     
     
     
-    const cartToTg = await cartToFront(res, user.cart)
+    const cartToTg = await cartToFront(user.cart)
     const textCart = cartToTg.reduce((text: string, item: typeof cartToTg[number], i: number) => {
         return text + `${i+1}) ${item.product.name[lang]}
     ${lang === 'en' ? 'Options' : 'Версия'}: ${item.type[lang]} 
@@ -103,14 +103,12 @@ const orderToTg = async ({lang, user, message, files, dir, res}: IOrderToTg) => 
 
 
     files.reduce(async (acc: Promise<string>, file, i) => {//send files to TG
-        const filePathName = dir+'/'+file.filename                
+        const filePathName = dir+'/'+file.filename     
         await acc
         return new Promise<string>(async (resolve, rej) => {
             const timeStart = Date.now()
             const form = new FormData();
-            //const stats = fs.stat(filePathName);
-            //const fileSizeInBytes = stats.size;
-            const fileStream = fse.createReadStream(filePathName);
+            const fileStream = await fse.createReadStream(filePathName);
             form.append('document', fileStream, file.filename);
             form.append('chat_id', process.env.chatId || '');
             const options = {method: 'POST', body: form};
@@ -129,6 +127,54 @@ const orderToTg = async ({lang, user, message, files, dir, res}: IOrderToTg) => 
 }
  
 
+interface IMessageToTg {
+    message: string
+    files: IMulterFile[]
+    dir: string
+}
+
+const messageToTg = async ({message, files, dir}: IMessageToTg) => {
+    const urlMessage= `https://api.telegram.org/bot${process.env.tgToken}/sendMessage`;
+    const urlDocument= `https://api.telegram.org/bot${process.env.tgToken}/sendDocument`;
+    try { //send text to TG
+        const response = await fetch(urlMessage, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chat_id: process.env.chatId, text: message })
+        })
+        if (!response.ok) {
+            console.log('Error while sending message using TG.', response);
+            throw new Error(`Error while sending message using TG. ${response}`)
+        }
+    } catch (e) {
+        console.log(`Something wrong while sending message to TG, try again later. Error: ${e}`)
+        throw new Error(e)
+    }
+
+    files.reduce(async (acc: Promise<string>, file, i) => {//send files to TG
+        const filePathName = dir+'/'+file.filename     
+        await acc
+        return new Promise<string>(async (resolve, rej) => {
+            const timeStart = Date.now()
+            const form = new FormData();
+            const fileStream = await fse.createReadStream(filePathName);
+            form.append('document', fileStream, file.filename);
+            form.append('chat_id', process.env.chatId || '');
+            const options = {method: 'POST', body: form};
+            try {   
+                const response = await fetch(urlDocument, options)
+                if (!response.ok) console.log(`error while sending file: ${file.filename}`);
+                const transitionSending = Date.now() - timeStart
+                // if (sendingTime < minTimeBetweenSendings) => wait until (sendingTime >= minTimeBetweenSendings)
+                setTimeout(() => {resolve(`File ${file.filename} has been sent successfully`)}, Number(process.env.minTimeBetweenSendings) - transitionSending)
+            } catch (error) {
+                console.log(`Error while sending file: ${file.filename}, error: ${error}`);
+            }
+        })
+    }, Promise.resolve('Files sending started'))
+            
+}
+ 
 
 
 //api/outh/register
@@ -211,7 +257,7 @@ router.post('/login',
                 name: user.name,
                 email: user.email,
                 phone: user.phone,
-                cart: await cartToFront(res, user.cart),
+                cart: await cartToFront(user.cart),
                 token,
                 isAdmin: false
             }
@@ -254,7 +300,7 @@ router.post('/login-token',
                 name: user.name,
                 email: user.email,
                 phone: user.phone,
-                cart: await cartToFront(res, user.cart),
+                cart: await cartToFront(user.cart),
                 //orders: user.orders,
                 token: newToken, //auto token prolong
                 isAdmin: false
@@ -305,7 +351,32 @@ interface IMulterFile {
 }
 
 
+router.post('/message', 
+    fileSaver,
+    async (req, res) => {
+        const { message, lang } = req.body
+        const files = req.files as IMulterFile[] || []
+        
+        const date = moment().utc().add(timeZoneDelta, 'hours').format("YYYY-MM-DD (dddd)");
+        const time = moment().utc().add(timeZoneDelta, 'hours').format("HH:mm");
 
+        const text = `
+${lang === 'en' ? 'Date' : 'Дата'}: ${date}
+${lang === 'en' ? 'Time' : 'Время'}: ${time}
+${message}`
+
+        try {
+            //send data to TG
+            await messageToTg({message: text, files, dir: allPaths.pathToTemp})
+
+            await foldersCleaner([allPaths.pathToTemp])
+            return res.status(200).json({message: {en: 'Message has been sent', ru: 'Сообщение было отправлено'}})
+        } catch (e) {
+            return res.status(500).json({ message:{en: `Something wrong with server, try again later. Error: ${e}`, ru: `Ошибка на сервере, попробуйте позже. Ошибка: ${e}`}})
+        }
+
+    }
+)
 
 
 router.post('/orders', 
@@ -377,7 +448,9 @@ router.post('/orders',
             })
             
             //send data to TG
-            if (sendNotificationsInTG) orderToTg({lang, user, message, files, dir: orderId, res})
+            if (sendNotificationsInTG) {
+                await orderToTg({lang, user, message, files, dir: allPaths.pathToTemp, res})
+            } 
 
             await User.findOneAndUpdate( {_id: user._id}, {cart: []}) //clear user's cart if order successfully created
             await foldersCleaner([allPaths.pathToTemp])

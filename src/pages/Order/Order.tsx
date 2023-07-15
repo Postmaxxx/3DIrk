@@ -54,24 +54,12 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
 	}, [sendOrder.status, errChecker])
 
 
-
-/*
-    const informer = (info: TLangText): void => {
-        if (!message.current) return
-        message.current.update({
-            header:  lang === 'en' ? "Sending order..." : "Отправка заказа...",
-            status: '',
-            text: [info[lang]]
-        })
-        modal_message.current?.openModal()
-    }
-*/
     
 
     const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
         if (!_message.current || !message.current || !modal_message.current || !addFiles.current) return
         prevent(e)
-        //errChecker.check(_message.current, 0, 3000)
+        errChecker.check(_message.current, -1, 3000)
 
         if (errChecker.amount() > 0) {
             message.current?.update(errChecker.result())
@@ -169,7 +157,6 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
     cart: state.user.cart,
     sendOrder: state.user.sendOrder,
-   // message: state.user.message,
     colorsState: state.colors,
     fibersState: state.fibers,
 })

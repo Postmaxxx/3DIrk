@@ -24,7 +24,7 @@ const LazyHomePage = lazy(() => import("./pages/Home/Home"));
 const LazyFibersPage = lazy(() => import("./pages/Fibers/Fibers"));
 const LazyFiberPage = lazy(() => import("./pages/Fiber/Fiber"));
 const LazyOrderPage = lazy(() => import("./pages/Order/Order"));
-const LazyOrdersPage = lazy(() => import("./pages/Orders/Orders"));
+const LazyOrdersPage = lazy(() => import("./pages/Admin/Orders/Orders"));
 const LazyCatalogPage = lazy(() => import("./pages/Catalog/Catalog"));
 const LazyProduct = lazy(() => import("./pages/Product/Product"));
 const LazyNewsDetails = lazy(() => import("./pages/NewsDetails/NewsDetails"));

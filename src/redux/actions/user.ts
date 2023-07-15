@@ -197,7 +197,6 @@ export const sendOrder = ({message, files}: ISendOrder ) => {
                 method: 'POST',
                 headers: {
                     'enctype': "multipart/form-data",
-                   // 'Content-Type': '"multipart/form-data',
                     'Authorization': `Bearer ${user.token}`
                 },
                 body: sendForm
@@ -221,33 +220,32 @@ export const sendOrder = ({message, files}: ISendOrder ) => {
 }
 
 
-
-export const sendMessafe = ({message, files}: ISendOrder ) => {
+interface ISendMessage {
+    text: string
+    files: File[]
+}
+export const sendMessage = ({text, files}: ISendMessage ) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
         const { user } = getState()
         const {lang} = getState().base
-        if (user.sendOrder.status === 'fetching') return
-        await sendCart()(dispatch, getState)
-      
+        if (user.sendOrder.status === 'fetching') return        
         dispatch(setSendOrder({...fetchingFetch}))
         const sendForm = new FormData()       
         files.forEach(item => {
             sendForm.append('files', item, item.name)
         })
         sendForm.append('lang', lang)
-        sendForm.append('message', message)
+        sendForm.append('message', text)
         
         try {
-            const response = await fetch(`${process.env.REACT_BACK_URL}/api/user/orders`, {
+            const response = await fetch(`${process.env.REACT_BACK_URL}/api/user/message`, {
                 method: 'POST',
                 headers: {
                     'enctype': "multipart/form-data",
-                   // 'Content-Type': '"multipart/form-data',
-                    'Authorization': `Bearer ${user.token}`
                 },
                 body: sendForm
             })
-            if (response.status !== 201) {
+            if (response.status !== 200) {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setSendOrder({
                     status: 'error', 

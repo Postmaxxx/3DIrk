@@ -1,15 +1,15 @@
 import './orders.scss'
-import { allActions } from "../../redux/actions/all";
+import { allActions } from "../../../redux/actions/all";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import { IColorsState, IFetch, IFibersState, IFilterUser, IFullState, IOrdersState, IUserState, OrderType, TLang, TLangText } from '../../interfaces';
-import {Fragment, useEffect, useRef, useCallback, useMemo, useState } from 'react'
-import { gapBetweenRequests, orderStatus, timeOffset, usersPerPage } from '../../assets/js/consts';
+import { IColorsState, IFibersState, IFullState, IOrdersState, IUserState, OrderType, TLang } from '../../../interfaces';
+import {Fragment, useEffect, useRef, useState } from 'react'
+import { orderStatus, timeOffset, usersPerPage } from '../../../assets/js/consts';
 import moment from "moment";
-import Preloader from '../../components/Preloaders/Preloader';
+import Preloader from '../../../components/Preloaders/Preloader';
 import { useNavigate } from 'react-router-dom';
-import { checkAndLoad } from '../../assets/js/processors';
+import { checkAndLoad } from '../../../assets/js/processors';
 
 
 
@@ -56,29 +56,8 @@ const Orders = ({lang, colorsState, fibersState, ordersState, userState, setStat
     useEffect(() => { //initial load data
         if (userState.auth.status !== 'success') return //!!!
 
-        /*if (colorsState.load.status === 'idle') {
-            setState.colors.loadColors()
-        }
-        if (colorsState.load.status === 'error') { //!!!
-            setTimeout(() => setState.colors.loadColors(), gapBetweenRequests)
-        }*/
         checkAndLoad(colorsState.load.status, setState.colors.loadColors)
         checkAndLoad(ordersState.userList.load.status, setState.orders.loadUsers)
-
-/*
-        checkAndLoad(fibersState.load.status, setState.fibers.loadFibers)
-        checkAndLoad(catalogState.catalog.load.status, setState.catalog.loadCatalog)
-
-
-*/
-
-        /*
-        if (ordersState.userList.load.status === 'idle') {
-            setState.orders.loadUsers()
-        }
-        if (ordersState.userList.load.status === 'error') {            
-            setTimeout(() => {setState.orders.loadUsers()}, gapBetweenRequests)
-        }*/
 
         if (colorsState.load.status === 'success' && fibersState.load.status === 'success') {
             setLoaded(true)
@@ -99,7 +78,7 @@ const Orders = ({lang, colorsState, fibersState, ordersState, userState, setStat
         }    
 
         const dateFrom: string = new Date(_dateFrom.current.value).toISOString()
-        const dateTo: string = moment(_dateTo.current.value).add('day', 1).format("YYYY-MM-DDT00:00:00.000") + "Z";
+        const dateTo: string = moment(_dateTo.current.value).add(1, 'day').format("YYYY-MM-DDT00:00:00.000") + "Z";
         
 
         const dateTimeFrom = moment(dateFrom).add(timeOffset, 'hours').toISOString();

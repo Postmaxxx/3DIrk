@@ -1,7 +1,7 @@
 const minTimeBetweenSendings: number = 500 //in ms
 const sendNotificationsInTG: boolean = false
 const delayForFS = 1000
-
+const timeZoneDelta = 8
 
 const allPaths = {
     pathToServer: "http://localhost/data",
@@ -68,4 +68,5 @@ const sizes: IImageSizes = {//in px
     
 }
 
-export {minTimeBetweenSendings, sendNotificationsInTG, orderStatus, sizes, delayForFS, allPaths, ISizesItem, IImageSizes}
+export {minTimeBetweenSendings, sendNotificationsInTG, orderStatus, sizes, delayForFS, allPaths, timeZoneDelta,  
+    ISizesItem, IImageSizes}

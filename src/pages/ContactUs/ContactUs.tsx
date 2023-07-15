@@ -40,12 +40,15 @@ const ContactUs:React.FC<IProps> = ({lang, userState, setState}): JSX.Element =>
     const errChecker = useMemo(() => errorsChecker({lang}), [lang])
 
     const closeModalMessage = useCallback(() => {
-        if (!_name.current || !_email.current || !_phone.current || !_message.current || !addFiles.current ) return
+        if (!_message.current || !addFiles.current ) return
         modal_message.current?.closeModal()
         if (userState.sendOrder.status === 'success') {
-            _name.current.value = ''
-            _email.current.value = ''
-            _phone.current.value = ''
+            if (userState.auth.status !== 'success') {
+                if (!_name.current || !_email.current || !_phone.current) return
+                _name.current.value = ''
+                _email.current.value = ''
+                _phone.current.value = ''
+            }
             _message.current.value = ''
             addFiles.current.clearAttachedFiles()
         }
@@ -58,8 +61,10 @@ const ContactUs:React.FC<IProps> = ({lang, userState, setState}): JSX.Element =>
     const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
         prevent(e)
         
+        const isAuth = userState.auth.status === 'success' ? true : false
+        
         if (!_message.current || !addFiles.current) return
-        if (userState.auth.status !== 'success') {
+        if (!isAuth) {
             if (!_name.current || !_email.current || !_phone.current) return
             errChecker.check(_name.current, 2, 50)
             errChecker.check(_email.current, 6, 60)
@@ -72,38 +77,20 @@ const ContactUs:React.FC<IProps> = ({lang, userState, setState}): JSX.Element =>
             modal_message.current?.openModal()
             return
         }
-        const files2 = addFiles.current.getFiles()
+        const files = addFiles.current.getFiles()
+        const currentDate = new Date()
 
-
+        const textOrder: string = 
+`${lang === 'en' ? 'New message' : 'Новое сообщение'}:
+${lang === 'en' ? 'Name' : 'Имя'}: ${isAuth ? userState.name : _name.current?.value}
+${lang === 'en' ? 'Email' : 'Почта'}: ${isAuth ? userState.email : _email.current?.value}
+${lang === 'en' ? 'Phone' : 'Телефон'}: ${isAuth ? userState.phone : _phone.current?.value}
+${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
         
-/*
-        const textOrder: string = `
-${lang === 'en' ? 'Date' : 'Дата'}: ${currentDate.toISOString().slice(0,10)}
-${lang === 'en' ? 'Time' : 'Время'}: ${currentDate.toISOString().slice(11, 19)}
-${lang === 'en' ? 'Name' : 'Имя'}: ${name}
-${lang === 'en' ? 'Email' : 'Почта'}: ${email}
-${lang === 'en' ? 'Phone' : 'Телефон'}: ${phone}
-${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
+        const text = `${lang === 'en' ? 'New message' : 'Новое сообщение'}:${textOrder}\n ${files.length > 0 ? (lang==='en' ? `\nAttached files ${files.length}:` : `\nПрикрепленные файлы ${files.length}:`) : ''}`
 
-        const text = `${lang === 'en' ? 'New message' : 'Новое сообщение'}:${textOrder}\n\n\n ${order.files.length > 0 ? (lang==='en' ? '\n\n\nAttached files:' : '\n\n\nПрикрепленные файлы:') : ''}`
-        
-        setState.order.sendOrder({lang, text, filesArr: order.files, informer})*/
+        setState.user.sendMessage({text, files})
     }
-
-
-
-/*
-    const informer = (info: TLangText): void => {
-        if (!message.current) return
-        message.current.update({
-            header:  lang === 'en' ? "Sending message..." : "Отправка сообщения...",
-            status: '',
-            text: [info[lang]]
-        })
-        modal_message.current?.openModal()
-    }
-
-*/
 
 
 
