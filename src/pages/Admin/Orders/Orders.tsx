@@ -185,7 +185,7 @@ const Orders = ({lang, colorsState, fibersState, ordersState, userState, setStat
                     :
                         <h1>{lang === 'en' ? 'All your orders' : 'Все ваши заказы'}</h1>
                     }
-                    {loaded && <>
+                    {loaded &&  <>
                         <div className="filters">
                             <div className="filter__item">
                                 <label htmlFor="user">Select user
@@ -217,13 +217,13 @@ const Orders = ({lang, colorsState, fibersState, ordersState, userState, setStat
                                     <input type="date" id='date-to' ref={_dateTo}/>
                                 </label>
                             </div>
-                            <button className='button_blue' onClick={loadOrders}>Load Orders</button>
+                            <button className='button_blue' onClick={loadOrders} disabled={ordersState.load.status === 'fetching'}>Load Orders</button>
                         </div>
                         <div className="orders__container">
-                            {ordersState.users.length > 0 ? 
+                            {ordersState.users.length > 0 && ordersState.load.status ==='success' ? 
                                 userTable 
                              : 
-                                ordersState.load.status === 'success' && <div className="">Nothing found</div>
+                                ordersState.load.status === 'success' && <span className="empty-informer">Nothing found</span>
                             }
                             <div className="pagination__container">
                                 {totalPages.map((item, i) => {

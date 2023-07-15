@@ -3,7 +3,7 @@ import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import './cart-content.scss'
 import { ICartItem, ICartState, ICatalogState, IColor, IColorsState, IFiber, IFibersState, IFullState, IProduct, TLang } from "../../interfaces";
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo, memo } from 'react'
 import { NavLink } from "react-router-dom";
 import Delete from "../Delete/Delete";
 import AmountChanger from "../AmountChanger/AmountChanger";
@@ -38,6 +38,9 @@ interface IPropsActions {
 
 
 interface IProps extends IPropsState, IPropsActions {}
+
+
+const ModalMemo = memo(Modal)
 
 const CartContent: React.FC<IProps> = ({lang, cart, colorsState, fibersState, setState}): JSX.Element => {
 
@@ -89,6 +92,13 @@ const CartContent: React.FC<IProps> = ({lang, cart, colorsState, fibersState, se
     const closeModalImage = () => {
         modal_image.current?.closeModal()
 	}
+
+
+    const modalWindow = useMemo(() => {
+        return  <Modal escExit={true} ref={modal_image} onClose={closeModalImage}>
+                    <ImageModal ref={imageModal} />
+                </Modal>
+    }, [])
 
 
     return (
@@ -154,7 +164,7 @@ const CartContent: React.FC<IProps> = ({lang, cart, colorsState, fibersState, se
             {cart.load.status === 'error' && <ErrorMock lang={lang} comp={{en: 'cart', ru: 'корзины'}}/>}
 
             <Modal escExit={true} ref={modal_image} onClose={closeModalImage}>
-				<ImageModal ref={imageModal} />
+                <ImageModal ref={imageModal} />
             </Modal>
         </div>
     )

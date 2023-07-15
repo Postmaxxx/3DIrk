@@ -9,8 +9,8 @@
     user-select: none;
 
     & * {
-        -webkit-user-drag: none;
-        user-select: none; 
+        -webkit-user-drag: none !important;
+        user-select: none !important;  
     }
 
     & > .ribbon {
@@ -51,9 +51,20 @@
 
             & .image-extender {
                 position: absolute;
-                left: 10%;
-                bottom: 10%;
-                font-size: 40px;
+                left: 5%;
+                bottom: 5%;
+                height: 25px;
+                width: 25px;
+                cursor: pointer;
+                transition: transform $transition_fast;
+
+                & > svg > path {
+                    fill: var(--main);
+                }
+
+                &:hover {
+                    transform: scale(1.3);
+                }
             }
             
         }

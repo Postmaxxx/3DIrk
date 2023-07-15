@@ -1,6 +1,6 @@
 import './modal.scss'
 import { createPortal } from 'react-dom';
-import { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
+import { useEffect, useState, forwardRef, useImperativeHandle, memo } from 'react';
 
 
 interface IProps {
@@ -29,7 +29,7 @@ const Modal = forwardRef<IModalFunctions, IProps>(({escExit, onClose, children},
             return owner
         },
     }));
-
+    
     
     const _modal = document.getElementById('modal') as HTMLElement;
     const [visible, setVisible] = useState<boolean>(false)
@@ -43,6 +43,8 @@ const Modal = forwardRef<IModalFunctions, IProps>(({escExit, onClose, children},
         }
     }
 
+    console.log('Model re');
+    
 
     useEffect(() => {
         document.addEventListener("keyup", modalKeyListener);

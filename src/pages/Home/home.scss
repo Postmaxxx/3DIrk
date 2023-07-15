@@ -12,6 +12,8 @@
             margin-top: 50px;
             height: 400px;
             position: relative;
+            -webkit-user-drag: none;
+            user-select: none;
 
             @include respond-to(md) {
                 height: 320px;
