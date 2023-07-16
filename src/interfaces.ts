@@ -29,12 +29,6 @@ export interface IFetch {
     errors?: TLangText[]
 }
 
-export interface IFetchImage {
-    status: TFetchStatus
-    message: TLangText
-    //urls?: IImgWithThumb
-}
-
 export interface IMessageModal {
     header: string
     status: string
@@ -60,7 +54,7 @@ export interface IPageItem {
     path: string
     _id: TId
     notLink?: boolean
-    expanded?: boolean
+    //expanded?: boolean
     subMenu?: Array<IPageItem>
 }
 

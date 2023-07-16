@@ -11,6 +11,10 @@
     overflow: hidden;
     z-index: 5500;
     transition: background-color $transition_theme, left $nav_mobile_delay, right $nav_mobile_delay, opacity $nav_mobile_delay;
+    & * {
+        -webkit-user-drag: none !important;
+        user-select: none !important;  
+    }
 
     @include respond-to(sm) {
         transform: scale(0.85);

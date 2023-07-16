@@ -28,12 +28,6 @@ interface IProps extends IPropsState, IPropsActions {}
 const Home:React.FC<IProps> = ({lang, contentState, setState} : IProps): JSX.Element => {
 
     useEffect(() => {
-        /*if (contentState.load.status === 'idle') {
-            setState.content.loadSplider()
-        }
-        if (contentState.load.status === 'error') {            
-            setTimeout(() => {setState.content.loadSplider()}, gapBetweenRequests)
-        }*/
         checkAndLoad(contentState.load.status, setState.content.loadSplider)
     }, [contentState.load.status])
     

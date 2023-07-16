@@ -161,7 +161,7 @@ $k_xs: 0.65;
                             top: 0;
                             right: 0;
                             background-color: var(--border_compare);
-                            transition: background-color $transition_theme;
+                            transition: background-color $transition_theme, transform $transition_fast;
 
                             @include respond-to(sm) {
                                 height: 15px;
@@ -176,6 +176,21 @@ $k_xs: 0.65;
                                 padding: 4px;
                                 height: 100%;
                                 width: 100%;
+                            }
+
+                            &:hover {
+                                &::after {
+                                    content: attr(tip-text);
+                                    position: absolute;
+                                    top: 100%;
+                                    padding: 0 5px;
+                                    border: 1px solid white;
+                                    border-radius: 5px;
+                                    background-color: var(--main);
+                                    width: 300px;
+                                    font-size: 14px;
+                                    max-width: calc(100vw );
+                                }
                             }
                         }
                     }
@@ -346,6 +361,7 @@ $k_xs: 0.65;
 
                 .row-name {
                     padding: 0;
+                    padding-right: 20px;
                     width: 100%;
                     
                     & > .button_blue {
@@ -374,7 +390,6 @@ $k_xs: 0.65;
                         & > span {
                             color: var(--main_vv);
                             font-weight: 700;
-
                         }
                     }
                 }

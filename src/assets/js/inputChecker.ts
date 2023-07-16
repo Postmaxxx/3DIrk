@@ -23,7 +23,7 @@ const inputChecker = ({lang="en", el, min=0, max=1000, type, exact=""}:  IInputC
         el.parentElement.classList.add('incorrect-value')
     }
     if (exact && el.value !== exact) {
-        el.parentElement.dataset.errorText = lang === 'en' ? `Not match` : `Не совпадает`
+        el.parentElement.dataset.errorText = lang === 'en' ? `Doesn't match` : `Не совпадает`
         el.parentElement.classList.add('incorrect-value')
     }
     if (type === 'numbers' && !/^[0-9]*$/.test(el.value)) {

@@ -120,9 +120,9 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
         return fibersProperties.map((property, i) => {
             return property._id !== 'priceGr' && 
                 <div className="cell row-name fixed-left with-tip padding_no" key={property._id}>
-                    <button onClick={() => sortByProperty(property._id)} title={`${lang === 'en' ? 'Sort fibers by' : 'Отсортировать материалы по свойству '} ${property.name[lang]}`}>
+                    <button onClick={() => sortByProperty(property._id)}>
                         <span>{property.name[lang]}</span>
-                        <div className='tip' title={property.tip[lang]}>
+                        <div className='tip' tip-text={property.tip[lang]}>
                             <SvgInserter type={'question'}/>
                         </div>
                     </button>

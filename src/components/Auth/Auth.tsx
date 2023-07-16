@@ -52,8 +52,11 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
     const focusNext = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
             e.preventDefault()
-            //!!!
-           // target?.focus();
+            const focusableElements: HTMLElement[] = Array.from(document.querySelector('.login__form')?.querySelectorAll('input, button') || []);
+            focusableElements.sort((a, b) => a.tabIndex - b.tabIndex);
+            const currentIndex = focusableElements.indexOf(document.activeElement as HTMLElement);
+            const nextIndex = (currentIndex + 1) % focusableElements.length;
+            focusableElements[nextIndex].focus();
         }
     }
 
@@ -215,6 +218,7 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
                                 type={hideInput ? `password` : 'text'}
                                 value={form.repassword}
                                 onChange={onChangeText}
+                                onKeyDown={focusNext}
                                 onBlur={(e) => inputChecker({lang, min:8, max:30, el: e.target, exact: form.password})}/>
                         </div>}
                         {userState.auth.status === 'error' ? 
@@ -222,8 +226,9 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
                                 <span className='errors__header'>{lang === 'en' ? 'Errors' : 'Ошибки'}: </span>
                                 <ul className='errors__list'>
                                     {userState.auth.errors && userState.auth.errors.length > 0 && userState.auth.errors.map((error, i) => {
-                                        return (
+                                        return (<>
                                             <li key={i} className='errors__item'>{error[lang]}</li>
+                                        </>
                                         )
                                     })}
                                 </ul>

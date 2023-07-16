@@ -238,7 +238,7 @@ router.post('/login',
             const user: IUser = await User.findOne({ email })
             
             if (!user) {
-                return res.status(400).json({ message: { en: 'User not found', ru: "Пользователь не найден"},  errors: { en: 'User not found', ru: "Пользователь не найден"}})
+                return res.status(400).json({ message: { en: 'User not found', ru: "Пользователь не найден"},  errors: [{ en: 'User not found', ru: "Пользователь не найден"}]})
             }
             
             const passwordsSame = await bcrypt.compare(password, user.password)

@@ -11,6 +11,7 @@ $delta-medium: calc(($lang-width - $blob-size_medium - $lang-height + $blob-size
 $delta-small: calc(($lang-width - $blob-size_small - $lang-height + $blob-size_small) / 2);
 $transition_lang: cubic-bezier(0.51, 0.06, 0.56, 1.37) .2s;
 
+
 .lang-switcher {
     position: fixed;
     cursor: pointer;
@@ -29,6 +30,10 @@ $transition_lang: cubic-bezier(0.51, 0.06, 0.56, 1.37) .2s;
     font-weight: 700;
     z-index: 5500;
     transition: background-color $transition_theme, left $nav_mobile_delay, opacity $nav_mobile_delay;
+    & * {
+        -webkit-user-drag: none !important;
+        user-select: none !important;  
+    }
 
     
     @include respond-to(sm) {

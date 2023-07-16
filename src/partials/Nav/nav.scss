@@ -272,6 +272,10 @@ $gap_to_text: 5px;
         display: flex;
         align-items: center;
         justify-content: center;
+        & * {
+            -webkit-user-drag: none !important;
+            user-select: none !important;  
+        }
 
         & .text-hider {
             position: absolute;
