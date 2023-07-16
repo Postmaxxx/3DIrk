@@ -3,7 +3,7 @@ import './auth.scss'
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import { ICheckErrorItem, IFullState, ILoggingForm, IUserState, TLang, TLangText } from '../../interfaces';
+import { IFullState, ILoggingForm, IUserState, TLang, TLangText } from '../../interfaces';
 import { setUser, register, login } from "../../redux/actions/user"
 import { empty, resetFetch } from '../../assets/js/consts';
 import { errorsChecker } from '../../assets/js/processors';

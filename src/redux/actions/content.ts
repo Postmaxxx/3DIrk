@@ -1,4 +1,4 @@
-import { IAction, IContentState, IDispatch, IErrRes, IFetch, IFullState, IImgWithThumb, IMsgRes, INewsItem, INewsItemShort, ISendNews, IUserState, TLangText } from "../../interfaces"
+import { IAction, IContentState, IDispatch, IErrRes, IFetch, IFullState, IMsgRes, } from "../../interfaces"
 import { actionsListContent } from './actionsList'
 import { empty, errorFetch, fetchingFetch, successFetch } from "../../assets/js/consts";
 

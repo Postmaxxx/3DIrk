@@ -1,4 +1,4 @@
-import { IImgWithThumb, TImageSizes, TLang, TLangText } from '../../interfaces';
+import { TImageSizes, TLang, TLangText } from '../../interfaces';
 import './picker.scss'
 import { useEffect, useState, forwardRef, useImperativeHandle  } from "react";
 import { prevent } from '../../assets/js/processors';

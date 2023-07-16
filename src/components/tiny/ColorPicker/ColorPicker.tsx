@@ -1,8 +1,8 @@
 import './color-picker.scss'
-import { ICartState, IColor, IModalImg, TLang } from "../../../interfaces";
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { IColor, TLang } from "../../../interfaces";
+import { useState, useRef, useCallback } from 'react'
 import Modal, { IModalFunctions } from '../../../components/Modal/Modal';
-import ModalImage, { IImageModalFunctions } from '../../ImageModal/ImageModal';
+import { IImageModalFunctions } from '../../ImageModal/ImageModal';
 import ImageModal from '../../ImageModal/ImageModal';
 import { timeModalClosing } from '../../../assets/js/consts';
 

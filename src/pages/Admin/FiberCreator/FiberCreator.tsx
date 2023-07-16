@@ -136,7 +136,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
         errChecker.check(_descr.current.querySelector('#text_en') as HTMLInputElement, 100, 8000)
         errChecker.check(_descr.current.querySelector('#text_ru') as HTMLInputElement, 100, 8000)
 
-        const allSpec: {[key: string]: string} = {};
+        const allSpec = {} as IFiberParam;
         _spec.current.querySelectorAll('input, select').forEach(item => { //check specifications      
             errChecker.check(item as HTMLInputElement | HTMLSelectElement, 1, 10)
             allSpec[item.id] = (item as HTMLInputElement | HTMLSelectElement).value 

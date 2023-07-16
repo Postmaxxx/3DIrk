@@ -1,4 +1,4 @@
-import { IImgWithThumb, TLang, TLangText } from '../../interfaces';
+import { TLang, TLangText } from '../../interfaces';
 import './featurer.scss'
 import { useEffect, useState, forwardRef, useImperativeHandle  } from "react";
 import { prevent } from '../../assets/js/processors';

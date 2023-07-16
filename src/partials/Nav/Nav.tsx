@@ -1,6 +1,6 @@
 import { useState, useRef, useMemo } from "react";
 import { NavLink } from "react-router-dom";
-import { IFiber, IFullState, IPageItem, TLang } from "../../interfaces";
+import { IFiber, IFullState, TId, TLang } from "../../interfaces";
 import "./nav.scss"
 import navLogo from "../../assets/img/nav_logo.png"
 import { connect } from "react-redux";
@@ -36,7 +36,7 @@ interface IProps extends IPropsState, IPropsActions {}
 
 const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersList, isAdmin, token}): JSX.Element => {
     const _blur = useRef<HTMLDivElement>(null)
-    const [expandedNavItems, setExpandedNavItems] = useState<IPageItem["_id"][]>([])
+    const [expandedNavItems, setExpandedNavItems] = useState<TId[]>([])
     const modal = useRef<IModalFunctions>(null)
 
 

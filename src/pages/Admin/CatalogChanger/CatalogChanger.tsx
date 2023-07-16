@@ -1,4 +1,4 @@
-import { ICatalog,  ICatalogItem,  ICatalogState,  ICatalogTypes,  IFullState, TLang, TLangText } from '../../../interfaces';
+import { ICatalogState,  IFullState, TLang } from '../../../interfaces';
 import './catalog-changer.scss'
 import { FC, Fragment, useRef, useMemo, useCallback } from "react";
 import { connect } from "react-redux";

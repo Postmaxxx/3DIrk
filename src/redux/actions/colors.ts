@@ -1,4 +1,4 @@
-import { IAction, IDispatch, IColor, IColorsState, IFetch, IFullState, IErrRes, TLangText, IMsgRes, ISendColor, IImgWithThumb } from "../../interfaces"
+import { IAction, IDispatch, IColor, IColorsState, IFetch, IFullState, IErrRes, TLangText, IMsgRes, ISendColor, } from "../../interfaces"
 import { actionsListColors } from './actionsList'
 import { empty, fetchingFetch } from "../../assets/js/consts";
 //import mockColors from "../mocks/colors";

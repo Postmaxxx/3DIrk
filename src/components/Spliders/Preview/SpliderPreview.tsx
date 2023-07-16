@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { useEffect, useMemo, useRef, useState, } from "react";
 import "@splidejs/react-splide/css";
 import "./splider-preview.scss";
-import { IFullState, IImg, IImgWithThumb, IProduct, ISpliderOptions, TImageSizes, TLang } from "../../../interfaces";
+import { IFullState, ISpliderOptions, TImageSizes, TLang } from "../../../interfaces";
 import Splide from "@splidejs/splide";
 import ImgWithPreloader from "../../../assets/js/ImgWithPreloader";
 

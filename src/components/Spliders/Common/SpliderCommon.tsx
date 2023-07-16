@@ -1,7 +1,7 @@
 import './splider-common.scss'
 import Splide from "@splidejs/splide";
 import ImgWithPreloader from '../../../assets/js/ImgWithPreloader';
-import { IImgWithThumb, ISpliderOptions, TImageSizes } from '../../../interfaces';
+import { ISpliderOptions, TImageSizes } from '../../../interfaces';
 import "@splidejs/react-splide/css";
 import Modal, { IModalFunctions } from '../../../components/Modal/Modal';
 import { IImageModalFunctions } from '../../ImageModal/ImageModal';

@@ -1,7 +1,7 @@
 import './carouselmax.scss'
 import { useEffect,useRef, useState,useCallback, useMemo, memo } from 'react';
 import ImgWithPreloader from '../../assets/js/ImgWithPreloader'
-import { IImgWithThumb, ISplider } from '../../interfaces';
+import { ICarouselMax } from '../../interfaces';
 import Modal, { IModalFunctions } from "../Modal/Modal";
 import ImageModal, { IImageModalFunctions } from "../ImageModal/ImageModal";
 import Homer from '../Homer/Homer';
@@ -46,7 +46,7 @@ const options: IOptions = {
 }
 
 interface ISliderMax {
-    content: ISplider
+    content: ICarouselMax
 }
 
 

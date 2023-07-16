@@ -1,4 +1,12 @@
-import { IFiberProperties } from "../../interfaces"
+import { TId, TLangText } from "../../interfaces"
+
+export interface IFiberProperties {
+    _id: TId
+    name: TLangText
+    tip: TLangText
+    unit: TLangText
+    type: string
+}
 
 
 export const fibersProperties = [

@@ -1,4 +1,4 @@
-import { IAction, IDispatch, IErrRes, IFetch, IFiber, IFullState, IImgWithThumb, IMsgRes, ISendFiber, TLangText } from "../../interfaces"
+import { IAction, IDispatch, IErrRes, IFetch, IFiber, IFullState, IMsgRes, ISendFiber, TLangText } from "../../interfaces"
 import { actionsListFibers } from './actionsList'
 import { empty, errorFetch, fetchingFetch } from "../../assets/js/consts";
 

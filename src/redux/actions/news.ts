@@ -1,4 +1,4 @@
-import { IAction, IDispatch, IErrRes, IFetch, IFullState, IImgWithThumb, IMsgRes, INewsItem, INewsItemShort, ISendNews, IUserState, TLangText } from "../../interfaces"
+import { IAction, IDispatch, IErrRes, IFetch, IFullState, IMsgRes, INewsItem, INewsItemShort,  ISendNewsItem } from "../../interfaces"
 import { actionsListNews } from './actionsList'
 import { empty, fetchingFetch, successFetch } from "../../assets/js/consts";
 
@@ -113,16 +113,15 @@ export const loadOneNews = (_id: string) => {
 
 
 
-export const sendNews = () => {
+export const sendNews = (newsItem: ISendNewsItem) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
         if (getState().news.send.status === 'fetching') return
-        const { newsOne } = getState().news
         const token = getState().user.token
         dispatch(setSendNews(fetchingFetch))
 
         const sendForm = new FormData()   
-        if (newsOne.files && newsOne.files?.length > 0) {
-            newsOne.files.forEach(item => {
+        if (newsItem.files && newsItem.files?.length > 0) {
+            newsItem.files.forEach(item => {
                 sendForm.append('files', item, item.name)
             })
         }
@@ -130,18 +129,18 @@ export const sendNews = () => {
         try {
             const newsToDb: Partial<INewsItem> = {
                 header: {
-                    en:  newsOne.header.en.trim(),
-                    ru:  newsOne.header.ru.trim()
+                    en:  newsItem.header.en.trim(),
+                    ru:  newsItem.header.ru.trim()
                 },
                 text: {
-                    en:  newsOne.text.en.trim(),
-                    ru:  newsOne.text.ru.trim()
+                    en:  newsItem.text.en.trim(),
+                    ru:  newsItem.text.ru.trim()
                 },
                 short: {
-                    en:  newsOne.short.en.trim(),
-                    ru:  newsOne.short.ru.trim()
+                    en:  newsItem.short.en.trim(),
+                    ru:  newsItem.short.ru.trim()
                 },
-                date: newsOne.date,
+                date: newsItem.date,
             }
             sendForm.append('news', JSON.stringify(newsToDb))
 
@@ -178,16 +177,15 @@ export const sendNews = () => {
 
 
 
-export const updateNews = () => {
+export const updateNews = (newsItem: ISendNewsItem) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
         if (getState().news.send.status === 'fetching') return
-        const { newsOne } = getState().news
         const token = getState().user.token //get current user state
         dispatch(setSendNews(fetchingFetch))
 
         const sendForm = new FormData()   
-        if (newsOne.files && newsOne.files?.length > 0) {
-            newsOne.files.forEach(item => {
+        if (newsItem.files && newsItem.files?.length > 0) {
+            newsItem.files.forEach(item => {
                 sendForm.append('files', item, item.name)
             })
         }
@@ -196,19 +194,19 @@ export const updateNews = () => {
         try {
             const newsToDb: Partial<INewsItem> = {
                 header: {
-                    en:  newsOne.header.en.trim(),
-                    ru:  newsOne.header.ru.trim()
+                    en:  newsItem.header.en.trim(),
+                    ru:  newsItem.header.ru.trim()
                 },
                 text: {
-                    en:  newsOne.text.en.trim(),
-                    ru:  newsOne.text.ru.trim()
+                    en:  newsItem.text.en.trim(),
+                    ru:  newsItem.text.ru.trim()
                 },
                 short: {
-                    en:  newsOne.short.en.trim(),
-                    ru:  newsOne.short.ru.trim()
+                    en:  newsItem.short.en.trim(),
+                    ru:  newsItem.short.ru.trim()
                 },
-                date: newsOne.date,
-                _id: newsOne._id,
+                date: newsItem.date,
+                _id: newsItem._id,
             }
             sendForm.append('news', JSON.stringify(newsToDb))
             

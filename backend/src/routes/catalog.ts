@@ -15,39 +15,6 @@ const { check, validationResult } = require('express-validator')
 const fileSaver = require('../routes/files')
 const isAdmin = require('../middleware/isAdmin')
 
-/*
-let allCatalog: ICatalogItem[] = [] //wo __v
-let allProducts: ({__v: string} & IProduct)[]  = [] //with __V
-
-
-const loadCatalog = async (res): Promise<{loaded: boolean, msg: string}> => {
-    if (allCatalog.length === 0 || cacheStatus.catalog) {
-        try {  
-            await loadProducts(res)
-            const rawCatalog: ({__v: string} & ICatalogItem)[] = await Catalog.find()
-            
-            const amounts: {[key:string]: number} = {}    
-            allProducts.forEach(product => {
-                amounts[product.category.toString()] ? amounts[product.category.toString()]++ : amounts[product.category.toString()] = 1     
-            })
-            
-            allCatalog = rawCatalog.map(item => {
-                return {
-                    _id: item._id,
-                    name: item.name,
-                    total: amounts[item._id.toString()] || 0
-                }
-            })
-
-            cacheStatus.catalog = false
-
-        } catch (e) {
-            return res.status(400).json({message: {en: `Error while loading catalog from db: ${e}`, ru: `Ошибка при получении каталога из базы данных: ${e}`}})
-        }
-    }
-}
-
-*/
 
 router.get('/list', async (req, res) => { 
     try {
@@ -137,7 +104,12 @@ router.get('/category', async(req, res) => {
                 name: item.name,
                 price: item.price,
                 text_short: item.text_short,
-                images: item.images
+                images: {
+                    files: item.images.files,
+                    paths: {
+                        small: item.images.paths.small
+                    }
+                }
             }))
         })
 

@@ -1,4 +1,4 @@
-import { IAction, ICatalogItem, ICategory, IDispatch, IErrRes, IFetch, IFullState, IImgWithThumb, IMsgRes, IProduct, ISendProduct, TId, TLangText } from "../../interfaces"
+import { IAction, ICatalogItem, ICategory, IDispatch, IErrRes, IFetch, IFullState, IMsgRes, IProduct, ISendProduct, TId, TLangText } from "../../interfaces"
 import { actionsListCatalog } from './actionsList'
 
 import { empty, errorFetch, fetchingFetch, resetFetch, successFetch } from "../../assets/js/consts";

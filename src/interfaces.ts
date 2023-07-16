@@ -3,7 +3,7 @@ import { AnyAction } from "redux";
 //================================================================================
 export type TTheme = 'dark' | 'light'
 export type TLang = 'en' | 'ru'
-export type TId = string
+export type TId = string //id of any element
 
 //---------------------------------------redux
 export interface IAction<T> {
@@ -25,8 +25,8 @@ export type TFetchStatus = 'idle' | 'success' | 'fetching' | 'error'
 
 export interface IFetch {
     status: TFetchStatus
-    message: TLangText
-    errors?: TLangText[]
+    message: TLangText //for handling messages from BE
+    errors?: TLangText[] ////for handling errors-list from BE
 }
 
 export interface IMessageModal {
@@ -48,80 +48,33 @@ export type TLangText = {
 }
 
 
-// ---------------------------------------------nav
-export interface IPageItem {
-    name: TLangText
-    path: string
-    _id: TId
-    notLink?: boolean
-    //expanded?: boolean
-    subMenu?: Array<IPageItem>
-}
-
-
-//-------------------------------------------img
-export interface IImg {
-    url: string
-    name: TLangText
-}
-
-export interface IImgWithThumb {
-    full: string
-    medium: string
-    thumb: string
-    fileName: string
-}
-
-
 
 //-------------------------------------------splider
 export interface ISpliderOptions {
-	type   : string
-	perPage: number
-	gap: string | number
-	lazyLoad: boolean
-	updateOnMove: boolean
-	perMove: number
-	pagination: boolean
-	arrows: boolean
-	drag: boolean
-	speed: number
-	autoplay: boolean
-    wheel: boolean
-    wheelSleep: number
-	interval: number
-	pauseOnHover: boolean
-    fixedWidth: string
-    focus: number | "center"
-    rewind: boolean
-	isNavigation: boolean
-    direction: "ltr" | "rtl" | "ttb" | undefined
-    height: string
-    releaseWheel: boolean
-	breakpoints: {
-		[key: number]: Partial<{
-            type   : string
-            perPage: number
-            gap: string | number
-            lazyLoad: boolean
-            updateOnMove: boolean
-            perMove: number
-            pagination: boolean
-            arrows: boolean
-            drag: boolean
-            speed: number
-            autoplay: boolean
-            wheel: boolean
-            wheelSleep: number
-            interval: number
-            pauseOnHover: boolean
-            fixedWidth: string
-            focus: number | "center"
-            rewind: boolean
-            isNavigation: boolean
-            direction: "ltr" | "rtl" | "ttb" | undefined
-            height: string
-		}>
+	type?   : string
+	perPage?: number
+	gap?: string | number
+	lazyLoad?: boolean
+	updateOnMove?: boolean
+	perMove?: number
+	pagination?: boolean
+	arrows?: boolean
+	drag?: boolean
+	speed?: number
+	autoplay?: boolean
+    wheel?: boolean
+    wheelSleep?: number
+	interval?: number
+	pauseOnHover?: boolean
+    fixedWidth?: string
+    focus?: number | "center"
+    rewind?: boolean
+	isNavigation?: boolean
+    direction?: "ltr" | "rtl" | "ttb" | undefined
+    height?: string
+    releaseWheel?: boolean
+	breakpoints?: {
+		[key: number]: Partial<ISpliderOptions>
 	}
 }
 
@@ -146,7 +99,7 @@ export interface IProsCons {
 
 
 
-//----------------------------------- base
+//----------------------------------- features
 export interface IFeature {
     name: TLangText
     value: TLangText
@@ -155,13 +108,13 @@ export interface IFeature {
 
 
 //==========================================Fibers State
-export interface ISendFiber extends Omit<IFiber, 'images'> {
+export interface ISendFiber extends Omit<IFiber, 'images'> { //for sending to BE
     files: File[]
 }
 
 
 export interface IFiberParam {
-    [key: string]: number | string
+    [key: string]: number | string //for enumerating and useinmg with inputs
     strength: number //MPa
     stiffnes: number //1..10
     durability: number //1..10
@@ -183,7 +136,7 @@ export interface IFiberParam {
     cutting: number //0..2, 0 -no, 1 - maybe, 3 - ok
     grinding: number  //0..2, 0 -no, 1 - maybe, 3 - ok
     price: number //1-low...5-high
-    priceGr: string
+    priceGr: string //price for 1gr
 }
 
 
@@ -204,7 +157,7 @@ export interface IFiber {
     }
     params: IFiberParam
     proscons: IProsCons
-    colors: TId[] //ids of colors
+    colors: TId[] //list of colors ids
 }
 
 export interface IFibersState {
@@ -220,7 +173,7 @@ export interface IFibersState {
 
 
 //============================================== category state
-export interface ISendProduct extends Omit<IProduct, 'images'> {
+export interface ISendProduct extends Omit<IProduct, 'images'> { //for sending to BE
     files: File[]
 }
 
@@ -241,10 +194,8 @@ export interface IProduct {
         files: string[]
     }
     fibers: TId[] //array of fiber ids
-    //features: IFeature[]
     mods: TLangText[]
     category: TId
-    //files?: File[]
 }
 
 
@@ -255,10 +206,7 @@ export interface IProductShort { //for gallery
     text_short: TLangText
     images: {
         paths: {
-            full: string
             small: string
-            medium: string
-            preview: string
         }
         files: string[]
     }
@@ -267,14 +215,11 @@ export interface IProductShort { //for gallery
 
 export interface ICategory {
     _id: TId
-    //name: TLangText
     products: IProductShort[] // loaded products,
     loadCategory: IFetch //for load products in selected category
     product: IProduct //current opened product (in case opened from bookmarks)
     loadProduct: IFetch
     sendProduct: IFetch
-    //page: number //current open page of products in category, max as total / amountOfItemsPerPage
-    //selectedProduct: string //id of selected product in category
 }
 
 
@@ -297,17 +242,11 @@ export interface ICatalogState {
 
 
 
-//================================================news state
-/*export interface ISendNews {
-    header: TLangText
-    short: TLangText
-    text: TLangText
-    date: Date
-    images: File[]
-}*/
 
-export interface ISendNews extends Omit<INewsItem, 'images'> {
-    images: File[]
+
+//============================================== news state
+export interface ISendNewsItem extends Omit<INewsItem, 'images'> { //for sending to BE
+    files: File[]
 }
 
 
@@ -325,7 +264,6 @@ export interface INewsItem { //for detail view on news detail page
         }
         files: string[]
     }
-    files?: File[]
 }
 
 export interface INewsItemShort { // for preview news on main page
@@ -359,35 +297,12 @@ export interface INewsState {
 export interface IBaseState {
     theme: TTheme
     lang: TLang
-    mobOpened: boolean,
-    desktopOpened: boolean
+    mobOpened: boolean //mobile nav panel opened
+    desktopOpened: boolean //desktop nav panel opened
 }
 
 
 
-
-//============================================== order state
-/*export interface IOrderState {
-    _id: TId
-    load: IFetch
-    send: IFetch
-    date: Date
-    name: string
-    phone: string
-    email: string
-    message: string
-    files: File[]
-    cart: ICartState
-}
-*/
-
-
-
-//============================================== Product state
-/*export interface IProductState extends IProduct {
-    load: IFetch
-   // selectedImage: number
-}*/
 
 //============================================== Colors state
 export interface ISendColor {
@@ -396,7 +311,7 @@ export interface ISendColor {
         ru: string, 
         en: string
     }, 
-    files: {
+    files: { //specific due to the neccessarity to have different images for thumb and full images
         full: File, 
         thumb: File
     },
@@ -416,10 +331,9 @@ export interface IColorsState {
 
 //============================================== Cart state
 export interface ICartItem {
-    //product: TId //
     product: IProduct
-    fiber: TId //id
-    color: TId  //id
+    fiber: TId 
+    color: TId 
     type: TLangText
     amount: number
 }
@@ -429,34 +343,22 @@ export interface ICartState {
     load: IFetch
     send: IFetch
     items: ICartItem[]
-    shouldUpdate: boolean
+    shouldUpdate: boolean //if true it means client updated cart and it must be sent to BE
 }
 
 
 
 //============================================== User state
-type TOrderStatus = 'working' | 'canceled' | 'finished'
-
-/*
-export interface IOrder {
-    date: Date
-    status: TOrderStatus
-    items: Omit<ICartItem, "id">[]
-}
-*/
-
 export interface IUserState {
     name: string
     email: string
     phone: string
     token: string
     message: string
-    //orders: TId[]
-    auth: IFetch
+    auth: IFetch //for authenticating
     isAdmin: boolean
-    //files: File[]
     cart: ICartState
-    sendOrder: IFetch
+    sendOrder: IFetch //for sending order
 }
 
 
@@ -465,18 +367,14 @@ export interface IUserState {
 
 
 
-//--------------------------------- ORDERS----------------------------------------------------------
-
+//---------------------------------ALL ORDERS----------------------------------------------------------
 export type OrderType = 'finished' | 'new' | 'working' | 'canceled'
 
-export interface IFilterUser {
-    name: string
-    phone: string
-    email: string
-    _id: string
+export interface IFilterUser extends Pick<IUserState, "name" | "phone" | "email"> { //User for filter orders for Admin in All_Orders
+    _id: TId
 }
 
-export interface IOrdersCartItem {
+export interface IOrdersCartItem { //cart in order, for All_Orders
     productName: TLangText
     fiberName: TLangText
     colorName: TLangText
@@ -486,7 +384,7 @@ export interface IOrdersCartItem {
 
 
 export interface IOrdersItem {
-    _id: string
+    _id: TId
     date: string
     message: string
     status: OrderType
@@ -496,19 +394,19 @@ export interface IOrdersItem {
 }
 
 
-export interface IOrdersUser {
-    userInfo: IFilterUser
+export interface IUserOrders { //user with userInfo and orders for requested period and with requested stauts
+    userInfo: IFilterUser 
     orders: IOrdersItem[]
 }
 
 interface IUserList {
     load: IFetch
-    list: IFilterUser[]
+    list: IFilterUser[] //userlist to pick user, for Admin in All_Orders
 }
 
 export interface IOrdersState {
-    users: IOrdersUser[]
-    userList: IUserList
+    users: IUserOrders[] //list of all requested users with orders for requested period and with requested status 
+    userList: IUserList //list of all users, for fast fetch just only userInfo
     load: IFetch
     send: IFetch
 }
@@ -524,69 +422,30 @@ export interface IFullState {
     user: IUserState
     content:  IContentState
     orders: IOrdersState
-    //order: IOrderState
-    //cart: ICartState
 }
 
 
 
 
 
-//////////////////////////////////////////////////////////////////////////////////////  BackEnd
-
-export interface ICategoryReceived {
-    _id: TId
-    name: TLangText
-    products: IProduct[]
-}
-
-
-export interface IProductBE {
-    categoryId: TId
-    _id: TId
-    price: TLangText
-    name: TLangText
-    text: TLangText
-    imgs: IImg[]
-    fibers: TId[]
-    features: IFeature[]
-    mods: TLangText[]
-}
-
-
-
-
-export interface IFiberProperties {
-    _id: TId
-    name: TLangText
-    tip: TLangText
-    unit: TLangText
-    type: string
-}
-
-
-
-
+//////////////////////////////////for intercommunicate with BackEnd
 export interface IUserLoginResOk {
     message: TLangText
     user: Pick<IUserState, 'name' | 'email' | 'phone' | 'token' | 'isAdmin'> & {cart: ICartItem[]}
 }
 
 
-
-
-//////////////////////////////////////////////////////////
-export interface IErrRes {
+export interface IErrRes { //type for response with not 2XX status
     errors?: TLangText[]
     message: TLangText
 }
 
-export interface IMsgRes {
+export interface IMsgRes {  //type for response with message
     message: TLangText
 }
 
 
-export interface ILoggingForm {
+export interface ILoggingForm { //for form login/register form
     email: string
     password: string
     name: string,
@@ -594,19 +453,7 @@ export interface ILoggingForm {
     repassword: string
 }
 
-export interface ICheckErrorItem {
-    ref: React.RefObject<HTMLInputElement | HTMLTextAreaElement>
-    name: TLangText
-}
-
-
-export interface IModalImg {
-	descr: string 
-	path: string
-}
-
-
-export interface ISplider {
+export interface ICarouselMax { //for CarouselMax
     paths: {
         full: string
         spliderMain: string
@@ -614,18 +461,11 @@ export interface ISplider {
     files: string[]
 }
 
-export interface IContentState {
-    splider: ISplider
+export interface IContentState { //for other app content 
+    splider: ICarouselMax
     send: IFetch
     load: IFetch
 }
 
-///////////////////////////// tech
-export interface ICatalogTypes {
-    new: TLangText[]
-    old: TLangText[]
-    changed: TLangText[]
-}
 
-
-export type TImageSizes = 'thumb' | 'small' | 'medium' | 'full' | 'spliderMain' | 'preview'
+export type TImageSizes = 'thumb' | 'small' | 'medium' | 'full' | 'spliderMain' | 'preview' //all supported types of images.
