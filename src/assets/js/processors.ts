@@ -19,7 +19,7 @@ interface IErrorsChecker {
 const errorsChecker = ({lang = 'en'}: IErrorsChecker) => {
     const errors: string[] = []
 
-    const check = (el:  HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | HTMLSelectElement, min = 0, max = 1000): {result: boolean, error: string} => {
+    const check = (el:  HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement , min = 0, max = 1000): {result: boolean, error: string} => {
         const err = {result: false, error: ''}
         if (el.value.length >= min && el.value.length <= max) return err // no error
         

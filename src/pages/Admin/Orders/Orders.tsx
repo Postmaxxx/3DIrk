@@ -187,10 +187,10 @@ const Orders = ({lang, colorsState, fibersState, ordersState, userState, setStat
                     }
                     {loaded &&  <>
                         <div className="filters">
-                            <div className="filter__item">
+                            <div className={`filter__item ${userState.isAdmin ? null : 'hidden'}`}>
                                 <label htmlFor="user">Select user
                                     <select name="user" id="user" ref={_user}>
-                                        <option value="all" defaultValue='all'>All</option>
+                                        {userState.isAdmin  && <option value="all" defaultValue='all'>All</option>}
                                         {ordersState.userList.list.map(item => (
                                             <option key={item._id} value={item._id}>{item.name} - {item.email}</option>
                                         ))}

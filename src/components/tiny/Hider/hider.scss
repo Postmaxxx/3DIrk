@@ -43,7 +43,7 @@
     }
 
 
-    &.hidden {
+    &.hide {
         & .eye {
             animation: lid--close .5s ease-in-out forwards;
         }

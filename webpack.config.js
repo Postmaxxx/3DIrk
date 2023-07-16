@@ -49,7 +49,7 @@ module.exports = (env, argv) => {
 				swSrc: './src/sw.ts', //source file
 				swDest: 'sw.js', //destanation file, root: build folder (dist)
 				include: [/\.(html|js|css|woff2|woff)$/], //type of resources to be precached
-				maximumFileSizeToCacheInBytes: 2 * 1024 * 1024, //max size of resource to be precached
+				maximumFileSizeToCacheInBytes: 3 * 1024 * 1024, //max size of resource to be precached
 			}),
 			new CopyWebpackPlugin({ //copy resources from "public" folder to "dist"
 				patterns: [

@@ -163,14 +163,14 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
             errChecker.check(item, 2, 100)
         })
 
-        /*if (errChecker.amount() > 0) {
+        if (errChecker.amount() > 0) {
             message.current?.update(errChecker.result())
             modal.current?.openModal('submit')
             return
-        }*/
+        }
 
 
-        setFiber(prev => ({
+        setFiber(prev => ({ 
                 ...prev,
                 _id: paramFiberId,
                 params: (allSpec as unknown) as IFiberParam,

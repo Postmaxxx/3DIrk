@@ -127,7 +127,6 @@ registerRoute(imagesRoute);
 setCatchHandler(async (options) => {
 	const destination = options.request.destination;
 	//in case of fetching images are unabled to reach response with cached mock image
-	console.log(111);
 	if (destination === 'image') {
 		const cache = await self.caches.open(cachesCurrent.offline);
 		return (await cache.match('offline.webp')) || Response.error();

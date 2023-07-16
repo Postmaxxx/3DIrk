@@ -5,10 +5,10 @@ import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { ICheckErrorItem, IFullState, ILoggingForm, IUserState, TLang, TLangText } from '../../interfaces';
 import { setUser, register, login } from "../../redux/actions/user"
-import inputChecker from '../../assets/js/inputChecker';
 import { empty, resetFetch } from '../../assets/js/consts';
 import { errorsChecker } from '../../assets/js/processors';
 import Hider from '../tiny/Hider/Hider';
+import inputChecker from '../../assets/js/inputChecker';
 
 const actionsListUser = { setUser, register, login }
 
@@ -33,14 +33,14 @@ interface IProps extends IPropsState, IPropsActions {
 const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Element => {
 
     const [register, setRegister] = useState<boolean>(false) //true - register, false - login
-    const [hide, setHide] = useState<boolean>(true) //true - register, false - login
+    const [hideInput, setHideInput] = useState<boolean>(true) //true - register, false - login
     const [form, setForm] = useState<ILoggingForm>({name: userState.name, email: userState.email, phone: userState.phone, password: '', repassword: ''})
 
 
     const onChangeText: React.ChangeEventHandler<HTMLInputElement> = (e) => {
         const key = e.target.name as keyof ILoggingForm
         setForm({...form, [key]: e.target.value});
-        (e.target as HTMLElement).parentElement?.classList.remove('error')
+        (e.target as HTMLElement).parentElement?.classList.remove('incorrect-value')
         if (status !== 'idle') {
             clearErrors()
         }
@@ -76,8 +76,8 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
         errChecker.clear()
         
         if (register) { 
-            if (form.email.length < 2) {errChecker.add(lang === 'en' ? 'Name is too short' : 'Имя слишком короткое')}
-            if (form.email.length > 30) {errChecker.add(lang === 'en' ? 'Name is too long' : 'Имя слишком длинное')}
+            if (form.name.length < 2) {errChecker.add(lang === 'en' ? 'Name is too short' : 'Имя слишком короткое')}
+            if (form.name.length > 30) {errChecker.add(lang === 'en' ? 'Name is too long' : 'Имя слишком длинное')}
             if (form.phone.length < 6) {errChecker.add(lang === 'en' ? 'Phone is too short' : 'Телефон слишком короткий')}
             if (form.phone.length > 20) {errChecker.add(lang === 'en' ? 'Phone is too long' : 'Телефон слишком длинный')}
             if (form.email.length < 6) {errChecker.add(lang === 'en' ? 'Email is too short' : 'Почта слишком короткая')}
@@ -117,7 +117,7 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
 
 
     const onHiderClick = () => {
-        setHide(prev => !prev)
+        setHideInput(prev => !prev)
     }
 
 
@@ -132,6 +132,7 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
     useEffect(() => {
         clearErrors()
     }, [])
+
 
 
    
@@ -153,12 +154,10 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
                                 name="name"
                                 id="user_user_name" 
                                 type="text" 
-                                required 
-                                minLength={2} 
-                                maxLength={25} 
                                 onChange={onChangeText}
                                 value={form.name}
-                                onKeyDown={focusNext}/>
+                                onKeyDown={focusNext}
+                                onBlur={(e) => inputChecker({lang, min:2, max:30, el: e.target})}/>
                         </div>}
                     <div className="input-block">
                         <label htmlFor="user_email">
@@ -169,12 +168,10 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
                             name="email"
                             id="user_email" 
                             type="email" 
-                            required 
-                            minLength={5} 
-                            maxLength={35} 
                             value={form.email}
                             onChange={onChangeText} 
-                            onKeyDown={focusNext}/>
+                            onKeyDown={focusNext}
+                            onBlur={(e) => inputChecker({lang, min:6, max:50, type: 'email', el: e.target})}/>
                     </div>
                     {register &&
                         <div className="input-block">
@@ -186,45 +183,39 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
                                 name="phone"
                                 id="user_phone" 
                                 type="tel" 
-                                required 
-                                minLength={2} 
-                                maxLength={25} 
                                 value={form.phone}
                                 onChange={onChangeText} 
-                                onKeyDown={focusNext}/>
+                                onKeyDown={focusNext}
+                                onBlur={(e) => inputChecker({lang, min:6, max:25, type: 'phone', el: e.target})}/>
                         </div>}
                     <div className="input-block">
                         <label htmlFor="user_password">
-                            {lang === 'en' ? 'Your password (8 symbols or more)' : 'Ваш пароль (не менее 8 символов)'}
+                            {lang === 'en' ? 'Your password' : 'Ваш пароль'}
                         </label>
                         <input 
                             className="input-element" 
                             name="password"
                             id="user_password" 
-                            type={hide ? `password` : 'text'}
-                            required 
-                            minLength={8} 
-                            maxLength={25} 
+                            type={hideInput ? `password` : 'text'}
                             value={form.password}
                             onChange={onChangeText} 
-                            onKeyDown={focusNext}/>
-                            <Hider hidden={hide} onClick={onHiderClick}/>
+                            onKeyDown={focusNext}
+                            onBlur={(e) => inputChecker({lang, min:8, max:30, el: e.target})}/>
+                        <Hider hidden={hideInput} onClick={onHiderClick} />
                     </div>
                     {register &&
                         <div className="input-block">
                             <label htmlFor="user_repassword">
-                                {lang === 'en' ? 'Repeat your password' : 'Повторите ваш пароль'}
+                                {lang === 'en' ? 'Your password' : 'Ваш пароль'}
                             </label>
                             <input 
                                 className="input-element" 
                                 name="repassword"
                                 id="user_repassword" 
-                                type={hide ? `password` : 'text'}
-                                required 
-                                minLength={8} 
-                                maxLength={25} 
+                                type={hideInput ? `password` : 'text'}
                                 value={form.repassword}
-                                onChange={onChangeText} />
+                                onChange={onChangeText}
+                                onBlur={(e) => inputChecker({lang, min:8, max:30, el: e.target, exact: form.password})}/>
                         </div>}
                         {userState.auth.status === 'error' ? 
                             <div className="errors__container">

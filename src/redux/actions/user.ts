@@ -119,7 +119,7 @@ export const loginWithToken = () => {
         const savedUser = localStorage.getItem('user')
         const currentToken: string = savedUser ? JSON.parse(savedUser).token : null
         if (!currentToken) {
-            return dispatch(setUser({...user, auth: {status: 'error', message: {en: 'Token not found', ru: 'Токен не найден'}, errors: []}}))
+            return //dispatch(setUser({...user, auth: {status: 'error', message: {en: 'Token not found', ru: 'Токен не найден'}, errors: []}}))
         }
 
         dispatch(setUser({...user, auth: fetchingFetch}))
