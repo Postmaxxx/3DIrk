@@ -1,17 +1,36 @@
 import { IFetch, IFiber, IFiberParam, IMessageModal, ISendColor, ISendFiber, ISendProduct, TLangText } from "../../interfaces"
-/*
-const delayBetweenImagesPost: number = 300
 
-const minTimeBetweenSendings = 1000; //in ms
-*/
-const timeModalClosing: number = 500
+const timeModalClosing: number = 500 //transition of closing modal window
 
 const gapBetweenRequests: number = 2000 //time between requests in case of error
 
-const strengthMin = 1
-const strengthMax = 180
+const strengthMin = 1 //fiber strength min
+const strengthMax = 180 //fiber strength max
 
-const usersPerPage = 2
+const usersPerPage = 2 //for Admin for AllOrders page
+
+const inputsProps = { //restrictions of inputs
+    email: {
+        min: 6,
+        max: 50
+    },
+    name: {
+        min: 2,
+        max: 40
+    },
+    phone: {
+        min: 6,
+        max: 25
+    },
+    message: {
+        min: 20,
+        max: 4000
+    },
+    password: {
+        min: 8,
+        max: 40
+    }
+}
 
 const clearModalMessage: IMessageModal = {
     status: '',
@@ -269,4 +288,4 @@ const timeOffset = (new Date()).getTimezoneOffset() / 60
 export { clearModalMessage, resetFetch, timeModalClosing, 
     fetchingFetch, errorFetch, successFetch, headerStatus, empty, selector, strengthMin, 
     strengthMax, fiberEmpty, productEmpty, colorEmpty, gapBetweenRequests,
-    orderStatus, usersPerPage, timeOffset}
+    orderStatus, usersPerPage, timeOffset, inputsProps}

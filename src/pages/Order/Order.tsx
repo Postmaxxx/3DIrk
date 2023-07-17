@@ -2,16 +2,16 @@ import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import './order.scss'
-import { ICartState, IColorsState, IFetch, IFibersState, IFullState, TLang, TLangText } from "../../interfaces";
+import { ICartState, IColorsState, IFetch, IFibersState, IFullState, TLang } from "../../interfaces";
 import { useEffect, useRef, useCallback, useMemo } from 'react'
 import Modal, { IModalFunctions } from "../../components/Modal/Modal";
 import Message, { IMessageFunctions } from "../../components/Message/Message";
 import CartContent from "../../components/CartContent/CartContent";
 import AddFiles, { IAddFilesFunctions } from "../../components/AddFiles/AddFiles";
 import { allActions } from "../../redux/actions/all";
-import { headerStatus, resetFetch, timeModalClosing } from "../../assets/js/consts";
-import { checkAndLoad, errorsChecker, prevent } from "../../assets/js/processors";
-
+import { inputsProps, resetFetch} from "../../assets/js/consts";
+import { checkAndLoad, focusMover, modalMessageCreator, prevent } from "../../assets/js/processors";
+import inputChecker from "../../../src/assets/js/inputChecker";
 
 interface IPropsState {
     lang: TLang,
@@ -32,66 +32,66 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 
+
 const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState, setState}): JSX.Element => {
     const _message = useRef<HTMLTextAreaElement>(null)
-    const modal_message = useRef<IModalFunctions>(null)
-    const message = useRef<IMessageFunctions>(null)
-    const addFiles = useRef<IAddFilesFunctions>(null)
-    const errChecker = useMemo(() => errorsChecker({lang}), [lang])
+    const modalMessageRef = useRef<IModalFunctions>(null)
+    const messageRef = useRef<IMessageFunctions>(null)
+    const addFilesRef = useRef<IAddFilesFunctions>(null)
+
+    const focuser = useMemo(() => focusMover(), [lang])
 
 
     const closeModalMessage = useCallback(() => {
         if (!_message.current) return
-        modal_message.current?.closeModal()
-        setTimeout(() => message.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
+        modalMessageRef.current?.closeModal()
+        //setTimeout(() => message.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
         if (sendOrder.status === 'success') {
-            addFiles.current?.clearAttachedFiles()
+            addFilesRef.current?.clearAttachedFiles()
             _message.current.value = ''
             setState.user.setCart({items: []})
         }
         setState.user.setSendOrder(resetFetch)
-        errChecker.clear()
-	}, [sendOrder.status, errChecker])
+	}, [sendOrder.status])
 
-
-    
+ 
 
     const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
-        if (!_message.current || !message.current || !modal_message.current || !addFiles.current) return
+        if (!_message.current || !messageRef.current || !modalMessageRef.current || !addFilesRef.current) return
         prevent(e)
-        errChecker.check(_message.current, -1, 3000)
 
-        if (errChecker.amount() > 0) {
-            message.current?.update(errChecker.result())
-            modal_message.current.openModal()
-            return
-        }
-
+        //check errors
+        focuser.focusAll();//run over all elements to get all errors
+        const errorFields = document.querySelector('[data-selector="order-form"]')?.querySelectorAll('.incorrect-value')
+        if (errorFields && errorFields?.length > 0) return
         setState.user.sendOrder({
             message: _message.current.value,
-            files: addFiles.current.getFiles(),
-            //informer
+            files: addFilesRef.current.getFiles(),
         })
     }
 
 
     useEffect(() => {
         if (sendOrder.status === 'success' || sendOrder.status === 'error') {
-            const errors: string[] = sendOrder.errors?.map(e => e[lang]) || []
-            message.current?.update({
-                header: headerStatus[sendOrder.status][lang],
-                status: sendOrder.status,
-                text: [sendOrder.message[lang], ...errors]
-            })
-            modal_message.current?.openModal()
+            messageRef.current?.update(modalMessageCreator(sendOrder, lang))
+            modalMessageRef.current?.openModal()
         }
     }, [sendOrder.status])
 
 
     useEffect(() => {
         checkAndLoad(colorsState.load.status, setState.colors.loadColors)
-        
     }, [colorsState.load.status])
+
+
+    useEffect(() => {
+        focuser.create({parent: '[data-selector="order-form"]', items: '[data-selector="input"]'})
+    }, [lang])
+
+    
+    const onChangeText: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (e) => {
+        (e.target as HTMLElement).parentElement?.classList.remove('incorrect-value') 
+    }
 
 
     return (
@@ -101,26 +101,28 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
                     <h1>{lang === 'en' ? 'Order 3D printing' : 'Заказать 3D печать'}</h1>
                     <div className="order__block">
 
-                        <form className="order__container">
+                        <form className="order__container" data-selector="order-form" >
                             <h2>{lang === 'en' ? 'Additional information' : 'Дополнительная информация'}</h2>
                             <div className="data-block">
 
                                 <div className="inputs-block">
-                                    <div className="input-block message-block">
+                                    <div className="input-block message-block" data-selector="input-block">
                                         <label htmlFor="message">
                                             {lang === 'en' ? 'Information about the order' : 'Информация о заказе'}
                                         </label>
                                         <textarea 
+                                            data-selector="input"
                                             className="input-element" 
                                             id="message" 
                                             ref={_message}
-                                            onChange={(e) => errChecker.clearError(e.target)}/>
+                                            onChange={onChangeText}
+                                            onBlur={(e) => inputChecker({lang, min:0, max:inputsProps.message.max, el: e.target})}/>
                                     </div>
                                 </div>
                                 <div className="files-block">
                                     <div className="input-block files">
                                         <label htmlFor="allImages">{lang === 'en' ? 'Attach files' : 'Прикрепить файлы'}</label>
-                                        <AddFiles lang={lang} ref={addFiles} multiple={true} id='allImages'/>
+                                        <AddFiles lang={lang} ref={addFilesRef} multiple={true} id='allImages'/>
                                     </div>
                                 </div>
 
@@ -142,8 +144,8 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
                     </div>
                 </div>
             </div>
-            <Modal escExit={true} ref={modal_message} onClose={closeModalMessage}>
-                <Message buttonText={lang === 'en' ? `Close` : `Закрыть`} buttonAction={closeModalMessage} ref={message}/>
+            <Modal escExit={true} ref={modalMessageRef} onClose={closeModalMessage}>
+                <Message buttonText={lang === 'en' ? `Close` : `Закрыть`} buttonAction={closeModalMessage} ref={messageRef}/>
             </Modal>
         </div>
     )

@@ -4,10 +4,10 @@ import { TLang } from "src/interfaces"
 type TInputs = "email" | "numbers" | "phone"
 interface IInputChecker {
     el: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    min?: number
-    max?: number
+    min?: number //length
+    max?: number //length
     type?: TInputs 
-    exact?: string
+    exact?: string //if proveided value must be the same
     lang: TLang
 }
 
@@ -31,15 +31,13 @@ const inputChecker = ({lang="en", el, min=0, max=1000, type, exact=""}:  IInputC
         el.parentElement.classList.add('incorrect-value')
     }
     if (type === 'phone' && !/^\+?[0-9]*$/.test(el.value)) {
-        el.parentElement.dataset.errorText = lang === 'en' ? `Wrong format` : `Неверный формат`
+        el.parentElement.dataset.errorText = lang === 'en' ? `Numbers only` : `Только цифры`
         el.parentElement.classList.add('incorrect-value')
     }
     if (type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value)) {
         el.parentElement.dataset.errorText = lang === 'en' ? `Wrong format` : `Неверный формат`
         el.parentElement.classList.add('incorrect-value')
     }
-
-
 }
 
 export default inputChecker

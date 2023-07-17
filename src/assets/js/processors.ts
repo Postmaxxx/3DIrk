@@ -1,5 +1,5 @@
 import { IFetch, TLang, TLangText } from "../../interfaces";
-import { gapBetweenRequests, selector } from "./consts";
+import { gapBetweenRequests, headerStatus, selector } from "./consts";
 
 //---------------------------------------------------------------
 
@@ -67,7 +67,7 @@ const errorsChecker = ({lang = 'en'}: IErrorsChecker) => {
 
 //---------------------------------------------------------------
 
-const prevent = (e: React.MouseEvent<HTMLElement>) => {
+const prevent = (e: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     e.preventDefault()
     e.stopPropagation()
 }
@@ -92,4 +92,68 @@ const checkAndLoad = (checkValue: IFetch["status"], loadFunc: () => void) => {
 }
 
 
-export { ratingNumberToText, errorsChecker, prevent, filenameChanger, checkAndLoad }
+const modalMessageCreator = (source: IFetch, lang: TLang) => { //create all keys for Message
+    const errors: string[] = source.errors?.map(e => e[lang]) || []
+    return {
+        header: headerStatus[source.status as "success" | "error"][lang],
+        status: source.status,
+        text: [source.message[lang], ...errors]
+    }
+}
+
+export interface IFocusNext {
+    e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
+    parent: string //selector for Element to search inside
+    items: string //selector for elements to focus on
+}
+
+
+
+
+
+const focusMover = () => {
+    const focusableElements: HTMLElement[] = []
+    
+    const next = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        e.stopPropagation()
+        if (focusableElements.length < 2) return
+        if (e.key === 'Enter') {
+            e.preventDefault()
+            const currentIndex = focusableElements.indexOf(document.activeElement as HTMLElement);
+            const nextIndex = (currentIndex + 1) % focusableElements.length;
+            focusableElements[nextIndex].focus();
+        }
+    }
+
+    const focusAll = () => {     
+        if (focusableElements.length < 1) return
+        if (focusableElements.length === 1) { //if only 1 element, provoke execution onBlur
+            focusableElements[0].focus()
+            focusableElements[0].blur()
+            focusableElements[0].focus()
+            return
+        }
+        for (let el = 0; el < focusableElements.length + 1; el++) { //add 1 to focus from last to first element
+            const nextIndex = (el) % focusableElements.length;           
+            focusableElements[nextIndex].focus();
+        }
+    }
+
+    const create = ({parent='#root', items='nothing'}) => {
+        focusableElements.splice(0, focusableElements.length, ...(document.querySelector(parent)?.querySelectorAll(items) || []) as HTMLElement[])
+        focusableElements.sort((a, b) => a.tabIndex - b.tabIndex);
+    }
+
+    const clear = () => {
+        focusableElements.splice(0, focusableElements.length)
+    }
+
+    const  length = () => {
+        return focusableElements.length
+    }
+
+    return {create, clear, next, length, focusAll}
+}
+
+
+export { ratingNumberToText, errorsChecker, prevent, filenameChanger, checkAndLoad, modalMessageCreator, focusMover}

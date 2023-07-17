@@ -62,7 +62,6 @@
             & .input-block {
                 width: 100%;
                 padding-top: 20px;
-                position: relative;
                 
                 @include respond-to(sm) {
                     margin-top: 10px;
