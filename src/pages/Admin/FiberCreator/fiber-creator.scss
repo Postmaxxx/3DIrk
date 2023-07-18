@@ -143,20 +143,18 @@
 
             }
 
-
             &:nth-of-type(3) {
-                & textarea {
-                    height: 250px;
-                }
-            }
-
-            &:nth-of-type(4) {
                 & textarea {
                     height: 100px;
                 }
             }
 
 
+            &:nth-of-type(4) {
+                & textarea {
+                    height: 250px;
+                }
+            }
         }
 
 

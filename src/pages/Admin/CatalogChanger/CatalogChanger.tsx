@@ -76,7 +76,9 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, catalogState}): JSX.Elem
             modalRef.current?.openModal("errorChecker")    
             return
         }
-        setState.catalog.sendCatalog(featurerRef.current.getFeatures())        
+        console.log(featurerRef.current.getFeatures());
+        
+        //setState.catalog.sendCatalog(featurerRef.current.getFeatures())        
     }
 
 

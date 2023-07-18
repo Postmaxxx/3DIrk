@@ -35,7 +35,8 @@ const Featurer = forwardRef<IFeaturerFunctions, IProps>(({lang, amountChanged, v
         }
     }));
 
-    const [features, setFeatures] = useState<{_id: string, name: {en: string, ru: string}}[]>([])
+
+    const [features, setFeatures] = useState<IItem[]>([])
 
     const onEditFeature = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
         e.target.parentElement?.classList.remove('error')

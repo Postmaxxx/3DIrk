@@ -15,10 +15,9 @@ interface IProps {
     lang: TLang
     label?: TLangText
     defaultData: IItem
-    dataset: TLangText
     data?: IItem[]
     onBlur?: (e: React.FocusEvent<HTMLSelectElement>) => void
-    saveValue?: ({id, e}: {id: string, e: React.ChangeEvent<HTMLSelectElement>}) => void
+    saveValue?: (e: React.ChangeEvent<HTMLSelectElement>) => void
 }
 
 
@@ -31,7 +30,7 @@ export interface ISelectorFunctions {
 
 
 
-const Selector = forwardRef<ISelectorFunctions, IProps>(({lang, id, label, defaultData, dataset, data, onBlur, saveValue}, ref) => {
+const Selector = forwardRef<ISelectorFunctions, IProps>(({lang, id, label, defaultData, data, onBlur, saveValue}, ref) => {
     useImperativeHandle(ref, () => ({
         setData(elements) {
             setStore(prev => ({...prev, items: elements, item: {name: {...empty}, value: ''}}))
@@ -39,7 +38,7 @@ const Selector = forwardRef<ISelectorFunctions, IProps>(({lang, id, label, defau
         getValue() {
             return store.item
         },
-        setValue(element) { //altough element can be absent in items
+        setValue(element) { //altough element can be not in items
             setStore(prev => ({...prev, item: element}))
         },
         setItem(value) { //select item if item.value === value
@@ -59,7 +58,7 @@ const Selector = forwardRef<ISelectorFunctions, IProps>(({lang, id, label, defau
 
     const onChange = (e: React.ChangeEvent<HTMLSelectElement>) => {        
         setStore(prev => ({...prev, item: {value: e.target.value, name: (prev.items.find(el => el.value === e.target.value) as IItem).name}}))
-        saveValue && saveValue({id, e})
+        saveValue && saveValue(e)
         e.target.parentElement?.classList.remove('incorrect-value') 
     }
 
@@ -81,8 +80,6 @@ const Selector = forwardRef<ISelectorFunctions, IProps>(({lang, id, label, defau
                 id={id} 
                 defaultValue={store.item.value} 
                 onChange={onChange} 
-                data-en={dataset.en} 
-                data-ru={dataset.ru}
                 onBlur={onBlur}>
                     <option key={-1} value={store.item.value} disabled hidden>{store.item.name[lang]}</option>
                     {store.items.map((el, i) => <option key={i} value={el.value}>{el.name[lang]}</option>)}

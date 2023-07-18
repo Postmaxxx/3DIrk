@@ -278,7 +278,7 @@ const selector = {
     
 }
 
-const fiberEmpty: ISendFiber = {
+const fiberEmpty: ISendFiber = { //can be changed to be the default value for a new fiber
     _id: '',
     name: {...empty},
     text: {...empty},

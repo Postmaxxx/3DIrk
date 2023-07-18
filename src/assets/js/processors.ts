@@ -1,3 +1,4 @@
+import { container } from "webpack";
 import { IFetch, TLang, TLangText } from "../../interfaces";
 import { gapBetweenRequests, headerStatus, selector } from "./consts";
 
@@ -108,7 +109,9 @@ export interface IFocusNext {
 }
 
 
-
+const deepCopy = <T>(objToCopy: T): T  => {
+    return structuredClone(objToCopy)
+}
 
 
 const focusMover = () => {
@@ -139,8 +142,14 @@ const focusMover = () => {
         }
     }
 
-    const create = ({container='#root', itemsSelector='[data-selector="input"]'}: {container: string, itemsSelector?: string}) => {
-        focusableElements.splice(0, focusableElements.length, ...(document.querySelector(container)?.querySelectorAll(itemsSelector) || []) as HTMLElement[])
+
+    const create = ({container='#root', itemsSelector='[data-selector="input"]'}: {container: string | HTMLElement, itemsSelector?: string}) => {
+        if (typeof container === 'string') {
+            focusableElements.splice(0, focusableElements.length, ...(document.querySelector(container)?.querySelectorAll(itemsSelector) || []) as HTMLElement[])
+        }
+        if (container instanceof HTMLElement) {
+            focusableElements.splice(0, focusableElements.length, ...(container.querySelectorAll(itemsSelector) || []) as unknown as HTMLElement[])
+        }
         focusableElements.sort((a, b) => a.tabIndex - b.tabIndex);
     }
 
@@ -156,4 +165,4 @@ const focusMover = () => {
 }
 
 
-export { ratingNumberToText, errorsChecker, prevent, filenameChanger, checkAndLoad, modalMessageCreator, focusMover}
+export { ratingNumberToText, errorsChecker, prevent, filenameChanger, checkAndLoad, modalMessageCreator, focusMover, deepCopy}

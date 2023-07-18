@@ -43,7 +43,7 @@ const Modal = forwardRef<IModalFunctions, IProps>(({escExit, onClose, children},
         }
     }
 
-    console.log('Model re');
+    //console.log('Model re');
     
 
     useEffect(() => {
