@@ -36,7 +36,6 @@ interface IProps extends IPropsState, IPropsActions {}
 
 
 const Orders = ({lang, colorsState, fibersState, ordersState, userState, setState}: IProps): JSX.Element => {
-    const updater = useNavigate()
     const _dateFrom = useRef<HTMLInputElement>(null)
     const _dateTo = useRef<HTMLInputElement>(null)
     const _user = useRef<HTMLSelectElement>(null)

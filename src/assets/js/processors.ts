@@ -55,7 +55,7 @@ const errorsChecker = ({lang = 'en'}: IErrorsChecker) => {
     const amount = () => errors.length
 
     const result = () => ({
-        header: lang === 'en' ? 'Errors in fields' : 'Найдены ошибки в полях',
+        header: lang === 'en' ? 'Errors was found' : 'Найдены ошибки',
         status: 'error',
         text: [...errors]
     })
@@ -125,7 +125,7 @@ const focusMover = () => {
         }
     }
 
-    const focusAll = () => {     
+    const focusAll = () => {            
         if (focusableElements.length < 1) return
         if (focusableElements.length === 1) { //if only 1 element, provoke execution onBlur
             focusableElements[0].focus()
@@ -139,8 +139,8 @@ const focusMover = () => {
         }
     }
 
-    const create = ({parent='#root', items='nothing'}) => {
-        focusableElements.splice(0, focusableElements.length, ...(document.querySelector(parent)?.querySelectorAll(items) || []) as HTMLElement[])
+    const create = ({container='#root', itemsSelector='[data-selector="input"]'}: {container: string, itemsSelector?: string}) => {
+        focusableElements.splice(0, focusableElements.length, ...(document.querySelector(container)?.querySelectorAll(itemsSelector) || []) as HTMLElement[])
         focusableElements.sort((a, b) => a.tabIndex - b.tabIndex);
     }
 

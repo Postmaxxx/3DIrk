@@ -9,10 +9,11 @@ import Message, { IMessageFunctions } from '../../../components/Message/Message'
 import { useEffect } from "react";
 import { allActions } from "../../../redux/actions/all";
 import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFiles';
-import { empty, headerStatus, resetFetch, timeModalClosing } from '../../../assets/js/consts';
-import { errorsChecker, prevent } from '../../../assets/js/processors';
+import { empty, headerStatus, inputsProps, resetFetch, timeModalClosing } from '../../../assets/js/consts';
+import { errorsChecker, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import { useNavigate, useParams } from 'react-router-dom';
 import Preloader from '../../../components/Preloaders/Preloader';
+import inputChecker from "../../../../src/assets/js/inputChecker";
 
 interface IPropsState {
     lang: TLang
@@ -34,9 +35,9 @@ interface IProps extends IPropsState, IPropsActions {
 const NewsCreator: FC<IProps> = ({lang, send, setState}): JSX.Element => {
     const paramNewsId = useParams().newsId || ''
     const navigate = useNavigate()
-    const addFilesBig = useRef<IAddFilesFunctions>(null)
-    const modal_message = useRef<IModalFunctions>(null)
-    const message = useRef<IMessageFunctions>(null)
+    const addFilesBigRef = useRef<IAddFilesFunctions>(null)
+    const modalRef = useRef<IModalFunctions>(null)
+    const messageRef = useRef<IMessageFunctions>(null)
     const _form = useRef<HTMLFormElement>(null)
     const [changeImages, setChangeImages] = useState<boolean>(true)
     const [submit, setSubmit] = useState<boolean>(false)
@@ -47,8 +48,11 @@ const NewsCreator: FC<IProps> = ({lang, send, setState}): JSX.Element => {
         _id: '',
         files: [],
         date: new Date(),})
+    const processedContainer = '[data-selector="news-form"]'
     
+    const focuser = useMemo(() => focusMover(), [lang])
     const errChecker = useMemo(() => errorsChecker({lang}), [lang])
+
 
     const onChangeImages = (e: React.MouseEvent<HTMLElement>) => {
         prevent(e)
@@ -56,32 +60,35 @@ const NewsCreator: FC<IProps> = ({lang, send, setState}): JSX.Element => {
     }
 
     
-    const closeModalMessage = useCallback(() => {
-        modal_message.current?.closeModal()
-        setTimeout(() => message.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
-        errChecker.clear()
-        
-        if (send.status === 'success') {
-            setNewsItem({...clearForm})
-            addFilesBig.current?.clearAttachedFiles()
-            if (paramNewsId) {
-                navigate('/admin/news-create', { replace: true });
+    const closeModal = useCallback(() => {
+        modalRef.current?.closeModal()
+        setTimeout(() => messageRef.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
+        if (modalRef.current?.getOwner() === 'sender') {
+            if (send.status === 'success') {
+                setNewsItem({...clearForm})
+                addFilesBigRef.current?.clearAttachedFiles()
+                if (paramNewsId) {
+                    navigate('/admin/news-create', { replace: true });
+                }
             }
+            setState.news.setSendNews({...resetFetch})
+            errChecker.clear()
+        }
+        if (modalRef.current?.getOwner() === 'errorChecker') {
+            errChecker.clear()
         }
         setState.news.setSendNews(resetFetch)// clear fetch status
 	}, [send.status, paramNewsId, errChecker])
 
 
+
+
     useEffect(() => {
         if (send.status === 'idle' || send.status === 'fetching')  return
-        const errors: string[] = send.errors?.map(e => e[lang]) || []
-        message.current?.update({
-            header: headerStatus[send.status][lang],
-            status: send.status,
-            text: [send.message[lang], ...errors]
-        })
-		modal_message.current?.openModal()
+        messageRef.current?.update(modalMessageCreator(send, lang))
+		modalRef.current?.openModal("sender")
     }, [send.status])
+
 
 
     useEffect(() => { 
@@ -91,7 +98,7 @@ const NewsCreator: FC<IProps> = ({lang, send, setState}): JSX.Element => {
         } else {
             setNewsItem({...clearForm})
             setChangeImages(true)
-            addFilesBig.current?.clearAttachedFiles()
+            addFilesBigRef.current?.clearAttachedFiles()
         }
     }, [paramNewsId])
 
@@ -99,7 +106,7 @@ const NewsCreator: FC<IProps> = ({lang, send, setState}): JSX.Element => {
 
 
     const onChangeText = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        errChecker.clearError(e.target)
+        //  errChecker.clearError(e.target)
         e.target.id === 'header_en' && setNewsItem(prev => ({...prev, header: {...prev.header, en: e.target.value}}))
         e.target.id === 'header_ru' && setNewsItem(prev => ({...prev, header: {...prev.header, ru: e.target.value}}))
         e.target.id === 'text_short_en' && setNewsItem(prev => ({...prev, short: {...prev.short, en: e.target.value}}))
@@ -122,41 +129,33 @@ const NewsCreator: FC<IProps> = ({lang, send, setState}): JSX.Element => {
 
     const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
         prevent(e)   
-        
         if (!_form.current) return
-        console.log(errChecker.amount());
-        errChecker.check(_form.current.querySelector('#header_en') as HTMLInputElement, 5, 50)
-        errChecker.check(_form.current.querySelector('#header_ru') as HTMLInputElement, 5, 50)
-        errChecker.check(_form.current.querySelector('#text_short_en') as HTMLInputElement, 40, 150)
-        errChecker.check(_form.current.querySelector('#text_short_ru') as HTMLInputElement, 40, 150)
-        errChecker.check(_form.current.querySelector('#text_en') as HTMLInputElement, 20, 5000)
-        errChecker.check(_form.current.querySelector('#text_ru') as HTMLInputElement, 20, 5000)
-        errChecker.check(_form.current.querySelector('#date') as HTMLInputElement, 10, 10)
-        isNaN(Date.parse((_form.current.querySelector('#date') as HTMLInputElement).value)) && errChecker.add(lang === 'en' ? 'Date is wrong' : 'Дата неверная')
-        console.log(errChecker.amount());
-        
-        
-        if (errChecker.amount() > 0) { 
-            message.current?.update(errChecker.result())
-            modal_message.current?.openModal()
+        focuser.focusAll(); //run over all elements to get all errors
+        const errorFields = document.querySelector(processedContainer)?.querySelectorAll('.incorrect-value')
+        if (errorFields && errorFields?.length > 0) {
+            errChecker.add(lang === 'en' ? 'Some fields are filled incorrectly' : 'Некоторые поля заполнены неправильно')
+        }    
+        if (errChecker.amount() > 0) {
+            messageRef.current?.update(errChecker.result())
+            modalRef.current?.openModal("errorChecker")
             return
-        }
+        }   
         //if no errors
-        setNewsItem(prev => ({...prev, files: addFilesBig.current?.getFiles() || []}))
+        setNewsItem(prev => ({...prev, files: addFilesBigRef.current?.getFiles() || []}))
         setSubmit(true)
     }
 
 
     useEffect(() => {
         if (!submit) return
-        if (paramNewsId) {
-            setState.news.updateNews(newsItem)
-        } else {
-            setState.news.sendNews(newsItem)
-        }
+        paramNewsId ? setState.news.updateNews(newsItem) : setState.news.sendNews(newsItem)
         setSubmit(false)
     }, [submit])
 
+
+    useEffect(() => {       
+        focuser.create({container: processedContainer})
+    }, [lang])
 
 
     return (
@@ -168,7 +167,7 @@ const NewsCreator: FC<IProps> = ({lang, send, setState}): JSX.Element => {
                     :
                         <h1>{lang === 'en' ? 'Post news' : 'Добавление новости'}</h1>
                     }
-                    <form ref={_form}>
+                    <form ref={_form} data-selector="news-form">
                         <div className="input-block_header">
                             <span></span>
                             <h3 className='lang'>EN</h3>
@@ -176,44 +175,89 @@ const NewsCreator: FC<IProps> = ({lang, send, setState}): JSX.Element => {
                         </div>
                         <div className="input-block">
                             <label>{lang === 'en' ? 'Header' : 'Заголовок'}:</label>
-                            <div className="input__wrapper">
-                                <input type="text" id='header_en' data-en="Header EN" data-ru="Заголовок EN"  onChange={(e) => onChangeText(e)} value={newsItem.header.en}/>
+                            <div className="input__wrapper" data-selector="input-block">
+                                <input 
+                                    data-selector="input"
+                                    type="text" 
+                                    id='header_en' 
+                                    onChange={(e) => onChangeText(e)}
+                                    onKeyDown={(e) => focuser.next(e)} 
+                                    value={newsItem.header.en}
+                                    onBlur={(e) => inputChecker({lang, min:inputsProps.news.header.min, max:inputsProps.news.header.max, el: e.target})}/>
                             </div>
-                            <div className="input__wrapper">
-                                <input type="text" id='header_ru' data-en="Header RU" data-ru="Заголовок RU"  onChange={(e) => onChangeText(e)} value={newsItem.header.ru}/>
+                            <div className="input__wrapper" data-selector="input-block">
+                                <input 
+                                    data-selector="input"
+                                    type="text" 
+                                    id='header_ru' 
+                                    onChange={(e) => onChangeText(e)} 
+                                    onKeyDown={(e) => focuser.next(e)}
+                                    value={newsItem.header.ru}
+                                    onBlur={(e) => inputChecker({lang, min:inputsProps.news.header.min, max:inputsProps.news.header.max, el: e.target})}/>
                             </div>
                         </div>
 
                         <div className="input-block">
                             <label>{lang === 'en' ? 'Short text' : 'Краткий текст'}:</label>
-                            <div className="input__wrapper">
-                                <textarea id='text_short_en' data-en="Short text EN" data-ru="Краткий текст EN"  onChange={(e) => onChangeText(e)} value={newsItem.short.en}/>
+                            <div className="input__wrapper" data-selector="input-block">
+                                <textarea 
+                                    data-selector="input"
+                                    id='text_short_en' 
+                                    onChange={(e) => onChangeText(e)} 
+                                    onKeyDown={(e) => focuser.next(e)}
+                                    value={newsItem.short.en}
+                                    onBlur={(e) => inputChecker({lang, min:inputsProps.news.textShort.min, max:inputsProps.news.textShort.max, el: e.target})}/>
                             </div>
-                            <div className="input__wrapper">
-                                <textarea id='text_short_ru' data-en="Short text RU" data-ru="Краткий текст RU" onChange={(e) => onChangeText(e)} value={newsItem.short.ru}/>
+                            <div className="input__wrapper" data-selector="input-block">
+                                <textarea 
+                                    data-selector="input"
+                                    id='text_short_ru' 
+                                    onChange={(e) => onChangeText(e)} 
+                                    onKeyDown={(e) => focuser.next(e)}
+                                    value={newsItem.short.ru}
+                                    onBlur={(e) => inputChecker({lang, min:inputsProps.news.textShort.min, max:inputsProps.news.textShort.max, el: e.target})}/>
                             </div>
                         </div>
 
                         <div className="input-block">
                             <label>{lang === 'en' ? 'Full text' : 'Полный текст'}:</label>
-                            <div className="input__wrapper">
-                                <textarea id='text_en' data-en="Text EN" data-ru="Tекст EN" onChange={(e) => onChangeText(e)} value={newsItem.text.en}/>
+                            <div className="input__wrapper" data-selector="input-block">
+                                <textarea 
+                                    data-selector="input"
+                                    id='text_en' 
+                                    onChange={(e) => onChangeText(e)} 
+                                    onKeyDown={(e) => focuser.next(e)}
+                                    value={newsItem.text.en}
+                                    onBlur={(e) => inputChecker({lang, min:inputsProps.news.textFull.min, max:inputsProps.news.textFull.max, el: e.target})}/>
                             </div>
-                            <div className="input__wrapper">
-                                <textarea id='text_ru' data-en="Text RU" data-ru="Tекст RU" onChange={(e) => onChangeText(e)} value={newsItem.text.ru}/>
+                            <div className="input__wrapper" data-selector="input-block">
+                                <textarea 
+                                    data-selector="input"
+                                    id='text_ru' 
+                                    onChange={(e) => onChangeText(e)} 
+                                    onKeyDown={(e) => focuser.next(e)}
+                                    value={newsItem.text.ru}
+                                    onBlur={(e) => inputChecker({lang, min:inputsProps.news.textFull.min, max:inputsProps.news.textFull.max, el: e.target})}/>
                             </div>
                         </div>
 
                         <div className="input-block">
                             <label>{lang === 'en' ? 'Date' : 'Дата'}:</label>
-                            <div className="input__wrapper">
-                                <input type="date" id="date" data-en="Date" data-ru="Дата" onChange={(e) => onChangeText(e)} value={newsItem.date.toISOString().slice(0, 10)}/>
+                            <div className="input__wrapper" data-selector="input-block">
+                                <input 
+                                    data-selector="input"
+                                    type="date" 
+                                    id="date" 
+                                    onChange={(e) => onChangeText(e)} 
+                                    onKeyDown={(e) => focuser.next(e)}
+                                    value={newsItem.date.toISOString().slice(0, 10)}
+                                    onBlur={(e) => inputChecker({lang, type: "date", el: e.target})}/>
                             </div>
                         </div>
                         {changeImages ? 
                             <>
                                 <h2 className='section-header full-width'>{lang === 'en' ? 'IMAGES' : 'ИЗОБРАЖЕНИЯ'}</h2>           
-                                <AddFiles lang={lang} ref={addFilesBig} multiple={true} id='allImages'/>
+                                <AddFiles lang={lang} ref={addFilesBigRef} multiple={true} id='allImages'/>
                                 {paramNewsId && <button className='button_blue change-images' onClick={onChangeImages}>Do not change images</button>}
                             </>
                         :
@@ -228,8 +272,8 @@ const NewsCreator: FC<IProps> = ({lang, send, setState}): JSX.Element => {
                         </button>
                     </form>
                 </div>
-                <Modal escExit={true} ref={modal_message} onClose={closeModalMessage}>
-                    <Message buttonText={lang === 'en' ? `Close` : `Закрыть`} buttonAction={closeModalMessage} ref={message}/>
+                <Modal escExit={true} ref={modalRef} onClose={closeModal}>
+                    <Message buttonText={lang === 'en' ? `Close` : `Закрыть`} buttonAction={closeModal} ref={messageRef}/>
                 </Modal>
             </div>
 

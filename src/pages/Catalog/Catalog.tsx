@@ -3,19 +3,22 @@ import SpliderSingle from '../../components/Spliders/Single/SpliderSingle';
 import "@splidejs/react-splide/css"; 
 import CategoriesList from '../../components/CatalogList/CatalogList';
 import CatalogIntro from '../../components/CatalogIntro/CatalogIntro';
+import { memo } from 'react';
 
 
-
+const CatalogIntroMemo = memo(CatalogIntro)
+const CategoriesListMemo = memo(CategoriesList)
+const SpliderSingleMemo = memo(SpliderSingle)
 
 const Catalog = (): JSX.Element => {
     return (
         <div className="page page_catalog">
             <div className="container_page">
                 <div className="container">
-                    <CatalogIntro />
+                    <CatalogIntroMemo />
                     <div className="splider_catalog__main">
-                        <CategoriesList />
-                        <SpliderSingle />
+                        <CategoriesListMemo />
+                        <SpliderSingleMemo />
                     </div>
                 </div>
             </div>

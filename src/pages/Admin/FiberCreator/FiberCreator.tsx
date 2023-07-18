@@ -13,10 +13,11 @@ import Selector from '../../../components/tiny/Selector/Selector';
 import { fibersProperties } from '../../../assets/data/fibersProperties';
 import Preloader from '../../../components/Preloaders/Preloader';
 import { useNavigate, useParams } from 'react-router-dom';
-import { fiberEmpty, headerStatus, resetFetch, selector, timeModalClosing } from '../../../assets/js/consts';
-import { checkAndLoad, errorsChecker, prevent } from '../../../assets/js/processors';
+import { fiberEmpty, headerStatus, inputsProps, resetFetch, selector, timeModalClosing } from '../../../assets/js/consts';
+import { checkAndLoad, errorsChecker, focusMover, prevent } from '../../../assets/js/processors';
 import Picker, { IPickerFunctions } from '../../../components/Picker/Picker';
 import Featurer, { IFeaturerFunctions } from '../../../components/Featurer/Featurer';
+import inputChecker from '../../../../src/assets/js/inputChecker';
 
 interface IPropsState {
     lang: TLang
@@ -50,10 +51,17 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
     const _cons = useRef<HTMLDivElement>(null)
     const _spec = useRef<HTMLDivElement>(null)
     const _descr = useRef<HTMLDivElement>(null)
-
-    const pros = useRef<IFeaturerFunctions>(null)
-    const cons = useRef<IFeaturerFunctions>(null)
+    const prosRef = useRef<IFeaturerFunctions>(null)
+    const consRef = useRef<IFeaturerFunctions>(null)
     const [fiber, setFiber] = useState<ISendFiber>({...fiberEmpty})
+    const processedContainerDescr = '[data-selector="fiber-descr"]'
+    const processedContainerSpec = '[data-selector="fiber-spec"]'
+    const processedContainerPros = '[data-selector="fiber-pros"]'
+    const processedContainerCons = '[data-selector="fiber-cons"]'
+    const focuserDescr = useMemo(() => focusMover(), [lang])
+    const focuserSpec = useMemo(() => focusMover(), [lang])
+    const focuserPros = useMemo(() => focusMover(), [lang])
+    const focuserCons = useMemo(() => focusMover(), [lang])
 
     const data10 = useMemo(() => selector["10"], [])
     const data5 = useMemo(() => selector["5"], [])
@@ -123,8 +131,8 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
 
     const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {        
         prevent(e)
-        if (!pros.current|| !cons.current || !_spec.current || !_descr.current || 
-        !colorPicker.current || !pros.current || !cons.current) return
+        if (!prosRef.current|| !consRef.current || !_spec.current || !_descr.current || 
+        !colorPicker.current) return
         
         //check DESCRIPTION
         errChecker.check(_descr.current.querySelector('#name_en') as HTMLInputElement, 1, 30)
@@ -177,8 +185,8 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
                 colors: (colorPicker.current as IPickerFunctions).getSelected(),
                 files: addFiles.current?.getFiles() || [],
                 proscons : {
-                    pros: (pros.current as IFeaturerFunctions).getFeatures().map(item => ({en: item.name.en, ru: item.name.ru})),
-                    cons: (cons.current as IFeaturerFunctions).getFeatures().map(item => ({en: item.name.en, ru: item.name.ru}))
+                    pros: (prosRef.current as IFeaturerFunctions).getFeatures().map(item => ({en: item.name.en, ru: item.name.ru})),
+                    cons: (consRef.current as IFeaturerFunctions).getFeatures().map(item => ({en: item.name.en, ru: item.name.ru}))
                 }
             })
         )
@@ -220,7 +228,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
             return
         }
         
-        if (!_spec.current || !pros.current || !cons.current) return
+        if (!_spec.current || !prosRef.current || !consRef.current) return
         //description        
         setFiber(prev => ({
             ...prev,
@@ -239,8 +247,8 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
         })
 
         //proscons
-        pros.current.setFeatures(sourceFiber.proscons.pros.map(item => ({name: item, _id: ''})))
-        cons.current.setFeatures(sourceFiber.proscons.cons.map(item => ({name: item, _id: ''})))
+        prosRef.current.setFeatures(sourceFiber.proscons.pros.map(item => ({name: item, _id: ''})))
+        consRef.current.setFeatures(sourceFiber.proscons.cons.map(item => ({name: item, _id: ''})))
 
         //colors 
         colorPicker.current?.setSelected(sourceFiber.colors)
@@ -251,7 +259,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
 
 
     const fillBlank = () => {
-        if (!_spec.current || !pros.current || !cons.current) return
+        if (!_spec.current || !prosRef.current || !consRef.current) return
 
         setFiber({...fiberEmpty})
 
@@ -260,8 +268,8 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
             (item as HTMLInputElement | HTMLSelectElement).value = ''
         })
         //proscons
-        pros.current.setFeatures([])
-        cons.current.setFeatures([])
+        prosRef.current.setFeatures([])
+        consRef.current.setFeatures([])
 
         //colors 
         colorPicker.current?.setSelected([])
@@ -278,16 +286,9 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
 
 
     useEffect(() => { //if edit
-        /*if (colorsState.load.status !== 'success' && colorsState.load.status !== 'fetching') {
-            setState.colors.loadColors()
-            return
-        }*/
         checkAndLoad(colorsState.load.status, setState.colors.loadColors)
-
         if (fibersState.load.status !== 'success' || colorsState.load.status !== 'success') return
-       
         paramFiberId ? fillValues(paramFiberId) : fillBlank()
-
     }, [fibersState.load.status, colorsState.load.status, paramFiberId])
 
 
@@ -309,12 +310,20 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
                                     saveValue={({id, e}:{e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>, id: string}) => errChecker.clearError(e.target)}
                                     data={item.type === '10' ? data10 : item.type === '5' ? data5 : data3 }
                                     dataset={item.name}
-                                    />
+                                    onBlur={(e) => inputChecker({lang, notExact: '', el: e.target})}/>
                             </div>
                         :
-                            <div className="input__wrapper no-info" key={item._id}>
+                            <div className="input__wrapper no-info" key={item._id} data-selector="input-block">
                                 <label htmlFor={item._id}>{item.name[lang]}, ({item.unit[lang]}):</label>
-                                <input type="text" id={item._id} onChange={(e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => errChecker.clearError(e.target)} data-ru={item.name.ru} data-en={item.name.en}/>
+                                <input 
+                                    data-selector="input"
+                                    type="text" 
+                                    id={item._id} 
+                                    onChange={(e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => errChecker.clearError(e.target)} 
+                                    data-ru={item.name.ru} 
+                                    data-en={item.name.en}
+                                    onKeyDown={(e) => focuserSpec.next(e)}
+                                    onBlur={(e) => inputChecker({lang, min:1, max:50, el: e.target})}/>
                             </div>
                         }
                     </Fragment>
@@ -356,6 +365,38 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
     }
 
 
+    useEffect(() => {
+        onChangeFeaturesAmount()
+    }, [lang])
+
+
+    const onChangeFeaturesAmount = () => {  //select all inputs if new pro/con was added/ old one was removed  
+        focuserPros.create({container: processedContainerPros})
+        const allInputsPros = document.querySelector(processedContainerPros)?.querySelectorAll('[data-selector="input"]')
+        allInputsPros?.forEach(input => {
+            (input as HTMLInputElement).onblur = (e) => inputChecker({lang, min: inputsProps.fiber.proscons.min, max: inputsProps.fiber.proscons.max, el: e.target as HTMLInputElement});
+        })
+        focuserCons.create({container: processedContainerCons})
+        const allInputsCons = document.querySelector(processedContainerCons)?.querySelectorAll('[data-selector="input"]')
+        allInputsCons?.forEach(input => {
+            (input as HTMLInputElement).onblur = (e) => inputChecker({lang, min: inputsProps.fiber.proscons.min, max: inputsProps.fiber.proscons.max, el: e.target as HTMLInputElement});
+        })
+    }
+
+
+    useEffect(() => {       
+        focuserDescr.create({container: processedContainerDescr})
+        focuserSpec.create({container: processedContainerSpec, itemsSelector: '[data-selector="select"]'})
+        focuserPros.create({container: processedContainerPros})
+        focuserCons.create({container: processedContainerCons})
+    }, [lang])
+
+
+    const onChangeFeature = (target: HTMLInputElement) => {       
+        target.parentElement?.classList.remove('incorrect-value') 
+    }
+
+
     return (
         <div className="page page_fiber-add">
             <div className="container_page">
@@ -368,58 +409,134 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
                             <h3 className='lang'>EN</h3>
                             <h3 className='lang'>RU</h3>
                         </div>
-                        <div className="descr__container" ref={_descr}>
+                        <div className="descr__container" ref={_descr} data-selector="fiber-descr">
+                        <div className="input-block">
+                                <label htmlFor="name-short_en">{lang === 'en' ? 'Name short' : 'Назв. кратко'}:</label>
+                                <div className="input__wrapper" data-selector="input-block">
+                                    <input 
+                                        data-selector="input"
+                                        type="text" 
+                                        id="name-short_en" 
+                                        data-ru="Название кратко EN" 
+                                        data-en="Name short EN"  
+                                        onChange={onChangeInputs} 
+                                        onKeyDown={(e) => focuserDescr.next(e)}
+                                        value={fiber.short.name.en}
+                                        onBlur={(e) => inputChecker({lang, min:inputsProps.fiber.nameShort.min, max:inputsProps.fiber.nameShort.max, el: e.target})}/>
+                                </div>
+                                <div className="input__wrapper" data-selector="input-block">
+                                    <input 
+                                        data-selector="input"
+                                        type="text" 
+                                        id="name-short_ru" 
+                                        data-ru="Название кратко RU" 
+                                        data-en="Name short RU" 
+                                        onChange={onChangeInputs} 
+                                        onKeyDown={(e) => focuserDescr.next(e)}
+                                        value={fiber.short.name.ru}
+                                        onBlur={(e) => inputChecker({lang, min:inputsProps.fiber.nameShort.min, max:inputsProps.fiber.nameShort.max, el: e.target})}/>
+                                </div>
+                            </div>
                             <div className="input-block">
                                 <label htmlFor="namer_en">{lang === 'en' ? 'Name' : 'Название'}:</label>
-                                <div className="input__wrapper">
-                                    <input type="text" id="name_en" data-ru="Название EN" data-en="Name EN" onChange={onChangeInputs} value={fiber.name.en}/>
+                                <div className="input__wrapper" data-selector="input-block">
+                                    <input 
+                                        data-selector="input"
+                                        type="text" 
+                                        id="name_en" 
+                                        data-ru="Название EN" 
+                                        data-en="Name EN" 
+                                        onChange={onChangeInputs} 
+                                        onKeyDown={(e) => focuserDescr.next(e)}
+                                        value={fiber.name.en}
+                                        onBlur={(e) => inputChecker({lang, min:inputsProps.fiber.nameFull.min, max:inputsProps.fiber.nameFull.max, el: e.target})}/>
                                 </div>
-                                <div className="input__wrapper">
-                                    <input type="text" id="name_ru" data-ru="Название RU" data-en="Name RU"  onChange={onChangeInputs} value={fiber.name.ru}/>
-                                </div>
-                            </div>
-                            <div className="input-block">
-                                <label htmlFor="name-short_en">{lang === 'en' ? 'Name short' : 'Назв. кратко'}:</label>
-                                <div className="input__wrapper">
-                                    <input type="text" id="name-short_en" data-ru="Название кратко EN" data-en="Name short EN"  onChange={onChangeInputs} value={fiber.short.name.en}/>
-                                </div>
-                                <div className="input__wrapper">
-                                    <input type="text" id="name-short_ru" data-ru="Название кратко RU" data-en="Name short RU" onChange={onChangeInputs} value={fiber.short.name.ru}/>
-                                </div>
-                            </div>
-                            <div className="input-block">
-                                <label htmlFor="text_en">{lang === 'en' ? 'Text' : 'Текст'}:</label>
-                                <div className="input__wrapper">
-                                    <textarea id="text_en" data-ru="Текст EN" data-en="Text EN" onChange={onChangeInputs} value={fiber.text.en} />
-                                </div>
-                                <div className="input__wrapper">
-                                    <textarea id="text_ru" data-ru="Текст RU" data-en="Text RU" onChange={onChangeInputs} value={fiber.text.ru} />
+                                <div className="input__wrapper" data-selector="input-block">
+                                    <input 
+                                        data-selector="input"
+                                        type="text" 
+                                        id="name_ru" 
+                                        data-ru="Название RU" 
+                                        data-en="Name RU"  
+                                        onChange={onChangeInputs} 
+                                        onKeyDown={(e) => focuserDescr.next(e)}
+                                        value={fiber.name.ru}
+                                        onBlur={(e) => inputChecker({lang, min:inputsProps.fiber.nameFull.min, max:inputsProps.fiber.nameFull.max, el: e.target})}/>
                                 </div>
                             </div>
                             <div className="input-block">
                                 <label htmlFor="text-short_en">{lang === 'en' ? 'Text short' : 'Текст кратко'}:</label>
-                                <div className="input__wrapper">
-                                    <textarea id="text-short_en" data-ru="Текст кратко EN" data-en="Text short EN" onChange={onChangeInputs} value={fiber.short.text.en} />
+                                <div className="input__wrapper" data-selector="input-block">
+                                    <textarea 
+                                        data-selector="input"
+                                        id="text-short_en" 
+                                        data-ru="Текст кратко EN" 
+                                        data-en="Text short EN" 
+                                        onChange={onChangeInputs}
+                                        onKeyDown={(e) => focuserDescr.next(e)} 
+                                        value={fiber.short.text.en}
+                                        onBlur={(e) => inputChecker({lang, min:inputsProps.fiber.textShort.min, max:inputsProps.fiber.textShort.max, el: e.target})}/>
                                 </div>
-                                <div className="input__wrapper">
-                                    <textarea id="text-short_ru" data-ru="Текст кратко RU" data-en="Text short RU" onChange={onChangeInputs} value={fiber.short.text.ru} />
+                                <div className="input__wrapper" data-selector="input-block">
+                                    <textarea 
+                                        data-selector="input"
+                                        id="text-short_ru" 
+                                        data-ru="Текст кратко RU" 
+                                        data-en="Text short RU" 
+                                        onChange={onChangeInputs} 
+                                        onKeyDown={(e) => focuserDescr.next(e)}
+                                        value={fiber.short.text.ru}
+                                        onBlur={(e) => inputChecker({lang, min:inputsProps.fiber.textShort.min, max:inputsProps.fiber.textShort.max, el: e.target})}/>
+                                </div>
+                            </div>
+                            <div className="input-block">
+                                <label htmlFor="text_en">{lang === 'en' ? 'Text' : 'Текст'}:</label>
+                                <div className="input__wrapper" data-selector="input-block">
+                                    <textarea 
+                                        data-selector="input"
+                                        id="text_en" 
+                                        data-ru="Текст EN" 
+                                        data-en="Text EN" 
+                                        onChange={onChangeInputs} 
+                                        onKeyDown={(e) => focuserDescr.next(e)}
+                                        value={fiber.text.en}
+                                        onBlur={(e) => inputChecker({lang, min:inputsProps.fiber.textFull.min, max:inputsProps.fiber.textFull.max, el: e.target})}/>
+                                </div>
+                                <div className="input__wrapper" data-selector="input-block">
+                                    <textarea 
+                                        data-selector="input"
+                                        id="text_ru"
+                                        data-ru="Текст RU" 
+                                        data-en="Text RU" 
+                                        onChange={onChangeInputs}
+                                        onKeyDown={(e) => focuserDescr.next(e)}
+                                        value={fiber.text.ru}
+                                        onBlur={(e) => inputChecker({lang, min:inputsProps.fiber.textFull.min, max:inputsProps.fiber.textFull.max, el: e.target})}/>
                                 </div>
                             </div>
                         </div>
 
                         <h2 className='section-header full-width'>{lang === 'en' ? 'SPECIFICATIONS' : 'ПАРАМЕТРЫ'}</h2>           
-                        <div className="input-block multi" ref={_spec}>
+                        <div className="input-block multi" ref={_spec}  data-selector="fiber-spec">
                             {renderSpec}
                         </div>
 
                         <h2 className='section-header full-width'>{lang === 'en' ? 'PROS' : 'ПЛЮСЫ'}</h2>           
-                        <div className="proscons pros" ref={_pros}>
-                            <Featurer lang={lang} ref={pros}/>
+                        <div className="proscons pros" ref={_pros} data-selector="fiber-pros">
+                            <Featurer 
+                                lang={lang} 
+                                ref={prosRef}
+                                amountChanged={onChangeFeaturesAmount}
+                                valueChanged={onChangeFeature}/>
                         </div>
 
                         <h2 className='section-header full-width'>{lang === 'en' ? 'CONS' : 'МИНУСЫ'}</h2>                   
-                        <div className="proscons cons" ref={_cons}>
-                            <Featurer lang={lang} ref={cons}/>
+                        <div className="proscons cons" ref={_cons} data-selector="fiber-cons">
+                            <Featurer 
+                                lang={lang} 
+                                ref={consRef}
+                                amountChanged={onChangeFeaturesAmount}
+                                valueChanged={onChangeFeature}/>
                         </div>
 
                         <h2 className='section-header full-width'>{lang === 'en' ? 'PICK COLORS' : 'ВЫБЕРЕТЕ ЦВЕТА'}</h2>           

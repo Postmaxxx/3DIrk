@@ -3,7 +3,7 @@ import { Routes, Route, HashRouter } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import Preloader from "./components/Preloaders/Preloader"; 
 import "./assets/css/_base.scss";
-import { IFullState, TId, TLang } from "./interfaces";
+import { IFullState, IUserState, TId, TLang } from "./interfaces";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
@@ -14,6 +14,7 @@ import Header from "./partials/Header/Header";
 import Homer from "./components/Homer/Homer";
 import LangSwitcher from "./components/LangSwitcher/LangSwitcher";
 import Offliner from "./components/Offliner/Offliner";
+import Unauthorized from "./components/Unauthorized/Unauthorized";
 
 const LazyThemeSwitcher = lazy(() => import("./components/ThemeSwitcher/ThemeSwitcher"));
 const LazyLangSwitcher = lazy(() => import("./components/LangSwitcher/LangSwitcher"));
@@ -41,6 +42,7 @@ const LazySpliderChanger = lazy(() => import("./pages/Admin/SpliderChanger/Splid
 
 interface IPropsState {
     lang: TLang
+	isAdmin: boolean
 }
 
 interface IPropsActions {
@@ -56,7 +58,7 @@ interface IProps extends IPropsState, IPropsActions {}
 
 const MemoFooter = memo(Footer)
 
-const App:React.FC<IProps> = ({lang, setState}):JSX.Element => {
+const App:React.FC<IProps> = ({lang, isAdmin, setState}):JSX.Element => {
 	
 	useEffect(() => {
 		setState.user.loginWithToken()
@@ -71,8 +73,7 @@ const App:React.FC<IProps> = ({lang, setState}):JSX.Element => {
 			<Offliner lang={lang}/>
 			<Suspense fallback={<Preloader />}><LazyThemeSwitcher /></Suspense>
 			<Suspense fallback={<Preloader />}><LazyHeader /></Suspense>
-
-			
+		
 			<Routes>
 				<Route index path="/" element={<Suspense fallback={<Preloader />}><LazyHomePage /></Suspense>} />
 				
@@ -94,20 +95,17 @@ const App:React.FC<IProps> = ({lang, setState}):JSX.Element => {
 				<Route path="news/:newsId" element={<Suspense fallback={<Preloader />}><LazyNewsDetails /></Suspense>} />
 
 				<Route path="/admin">
-					<Route path="news-create" element={<Suspense fallback={<Preloader />}><LazyNewsCreator /></Suspense>} />
-					<Route path="news-create/:newsId" element={<Suspense fallback={<Preloader />}><LazyNewsCreator /></Suspense>} />
-					<Route path="fiber-create" element={<Suspense fallback={<Preloader />}><LazyFiberCreator /></Suspense>} />
-					<Route path="fiber-create/:fiberId" element={<Suspense fallback={<Preloader />}><LazyFiberCreator /></Suspense>} />
-					<Route path="color-create" element={<Suspense fallback={<Preloader />}><LazyColorCreator /></Suspense>} />
-					<Route path="color-create/:colorId" element={<Suspense fallback={<Preloader />}><LazyColorCreator /></Suspense>} />
-					<Route path="catalog-change" element={<Suspense fallback={<Preloader />}><LazyCatalogCahnger /></Suspense>} />
-
-					<Route path="product-create" element={<Suspense fallback={<Preloader />}><LazyProductCreator /></Suspense>} />
-					<Route path="product-create/:productId" element={<Suspense fallback={<Preloader />}><LazyProductCreator /></Suspense>} />
-
-					<Route path="splider-change" element={<Suspense fallback={<Preloader />}><LazySpliderChanger /></Suspense>} />
+					<Route path="news-create" element={<Suspense fallback={<Preloader />}>{isAdmin ? <LazyNewsCreator /> : <Unauthorized lang={lang} />}</Suspense>} />
+					<Route path="news-create/:newsId" element={<Suspense fallback={<Preloader />}>{isAdmin ? <LazyNewsCreator /> : <Unauthorized lang={lang} />}</Suspense>} />
+					<Route path="fiber-create" element={<Suspense fallback={<Preloader />}>{isAdmin ? <LazyFiberCreator /> : <Unauthorized lang={lang} />}</Suspense>} />
+					<Route path="fiber-create/:fiberId" element={<Suspense fallback={<Preloader />}>{isAdmin ? <LazyFiberCreator /> : <Unauthorized lang={lang} />}</Suspense>} />
+					<Route path="color-create" element={<Suspense fallback={<Preloader />}>{isAdmin ? <LazyColorCreator /> : <Unauthorized lang={lang} />}</Suspense>} />
+					<Route path="color-create/:colorId" element={<Suspense fallback={<Preloader />}>{isAdmin ? <LazyColorCreator /> : <Unauthorized lang={lang} />}</Suspense>} />
+					<Route path="catalog-change" element={<Suspense fallback={<Preloader />}>{isAdmin ? <LazyCatalogCahnger /> : <Unauthorized lang={lang} />}</Suspense>} />
+					<Route path="product-create" element={<Suspense fallback={<Preloader />}>{isAdmin ? <LazyProductCreator /> : <Unauthorized lang={lang} />}</Suspense>} />
+					<Route path="product-create/:productId" element={<Suspense fallback={<Preloader />}>{isAdmin ? <LazyProductCreator /> : <Unauthorized lang={lang} />}</Suspense>} />
+					<Route path="splider-change" element={<Suspense fallback={<Preloader />}>{isAdmin ? <LazySpliderChanger /> : <Unauthorized lang={lang} />}</Suspense>} />
 				</Route>
-
 
 				<Route path="/*" element={<Suspense fallback={<Preloader />}><P404 lang={lang}/></Suspense>} />
 			</Routes>
@@ -121,6 +119,7 @@ const App:React.FC<IProps> = ({lang, setState}):JSX.Element => {
 
 const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
+	isAdmin: state.user.isAdmin,
 })
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>):IPropsActions => ({

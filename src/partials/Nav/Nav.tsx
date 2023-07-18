@@ -1,6 +1,6 @@
 import { useState, useRef, useMemo } from "react";
 import { NavLink } from "react-router-dom";
-import { IFiber, IFullState, TId, TLang } from "../../interfaces";
+import { IFetch, IFiber, IFullState, TId, TLang } from "../../interfaces";
 import "./nav.scss"
 import navLogo from "../../assets/img/nav_logo.png"
 import { connect } from "react-redux";
@@ -10,7 +10,8 @@ import CartInformer from "../../components/CartInformer/CartInformerUpdater";
 import Modal, { IModalFunctions } from "../../components/Modal/Modal";
 import Auth from "../../components/Auth/Auth";
 import { allActions } from "../../redux/actions/all";
-import { resetFetch } from "../../assets/js/consts";
+import initialUserState from "../../../src/redux/initialStates/user";
+import { navList } from "../../../src/assets/js/consts";
 
 
 interface IPropsState {
@@ -19,7 +20,7 @@ interface IPropsState {
     desktopOpened: boolean
     fibersList: IFiber[]
     isAdmin: boolean
-    token: string
+    isAuth: boolean
 }
 
 
@@ -34,18 +35,18 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 
-const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersList, isAdmin, token}): JSX.Element => {
+const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersList, isAdmin, isAuth}): JSX.Element => {
     const _blur = useRef<HTMLDivElement>(null)
     const [expandedNavItems, setExpandedNavItems] = useState<TId[]>([])
-    const modal = useRef<IModalFunctions>(null)
+    const modalRef = useRef<IModalFunctions>(null)
 
 
     const navToggle = () => {
-        desktopOpened ? setState.base.setNavCloseDt() : setState.base.setNavOpenDt()
+        setState.base.setNavToggleDt()
     }
 
     const navToggleMobile = () => {
-        mobOpened ? setState.base.setNavCloseMob() : setState.base.setNavOpenMob()
+        setState.base.setNavToggleMob()
     }
 
 
@@ -59,54 +60,47 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
 
 
     const closeModal = () => {
-        modal.current?.closeModal()
+        modalRef.current?.closeModal()
 	}
 
 
     const onClickNotLink = (action: string) => {
-        if (action === 'login' && !token) {
-            modal.current?.openModal()
+        if (action === 'login' && !isAuth) {
+            modalRef.current?.openModal()
         }
         if (action === 'logout') {
-            setState.user.setUser({
-                name: '', 
-                email: '', 
-                phone: '', 
-                token: '', 
-                orders: [], 
-                isAdmin: false,
-                auth: {...resetFetch}
-            })
-            localStorage.removeItem('user')        
+            setState.user.setUser({...initialUserState})
+            localStorage.removeItem('user')
+            window.location.reload()
         }
         navToggleMobile()
     }
 
-    const desktop = useMemo(() => {
+    const desktopNav = useMemo(() => {
         return <nav className={desktopOpened ? "nav_desktop opened" : "nav_desktop"}>
         <div className="nav__container">
             <ul>
                 <li>
-                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to='/'>
-                        {lang === 'en' ? 'HOME' : 'ГЛАВНАЯ'}
+                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to={navList.home.to}>
+                        {navList.home[lang]}
                     </NavLink>
                 </li>
 
                 <li className="extandable">
-                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to='/fibers'>
-                        {lang === 'en' ? 'FIBERS' : 'МАТЕРИАЛЫ '}
+                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to={navList.fibers.to}>
+                        {navList.fibers[lang]}
                     </NavLink>
                     <ul className="sub_menu">
                         <li>
                             <ul className="submenu__content">
                                 <li>
-                                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to={`fibers`} end>
-                                        {lang === 'en' ? 'ABOUT' : 'О ФИЛАМЕНТАХ'}
+                                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to={navList.fibers.about.to} end>
+                                        {navList.fibers.about[lang]}
                                     </NavLink>
                                 </li>
                                 <li>
-                                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to={`/fibers/compare`}>
-                                        {lang === 'en' ? 'COMPARASING' : 'СРАВНЕНИЕ'}
+                                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to={navList.fibers.compare.to}>
+                                        {navList.fibers.compare[lang]}
                                     </NavLink>
                                 </li>
                                 {fibersList.map(fiber => {
@@ -124,73 +118,70 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
                 </li>
 
                 <li>
-                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to='/catalog'>
-                        {lang === 'en' ? 'CATALOG' : 'КАТАЛОГ'}
+                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to={navList.catalog.to}>
+                        {navList.catalog[lang]}
                     </NavLink>
                 </li>
 
                 <li>
-                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to='/contact_us'>
-                        {lang === 'en' ? 'CONTACT' : 'КОНТАКТЫ'}
+                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to={navList.contacts.to}>
+                        {navList.contacts[lang]}
                     </NavLink>
                 </li>
                 
-                {token ? 
+                {isAuth ? 
                     <li className="extandable">
-                        <a className="not-link" onClick={() => onClickNotLink('login')}>{lang === 'en' ? 'ACCOUNT' : 'Кабинет'}</a>
+                        <a className="not-link" onClick={() => onClickNotLink('login')}>{navList.account[lang]}</a>
                         <ul className="sub_menu">
                             <li>
                                 <ul className="submenu__content">
                                     <li>
-                                        <NavLink to='/orders'>
-                                            {lang === 'en' ? 'ORDERS' : 'ЗАКАЗЫ'}
+                                        <NavLink to={navList.account.orders.to}>
+                                            {navList.account.orders[lang]}
                                         </NavLink>
                                     </li>
                                     <li>
-                                        <NavLink to='/order'>
-                                            {lang === 'en' ? 'CART' : 'КОРЗИНА'}
+                                        <NavLink to={navList.account.cart.to}>
+                                            {navList.account.cart[lang]}
                                             <div className="cart-informer__container"><CartInformer /></div>          
                                         </NavLink>
 
                                     </li> 
-                                    {isAdmin ? 
+                                    {isAdmin && 
                                         <>
                                             <li>
-                                                <NavLink to='/admin/news-create' >
-                                                    {lang === 'en' ? '+ NEWS' : '+ НОВОСТЬ'}
+                                                <NavLink to={navList.account.admin.news.to} >
+                                                    {navList.account.admin.news[lang]}
                                                 </NavLink>
                                             </li>
                                             <li>
-                                                <NavLink to='/admin/color-create' >
-                                                    {lang === 'en' ? '+ COLOR' : '+ ЦВЕТ'}
+                                                <NavLink to={navList.account.admin.color.to} >
+                                                    {navList.account.admin.color[lang]}
                                                 </NavLink>
                                             </li>
                                             <li>
-                                                <NavLink to='/admin/fiber-create' >
-                                                    {lang === 'en' ? '+ FIBER' : '+ МАТЕРИАЛ'}
+                                                <NavLink to={navList.account.admin.fiber.to} >
+                                                    {navList.account.admin.fiber[lang]}
                                                 </NavLink>
                                             </li>
                                             <li>
-                                                <NavLink to='/admin/catalog-change' >
-                                                    {lang === 'en' ? '~ CATALOG' : '~ КАТАЛОГ'}
+                                                <NavLink to={navList.account.admin.catalog.to} >
+                                                    {navList.account.admin.catalog[lang]}
                                                 </NavLink>
                                             </li>
                                             <li>
-                                                <NavLink to='/admin/product-create' >
-                                                    {lang === 'en' ? '+ PRODUCT' : '+ ТОВАР'}
+                                                <NavLink to={navList.account.admin.product.to} >
+                                                    {navList.account.admin.product[lang]}
                                                 </NavLink>
                                             </li>
                                             <li>
-                                                <NavLink to='/admin/splider-change' >
-                                                    {lang === 'en' ? '~ SPLIDER' : '~ ГАЛЕРЕЯ'}
+                                                <NavLink to={navList.account.admin.content.to} >
+                                                    {navList.account.admin.content[lang]}
                                                 </NavLink>
                                             </li>
-                                        </>
-                                    : 
-                                        null
-                                    }
+                                        </>}
                                     <li>
-                                        <a className="not-link" onClick={() => onClickNotLink('logout')}>{lang === 'en' ? 'LOGOUT' : 'ВЫХОД'}</a>
+                                        <a className="not-link" onClick={() => onClickNotLink('logout')}>{navList.account.logout[lang]}</a>
                                     </li>
                                 </ul>
                             </li>
@@ -198,7 +189,7 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
                     </li>
                     :
                     <li>
-                        <a className="not-link" onClick={() => onClickNotLink('login')}>{lang === 'en' ? 'LOGIN' : 'ВХОД'}</a>
+                        <a className="not-link" onClick={() => onClickNotLink('login')}>{navList.account.login[lang]}</a>
                     </li>
                 }
             </ul>
@@ -213,13 +204,13 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
                 </div>
             </label>
         </div>
-    </nav>}, [isAdmin, token, desktopOpened, lang, fibersList])
+    </nav>}, [isAdmin, isAuth, desktopOpened, lang, fibersList])
 
 
 
 
 
-    const mobile = useMemo(() => {
+    const mobileNav = useMemo(() => {
         return  <nav className={mobOpened ? "nav_mobile opened" : "nav_mobile"}>
         <div className="nav__switcher">
             <label aria-label="open/hide navigation">
@@ -232,17 +223,36 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
         </div>
         <div className="blur" ref={_blur}></div>
         <div className="nav__container">
+            <div className="switchers__container">
+                
+            </div>
             <ul>
                 <li>
-                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to='/' onClick={navToggleMobile}>
-                        {lang === 'en' ? 'HOME' : 'ГЛАВНАЯ'}
+                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to={navList.home.to} onClick={navToggleMobile}>
+                        {navList.home[lang]}
                     </NavLink>
                 </li>
 
                 <li className={`${expandedNavItems.includes('fibers') ? 'expanded' : ''}`}>
-                    <span onClick={() => onNavWithSubClicked('fibers')}>{lang === 'en' ? 'FIBERS' : 'МАТЕРИАЛЫ '}</span>
+                    <span onClick={() => onNavWithSubClicked('fibers')}>{navList.fibers[lang]}</span>
                     <div>
                         <ul className="nav__subnav">
+                            <li>
+                                <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} 
+                                    onClick={navToggleMobile}
+                                    to={navList.fibers.about.to}
+                                    end>
+                                        {navList.fibers.about[lang]}
+                                </NavLink>
+                            </li>
+                            <li>
+                                <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} 
+                                    onClick={navToggleMobile}
+                                    to={navList.fibers.compare.to}
+                                    end>
+                                        {navList.fibers.compare[lang]}
+                                </NavLink>
+                            </li>
                             {fibersList.map((fiber) => {
                                 return (
                                     <li key={fiber._id}>
@@ -250,7 +260,7 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
                                             onClick={navToggleMobile}
                                             to={`fibers/${fiber.short.name.en}`}
                                             end>
-                                            {fiber.short.name[lang]}
+                                                {fiber.short.name[lang]}
                                         </NavLink>
                                     </li>
                                 )
@@ -260,69 +270,100 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
                 </li>
 
                 <li>
-                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to='/catalog' onClick={navToggleMobile}>
-                        {lang === 'en' ? 'CATALOG' : 'КАТАЛОГ'}
+                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to={navList.catalog.to} onClick={navToggleMobile}>
+                        {navList.catalog[lang]}
                     </NavLink>
                 </li>
-                {token ? 
-                    <li className="narrow">
-                        <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to='/order' onClick={navToggleMobile}>
-                            {lang === 'en' ? 'CART' : 'КОРЗИНА'}
-                        </NavLink>
-                        <div className="cart-informer__container"><CartInformer /></div>          
-                    </li>
-                :
-                    <li>
-                        <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to='/contacts' onClick={navToggleMobile}>
-                            {lang === 'en' ? 'CONTACTS' : 'КОНТАКТЫ'}
-                        </NavLink>
-                    </li>
-                }
+                <li>
+                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to={navList.contacts.to} onClick={navToggleMobile}>
+                        {navList.contacts[lang]}
+                    </NavLink>
+                </li>
+                {isAuth &&
+                <li className="narrow">
+                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to='/order' onClick={navToggleMobile}>
+                        {lang === 'en' ? 'CART' : 'КОРЗИНА'}
+                    </NavLink>
+                    <div className="cart-informer__container"><CartInformer /></div>          
+                </li>}
 
                 
-                {token ? 
+                {isAuth ? 
                     <li className={`${expandedNavItems.includes('cabinet') ? 'expanded' : ''}`}>
                         <span onClick={() => onNavWithSubClicked('cabinet')}>{lang === 'en' ? 'ACCOUNT' : 'КАБИНЕТ '}</span>
                         <div>
                             <ul className="nav__subnav noscroll">
                                 <li>
-                                    <NavLink to='/order' onClick={navToggleMobile}>
-                                        {lang === 'en' ? 'CART' : 'КОРЗИНА'}
-                                    </NavLink>
-                                    <div className="cart-informer__container"><CartInformer /></div>          
-                                </li> 
-                                <li>
-                                    <NavLink to='/order' onClick={navToggleMobile}>
-                                        {lang === 'en' ? 'ORDERS HISTORY' : 'ЗАКАЗЫ'}
+                                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}  
+                                        to={navList.account.orders.to} 
+                                        onClick={navToggleMobile}>
+                                            {navList.account.orders[lang]}
                                     </NavLink>
                                 </li>
                                 <li>
-                                    <NavLink to='/order' onClick={navToggleMobile}>
-                                        {lang === 'en' ? 'WRITE US' : 'СООБЩЕНИЕ'}
+                                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}  
+                                        to={navList.account.admin.news.to} 
+                                        onClick={navToggleMobile}>
+                                            {navList.account.admin.news[lang]}
                                     </NavLink>
                                 </li>
                                 <li>
-                                    <a className="not-link" onClick={() => onClickNotLink('logout')}>{lang === 'en' ? 'LOGOUT' : 'ВЫХОД'}</a>
+                                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}  
+                                        to={navList.account.admin.color.to} 
+                                        onClick={navToggleMobile}>
+                                            {navList.account.admin.color[lang]}
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}  
+                                        to={navList.account.admin.fiber.to} 
+                                        onClick={navToggleMobile}>
+                                            {navList.account.admin.fiber[lang]}
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}  
+                                        to={navList.account.admin.catalog.to} 
+                                        onClick={navToggleMobile}>
+                                            {navList.account.admin.catalog[lang]}
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}  
+                                        to={navList.account.admin.product.to} 
+                                        onClick={navToggleMobile}>
+                                            {navList.account.admin.product[lang]}
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}  
+                                        to={navList.account.admin.content.to} 
+                                        onClick={navToggleMobile}>
+                                            {navList.account.admin.content[lang]}
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <a className="not-link" onClick={() => onClickNotLink('logout')}>{navList.account.logout[lang]}</a>
                                 </li>
                             </ul>
                         </div>
                     </li>
                 :
                     <li>
-                        <a className="not-link" onClick={() => onClickNotLink('login')}>{lang === 'en' ? 'LOGIN' : 'ВХОД'}</a>
+                        <a className="not-link" onClick={() => onClickNotLink('login')}>{navList.account.login[lang]}</a>
                     </li>
                 }
             </ul>
         </div>
         <div className="nav__container_right"></div>
-    </nav>}, [isAdmin, token, mobOpened, lang, fibersList, expandedNavItems])
+    </nav>}, [isAdmin, isAuth, mobOpened, lang, fibersList, expandedNavItems])
 
 
     return (
         <>
-            {desktop}
-            {mobile}
-            <Modal escExit={true} ref={modal}>
+            {desktopNav}
+            {mobileNav}
+            <Modal escExit={true} ref={modalRef}>
                 <Auth onCancel={closeModal}/>
             </Modal> 
         </>
@@ -336,7 +377,7 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
     desktopOpened: state.base.desktopOpened,
     fibersList: state.fibers.fibersList,
     isAdmin: state.user.isAdmin,
-    token: state.user.token
+    isAuth: state.user.auth.status === 'success'
 })
   
   

@@ -4,13 +4,13 @@ import './rating-line.scss'
 interface IRatingLine {
     colorValue?: string
     value: number
-    min: number
-    max: number
+    min?: number
+    max?: number
     text: string
-    measurment: string
+    measurment?: string
 }
 
-const RatingLine: React.FC<IRatingLine> = ({colorValue, value, min, max, text, measurment}): JSX.Element => {
+const RatingLine: React.FC<IRatingLine> = ({colorValue='', value=0, min=0, max=10, text='', measurment=''}): JSX.Element => {
     const _rating = useRef<HTMLDivElement>(null)
     const _value = useRef<HTMLDivElement>(null)
 

@@ -9,7 +9,7 @@ import Message, { IMessageFunctions } from "../../components/Message/Message";
 import CartContent from "../../components/CartContent/CartContent";
 import AddFiles, { IAddFilesFunctions } from "../../components/AddFiles/AddFiles";
 import { allActions } from "../../redux/actions/all";
-import { inputsProps, resetFetch} from "../../assets/js/consts";
+import { inputsProps, resetFetch, timeModalClosing} from "../../assets/js/consts";
 import { checkAndLoad, focusMover, modalMessageCreator, prevent } from "../../assets/js/processors";
 import inputChecker from "../../../src/assets/js/inputChecker";
 
@@ -38,6 +38,7 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
     const modalMessageRef = useRef<IModalFunctions>(null)
     const messageRef = useRef<IMessageFunctions>(null)
     const addFilesRef = useRef<IAddFilesFunctions>(null)
+    const processedContainer = '[data-selector="order-form"]'
 
     const focuser = useMemo(() => focusMover(), [lang])
 
@@ -45,7 +46,7 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
     const closeModalMessage = useCallback(() => {
         if (!_message.current) return
         modalMessageRef.current?.closeModal()
-        //setTimeout(() => message.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
+        setTimeout(() => messageRef.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
         if (sendOrder.status === 'success') {
             addFilesRef.current?.clearAttachedFiles()
             _message.current.value = ''
@@ -62,7 +63,7 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
 
         //check errors
         focuser.focusAll();//run over all elements to get all errors
-        const errorFields = document.querySelector('[data-selector="order-form"]')?.querySelectorAll('.incorrect-value')
+        const errorFields = document.querySelector(processedContainer)?.querySelectorAll('.incorrect-value')
         if (errorFields && errorFields?.length > 0) return
         setState.user.sendOrder({
             message: _message.current.value,
@@ -74,7 +75,7 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
     useEffect(() => {
         if (sendOrder.status === 'success' || sendOrder.status === 'error') {
             messageRef.current?.update(modalMessageCreator(sendOrder, lang))
-            modalMessageRef.current?.openModal()
+            modalMessageRef.current?.openModal('order')
         }
     }, [sendOrder.status])
 
@@ -85,7 +86,7 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
 
 
     useEffect(() => {
-        focuser.create({parent: '[data-selector="order-form"]', items: '[data-selector="input"]'})
+        focuser.create({container: processedContainer})
     }, [lang])
 
     

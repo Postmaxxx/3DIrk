@@ -401,53 +401,7 @@ $gap_to_text: 5px;
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//======================================================== MOBILE ============================================
 
 
 
@@ -477,8 +431,8 @@ $gap_to_text: 5px;
         top: 100%;
         left: 0;
         transform: translateY(-100%);
-        display: flex;
-        align-items: stretch;
+        //display: flex;
+        //align-items: stretch;
         transition: transform $transition_nav $nav_mobile_delay, background-color $transition_theme;
         width: calc(100% - 20px * 2);
         background-color: var(--main);
@@ -487,6 +441,23 @@ $gap_to_text: 5px;
         z-index: -1;
         height: auto;
         width: calc(100% - 40px);
+        border-left: 4px solid var(--main_vv);
+        border-bottom: 4px solid var(--main_vv);
+        border-top: 2px solid var(--main_vv);
+
+        & > .switchers__container {
+            height: 70px;
+            width: 80%;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            background-color: var(--main_vv);
+            transition:  background-color $transition_theme;
+            border-radius: 40px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 20px;
+        }
+        
 
         & > .right-line {
             width: 10px;
@@ -503,25 +474,15 @@ $gap_to_text: 5px;
             align-items: center;
             justify-content: space-between;
             font-weight: 600;
-            //padding-top: 80px;
             padding-bottom: 20px;
             height: 100%;
             width: 100%;
-            border-left: 4px solid var(--main_vv);
-            border-bottom: 4px solid var(--main_vv);
             border-top: 2px solid var(--main_vv);
-            //box-shadow: 0px 0px 3px 0px var(--main_vv);;
 
-            &::before {
-                content: '';
-                height: 70px;
-                width: 80%;
-                margin-top: 40px;
-                margin-bottom: 20px;
-                background-color: var(--main_vv);
-                transition:  background-color $transition_theme;
-                border-radius: 40px;
-            }
+            max-height: calc(100vh - 250px);
+            overflow-x: hidden;
+            overflow-y: auto;
+
     
     
             & > li {
@@ -599,8 +560,6 @@ $gap_to_text: 5px;
 
                     & > .nav__subnav {
                         overflow: hidden;
-                        max-height: 40vh;
-                        overflow: auto;
                         display: flex;
                         flex-direction: column;
                         align-items: center;

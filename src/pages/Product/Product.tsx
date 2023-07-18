@@ -1,11 +1,11 @@
 import "./product.scss"
-import { useRef, useEffect, useState, useMemo, useCallback } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 import { NavLink, useNavigate, useParams  } from "react-router-dom"
 import Preloader from '../../components/Preloaders/Preloader';
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import { ICatalogState, IColorsState, IFetch, IFiber, IFibersState, IFullState, IProduct, TId, TLang } from "../../interfaces";
+import { ICatalogState, IColorsState, IFibersState, IFullState, IProduct, TLang } from "../../interfaces";
 import SpliderPreview from "../../components/Spliders/Preview/SpliderPreview";
 import ProductDetails from "../../components/ProductDetails/ProductDetails";
 import { allActions } from "../../redux/actions/all";
@@ -13,10 +13,8 @@ import IconEdit from "../../components/tiny/IconEdit/IconEdit";
 import Delete from "../../components/Delete/Delete";
 import Modal, { IModalFunctions } from "../../components/Modal/Modal";
 import Message, { IMessageFunctions } from "../../components/Message/Message";
-import { gapBetweenRequests, headerStatus, resetFetch, timeModalClosing } from "../../assets/js/consts";
-import { checkAndLoad } from "../../assets/js/processors";
-
-
+import { resetFetch, timeModalClosing } from "../../assets/js/consts";
+import { checkAndLoad, modalMessageCreator } from "../../assets/js/processors";
 
 
 interface IPropsState {
@@ -43,26 +41,21 @@ const Product: React.FC<IProps> = ({lang, setState, catalogState, colorsState, f
     const navigate = useNavigate()
     const paramProductId = useParams().productId || ''
     const [loaded, setLoaded] = useState<boolean>(false)
-    const modal_message = useRef<IModalFunctions>(null)
-    const message = useRef<IMessageFunctions>(null)
+    const modalMessageRef = useRef<IModalFunctions>(null)
+    const messageRef = useRef<IMessageFunctions>(null)
 
 
     useEffect(() => {
         if (catalogState.category.sendProduct.status === 'success' || catalogState.category.sendProduct.status === 'error') {
-            const errors: string[] = catalogState.category.sendProduct.errors?.map(e => e[lang]) || []
-            message.current?.update({
-                header: headerStatus[catalogState.category.sendProduct.status][lang],
-                status: catalogState.category.sendProduct.status,
-                text: [catalogState.category.sendProduct.message[lang], ...errors]
-            })
-            modal_message.current?.openModal()
+            messageRef.current?.update(modalMessageCreator(catalogState.category.sendProduct, lang))
+            modalMessageRef.current?.openModal()
         }
     }, [catalogState.category.sendProduct.status])
 
 
     const closeModalMessage = useCallback(() => {
-        modal_message.current?.closeModal()
-        setTimeout(() => message.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
+        modalMessageRef.current?.closeModal()
+        setTimeout(() => messageRef.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
         if (catalogState.category.sendProduct.status === 'success') {
             navigate('/catalog', { replace: true });
             window.location.reload()
@@ -77,24 +70,8 @@ const Product: React.FC<IProps> = ({lang, setState, catalogState, colorsState, f
             setLoaded(true)
         } else {
             checkAndLoad(colorsState.load.status, setState.colors.loadColors)
-
-            /*if (colorsState.load.status === 'idle') {
-                setState.colors.loadColors()
-            }
-            if (colorsState.load.status === 'error') {            
-                setTimeout(() => {setState.colors.loadColors()}, gapBetweenRequests)
-            }*/
-
-
             if (paramProductId !== catalogState.category.product._id) {
                 checkAndLoad(catalogState.category.loadProduct.status, () => setState.catalog.loadProduct(paramProductId))
-
-                /*if (catalogState.category.loadProduct.status === 'idle') {
-                    setState.catalog.loadProduct(paramProductId)
-                }
-                if (colorsState.load.status === 'error') {            
-                    setTimeout(() => {setState.catalog.loadProduct(paramProductId)}, gapBetweenRequests)
-                }*/
             } 
             setLoaded(false)
         }
@@ -135,8 +112,8 @@ const Product: React.FC<IProps> = ({lang, setState, catalogState, colorsState, f
                     :
                         <Preloader />}
                 </div>
-                <Modal escExit={true} ref={modal_message} onClose={closeModalMessage}>
-                    <Message buttonText={lang === 'en' ? `Close` : `Закрыть`} buttonAction={closeModalMessage} ref={message}/>
+                <Modal escExit={true} ref={modalMessageRef} onClose={closeModalMessage}>
+                    <Message buttonText={lang === 'en' ? `Close` : `Закрыть`} buttonAction={closeModalMessage} ref={messageRef}/>
                 </Modal>
             </div>
         </div>

@@ -17,6 +17,7 @@ interface IProps {
     defaultData: IItem
     dataset: TLangText
     data?: IItem[]
+    onBlur?: (e: React.FocusEvent<HTMLSelectElement>) => void
     saveValue?: ({id, e}: {id: string, e: React.ChangeEvent<HTMLSelectElement>}) => void
 }
 
@@ -30,7 +31,7 @@ export interface ISelectorFunctions {
 
 
 
-const Selector = forwardRef<ISelectorFunctions, IProps>(({lang, id, label, defaultData, dataset, data, saveValue}, ref) => {
+const Selector = forwardRef<ISelectorFunctions, IProps>(({lang, id, label, defaultData, dataset, data, onBlur, saveValue}, ref) => {
     useImperativeHandle(ref, () => ({
         setData(elements) {
             setStore(prev => ({...prev, items: elements, item: {name: {...empty}, value: ''}}))
@@ -59,6 +60,7 @@ const Selector = forwardRef<ISelectorFunctions, IProps>(({lang, id, label, defau
     const onChange = (e: React.ChangeEvent<HTMLSelectElement>) => {        
         setStore(prev => ({...prev, item: {value: e.target.value, name: (prev.items.find(el => el.value === e.target.value) as IItem).name}}))
         saveValue && saveValue({id, e})
+        e.target.parentElement?.classList.remove('incorrect-value') 
     }
 
     useEffect(() => {
@@ -71,11 +73,19 @@ const Selector = forwardRef<ISelectorFunctions, IProps>(({lang, id, label, defau
 
 
     return (
-        <div className="selector">
+        <div className="selector" data-selector="input-block">
             {label && <label htmlFor={id}>{label[lang]}: </label>}
-            <select ref={select} id={id} defaultValue={store.item.value} onChange={(e) => onChange(e)} data-en={dataset.en} data-ru={dataset.ru}>
-                <option key={-1} value={store.item.value} disabled hidden>{store.item.name[lang]}</option>
-                {store.items.map((el, i) => <option key={i} value={el.value}>{el.name[lang]}</option>)}
+            <select 
+                data-selector="select"
+                ref={select} 
+                id={id} 
+                defaultValue={store.item.value} 
+                onChange={onChange} 
+                data-en={dataset.en} 
+                data-ru={dataset.ru}
+                onBlur={onBlur}>
+                    <option key={-1} value={store.item.value} disabled hidden>{store.item.name[lang]}</option>
+                    {store.items.map((el, i) => <option key={i} value={el.value}>{el.name[lang]}</option>)}
             </select>
         </div>
     )

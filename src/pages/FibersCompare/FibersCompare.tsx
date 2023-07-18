@@ -2,7 +2,7 @@ import './FibersCompare.scss'
 import { AnyAction, bindActionCreators, Dispatch } from "redux";
 import { connect } from "react-redux";
 import { TLang, IFullState, IFibersState, IFiber } from "../../interfaces";
-import { useEffect, useState, Fragment, useMemo } from 'react'; 
+import { useEffect, useState, Fragment, useMemo, useCallback } from 'react'; 
 import Preloader from '../../components/Preloaders/Preloader';
 import { NavLink } from 'react-router-dom';
 import SvgInserter from '../../components/tiny/SvgInserter/SvgInserter';
@@ -11,10 +11,9 @@ import RatingMoney from '../../components/tiny/RatingMoney/RatingMoney';
 import { fibersProperties } from '../../assets/data/fibersProperties';
 import { allActions } from "../../redux/actions/all";
 import ErrorMock from '../../components/tiny/ErrorMock/ErrorMock';
-import { strengthMax, strengthMin } from '../../assets/js/consts';
+import { strengthMax, strengthMin, tipsTransition } from '../../assets/js/consts';
 import ImgWithPreloader from '../../assets/js/ImgWithPreloader';
 import { checkAndLoad } from '../../assets/js/processors';
-
 
 
 interface IPropsState {
@@ -31,7 +30,6 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Element => {
-
     const [filtered, setFiltered] = useState<boolean>(false)
     const [selectError, setSelectError] = useState<boolean>(false)
     const [selectedMore, setSelectedMore] = useState<boolean>(false)
@@ -40,11 +38,7 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
     const [fibersList, setFibersList] = useState<IFiber[]>([]) //for sort fibers
 
     useEffect(() => {
-        /*if (fibersState.load.status !== 'success' && fibersState.load.status !== 'fetching') {
-            setState.fibers.loadFibers()
-        }*/
         checkAndLoad(fibersState.load.status, setState.fibers.loadFibers)
-
         if (fibersState.load.status === 'success') {
             setFibersList(fibersState.fibersList)
             clearSelected()
@@ -53,13 +47,12 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
     }, [fibersState.load.status])
    
 
-
-    const clearCheckboxes = () => {
+    const clearCheckboxes = useCallback(() => {
         Array.from(document.querySelectorAll('[data-fiberselect]')).forEach(item => (item as HTMLInputElement).checked = false)
-    }
+    }, [])
 
 
-    const compareSelected = () => {       
+    const compareSelected = useCallback(() => {       
         const selectedFibers:IFiber['_id'][] = Array.from(document.querySelectorAll('[data-fiberselect]'))
             .filter(item => (item as HTMLInputElement).checked)
             .map(input => (input as HTMLInputElement).dataset.fiberselect as IFiber['_id']) 
@@ -71,11 +64,11 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
         setFiltered(true)
         clearCheckboxes()
         setSelectedMore(false)
-    }
+    }, [])
 
 
     useEffect(() => {
-        setTimeout(() => {setSelectError(false)}, 3000)
+        setTimeout(() => {setSelectError(false)}, tipsTransition)
     }, [selectError])
 
 
@@ -105,7 +98,7 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
 
     const sortByProperty = (_id: string) => {
         setFibersList(prev => {
-            let reverse: boolean = true
+            let reverse: boolean = true //if newFibers already sorted in reverse order 
             const newFibers = prev.sort((fiberA, fiberB) => { 
                 const delta = (fiberA.params[_id] as number) - (fiberB.params[_id] as number)
                 delta < 0 && (reverse = false)
@@ -117,7 +110,7 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
 
 
     const renderProperties = useMemo(() => {
-        return fibersProperties.map((property, i) => {
+        return fibersProperties.map((property) => {
             return property._id !== 'priceGr' && 
                 <div className="cell row-name fixed-left with-tip padding_no" key={property._id}>
                     <button onClick={() => sortByProperty(property._id)}>
@@ -131,9 +124,10 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
     )}, [lang, fibersList, lang])
 
 
+
     const renderFiberList = useMemo(() => fibersList
         .filter(fiber => showList.includes(fiber._id))
-        .map((fiber, i) => {
+        .map((fiber) => {
             return (
                 <Fragment key={fiber._id}>
                     <div className={`cell col-name ${fiber._id === fibersState.selected ? "selected" : ""}`} onClick={e => onCellClick(fiber._id, '')} >
@@ -154,15 +148,15 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
                             <span></span>
                         </label>
                     </div>
-                    {fibersProperties.map((property, i) => {                                                
+                    {fibersProperties.map((property) => {                                                
                         return (
                             <Fragment key={property._id}>
-                                {property._id !== 'priceGr' ? 
-                                    <div className={`cell ${fiber._id === fibersState.selected ? 'selected' : ''} ${selectedProperty === property._id ? 'selected' : ''}`} key={`${fiber._id}-${property._id}`}  onClick={e => onCellClick(fiber._id, property._id)}>
-                                        {property._id === "strength" && <div className="rating__container"><RatingLine colorValue='blue' min={strengthMin} max={strengthMax} value={fiber.params[property._id]} text={`${fiber.params[property._id]}`} measurment={lang === 'en' ? ' MPa' : ' МПа'}/></div>}
-                                        {property._id === "stiffnes" && <div className="rating__container"><RatingLine colorValue='red' min={0} max={10} value={fiber.params[property._id]} text={`${fiber.params[property._id]}`} measurment={' / 10'}/></div>}
-                                        {property._id === "durability" && <div className="rating__container"><RatingLine colorValue='green' min={0} max={10} value={fiber.params[property._id]} text={`${fiber.params[property._id]}`} measurment={' / 10'}/></div>}
-                                        {property._id === "resistantImpact" && <div className="rating__container"><RatingLine colorValue='lilac' min={0} max={10} value={fiber.params[property._id]} text={`${fiber.params[property._id]}`} measurment={' / 10'}/></div>}
+                                {property._id !== 'priceGr' && //filter, priceGr won't shown in this table
+                                    <div className={`cell ${fiber._id === fibersState.selected ? 'selected' : ''} ${selectedProperty === property._id ? 'selected' : ''}`} key={`${fiber._id}-${property._id}`}  onClick={() => onCellClick(fiber._id, property._id)}>
+                                        {property._id === "strength" && <div className="rating__container"><RatingLine colorValue='blue' min={strengthMin} max={strengthMax} value={fiber.params[property._id]} text={`${fiber.params[property._id]}`} measurment={property.unit[lang]}/></div>}
+                                        {property._id === "stiffnes" && <div className="rating__container"><RatingLine colorValue='red' value={fiber.params[property._id]} text={`${fiber.params[property._id]}`} measurment={property.unit[lang]}/></div>}
+                                        {property._id === "durability" && <div className="rating__container"><RatingLine colorValue='green' value={fiber.params[property._id]} text={`${fiber.params[property._id]}`} measurment={property.unit[lang]}/></div>}
+                                        {property._id === "resistantImpact" && <div className="rating__container"><RatingLine colorValue='lilac' value={fiber.params[property._id]} text={`${fiber.params[property._id]}`} measurment={property.unit[lang]}/></div>}
                                         {(property._id === "minTemp" || property._id === "maxTemp" || property._id === "thermalExpansion" || property._id === "density") && <span>{fiber.params[property._id]} <span>{property.unit[lang]}</span></span>}
                                         {(property._id === "flexible" 
                                         || property._id === "elastic"
@@ -177,18 +171,15 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
                                         || property._id === "cutting"
                                         || property._id === "grinding"
                                         ) && <SvgInserter type={fiber.params[property._id] === 3 ? 'plus' : fiber.params[property._id] === 1 ? 'minus' : 'question'}/>}
-                                        {property._id === "price" && <RatingMoney value={fiber.params.price} max={5} text={``} measurment={''} />}
+                                        {property._id === "price" && <RatingMoney value={fiber.params.price} max={5} text={``} measurment={''} fullFormat={false}/>}
                                     </div>
-                                :
-                                    null
-                            }
+                                }
                             </Fragment>
                         )
                     })}
-                    <div className={`cell col-name_last  ${fiber._id === fibersState.selected ? "selected" : ""}`} onClick={e => onCellClick(fiber._id, '')}>
+                    <div className={`cell col-name_last  ${fiber._id === fibersState.selected ? "selected" : ""}`} onClick={() => onCellClick(fiber._id, '')}>
                         <span>{fiber.short.name[lang]}</span>
                     </div>
-
                 </Fragment>
             )
         })
@@ -204,24 +195,19 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
                 <div className="container_compare">
                     <div className="block_text">
                         <h1>{lang === 'en' ? 'Filaments comparison' : 'Сравнение филаментов'}</h1>
-                        <p>{lang === 'en' ? 'You can click at the feature on the left to sort fibers in forward or reverse order by this feature' : 'Вы можете кликнуть по свойству слева чтобы отсортировать материалы по данному свойству'}</p>
+                        <p>{lang === 'en' ? 'You can click at the feature on the left to sort fibers in forward or reverse order by clicked feature' : 'Вы можете кликнуть по свойству слева чтобы отсортировать материалы по данному свойству'}</p>
                     </div>
                     <div className="table__container">
                         {fibersState.load.status === 'success' && 
                             <div className="table">
-                                <div className="cell row-name fixed-left">
-                                    <span></span>
-                                </div>
-                                
+                                <div className="cell row-name fixed-left"></div>
                                 <div className="cell row-name fixed-left selectors">
                                     {(filtered && !selectedMore) && <button className='button_blue' onClick={clearSelected}>{lang === 'en' ? 'Show all' : 'Показать все'}</button>}
                                     {(!filtered || selectedMore) && <button className='button_blue' onClick={compareSelected}>{lang === 'en' ? 'Compare' : 'Сравнить'}</button>}
                                     {selectError && <span className='error-message'>{lang === 'en' ? `select > 1` : `выберите > 1`}</span>}
                                 </div>
                                 {renderProperties}
-                                <div className="cell row-name fixed-left row-name_last">
-                                    <span></span>
-                                </div>
+                                <div className="cell row-name fixed-left row-name_last"></div>
                                 {renderFiberList}
                             </div>}
                         {fibersState.load.status === 'fetching' && <Preloader />}
@@ -232,8 +218,6 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
         </div>
     )
 }
-
-
 
 
 

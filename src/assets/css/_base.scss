@@ -197,7 +197,7 @@ button {
         font-weight: 600;
     }
 
-    & > input, textarea {
+    & > input, textarea, select {
         animation: inputshake 0.2s ease-in-out 0s 2;
         background-color: rgb(238, 167, 167) !important;
     }

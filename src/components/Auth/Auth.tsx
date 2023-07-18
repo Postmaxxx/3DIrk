@@ -34,6 +34,7 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
     const [register, setRegister] = useState<boolean>(false) //true - register, false - login
     const [hideInput, setHideInput] = useState<boolean>(true) //true - hide passwords, false - show
     const [form, setForm] = useState<ILoggingForm>({name: userState.name, email: userState.email, phone: userState.phone, password: '', repassword: ''})
+    const processedContainer = '[data-selector="auth-form"]'
     
     const focuser = useMemo(() => focusMover(), [lang])
     
@@ -57,7 +58,7 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
 
         //check errors
         focuser.focusAll(); //run over all elements to get all errors
-        const errorFields = document.querySelector('[data-selector="auth-form"]')?.querySelectorAll('.incorrect-value')
+        const errorFields = document.querySelector(processedContainer)?.querySelectorAll('.incorrect-value')
         if (errorFields && errorFields?.length > 0) return
 
         register ? setState.user.register(form) : setState.user.login(form)
@@ -72,7 +73,7 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
 
 
     useEffect(() => {
-        focuser.create({parent: '[data-selector="auth-form"]', items: '[data-selector="input"]'})
+        focuser.create({container: processedContainer})
     }, [register, lang])
 
 

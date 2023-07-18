@@ -1,6 +1,6 @@
 import { TLang, TLangText } from '../../interfaces';
 import './featurer.scss'
-import { useEffect, useState, forwardRef, useImperativeHandle  } from "react";
+import { useState, forwardRef, useImperativeHandle, useEffect  } from "react";
 import { prevent } from '../../assets/js/processors';
 import { empty } from '../../assets/js/consts';
 
@@ -13,6 +13,8 @@ interface IItem {
 
 interface IProps {
     lang: TLang
+    amountChanged?: (newAmount: number) => void
+    valueChanged?: (target: HTMLInputElement) => void
 }
 
 
@@ -23,14 +25,14 @@ export interface IFeaturerFunctions {
 
 
 
-const Featurer = forwardRef<IFeaturerFunctions, IProps>(({lang}, ref) => {
+const Featurer = forwardRef<IFeaturerFunctions, IProps>(({lang, amountChanged, valueChanged}, ref) => {
     useImperativeHandle(ref, () => ({
         setFeatures(items) {
             setFeatures(items || [])
         },
         getFeatures() {
             return features
-        },
+        }
     }));
 
     const [features, setFeatures] = useState<{_id: string, name: {en: string, ru: string}}[]>([])
@@ -42,6 +44,7 @@ const Featurer = forwardRef<IFeaturerFunctions, IProps>(({lang}, ref) => {
             newFeatures[index].name[e.target.name as TLang] = e.target.value
             return newFeatures
         })
+        valueChanged && valueChanged(e.target)
     }
 
 
@@ -59,6 +62,11 @@ const Featurer = forwardRef<IFeaturerFunctions, IProps>(({lang}, ref) => {
         prevent(e)
         setFeatures(prev => [...prev, {_id: '', name: {...empty}}])
     }
+    
+    
+    useEffect(() => {
+        amountChanged && amountChanged(features.length)
+    }, [features.length])
 
 
 
@@ -68,13 +76,23 @@ const Featurer = forwardRef<IFeaturerFunctions, IProps>(({lang}, ref) => {
                 {features.map((item, i) => {
                     return (
                         <div className="block_feature full-width" key={i}>
-                            <div className="input__wrapper">
+                            <div className="input__wrapper" data-selector="input-block">
                                 <label>{lang === 'en' ? 'Value EN' : 'Значение EN'}</label>
-                                <input name="en" type="text" onChange={(e) => onEditFeature(e, i)} value={item.name.en} />
+                                <input 
+                                    data-selector="input"
+                                    name="en" 
+                                    type="text" 
+                                    onChange={(e) => onEditFeature(e, i)} 
+                                    value={item.name.en}/>
                             </div>
-                            <div className="input__wrapper">
+                            <div className="input__wrapper" data-selector="input-block">
                                 <label>{lang === 'en' ? 'Value RU' : 'Значение RU'}</label>
-                                <input name="ru" type="text" onChange={(e) => onEditFeature(e, i)} value={item.name.ru}/>
+                                <input 
+                                    data-selector="input"
+                                    name="ru" 
+                                    type="text" 
+                                    onChange={(e) => onEditFeature(e, i)} 
+                                    value={item.name.ru}/>
                             </div>
                             <button className="button_blue del" onClick={(e) => {onDeleteFeature(e, i)}}>X</button>
                         </div>

@@ -9,7 +9,7 @@ import AddFiles, { IAddFilesFunctions } from "../../components/AddFiles/AddFiles
 import { allActions } from "../../redux/actions/all";
 import Message, { IMessageFunctions } from "../../components/Message/Message";
 import { inputsProps, resetFetch, timeModalClosing } from "../../assets/js/consts";
-import { errorsChecker, focusMover, modalMessageCreator, prevent } from "../../assets/js/processors";
+import { focusMover, modalMessageCreator, prevent } from "../../assets/js/processors";
 import inputChecker from "../../../src/assets/js/inputChecker";
 
 interface IPropsState {
@@ -36,6 +36,7 @@ const ContactUs:React.FC<IProps> = ({lang, userState, setState}): JSX.Element =>
     const modalMessageRef = useRef<IModalFunctions>(null)
     const messageRef = useRef<IMessageFunctions>(null)
     const addFilesRef = useRef<IAddFilesFunctions>(null)
+    const processedContainer = '[data-selector="contact-form"]'
 
     const focuser = useMemo(() => focusMover(), [lang])
 
@@ -44,9 +45,9 @@ const ContactUs:React.FC<IProps> = ({lang, userState, setState}): JSX.Element =>
     const closeModalMessage = useCallback(() => {
         if (!_message.current || !addFilesRef.current ) return
         modalMessageRef.current?.closeModal()
-        //setTimeout(() => messageRef.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
+        setTimeout(() => messageRef.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
         if (userState.sendOrder.status === 'success') { //clear all inputs
-            if (userState.auth.status !== 'success') { //if user authorized
+            if (userState.auth.status !== 'success') { //if user unauthorized
                 if (!_name.current || !_email.current || !_phone.current) return
                 _name.current.value = ''
                 _email.current.value = ''
@@ -55,7 +56,7 @@ const ContactUs:React.FC<IProps> = ({lang, userState, setState}): JSX.Element =>
             _message.current.value = ''
             addFilesRef.current.clearAttachedFiles()
         }
-        setState.user.setSendOrder(resetFetch)
+        setState.user.setSendOrder({...resetFetch})
 	}, [userState.sendOrder.status])
 
 
@@ -66,7 +67,7 @@ const ContactUs:React.FC<IProps> = ({lang, userState, setState}): JSX.Element =>
 
         //check errors
         focuser.focusAll(); //run over all elements to get all errors
-        const errorFields = document.querySelector('[data-selector="contact-form"]')?.querySelectorAll('.incorrect-value')
+        const errorFields = document.querySelector(processedContainer)?.querySelectorAll('.incorrect-value')
         if (errorFields && errorFields?.length > 0) return
         const files = addFilesRef.current.getFiles() // attached files
 
@@ -85,17 +86,15 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
     useEffect(() => {
         if (userState.sendOrder.status === 'success' || userState.sendOrder.status === 'error') { //show modal after fetch with the fetch result 
             messageRef.current?.update(modalMessageCreator(userState.sendOrder, lang))
-            modalMessageRef.current?.openModal()
+            modalMessageRef.current?.openModal('order')
         }
     }, [userState.sendOrder.status])
 
 
 
-    useEffect(() => {
-        console.log('creating');
-        
-        focuser.create({parent: '[data-selector="contact-form"]', items: '[data-selector="input"]'})
-    }, [lang, userState.auth.status])
+    useEffect(() => {       
+        focuser.create({container: processedContainer})
+    }, [userState.auth.status, lang])
 
 
 

@@ -6,9 +6,8 @@ import { IContentState, IFullState, TLang } from "../../interfaces";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { allActions } from '../../redux/actions/all';
-import { FC, useRef, useMemo, useCallback, useState, useEffect } from "react";
+import { useEffect } from "react";
 import Preloader from '../../components/Preloaders/Preloader';
-import { gapBetweenRequests } from '../../assets/js/consts';
 import { checkAndLoad } from '../../assets/js/processors';
 
 
@@ -31,8 +30,6 @@ const Home:React.FC<IProps> = ({lang, contentState, setState} : IProps): JSX.Ele
         checkAndLoad(contentState.load.status, setState.content.loadSplider)
     }, [contentState.load.status])
     
-
-
     return (
         <div className='page page_home'>
             <div className="container_page">

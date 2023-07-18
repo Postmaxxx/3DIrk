@@ -25,25 +25,35 @@ const reducerBase = (state:IBaseState = initialBaseState, action: IAction<any>):
             return {
                 ...state, theme: newTheme
             }
-        case actionsListBase.SET_NAV_OPEN_MOB: 
+        case actionsListBase.SET_NAV_MOB_OPEN: 
             return {
                 ...state, 
                 mobOpened: true
             }
-        case actionsListBase.SET_NAV_CLOSE_MOB: 
+        case actionsListBase.SET_NAV_MOB_CLOSE: 
             return {
                 ...state, 
                 mobOpened: false
             }
-        case actionsListBase.SET_NAV_OPEN_DT: 
+        case actionsListBase.SET_NAV_MOB_TOGGLE: 
+            return {
+                ...state, 
+                mobOpened: !state.mobOpened
+            }
+        case actionsListBase.SET_NAV_DT_OPEN: 
             return {
                 ...state,
                 desktopOpened: true
             }
-        case actionsListBase.SET_NAV_CLOSE_DT: 
+        case actionsListBase.SET_NAV_DT_CLOSE: 
             return {
                 ...state,
                 desktopOpened: false
+            }
+        case actionsListBase.SET_NAV_DT_TOGGLE: 
+            return {
+                ...state,
+                desktopOpened: !state.desktopOpened
             }
 
         default: return state
