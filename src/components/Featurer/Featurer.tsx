@@ -15,6 +15,7 @@ interface IProps {
     lang: TLang
     amountChanged?: (newAmount: number) => void
     valueChanged?: (target: HTMLInputElement) => void
+    onEnter?: (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => void
 }
 
 
@@ -25,7 +26,7 @@ export interface IFeaturerFunctions {
 
 
 
-const Featurer = forwardRef<IFeaturerFunctions, IProps>(({lang, amountChanged, valueChanged}, ref) => {
+const Featurer = forwardRef<IFeaturerFunctions, IProps>(({lang, amountChanged, valueChanged, onEnter}, ref) => {
     useImperativeHandle(ref, () => ({
         setFeatures(items) {
             setFeatures(items || [])
@@ -70,6 +71,14 @@ const Featurer = forwardRef<IFeaturerFunctions, IProps>(({lang, amountChanged, v
     }, [features.length])
 
 
+    const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        e.stopPropagation()
+        if (e.key === 'Enter') {
+            e.preventDefault()
+            onEnter && onEnter(e)
+        }
+    }
+
 
     return (
         <div className="features__container">
@@ -84,6 +93,7 @@ const Featurer = forwardRef<IFeaturerFunctions, IProps>(({lang, amountChanged, v
                                     name="en" 
                                     type="text" 
                                     onChange={(e) => onEditFeature(e, i)} 
+                                    onKeyDown={onKeyDown}
                                     value={item.name.en}/>
                             </div>
                             <div className="input__wrapper" data-selector="input-block">
@@ -92,6 +102,7 @@ const Featurer = forwardRef<IFeaturerFunctions, IProps>(({lang, amountChanged, v
                                     data-selector="input"
                                     name="ru" 
                                     type="text" 
+                                    onKeyDown={onKeyDown}
                                     onChange={(e) => onEditFeature(e, i)} 
                                     value={item.name.ru}/>
                             </div>

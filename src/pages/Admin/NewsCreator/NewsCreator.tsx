@@ -9,7 +9,7 @@ import Message, { IMessageFunctions } from '../../../components/Message/Message'
 import { useEffect } from "react";
 import { allActions } from "../../../redux/actions/all";
 import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFiles';
-import { empty, headerStatus, inputsProps, resetFetch, timeModalClosing } from '../../../assets/js/consts';
+import { empty, headerStatus, inputsProps, navList, newsItemEmpty, resetFetch, timeModalClosing } from '../../../assets/js/consts';
 import { errorsChecker, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import { useNavigate, useParams } from 'react-router-dom';
 import Preloader from '../../../components/Preloaders/Preloader';
@@ -41,13 +41,7 @@ const NewsCreator: FC<IProps> = ({lang, send, setState}): JSX.Element => {
     const _form = useRef<HTMLFormElement>(null)
     const [changeImages, setChangeImages] = useState<boolean>(true)
     const [submit, setSubmit] = useState<boolean>(false)
-    const [newsItem, setNewsItem] = useState<ISendNewsItem>({        
-        header: empty,
-        text: empty,
-        short: empty,
-        _id: '',
-        files: [],
-        date: new Date(),})
+    const [newsItem, setNewsItem] = useState<ISendNewsItem>({...newsItemEmpty})
     const processedContainer = '[data-selector="news-form"]'
     
     const focuser = useMemo(() => focusMover(), [lang])
@@ -68,7 +62,7 @@ const NewsCreator: FC<IProps> = ({lang, send, setState}): JSX.Element => {
                 setNewsItem({...clearForm})
                 addFilesBigRef.current?.clearAttachedFiles()
                 if (paramNewsId) {
-                    navigate('/admin/news-create', { replace: true });
+                    navigate(navList.account.admin.news.to, { replace: true });
                 }
             }
             setState.news.setSendNews({...resetFetch})
@@ -116,14 +110,7 @@ const NewsCreator: FC<IProps> = ({lang, send, setState}): JSX.Element => {
         e.target.id === 'date' && setNewsItem(prev => ({...prev, date: isNaN(Date.parse(e.target.value)) ? prev.date : new Date(e.target.value)}) )
     }
 
-    const clearForm = useMemo(() => ({
-        header: empty,
-        text: empty,
-        short: empty,
-        _id: '',
-        files: [],
-        date: new Date(),
-    }), [])
+    const clearForm = useMemo(() => ({...newsItemEmpty}), [])
 
 
 
@@ -159,7 +146,7 @@ const NewsCreator: FC<IProps> = ({lang, send, setState}): JSX.Element => {
 
 
     return (
-        <div className="page page_news-add">
+        <div className="page page_creator_fiber">
             <div className="container_page">
                 <div className="container">
                     {paramNewsId ? 

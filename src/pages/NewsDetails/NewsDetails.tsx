@@ -12,7 +12,7 @@ import Delete from '../../components/Delete/Delete';
 import Modal, { IModalFunctions } from "../../components/Modal/Modal";
 import Message, { IMessageFunctions } from '../../components/Message/Message';
 import IconEdit from '../../components/tiny/IconEdit/IconEdit';
-import { resetFetch, timeModalClosing } from '../../assets/js/consts';
+import { navList, resetFetch, timeModalClosing } from '../../assets/js/consts';
 import { modalMessageCreator } from '../../../src/assets/js/processors';
 
 
@@ -55,7 +55,7 @@ const NewsDetails: FC<IProps> = ({lang, setState, newsState, isAdmin }): JSX.Ele
         setTimeout(() => messageRef.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
         setState.news.setSendNews(resetFetch)
         if (newsState.send.status === 'success') {
-            navigate('/', { replace: true });
+            navigate(navList.home.to, { replace: true });
             window.location.reload()
         }
 	}, [newsState.send.status])
@@ -107,7 +107,7 @@ const NewsDetails: FC<IProps> = ({lang, setState, newsState, isAdmin }): JSX.Ele
         return (
             <div className="buttons">
                 {isAdmin && newsState.newsOne && newsState.loadOne.status === 'success' &&
-                    <NavLink className="button_edit" to={`../../admin/news-create/${newsState.newsOne._id}`}>
+                    <NavLink className="button_edit" to={`../..${navList.account.admin.news.to}/${newsState.newsOne._id}`}>
                         <IconEdit />
                     </NavLink>}
                 <button className="button_blue button_back" onClick={() => navigate(-1)}>

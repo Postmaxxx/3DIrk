@@ -27,7 +27,6 @@ interface IProps extends IPropsState, IPropsActions {}
 
 
 
-
 const ContactUs:React.FC<IProps> = ({lang, userState, setState}): JSX.Element => {
     const _name = useRef<HTMLInputElement>(null)
     const _email = useRef<HTMLInputElement>(null)
@@ -36,10 +35,8 @@ const ContactUs:React.FC<IProps> = ({lang, userState, setState}): JSX.Element =>
     const modalMessageRef = useRef<IModalFunctions>(null)
     const messageRef = useRef<IMessageFunctions>(null)
     const addFilesRef = useRef<IAddFilesFunctions>(null)
-    const processedContainer = '[data-selector="contact-form"]'
-
+    const formContact = useRef<HTMLFormElement>(null)
     const focuser = useMemo(() => focusMover(), [lang])
-
 
     
     const closeModalMessage = useCallback(() => {
@@ -63,11 +60,11 @@ const ContactUs:React.FC<IProps> = ({lang, userState, setState}): JSX.Element =>
     const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {  
         prevent(e)
         const isAuth = userState.auth.status === 'success' ? true : false
-        if (!_message.current || !addFilesRef.current) return
+        if (!_message.current || !addFilesRef.current || !formContact.current) return
 
         //check errors
         focuser.focusAll(); //run over all elements to get all errors
-        const errorFields = document.querySelector(processedContainer)?.querySelectorAll('.incorrect-value')
+        const errorFields = formContact.current.querySelectorAll('.incorrect-value')
         if (errorFields && errorFields?.length > 0) return
         const files = addFilesRef.current.getFiles() // attached files
 
@@ -93,7 +90,8 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
 
 
     useEffect(() => {       
-        focuser.create({container: processedContainer})
+        if (!formContact.current) return
+        focuser.create({container: formContact.current})
     }, [userState.auth.status, lang])
 
 
@@ -111,7 +109,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
                         <h1>{lang === 'en' ? 'Send us a message' : 'Написать нам'}</h1>
                         <div className="order__block">
 
-                            <form className="order__container" data-selector="contact-form">
+                            <form className="order__container" ref={formContact}>
                                 <div className="data-block">
 
                                     <div className="inputs-block">

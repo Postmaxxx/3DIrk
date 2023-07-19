@@ -7,7 +7,7 @@ import Message, { IMessageFunctions } from '../../../components/Message/Message'
 import { allActions } from "../../../redux/actions/all";
 import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFiles';
 import { checkAndLoad, errorsChecker, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
-import { colorEmpty, empty, inputsProps, resetFetch, timeModalClosing } from '../../../assets/js/consts';
+import { colorEmpty, empty, inputsProps, navList, resetFetch, timeModalClosing } from '../../../assets/js/consts';
 import Modal, { IModalFunctions } from '../../../components/Modal/Modal';
 import { useNavigate, useParams } from 'react-router-dom';
 import Preloader from '../../../components/Preloaders/Preloader';
@@ -51,13 +51,13 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
             if (colorsState.send.status === 'success') {
                 setState.colors.loadColors() //reload colors if update db was succsessfull
                 if (paramColorId) { //return to home pahe
-                    navigate('/', { replace: true });
+                    navigate(navList.home.to, { replace: true });
                 }
             }
             setState.colors.setSendColors(resetFetch)// clear fetch status
         }
         if (modalRef.current?.getOwner() === 'filler') {
-            navigate('/', { replace: true });
+            navigate(navList.home.to, { replace: true });
         }
 	}, [colorsState.send.status, paramColorId])
 
@@ -94,8 +94,6 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
     }
 
 
-
-
     const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
         errChecker.clear()
         prevent(e)
@@ -118,7 +116,6 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
             return
         }
         
-
         setColor(prev => ({
             ...prev, 
             _id: paramColorId,
@@ -136,7 +133,6 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
         paramColorId ? setState.colors.editColor(color) : setState.colors.sendColor(color)
         setSubmit(false)
     }, [submit])
-
 
 
 
@@ -168,13 +164,15 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
     }
 
 
+
     useEffect(() => {       
         focuser.create({container: processedContainer})
     }, [lang])
 
 
+
     return (
-        <div className="page page_color-add">
+        <div className="page page_creator_color">
             <div className="container_page">
                 <div className="container">
                 {paramColorId ? 

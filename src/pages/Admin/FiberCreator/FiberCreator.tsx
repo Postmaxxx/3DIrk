@@ -13,7 +13,7 @@ import Selector from '../../../components/tiny/Selector/Selector';
 import { fibersProperties } from '../../../assets/data/fibersProperties';
 import Preloader from '../../../components/Preloaders/Preloader';
 import { useNavigate, useParams } from 'react-router-dom';
-import { fiberEmpty, inputsProps, resetFetch, selector, timeModalClosing } from '../../../assets/js/consts';
+import { fiberEmpty, inputsProps, navList, resetFetch, selector, timeModalClosing } from '../../../assets/js/consts';
 import { checkAndLoad, deepCopy, errorsChecker, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import Picker, { IPickerFunctions } from '../../../components/Picker/Picker';
 import Featurer, { IFeaturerFunctions } from '../../../components/Featurer/Featurer';
@@ -72,7 +72,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
             setState.fibers.setSendFibers(resetFetch)// clear fetch status
             if (fibersState.send.status === 'success') {
                 setState.fibers.loadFibers()
-                navigate('/fibers', { replace: true })
+                navigate(navList.fibers.to, { replace: true })
                 window.location.reload()
             }
         }
@@ -83,7 +83,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
             setState.colors.setSendColors(resetFetch)// clear fetch status
         }
         if (modalRef.current?.getOwner() === 'missedId') {
-            navigate('/fibers', { replace: true })
+            navigate(navList.fibers.to, { replace: true })
             window.location.reload()
         }
 	}, [fibersState.send.status, colorsState.send.status, errChecker])
@@ -182,7 +182,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
 
 
     const onEditColor = useCallback((_id: string) => {
-        navigate(`/admin/color-create/${_id}`)
+        navigate(`${navList.account.admin.color.to}/${_id}`)
     }, [])
 
 
@@ -324,7 +324,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
 
 
     return (
-        <div className="page page_fiber-add">
+        <div className="page page_creator_fiber">
             <div className="container_page">
                 <div className="container">
                     <h1>{paramFiberId ? lang === 'en' ? 'Edit fiber' : 'Редактирование материала' : lang === 'en' ? 'Add new fiber' : 'Добавление нового материала'}</h1>
@@ -437,7 +437,8 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
                                 lang={lang} 
                                 ref={prosRef}
                                 amountChanged={onChangeFeaturesAmount}
-                                valueChanged={onChangeFeature}/>
+                                valueChanged={onChangeFeature}
+                                onEnter={focuserPros.next}/>
                         </div>
 
                         <h2 className='section-header full-width'>{lang === 'en' ? 'CONS' : 'МИНУСЫ'}</h2>                   
@@ -446,7 +447,8 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
                                 lang={lang} 
                                 ref={consRef}
                                 amountChanged={onChangeFeaturesAmount}
-                                valueChanged={onChangeFeature}/>
+                                valueChanged={onChangeFeature}
+                                onEnter={focuserCons.next}/>
                         </div>
 
                         <h2 className='section-header full-width'>{lang === 'en' ? 'PICK COLORS' : 'ВЫБЕРЕТЕ ЦВЕТА'}</h2>           

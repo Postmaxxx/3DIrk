@@ -12,10 +12,14 @@ const usersPerPage = 2 //for Admin for AllOrders page
 const tipsTransition = 3000
 
 const socials = {
-    vk: "#",
-    instagram: "#",
-    youtube: "#",
-    telegram: "#",
+    vk: "vk.ru",
+    instagram: "https://instagram.com",
+    youtube: "https://youtube.com",
+    telegram: "https://telegram.org",
+}
+
+const API = { //all routes to BE
+
 }
 
 const inputsProps = { //restrictions of inputs
@@ -86,6 +90,28 @@ const inputsProps = { //restrictions of inputs
     date: {
         min: new Date("2020-01-01"),
         max: new Date("2030-01-01")
+    },
+    product: {
+        name: {
+            min: 3,
+            max: 40
+        },
+        price: {
+            min: 1,
+            max: 10
+        },
+        textShort: {
+            min: 20,
+            max: 100
+        },
+        textFull: {
+            min: 50,
+            max: 5000
+        },
+        mods : {
+            min: 1,
+            max: 100
+        }
     }
 }
 
@@ -308,6 +334,14 @@ const productEmpty: ISendProduct = {
     files: [] as File[],
 }
 
+const newsItemEmpty = {
+    header: empty,
+    text: empty,
+    short: empty,
+    _id: '',
+    files: [],
+    date: new Date(),
+}
 
 const colorEmpty: ISendColor = {
     _id: '', 
@@ -431,4 +465,4 @@ export { clearModalMessage, resetFetch, timeModalClosing,
     fetchingFetch, errorFetch, successFetch, headerStatus, empty, selector, strengthMin, 
     strengthMax, fiberEmpty, productEmpty, colorEmpty, gapBetweenRequests,
     orderStatus, usersPerPage, timeOffset, inputsProps, tipsTransition, socials,
-    navList}
+    navList, newsItemEmpty}

@@ -8,7 +8,7 @@ import { TLang, IFullState, IFiber, IFibersState, IColorsState, IColor } from ".
 import { allActions } from "../../redux/actions/all";
 import Modal, { IModalFunctions } from '../../components/Modal/Modal';
 import Message, { IMessageFunctions } from '../../components/Message/Message';
-import { resetFetch, timeModalClosing } from '../../assets/js/consts';
+import { navList, resetFetch, timeModalClosing } from '../../assets/js/consts';
 import ErrorMock from '../../components/tiny/ErrorMock/ErrorMock';
 import SpliderCommon from '../../components/Spliders/Common/SpliderCommon';
 import Features from '../../components/Features/Params';
@@ -63,7 +63,7 @@ const Fiber: FC<IProps> = ({lang, fibersState, colorsState, setState, isAdmin}):
         setTimeout(() => messageRef.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
         setState.fibers.setSendFibers(resetFetch)
         if (fibersState.send.status === 'success') {
-            navigate('/fibers', { replace: true });
+            navigate(navList.fibers.to, { replace: true });
             window.location.reload()
         }
 	}, [fibersState.send.status])
@@ -139,12 +139,12 @@ const Fiber: FC<IProps> = ({lang, fibersState, colorsState, setState, isAdmin}):
                         
                         <div className="buttons">
                             {isAdmin && 
-                                <NavLink className="button_edit" to={`../../admin/fiber-create/${fiber._id}`}>
+                                <NavLink className="button_edit" to={`../..${navList.account.admin.fiber.to}/${fiber._id}`}>
                                     <IconEdit />
                                 </NavLink>}
                             <NavLink
                                 className="button_blue link_compareList"
-                                to="/fibers/compare">
+                                to={navList.fibers.compare.to}>
                                     {lang === 'en' ? 'Watch in comparasing' : 'Посмотреть в сравнении'}
                             </NavLink>
                             {isAdmin && <Delete<IFiber> remove={onDelete} idInstance={fiber} lang={lang} disabled={fibersState.send.status === 'fetching'}/>}

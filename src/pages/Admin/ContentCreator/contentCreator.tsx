@@ -1,6 +1,6 @@
-import { IFetch, IFullState, INewsItem, TLang } from '../../../interfaces';
-import './splider-changer.scss'
-import { FC, useRef, useMemo, useCallback, useState } from "react";
+import { IFetch, IFullState, TLang } from '../../../interfaces';
+import './content-creator.scss'
+import { FC, useRef, useMemo, useCallback } from "react";
 import { connect } from "react-redux";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
@@ -9,9 +9,9 @@ import Message, { IMessageFunctions } from '../../../components/Message/Message'
 import { useEffect } from "react";
 import { allActions } from "../../../redux/actions/all";
 import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFiles';
-import { empty, headerStatus, resetFetch, timeModalClosing } from '../../../assets/js/consts';
+import { headerStatus, navList, resetFetch, timeModalClosing } from '../../../assets/js/consts';
 import { errorsChecker, prevent } from '../../../assets/js/processors';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Preloader from '../../../components/Preloaders/Preloader';
 
 interface IPropsState {
@@ -32,21 +32,19 @@ interface IProps extends IPropsState, IPropsActions {}
 const SpliderChanger: FC<IProps> = ({lang, send, setState}): JSX.Element => {
     const navigate = useNavigate()
     const addFiles = useRef<IAddFilesFunctions>(null)
-    const modal_message = useRef<IModalFunctions>(null)
-    const message = useRef<IMessageFunctions>(null)
+    const modalRef = useRef<IModalFunctions>(null)
+    const messageRef = useRef<IMessageFunctions>(null)
     const _form = useRef<HTMLFormElement>(null)
 
-    
     const errChecker = useMemo(() => errorsChecker({lang}), [lang])
 
-
     const closeModalMessage = useCallback(() => {
-        modal_message.current?.closeModal()
-        setTimeout(() => message.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
+        modalRef.current?.closeModal()
+        setTimeout(() => messageRef.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
         errChecker.clear()
         if (send.status === 'success') {
             addFiles.current?.clearAttachedFiles()
-            navigate('/', { replace: true });
+            navigate(navList.home.to, { replace: true });
             setState.content.setSendContent(resetFetch)// clear fetch status
         }
         setState.content.setSendContent(resetFetch)// clear fetch status
@@ -56,12 +54,12 @@ const SpliderChanger: FC<IProps> = ({lang, send, setState}): JSX.Element => {
     useEffect(() => {
         if (send.status === 'idle' || send.status === 'fetching')  return
         const errors: string[] = send.errors?.map(e => e[lang]) || []
-        message.current?.update({
+        messageRef.current?.update({
             header: headerStatus[send.status][lang],
             status: send.status,
             text: [send.message[lang], ...errors]
         })
-		modal_message.current?.openModal()
+		modalRef.current?.openModal()
     }, [send.status])
 
 
@@ -79,11 +77,10 @@ const SpliderChanger: FC<IProps> = ({lang, send, setState}): JSX.Element => {
         }
 
         if (errChecker.amount() > 0) {
-            message.current?.update(errChecker.result())
-            modal_message.current?.openModal()
+            messageRef.current?.update(errChecker.result())
+            modalRef.current?.openModal()
             return
         }
-
         //if no errors
         setState.content.sendSplider(addFiles.current.getFiles())
     }
@@ -91,7 +88,7 @@ const SpliderChanger: FC<IProps> = ({lang, send, setState}): JSX.Element => {
 
 
     return (
-        <div className="page page_splider-change">
+        <div className="page page_creator_content">
             <div className="container_page">
                 <div className="container">
                     <h1>{lang === 'en' ? 'Change splider' : 'Изменение галереи'}</h1> 
@@ -107,8 +104,8 @@ const SpliderChanger: FC<IProps> = ({lang, send, setState}): JSX.Element => {
                         </button>
                     </form>
                 </div>
-                <Modal escExit={true} ref={modal_message} onClose={closeModalMessage}>
-                    <Message buttonText={lang === 'en' ? `Close` : `Закрыть`} buttonAction={closeModalMessage} ref={message}/>
+                <Modal escExit={true} ref={modalRef} onClose={closeModalMessage}>
+                    <Message buttonText={lang === 'en' ? `Close` : `Закрыть`} buttonAction={closeModalMessage} ref={messageRef}/>
                 </Modal>
             </div>
 

@@ -13,7 +13,7 @@ import IconEdit from "../../components/tiny/IconEdit/IconEdit";
 import Delete from "../../components/Delete/Delete";
 import Modal, { IModalFunctions } from "../../components/Modal/Modal";
 import Message, { IMessageFunctions } from "../../components/Message/Message";
-import { resetFetch, timeModalClosing } from "../../assets/js/consts";
+import { navList, resetFetch, timeModalClosing } from "../../assets/js/consts";
 import { checkAndLoad, modalMessageCreator } from "../../assets/js/processors";
 
 
@@ -57,7 +57,7 @@ const Product: React.FC<IProps> = ({lang, setState, catalogState, colorsState, f
         modalMessageRef.current?.closeModal()
         setTimeout(() => messageRef.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
         if (catalogState.category.sendProduct.status === 'success') {
-            navigate('/catalog', { replace: true });
+            navigate(navList.catalog.to, { replace: true });
             window.location.reload()
         }
         setState.catalog.setSendProduct({...resetFetch})
@@ -102,7 +102,7 @@ const Product: React.FC<IProps> = ({lang, setState, catalogState, colorsState, f
 
                             {isAdmin && 
                                 <div className="buttons">
-                                    <NavLink className="button_edit" to={`../../admin/product-create/${catalogState.category.product._id}`}>
+                                    <NavLink className="button_edit" to={`../..${navList.account.admin.product.to}/${catalogState.category.product._id}`}>
                                         <IconEdit />
                                     </NavLink>
                                     <Delete<IProduct> remove={onDelete} idInstance={catalogState.category.product} lang={lang} disabled={catalogState.category.sendProduct.status === 'fetching'}/>

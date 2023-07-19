@@ -10,6 +10,7 @@ import FiberPreview from '../../components/FiberPreview/FiberPreview';
 import { allActions } from "../../redux/actions/all";
 import ErrorMock from '../../components/tiny/ErrorMock/ErrorMock';
 import { checkAndLoad } from '../../assets/js/processors';
+import { navList } from '../../../src/assets/js/consts';
 
 
 interface IPropsState {
@@ -37,7 +38,7 @@ const Fibers:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Element => {
         <div className="fibers__container">
             {fibersState.fibersList.map((fiber, i) => {
                 return (
-                    <NavLink to={`../../fibers/${fiber._id}`} aria-label={lang === 'en' ? '(About fiber)' : ' (О материале)'} key={fiber._id}>
+                    <NavLink to={`${navList.fibers.to}/${fiber._id}`} aria-label={lang === 'en' ? '(About fiber)' : ' (О материале)'} key={fiber._id}>
                         <FiberPreview {...{fiber}} lang={lang} key={i}/>  
                     </NavLink>
                 )})}

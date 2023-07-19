@@ -182,10 +182,8 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
                     </div>
                 </Fragment>
             )
-        })
-    , [fibersList, lang, fibersState.selected, selectedProperty, showList])
-
-
+        }
+    ), [fibersList, lang, fibersState.selected, selectedProperty, showList])
 
 
 

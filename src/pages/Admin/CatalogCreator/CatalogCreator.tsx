@@ -1,5 +1,5 @@
 import { ICatalogState,  IFullState, TLang } from '../../../interfaces';
-import './catalog-changer.scss'
+import './catalog-creator.scss'
 import { FC, useRef, useMemo, useCallback } from "react";
 import { connect } from "react-redux";
 import { AnyAction, bindActionCreators } from "redux";
@@ -12,7 +12,7 @@ import Preloader from '../../../components/Preloaders/Preloader';
 import { inputsProps, resetFetch, timeModalClosing } from '../../../assets/js/consts';
 import { checkAndLoad, errorsChecker, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import Featurer, { IFeaturerFunctions } from '../../../components/Featurer/Featurer';
-import inputChecker from '../../../../src/assets/js/inputChecker';
+import inputChecker from '../../../assets/js/inputChecker';
 
 
 interface IPropsState {
@@ -35,8 +35,8 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, catalogState}): JSX.Elem
     const errChecker = useMemo(() => errorsChecker({lang}), [lang])
     const featurerRef = useRef<IFeaturerFunctions>(null)
     const _catalog = useRef<HTMLDivElement>(null)
-    const focuser = useMemo(() => focusMover(), [lang])
     const processedContainer = '[data-selector="catalog-features"]'
+    const focuser = useMemo(() => focusMover(), [lang])
     
     const closeModal = useCallback(() => {
         modalRef.current?.closeModal()
@@ -76,11 +76,8 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, catalogState}): JSX.Elem
             modalRef.current?.openModal("errorChecker")    
             return
         }
-        console.log(featurerRef.current.getFeatures());
-        
-        //setState.catalog.sendCatalog(featurerRef.current.getFeatures())        
+        setState.catalog.sendCatalog(featurerRef.current.getFeatures())        
     }
-
 
 
     const fillValues = () => {      
@@ -96,8 +93,7 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, catalogState}): JSX.Elem
         }
     }, [catalogState.catalog.load.status])
 
-   
-
+    
 
     useEffect(() => {
         onChangeFeaturesAmount()
@@ -119,7 +115,7 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, catalogState}): JSX.Elem
 
 
     return (
-        <div className="page page_catalog-changer">
+        <div className="page page_creator_catalog">
             <div className="container_page">
                 <div className="container">
                     <h1>{lang === 'en' ? 'Change categoies' : 'Изменение категорий'}</h1>
@@ -131,7 +127,8 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, catalogState}): JSX.Elem
                                 lang={lang} 
                                 ref={featurerRef} 
                                 amountChanged={onChangeFeaturesAmount}
-                                valueChanged={onChangeFeature}/>
+                                valueChanged={onChangeFeature}
+                                onEnter={focuser.next}/>
                         </div>
 
                         <button className='button_blue post' disabled={catalogState.catalog.send.status === 'fetching'} onClick={onSubmit}>

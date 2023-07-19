@@ -35,9 +35,9 @@ const LazyNewsCreator = lazy(() => import("./pages/Admin/NewsCreator/NewsCreator
 const LazyColorCreator = lazy(() => import("./pages/Admin/ColorCreator/ColorCreator"));
 const LazyFiberCreator = lazy(() => import("./pages/Admin/FiberCreator/FiberCreator"));
 const LazyContactUs = lazy(() => import("./pages/ContactUs/ContactUs"));
-const LazyCatalogCahnger = lazy(() => import("./pages/Admin/CatalogChanger/CatalogChanger"));
+const LazyCatalogCahnger = lazy(() => import("./pages/Admin/CatalogCreator/CatalogCreator"));
 const LazyProductCreator = lazy(() => import("./pages/Admin/ProductCreator/ProductCreator"));
-const LazySpliderChanger = lazy(() => import("./pages/Admin/SpliderChanger/SpliderChanger"));
+const LazySpliderChanger = lazy(() => import("./pages/Admin/ContentCreator/contentCreator"));
 
 
 interface IPropsState {

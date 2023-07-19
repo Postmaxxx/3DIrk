@@ -60,7 +60,6 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
     const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
         if (!_message.current || !messageRef.current || !modalMessageRef.current || !addFilesRef.current) return
         prevent(e)
-
         //check errors
         focuser.focusAll();//run over all elements to get all errors
         const errorFields = document.querySelector(processedContainer)?.querySelectorAll('.incorrect-value')
