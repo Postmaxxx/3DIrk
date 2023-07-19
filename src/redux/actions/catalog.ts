@@ -1,7 +1,7 @@
-import { IAction, ICatalogItem, ICategory, IDispatch, IErrRes, IFetch, IFullState, IMsgRes, IProduct, ISendProduct, TId, TLangText } from "../../interfaces"
+import { IAction, ICatalogItem, ICategory, IDispatch, IErrRes, IFetch, IFullState, IMsgRes, IProduct, ISendProduct, TId } from "../../interfaces"
 import { actionsListCatalog } from './actionsList'
-
-import { empty, errorFetch, fetchingFetch, resetFetch, successFetch } from "../../assets/js/consts";
+import { APIList, empty, fetchingFetch, resetFetch, successFetch } from "../../assets/js/consts";
+import { resErrorFiller } from "../../assets/js/processors";
 
 export const setLoadCatalog = <T extends IFetch>(payload: T):IAction<T> => ({
     type: actionsListCatalog.SET_LOAD_STATUS_CATEGORIES_LIST,
@@ -24,8 +24,8 @@ export const loadCatalog = () => {
         if ( getState().catalog.catalog.load.status === 'fetching') return
         dispatch(setLoadCatalog(resetFetch))
         try {
-            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/catalog/list`, {
-                method: 'GET',
+            const response: Response = await fetch(APIList.catalog.get.url, {
+                method: APIList.catalog.get.method,
                 headers: {
                     "Content-Type": 'application/json',
                 },
@@ -33,12 +33,7 @@ export const loadCatalog = () => {
             
             if (response.status !== 200) {
                 const result: IErrRes = await response.json() //message, errors
-                return dispatch(setLoadCatalog({
-                    status: 'error', 
-                    message: (result as IErrRes).message || {...empty}, 
-                    errors: result.errors || []
-                }
-                ))
+                return dispatch(setLoadCatalog(resErrorFiller(result)))
             }
             const result = await response.json() //message, errors
             dispatch(setCatalog(result.allCatalog || []))
@@ -61,8 +56,8 @@ export const sendCatalog = (newCatalog: (Omit<ICatalogItem, "total">)[]) => {
         dispatch(setSendCatalog(resetFetch))
         
         try {
-            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/catalog/list`, {
-                method: 'PUT',
+            const response: Response = await fetch(APIList.catalog.update.url, {
+                method: APIList.catalog.update.method,
                 headers: {
                     "Content-Type": 'application/json',
                     'Authorization': `Bearer ${token}`
@@ -119,8 +114,8 @@ export const loadCategory = ({_id, from, to}: ILoadCategory) => {
         if (getState().catalog.category.loadCategory.status === 'fetching') return
         dispatch(setLoadCategory(fetchingFetch))
         try {
-            const response = await fetch(`${process.env.REACT_BACK_URL}/api/catalog/category?_id=${_id}&from=${from}&to=${to}`, {
-                method: 'GET',
+            const response = await fetch(`${APIList.category.getSome.url}?_id=${_id}&from=${from}&to=${to}`, {
+                method: APIList.category.getSome.method,
                 headers: {
                     "Content-Type": 'application/json',
                 }
@@ -200,8 +195,8 @@ export const sendProduct = (product: ISendProduct) => {
         sendForm.append('data', JSON.stringify(productToSend))
         
         try {
-            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/catalog/product`, {
-                method: 'POST',
+            const response: Response = await fetch(APIList.product.create.url, {
+                method: APIList.product.create.method,
                 headers: {
                     "enctype": 'multipart/form-data',
                     'Authorization': `Bearer ${token}`
@@ -230,27 +225,24 @@ export const sendProduct = (product: ISendProduct) => {
 }
 
 
-
-
-export const editProduct = (product: ISendProduct) => {
+export const editProduct = (product: ISendProduct, changeImages: boolean) => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
         if (getState().catalog.category.sendProduct.status === 'fetching') return
         const { token } = getState().user
         dispatch(setSendProduct(fetchingFetch))
 
         const sendForm = new FormData()   
-        if (product.files && product.files.length > 0) {
+        const {files, ...productToSend} = product //exclude files from data
+        sendForm.append('data', JSON.stringify(productToSend))
+        if (changeImages) {
             product.files.forEach(item => {
                 sendForm.append('files', item, item.name)
             })
         }
-        const {files, ...productToSend}  = product //except files from data
-        sendForm.append('data', JSON.stringify(productToSend))
-
         try {
 
-            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/catalog/product`, {
-                method: 'PUT',
+            const response: Response = await fetch(APIList.product.update.url, {
+                method: APIList.product.update.method,
                 headers: {
                     "enctype": 'multipart/form-data',
                     'Authorization': `Bearer ${token}`
@@ -279,22 +271,18 @@ export const editProduct = (product: ISendProduct) => {
 }
 
 
-
-
-
 export const loadProduct = (_id: string) => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
         if (getState().catalog.category.loadProduct.status === 'fetching') return
         dispatch(setLoadProduct(fetchingFetch))
         
         try {
-            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/catalog/product?_id=${_id}`, {
-                method: 'GET',
+            const response: Response = await fetch(`${APIList.product.get.url}?_id=${_id}`, {
+                method: APIList.product.get.method,
                 headers: {
                     "Content-Type": 'application/json',
                 },
             })
-            
             
             if (response.status !== 200) {
                 const result: IErrRes = await response.json() //message, errors
@@ -310,7 +298,7 @@ export const loadProduct = (_id: string) => {
             if (!result.product) {
                 return dispatch(setLoadProduct({status: 'error', message: {en: `ERROR while loading product, result.product undefined`, ru: `Ошибка при загрузке продукта, result.product undefined`}}))
             }
-
+            
             dispatch(setProduct(result.product))
             dispatch(setLoadProduct(successFetch))
             
@@ -327,8 +315,8 @@ export const deleteProduct = (_id: TId) => {
         dispatch(setSendProduct(fetchingFetch))
 
         try {
-            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/catalog/product`, {
-                method: 'DELETE',
+            const response: Response = await fetch(APIList.product.delete.url, {
+                method: APIList.product.delete.method,
                 headers: {
                     "Content-Type": 'application/json',
                     'Authorization': `Bearer ${token}`

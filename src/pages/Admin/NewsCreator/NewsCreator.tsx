@@ -9,7 +9,7 @@ import Message, { IMessageFunctions } from '../../../components/Message/Message'
 import { useEffect } from "react";
 import { allActions } from "../../../redux/actions/all";
 import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFiles';
-import { empty, headerStatus, inputsProps, navList, newsItemEmpty, resetFetch, timeModalClosing } from '../../../assets/js/consts';
+import { inputsProps, navList, newsItemEmpty, resetFetch, timeModalClosing } from '../../../assets/js/consts';
 import { errorsChecker, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import { useNavigate, useParams } from 'react-router-dom';
 import Preloader from '../../../components/Preloaders/Preloader';
@@ -18,6 +18,8 @@ import inputChecker from "../../../../src/assets/js/inputChecker";
 interface IPropsState {
     lang: TLang
     send: IFetch
+    newsOne: INewsItem
+    loadOne: IFetch
 }
 
 
@@ -28,11 +30,10 @@ interface IPropsActions {
 }
 
 
-interface IProps extends IPropsState, IPropsActions {
-}
+interface IProps extends IPropsState, IPropsActions {}
 
 
-const NewsCreator: FC<IProps> = ({lang, send, setState}): JSX.Element => {
+const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, setState}): JSX.Element => {
     const paramNewsId = useParams().newsId || ''
     const navigate = useNavigate()
     const addFilesBigRef = useRef<IAddFilesFunctions>(null)
@@ -42,7 +43,6 @@ const NewsCreator: FC<IProps> = ({lang, send, setState}): JSX.Element => {
     const [changeImages, setChangeImages] = useState<boolean>(true)
     const [submit, setSubmit] = useState<boolean>(false)
     const [newsItem, setNewsItem] = useState<ISendNewsItem>({...newsItemEmpty})
-    const processedContainer = '[data-selector="news-form"]'
     
     const focuser = useMemo(() => focusMover(), [lang])
     const errChecker = useMemo(() => errorsChecker({lang}), [lang])
@@ -96,11 +96,16 @@ const NewsCreator: FC<IProps> = ({lang, send, setState}): JSX.Element => {
         }
     }, [paramNewsId])
 
-    
+
+    useEffect(() => {
+        if (loadOne.status === 'success') {
+            const {images, ...newsToState} = newsOne
+            setNewsItem({...newsToState, files:[]})
+        }
+    }, [loadOne])
 
 
     const onChangeText = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        //  errChecker.clearError(e.target)
         e.target.id === 'header_en' && setNewsItem(prev => ({...prev, header: {...prev.header, en: e.target.value}}))
         e.target.id === 'header_ru' && setNewsItem(prev => ({...prev, header: {...prev.header, ru: e.target.value}}))
         e.target.id === 'text_short_en' && setNewsItem(prev => ({...prev, short: {...prev.short, en: e.target.value}}))
@@ -118,7 +123,7 @@ const NewsCreator: FC<IProps> = ({lang, send, setState}): JSX.Element => {
         prevent(e)   
         if (!_form.current) return
         focuser.focusAll(); //run over all elements to get all errors
-        const errorFields = document.querySelector(processedContainer)?.querySelectorAll('.incorrect-value')
+        const errorFields = _form.current.querySelectorAll('.incorrect-value')
         if (errorFields && errorFields?.length > 0) {
             errChecker.add(lang === 'en' ? 'Some fields are filled incorrectly' : 'Некоторые поля заполнены неправильно')
         }    
@@ -128,20 +133,24 @@ const NewsCreator: FC<IProps> = ({lang, send, setState}): JSX.Element => {
             return
         }   
         //if no errors
-        setNewsItem(prev => ({...prev, files: addFilesBigRef.current?.getFiles() || []}))
+        setNewsItem(prev => ({
+            ...prev, 
+            files: addFilesBigRef.current?.getFiles() || []
+        }))
         setSubmit(true)
     }
 
 
     useEffect(() => {
         if (!submit) return
-        paramNewsId ? setState.news.updateNews(newsItem) : setState.news.sendNews(newsItem)
+        paramNewsId ? setState.news.updateNews(newsItem, changeImages) : setState.news.sendNews(newsItem)
         setSubmit(false)
     }, [submit])
 
 
     useEffect(() => {       
-        focuser.create({container: processedContainer})
+        if (!_form.current) return
+        focuser.create({container: _form.current})
     }, [lang])
 
 
@@ -154,7 +163,7 @@ const NewsCreator: FC<IProps> = ({lang, send, setState}): JSX.Element => {
                     :
                         <h1>{lang === 'en' ? 'Post news' : 'Добавление новости'}</h1>
                     }
-                    <form ref={_form} data-selector="news-form">
+                    <form ref={_form}>
                         <div className="input-block_header">
                             <span></span>
                             <h3 className='lang'>EN</h3>
@@ -275,6 +284,8 @@ const NewsCreator: FC<IProps> = ({lang, send, setState}): JSX.Element => {
 const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
     send: state.news.send,
+    newsOne: state.news.newsOne,
+    loadOne: state.news.loadOne
 })
 
 

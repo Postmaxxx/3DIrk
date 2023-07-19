@@ -1,10 +1,8 @@
 import { IAllCache } from '../data/cache'
-import { allPaths, delayForFS } from '../data/consts'
+import { allPaths } from '../data/consts'
 const cache: IAllCache = require('../data/cache')
 import { IColor } from "../models/Color"
 import { folderCleanerS3 } from '../processors/aws'
-import { foldersCleaner, foldersCreator } from '../processors/fsTools'
-import { makeDelay } from '../processors/makeDelay'
 import { resizeAndSaveS3 } from '../processors/sharp'
 import { IMulterFile } from './user'
 const { Router } = require("express")
@@ -69,9 +67,9 @@ router.put('/edit',
         try {
             const dataRaw: string = req.body.data           
             const { name, _id } = JSON.parse(dataRaw)
-            const files = req.files as IMulterFile[] || []  
+            const files = req.files as IMulterFile[] || undefined
             
-            if (files.length === 0) { //if images was not sent save old images
+            if (!files) { //if images was not sent save old images
                 await Colors.findOneAndUpdate({_id}, {name})
                 cache.colors.obsolete = true
                 return res.status(200).json({message: {en: 'Color saved', ru: 'Цвет сохранен'}})

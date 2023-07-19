@@ -14,7 +14,7 @@ interface IProps {
     id: string
     lang: TLang
     label?: TLangText
-    defaultData: IItem
+    defaultData?: IItem
     data?: IItem[]
     onBlur?: (e: React.FocusEvent<HTMLSelectElement>) => void
     saveValue?: (e: React.ChangeEvent<HTMLSelectElement>) => void
@@ -24,13 +24,13 @@ interface IProps {
 export interface ISelectorFunctions {
     setData: (elements: IItem[]) => void;
     getValue: () => IItem;
-    setValue: (element: IItem) => void;
-    setItem: (value: string) => void;
+    setItem: (element: IItem) => void;
+    setValue: (value: string) => void;
 }
 
 
 
-const Selector = forwardRef<ISelectorFunctions, IProps>(({lang, id, label, defaultData, data, onBlur, saveValue}, ref) => {
+const Selector = forwardRef<ISelectorFunctions, IProps>(({lang, id, label, defaultData={value: '', name: {en: 'Select', ru: 'Выберете'}}, data=[], onBlur, saveValue}, ref) => {
     useImperativeHandle(ref, () => ({
         setData(elements) {
             setStore(prev => ({...prev, items: elements, item: {name: {...empty}, value: ''}}))
@@ -38,10 +38,10 @@ const Selector = forwardRef<ISelectorFunctions, IProps>(({lang, id, label, defau
         getValue() {
             return store.item
         },
-        setValue(element) { //altough element can be not in items
+        setItem(element) { //altough element can be not in items
             setStore(prev => ({...prev, item: element}))
         },
-        setItem(value) { //select item if item.value === value
+        setValue(value) { //select item if item.value === value
             setStore(prev => ({...prev, value: value}))
         },
     }));
@@ -56,8 +56,12 @@ const Selector = forwardRef<ISelectorFunctions, IProps>(({lang, id, label, defau
     const [store, setStore] = useState<IStore>({items: data || [], item: defaultData || {value: '', name: {...empty}}, value: ''})
     const select = useRef<HTMLSelectElement>(null)
 
-    const onChange = (e: React.ChangeEvent<HTMLSelectElement>) => {        
-        setStore(prev => ({...prev, item: {value: e.target.value, name: (prev.items.find(el => el.value === e.target.value) as IItem).name}}))
+    const onChange = (e: React.ChangeEvent<HTMLSelectElement>) => {  
+        setStore(prev => ({
+            ...prev, 
+            item: {value: e.target.value, name: (prev.items.find(el => el.value === e.target.value) as IItem).name},
+            value: e.target.value
+        }))
         saveValue && saveValue(e)
         e.target.parentElement?.classList.remove('incorrect-value') 
     }
@@ -65,11 +69,9 @@ const Selector = forwardRef<ISelectorFunctions, IProps>(({lang, id, label, defau
     useEffect(() => {
         if (!select.current) return
         select.current.selectedIndex = store.items.findIndex(el => el.value === store.value) + 1
-    }, [store.value])
+    }, [store])
     
-
-
-
+    
 
     return (
         <div className="selector" data-selector="input-block">

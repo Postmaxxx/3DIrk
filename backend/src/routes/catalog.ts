@@ -178,9 +178,9 @@ router.put('/product', //create
     async(req, res) => { 
         try {
             const { price, name, text, text_short, fibers, mods, category, _id } = JSON.parse(req.body.data)
-            const files = req.files as IMulterFile[] || [] 
+            const files = req.files as IMulterFile[] || undefined
             
-            if (files.length === 0) {
+            if (!files) {//if images was not sent save old images
                 await Product.findOneAndUpdate({_id}, { price, name, text, text_short, fibers, mods, category, _id })
                 cache.products.obsolete = true
                 cache.catalog.obsolete = true

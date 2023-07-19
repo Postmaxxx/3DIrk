@@ -1,6 +1,6 @@
 import { IAction, IDispatch, IErrRes, IFetch, IFilterUser, IFullState, IMsgRes, IOrdersState, OrderType, TLang, TLangText } from "../../interfaces"
 import { actionsListOrders } from './actionsList'
-import { empty, fetchingFetch, successFetch } from "../../assets/js/consts";
+import { APIList, empty, fetchingFetch, successFetch } from "../../assets/js/consts";
 
 
 
@@ -33,10 +33,10 @@ interface ILoadOrders {
 export const loadOrders = ({from, to, userId, status}: ILoadOrders) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
         if (getState().orders.load.status === 'fetching') return
-        dispatch(setLoadOrders(fetchingFetch))
+        dispatch(setLoadOrders({...fetchingFetch}))
         try {
-            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/user/orders?from=${from}&to=${to}&userId=${userId}&status=${status}`, {
-                method: 'GET',
+            const response: Response = await fetch(`${APIList.orders.getSome.url}?from=${from}&to=${to}&userId=${userId}&status=${status}`, {
+                method: APIList.orders.getSome.method,
                 headers: {
                     "Content-Type": 'application/json',
                     'Authorization': `Bearer ${getState().user.token}`
@@ -46,14 +46,9 @@ export const loadOrders = ({from, to, userId, status}: ILoadOrders) => {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setLoadOrders({status: 'error', message: (result as IErrRes).message || {...empty}, errors: result.errors || []}))
             }
-            
             const result = await response.json() //message, errors
-           console.log(result.users);
-           
             dispatch(setOrders(result.users))
-
             dispatch(setLoadOrders(successFetch))
-
         } catch (e) {
             dispatch(setLoadOrders({status: 'error', message: {en: `Error occured while loading orders: ${e}`, ru: `Ошибка в процессе загрузки заказов: ${e}`}}))
         }
@@ -64,12 +59,11 @@ export const loadOrders = ({from, to, userId, status}: ILoadOrders) => {
 
 export const changeOrderStatus = (orderId: string, newStatus: OrderType) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        
         if (getState().orders.send.status === 'fetching') return
-        dispatch(setSendOrders(fetchingFetch))
+        dispatch(setSendOrders({...fetchingFetch}))
         try {
-            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/user/orders`, {
-                method: 'PATCH',
+            const response: Response = await fetch(APIList.orders.editStatus.url, {
+                method: APIList.orders.editStatus.method,
                 headers: {
                     "Content-Type": 'application/json',
                     'Authorization': `Bearer ${getState().user.token}`
@@ -110,10 +104,10 @@ export const setUserList = <T extends IFilterUser[]>(payload: T):IAction<T> => (
 export const loadUsers = () => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
         if (getState().orders.userList.load.status === 'fetching') return
-        dispatch(setLoadUsers(fetchingFetch))
+        dispatch(setLoadUsers({...fetchingFetch}))
         try {
-            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/user/users`, {
-                method: 'GET',
+            const response: Response = await fetch(APIList.orders.getUsers.url, {
+                method: APIList.orders.getUsers.method,
                 headers: {
                     "Content-Type": 'application/json',
                     'Authorization': `Bearer ${getState().user.token}`
@@ -123,9 +117,7 @@ export const loadUsers = () => {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setLoadUsers({status: 'error', message: (result as IErrRes).message || {...empty}, errors: result.errors || []}))
             }
-            
             const result = await response.json() //message, errors
-            
             dispatch(setUserList(result.userList))
             dispatch(setLoadUsers(successFetch))
         } catch (e) {

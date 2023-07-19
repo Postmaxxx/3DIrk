@@ -18,7 +18,152 @@ const socials = {
     telegram: "https://telegram.org",
 }
 
-const API = { //all routes to BE
+const APIList = { //all routes to BE
+    catalog: {
+        get: { //load all catalog
+            url: `${process.env.REACT_BACK_URL}/api/catalog/list`,
+            method: "GET"
+        },
+        update: { //send updated catalog
+            url: `${process.env.REACT_BACK_URL}/api/catalog/list`,
+            method: "PUT"
+        },
+    },
+    category: {
+        getSome: { //get some products from one category (short format), ?_id=${CategoryId}&from=${NumberFrom}&to=${NumberTo}
+            url: `${process.env.REACT_BACK_URL}/api/catalog/category`,
+            method: "GET"
+        }
+    },
+    product: {
+        create: { //create product
+            url: `${process.env.REACT_BACK_URL}/api/catalog/product`,
+            method: "POST"
+        },
+        update: { //update existed product
+            url: `${process.env.REACT_BACK_URL}/api/catalog/product`,
+            method: "PUT"
+        },
+        get: { //get one product
+            url: `${process.env.REACT_BACK_URL}/api/catalog/product`,
+            method: "GET"
+        },
+        delete: { //delete one product
+            url: `${process.env.REACT_BACK_URL}/api/catalog/product`,
+            method: "DELETE"
+        }
+    },
+    news: {
+        getSome: { //get some news, +?from=${FromIdex}&amount=${AmountOfNews}
+            url: `${process.env.REACT_BACK_URL}/api/news/get-some`,
+            method: "GET"
+        },
+        getOne: { //get some news, +?from=${FromIdex}&amount=${AmountOfNews}
+            url: `${process.env.REACT_BACK_URL}/api/news/get-one`,
+            method: "GET"
+        },
+        create: { //create newsItem
+            url: `${process.env.REACT_BACK_URL}/api/news/create`,
+            method: "POST"
+        },
+        update: { //update newsItem
+            url: `${process.env.REACT_BACK_URL}/api/news/edit`,
+            method: "PUT"
+        },
+        delete: { //update newsItem
+            url: `${process.env.REACT_BACK_URL}/api/news/delete`,
+            method: "DELETE"
+        },
+    },
+    colors: {
+        get: { //load all colors
+            url: `${process.env.REACT_BACK_URL}/api/colors/load-all`,
+            method: "GET"
+        },
+        create: { //create newsItem
+            url: `${process.env.REACT_BACK_URL}/api/colors/create`,
+            method: "POST"
+
+        },
+        update: { //update newsItem
+            url: `${process.env.REACT_BACK_URL}/api/colors/edit`,
+            method: "PUT"
+        },
+        delete: { //delete newsItem
+            url: `${process.env.REACT_BACK_URL}/api/colors/delete`,
+            method: "DELETE"
+        }
+    },
+    content: {
+        carouselMax: {
+            update: { //update carousel
+                url: `${process.env.REACT_BACK_URL}/api/content/splider`,
+                method: 'PUT'
+            },
+            get: { //load carousel
+                url: `${process.env.REACT_BACK_URL}/api/content/splider`,
+                method: 'GET'
+            }
+        }
+    },
+    fibers: {
+        get: { //load all fibers
+            url: `${process.env.REACT_BACK_URL}/api/fibers/all`,
+            method: 'GET'
+        },
+        create: { //create fiber
+            url: `${process.env.REACT_BACK_URL}/api/fibers/create`,
+            method: 'POST'
+        },
+        update: { //update fiber
+            url: `${process.env.REACT_BACK_URL}/api/fibers/edit`,
+            method: 'PUT'
+        },
+        delete: { //delete fiber
+            url: `${process.env.REACT_BACK_URL}/api/fibers/delete`,
+            method: 'DELETE'
+        },
+    },
+    orders: {
+        getSome: { //load orders, ?from=${FromDate}&to=${ToDate}&userId=${UserId}&status=${OrderStatus}`
+            url: `${process.env.REACT_BACK_URL}/api/user/orders`,
+            method: 'GET'
+        },
+        editStatus: { // edit order status
+            url: `${process.env.REACT_BACK_URL}/api/user/orders`,
+            method: 'PATCH'
+        },
+        getUsers: { //load all customers
+            url: `${process.env.REACT_BACK_URL}/api/user/users`,
+            method: 'GET'
+        }
+    },
+    user: {
+        register: { //delete fiber
+            url: `${process.env.REACT_BACK_URL}/api/user/register`,
+            method: 'POST'
+        }, 
+        login: {
+            url: `${process.env.REACT_BACK_URL}/api/user/login`,
+            method: 'POST'
+        },
+        loginToken: {
+            url: `${process.env.REACT_BACK_URL}/api/user/login-token`,
+            method: 'POST'
+        },
+        createOrder: {
+            url: `${process.env.REACT_BACK_URL}/api/user/orders`,
+            method: 'POST'
+        },
+        createMessage: {
+            url: `${process.env.REACT_BACK_URL}/api/user/message`,
+            method: 'POST'
+        },
+        updateCart: {
+            url: `${process.env.REACT_BACK_URL}/api/user/cart`,
+            method: 'PUT'
+        }
+    }
 
 }
 
@@ -465,4 +610,4 @@ export { clearModalMessage, resetFetch, timeModalClosing,
     fetchingFetch, errorFetch, successFetch, headerStatus, empty, selector, strengthMin, 
     strengthMax, fiberEmpty, productEmpty, colorEmpty, gapBetweenRequests,
     orderStatus, usersPerPage, timeOffset, inputsProps, tipsTransition, socials,
-    navList, newsItemEmpty}
+    navList, newsItemEmpty, APIList}

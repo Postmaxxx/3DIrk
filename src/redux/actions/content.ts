@@ -1,6 +1,6 @@
 import { IAction, IContentState, IDispatch, IErrRes, IFetch, IFullState, IMsgRes, } from "../../interfaces"
 import { actionsListContent } from './actionsList'
-import { empty, errorFetch, fetchingFetch, successFetch } from "../../assets/js/consts";
+import { APIList, empty, fetchingFetch } from "../../assets/js/consts";
 
 
 
@@ -34,18 +34,15 @@ export const sendSplider = (files: File[]) => {
         files.forEach(item => {
             sendForm.append('files', item, item.name)
         })
-
-        //post to db
         try {
-            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/content/splider`, {
-                method: 'PUT',
+            const response: Response = await fetch(APIList.content.carouselMax.update.url, {
+                method: APIList.content.carouselMax.update.method,
                 headers: {
                     'enctype': "multipart/form-data",
                     'Authorization': `Bearer ${token}`
                 },
                 body: sendForm
             })
-            
             if (response.status !== 200) {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setSendContent({
@@ -54,15 +51,11 @@ export const sendSplider = (files: File[]) => {
                     errors: result.errors || []
                 }))
             }
-
             const result: IMsgRes = await response.json() //message, errors
-            
             dispatch(setSendContent({status: 'success', message: result.message || {...empty}}))
-            
         } catch (e) {           
             dispatch(setSendContent({status: 'error', message: {en: `Error "${e}", try again later`, ru: `Ошибка "${e}", попробуйте позже`}}))
         }
-
     }
 }
 
@@ -73,18 +66,14 @@ export const sendSplider = (files: File[]) => {
 export const loadSplider = () => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
         if (getState().content.load.status === 'fetching') return
-
         dispatch(setLoadContent(fetchingFetch))
-
-        //get from db
         try {
-            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/content/splider`, {
-                method: 'GET',
+            const response: Response = await fetch(APIList.content.carouselMax.get.url, {
+                method: APIList.content.carouselMax.get.method,
                 headers: {
                     "Content-Type": 'application/json',
                 },
             })
-
             if (response.status !== 200) {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setLoadContent({
@@ -93,17 +82,12 @@ export const loadSplider = () => {
                     errors: result.errors || []
                 }))
             }
-
             const result = await response.json() //message, errors
-            
             dispatch(setContent({...getState().content, splider: result}))
-            
             dispatch(setLoadContent({status: 'success', message: result.message || {...empty}}))
-            
         } catch (e) {           
             dispatch(setLoadContent({status: 'error', message: {en: `Error "${e}", try again later`, ru: `Ошибка "${e}", попробуйте позже`}}))
         }
-
     }
 }
 

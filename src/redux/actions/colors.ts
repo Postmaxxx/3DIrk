@@ -1,7 +1,6 @@
-import { IAction, IDispatch, IColor, IColorsState, IFetch, IFullState, IErrRes, TLangText, IMsgRes, ISendColor, } from "../../interfaces"
+import { IAction, IDispatch, IColor, IFetch, IFullState, IErrRes, TLangText, IMsgRes, ISendColor, } from "../../interfaces"
 import { actionsListColors } from './actionsList'
-import { empty, fetchingFetch } from "../../assets/js/consts";
-//import mockColors from "../mocks/colors";
+import { APIList, empty, fetchingFetch } from "../../assets/js/consts";
 
 
 export const setLoadColors = <T extends IFetch>(payload: T):IAction<T> => ({
@@ -42,13 +41,12 @@ export const loadColors = () => {
         if (getState().colors.load.status === 'fetching') return
         dispatch(setLoadColors(fetchingFetch))
         try {
-            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/colors/load-all`, {
-                method: 'GET',
+            const response: Response = await fetch(APIList.colors.get.url, {
+                method: APIList.colors.get.method,
                 headers: {
                     "Content-Type": 'application/json',
                 }
             })
-
             if (response.status !== 200) {
                 const result: IErrRes = await response.json()
                 dispatch(setLoadColors({
@@ -57,9 +55,7 @@ export const loadColors = () => {
                     errors: result.errors || []
                 }))
             }
-
             const result: {colors: IImages[], message: TLangText} = await response.json()
-            
             const resultProcessed = result.colors.map((item) => {
                 return {
                     _id: item._id,
@@ -80,34 +76,26 @@ export const loadColors = () => {
 
 
 
-
-
-
 export const sendColor = (color: ISendColor) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
         if (getState().colors.send.status === 'fetching') return
         const token = getState().user.token
         dispatch(setSendColors(fetchingFetch))
-        const colorFiles = [color.files.full, color.files.thumb]
-
         const sendForm = new FormData()   
+        const colorFiles = [color.files.full, color.files.thumb]
         colorFiles.forEach(item => {
             sendForm.append('files', item, item.name)
         })
         sendForm.append('data', JSON.stringify({name: color.name}))
-
-        // to db
         try {
-            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/colors/create`, {
-                method: 'POST',
+            const response: Response = await fetch(APIList.colors.create.url, {
+                method: APIList.colors.create.method,
                 headers: {
                     'enctype': "multipart/form-data",
                     'Authorization': `Bearer ${token}`
                 },
                 body: sendForm
             })
-        
-        
             if (response.status !== 201) {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setSendColors({
@@ -117,9 +105,7 @@ export const sendColor = (color: ISendColor) => {
                     }
                 ))
             }
-
             const result: IMsgRes = await response.json() //message, errors
-            
             dispatch(setSendColors({status: 'success', message: result.message || {...empty}}))
         } catch (e) {
             dispatch(setSendColors({status: 'error', message: {en:`Error while saving color to db: ${e}`, ru: `Ошибка при сохранении цвета в бд: ${e}`}}))
@@ -129,34 +115,28 @@ export const sendColor = (color: ISendColor) => {
 
 
 
-
-
-export const editColor = (color: ISendColor) => {
+export const editColor = (color: ISendColor, changeImages: boolean) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
         if (getState().colors.send.status === 'fetching') return
         const token = getState().user.token
         dispatch(setSendColors(fetchingFetch))
-
-        const colorFiles = [color.files.full, color.files.thumb]
         const sendForm = new FormData()   
         sendForm.append('data', JSON.stringify({name: color.name, _id: color._id}))
-        if (color.files.full && color.files.thumb) {
+        if (changeImages) {
+            const colorFiles = [color.files.full, color.files.thumb]
             colorFiles.forEach(item => {
                 sendForm.append('files', item, item.name)
             })
         }
-        
-        // to db
         try {
-            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/colors/edit`, {
-                method: 'PUT',
+            const response: Response = await fetch(APIList.colors.update.url, {
+                method: APIList.colors.update.method,
                 headers: {
                     "enctype": 'multipart/form-data',
                     'Authorization': `Bearer ${token}`
                 },
                 body: sendForm
             })
-        
             if (response.status !== 200) {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setSendColors({
@@ -166,18 +146,13 @@ export const editColor = (color: ISendColor) => {
                     }
                 ))
             }
-
             const result: IMsgRes = await response.json() //message, errors
-            
             dispatch(setSendColors({status: 'success', message: result.message || {...empty}}))
-
-
         } catch (e) {
             dispatch(setSendColors({status: 'error', message: {en:`Error while saving color to db: ${e}`, ru: `Ошибка при сохранении цвета в бд: ${e}`}}))
         }
     }
 }
-
 
 
 
@@ -189,16 +164,14 @@ export const deleteColor = (_id: string) => {
         dispatch(setSendColors(fetchingFetch))       
         // to db
         try {
-            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/colors/delete`, {
-                method: 'DELETE',
+            const response: Response = await fetch(APIList.colors.delete.url, {
+                method: APIList.colors.delete.method,
                 headers: {
                     "Content-Type": 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({_id})
             })
-        
-        
             if (response.status !== 200) {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setSendColors({
@@ -208,11 +181,8 @@ export const deleteColor = (_id: string) => {
                     }
                 ))
             }
-
             const result: IMsgRes = await response.json() //message, errors
-            
             dispatch(setSendColors({status: 'success', message: result.message || {...empty}}))
-
         } catch (e) {
             dispatch(setSendColors({status: 'error', message: {en:`Error while deleting color from db: ${e}`, ru: `Ошибка при удалении цвета из бд: ${e}`}}))
         }

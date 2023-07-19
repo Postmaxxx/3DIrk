@@ -171,7 +171,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
 
     useEffect(() => {
         if (!submit) return
-        paramFiberId ? setState.fibers.editFiber(fiber) : setState.fibers.sendFiber(fiber)
+        paramFiberId ? setState.fibers.editFiber(fiber, changeImages) : setState.fibers.sendFiber(fiber)
         setSubmit(false)
     }, [submit])
 
@@ -252,7 +252,6 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
                                     lang={lang} 
                                     id={item._id} 
                                     label={item.name}
-                                    defaultData={{value: '', name: {en: 'Select', ru: 'Выберете'}}}
                                     data={item.type === '10' ? data10 : item.type === '5' ? data5 : data3 }
                                     onBlur={(e) => inputChecker({lang, notExact: '', el: e.target})}/>
                             </div>

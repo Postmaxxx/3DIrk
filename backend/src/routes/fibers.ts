@@ -96,14 +96,13 @@ router.put('/edit',
     async (req, res) => {
         try {
             const { name, text, short, params, proscons, colors, _id } = JSON.parse(req.body.data)
-            const files = req.files as IMulterFile[] || [] 
+            const files = req.files as IMulterFile[] || undefined
             
-            if (files.length === 0) {
+            if (!files) {//if images was not sent save old images
                 await Fiber.findOneAndUpdate({_id}, {name, text, short, params, proscons, colors})
                 cache.fibers.obsolete = true
                 return res.status(201).json({message: {en: 'Fiber updated', ru: 'Материал отредактирован'}})
             }
-
 
             const paths = await resizeAndSaveS3({
                 files,

@@ -1,7 +1,7 @@
 import { IAction, ICartItem, ICartState, IDispatch, IErrRes, IFetch, IFullState, ILoggingForm, IMsgRes, IUserLoginResOk, IUserState, TLangText } from "../../interfaces";
 import { actionsListUser } from './actionsList'
 //import { setText } from "./order";
-import { empty, fetchingFetch, successFetch } from "../../assets/js/consts";
+import { APIList, empty, fetchingFetch, successFetch } from "../../assets/js/consts";
 import moment from "moment";
 
 export const setUser = <T extends Partial<IUserState>>(payload: T):IAction<T> => ({
@@ -21,11 +21,11 @@ export const register = ({name, email, phone, password}: ILoggingForm) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
         const { user } = getState() //get current user state
         if (user.auth.status === 'fetching') return  
-        dispatch(setUser({...user, auth: fetchingFetch}))
+        dispatch(setUser({...user, auth: {...fetchingFetch}}))
         const localDate = moment().format('YYYY-MM-DD')
         try {
-            const response = await fetch(`${process.env.REACT_BACK_URL}/api/user/register`, {
-                method: 'POST',
+            const response = await fetch(APIList.user.register.url, {
+                method: APIList.user.register.method,
                 headers: {
                     "Content-Type": 'application/json'
                 },
@@ -57,17 +57,15 @@ export const login = ({email, password}: Pick<ILoggingForm, "email" | "password"
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
         const { user } = getState() //get current user state
         if (user.auth.status === 'fetching') return             
-        dispatch(setUser({...user, auth: fetchingFetch}))
+        dispatch(setUser({...user, auth: {...fetchingFetch}}))
         try {
-            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/user/login`, {
-                    method: 'POST',
+            const response: Response = await fetch(APIList.user.login.url, {
+                    method: APIList.user.login.method,
                     headers: {
                         "Content-Type": 'application/json',
                     },
                     body: JSON.stringify({email, password})
                 })
-            
-            
             if (response.status !== 200) {
                 const result: IErrRes = await response.json() //message, errors
                 console.log(result);
@@ -81,9 +79,7 @@ export const login = ({email, password}: Pick<ILoggingForm, "email" | "password"
                     }
                 }))
             }
-            
             const result: IUserLoginResOk = await response.json() //message, errors
-            
             dispatch(setUser({
                 ...user, 
                 name: result.user.name,
@@ -99,8 +95,6 @@ export const login = ({email, password}: Pick<ILoggingForm, "email" | "password"
                     load: successFetch
                 }
             }))
-            
-
             localStorage.setItem('user', JSON.stringify({token: result.user.token}))
         } catch (e) {         
             dispatch(setUser({...user, auth: {status: 'error', message: (e as IErrRes).message || {...empty}}}))
@@ -121,12 +115,10 @@ export const loginWithToken = () => {
         if (!currentToken) {
             return //dispatch(setUser({...user, auth: {status: 'error', message: {en: 'Token not found', ru: 'Токен не найден'}, errors: []}}))
         }
-
         dispatch(setUser({...user, auth: fetchingFetch}))
-        
         try {
-            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/user/login-token`, {
-                    method: 'POST',
+            const response: Response = await fetch(APIList.user.loginToken.url, {
+                    method: APIList.user.loginToken.method,
                     headers: {
                         "Content-Type": 'application/json',
                         'Authorization': `Bearer ${currentToken}`
@@ -183,8 +175,8 @@ export const sendOrder = ({message, files}: ISendOrder ) => {
         const {lang} = getState().base
         if (user.sendOrder.status === 'fetching') return
         await sendCart()(dispatch, getState)
-      
         dispatch(setSendOrder({...fetchingFetch}))
+
         const sendForm = new FormData()       
         files.forEach(item => {
             sendForm.append('files', item, item.name)
@@ -193,8 +185,8 @@ export const sendOrder = ({message, files}: ISendOrder ) => {
         sendForm.append('message', message)
         
         try {
-            const response = await fetch(`${process.env.REACT_BACK_URL}/api/user/orders`, {
-                method: 'POST',
+            const response = await fetch(APIList.user.createOrder.url, {
+                method: APIList.user.createOrder.method,
                 headers: {
                     'enctype': "multipart/form-data",
                     'Authorization': `Bearer ${user.token}`
@@ -212,7 +204,6 @@ export const sendOrder = ({message, files}: ISendOrder ) => {
 
             const result: IMsgRes = await response.json() //message, errors
             dispatch(setSendOrder({status: 'success', message: result.message}))
-            
         } catch (e) {           
             dispatch(setSendOrder({status: 'error', message: {en: `Error "${e}", try again later`, ru: `Ошибка "${e}", попробуйте позже`}}))
         }
@@ -238,8 +229,8 @@ export const sendMessage = ({text, files}: ISendMessage ) => {
         sendForm.append('message', text)
         
         try {
-            const response = await fetch(`${process.env.REACT_BACK_URL}/api/user/message`, {
-                method: 'POST',
+            const response = await fetch(APIList.user.createMessage.url, {
+                method: APIList.user.createMessage.method,
                 headers: {
                     'enctype': "multipart/form-data",
                 },
@@ -256,7 +247,6 @@ export const sendMessage = ({text, files}: ISendMessage ) => {
 
             const result: IMsgRes = await response.json() //message, errors
             dispatch(setSendOrder({status: 'success', message: result.message}))
-            
         } catch (e) {           
             dispatch(setSendOrder({status: 'error', message: {en: `Error "${e}", try again later`, ru: `Ошибка "${e}", попробуйте позже`}}))
         }
@@ -291,10 +281,6 @@ export const changeItem = <T extends ICartItem>(payload: T):IAction<T> => ({
     type: actionsListUser.CHANGE_AMOUNT_CART,
     payload
 });
-/*
-export const clearCart = <T>():IAction<T> => ({
-    type: actionsListUser.CLEAR_CART
-});*/
 
 export const removeItem = <T extends ICartItem>(payload: T):IAction<T> => ({
     type: actionsListUser.REMOVE_ITEM_CART,
@@ -320,8 +306,8 @@ export const sendCart = () => {
            productId: item.product._id,
         }))
         try {
-            const response: Response = await fetch(`${process.env.REACT_BACK_URL}/api/user/cart`, {
-                method: 'PUT',
+            const response: Response = await fetch(APIList.user.updateCart.url, {
+                method: APIList.user.updateCart.method,
                 headers: {
                     "Content-Type": 'application/json',
                     'Authorization': `Bearer ${token}`
@@ -338,13 +324,10 @@ export const sendCart = () => {
                 }))
             }
             const result: IMsgRes = await response.json() //message, errors
-            
             dispatch(setCart({shouldUpdate: false}))
             dispatch(setSendCart({status: 'success', message: result.message}))
-            
         } catch (e) {           
             dispatch(setSendCart({status: 'error', message: {en: `Error "${e}", try again later`, ru: `Ошибка "${e}", попробуйте позже`}}))
         }
-
     }
 }

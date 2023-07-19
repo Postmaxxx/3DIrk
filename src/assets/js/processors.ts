@@ -1,6 +1,6 @@
 import { container } from "webpack";
-import { IFetch, TLang, TLangText } from "../../interfaces";
-import { gapBetweenRequests, headerStatus, selector } from "./consts";
+import { IErrRes, IFetch, TFetchStatus, TLang, TLangText } from "../../interfaces";
+import { empty, gapBetweenRequests, headerStatus, selector } from "./consts";
 
 //---------------------------------------------------------------
 
@@ -165,4 +165,12 @@ const focusMover = () => {
 }
 
 
-export { ratingNumberToText, errorsChecker, prevent, filenameChanger, checkAndLoad, modalMessageCreator, focusMover, deepCopy}
+const resErrorFiller = (result: IErrRes) => {
+    return {
+        status: 'error' as TFetchStatus, 
+        message: (result as IErrRes).message || {...empty}, 
+        errors: result.errors || []
+    }
+}
+
+export { ratingNumberToText, errorsChecker, prevent, filenameChanger, checkAndLoad, modalMessageCreator, focusMover, deepCopy, resErrorFiller}

@@ -12,7 +12,7 @@ import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFi
 import Preloader from '../../../components/Preloaders/Preloader';
 import { useNavigate, useParams } from 'react-router-dom';
 import { inputsProps, navList, productEmpty, resetFetch, timeModalClosing } from '../../../assets/js/consts';
-import { checkAndLoad, errorsChecker, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
+import { checkAndLoad, deepCopy, errorsChecker, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import Picker, { IPickerFunctions } from '../../../components/Picker/Picker';
 import Featurer, { IFeaturerFunctions } from '../../../components/Featurer/Featurer';
 import Selector, { ISelectorFunctions } from '../../../components/tiny/Selector/Selector';
@@ -83,9 +83,9 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
 
 
 
-    const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {                     
+    const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => { 
         prevent(e)
-        if (!_descr.current || !_mods.current || !fiberPickerRef.current || !addFilesRef.current) return
+        if (!_descr.current || !_mods.current || !fiberPickerRef.current) return
         //check DESCRIPTION
         focuserDescr.focusAll(); //run over all elements to get all errors
         const errorDescrFields = _descr.current.querySelectorAll('.incorrect-value')
@@ -103,7 +103,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
             errChecker.add(lang === 'en' ? 'No fiber selected' : 'Материал не выбран')
         } 
         //check images
-        if (addFilesRef.current.getFiles().length === 0) {//at least 1 image must be added
+        if (addFilesRef.current && addFilesRef.current.getFiles().length === 0) {//at least 1 image must be added
             errChecker.add(lang === 'en' ? 'Images missed' : 'Картинки отсутствуют')
         }
 
@@ -111,13 +111,13 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
             messageRef.current?.update(errChecker.result())
             modalRef.current?.openModal('errorChecker')
             return
-        }
+        }      
 
         setProduct(prev => {
             return { 
                 ...prev, 
                 mods: (modsRef.current as IFeaturerFunctions).getFeatures().map(item => ({en: item.name.en, ru: item.name.ru})),
-                files: (addFilesRef.current as IAddFilesFunctions).getFiles(),
+                files: addFilesRef.current?.getFiles() || [], 
                 fibers: (fiberPickerRef.current as IPickerFunctions).getSelected()
             }
         })
@@ -127,7 +127,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
 
     useEffect(() => {
         if (!submit) return
-        paramProductId ? setState.catalog.editProduct(product) : setState.catalog.sendProduct(product)
+        paramProductId ? setState.catalog.editProduct(product, changeImages) : setState.catalog.sendProduct(product)
         setSubmit(false)
     }, [submit])
 
@@ -153,28 +153,34 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
 
 
     useEffect(() => {
-        if (product.files.length === 0) {
+        if (product.files?.length === 0) {
             addFilesRef.current?.clearAttachedFiles()
         }
     }, [product.files])
 
 
     useEffect(() => {
-        selectorRef.current?.setData(catalogState.catalog.list.map(item => ({value: item._id, name: item.name})))
+        if (catalogState.catalog.load.status === 'success') {
+            selectorRef.current?.setData(catalogState.catalog.list.map(item => ({value: item._id, name: item.name})))
+        }
     }, [catalogState.catalog.list])
 
 
     
     useEffect(() => {
-        if (catalogState.category.loadProduct.status === 'success' && paramProductId) { //new product or edit old one
-            setProduct({
-                ...catalogState.category.product,
-                files: [],
-            })
-            setChangeImages(false)
-            selectorRef.current?.setItem(catalogState.category.product.category)
-        } else {
+        if (paramProductId) {// edit old product
+            if (catalogState.category.loadProduct.status === 'success') { //new product or edit old one
+                setProduct({
+                    ...catalogState.category.product,
+                    files: [],
+                })
+                setChangeImages(false)
+                selectorRef.current?.setValue(catalogState.category.product.category)
+            } 
+        }
+        else {
             setProduct({...productEmpty})
+            setChangeImages(true)
         }
     }, [catalogState.category.loadProduct.status])
 
@@ -264,7 +270,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
                                         onKeyDown={(e) => focuserDescr.next(e)} 
                                         onChange={onChangeInputs} 
                                         value={product.name.en}
-                                        onBlur={(e) => inputChecker({lang, min:inputsProps.fiber.nameShort.min, max:inputsProps.fiber.nameShort.max, el: e.target})}/>
+                                        onBlur={(e) => inputChecker({lang, min:inputsProps.product.name.min, max:inputsProps.product.name.max, el: e.target})}/>
                                 </div>
                                 <div className="input__wrapper" data-selector="input-block">
                                     <input 
@@ -274,7 +280,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
                                         onKeyDown={(e) => focuserDescr.next(e)}
                                         onChange={onChangeInputs} 
                                         value={product.name.ru} 
-                                        onBlur={(e) => inputChecker({lang, min:inputsProps.fiber.nameShort.min, max:inputsProps.fiber.nameShort.max, el: e.target})}/>
+                                        onBlur={(e) => inputChecker({lang, min:inputsProps.product.name.min, max:inputsProps.product.name.max, el: e.target})}/>
                                 </div>
                             </div>
                             <div className="input-block">
@@ -287,7 +293,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
                                         onKeyDown={(e) => focuserDescr.next(e)}
                                         onChange={onChangeInputs} 
                                         value={product.price.en} 
-                                        onBlur={(e) => inputChecker({lang, min:inputsProps.fiber.nameShort.min, max:inputsProps.fiber.nameShort.max, el: e.target})}/>
+                                        onBlur={(e) => inputChecker({lang, min:inputsProps.product.price.min, max:inputsProps.product.price.max, el: e.target})}/>
                                 </div>
                                 <div className="input__wrapper" data-selector="input-block">
                                     <input 
@@ -297,7 +303,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
                                         onKeyDown={(e) => focuserDescr.next(e)}
                                         onChange={onChangeInputs} 
                                         value={product.price.ru} 
-                                        onBlur={(e) => inputChecker({lang, min:inputsProps.fiber.nameShort.min, max:inputsProps.fiber.nameShort.max, el: e.target})}/>
+                                        onBlur={(e) => inputChecker({lang, min:inputsProps.product.price.min, max:inputsProps.product.price.max, el: e.target})}/>
                                 </div>
                             </div>
                             <div className="input-block">
@@ -309,7 +315,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
                                         onKeyDown={(e) => focuserDescr.next(e)}
                                         onChange={onChangeInputs} 
                                         value={product.text.en} 
-                                        onBlur={(e) => inputChecker({lang, min:inputsProps.fiber.nameShort.min, max:inputsProps.fiber.nameShort.max, el: e.target})}/>
+                                        onBlur={(e) => inputChecker({lang, min:inputsProps.product.textFull.min, max:inputsProps.product.textFull.max, el: e.target})}/>
                                 </div>
                                 <div className="input__wrapper" data-selector="input-block">
                                     <textarea 
@@ -318,7 +324,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
                                         onKeyDown={(e) => focuserDescr.next(e)}
                                         onChange={onChangeInputs} 
                                         value={product.text.ru} 
-                                        onBlur={(e) => inputChecker({lang, min:inputsProps.fiber.nameShort.min, max:inputsProps.fiber.nameShort.max, el: e.target})}/>
+                                        onBlur={(e) => inputChecker({lang, min:inputsProps.product.textFull.min, max:inputsProps.product.textFull.max, el: e.target})}/>
                                 </div>
                             </div>
                             <div className="input-block">
@@ -330,7 +336,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
                                         onKeyDown={(e) => focuserDescr.next(e)}
                                         onChange={onChangeInputs} 
                                         value={product.text_short.en} 
-                                        onBlur={(e) => inputChecker({lang, min:inputsProps.fiber.nameShort.min, max:inputsProps.fiber.nameShort.max, el: e.target})}/>
+                                        onBlur={(e) => inputChecker({lang, min:inputsProps.product.textShort.min, max:inputsProps.product.textShort.max, el: e.target})}/>
                                 </div>
                                 <div className="input__wrapper" data-selector="input-block">
                                     <textarea 
@@ -339,7 +345,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
                                         onKeyDown={(e) => focuserDescr.next(e)}
                                         onChange={onChangeInputs} 
                                         value={product.text_short.ru} 
-                                        onBlur={(e) => inputChecker({lang, min:inputsProps.fiber.nameShort.min, max:inputsProps.fiber.nameShort.max, el: e.target})}/>
+                                        onBlur={(e) => inputChecker({lang, min:inputsProps.product.textShort.min, max:inputsProps.product.textShort.max, el: e.target})}/>
                                 </div>
                             </div>
                             <div className="input-block">
@@ -350,7 +356,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
                                     id='selector_category' 
                                     onBlur={(e) => inputChecker({lang, notExact: '', el: e.target})}
                                     defaultData={{value: '', name: {en: 'Select', ru: 'Выберете'}}}
-                                    saveValue={(e: React.ChangeEvent<HTMLSelectElement>) => onChangeInputs(e)}
+                                    saveValue={onChangeInputs}
                                     ref={selectorRef}/>
                                 </div>
                             </div>

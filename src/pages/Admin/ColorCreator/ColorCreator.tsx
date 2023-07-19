@@ -65,10 +65,15 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
 
 
     useEffect(() => { 
-        if (paramColorId && colorsState.load.status === 'success') {//if edit
-            setChangeImages(false)
-            fillColor(paramColorId)
-        } 
+        if (paramColorId) {//if edit
+            if (colorsState.load.status === 'success') {
+                setChangeImages(false)
+                fillColor(paramColorId)
+            } 
+        } else { //if new
+            setChangeImages(true)
+            setColor({...colorEmpty})
+        }
     }, [paramColorId, colorsState.load.status])
 
 
@@ -120,9 +125,9 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
             ...prev, 
             _id: paramColorId,
             files: {
-                full: addFileBigRef.current?.getFiles()[0] as File,
-                thumb: addFileSmallRef.current?.getFiles()[0] as File,
-            }
+                    full: addFileBigRef.current?.getFiles()[0] as File,
+                    thumb: addFileSmallRef.current?.getFiles()[0] as File,
+                }
         }))
         setSubmit(true)
     }
@@ -130,7 +135,7 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
 
     useEffect(() => { //we need to wait until state will be fully updated before submiting
         if (!submit) return
-        paramColorId ? setState.colors.editColor(color) : setState.colors.sendColor(color)
+        paramColorId ? setState.colors.editColor(color, changeImages) : setState.colors.sendColor(color)
         setSubmit(false)
     }, [submit])
 
