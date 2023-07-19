@@ -1,4 +1,4 @@
-import { IAction, IDispatch, IErrRes, IFetch, IFilterUser, IFullState, IMsgRes, IOrdersState, OrderType, TLang, TLangText } from "../../interfaces"
+import { IAction, IDispatch, IErrRes, IFetch, IFilterUser, IFullState, IMsgRes, IOrdersState, OrderType } from "../../interfaces"
 import { actionsListOrders } from './actionsList'
 import { APIList, empty, fetchingFetch, successFetch } from "../../assets/js/consts";
 

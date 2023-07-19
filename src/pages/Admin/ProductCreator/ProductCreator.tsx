@@ -386,7 +386,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
                             {catalogState.category.sendProduct.status === 'fetching' ? 
                                 <Preloader />
                             :
-                                <>{lang === 'en' ? paramProductId ? 'Save product' : 'Post product' : paramProductId ? "Сохранить товар" : "Отправить тован"}</>
+                                <>{lang === 'en' ? paramProductId ? 'Save product' : 'Post product' : paramProductId ? "Сохранить товар" : "Отправить товар"}</>
                             }
                         </button>
                     </form>

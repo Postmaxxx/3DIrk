@@ -375,6 +375,7 @@ export interface IFilterUser extends Pick<IUserState, "name" | "phone" | "email"
 }
 
 export interface IOrdersCartItem { //cart in order, for All_Orders
+    productId: string
     productName: TLangText
     fiberName: TLangText
     colorName: TLangText

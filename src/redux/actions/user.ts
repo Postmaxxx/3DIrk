@@ -1,6 +1,5 @@
 import { IAction, ICartItem, ICartState, IDispatch, IErrRes, IFetch, IFullState, ILoggingForm, IMsgRes, IUserLoginResOk, IUserState, TLangText } from "../../interfaces";
 import { actionsListUser } from './actionsList'
-//import { setText } from "./order";
 import { APIList, empty, fetchingFetch, successFetch } from "../../assets/js/consts";
 import moment from "moment";
 

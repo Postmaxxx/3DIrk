@@ -12,7 +12,7 @@ const usersPerPage = 2 //for Admin for AllOrders page
 const tipsTransition = 3000
 
 const socials = {
-    vk: "vk.ru",
+    vk: "https://vk.ru",
     instagram: "https://instagram.com",
     youtube: "https://youtube.com",
     telegram: "https://telegram.org",
@@ -139,27 +139,27 @@ const APIList = { //all routes to BE
         }
     },
     user: {
-        register: { //delete fiber
+        register: { //register new user
             url: `${process.env.REACT_BACK_URL}/api/user/register`,
             method: 'POST'
         }, 
-        login: {
+        login: { //login user using email + password
             url: `${process.env.REACT_BACK_URL}/api/user/login`,
             method: 'POST'
         },
-        loginToken: {
+        loginToken: {//login user using token
             url: `${process.env.REACT_BACK_URL}/api/user/login-token`,
             method: 'POST'
         },
-        createOrder: {
+        createOrder: { //create new order
             url: `${process.env.REACT_BACK_URL}/api/user/orders`,
             method: 'POST'
         },
-        createMessage: {
+        createMessage: {// create new message
             url: `${process.env.REACT_BACK_URL}/api/user/message`,
             method: 'POST'
         },
-        updateCart: {
+        updateCart: { // update cart content on BE
             url: `${process.env.REACT_BACK_URL}/api/user/cart`,
             method: 'PUT'
         }

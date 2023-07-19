@@ -560,6 +560,7 @@ router.get('/orders',
                     }
                 }
                 const cart = order.cart.map(cartItem => ({ //fill cart with the text using cache
+                    productId: cartItem.productId,
                     productName: cache.products.data.find(el => el._id.toString() === cartItem.productId.toString()).name,
                     fiberName: cache.fibers.data.find(el => el._id.toString() === cartItem.fiberId.toString()).name,
                     colorName: cache.colors.data.find(el => el._id.toString() === cartItem.colorId.toString()).name,

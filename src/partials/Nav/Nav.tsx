@@ -73,7 +73,6 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
             localStorage.removeItem('user')
             window.location.reload()
         }
-        navToggleMobile()
     }
 
     const desktopNav = useMemo(() => {
@@ -123,15 +122,22 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
                     </NavLink>
                 </li>
 
-                <li>
-                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to={navList.contacts.to}>
-                        {navList.contacts[lang]}
+                {isAuth ? 
+                    <NavLink to={navList.account.cart.to}>
+                        {navList.account.cart[lang]}
+                        <div className="cart-informer__container"><CartInformer /></div>          
                     </NavLink>
-                </li>
+                :
+                    <li>
+                        <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to={navList.contacts.to}>
+                            {navList.contacts[lang]}
+                        </NavLink>
+                    </li>
+                }
                 
                 {isAuth ? 
                     <li className="extandable">
-                        <a className="not-link" onClick={() => onClickNotLink('login')}>{navList.account[lang]}</a>
+                        <a className="not-link">{navList.account[lang]}</a>
                         <ul className="sub_menu">
                             <li>
                                 <ul className="submenu__content">
@@ -141,12 +147,10 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
                                         </NavLink>
                                     </li>
                                     <li>
-                                        <NavLink to={navList.account.cart.to}>
-                                            {navList.account.cart[lang]}
-                                            <div className="cart-informer__container"><CartInformer /></div>          
+                                        <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to={navList.contacts.to}>
+                                            {navList.contacts[lang]}
                                         </NavLink>
-
-                                    </li> 
+                                    </li>
                                     {isAdmin && 
                                         <>
                                             <li>
@@ -274,18 +278,20 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
                         {navList.catalog[lang]}
                     </NavLink>
                 </li>
-                <li>
-                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to={navList.contacts.to} onClick={navToggleMobile}>
-                        {navList.contacts[lang]}
-                    </NavLink>
-                </li>
-                {isAuth &&
-                <li className="narrow">
-                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to='/order' onClick={navToggleMobile}>
-                        {lang === 'en' ? 'CART' : 'КОРЗИНА'}
-                    </NavLink>
-                    <div className="cart-informer__container"><CartInformer /></div>          
-                </li>}
+                {isAuth ?
+                    <li className="narrow">
+                        <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to='/order' onClick={navToggleMobile}>
+                            {lang === 'en' ? 'CART' : 'КОРЗИНА'}
+                        </NavLink>
+                        <div className="cart-informer__container"><CartInformer /></div>          
+                    </li>
+                :
+                    <li>
+                        <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to={navList.contacts.to} onClick={navToggleMobile}>
+                            {navList.contacts[lang]}
+                        </NavLink>
+                    </li>
+                }
 
                 
                 {isAuth ? 
@@ -298,6 +304,11 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
                                         to={navList.account.orders.to} 
                                         onClick={navToggleMobile}>
                                             {navList.account.orders[lang]}
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to={navList.contacts.to} onClick={navToggleMobile}>
+                                        {navList.contacts[lang]}
                                     </NavLink>
                                 </li>
                                 <li>
@@ -343,14 +354,14 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
                                     </NavLink>
                                 </li>
                                 <li>
-                                    <a className="not-link" onClick={() => onClickNotLink('logout')}>{navList.account.logout[lang]}</a>
+                                    <a className="not-link" onClick={() => {onClickNotLink('logout'); navToggleMobile()}}>{navList.account.logout[lang]}</a>
                                 </li>
                             </ul>
                         </div>
                     </li>
                 :
                     <li>
-                        <a className="not-link" onClick={() => onClickNotLink('login')}>{navList.account.login[lang]}</a>
+                        <a className="not-link" onClick={() => {onClickNotLink('login'); navToggleMobile()}}>{navList.account.login[lang]}</a>
                     </li>
                 }
             </ul>

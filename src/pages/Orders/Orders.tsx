@@ -9,6 +9,7 @@ import { orderStatus, timeOffset, usersPerPage } from '../../assets/js/consts';
 import moment from "moment";
 import Preloader from '../../components/Preloaders/Preloader';
 import { checkAndLoad } from '../../assets/js/processors';
+import { NavLink } from 'react-router-dom';
 
 
 
@@ -135,7 +136,11 @@ const Orders = ({lang, colorsState, fibersState, ordersState, userState, setStat
                                         {order.cart.map((cartItem, i) => {
                                             return (
                                                 <Fragment key={i}>
-                                                    <div className="cell first">{cartItem.productName[lang]}</div>
+                                                    <div className="cell first">
+                                                        <NavLink to={`../catalog/${cartItem.productId}`}>
+                                                            {cartItem.productName[lang]}
+                                                        </NavLink>
+                                                    </div>
                                                     <div className="cell">{cartItem.fiberName[lang]}</div>
                                                     <div className="cell">{cartItem.colorName[lang]}</div>
                                                     <div className="cell">{cartItem.type[lang]}</div>
