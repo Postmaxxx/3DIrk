@@ -114,9 +114,6 @@ const Featurer = forwardRef<IFeaturerFunctions, IProps>(({lang, amountChanged, v
             </div>
             <button className='button_blue add' onClick={onAddFeature}>{lang === 'en' ? '+' : '+'}</button>
         </div>
-
-
-
     )
 })
 

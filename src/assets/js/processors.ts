@@ -1,4 +1,3 @@
-import { container } from "webpack";
 import { IErrRes, IFetch, TFetchStatus, TLang, TLangText } from "../../interfaces";
 import { empty, gapBetweenRequests, headerStatus, selector } from "./consts";
 
@@ -68,7 +67,7 @@ const errorsChecker = ({lang = 'en'}: IErrorsChecker) => {
 
 //---------------------------------------------------------------
 
-const prevent = (e: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+const prevent = (e: React.MouseEvent<HTMLElement | HTMLButtonElement> | DragEvent | React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement> | React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault()
     e.stopPropagation()
 }

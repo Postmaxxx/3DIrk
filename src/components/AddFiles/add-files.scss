@@ -68,7 +68,7 @@
             display: none;
         }
 
-        & > div {
+        & > .preview__item {
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -79,7 +79,7 @@
             transition: background-color $transition-theme;
             border-radius: 5px;
 
-            & > div {
+            & > .img__container {
                 height: 100px;
                 width: 100%;
                 display: flex;
@@ -99,7 +99,7 @@
 
             }
 
-            & > span {
+            & > .file__descr {
                 margin-top: 10px;
                 font-size: 14px;
                 text-align: center;

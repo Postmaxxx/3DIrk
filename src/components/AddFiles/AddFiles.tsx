@@ -3,6 +3,8 @@ import './add-files.scss'
 import { useState, useEffect, useRef, forwardRef, useImperativeHandle, useCallback} from 'react'
 import iconFileQuestion from '../../assets/img/icon_file_question.svg'
 import Delete from "../../components/Delete/Delete";
+import { prevent } from '../../../src/assets/js/processors';
+import { imageExtentions } from '../../../src/assets/js/consts';
 
 interface IProps {
     lang: TLang
@@ -13,6 +15,11 @@ interface IProps {
 export interface IAddFilesFunctions {
     clearAttachedFiles: () => void;
     getFiles: () => File[]
+}
+
+interface IFileToShow {
+    name: string, //filename
+    content: string //content of file OR iconFileQuestion if file not in imageExtentions
 }
 
 const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, multiple, id}, ref) => {
@@ -28,12 +35,11 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, multiple, id}, r
     const _files = useRef<HTMLInputElement>(null)
     const _filesGallery = useRef<HTMLDivElement>(null)
     let dragCounter: number = 0
-    const [files, setFiles] = useState<File[]>([])
+    const [files, setFiles] = useState<File[]>([]) //pure files
+    const [filesToShow, setFilesToShow] = useState<IFileToShow[]>([]) //files for preview:
 
- 
     const preventDefaults = (e: DragEvent | React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault()
-        e.stopPropagation()
+        prevent(e)
     }
 
     const dragEnter = (e: DragEvent) => {
@@ -60,21 +66,13 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, multiple, id}, r
         preventDefaults(e)
         if (!e.dataTransfer?.files) return 
         _dropArea.current?.classList.remove('active')
-        if (multiple) {
-            setFiles(prev => [...prev, ...(e.dataTransfer?.files as FileList)])
-        } else {
-            setFiles([e.dataTransfer?.files[0]])
-        }
+        multiple ? setFiles(prev => [...prev, ...(e.dataTransfer?.files as FileList)]) : setFiles([e.dataTransfer?.files[0]])
     }
     
     const onSelectFiles = () => {  
         if (!_files.current?.files) return 
         _dropArea.current?.classList.remove('active')
-        if (multiple) {
-            setFiles(prev => [...prev, ...(_files.current?.files as FileList)])
-        } else {
-            setFiles([(_files.current.files)[0]])
-        }
+        multiple ? setFiles(prev => [...prev, ...(_files.current?.files as FileList)]) : setFiles([(_files.current.files)[0]])
     }
 
     const clearFiles = useCallback(() => {
@@ -82,38 +80,8 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, multiple, id}, r
     }, [])
 
 
-    const previewFiles = (arrayOfFiles: File[]) => {
-        (_filesGallery.current as HTMLDivElement).innerHTML = '';
-        const imageTypes: string[] = ['jpg', 'jpeg', 'bmp', 'svg', 'png', 'tiff', 'webp'];
-        arrayOfFiles.reduce(async (acc: Promise<string>, currentFile: File) => {
-            await acc
-            return new Promise<string>((res) => {
-                acc.then(() => {
-                    const reader =  new FileReader();
-                    reader.readAsDataURL(currentFile)
-                    reader.onloadend = () => {
-                        let _containerObj: HTMLDivElement = document.createElement('div')
-                        let _containerImg: HTMLDivElement = document.createElement('div')
-                        let _descr: HTMLSpanElement = document.createElement('span')
-                        let _img: HTMLImageElement = document.createElement('img')
-                        _img.src = (imageTypes.includes(currentFile.name.split('.').pop() || '')) ? reader.result as string : iconFileQuestion;
-                        _descr.innerText = currentFile.name;
-                        _filesGallery.current?.appendChild(_containerObj)
-                        _containerImg.appendChild(_img)
-                        _containerObj.appendChild(_containerImg)
-                        _containerObj.appendChild(_descr)
-                        res(`File ${currentFile.name} added`)
-                    }
-                })
-            })
-        }, Promise.resolve('Files array is empty'))
-    }
-
-
-
     useEffect(() => {
         if (!_dropArea.current) { return }
-        
         _dropArea.current.addEventListener('dragenter', dragEnter, false);
         _dropArea.current.addEventListener('dragover', dragOver, false);
         _dropArea.current.addEventListener('dragleave', dragLeave, false);
@@ -128,15 +96,29 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, multiple, id}, r
     })
 
 
+    const fillFilesToShow = useCallback(async (filesList: File[]) => {
+        const reader = new FileReader();
+        const filesWithContent: typeof filesToShow = await filesList.reduce(async (acc: Promise<IFileToShow[]>, currentFile: File) => {
+            const result = await acc
+            return new Promise<IFileToShow[]>(async (res) => {
+                reader.readAsDataURL(currentFile)
+                reader.onloadend = () => {                   
+                    res([...result, {
+                        name: currentFile.name,//currentFile.name.includes('.') ? currentFile.name.split('.').pop() || '' : currentFile.name, //get filename without extention
+                        content: (imageExtentions.includes(currentFile.name.split('.').pop() || '')) ? reader.result as string : iconFileQuestion,
+                    }])
+                }
+            })
+        }, Promise.resolve([]))
+        setFilesToShow(filesWithContent)
+    }, [])
+
+
+
     useEffect(() => {
-        previewFiles(files)
+        fillFilesToShow(files)
     }, [files])
 
-
-
-    const remove = useCallback(() => {
-        clearFiles()
-    }, [])
 
 
     return (
@@ -149,11 +131,24 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, multiple, id}, r
                 <span>{lang === 'en' ? ' or drag it here' : 'для добавления или перетащите их сюда'}</span>
             </div>
             <input id={id} type="file" multiple={multiple} onChange={onSelectFiles} ref={_files}/>
-            <div className="preview-gallery" ref={_filesGallery}></div>
+            <div className="preview-gallery" ref={_filesGallery}>
+                {filesToShow.map(file => {
+                    return (
+                        <div className="preview__item" key={file.name}>
+                            <div className="img__container">
+                                <img src={file.content} alt={file.name} />
+                            </div>
+                            <span className="file__descr">{file.name}</span>
+                        </div>
+                    )
+                })}
+            </div>
+
             {files.length > 0 &&
                 <div className="clear-files">
-                    <Delete<string> remove={remove} idInstance="cartCleaner" lang={lang} disabled={false}/>
-                </div>}
+                    <Delete<string> remove={clearFiles} idInstance="cartCleaner" lang={lang} disabled={false}/>
+                </div>
+            }
         </div>
     );
 })

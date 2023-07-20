@@ -1,10 +1,10 @@
 import './color-picker.scss'
-import { IColor, TLang } from "../../../interfaces";
+import { IColor, TLang } from "../../interfaces";
 import { useState, useRef, useCallback } from 'react'
-import Modal, { IModalFunctions } from '../../../components/Modal/Modal';
-import { IImageModalFunctions } from '../../ImageModal/ImageModal';
-import ImageModal from '../../ImageModal/ImageModal';
-import { timeModalClosing } from '../../../assets/js/consts';
+import Modal, { IModalFunctions } from '../Modal/Modal';
+import { IImageModalFunctions } from '../ImageModal/ImageModal';
+import ImageModal from '../ImageModal/ImageModal';
+import { timeModalClosing } from '../../assets/js/consts';
 
 
 interface IPropsState {
@@ -14,14 +14,11 @@ interface IPropsState {
 }
 
 
-
-
 const ColorPicker: React.FC<IPropsState> = ({lang, colors, onSelect}): JSX.Element => {
-
     const [currentColor, setCurrentColor] = useState<IColor>()
     const [expanded, setExpanded] = useState<boolean>(false)
-    const modal_image = useRef<IModalFunctions>(null)
-    const image = useRef<IImageModalFunctions>(null)
+    const modalRef = useRef<IModalFunctions>(null)
+    const imageRef = useRef<IImageModalFunctions>(null)
     
     const onCurrentClick = () => {
         setExpanded(prev => !prev)
@@ -36,15 +33,15 @@ const ColorPicker: React.FC<IPropsState> = ({lang, colors, onSelect}): JSX.Eleme
 
     const onImageClick = (e: React.MouseEvent , color: IColor) => {
         e.stopPropagation()
-        image.current?.update({url: color.url.full, text: color.name[lang]})
-        modal_image.current?.openModal()
+        imageRef.current?.update({url: color.url.full, text: color.name[lang]})
+        modalRef.current?.openModal()
     }
 
 
 
     const closeModalImage = useCallback(() => {
-        modal_image.current?.closeModal()
-        setTimeout(() => image.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
+        modalRef.current?.closeModal()
+        setTimeout(() => imageRef.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
 	}, [])
 
 
@@ -78,8 +75,8 @@ const ColorPicker: React.FC<IPropsState> = ({lang, colors, onSelect}): JSX.Eleme
                     )
                 })}
             </div>
-            <Modal escExit={true} ref={modal_image} onClose={closeModalImage}>
-				<ImageModal ref={image} />
+            <Modal escExit={true} ref={modalRef} onClose={closeModalImage}>
+				<ImageModal ref={imageRef} />
             </Modal>
         </div>
     )

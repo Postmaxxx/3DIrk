@@ -3,10 +3,10 @@ import { ICatalog, ICatalogItem, IFullState, TId, TLang } from "../../interfaces
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { allActions } from "../../redux/actions/all";
 import Preloader from "../Preloaders/Preloader";
-import ErrorMock from "../tiny/ErrorMock/ErrorMock";
+import ErrorMock from "../ErrorMock/ErrorMock";
 import { checkAndLoad } from "../../assets/js/processors"
 
 
@@ -29,21 +29,16 @@ interface IProps extends IPropsState, IPropsActions {}
 const CatalogList: React.FC<IProps> = ({catalog, lang, selectedCategory, setState}): JSX.Element => {
 
 	const loadCategory = (_id: TId, total: number) => {
-		setState.catalog.loadCategory({_id, from: 0, to: total})
+		setState.catalog.loadCategory({_id, from: 0, to: total}) //load all products for category
 	};
 
 
 	useEffect(() => {
-		/*if (catalog.load.status !== 'success' && catalog.load.status !== 'fetching') {
-			setState.catalog.loadCatalog()
-		}*/
         checkAndLoad(catalog.load.status, setState.catalog.loadCatalog)
-
 		if (catalog.load.status === 'success') {
-			loadCategory(catalog.list[0]._id, catalog.list[0].total)
+			loadCategory(catalog.list[0]._id, catalog.list[0].total) //load first category
 		}
 	}, [catalog.load.status])
-
 
 
 
@@ -52,7 +47,7 @@ const CatalogList: React.FC<IProps> = ({catalog, lang, selectedCategory, setStat
 			<div className="list">
 				{catalog.load.status === 'success' &&
 					<ul>
-						{catalog.list.map((category: ICatalogItem, index: number): JSX.Element => {
+						{catalog.list.map((category: ICatalogItem): JSX.Element => {
 							return (
 								<li 
 									key={category._id} 

@@ -9,7 +9,7 @@ import { ICatalogState, IColorsState, IFibersState, IFullState, IProduct, TLang 
 import SpliderPreview from "../../components/Spliders/Preview/SpliderPreview";
 import ProductDetails from "../../components/ProductDetails/ProductDetails";
 import { allActions } from "../../redux/actions/all";
-import IconEdit from "../../components/tiny/IconEdit/IconEdit";
+import IconEdit from "../../components/IconEdit/IconEdit";
 import Delete from "../../components/Delete/Delete";
 import Modal, { IModalFunctions } from "../../components/Modal/Modal";
 import Message, { IMessageFunctions } from "../../components/Message/Message";

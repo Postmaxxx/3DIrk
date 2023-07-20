@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
 import './cart-informer-updater.scss'
 import { ICartState, IFullState, TLang } from "../../interfaces";
-import { useState, useEffect, useRef, useCallback, FC } from 'react'
+import { useState, useEffect } from 'react'
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { allActions } from "../../redux/actions/all";
@@ -21,7 +21,7 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 
-const CartInformerUpdater: FC<IProps> = ({lang, cart, setState}): JSX.Element => {
+const CartInformerUpdater: React.FC<IProps> = ({cart, setState}): JSX.Element => {
     const [itemsInCart, setItemsInCart] = useState<number>(0)
 
     useEffect(() => {
@@ -33,7 +33,6 @@ const CartInformerUpdater: FC<IProps> = ({lang, cart, setState}): JSX.Element =>
 
     useEffect(() => {
         if (cart.shouldUpdate) {
-            console.log('cart needs to be send');
             setState.user.sendCart()
         }
     }, [cart.shouldUpdate])
@@ -50,7 +49,6 @@ const CartInformerUpdater: FC<IProps> = ({lang, cart, setState}): JSX.Element =>
         </>
     )
 }
-
 
 
 const mapStateToProps = (state: IFullState): IPropsState => ({

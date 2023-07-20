@@ -6,7 +6,7 @@ import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import AddToCart from '../AddToCart/AddToCart';
 import { NavLink } from 'react-router-dom';
-import ColorPicker from '../tiny/ColorPicker/ColorPicker';
+import ColorPicker from '../ColorPicker/ColorPicker';
 import { allActions } from "../../redux/actions/all";
 
 

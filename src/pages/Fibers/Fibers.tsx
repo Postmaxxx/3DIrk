@@ -8,7 +8,7 @@ import Preloader from '../../components/Preloaders/Preloader';
 import { NavLink } from 'react-router-dom';
 import FiberPreview from '../../components/FiberPreview/FiberPreview';
 import { allActions } from "../../redux/actions/all";
-import ErrorMock from '../../components/tiny/ErrorMock/ErrorMock';
+import ErrorMock from '../../components/ErrorMock/ErrorMock';
 import { checkAndLoad } from '../../assets/js/processors';
 import { navList } from '../../../src/assets/js/consts';
 

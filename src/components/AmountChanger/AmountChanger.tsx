@@ -1,3 +1,5 @@
+import { maxAmountToOrder } from '../../../src/assets/js/consts';
+import { prevent } from '../../../src/assets/js/processors';
 import { TLang } from '../../interfaces'
 import './amount-changer.scss'
 import { useEffect, useState } from "react";
@@ -34,11 +36,27 @@ const AmountChanger = <T,>({idInstance, onChange, initialAmount, lang, reset}: I
         }
     }, [reset])
 
+
+    const onDecreaseAmount = (e: React.MouseEvent<HTMLButtonElement>) => {
+        prevent(e)
+        amount <= maxAmountToOrder && changeAmount(amount + 1)
+    }
+
+    const onIncreaseAmount = (e: React.MouseEvent<HTMLButtonElement>) => {
+        prevent(e); 
+        amount > 1 && changeAmount(amount > 2 ?  amount - 1 : 1)
+    }
+
+    const onCahngeAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
+        e.preventDefault(); 
+        Number(e.target.value) <= maxAmountToOrder && changeAmount(Number(e.target.value))
+    }
+
     return (
         <div className="amount__changer">
-            <button className={amount <= 1 ? "disabled" : ''} aria-label='Decrease amount' onClick={(e) => {e.preventDefault(); amount > 1 && changeAmount(amount > 2 ?  amount - 1 : 1)}}>–</button>
-            <input onBlur={(e) => onFocusOut(Number(e.target.value))} type="text" value={amount} onChange={(e) => {e.preventDefault(); changeAmount(Number(e.target.value))}} aria-label={lang === 'en' ? "Enter amount" : 'Введите количество'}/>
-            <button aria-label='Increase amount' onClick={(e) => {e.preventDefault(); changeAmount(amount + 1)}}>+</button>
+            <button className={amount <= 1 ? "disabled" : ''} aria-label='Decrease amount' onClick={onIncreaseAmount}>–</button>
+            <input onBlur={(e) => onFocusOut(Number(e.target.value))} type="text" value={amount} onChange={onCahngeAmount} aria-label={lang === 'en' ? "Enter amount" : 'Введите количество'}/>
+            <button aria-label='Increase amount' onClick={onDecreaseAmount}>+</button>
         </div>
     )
 }

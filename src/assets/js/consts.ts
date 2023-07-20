@@ -4,19 +4,24 @@ const timeModalClosing: number = 500 //transition of closing modal window
 
 const gapBetweenRequests: number = 2000 //time between requests in case of error
 
-const strengthMin = 1 //fiber strength min
-const strengthMax = 180 //fiber strength max
+const strengthMin:number = 1 //fiber strength min
+const strengthMax:number = 180 //fiber strength max
 
-const usersPerPage = 2 //for Admin for AllOrders page
+const usersPerPage:number = 2 //for Admin for AllOrders page
 
-const tipsTransition = 3000
+const tipsTransition:number = 3000
 
-const socials = {
+const socials: Record<string, string> = {
     vk: "https://vk.ru",
     instagram: "https://instagram.com",
     youtube: "https://youtube.com",
     telegram: "https://telegram.org",
 }
+
+const maxAmountToOrder: number = 999
+
+
+const imageExtentions: string[] = ['jpg', 'jpeg', 'bmp', 'svg', 'png', 'tiff', 'webp']
 
 const APIList = { //all routes to BE
     catalog: {
@@ -610,4 +615,4 @@ export { clearModalMessage, resetFetch, timeModalClosing,
     fetchingFetch, errorFetch, successFetch, headerStatus, empty, selector, strengthMin, 
     strengthMax, fiberEmpty, productEmpty, colorEmpty, gapBetweenRequests,
     orderStatus, usersPerPage, timeOffset, inputsProps, tipsTransition, socials,
-    navList, newsItemEmpty, APIList}
+    navList, newsItemEmpty, APIList, imageExtentions, maxAmountToOrder}

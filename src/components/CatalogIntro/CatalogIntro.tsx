@@ -6,12 +6,9 @@ import catalogPhoto1 from '../../assets/img/catalog/catalog_hero.webp'
 import ImgWithPreloader from "../../assets/js/ImgWithPreloader";
 
 
-
-
 interface IPropsState {
     lang: TLang
 }
-
 
 
 const CatalogIntro:React.FC<IPropsState> = ({lang}): JSX.Element => {

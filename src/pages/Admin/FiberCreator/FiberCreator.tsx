@@ -9,7 +9,7 @@ import Message, { IMessageFunctions } from '../../../components/Message/Message'
 import { useEffect, useState } from "react";
 import { allActions } from "../../../redux/actions/all";
 import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFiles';
-import Selector from '../../../components/tiny/Selector/Selector';
+import Selector from '../../../components/Selector/Selector';
 import { fibersProperties } from '../../../assets/data/fibersProperties';
 import Preloader from '../../../components/Preloaders/Preloader';
 import { useNavigate, useParams } from 'react-router-dom';

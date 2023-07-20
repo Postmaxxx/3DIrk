@@ -1,4 +1,5 @@
-import { TLang, TLangText } from "../../../interfaces"
+import { TLang, TLangText } from "../../interfaces"
+import "./error-mock.scss"
 
 interface IProps {
     lang: TLang

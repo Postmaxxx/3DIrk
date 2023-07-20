@@ -4,8 +4,6 @@ import ImgWithPreloader from '../../assets/js/ImgWithPreloader'
 import { ICarouselMax } from '../../interfaces';
 import Modal, { IModalFunctions } from "../Modal/Modal";
 import ImageModal, { IImageModalFunctions } from "../ImageModal/ImageModal";
-import Homer from '../Homer/Homer';
-
 
 
 interface IOptions {
@@ -39,10 +37,10 @@ const options: IOptions = {
     deltaSize: 0,
     carouselWidth: 0,
     gap: 80,
-    initialSpeed: 0.0006,
-    mouseSensivity: 0.005,
-    carouselMaxSpeed: 0.03,
-    carousecInertia: 0.997,
+    initialSpeed: 0.0006, //speed by default, min speed (>0), speed carousel tends to
+    mouseSensivity: 0.005, //more carousel sensevity for mouse movings
+    carouselMaxSpeed: 0.03, //carousel max speed
+    carousecInertia: 0.997, //multiplier for carousel speed in time until carousel speed reachs initialSpeed
 }
 
 interface ISliderMax {
@@ -52,33 +50,30 @@ interface ISliderMax {
 
 const SliderMax = ({content}: ISliderMax) => {
     const _carouselRef = useRef<HTMLDivElement>(null)
-    const [ribbonPos, setRibbonPos] = useState<number>(0)
+    const [ribbonPos, setRibbonPos] = useState<number>(0) //initial ribbon position
     const [state, setState] = useState<IOptions>({...options})
-    const [ribbonDx, setRibbonDx] = useState<number>(0)
+    const [ribbonDx, setRibbonDx] = useState<number>(0) //delta for ribbon position
     const [images, setImages] = useState<{urlSplider: string, urlFull: string, filename: string}[]>(content.files.map(filename => ({
         urlSplider: `${content.paths.spliderMain}/${filename}`, 
         urlFull: `${content.paths.full}/${filename}`, 
         filename})))
-    const prevPos = useRef<number>(0)
-    const step = useRef<number>(0)
-    const isMoving = useRef<number>(1)
-    const delta = useRef<number>(0)
-    const sum = useRef<number>(0)
-    const newDx = useRef<number>(0)
-    const mouseSpeed = useRef<number>(0)
-    const speed = useRef<number>(options.initialSpeed)
+    const prevPos = useRef<number>(0) //prev mouse position for every measuring
+    const step = useRef<number>(0) //step for carousel delta for every calling (changeRibbonDx) for background moving
+    const isMoving = useRef<number>(1)//is carousel moves on background
+    const delta = useRef<number>(0) //delta for carousel for moving by mouse
+    const newDx = useRef<number>(0) //new ribbon position, for calculating ribbonDx
+    const mouseSpeed = useRef<number>(0) //mouseSpeed, pixels between measurements
     const [firstRender, setFirstRender] = useState<boolean>(true)
-    const modal_image = useRef<IModalFunctions>(null)
-    const imageModal = useRef<IImageModalFunctions>(null)
+    const modalRef = useRef<IModalFunctions>(null)
+    const imageModalRef = useRef<IImageModalFunctions>(null)
 
 
-    useEffect (() => {//initial settings
+    useEffect (() => {//initial settings, set all parameters for carousel like container width, total amount of images, ...
         if (!_carouselRef.current) return;
-
-        const carouselContainerWidth = _carouselRef.current.clientWidth
-        setState(prev => ({...prev, imageContainerWidth: carouselContainerWidth/2, gap: carouselContainerWidth / 15}))
         
         if (firstRender) {
+            const carouselContainerWidth = _carouselRef.current.clientWidth //initial settings, get container carousel width
+            setState(prev => ({...prev, imageContainerWidth: carouselContainerWidth/2, gap: carouselContainerWidth / 15}))
             setFirstRender(false)
             return
         }
@@ -103,19 +98,18 @@ const SliderMax = ({content}: ISliderMax) => {
 
 
 
-
     const changeRibbonDx = () => {
-        newDx.current += (step.current * isMoving.current) + delta.current
-        if (newDx.current < -images.length * state.imageContainerWidth) {
+        newDx.current += (step.current * isMoving.current) + delta.current //move ribbon to delta = (sum all mouse dx between calling (changeRibbonDx))
+        if (newDx.current < -images.length * state.imageContainerWidth) { //if too left/right -> reset delta
             newDx.current += images.length * state.imageContainerWidth 
         }
         if (newDx.current > 0) {
             newDx.current -= images.length * state.imageContainerWidth 
         }
-        setRibbonDx(newDx.current)
+        setRibbonDx(newDx.current) 
 
-        delta.current = 0
-        if (Math.abs(mouseSpeed.current) > Math.abs(options.initialSpeed*1.2)) {
+        delta.current = 0 
+        if (Math.abs(mouseSpeed.current) > Math.abs(options.initialSpeed)) { //reduce carousel speed in time, simulate mouse speed is reducing
             mouseSpeed.current *= options.carousecInertia
             step.current = mouseSpeed.current * state.imageContainerWidth
         }
@@ -124,32 +118,28 @@ const SliderMax = ({content}: ISliderMax) => {
 
     const mouseDown =(e: MouseEvent) => {
         prevPos.current = e.clientX
-        isMoving.current = 0
-        delta.current = 0
-        sum.current = 0
-        mouseSpeed.current = 0
+        isMoving.current = 0//prohibit automoving
+        mouseSpeed.current = 0 //stop background moving
     }
 
     
     const mouseUp =(e: MouseEvent) => {
-        step.current = mouseSpeed.current * state.imageContainerWidth * options.mouseSensivity
-        isMoving.current = 1
+        step.current = mouseSpeed.current * state.imageContainerWidth * options.mouseSensivity //calculate step for carousel when mouse button released or leave and * carousel width
+        isMoving.current = 1 //let automoving
     }
 
 
     const mouseMove = (e: MouseEvent) => {
         if (e.buttons === 1) {
-            delta.current += e.clientX - prevPos.current;
-            mouseSpeed.current = delta.current * options.mouseSensivity 
-            mouseSpeed.current = mouseSpeed.current > 0 ? Math.min(mouseSpeed.current, options.carouselMaxSpeed) : Math.max(mouseSpeed.current, -options.carouselMaxSpeed)
-            //mouseSpeed.current = delta.current * options.mouseSensivity
-            prevPos.current = e.clientX
+            delta.current += e.clientX - prevPos.current; //saves all amount of mouse deltaX between calling (changeRibbonDx)
+            mouseSpeed.current = delta.current * options.mouseSensivity //get mousespeed - how much mouse moves between measurements
+            mouseSpeed.current = mouseSpeed.current > 0 ? Math.min(mouseSpeed.current, options.carouselMaxSpeed) : Math.max(mouseSpeed.current, -options.carouselMaxSpeed) //for reverse and forward moving + limits mouseSpeed
+            prevPos.current = e.clientX //saves last measured mouse position
         }
     }
 
-
     const mouseEnter = (e: MouseEvent) => {
-        prevPos.current = e.clientX
+        prevPos.current = e.clientX //avoid abrupt jump if mose enter with pressed button
     }
 
     const mouseLeave = (e: MouseEvent) => {
@@ -159,31 +149,35 @@ const SliderMax = ({content}: ISliderMax) => {
 
 
     const onImageExpand = (urlFull: string) => {
-        imageModal.current?.update({url: urlFull, text: ''})
-        modal_image.current?.openModal()
-        isMoving.current = 0
+        imageModalRef.current?.update({url: urlFull, text: ''})
+        modalRef.current?.openModal()
+        isMoving.current = 0 //deny background moving after open modal
     }
 
 
     const closeModalImage = useCallback(() => {
-        modal_image.current?.closeModal()
-        isMoving.current = 1
-	}, [modal_image])
+        modalRef.current?.closeModal()
+        isMoving.current = 1 //allow moving after close modal
+	}, [modalRef])
 
-
+    const onResize = () => {
+        setFirstRender(true)
+    }
     
     useEffect(() => {
         if (firstRender) return
-        step.current = -speed.current * state.imageContainerWidth
+        step.current = -options.initialSpeed * state.imageContainerWidth
         const ribbonMoveInterval = setInterval(changeRibbonDx, 5)
         _carouselRef.current?.addEventListener('mousedown', mouseDown)
         _carouselRef.current?.addEventListener('mouseup', mouseUp)
         _carouselRef.current?.addEventListener('mousemove', mouseMove)
         _carouselRef.current?.addEventListener('mouseenter', mouseEnter)
         _carouselRef.current?.addEventListener('mouseleave', mouseLeave)
+        document.addEventListener("resize", onResize)
 
         return (()=> {
             clearInterval(ribbonMoveInterval)
+            document.removeEventListener("resize", onResize)
             _carouselRef.current?.removeEventListener('mousedown', mouseDown)
             _carouselRef.current?.removeEventListener('mouseup', mouseUp)
             _carouselRef.current?.removeEventListener('mousemove', mouseMove)
@@ -195,10 +189,11 @@ const SliderMax = ({content}: ISliderMax) => {
 
 
     const modalMemo = useMemo(() => (
-        <Modal escExit={true} ref={modal_image} onClose={closeModalImage}>
-            <ImageModal ref={imageModal} />
+        <Modal escExit={true} ref={modalRef} onClose={closeModalImage}>
+            <ImageModal ref={imageModalRef} />
         </Modal>
     ), [])
+
 
     return (
         <div className="carouselmax" ref={_carouselRef}>

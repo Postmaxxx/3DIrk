@@ -1,11 +1,12 @@
 import { TId, TLangText } from "../../interfaces"
+import { selector } from "../js/consts"
 
 export interface IFiberProperties {
     _id: TId
     name: TLangText
     tip: TLangText
     unit: TLangText
-    type: string
+    type: 'string' | keyof typeof selector
 }
 
 

@@ -11,7 +11,7 @@ import { allActions } from "../../redux/actions/all";
 import Delete from '../../components/Delete/Delete';
 import Modal, { IModalFunctions } from "../../components/Modal/Modal";
 import Message, { IMessageFunctions } from '../../components/Message/Message';
-import IconEdit from '../../components/tiny/IconEdit/IconEdit';
+import IconEdit from '../../components/IconEdit/IconEdit';
 import { navList, resetFetch, timeModalClosing } from '../../assets/js/consts';
 import { modalMessageCreator } from '../../../src/assets/js/processors';
 

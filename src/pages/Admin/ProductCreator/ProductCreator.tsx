@@ -15,7 +15,7 @@ import { inputsProps, navList, productEmpty, resetFetch, timeModalClosing } from
 import { checkAndLoad, deepCopy, errorsChecker, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import Picker, { IPickerFunctions } from '../../../components/Picker/Picker';
 import Featurer, { IFeaturerFunctions } from '../../../components/Featurer/Featurer';
-import Selector, { ISelectorFunctions } from '../../../components/tiny/Selector/Selector';
+import Selector, { ISelectorFunctions } from '../../../components/Selector/Selector';
 import inputChecker from '../../../../src/assets/js/inputChecker';
 
 interface IPropsState {

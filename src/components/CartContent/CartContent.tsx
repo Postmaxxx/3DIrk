@@ -13,7 +13,7 @@ import Modal, { IModalFunctions } from "../Modal/Modal";
 import { IImageModalFunctions } from "../ImageModal/ImageModal";
 import { allActions } from "../../redux/actions/all";
 import ImageModal from "../ImageModal/ImageModal";
-import ErrorMock from "../tiny/ErrorMock/ErrorMock";
+import ErrorMock from "../ErrorMock/ErrorMock";
 
 interface IPropsState {
     lang: TLang,

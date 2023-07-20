@@ -7,7 +7,7 @@ import { IFullState, ILoggingForm, IUserState, TLang } from '../../interfaces';
 import { setUser, register, login } from "../../redux/actions/user"
 import { inputsProps, resetFetch } from '../../assets/js/consts';
 import { focusMover, prevent } from '../../assets/js/processors';
-import Hider from '../tiny/Hider/Hider';
+import Hider from '../Hider/Hider';
 import inputChecker from '../../assets/js/inputChecker';
 
 const actionsListUser = { setUser, register, login }
@@ -101,7 +101,7 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
                                 type="text" 
                                 onChange={onChangeText}
                                 value={form.name}
-                                onKeyDown={(e) => focuser.next(e)}
+                                onKeyDown={focuser.next}
                                 onBlur={(e) => inputChecker({lang, min: inputsProps.name.min, max:inputsProps.name.max, el: e.target})}/>
                         </div>}
                     <div className="input-block" data-selector="input-block">
@@ -114,7 +114,7 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
                             type="email" 
                             value={form.email}
                             onChange={onChangeText} 
-                            onKeyDown={(e) => focuser.next(e)}
+                            onKeyDown={focuser.next}
                             onBlur={(e) => inputChecker({lang, min:inputsProps.email.min, max:inputsProps.email.max, type: 'email', el: e.target})}/>
                     </div>
                     {register &&
@@ -128,7 +128,7 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
                                 type="tel" 
                                 value={form.phone}
                                 onChange={onChangeText} 
-                                onKeyDown={(e) => focuser.next(e)}
+                                onKeyDown={focuser.next}
                                 onBlur={(e) => inputChecker({lang, min:inputsProps.phone.min, max:inputsProps.phone.max, type: 'phone', el: e.target})}/>
                         </div>
                     }
@@ -142,7 +142,7 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
                             type={hideInput ? `password` : 'text'}
                             value={form.password}
                             onChange={onChangeText} 
-                            onKeyDown={(e) => focuser.next(e)}
+                            onKeyDown={focuser.next}
                             onBlur={(e) => inputChecker({lang, min:inputsProps.password.min, max:inputsProps.password.max, el: e.target})}/>
                         <Hider hidden={hideInput} onClick={() => setHideInput(prev => !prev)} />
                     </div>
@@ -157,7 +157,7 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
                                 type={hideInput ? `password` : 'text'}
                                 value={form.repassword}
                                 onChange={onChangeText}
-                                onKeyDown={(e) => focuser.next(e)}
+                                onKeyDown={focuser.next}
                                 onBlur={(e) => inputChecker({lang, min:inputsProps.password.min, max:inputsProps.password.max, el: e.target, exact: form.password})}/>
                         </div>
                     }
@@ -177,7 +177,7 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
                                 lang === 'en' ? 'Login' : 'Вход'
                             }
                         </button>
-                        <button className='button_blue' onClick={e => onCancelClick(e)}>{lang === 'en' ? 'Cancel' : 'Отмена'}</button>
+                        <button className='button_blue' onClick={onCancelClick}>{lang === 'en' ? 'Cancel' : 'Отмена'}</button>
                     </div>
                 </form>
             </div>
