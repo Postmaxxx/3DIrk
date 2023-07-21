@@ -9,19 +9,21 @@ const strengthMax:number = 180 //fiber strength max
 
 const usersPerPage:number = 2 //for Admin for AllOrders page
 
-const tipsTransition:number = 3000
+const loadNewsPerRequest: number = 4 //how many news will be loaded per click "more news"
 
-const socials: Record<string, string> = {
+const tipsTransition:number = 3000 //in ms, how long tip will be shown before disappearing
+
+const socials: Record<string, string> = { //link to groups
     vk: "https://vk.ru",
     instagram: "https://instagram.com",
     youtube: "https://youtube.com",
     telegram: "https://telegram.org",
 }
 
-const maxAmountToOrder: number = 999
+const maxAmountToOrder: number = 990 //max amount for amountChanger
 
 
-const imageExtentions: string[] = ['jpg', 'jpeg', 'bmp', 'svg', 'png', 'tiff', 'webp']
+const imageExtentions: string[] = ['jpg', 'jpeg', 'bmp', 'svg', 'png', 'tiff', 'webp'] //files with these extentions will be treaten as images, preview will be loaded
 
 const APIList = { //all routes to BE
     catalog: {
@@ -615,4 +617,5 @@ export { clearModalMessage, resetFetch, timeModalClosing,
     fetchingFetch, errorFetch, successFetch, headerStatus, empty, selector, strengthMin, 
     strengthMax, fiberEmpty, productEmpty, colorEmpty, gapBetweenRequests,
     orderStatus, usersPerPage, timeOffset, inputsProps, tipsTransition, socials,
-    navList, newsItemEmpty, APIList, imageExtentions, maxAmountToOrder}
+    navList, newsItemEmpty, APIList, imageExtentions, maxAmountToOrder, loadNewsPerRequest,
+}

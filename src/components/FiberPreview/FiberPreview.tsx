@@ -23,4 +23,3 @@ const FiberPreview = ({fiber, lang}: IProps) => {
 }
 
 export default FiberPreview
-//done

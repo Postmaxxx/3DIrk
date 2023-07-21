@@ -33,7 +33,7 @@ export interface ISelectorFunctions {
 const Selector = forwardRef<ISelectorFunctions, IProps>(({lang, id, label, defaultData={value: '', name: {en: 'Select', ru: 'Выберете'}}, data=[], onBlur, saveValue}, ref) => {
     useImperativeHandle(ref, () => ({
         setData(elements) {
-            setStore(prev => ({...prev, items: elements, item: {name: {...empty}, value: ''}}))
+            setStore(prev => ({...prev, items: elements}))
         },
         getValue() {
             return store.item
@@ -57,6 +57,7 @@ const Selector = forwardRef<ISelectorFunctions, IProps>(({lang, id, label, defau
     const select = useRef<HTMLSelectElement>(null)
 
     const onChange = (e: React.ChangeEvent<HTMLSelectElement>) => {  
+        console.log((store.items.find(el => el.value === e.target.value) as IItem).name);
         setStore(prev => ({
             ...prev, 
             item: {value: e.target.value, name: (prev.items.find(el => el.value === e.target.value) as IItem).name},
@@ -70,8 +71,7 @@ const Selector = forwardRef<ISelectorFunctions, IProps>(({lang, id, label, defau
         if (!select.current) return
         select.current.selectedIndex = store.items.findIndex(el => el.value === store.value) + 1
     }, [store])
-    
-    
+      
 
     return (
         <div className="selector" data-selector="input-block">

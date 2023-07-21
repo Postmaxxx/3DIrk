@@ -1,59 +1,44 @@
 import './gallery.scss'
-import { AnyAction, bindActionCreators } from "redux";
-import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import { IFibersState, IFullState, IProduct, IProductShort, TId, TLang } from "../../interfaces";
+import { IFullState, IProductShort, TLang } from "../../interfaces";
 import ImgWithPreloader from '../../assets/js/ImgWithPreloader';
 import { NavLink } from 'react-router-dom';
-import { allActions } from "../../redux/actions/all";
-
+import { useMemo } from 'react'
 
 interface IPropsState {
 	lang: TLang
 }
 
-interface IPropsActions {
-    setState: {
-        catalog: typeof allActions.catalog
-    }
-}
-
-interface IProps extends IPropsState, IPropsActions {
+interface IProps extends IPropsState {
     products: IProductShort[]
 }
 
 
-const Gallery: React.FC<IProps> = ({lang, products, setState}):JSX.Element => {
+const Gallery: React.FC<IProps> = ({lang, products}):JSX.Element => {
 
-    const onClicked = (_id: TId) => {
-        //setState.catalog.setSelectedProduct(product.id)
-        /*setState.product.setLoadDataStatusProduct({status: 'success', message: ''})
-        setState.product.setProduct(product)*/
-        //setState.catalog.loadProduct(_id)
-    }
+    const cards = useMemo(() => products.map(product => {
+        return (
+            <NavLink
+                to={product._id}
+                key={product._id}
+                >
+                <div className='gallery__item' >
+                    <div className="img__container">
+                        <ImgWithPreloader src={`${product.images.paths.small}/${product.images.files[0]}`} alt={product.images.files[0]}/>
+                    </div>
+                    <div className="descr__container">
+                        <span className='name'>{product.name[lang]}</span>
+                        <span className='price'>{lang === 'en' ? 'Price' : 'Цена'}: {product.price[lang]}</span>
+                    </div>
+                </div>
+            </NavLink>
+        )
+    }), [lang, products])
+
 
     return (
         <div className="gallery__container">
-            {products.map((product):JSX.Element => {
-                return (
-                    <NavLink
-                        to={product._id}
-                        key={product._id}
-                        onClick={() => onClicked(product._id)}
-                        >
-                        <div className='gallery__item' >
-                            <div className="img__container">
-                                <ImgWithPreloader src={`${product.images.paths.small}/${product.images.files[0]}`} alt={product.images.files[0]}/>
-                            </div>
-                            <div className="descr__container">
-                                <span className='name'>{product.name[lang]}</span>
-                                <span className='price'>{lang === 'en' ? 'Price' : 'Цена'}: {product.price[lang]}</span>
-                            </div>
-                        </div>
-                    </NavLink>
-                )
-            })
-            }
+            {cards}
         </div>
     )
 }
@@ -64,13 +49,7 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
 })
 
 
-const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
-    setState: {
-		catalog: bindActionCreators(allActions.catalog, dispatch),
-	}
-})
-  
   
 
-export default connect(mapStateToProps, mapDispatchToProps)(Gallery);
+export default connect(mapStateToProps)(Gallery);
 

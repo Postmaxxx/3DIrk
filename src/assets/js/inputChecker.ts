@@ -47,7 +47,7 @@ const inputChecker = ({lang="en", el, min=0, max=1000, type, exact="", notExact}
             el.parentElement.classList.add('incorrect-value')
         }
     }
-    if (typeof notExact !== 'undefined' && el.value === notExact) {
+    if (typeof notExact !== 'undefined' && el.value === String(notExact)) {
         el.parentElement.dataset.errorText = lang === 'en' ? `Wrong value` : `Направильное значение`
         el.parentElement.classList.add('incorrect-value')
     }

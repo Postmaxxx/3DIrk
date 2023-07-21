@@ -1,4 +1,4 @@
-import { ICartItem, ICartState, IColor, IFiber, IFullState, IProduct, TLang, TLangText } from '../../interfaces';
+import { ICartState, IColor, IFiber, IFullState, IProduct, TLang, TLangText } from '../../interfaces';
 import './add-to-cart.scss'
 import { useRef, useState, useCallback } from "react";
 import { AnyAction, bindActionCreators } from "redux";
@@ -8,13 +8,24 @@ import Modal, { IModalFunctions } from "../../components/Modal/Modal";
 import Message, { IMessageFunctions } from '../Message/Message';
 import AmountChanger from '../AmountChanger/AmountChanger';
 import { allActions } from "../../redux/actions/all";
+import { errorsChecker } from '../../../src/assets/js/processors';
+import { useMemo } from 'react'
 
 interface IPropsState {
     cart: ICartState
     lang: TLang
 }
 
-interface IPropsParent extends IPropsState {}
+interface IParentProps {
+    product: IProduct
+    getData: () => IAddToCart
+}
+
+export interface IAddToCart {
+    type: TLangText
+    fiber: IFiber['_id'] | undefined
+    color: IColor['_id']
+}
 
 interface IPropsActions {
     setState: {
@@ -22,56 +33,52 @@ interface IPropsActions {
     }
 }
 
-interface IProps extends IPropsParent, IPropsActions {
-    product : IProduct
-    type: TLangText | undefined
-    fiber: IFiber['_id'] | undefined
-    color: IColor['_id']
-}
+
+interface IProps extends IPropsState, IParentProps, IPropsActions {}
 
 
 
-const AddToCart: React.FC<IProps> = ({product, type, fiber, color, lang, cart, setState}): JSX.Element => {
+const AddToCart: React.FC<IProps> = ({getData, product, lang, cart, setState}): JSX.Element => {
     const [amount, setAmount] = useState<number>(1)
     const [amountChangerReset, setAmountChangerReset] = useState<{amount: number}>({amount: 1})
     const modalRef = useRef<IModalFunctions>(null)
     const messageRef  = useRef<IMessageFunctions>(null)
+    const errChecker = useMemo(() => errorsChecker({lang}), [lang])
 
     const closeModalMessage = useCallback(() => {
 		modalRef.current?.closeModal()
 	}, [])
-
+     
         
-    const addToCart = () => {
-        const errorsList: string[] = []
-        !color && errorsList.push(lang === 'en' ? 'Please choose the color' : 'Пожалуйста, выберите цвет')
-        !fiber && errorsList.push(lang === 'en' ? 'Please choose the fiber' : 'Пожалуйста, выберите материал')
-        !type && errorsList.push(lang === 'en' ? 'Please choose the type' : 'Пожалуйста, выберите версию')
-        !amount && errorsList.push(lang === 'en' ? 'Please set the amount' : 'Пожалуйста, укажите количество')
+    const addToCart = () => { 
+        errChecker.clear() 
+        !getData().color && errChecker.add(lang === 'en' ? 'Please choose the color' : 'Пожалуйста, выберите цвет');
+        !getData().fiber && errChecker.add(lang === 'en' ? 'Please choose the fiber' : 'Пожалуйста, выберите материал');
+        (getData().type?.en === '') && errChecker.add(lang === 'en' ? 'Please choose the type' : 'Пожалуйста, выберите версию');
+        !amount && errChecker.add(lang === 'en' ? 'Please set the amount' : 'Пожалуйста, укажите количество')
 
-        if (!color || !fiber || !type || !amount) {
-            messageRef.current?.update({
-                status: 'error',
-                header: lang === 'en' ? 'Error' : 'Ошибка',
-                text: errorsList
-            })
-        } else {
-            const newItem: ICartItem = {
-                product, 
-                fiber, 
-                color, 
-                amount, 
-                type, 
-            }
-            setState.user.addItem(newItem)
-            setAmountChangerReset({amount: 1})
-            const amountItemsInCart = cart.items.reduce((total, item) => total + item.amount, 0) + amount
-            messageRef.current?.update({
-                status: 'success',
-                header: lang === 'en' ? 'Added' : 'Добавлено',
-                text: lang === 'en' ? [`This item has been added to your сart.`, `You now have ${amountItemsInCart} item${amountItemsInCart > 1 ? 's' : ''} in your сart`, ] : [`Этот товар был успешно добавлен в Вашу корзину.`, `Сейчас у Вас товаров в корзине: ${amountItemsInCart}`, ]
-            })
+        if (errChecker.amount() > 0) {
+            messageRef.current?.update(errChecker.result())
+            modalRef.current?.openModal('submit')
+            return
         }
+
+        setState.user.addItem({
+            product, 
+            amount, 
+            fiber: getData().fiber as string, 
+            color: getData().color,
+            type: getData().type, 
+        })
+
+        setAmountChangerReset({amount: 1})
+        const amountItemsInCart = cart.items.reduce((total, item) => total + item.amount, 0) + amount
+        messageRef.current?.update({
+            status: 'success',
+            header: lang === 'en' ? 'Added' : 'Добавлено',
+            text: lang === 'en' ? [`This item has been added to your сart.`, `You now have ${amountItemsInCart} item${amountItemsInCart > 1 ? 's' : ''} in your сart`, ] : [`Этот товар был успешно добавлен в Вашу корзину.`, `Сейчас у Вас товаров в корзине: ${amountItemsInCart}`, ]
+        })
+        
         modalRef.current?.openModal()
     }
 

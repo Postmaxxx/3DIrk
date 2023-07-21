@@ -16,9 +16,6 @@ const Params: React.FC<IProps> = ({params, lang, fiber}): JSX.Element => {
         if (param._id === "minTemp") {
             return <div className="param"><span>{lang === "en" ? "Temperetures" : 't использования'}: </span><span></span><span>{params.minTemp} ... {params.maxTemp} {param.unit[lang]}</span></div>
         }
-        if (param._id === "price") {
-            return <div className="param"><span>{param.name[lang]}: </span><span></span><span>{fiber.params.priceGr} {param.unit[lang]}</span></div>
-        }
         if (param.type === 'string') {
             return <div className="param"><span>{param.name[lang]}: </span><span></span><span>{params[param._id]} {param.unit[lang]}</span></div>
         } else {

@@ -1,6 +1,6 @@
 import { TImageSizes, TLang, TLangText } from '../../interfaces';
 import './picker.scss'
-import { useEffect, useState, forwardRef, useImperativeHandle  } from "react";
+import { useState, forwardRef, useImperativeHandle, useMemo  } from "react";
 import { prevent } from '../../assets/js/processors';
 
 
@@ -60,23 +60,28 @@ const Picker = forwardRef<IPickerFunctions, IProps>(({items, lang, onEditClick, 
         onEditClick && onEditClick(_id)
     }
 
+
+    const contentMemo = useMemo(() => {
+        return items.map((item) => {
+            return (
+                <div className="item__container" key={item._id}>
+                    <div className={`image__container ${selectedItems[item._id] ? 'selected' : ''}`} onClick={() => onItemClick(item._id)}>
+                        {item.images && <img src={`${item.images.paths.small}/${item.images.files[0]}`} alt={item.name[lang]} />} {/*for fibers*/}
+                        {item.url && <img src={item.url.thumb} alt={item.name[lang]} />} {/*for colors*/}
+                    </div>
+                    <span>{item.name[lang]}</span>
+                    <div className="buttons_control">
+                        <button className="button_blue edit" onClick={(e) => onEditItem(e, item._id)}>E</button>
+                        <button className="button_blue delete" onClick={(e) => onDeleteItem(e, item._id)}>X</button>
+                    </div>
+                </div>
+            )
+        })
+    }, [items, lang, selectedItems ])
+
     return (
         <div className="items__container">
-            {items.map((item) => {
-                return (
-                    <div className="item__container" key={item._id}>
-                        <div className={`image__container ${selectedItems[item._id] ? 'selected' : ''}`} onClick={() => onItemClick(item._id)}>
-                            {item.images && <img src={`${item.images.paths.small}/${item.images.files[0]}`} alt={item.name[lang]} />} {/*for fibers*/}
-                            {item.url && <img src={item.url.thumb} alt={item.name[lang]} />} {/*for colors*/}
-                        </div>
-                        <span>{item.name[lang]}</span>
-                        <div className="buttons_control">
-                            <button className="button_blue edit" onClick={(e) => onEditItem(e, item._id)}>E</button>
-                            <button className="button_blue delete" onClick={(e) => onDeleteItem(e, item._id)}>X</button>
-                        </div>
-                    </div>
-                )
-            })}
+            {contentMemo}
         </div>
     )
 })

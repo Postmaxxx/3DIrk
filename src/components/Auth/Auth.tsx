@@ -7,7 +7,7 @@ import { IFullState, ILoggingForm, IUserState, TLang } from '../../interfaces';
 import { setUser, register, login } from "../../redux/actions/user"
 import { inputsProps, resetFetch } from '../../assets/js/consts';
 import { focusMover, prevent } from '../../assets/js/processors';
-import Hider from '../Hider/Hider';
+import Hider from '../InputHider/InputHider';
 import inputChecker from '../../assets/js/inputChecker';
 
 const actionsListUser = { setUser, register, login }

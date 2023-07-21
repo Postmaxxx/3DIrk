@@ -4,8 +4,6 @@ import { IMessageModal } from '../../interfaces'
 import { clearModalMessage } from '../../assets/js/consts'
 
 
-
-
 interface IProps {
     buttonText: string
     buttonAction: () => void
@@ -38,14 +36,16 @@ const Message = forwardRef<IMessageFunctions, IProps>(({buttonText, buttonAction
         setMessage(newData)        
     }
 
+    const text = message.text.map((currentText,index) => {
+        return <p key={index}>{currentText}</p>
+    })
+
 
     return (
         <div className={`message__container ${message.status}`}>
             <h3>{message.header}</h3>
             <div className="text-block">
-                {message.text.map((currentText,index) => {
-                    return <p key={index}>{currentText}</p>
-                })}
+                {text}
             </div>
             <button onClick={buttonAction}>{buttonText}</button>
         </div>

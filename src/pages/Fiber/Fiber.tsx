@@ -11,7 +11,7 @@ import Message, { IMessageFunctions } from '../../components/Message/Message';
 import { navList, resetFetch, timeModalClosing } from '../../assets/js/consts';
 import ErrorMock from '../../components/ErrorMock/ErrorMock';
 import SpliderCommon from '../../components/Spliders/Common/SpliderCommon';
-import Features from '../../components/Features/Params';
+import Features from '../../components/Params/Params';
 import Proscons from '../../components/Proscons/Proscons';
 import IconEdit from '../../components/IconEdit/IconEdit';
 import Delete from '../../components/Delete/Delete';

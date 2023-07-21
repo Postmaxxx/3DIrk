@@ -1,4 +1,4 @@
-import './color-picker.scss'
+import './color-selector.scss'
 import { IColor, TLang } from "../../interfaces";
 import { useState, useRef, useCallback } from 'react'
 import Modal, { IModalFunctions } from '../Modal/Modal';
@@ -14,7 +14,7 @@ interface IPropsState {
 }
 
 
-const ColorPicker: React.FC<IPropsState> = ({lang, colors, onSelect}): JSX.Element => {
+const ColorSelector: React.FC<IPropsState> = ({lang, colors, onSelect}): JSX.Element => {
     const [currentColor, setCurrentColor] = useState<IColor>()
     const [expanded, setExpanded] = useState<boolean>(false)
     const modalRef = useRef<IModalFunctions>(null)
@@ -46,7 +46,7 @@ const ColorPicker: React.FC<IPropsState> = ({lang, colors, onSelect}): JSX.Eleme
 
 
     return (
-        <div className={`color-picker ${expanded ? 'expanded' : ''}`}>
+        <div className={`color-selector ${expanded ? 'expanded' : ''}`}>
             <div className="option current" onClick={onCurrentClick}>
                 {currentColor ? 
                     <>
@@ -85,7 +85,4 @@ const ColorPicker: React.FC<IPropsState> = ({lang, colors, onSelect}): JSX.Eleme
 }
 
 
-
-  
-
-export default ColorPicker;
+export default ColorSelector;

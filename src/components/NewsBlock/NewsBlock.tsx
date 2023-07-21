@@ -1,11 +1,12 @@
 import './news_block.scss'
-import { useEffect, Fragment, useState } from 'react'
+import { useEffect, Fragment, useMemo } from 'react'
 import { connect } from "react-redux";
 import News from '../News/News'
-import { IFullState, INewsItem, INewsState, TLang } from '../../interfaces'
+import { IFullState, INewsState, TLang } from '../../interfaces'
 import { AnyAction, Dispatch, bindActionCreators } from 'redux';
 import { allActions } from "../../redux/actions/all";
 import Preloader from '../Preloaders/Preloader';
+import { loadNewsPerRequest } from '../../../src/assets/js/consts';
 
 
 interface IPropsState {
@@ -22,11 +23,9 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 const NewsBlock:React.FC<IProps>  = ({lang, news, setState}): JSX.Element => {
-    const loadStep = 4 //how many news will be loaded per click
-
     
     const showMoreNews = () => {
-        setState.news.loadSomeNews(news.newsList.length, loadStep) //from, amount
+        setState.news.loadSomeNews(news.newsList.length, loadNewsPerRequest) //from, amount
     }
 
     useEffect(()=> {
@@ -35,15 +34,18 @@ const NewsBlock:React.FC<IProps>  = ({lang, news, setState}): JSX.Element => {
         }
     },[])
 
+
+    const previewsNews = useMemo(() => news.newsList.map((newsPiece) => (
+        <Fragment key={newsPiece._id}>
+            <News newsPiece={newsPiece} lang={lang}/>
+        </Fragment>
+    )), [lang, news])
+
     return (
         <>
             <h2>{lang === 'en' ? 'Recent news' : 'Последние новости'}</h2>
             <div className="news-block">
-                {news.newsList.map((newsPiece, i) => (
-                    <Fragment key={i}>
-                        {<News newsPiece={newsPiece} lang={lang}/>}
-                    </Fragment>
-                ))}
+                {previewsNews}
                 <div className="break-new-line"></div>
                 {news.newsList.length < news.total && (
                     <button className='button_blue show-more-news' onClick={showMoreNews}>
@@ -58,7 +60,6 @@ const NewsBlock:React.FC<IProps>  = ({lang, news, setState}): JSX.Element => {
                 )}
                 {news.newsList.length === 0 && news.load.status !== 'success' && <Preloader />}
             </div>
-            
         </>
     )
 }

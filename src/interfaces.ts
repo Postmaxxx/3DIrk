@@ -470,3 +470,4 @@ export interface IContentState { //for other app content
 
 
 export type TImageSizes = 'thumb' | 'small' | 'medium' | 'full' | 'spliderMain' | 'preview' //all supported types of images.
+

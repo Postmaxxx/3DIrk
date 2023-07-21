@@ -2,13 +2,11 @@ import './modal.scss'
 import { createPortal } from 'react-dom';
 import { useEffect, useState, forwardRef, useImperativeHandle, memo } from 'react';
 
-
 interface IProps {
     escExit: boolean
     onClose?: () => void
     children: React.ReactNode
 }
-
 
 export interface IModalFunctions {
     openModal: (owner?: string) => void;
@@ -43,8 +41,6 @@ const Modal = forwardRef<IModalFunctions, IProps>(({escExit, onClose, children},
         }
     }
 
-    //console.log('Model re');
-    
 
     useEffect(() => {
         document.addEventListener("keyup", modalKeyListener);
@@ -63,6 +59,7 @@ const Modal = forwardRef<IModalFunctions, IProps>(({escExit, onClose, children},
         setOwner(owner)
     }
 
+    
 
     return _modal ? createPortal(
         <div className={visible ? "modal-window visible" : "modal-window"}>

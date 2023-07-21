@@ -22,7 +22,8 @@ router.get('/list', async (req, res) => {
         if (err) {
             return res.status(500).json(err)
         }  
-        res.status(200).json({allCatalog: cache.catalog.data , message: {en: 'Catalog has been loaded', ru: 'Каталог был загружены'}})
+        const catalogToSend = cache.catalog.data.filter(item => item.total > 0)
+        res.status(200).json({allCatalog: catalogToSend, message: {en: 'Catalog has been loaded', ru: 'Каталог был загружены'}})
     } catch (error) {
         res.status(500).json({message: {en: 'Error reading catalog from db', ru: 'Ошибка при чтении каталога из БД'}})
     }
@@ -119,21 +120,6 @@ router.get('/category', async(req, res) => {
 })
 
 //-------------------------------------------------------------------------------------
-/*
-const loadProducts = async (res): Promise<{loaded: boolean, msg: string}> => {
-    if (allProducts.length === 0 || cacheStatus.products) {
-        try {     
-            allProducts = await Product.find()
-
-            cacheStatus.products = false
-        } catch (e) {
-            return res.status(400).json({message: {en: `Error while loading products from db: ${e}`, ru: `Ошибка при получении товаров из базы данных: ${e}`}})
-        }
-    }
-}
-
-*/
-
 
 
 router.post('/product', //create

@@ -23,11 +23,10 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 const LangSwitcher:React.FC<IProps> = ({lang, mobOpened, setState}): JSX.Element => {
-
     const _lang = useRef<HTMLDivElement>(null)
     const {add: addToHider, clear: clearHider} = useScrollHider()
 
-    const handleChangeLang = (e: React.MouseEvent<HTMLDivElement>) => {
+    const handleChangeLang = () => {
         if (lang === 'en') {
             window.localStorage.setItem('language', 'ru')
             setState.base.setLangRu()
@@ -45,30 +44,14 @@ const LangSwitcher:React.FC<IProps> = ({lang, mobOpened, setState}): JSX.Element
     }, [])
 
 
-
-    useEffect(() => {
-        if (lang === 'en') {
-            _lang.current?.classList.add('ru')
-            _lang.current?.classList.remove('en')
-        } else {
-            _lang.current?.classList.add('en')
-            _lang.current?.classList.remove('ru')
-        }
-
-        mobOpened ? _lang.current?.classList.remove('hide') : _lang.current?.classList.add('hide')
-    }, [lang, mobOpened])
-
-
     return (
-        <div className='lang-switcher' onClick={handleChangeLang} ref={_lang}>
+        <div className={`lang-switcher ${lang === 'en' ? 'ru' : 'en'} ${mobOpened ? 'hide' : ''}`} onClick={handleChangeLang} ref={_lang}>
             <div className="lang-switcher__text lang_ru" data-lang='ru'>EN</div>
             <div className="lang-switcher__text lang_en" data-lang='en'>RU</div>
         </div>
     )
       
 }
-
-
 
 
 const mapStateToProps = (state: IFullState): IPropsState => ({

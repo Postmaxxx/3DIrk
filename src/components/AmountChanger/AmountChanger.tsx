@@ -39,7 +39,7 @@ const AmountChanger = <T,>({idInstance, onChange, initialAmount, lang, reset}: I
 
     const onDecreaseAmount = (e: React.MouseEvent<HTMLButtonElement>) => {
         prevent(e)
-        amount <= maxAmountToOrder && changeAmount(amount + 1)
+        amount < maxAmountToOrder && changeAmount(amount + 1)
     }
 
     const onIncreaseAmount = (e: React.MouseEvent<HTMLButtonElement>) => {
