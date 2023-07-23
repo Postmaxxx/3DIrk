@@ -1,6 +1,7 @@
-import { IAction, IDispatch, IErrRes, IFetch, IFiber, IFullState, IMsgRes, ISendFiber, TLangText } from "../../interfaces"
+import { IAction, IDispatch, IErrRes, IFetch, IFiber, IFullState, ISendFiber, TLangText } from "../../interfaces"
 import { actionsListFibers } from './actionsList'
-import { APIList, empty, fetchingFetch } from "../../assets/js/consts";
+import { APIList, DOMExceptions, fetchingFetch, successFetch } from "../../assets/js/consts";
+import { fetchError, resErrorFiller } from "../../../src/assets/js/processors";
 
 
 export const setLoadFibers = <T extends IFetch>(payload: T):IAction<T> => ({
@@ -26,20 +27,22 @@ export const setSelectedFiber = <T extends IFiber['_id']>(payload: T):IAction<T>
 
 export const loadFibers = () => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        if (getState().fibers.load.status === 'fetching') return
-        const token = getState().user.token
-        dispatch(setLoadFibers({...fetchingFetch}))
+        const controller = new AbortController()
+        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.fibers.get.timeout) //set time limit for fetch
+        dispatch(setLoadFibers({...fetchingFetch, controller}))  
         try {
             const response = await fetch(APIList.fibers.get.url, {
+                signal: controller.signal,
                 method: APIList.fibers.get.method,
                 headers: {
                     'Content-type': 'application/json',
-                    Autorization: `Bearer ${token}`
+                    Autorization: `Bearer ${getState().user.token}`
                 }
             })
+            clearTimeout(fetchTimeout)
             if (response.status !== 200) {
                 const result: IErrRes = await response.json()
-                return dispatch(setLoadFibers({status: 'error', message: result.message || {...empty}, errors: result.errors || []}))
+                return dispatch(setLoadFibers(resErrorFiller(result)))
             }
             const result: {fibers: IFiber[], message: TLangText} = await response.json()
             dispatch(setDataFibers(result.fibers.map(item => { //to not get some redundant fields from item like _v 
@@ -52,9 +55,15 @@ export const loadFibers = () => {
                     colors: item.colors,
                     params: Object.entries(item.params).reduce((acc, [key, value]) => {acc[key] = Number(value); return acc}, {} as {[key: string]: number}) as IFiber["params"]// convert strings to number
                 }})))
-            dispatch(setLoadFibers({status: 'success', message: result.message || {...empty}}))
+            dispatch(setLoadFibers({...successFetch}))
         } catch (e) {
-            dispatch(setLoadFibers({status: 'error', message: {en:`Error while loading fibers: ${e}`, ru: `Ошибка при загрузке материалов: ${e}`}}))
+            fetchError({ 
+                e,
+                dispatch,
+                setter: setLoadFibers,
+                controller,
+                comp: {en: 'loading fibers', ru: 'загрузки материалов'}
+            })
         }
     }
 }
@@ -63,9 +72,9 @@ export const loadFibers = () => {
 
 export const sendFiber = (newFiber: ISendFiber) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        if (getState().fibers.send.status === 'fetching') return
-        const token = getState().user.token //get current user state
-        dispatch(setSendFibers({...fetchingFetch}))
+        const controller = new AbortController()
+        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.fibers.create.timeout) //set time limit for fetch
+        dispatch(setSendFibers({...fetchingFetch, controller}))  
 
         const sendForm = new FormData()   
         if (newFiber.files && newFiber.files.length > 0) {
@@ -77,25 +86,28 @@ export const sendFiber = (newFiber: ISendFiber) => {
         sendForm.append('data', JSON.stringify(fiberToSend))
         try { 
             const response: Response = await fetch(APIList.fibers.create.url, {
+                signal: controller.signal,
                 method: APIList.fibers.create.method,
                 headers: {
                     'enctype': "multipart/form-data",
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${getState().user.token}`
                 },
                 body: sendForm
             })
+            clearTimeout(fetchTimeout)
             if (response.status !== 201) {
                 const result: IErrRes = await response.json() //message, errors
-                return dispatch(setSendFibers({
-                    status: 'error', 
-                    message: result.message || {...empty}, 
-                    errors: result.errors as TLangText[] || []
-                }))
+                return dispatch(setSendFibers(resErrorFiller(result)))
             }
-            const result: IMsgRes = await response.json() //message, errors
-            dispatch(setSendFibers({status: 'success', message: result.message || {...empty}}))
-        } catch (e) {           
-            dispatch(setSendFibers({status: 'error', message: {en: `Error "${e}", try again later`, ru: `Ошибка "${e}", попробуйте позже`}}))
+            dispatch(setSendFibers({...successFetch}))
+        } catch (e) { 
+            fetchError({ 
+                e,
+                dispatch,
+                setter: setSendFibers,
+                controller,
+                comp: {en: 'creating fiber', ru: 'создания каталога'}
+            })          
         }
     }
 }
@@ -104,10 +116,9 @@ export const sendFiber = (newFiber: ISendFiber) => {
 
 export const editFiber = (fiber: ISendFiber, changeImages: boolean) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        if (getState().fibers.send.status === 'fetching') return
-        const token = getState().user.token //get current user state
-        dispatch(setSendFibers(fetchingFetch))
-
+        const controller = new AbortController()
+        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.fibers.update.timeout) //set time limit for fetch
+        dispatch(setSendFibers({...fetchingFetch, controller}))  
         const sendForm = new FormData()   
         const {files, ...fiberToSend} = fiber //exclude files from data
         sendForm.append('data', JSON.stringify(fiberToSend))
@@ -119,25 +130,28 @@ export const editFiber = (fiber: ISendFiber, changeImages: boolean) => {
          //post to db
         try {
             const response: Response = await fetch(APIList.fibers.update.url, {
+                signal: controller.signal,
                 method: APIList.fibers.update.method,
                 headers: {
                     "enctype": 'multipart/fomr-data',
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${getState().user.token}`
                 },
                 body: sendForm
             })
+            clearTimeout(fetchTimeout)
             if (response.status !== 201) {
                 const result: IErrRes = await response.json() //message, errors
-                return dispatch(setSendFibers({
-                    status: 'error', 
-                    message: result.message || {...empty}, 
-                    errors: result.errors || []
-                }))
+                return dispatch(setSendFibers(resErrorFiller(result)))
             }
-            const result: IMsgRes = await response.json() //message, errors
-            dispatch(setSendFibers({status: 'success', message: result.message || {...empty}}))
-        } catch (e) {           
-            dispatch(setSendFibers({status: 'error', message: {en: `Error "${e}", try again later`, ru: `Ошибка "${e}", попробуйте позже`}}))
+            dispatch(setSendFibers({...successFetch}))
+        } catch (e) { 
+            fetchError({ 
+                e,
+                dispatch,
+                setter: setSendFibers,
+                controller,
+                comp: {en: 'updating fiber', ru: 'обновления каталога'}
+            })             
         }
     }
 }
@@ -146,27 +160,33 @@ export const editFiber = (fiber: ISendFiber, changeImages: boolean) => {
 
 export const deleteFiber = (_id: string) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        if (getState().fibers.send.status === 'fetching') return
-        const token = getState().user.token //get current user state
-        dispatch(setSendFibers({...fetchingFetch}))
+        const controller = new AbortController()
+        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.fibers.delete.timeout) //set time limit for fetch
+        dispatch(setSendFibers({...fetchingFetch, controller}))  
         try {
             const response: Response = await fetch(APIList.fibers.delete.url,{
+                signal: controller.signal,
                 method: APIList.fibers.delete.method,
                 headers: {
                     "Content-Type": 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${getState().user.token}`
                 },
                 body: JSON.stringify({_id})
             })
-
+            clearTimeout(fetchTimeout)
             if (response.status !== 200) {
                 const result: IErrRes = await response.json()
-                dispatch(setSendFibers({status: 'error', message: result.message || {...empty}, errors: result.errors || []}))
+                return dispatch(setSendFibers(resErrorFiller(result)))
             }
-            const result:IMsgRes = await response.json()
-            dispatch(setSendFibers({status: 'success', message: result.message}))
+            dispatch(setSendFibers({...successFetch}))
         } catch (e) {           
-            dispatch(setSendFibers({status: 'error', message: {en: `Error "${e}", try again later`, ru: `Ошибка "${e}", попробуйте позже`}}))
+            fetchError({ 
+                e,
+                dispatch,
+                setter: setSendFibers,
+                controller,
+                comp: {en: 'deleting fiber', ru: 'удаления каталога'}
+            })     
         }
     }
 }

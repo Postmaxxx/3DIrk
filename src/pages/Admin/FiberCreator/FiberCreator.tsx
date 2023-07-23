@@ -211,7 +211,10 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
 
 
     useEffect(() => { //if edit
-        checkAndLoad(colorsState.load.status, setState.colors.loadColors)
+        checkAndLoad({
+			fetchData: colorsState.load,
+			loadFunc: setState.colors.loadColors,
+		})
         if (fibersState.load.status !== 'success' || colorsState.load.status !== 'success') return
         if (paramFiberId) {
             const sourceFiber = fibersState.fibersList.find(item => item._id === paramFiberId)

@@ -80,7 +80,10 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
 
 
     useEffect(() => {
-        checkAndLoad(colorsState.load.status, setState.colors.loadColors)
+        checkAndLoad({
+			fetchData: colorsState.load,
+			loadFunc: setState.colors.loadColors,
+		})
     }, [colorsState.load.status])
 
 

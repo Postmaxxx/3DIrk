@@ -1,5 +1,6 @@
-import { TLang } from "src/interfaces"
+import { TLang } from "../../interfaces"
 import { inputsProps } from "./consts"
+import { checkIfEmail, checkIfNumbers, checkIfPhone } from "./processors"
 
 
 type TInputs = "email" | "numbers" | "phone" | "date"
@@ -28,15 +29,15 @@ const inputChecker = ({lang="en", el, min=0, max=1000, type, exact="", notExact}
         el.parentElement.dataset.errorText = lang === 'en' ? `Doesn't match` : `Не совпадает`
         el.parentElement.classList.add('incorrect-value')
     }
-    if (type === 'numbers' && !/^[0-9]*$/.test(el.value)) {
+    if (type === 'numbers' && !checkIfPhone(el.value)) {
         el.parentElement.dataset.errorText = lang === 'en' ? `Numbers only` : `Только цифры`
         el.parentElement.classList.add('incorrect-value')
     }
-    if (type === 'phone' && !/^\+?[0-9]*$/.test(el.value)) {
+    if (type === 'phone' && !checkIfNumbers(el.value)) {
         el.parentElement.dataset.errorText = lang === 'en' ? `Numbers only` : `Только цифры`
         el.parentElement.classList.add('incorrect-value')
     }
-    if (type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value)) {
+    if (type === 'email' && !checkIfEmail(el.value)) {
         el.parentElement.dataset.errorText = lang === 'en' ? `Wrong format` : `Неверный формат`
         el.parentElement.classList.add('incorrect-value')
     }

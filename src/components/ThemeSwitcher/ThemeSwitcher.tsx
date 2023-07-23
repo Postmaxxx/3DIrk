@@ -1,12 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { connect } from "react-redux";
-import * as actions from "../../redux/actions/base";
 import { AnyAction, Dispatch, bindActionCreators } from "redux";
 import cloud from "./theme_day__cloud.svg";
 import star from "./theme_nigth__star.svg";
 import "./themeSwitcher.scss";
 import { setThemeDark, setThemeLight, setThemeToggle }  from "../../redux/actions/base"
-import { IBaseState, IFullState, TLang } from "../../interfaces";
+import { IFullState, TLang } from "../../interfaces";
 import { useScrollHider } from "../../hooks/scrollHider";
 
 const actionsList = {setThemeDark, setThemeLight, setThemeToggle}

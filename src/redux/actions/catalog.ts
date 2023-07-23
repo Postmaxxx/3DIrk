@@ -1,7 +1,7 @@
 import { IAction, ICatalogItem, ICategory, IDispatch, IErrRes, IFetch, IFullState, IMsgRes, IProduct, ISendProduct, TId } from "../../interfaces"
 import { actionsListCatalog } from './actionsList'
-import { APIList, empty, fetchingFetch, resetFetch, successFetch } from "../../assets/js/consts";
-import { resErrorFiller } from "../../assets/js/processors";
+import { APIList, DOMExceptions, empty, fetchingFetch, successFetch } from "../../assets/js/consts";
+import { fetchError, resErrorFiller } from "../../assets/js/processors";
 
 export const setLoadCatalog = <T extends IFetch>(payload: T):IAction<T> => ({
     type: actionsListCatalog.SET_LOAD_STATUS_CATEGORIES_LIST,
@@ -19,29 +19,37 @@ export const setCatalog = <T extends ICatalogItem[]>(payload: T):IAction<T> => (
 });
 
 
-export const loadCatalog = () => {
+export const loadCatalog = () => {   
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        if ( getState().catalog.catalog.load.status === 'fetching') return
-        dispatch(setLoadCatalog(resetFetch))
+        const isAdmin = getState().user.isAdmin
+        const controller = new AbortController()
+        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.catalog.get.timeout) //set time limit for fetch
+        dispatch(setLoadCatalog({...fetchingFetch, controller}))  
         try {
-            const response: Response = await fetch(APIList.catalog.get.url, {
+            const response: Response = await fetch(`${APIList.catalog.get.url}${isAdmin ? '?full=true' : ''}`, {
+                signal: controller.signal,
                 method: APIList.catalog.get.method,
                 headers: {
                     "Content-Type": 'application/json',
                 },
             })
-            
+            clearTimeout(fetchTimeout)
             if (response.status !== 200) {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setLoadCatalog(resErrorFiller(result)))
             }
             const result = await response.json() //message, errors
             dispatch(setCatalog(result.allCatalog || []))
-            dispatch(setLoadCatalog(successFetch))
-            
-            //loadCategory((data as ICatalogItem[])[0]._id)(dispatch) //load default category
+            dispatch(setLoadCatalog({...successFetch}))
+            return
         } catch (e) {
-            dispatch(setLoadCatalog({status: 'error', message: {en:`Error while loading catalog: ${e}`, ru: `Ошибка при загрузке каталога: ${e}`}}))
+            fetchError({ 
+                e,
+                dispatch,
+                setter: setLoadCatalog,
+                controller,
+                comp: {en: 'loading catalog', ru: 'загрузки каталога'}
+            })
         }
     }
 }
@@ -50,13 +58,14 @@ export const loadCatalog = () => {
 
 export const sendCatalog = (newCatalog: (Omit<ICatalogItem, "total">)[]) => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
-        if (getState().catalog.catalog.send.status === 'fetching') return
-
         const { token } = getState().user
-        dispatch(setSendCatalog(resetFetch))
-        
+
+        const controller = new AbortController()
+        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.catalog.update.timeout) //set time limit for fetch
+        dispatch(setSendCatalog({...fetchingFetch, controller}))  
         try {
             const response: Response = await fetch(APIList.catalog.update.url, {
+                signal: controller.signal,
                 method: APIList.catalog.update.method,
                 headers: {
                     "Content-Type": 'application/json',
@@ -64,28 +73,24 @@ export const sendCatalog = (newCatalog: (Omit<ICatalogItem, "total">)[]) => {
                 },
                 body: JSON.stringify({newCatalog})
             })
-            
-
+            clearTimeout(fetchTimeout)
             if (response.status !== 200) {
                 const result: IErrRes = await response.json() //message, errors
-                return dispatch(setSendCatalog({
-                        status: 'error', 
-                        message: (result as IErrRes).message || {...empty}, 
-                        errors: result.errors || []
-                    }
-                ))
+                return dispatch(setSendCatalog(resErrorFiller(result)))
             }
             const result = await response.json() //message, errors
             dispatch(setSendCatalog({status: 'success', message: result.message || {...empty}}))
         } catch (e) {
-            dispatch(setSendCatalog({status: 'error', message: {en:`Error while sending catalog: ${e}`, ru: `Ошибка при загрузке каталога: ${e}`}}))
+            fetchError({ 
+                e,
+                dispatch,
+                setter: setSendCatalog,
+                controller,
+                comp: {en: 'sending catalog', ru: 'выгрузки каталога'}
+            })
         }
     }
 }
-
-
-
-
 
 
 
@@ -98,10 +103,12 @@ export const setLoadCategory = <T extends IFetch>(payload: T):IAction<T> => ({
 });
 
 
+
 export const setCategory = <T extends Omit<ICategory, "loadCategory" | "sendProduct" | "loadProduct" | "product">>(payload: T):IAction<T> => ({
     type: actionsListCatalog.SET_DATA_CATEGORY,
     payload
 });
+
 
 interface ILoadCategory {
     _id: string,
@@ -109,26 +116,26 @@ interface ILoadCategory {
     to: number
 }
 
+
+
+
 export const loadCategory = ({_id, from, to}: ILoadCategory) => {    
     return async function(dispatch: IDispatch, getState: () => IFullState) {
-        if (getState().catalog.category.loadCategory.status === 'fetching') return
-        dispatch(setLoadCategory(fetchingFetch))
+        const controller = new AbortController()
+        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.category.getSome.timeout) //set time limit for fetch
+        dispatch(setLoadCategory({...fetchingFetch, controller}))  
         try {
             const response = await fetch(`${APIList.category.getSome.url}?_id=${_id}&from=${from}&to=${to}`, {
+                signal: controller.signal,
                 method: APIList.category.getSome.method,
                 headers: {
                     "Content-Type": 'application/json',
                 }
             })
-
+            clearTimeout(fetchTimeout)
             if (response.status !== 200) {
                 const result: IErrRes = await response.json() //message, errors
-                return dispatch(setLoadCategory({
-                        status: 'error', 
-                        message: (result as IErrRes).message || {...empty}, 
-                        errors: result.errors || []
-                    }
-                ))
+                return dispatch(setLoadCategory(resErrorFiller(result)))
             }
 
             const result: (Pick<ICategory, "_id" | "products" >) & {__v: string} = await response.json()
@@ -137,11 +144,15 @@ export const loadCategory = ({_id, from, to}: ILoadCategory) => {
                 products: result.products,
                 _id,
             }))
-            
-            dispatch(setLoadCategory(successFetch))
-            
-        } catch(err) {
-            dispatch(setLoadCategory({status: 'error', message: {en: `Error occured while loading category: ${_id}`, ru: `Произошла ошибка при загрузке категории: ${_id}`}}))
+            dispatch(setLoadCategory({...successFetch}))
+        } catch(e) {
+            fetchError({ 
+                e,
+                dispatch,
+                setter: setLoadCategory,
+                controller,
+                comp: {en: 'loading category', ru: 'загрузке категории'}
+            })
         }
 
     }
@@ -151,13 +162,7 @@ export const loadCategory = ({_id, from, to}: ILoadCategory) => {
 
 
 
-
-
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////
-
-
 
 
 export const setLoadProduct = <T extends IFetch>(payload: T):IAction<T> => ({
@@ -178,12 +183,11 @@ export const setProduct = <T extends IProduct>(payload: T):IAction<T> => ({
 
 
 
-
 export const sendProduct = (product: ISendProduct) => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
-        if (getState().catalog.category.sendProduct.status === 'fetching') return
-        const { token } = getState().user
-        dispatch(setSendProduct(fetchingFetch))
+        const controller = new AbortController()
+        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.product.create.timeout) //set time limit for fetch
+        dispatch(setSendProduct({...fetchingFetch, controller})) 
 
         const sendForm = new FormData()   
         if (product.files && product.files.length > 0) {
@@ -196,40 +200,41 @@ export const sendProduct = (product: ISendProduct) => {
         
         try {
             const response: Response = await fetch(APIList.product.create.url, {
+                signal: controller.signal,
                 method: APIList.product.create.method,
                 headers: {
                     "enctype": 'multipart/form-data',
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${getState().user}`
                 },
                 body: sendForm
             })
-            
-
+            clearTimeout(fetchTimeout)
             if (response.status !== 201) {
                 const result: IErrRes = await response.json() //message, errors
-                return dispatch(setSendProduct({
-                        status: 'error', 
-                        message: (result as IErrRes).message || {...empty}, 
-                        errors: result.errors || []
-                    }
-                ))
+                return dispatch(setSendProduct(resErrorFiller(result)))
             }
 
             const result: IMsgRes = await response.json() //message, errors
-            dispatch(setSendProduct({status: 'success', message: result.message || {...empty}}))
-
+            dispatch(setSendProduct({...successFetch}))
         } catch (e) {
-            dispatch(setSendProduct({status: 'error', message: {en: `ERROR while sending product: ${e}`, ru: `Ошибка при сохранении продукта: ${e}`}}))
+            fetchError({ 
+                e,
+                dispatch,
+                setter: setSendProduct,
+                controller,
+                comp: {en: 'sending product', ru: 'сохранении продукта'}
+            })
         }
     }
 }
 
 
+
 export const editProduct = (product: ISendProduct, changeImages: boolean) => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
-        if (getState().catalog.category.sendProduct.status === 'fetching') return
-        const { token } = getState().user
-        dispatch(setSendProduct(fetchingFetch))
+        const controller = new AbortController()
+        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.product.update.timeout) //set time limit for fetch
+        dispatch(setSendProduct({...fetchingFetch, controller})) 
 
         const sendForm = new FormData()   
         const {files, ...productToSend} = product //exclude files from data
@@ -240,106 +245,101 @@ export const editProduct = (product: ISendProduct, changeImages: boolean) => {
             })
         }
         try {
-
             const response: Response = await fetch(APIList.product.update.url, {
+                signal: controller.signal,
                 method: APIList.product.update.method,
                 headers: {
                     "enctype": 'multipart/form-data',
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${getState().user}`
                 },
                 body: sendForm
             })
-            
-
+            clearTimeout(fetchTimeout)
             if (response.status !== 200) {
                 const result: IErrRes = await response.json() //message, errors
-                return dispatch(setSendProduct({
-                        status: 'error', 
-                        message: (result as IErrRes).message || {...empty}, 
-                        errors: result.errors || []
-                    }
-                ))
+                return dispatch(setSendProduct(resErrorFiller(result)))
             }
 
             const result: IMsgRes = await response.json() //message, errors
-            dispatch(setSendProduct({status: 'success', message: result.message || {...empty}}))
-
+            dispatch(setSendProduct({...successFetch}))
         } catch (e) {
-            dispatch(setSendProduct({status: 'error', message: {en: `ERROR while updating product: ${e}`, ru: `Ошибка при обновлении продукта: ${e}`}}))
+            fetchError({ 
+                e,
+                dispatch,
+                setter: setSendProduct,
+                controller,
+                comp: {en: 'updating product', ru: 'обновлении продукта'}
+            })
         }
     }
 }
 
 
+
 export const loadProduct = (_id: string) => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
-        if (getState().catalog.category.loadProduct.status === 'fetching') return
-        dispatch(setLoadProduct(fetchingFetch))
-        
+        const controller = new AbortController()
+        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.product.get.timeout) //set time limit for fetch
+        dispatch(setLoadProduct({...fetchingFetch, controller}))
         try {
             const response: Response = await fetch(`${APIList.product.get.url}?_id=${_id}`, {
+                signal: controller.signal,
                 method: APIList.product.get.method,
                 headers: {
                     "Content-Type": 'application/json',
                 },
             })
-            
+            clearTimeout(fetchTimeout)
             if (response.status !== 200) {
                 const result: IErrRes = await response.json() //message, errors
-                return dispatch(setLoadProduct({
-                    status: 'error', 
-                    message: (result as IErrRes).message || {...empty}, 
-                    errors: result.errors || []
-                }
-                ))
+                return dispatch(setLoadProduct(resErrorFiller(result)))
             }
-            
             const result = await response.json() //message, errors
-            if (!result.product) {
-                return dispatch(setLoadProduct({status: 'error', message: {en: `ERROR while loading product, result.product undefined`, ru: `Ошибка при загрузке продукта, result.product undefined`}}))
-            }
-            
             dispatch(setProduct(result.product))
-            dispatch(setLoadProduct(successFetch))
-            
+            dispatch(setLoadProduct({...successFetch}))
         } catch (e) {
-            dispatch(setLoadProduct({status: 'error', message: {en: `ERROR while loading product: ${e}`, ru: `Ошибка при загрузке продукта: ${e}`}}))
+            fetchError({ 
+                e,
+                dispatch,
+                setter: setLoadProduct,
+                controller,
+                comp: {en: 'loading product', ru: 'загрузке продукта'}
+            })
         }
     }
 }
 
+
+
 export const deleteProduct = (_id: TId) => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
-        if (getState().catalog.category.sendProduct.status === 'fetching') return
-        const { token } = getState().user
-        dispatch(setSendProduct(fetchingFetch))
-
+        const controller = new AbortController()
+        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.product.delete.timeout) //set time limit for fetch
+        dispatch(setSendProduct({...fetchingFetch, controller}))
         try {
             const response: Response = await fetch(APIList.product.delete.url, {
+                signal: controller.signal,
                 method: APIList.product.delete.method,
                 headers: {
                     "Content-Type": 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${getState().user}`
                 },
                 body: JSON.stringify({_id})
             })
-            
-
+            clearTimeout(fetchTimeout)
             if (response.status !== 200) {
                 const result: IErrRes = await response.json() //message, errors
-                return dispatch(setSendProduct({
-                        status: 'error', 
-                        message: (result as IErrRes).message || {...empty}, 
-                        errors: result.errors || []
-                    }
-                ))
+                return dispatch(setSendProduct(resErrorFiller(result)))
             }
-
-            const result: IMsgRes = await response.json() //message, errors
-            dispatch(setSendProduct({status: 'success', message: result.message || {...empty}}))
-
+            dispatch(setSendProduct({...successFetch}))
         } catch (e) {
-            dispatch(setSendProduct({status: 'error', message: {en: `ERROR while deleting product: ${e}`, ru: `Ошибка при удалении продукта: ${e}`}}))
+            fetchError({ 
+                e,
+                dispatch,
+                setter: setSendProduct,
+                controller,
+                comp: {en: 'deleting product', ru: 'удалении продукта'}
+            })
         }
     }
 }

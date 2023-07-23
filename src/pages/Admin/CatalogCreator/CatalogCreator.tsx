@@ -87,7 +87,10 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, catalogState}): JSX.Elem
 
 
     useEffect(() => {
-        checkAndLoad(catalogState.catalog.load.status, setState.catalog.loadCatalog)
+        checkAndLoad({
+			fetchData: catalogState.catalog.load,
+			loadFunc: setState.catalog.loadCatalog,
+		})
         if (catalogState.catalog.load.status === 'success') {
             fillValues()
         }

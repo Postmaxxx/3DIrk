@@ -10,10 +10,10 @@ import RatingLine from '../../components/RatingLine/RatingLine';
 import RatingMoney from '../../components/RatingMoney/RatingMoney';
 import { fibersProperties } from '../../assets/data/fibersProperties';
 import { allActions } from "../../redux/actions/all";
-import ErrorMock from '../../components/ErrorMock/ErrorMock';
 import { strengthMax, strengthMin, tipsTransition } from '../../assets/js/consts';
 import ImgWithPreloader from '../../assets/js/ImgWithPreloader';
 import { checkAndLoad } from '../../assets/js/processors';
+import ErrorFetch from '../../components/ErrorFetch/ErrorFetch';
 
 
 interface IPropsState {
@@ -38,7 +38,10 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
     const [fibersList, setFibersList] = useState<IFiber[]>([]) //for sort fibers
 
     useEffect(() => {
-        checkAndLoad(fibersState.load.status, setState.fibers.loadFibers)
+        checkAndLoad({
+			fetchData: fibersState.load,
+			loadFunc: setState.fibers.loadFibers,
+		})
         if (fibersState.load.status === 'success') {
             setFibersList(fibersState.fibersList)
             clearSelected()
@@ -209,7 +212,7 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
                                 {renderFiberList}
                             </div>}
                         {fibersState.load.status === 'fetching' && <Preloader />}
-                        {fibersState.load.status === 'error' && <ErrorMock lang={lang} comp={{en: 'fibers', ru: 'материалов'}} />}
+                        {fibersState.load.status === 'error' && <ErrorFetch fetchData={fibersState.load} lang={lang} />}
                     </div>
                 </div>
             </div>

@@ -69,9 +69,16 @@ const Product: React.FC<IProps> = ({lang, setState, catalogState, colorsState, f
         if (colorsState.load.status === 'success' && fibersState.load.status === 'success' && catalogState.category.loadProduct.status === 'success' && paramProductId === catalogState.category.product._id) {
             setLoaded(true)
         } else {
-            checkAndLoad(colorsState.load.status, setState.colors.loadColors)
+            checkAndLoad({
+                fetchData: colorsState.load,
+                loadFunc: setState.colors.loadColors,
+            })
             if (paramProductId !== catalogState.category.product._id) {
-                checkAndLoad(catalogState.category.loadProduct.status, () => setState.catalog.loadProduct(paramProductId))
+                checkAndLoad({
+                    fetchData: catalogState.category.loadProduct,
+                    loadFunc: setState.catalog.loadCatalog,
+                    args: [paramProductId]
+                })
             } 
             setLoaded(false)
         }

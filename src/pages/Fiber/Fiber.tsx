@@ -9,7 +9,7 @@ import { allActions } from "../../redux/actions/all";
 import Modal, { IModalFunctions } from '../../components/Modal/Modal';
 import Message, { IMessageFunctions } from '../../components/Message/Message';
 import { navList, resetFetch, timeModalClosing } from '../../assets/js/consts';
-import ErrorMock from '../../components/ErrorMock/ErrorMock';
+import ErrorMock from '../../components/ErrorFetch/ErrorFetch';
 import SpliderCommon from '../../components/Spliders/Common/SpliderCommon';
 import Features from '../../components/Params/Params';
 import Proscons from '../../components/Proscons/Proscons';
@@ -18,6 +18,7 @@ import Delete from '../../components/Delete/Delete';
 import ImageModal, { IImageModalFunctions } from '../../components/ImageModal/ImageModal';
 import ImgWithPreloader from '../../assets/js/ImgWithPreloader';
 import { checkAndLoad, modalMessageCreator } from '../../assets/js/processors';
+import ErrorFetch from '../../components/ErrorFetch/ErrorFetch';
 
 interface IPropsState {
     lang: TLang,
@@ -83,7 +84,10 @@ const Fiber: FC<IProps> = ({lang, fibersState, colorsState, setState, isAdmin}):
 
 
     useEffect(() => {
-        checkAndLoad(colorsState.load.status, setState.colors.loadColors)
+        checkAndLoad({
+			fetchData: colorsState.load,
+			loadFunc:  setState.colors.loadColors,
+		})
     }, [])
     
 
@@ -153,7 +157,7 @@ const Fiber: FC<IProps> = ({lang, fibersState, colorsState, setState, isAdmin}):
                 </div>
             </div>)
         :
-            <ErrorMock lang={lang} comp={{en: 'fiber, fiber not found', ru: 'материала, данный материал не найден'}} />
+            <ErrorFetch lang={lang} fetchData={{status: 'error', message: {en: 'Fiber not found', ru: 'Данный материал не найден'}}} />
     }, [paramFiberId, lang, fibersState.load.status, colorsState.load.status, fibersState.selected, isAdmin])
 
 
@@ -165,7 +169,7 @@ const Fiber: FC<IProps> = ({lang, fibersState, colorsState, setState, isAdmin}):
                 <div className="container">
                     {fibersState.load.status === 'success' && renderFiberItem}
                     {fibersState.load.status === 'fetching' && <Preloader />}
-                    {fibersState.load.status === 'error' && <ErrorMock lang={lang} comp={{en: 'fiber', ru: 'материала'}}/>}
+                    {fibersState.load.status === 'error' && <ErrorFetch fetchData={fibersState.load} lang={lang} />}
                 </div>
             </div>
             <Modal escExit={true} ref={modalMessageRef} onClose={closeModalMessage}>

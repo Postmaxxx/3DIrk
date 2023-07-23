@@ -65,6 +65,7 @@ export const actionsListColors = {
 
 export const actionsListUser = {
     SET_USER: 'SET_USER', 
+    SET_USER_AUTH: 'SET_USER_AUTH', 
     SET_USER_MESSAGE: 'SET_USER_MESSAGE',
     SET_SEND_STATUS_ORDER: 'SET_SEND_STATUS_ORDER',
     SET_LOAD_STATUS_CART: 'SET_LOAD_STATUS_CART', 

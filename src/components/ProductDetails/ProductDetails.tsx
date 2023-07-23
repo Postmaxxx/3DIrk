@@ -88,7 +88,7 @@ const ProductDetails: React.FC<IProps> = ({lang, product, colors,productLoad, fi
 
                 <div className="feature">
                     <span>{lang === 'en' ? 'Price' : 'Цена'}: </span>
-                    <span>{product.price[lang]}</span>
+                    <span>{product.price}</span>
                 </div>
 
                 {product.mods.length > 0 &&

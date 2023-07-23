@@ -1,10 +1,18 @@
-import { IAction, ICartItem, ICartState, IDispatch, IErrRes, IFetch, IFullState, ILoggingForm, IMsgRes, IUserLoginResOk, IUserState, TLangText } from "../../interfaces";
+import { IAction, ICartItem, ICartState, IDispatch, IErrRes, IFetch, IFullState, ILoggingForm, IUserLoginResOk, IUserState } from "../../interfaces";
 import { actionsListUser } from './actionsList'
-import { APIList, empty, fetchingFetch, successFetch } from "../../assets/js/consts";
+import { APIList, DOMExceptions, fetchingFetch, successFetch } from "../../assets/js/consts";
 import moment from "moment";
+import { fetchError, resErrorFiller } from "../../../src/assets/js/processors";
+
 
 export const setUser = <T extends Partial<IUserState>>(payload: T):IAction<T> => ({
     type: actionsListUser.SET_USER,
+    payload: payload
+});
+
+
+export const setAuth = <T extends IFetch>(payload: T):IAction<T> => ({
+    type: actionsListUser.SET_USER_AUTH,
     payload: payload
 });
 
@@ -17,34 +25,35 @@ export const setSendOrder = <T extends IFetch>(payload: T):IAction<T> => ({
 
 
 export const register = ({name, email, phone, password}: ILoggingForm) => {
-    return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        const { user } = getState() //get current user state
-        if (user.auth.status === 'fetching') return  
-        dispatch(setUser({...user, auth: {...fetchingFetch}}))
+    return async function(dispatch: IDispatch, getState: () => IFullState) {
+        const controller = new AbortController()
+        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.user.register.timeout) //set time limit for fetch
+        dispatch(setAuth({...fetchingFetch, controller}))  
         const localDate = moment().format('YYYY-MM-DD')
         try {
             const response = await fetch(APIList.user.register.url, {
+                signal: controller.signal,
                 method: APIList.user.register.method,
                 headers: {
                     "Content-Type": 'application/json'
                 },
                 body: JSON.stringify({name, email, phone, password, localDate})
             })    
+            clearTimeout(fetchTimeout)
             const result: IErrRes = await response.json() //message, errors
             if (response.status !== 201) {
-                return dispatch(setUser({
-                    ...user, 
-                    auth: {
-                        status: 'error', 
-                        message: result.message || {...empty}, 
-                        errors: result.errors as TLangText[] || []
-                    }
-                }))
+                return dispatch(setAuth(resErrorFiller(result)))
             }
-            dispatch(setUser({...user, auth: successFetch}))
+            dispatch(setAuth({...successFetch}))
             await login({email, password})(dispatch, getState)
-        } catch (e) {   
-            dispatch(setUser({...user,auth: {status: 'error', message: (e as IErrRes).message || {...empty}}}))
+        } catch (e) {  
+            fetchError({ 
+                e,
+                dispatch,
+                setter: setAuth,
+                controller,
+                comp: {en: 'user register', ru: 'регстрации пользователя'}
+            }) 
         } 
     }
 }
@@ -55,38 +64,29 @@ export const register = ({name, email, phone, password}: ILoggingForm) => {
 export const login = ({email, password}: Pick<ILoggingForm, "email" | "password">) => {         
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
         const { user } = getState() //get current user state
-        if (user.auth.status === 'fetching') return             
-        dispatch(setUser({...user, auth: {...fetchingFetch}}))
+        const controller = new AbortController()
+        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.user.login.timeout) //set time limit for fetch
+        dispatch(setAuth({...fetchingFetch, controller}))          
         try {
             const response: Response = await fetch(APIList.user.login.url, {
+                    signal: controller.signal,
                     method: APIList.user.login.method,
                     headers: {
                         "Content-Type": 'application/json',
                     },
                     body: JSON.stringify({email, password})
                 })
+            clearTimeout(fetchTimeout)
             if (response.status !== 200) {
                 const result: IErrRes = await response.json() //message, errors
-                console.log(result);
-                                
-                return dispatch(setUser({
-                    ...user, 
-                    auth: {
-                        status: 'error', 
-                        message: (result as IErrRes).message || {...empty}, 
-                        errors: result.errors as TLangText[] || []
-                    }
-                }))
+                return dispatch(setAuth(resErrorFiller(result)))
             }
             const result: IUserLoginResOk = await response.json() //message, errors
             dispatch(setUser({
-                ...user, 
                 name: result.user.name,
                 email: result.user.email,
                 phone: result.user.phone,
-                //orders: result.user.orders,
                 token: result.user.token,
-                auth: {status: 'success', message: result.message},
                 isAdmin: result.user.isAdmin,
                 cart: {
                     ...user.cart,
@@ -94,9 +94,16 @@ export const login = ({email, password}: Pick<ILoggingForm, "email" | "password"
                     load: successFetch
                 }
             }))
+            dispatch(setAuth({...successFetch}))
             localStorage.setItem('user', JSON.stringify({token: result.user.token}))
-        } catch (e) {         
-            dispatch(setUser({...user, auth: {status: 'error', message: (e as IErrRes).message || {...empty}}}))
+        } catch (e) {      
+            fetchError({ 
+                e,
+                dispatch,
+                setter: setAuth,
+                controller,
+                comp: {en: 'user login', ru: 'входа пользователя'}
+            })    
         } 
     }
 }
@@ -108,7 +115,9 @@ export const login = ({email, password}: Pick<ILoggingForm, "email" | "password"
 export const loginWithToken = () => {   
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
         const { user } = getState() //get current user state        
-        if (user.auth.status === 'fetching') return  
+        const controller = new AbortController()
+        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.user.loginToken.timeout) //set time limit for fetch
+        dispatch(setAuth({...fetchingFetch, controller}))    
         const savedUser = localStorage.getItem('user')
         const currentToken: string = savedUser ? JSON.parse(savedUser).token : null
         if (!currentToken) {
@@ -117,33 +126,24 @@ export const loginWithToken = () => {
         dispatch(setUser({...user, auth: fetchingFetch}))
         try {
             const response: Response = await fetch(APIList.user.loginToken.url, {
+                    signal: controller.signal,
                     method: APIList.user.loginToken.method,
                     headers: {
                         "Content-Type": 'application/json',
                         'Authorization': `Bearer ${currentToken}`
                     },
                 })
-                
+            clearTimeout(fetchTimeout)
             if (response.status !== 200) {
                 const result: IErrRes = await response.json() //message, errors
-                return dispatch(setUser({
-                    ...user, 
-                    token: '',
-                    auth: {
-                        status: 'error', 
-                        message: (result as IErrRes).message || {...empty}, 
-                        errors: result.errors as TLangText[] || []
-                    }
-                }))
+                return dispatch(setAuth(resErrorFiller(result)))
             }
             const result: IUserLoginResOk = await response.json() //message, errors
             dispatch(setUser({
-                ...user, 
                 name: result.user.name,
                 email: result.user.email,
                 phone: result.user.phone,
                 token: result.user.token,
-                auth: {status: 'success', message: result.message},
                 isAdmin: result.user.isAdmin,
                 cart: {
                     ...user.cart,
@@ -151,9 +151,16 @@ export const loginWithToken = () => {
                     load: successFetch
                 }
             }))
+            dispatch(setAuth({...successFetch}))
             localStorage.setItem('user', JSON.stringify({token: result.user.token}))
-        } catch (e) {         
-            dispatch(setUser({...user, auth: {status: 'error', message: (e as IErrRes).message || {...empty}}}))
+        } catch (e) {  
+            fetchError({ 
+                e,
+                dispatch,
+                setter: setAuth,
+                controller,
+                comp: {en: 'user login', ru: 'входа пользователя'}
+            })           
         } 
     }
 }
@@ -172,10 +179,10 @@ export const sendOrder = ({message, files}: ISendOrder ) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
         const { user } = getState()
         const {lang} = getState().base
-        if (user.sendOrder.status === 'fetching') return
+        const controller = new AbortController()
+        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.user.createOrder.timeout) //set time limit for fetch
+        dispatch(setSendOrder({...fetchingFetch, controller}))       
         await sendCart()(dispatch, getState)
-        dispatch(setSendOrder({...fetchingFetch}))
-
         const sendForm = new FormData()       
         files.forEach(item => {
             sendForm.append('files', item, item.name)
@@ -185,6 +192,7 @@ export const sendOrder = ({message, files}: ISendOrder ) => {
         
         try {
             const response = await fetch(APIList.user.createOrder.url, {
+                signal: controller.signal,
                 method: APIList.user.createOrder.method,
                 headers: {
                     'enctype': "multipart/form-data",
@@ -192,19 +200,20 @@ export const sendOrder = ({message, files}: ISendOrder ) => {
                 },
                 body: sendForm
             })
+            clearTimeout(fetchTimeout)
             if (response.status !== 201) {
                 const result: IErrRes = await response.json() //message, errors
-                return dispatch(setSendOrder({
-                    status: 'error', 
-                    message: result.message || {...empty}, 
-                    errors: result.errors || []
-                }))
+                return dispatch(setSendOrder(resErrorFiller(result)))
             }
-
-            const result: IMsgRes = await response.json() //message, errors
-            dispatch(setSendOrder({status: 'success', message: result.message}))
-        } catch (e) {           
-            dispatch(setSendOrder({status: 'error', message: {en: `Error "${e}", try again later`, ru: `Ошибка "${e}", попробуйте позже`}}))
+            dispatch(setSendOrder({...successFetch}))
+        } catch (e) {    
+            fetchError({ 
+                e,
+                dispatch,
+                setter: setSendOrder,
+                controller,
+                comp: {en: 'creating order', ru: 'создания пользователя'}
+            })           
         }
     }
 }
@@ -214,12 +223,13 @@ interface ISendMessage {
     text: string
     files: File[]
 }
+
 export const sendMessage = ({text, files}: ISendMessage ) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        const { user } = getState()
         const {lang} = getState().base
-        if (user.sendOrder.status === 'fetching') return        
-        dispatch(setSendOrder({...fetchingFetch}))
+        const controller = new AbortController()
+        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.user.createMessage.timeout) //set time limit for fetch
+        dispatch(setSendOrder({...fetchingFetch, controller}))        
         const sendForm = new FormData()       
         files.forEach(item => {
             sendForm.append('files', item, item.name)
@@ -229,25 +239,27 @@ export const sendMessage = ({text, files}: ISendMessage ) => {
         
         try {
             const response = await fetch(APIList.user.createMessage.url, {
+                signal: controller.signal,
                 method: APIList.user.createMessage.method,
                 headers: {
                     'enctype': "multipart/form-data",
                 },
                 body: sendForm
             })
+            clearTimeout(fetchTimeout)
             if (response.status !== 200) {
                 const result: IErrRes = await response.json() //message, errors
-                return dispatch(setSendOrder({
-                    status: 'error', 
-                    message: result.message || {...empty}, 
-                    errors: result.errors || []
-                }))
+                return dispatch(setSendOrder(resErrorFiller(result)))
             }
-
-            const result: IMsgRes = await response.json() //message, errors
-            dispatch(setSendOrder({status: 'success', message: result.message}))
-        } catch (e) {           
-            dispatch(setSendOrder({status: 'error', message: {en: `Error "${e}", try again later`, ru: `Ошибка "${e}", попробуйте позже`}}))
+            dispatch(setSendOrder({...successFetch}))
+        } catch (e) {     
+            fetchError({ 
+                e,
+                dispatch,
+                setter: setSendOrder,
+                controller,
+                comp: {en: 'creating message', ru: 'создания сообщения'}
+            })         
         }
     }
 }
@@ -293,9 +305,10 @@ export const removeItem = <T extends ICartItem>(payload: T):IAction<T> => ({
 export const sendCart = () => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
         const { cart } = getState().user
-        //if (cart.send.status === 'fetching') return  
         const token = getState().user.token
-        dispatch(setSendCart(fetchingFetch))
+        const controller = new AbortController()
+        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.user.updateCart.timeout) //set time limit for fetch
+        dispatch(setSendCart({...fetchingFetch, controller}))       
         
         const cartToSend = cart.items.map(item => ({
            amount: item.amount,
@@ -306,6 +319,7 @@ export const sendCart = () => {
         }))
         try {
             const response: Response = await fetch(APIList.user.updateCart.url, {
+                signal: controller.signal,
                 method: APIList.user.updateCart.method,
                 headers: {
                     "Content-Type": 'application/json',
@@ -313,20 +327,21 @@ export const sendCart = () => {
                 },
                 body: JSON.stringify({newCart: cartToSend})
             })
-
+            clearTimeout(fetchTimeout)
             if (response.status !== 200) {
                 const result: IErrRes = await response.json() //message, errors
-                return dispatch(setSendCart({
-                    status: 'error', 
-                    message: result.message || {...empty}, 
-                    errors: result.errors || []
-                }))
+                return dispatch(setSendCart(resErrorFiller(result)))
             }
-            const result: IMsgRes = await response.json() //message, errors
             dispatch(setCart({shouldUpdate: false}))
-            dispatch(setSendCart({status: 'success', message: result.message}))
-        } catch (e) {           
-            dispatch(setSendCart({status: 'error', message: {en: `Error "${e}", try again later`, ru: `Ошибка "${e}", попробуйте позже`}}))
+            dispatch(setSendCart({...successFetch}))
+        } catch (e) {   
+            fetchError({ 
+                e,
+                dispatch,
+                setter: setSendCart,
+                controller,
+                comp: {en: 'updating cart', ru: 'обновления корзины'}
+            })            
         }
     }
 }

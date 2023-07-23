@@ -7,10 +7,10 @@ const initialNews = {
     send: resetFetch,
     newsOne: {
         _id: '',
-        header: empty,
+        header: {...empty},
         date: new Date,
-        short: empty,
-        text: empty,
+        short: {...empty},
+        text: {...empty},
         images: {
             paths: {
                 full: '',

@@ -1,4 +1,4 @@
-import { IAction, ICartItem, ICartState, IUserState } from "../../interfaces"
+import { IAction, ICartItem, ICartState, IFetch, IUserState } from "../../interfaces"
 import initialUserState from '../initialStates/user'
 import { actionsListUser } from '../actions/actionsList'
 
@@ -12,6 +12,13 @@ const reducerUser = (state:IUserState = initialUserState, action: IAction<any>):
             })
             return newUser
 
+        case actionsListUser.SET_USER_AUTH: 
+        const newAuth: IFetch = action.payload
+            const newUserAuth: IUserState = {
+                ...state,
+                auth: newAuth
+            }
+            return newUserAuth
 
         case actionsListUser.SET_SEND_STATUS_ORDER: 
             return {

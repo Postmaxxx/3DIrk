@@ -55,8 +55,16 @@ const Orders = ({lang, colorsState, fibersState, ordersState, userState, setStat
     useEffect(() => { //initial load data
         if (userState.auth.status !== 'success') return //!!!
 
-        checkAndLoad(colorsState.load.status, setState.colors.loadColors)
-        checkAndLoad(ordersState.userList.load.status, setState.orders.loadUsers)
+        checkAndLoad({
+			fetchData: colorsState.load,
+			loadFunc: setState.colors.loadColors,
+			force: false
+		})
+        checkAndLoad({
+			fetchData: ordersState.userList.load,
+			loadFunc: setState.orders.loadUsers,
+			force: false
+		})
 
         if (colorsState.load.status === 'success' && fibersState.load.status === 'success') {
             setLoaded(true)
@@ -83,7 +91,13 @@ const Orders = ({lang, colorsState, fibersState, ordersState, userState, setStat
         const dateTimeFrom = moment(dateFrom).add(timeOffset, 'hours').toISOString();
         const dateTimeTo = moment(dateTo).add(timeOffset, 'hours').toISOString();
         
-        setState.orders.loadOrders({userId: _user.current.value, status: _status.current.value, from: dateTimeFrom, to: dateTimeTo})
+
+        checkAndLoad({
+			fetchData: ordersState.load,
+			loadFunc: setState.orders.loadOrders,
+            args: [{userId: _user.current.value, status: _status.current.value, from: dateTimeFrom, to: dateTimeTo}],
+            force: true
+		})
     }
 
 
@@ -220,7 +234,7 @@ const Orders = ({lang, colorsState, fibersState, ordersState, userState, setStat
                                     <input type="date" id='date-to' ref={_dateTo}/>
                                 </label>
                             </div>
-                            <button className='button_blue' onClick={loadOrders} disabled={ordersState.load.status === 'fetching'}>Load Orders</button>
+                            <button className='button_blue' onClick={loadOrders}>Load Orders</button>
                         </div>
                         <div className="orders__container">
                             {ordersState.users.length > 0 && ordersState.load.status ==='success' ? 

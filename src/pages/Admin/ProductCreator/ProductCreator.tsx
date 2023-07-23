@@ -12,7 +12,7 @@ import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFi
 import Preloader from '../../../components/Preloaders/Preloader';
 import { useNavigate, useParams } from 'react-router-dom';
 import { inputsProps, navList, productEmpty, resetFetch, timeModalClosing } from '../../../assets/js/consts';
-import { checkAndLoad, deepCopy, errorsChecker, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
+import { checkAndLoad, checkIfNumbers, deepCopy, errorsChecker, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import Picker, { IPickerFunctions } from '../../../components/Picker/Picker';
 import Featurer, { IFeaturerFunctions } from '../../../components/Featurer/Featurer';
 import Selector, { ISelectorFunctions } from '../../../components/Selector/Selector';
@@ -53,7 +53,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
     const focuserDescr = useMemo(() => focusMover(), [lang])
     const focuserMods = useMemo(() => focusMover(), [lang])
     const _form = useRef<HTMLFormElement>(null)
-
+    const _price = useRef<HTMLInputElement>(null)
 
     const closeModal = useCallback(() => {
         modalRef.current?.closeModal()
@@ -192,7 +192,10 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
 
 
     useEffect(() => { 
-        checkAndLoad(catalogState.catalog.load.status, setState.catalog.loadCatalog)
+        checkAndLoad({
+            fetchData: catalogState.catalog.load,
+            loadFunc: setState.catalog.loadCatalog,
+        })
         if (fibersState.load.status !== 'success' || fibersState.load.status !== 'success') return //loadFibers in App
         paramProductId ? setState.catalog.loadProduct(paramProductId) : setProduct({...productEmpty})
     }, [catalogState.catalog.load.status, fibersState.load.status, paramProductId])
@@ -215,8 +218,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
     const onChangeInputs = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         e.target.id === "name_en" && setProduct({...product, name: {...product.name, en: e.target.value}})
         e.target.id === "name_ru" && setProduct({...product, name: {...product.name, ru: e.target.value}})
-        e.target.id === "price_en" && setProduct({...product, price: {...product.price, en: e.target.value}})
-        e.target.id === "price_ru" && setProduct({...product, price: {...product.price, ru: e.target.value}})
+        e.target.id === "price" && checkIfNumbers(e.target.value) && setProduct({...product, price: Number(e.target.value)}) //save as string, but check it while submiting
         e.target.id === "text_en" && setProduct({...product, text: {...product.text, en: e.target.value}})
         e.target.id === "text_ru" && setProduct({...product, text: {...product.text, ru: e.target.value}})
         e.target.id === "text_short_en" && setProduct({...product, text_short: {...product.text_short, en: e.target.value}})
@@ -284,26 +286,17 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
                                 </div>
                             </div>
                             <div className="input-block">
-                                <label htmlFor="price_en">{lang === 'en' ? 'Price' : 'Цена'}:</label>
+                                <label htmlFor="price">{lang === 'en' ? 'Price' : 'Цена'}:</label>
                                 <div className="input__wrapper" data-selector="input-block">
                                     <input 
+                                        ref={_price}
                                         type="text" 
                                         data-selector="input"
-                                        id="price_en" 
+                                        id="price" 
                                         onKeyDown={(e) => focuserDescr.next(e)}
                                         onChange={onChangeInputs} 
-                                        value={product.price.en} 
-                                        onBlur={(e) => inputChecker({lang, min:inputsProps.product.price.min, max:inputsProps.product.price.max, el: e.target})}/>
-                                </div>
-                                <div className="input__wrapper" data-selector="input-block">
-                                    <input 
-                                        type="text" 
-                                        data-selector="input"
-                                        id="price_ru"
-                                        onKeyDown={(e) => focuserDescr.next(e)}
-                                        onChange={onChangeInputs} 
-                                        value={product.price.ru} 
-                                        onBlur={(e) => inputChecker({lang, min:inputsProps.product.price.min, max:inputsProps.product.price.max, el: e.target})}/>
+                                        value={product.price} 
+                                        onBlur={(e) => inputChecker({lang, type: 'numbers', el: e.target})}/>
                                 </div>
                             </div>
                             <div className="input-block">

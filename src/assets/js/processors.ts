@@ -1,5 +1,6 @@
-import { IErrRes, IFetch, TFetchStatus, TLang, TLangText } from "../../interfaces";
-import { empty, gapBetweenRequests, headerStatus, selector } from "./consts";
+import { Dispatch } from "redux";
+import { IAction, IDispatch, IErrRes, IFetch, TFetchStatus, TLang, TLangText } from "../../interfaces";
+import { DOMExceptions, empty, exceptionTimeout, gapBetweenRequests, headerStatus, selector } from "./consts";
 
 //---------------------------------------------------------------
 
@@ -81,13 +82,42 @@ const filenameChanger = (filename: string) => {
 }
 
 
+export interface ICheckAndLoad {
+    fetchData: IFetch
+    loadFunc: (...arg: any) => void
+    args?: any[]
+    force?: boolean
+}
 
-const checkAndLoad = (checkValue: IFetch["status"], loadFunc: () => void) => {
-    if (checkValue === 'idle') {
-        loadFunc()
+
+const checkAndLoad = async ({fetchData, loadFunc, args=[], force=false}: ICheckAndLoad) => {
+    if (force) {
+        await fetchData.controller && fetchData.controller?.abort(DOMExceptions.byFetch) //cancel current fetch if it continues 
+        loadFunc.apply(undefined, args || []) //create new fetch
+    } else { //fetch data only once or refetch in case of any error with delay
+        if (fetchData.status === 'idle') {
+            loadFunc.apply(undefined, args || [])
+        }
+        if (fetchData.status === 'error') { // create a delay before trying new request       
+            setTimeout(() => {loadFunc.apply(undefined, args || [])}, gapBetweenRequests)
+        }
     }
-    if (checkValue === 'error') {            
-        setTimeout(() => {loadFunc()}, gapBetweenRequests)
+}
+
+interface IFetchError {
+    dispatch: IDispatch
+    setter: <T extends IFetch>(payload: T) => IAction<T>
+    comp: TLangText
+    e: any
+    controller: AbortController
+}
+
+const fetchError = ({dispatch, setter, comp, e, controller}: IFetchError) => {
+    if (e.name !== 'AbortError') {
+        return dispatch(setter({status: 'error', message: {en:`Error ${comp.en}: ${e}`, ru: `Ошибка ${comp.ru}: ${e}`}}))
+    }
+    if (e.name === 'AbortError' && controller.signal.reason.name === exceptionTimeout.name) {
+        return dispatch(setter({status: 'error', message: {en:`Error ${comp.en}: server response timeout`, ru: `Ошибка ${comp.ru}: таймаут ответа от сервера`}}))
     }
 }
 
@@ -172,4 +202,19 @@ const resErrorFiller = (result: IErrRes) => {
     }
 }
 
-export { ratingNumberToText, errorsChecker, prevent, filenameChanger, checkAndLoad, modalMessageCreator, focusMover, deepCopy, resErrorFiller}
+
+const checkIfNumbers = (value: string) => {
+    return /^[0-9]*$/.test(value)
+}
+
+const checkIfEmail = (value: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+}
+
+const checkIfPhone = (value: string) => {
+    return /^\+?[0-9]*$/.test(value)
+}
+
+
+export { ratingNumberToText, errorsChecker, prevent, filenameChanger, checkAndLoad, modalMessageCreator, 
+    focusMover, deepCopy, resErrorFiller, checkIfNumbers, checkIfEmail, checkIfPhone, fetchError}

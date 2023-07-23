@@ -2,7 +2,7 @@ import { IFetch, IFiberParam, IMessageModal, ISendColor, ISendFiber, ISendProduc
 
 const timeModalClosing: number = 500 //transition of closing modal window
 
-const gapBetweenRequests: number = 2000 //time between requests in case of error
+const gapBetweenRequests: number = 3000 //time between requests in case of error
 
 const strengthMin:number = 1 //fiber strength min
 const strengthMax:number = 180 //fiber strength max
@@ -29,146 +29,176 @@ const APIList = { //all routes to BE
     catalog: {
         get: { //load all catalog
             url: `${process.env.REACT_BACK_URL}/api/catalog/list`,
-            method: "GET"
+            method: "GET",
+            timeout: 10000
         },
         update: { //send updated catalog
             url: `${process.env.REACT_BACK_URL}/api/catalog/list`,
-            method: "PUT"
+            method: "PUT",
+            timeout: 10000
         },
     },
     category: {
         getSome: { //get some products from one category (short format), ?_id=${CategoryId}&from=${NumberFrom}&to=${NumberTo}
             url: `${process.env.REACT_BACK_URL}/api/catalog/category`,
-            method: "GET"
+            method: "GET",
+            timeout: 15000
         }
     },
     product: {
         create: { //create product
             url: `${process.env.REACT_BACK_URL}/api/catalog/product`,
-            method: "POST"
+            method: "POST",
+            timeout: 30000
         },
         update: { //update existed product
             url: `${process.env.REACT_BACK_URL}/api/catalog/product`,
-            method: "PUT"
+            method: "PUT",
+            timeout: 30000
         },
         get: { //get one product
             url: `${process.env.REACT_BACK_URL}/api/catalog/product`,
-            method: "GET"
+            method: "GET",
+            timeout: 10000
         },
         delete: { //delete one product
             url: `${process.env.REACT_BACK_URL}/api/catalog/product`,
-            method: "DELETE"
+            method: "DELETE",
+            timeout: 10000
         }
     },
     news: {
         getSome: { //get some news, +?from=${FromIdex}&amount=${AmountOfNews}
             url: `${process.env.REACT_BACK_URL}/api/news/get-some`,
-            method: "GET"
+            method: "GET",
+            timeout: 10000
         },
         getOne: { //get some news, +?from=${FromIdex}&amount=${AmountOfNews}
             url: `${process.env.REACT_BACK_URL}/api/news/get-one`,
-            method: "GET"
+            method: "GET",
+            timeout: 10000
         },
         create: { //create newsItem
             url: `${process.env.REACT_BACK_URL}/api/news/create`,
-            method: "POST"
+            method: "POST",
+            timeout: 60000
         },
         update: { //update newsItem
             url: `${process.env.REACT_BACK_URL}/api/news/edit`,
-            method: "PUT"
+            method: "PUT",
+            timeout: 60000
         },
         delete: { //update newsItem
             url: `${process.env.REACT_BACK_URL}/api/news/delete`,
-            method: "DELETE"
+            method: "DELETE",
+            timeout: 30000
         },
     },
     colors: {
         get: { //load all colors
             url: `${process.env.REACT_BACK_URL}/api/colors/load-all`,
-            method: "GET"
+            method: "GET",
+            timeout: 10000
         },
         create: { //create newsItem
             url: `${process.env.REACT_BACK_URL}/api/colors/create`,
-            method: "POST"
-
+            method: "POST",
+            timeout: 10000
         },
         update: { //update newsItem
             url: `${process.env.REACT_BACK_URL}/api/colors/edit`,
-            method: "PUT"
+            method: "PUT",
+            timeout: 10000
         },
         delete: { //delete newsItem
             url: `${process.env.REACT_BACK_URL}/api/colors/delete`,
-            method: "DELETE"
+            method: "DELETE",
+            timeout: 10000
         }
     },
     content: {
         carouselMax: {
             update: { //update carousel
                 url: `${process.env.REACT_BACK_URL}/api/content/splider`,
-                method: 'PUT'
+                method: 'PUT',
+                timeout: 30000
             },
             get: { //load carousel
                 url: `${process.env.REACT_BACK_URL}/api/content/splider`,
-                method: 'GET'
+                method: 'GET',
+                timeout: 10000
             }
         }
     },
     fibers: {
         get: { //load all fibers
             url: `${process.env.REACT_BACK_URL}/api/fibers/all`,
-            method: 'GET'
+            method: 'GET',
+            timeout: 10000
         },
         create: { //create fiber
             url: `${process.env.REACT_BACK_URL}/api/fibers/create`,
-            method: 'POST'
+            method: 'POST',
+            timeout: 30000
         },
         update: { //update fiber
             url: `${process.env.REACT_BACK_URL}/api/fibers/edit`,
-            method: 'PUT'
+            method: 'PUT',
+            timeout: 30000
         },
         delete: { //delete fiber
             url: `${process.env.REACT_BACK_URL}/api/fibers/delete`,
-            method: 'DELETE'
+            method: 'DELETE',
+            timeout: 30000
         },
     },
     orders: {
         getSome: { //load orders, ?from=${FromDate}&to=${ToDate}&userId=${UserId}&status=${OrderStatus}`
             url: `${process.env.REACT_BACK_URL}/api/user/orders`,
-            method: 'GET'
+            method: 'GET',
+            timeout: 60000
         },
         editStatus: { // edit order status
             url: `${process.env.REACT_BACK_URL}/api/user/orders`,
-            method: 'PATCH'
+            method: 'PATCH',
+            timeout: 10000
         },
         getUsers: { //load all customers
             url: `${process.env.REACT_BACK_URL}/api/user/users`,
-            method: 'GET'
+            method: 'GET',
+            timeout: 10000
         }
     },
     user: {
         register: { //register new user
             url: `${process.env.REACT_BACK_URL}/api/user/register`,
-            method: 'POST'
+            method: 'POST',
+            timeout: 10000
         }, 
         login: { //login user using email + password
             url: `${process.env.REACT_BACK_URL}/api/user/login`,
-            method: 'POST'
+            method: 'POST',
+            timeout: 10000
         },
         loginToken: {//login user using token
             url: `${process.env.REACT_BACK_URL}/api/user/login-token`,
-            method: 'POST'
+            method: 'POST',
+            timeout: 10000
         },
         createOrder: { //create new order
             url: `${process.env.REACT_BACK_URL}/api/user/orders`,
-            method: 'POST'
+            method: 'POST',
+            timeout: 10000
         },
         createMessage: {// create new message
             url: `${process.env.REACT_BACK_URL}/api/user/message`,
-            method: 'POST'
+            method: 'POST',
+            timeout: 10000
         },
         updateCart: { // update cart content on BE
             url: `${process.env.REACT_BACK_URL}/api/user/cart`,
-            method: 'PUT'
+            method: 'PUT',
+            timeout: 10000
         }
     }
 
@@ -478,7 +508,7 @@ const productEmpty: ISendProduct = {
     _id: '',
     name: {...empty},
     text: {...empty},
-    price: {...empty},
+    price: 0,
     text_short:{...empty},
     fibers: [],
     mods: [],
@@ -487,9 +517,9 @@ const productEmpty: ISendProduct = {
 }
 
 const newsItemEmpty = {
-    header: empty,
-    text: empty,
-    short: empty,
+    header: {...empty},
+    text: {...empty},
+    short: {...empty},
     _id: '',
     files: [],
     date: new Date(),
@@ -613,9 +643,32 @@ const navList = {
     }
 };
 
+
+
+const exceptionTimeout = {
+    message: `Request response time exceeded, aborted`,
+    name: 'TimeoutError'
+}
+
+const exceptionFetch = {
+    message: 'Fetch aborted by new fetch',
+    name: 'ForceAbort'
+}
+
+const exceptionUser = {
+    message: 'Fetch aborted by user',
+    name: 'ForceAbort'
+}
+
+const DOMExceptions = {
+    byTimeout: new DOMException(exceptionTimeout.message, exceptionTimeout.name),
+    byFetch: new DOMException(exceptionFetch.message, exceptionFetch.name),
+    byUser: new DOMException(exceptionUser.message, exceptionUser.name)
+}
+
 export { clearModalMessage, resetFetch, timeModalClosing, 
     fetchingFetch, errorFetch, successFetch, headerStatus, empty, selector, strengthMin, 
     strengthMax, fiberEmpty, productEmpty, colorEmpty, gapBetweenRequests,
     orderStatus, usersPerPage, timeOffset, inputsProps, tipsTransition, socials,
     navList, newsItemEmpty, APIList, imageExtentions, maxAmountToOrder, loadNewsPerRequest,
-}
+    exceptionTimeout, exceptionFetch, DOMExceptions}

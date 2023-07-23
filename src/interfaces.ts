@@ -27,8 +27,8 @@ export interface IFetch {
     status: TFetchStatus
     message: TLangText //for handling messages from BE
     errors?: TLangText[] ////for handling errors-list from BE
+    controller?: AbortController //controller of current fetch 
 }
-
 export interface IMessageModal {
     header: string
     status: string
@@ -180,7 +180,7 @@ export interface ISendProduct extends Omit<IProduct, 'images'> { //for sending t
 
 export interface IProduct {
     _id: TId
-    price: TLangText
+    price: number
     name: TLangText
     text: TLangText
     text_short: TLangText
@@ -470,4 +470,6 @@ export interface IContentState { //for other app content
 
 
 export type TImageSizes = 'thumb' | 'small' | 'medium' | 'full' | 'spliderMain' | 'preview' //all supported types of images.
+
+
 

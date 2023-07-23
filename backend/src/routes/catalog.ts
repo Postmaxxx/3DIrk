@@ -19,11 +19,12 @@ const isAdmin = require('../middleware/isAdmin')
 router.get('/list', async (req, res) => { 
     try {
         const err = await cache.catalog.control.load()
+        const { full } = req.query;
         if (err) {
             return res.status(500).json(err)
-        }  
-        const catalogToSend = cache.catalog.data.filter(item => item.total > 0)
-        res.status(200).json({allCatalog: catalogToSend, message: {en: 'Catalog has been loaded', ru: 'Каталог был загружены'}})
+        } 
+        const catalogToSend = full ? cache.catalog.data : cache.catalog.data.filter(item => item.total > 0)
+        res.status(200).json({allCatalog: catalogToSend, full, message: {en: 'Catalog has been loaded', ru: 'Каталог был загружены'}})
     } catch (error) {
         res.status(500).json({message: {en: 'Error reading catalog from db', ru: 'Ошибка при чтении каталога из БД'}})
     }

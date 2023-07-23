@@ -79,7 +79,10 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
 
 
     useEffect(() => {
-        checkAndLoad(colorsState.load.status, setState.colors.loadColors)
+        checkAndLoad({
+			fetchData: colorsState.load,
+			loadFunc: setState.colors.loadColors,
+		})
     }, [colorsState.load.status])
 
 

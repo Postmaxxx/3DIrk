@@ -8,9 +8,9 @@ import Preloader from '../../components/Preloaders/Preloader';
 import { NavLink } from 'react-router-dom';
 import FiberPreview from '../../components/FiberPreview/FiberPreview';
 import { allActions } from "../../redux/actions/all";
-import ErrorMock from '../../components/ErrorMock/ErrorMock';
 import { checkAndLoad } from '../../assets/js/processors';
 import { navList } from '../../../src/assets/js/consts';
+import FetchError from '../../components/ErrorFetch/ErrorFetch';
 
 
 interface IPropsState {
@@ -29,7 +29,10 @@ interface IProps extends IPropsState, IPropsActions {}
 const Fibers:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Element => { 
     
     useEffect(() => {
-        checkAndLoad(fibersState.load.status, setState.fibers.loadFibers)
+        checkAndLoad({
+			fetchData: fibersState.load,
+			loadFunc: setState.fibers.loadFibers,
+		})
     }, [fibersState.load.status])
 
 
@@ -76,7 +79,7 @@ const Fibers:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Element => {
                         </div>}
                         {fibersState.load.status === 'fetching' && <Preloader />}
                         {fibersState.load.status === 'success' && listOfFibers}
-                        {fibersState.load.status === 'error' && <ErrorMock lang={lang} comp={{en: 'fibers', ru: 'материалов'}} />}
+                        {fibersState.load.status === 'error' && <FetchError fetchData={fibersState.load} lang={lang} />}
                 </div>
             </div>
         </div>

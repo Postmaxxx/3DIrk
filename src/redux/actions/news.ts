@@ -1,6 +1,7 @@
-import { IAction, IDispatch, IErrRes, IFetch, IFullState, IMsgRes, INewsItem, INewsItemShort,  ISendNewsItem } from "../../interfaces"
+import { IAction, IDispatch, IErrRes, IFetch, IFullState, INewsItem, INewsItemShort,  ISendNewsItem } from "../../interfaces"
 import { actionsListNews } from './actionsList'
-import { APIList, empty, fetchingFetch, successFetch } from "../../assets/js/consts";
+import { APIList, DOMExceptions, fetchingFetch, successFetch } from "../../assets/js/consts";
+import { fetchError, resErrorFiller } from "../../../src/assets/js/processors";
 
 
 
@@ -40,21 +41,23 @@ export const setTotalNews = <T extends number>(payload: T):IAction<T> => ({
 
 export const loadSomeNews = (from: number, amount: number) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        if (getState().news.load.status === 'fetching') return
+        const controller = new AbortController()
+        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.news.getSome.timeout) //set time limit for fetch
+        dispatch(setLoadNews({...fetchingFetch, controller}))  
         const news = getState().news
-        dispatch(setLoadNews(fetchingFetch))
         try {
             const response: Response = await fetch(`${APIList.news.getSome.url}?from=${from}&amount=${amount}`, {
+                signal: controller.signal,
                 method: APIList.news.getSome.method,
                 headers: {
                     "Content-Type": 'application/json',
                 },
             })
+            clearTimeout(fetchTimeout)
             if (response.status !== 200) {
                 const result: IErrRes = await response.json() //message, errors
-                return dispatch(setLoadNews({status: 'error', message: (result as IErrRes).message || {...empty}, errors: result.errors || []}))
+                return dispatch(setLoadNews(resErrorFiller(result)))
             }
-            
             const result: {news: INewsItem[], total: number} = await response.json()
             dispatch(setDataNews([...news.newsList, ...result.news.map(item => {
                 return {                    
@@ -68,9 +71,15 @@ export const loadSomeNews = (from: number, amount: number) => {
             })]))
             
             dispatch(setTotalNews(result.total))
-            dispatch(setLoadNews(successFetch))
+            dispatch(setLoadNews({...successFetch}))
         } catch (e) {
-            dispatch(setLoadNews({status: 'error', message: {en: `Error occured while loading news: ${e}`, ru: `Ошибка в процессе загрузки новостей: ${e}`}}))
+            fetchError({ 
+                e,
+                dispatch,
+                setter: setLoadNews,
+                controller,
+                comp: {en: 'loading news', ru: 'загрузки новостей'}
+            })
         }
     }
 }
@@ -81,10 +90,12 @@ export const loadSomeNews = (from: number, amount: number) => {
 
 export const loadOneNews = (_id: string) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        if (getState().news.loadOne.status === 'fetching') return
-        dispatch(setLoadOneNews(fetchingFetch))
+        const controller = new AbortController()
+        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.news.getOne.timeout) //set time limit for fetch
+        dispatch(setLoadOneNews({...fetchingFetch, controller}))  
         try {
             const response: Response = await fetch(`${APIList.news.getOne.url}?_id=${_id}`, {
+                signal: controller.signal,
                 method: APIList.news.getOne.method,
                 headers: {
                     "Content-Type": 'application/json',
@@ -92,27 +103,36 @@ export const loadOneNews = (_id: string) => {
             })
             if (response.status !== 200) {
                 const result: IErrRes = await response.json()
-                return dispatch(setLoadOneNews({status: 'error', message: (result as IErrRes).message  || {...empty}, errors: result.errors || []}))
+                return dispatch(setLoadOneNews(resErrorFiller(result)))
             }
+            clearTimeout(fetchTimeout)
             const result = await response.json()
             dispatch(setDataOneNews({
                     ...result.news,
                     date: new Date(result.news.date) //changing format, check !!!
                 }
             ))
-            dispatch(setLoadOneNews(successFetch))
+            dispatch(setLoadOneNews({...successFetch}))
         } catch (e) {
-            dispatch(setLoadOneNews({status: 'error', message: {en: `Error occured while loading this news: ${e}`, ru: `Ошибка в процессе загрузки новости: ${e}`}}))
+            fetchError({ 
+                e,
+                dispatch,
+                setter: setLoadOneNews,
+                controller,
+                comp: {en: 'loading this news', ru: 'загрузки этой новости'}
+            })
         }
     }
 }
 
 
 
+
 export const sendNews = (newsItem: ISendNewsItem) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        if (getState().news.send.status === 'fetching') return
-        const token = getState().user.token
+        const controller = new AbortController()
+        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.news.create.timeout) //set time limit for fetch
+        dispatch(setLoadOneNews({...fetchingFetch, controller})) 
         dispatch(setSendNews(fetchingFetch))
 
         const sendForm = new FormData()   
@@ -125,26 +145,28 @@ export const sendNews = (newsItem: ISendNewsItem) => {
         }
         try {
             const response: Response = await fetch(APIList.news.create.url, {
+                signal: controller.signal,
                 method: APIList.news.create.method,
                 headers: {
                     'enctype': "multipart/form-data",
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${getState().user.token}`
                 },
                 body: sendForm
             })
-
+            clearTimeout(fetchTimeout)
             if (response.status !== 201) {
                 const result: IErrRes = await response.json() //message, errors
-                return dispatch(setSendNews({
-                    status: 'error', 
-                    message: result.message || {...empty}, 
-                    errors: result.errors || []
-                }))
+                return dispatch(setSendNews(resErrorFiller(result)))
             }
-            const result: IMsgRes = await response.json() //message, errors
-            dispatch(setSendNews({status: 'success', message: result.message || {...empty}}))
-        } catch (e) {           
-            dispatch(setSendNews({status: 'error', message: {en: `Error "${e}", try again later`, ru: `Ошибка "${e}", попробуйте позже`}}))
+            dispatch(setSendNews({...successFetch}))
+        } catch (e) {  
+            fetchError({ 
+                e,
+                dispatch,
+                setter: setSendNews,
+                controller,
+                comp: {en: 'creating news', ru: 'создания новости'}
+            })         
         }
     }
 }
@@ -155,10 +177,10 @@ export const sendNews = (newsItem: ISendNewsItem) => {
 
 export const updateNews = (newsItem: ISendNewsItem, changeImages: boolean) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        if (getState().news.send.status === 'fetching') return
+        const controller = new AbortController()
+        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.news.update.timeout) //set time limit for fetch
+        dispatch(setSendNews({...fetchingFetch, controller})) 
         const token = getState().user.token //get current user state
-        dispatch(setSendNews(fetchingFetch))
-
         const sendForm = new FormData()   
         const {files, ...newsToSend} = newsItem //exclude files from data
         sendForm.append('data', JSON.stringify(newsToSend))
@@ -169,6 +191,7 @@ export const updateNews = (newsItem: ISendNewsItem, changeImages: boolean) => {
         }
         try {
             const response: Response = await fetch(APIList.news.update.url, {
+                signal: controller.signal,
                 method: APIList.news.update.method,
                 headers: {
                     'enctype': "multipart/form-data",
@@ -176,18 +199,20 @@ export const updateNews = (newsItem: ISendNewsItem, changeImages: boolean) => {
                 },
                 body: sendForm
             })
+            clearTimeout(fetchTimeout)
             if (response.status !== 200) {
                 const result: IErrRes = await response.json() //message, errors
-                return dispatch(setSendNews({
-                    status: 'error', 
-                    message: result.message || {...empty}, 
-                    errors: result.errors || []
-                }))
+                return dispatch(setSendNews(resErrorFiller(result)))
             }
-            const result: IMsgRes = await response.json() //message, errors
-            dispatch(setSendNews({status: 'success', message: result.message || {...empty}}))
-        } catch (e) {           
-            dispatch(setSendNews({status: 'error', message: {en: `Error "${e}", try again later`, ru: `Ошибка "${e}", попробуйте позже`}}))
+            dispatch(setSendNews({...successFetch}))
+        } catch (e) {   
+            fetchError({ 
+                e,
+                dispatch,
+                setter: setSendNews,
+                controller,
+                comp: {en: 'updating news', ru: 'редактирования новости'}
+            })          
         }
     }
 }
@@ -199,31 +224,33 @@ export const updateNews = (newsItem: ISendNewsItem, changeImages: boolean) => {
 
 export const deleteNews = (_id: string) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        if (getState().news.send.status === 'fetching') return
-        const token = getState().user.token //get current user state
-        dispatch(setSendNews(fetchingFetch))
+        const controller = new AbortController()
+        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.news.delete.timeout) //set time limit for fetch
+        dispatch(setSendNews({...fetchingFetch, controller})) 
         try {
             const response: Response = await fetch(APIList.news.delete.url, {
+                signal: controller.signal,
                 method: APIList.news.delete.method,
                 headers: {
                     "Content-Type": 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${getState().user.token}`
                 },
                 body: JSON.stringify({_id})
             })
-
+            clearTimeout(fetchTimeout)
             if (response.status !== 200) {
                 const result: IErrRes = await response.json() //message, errors
-                return dispatch(setSendNews({
-                    status: 'error', 
-                    message: result.message || {...empty}, 
-                    errors: result.errors || []
-                }))
+                return dispatch(setSendNews(resErrorFiller(result)))
             }
-            const result: IMsgRes = await response.json()
-            dispatch(setSendNews({status: 'success', message: result.message || {...empty}}))
-        } catch (e) {           
-            dispatch(setSendNews({status: 'error', message: {en: `Error "${e}", try again later`, ru: `Ошибка "${e}", попробуйте позже`}, errors: []}))
+            dispatch(setSendNews({...successFetch}))
+        } catch (e) {  
+            fetchError({ 
+                e,
+                dispatch,
+                setter: setSendNews,
+                controller,
+                comp: {en: 'deleting news', ru: 'удаления новости'}
+            })            
         }
     }
 }

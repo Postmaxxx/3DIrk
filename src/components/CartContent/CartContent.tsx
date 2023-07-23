@@ -13,7 +13,7 @@ import Modal, { IModalFunctions } from "../Modal/Modal";
 import { IImageModalFunctions } from "../ImageModal/ImageModal";
 import { allActions } from "../../redux/actions/all";
 import ImageModal from "../ImageModal/ImageModal";
-import ErrorMock from "../ErrorMock/ErrorMock";
+import ErrorMock from "../ErrorFetch/ErrorFetch";
 
 interface IPropsState {
     lang: TLang,
@@ -136,7 +136,7 @@ const CartContent: React.FC<IProps> = ({lang, cart, colorsState, fibersState, se
             }
             
             {cart.load.status === 'fetching' && <PreloaderW />}
-            {cart.load.status === 'error' && <ErrorMock lang={lang} comp={{en: 'cart', ru: 'корзины'}}/>}
+            {cart.load.status === 'error' && <ErrorMock lang={lang} fetchData={cart.load}/>}
 
             <Modal escExit={true} ref={modalImageRef} onClose={closeModalImage}>
                 <ImageModal ref={imageModalRef} />

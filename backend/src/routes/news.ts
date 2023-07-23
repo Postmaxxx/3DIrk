@@ -93,8 +93,6 @@ router.put('/edit',
 
 
 
-
-
 router.get('/get-amount', async (req, res) => {
     try {
         const err = await cache.news.control.load()

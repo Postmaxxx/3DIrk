@@ -15,10 +15,10 @@ const initialCatalog = {
         products: [],
         product: {
             _id: '',
-            price: empty,
-            name: empty,
-            text: empty,
-            text_short: empty,
+            price: 0,
+            name: {...empty},
+            text: {...empty},
+            text_short: {...empty},
             images: {
                 paths: {
                     full: '',

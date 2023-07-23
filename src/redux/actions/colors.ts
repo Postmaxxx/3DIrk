@@ -1,6 +1,7 @@
 import { IAction, IDispatch, IColor, IFetch, IFullState, IErrRes, TLangText, IMsgRes, ISendColor, } from "../../interfaces"
 import { actionsListColors } from './actionsList'
-import { APIList, empty, fetchingFetch } from "../../assets/js/consts";
+import { APIList, DOMExceptions, errorFetch, fetchingFetch, successFetch } from "../../assets/js/consts";
+import { fetchError, resErrorFiller } from "../../../src/assets/js/processors";
 
 
 export const setLoadColors = <T extends IFetch>(payload: T):IAction<T> => ({
@@ -38,22 +39,21 @@ interface IImages {
 
 export const loadColors = () => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        if (getState().colors.load.status === 'fetching') return
-        dispatch(setLoadColors(fetchingFetch))
+        const controller = new AbortController()
+        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.colors.get.timeout) //set time limit for fetch
+        dispatch(setLoadColors({...fetchingFetch, controller}))  
         try {
             const response: Response = await fetch(APIList.colors.get.url, {
+                signal: controller.signal,
                 method: APIList.colors.get.method,
                 headers: {
                     "Content-Type": 'application/json',
                 }
             })
+            clearTimeout(fetchTimeout)
             if (response.status !== 200) {
                 const result: IErrRes = await response.json()
-                dispatch(setLoadColors({
-                    status: 'error', 
-                    message: result.message || {...empty}, 
-                    errors: result.errors || []
-                }))
+                return dispatch(setLoadColors(resErrorFiller(result)))
             }
             const result: {colors: IImages[], message: TLangText} = await response.json()
             const resultProcessed = result.colors.map((item) => {
@@ -67,20 +67,27 @@ export const loadColors = () => {
                 }
             })
             dispatch(setColors(resultProcessed))
-            dispatch(setLoadColors({status: 'success', message: result.message || {...empty}}))
+            dispatch(setLoadColors({...successFetch}))
         } catch (e) {
-            dispatch(setLoadColors({status: 'error', message: {en:`Error while loading colors: ${e}`, ru: `Ошибка при загрузке цветов: ${e}`}}))
+            fetchError({ 
+                e,
+                dispatch,
+                setter: setLoadColors,
+                controller,
+                comp: {en: 'loading colors', ru: 'загрузки цветов'}
+            })
         }
     }
 }
 
 
 
+
 export const sendColor = (color: ISendColor) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        if (getState().colors.send.status === 'fetching') return
-        const token = getState().user.token
-        dispatch(setSendColors(fetchingFetch))
+        const controller = new AbortController()
+        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.colors.create.timeout) //set time limit for fetch
+        dispatch(setSendColors({...fetchingFetch, controller}))  
         const sendForm = new FormData()   
         const colorFiles = [color.files.full, color.files.thumb]
         colorFiles.forEach(item => {
@@ -89,26 +96,29 @@ export const sendColor = (color: ISendColor) => {
         sendForm.append('data', JSON.stringify({name: color.name}))
         try {
             const response: Response = await fetch(APIList.colors.create.url, {
+                signal: controller.signal,
                 method: APIList.colors.create.method,
                 headers: {
                     'enctype': "multipart/form-data",
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${getState().user.token}`
                 },
                 body: sendForm
             })
+            clearTimeout(fetchTimeout)
             if (response.status !== 201) {
                 const result: IErrRes = await response.json() //message, errors
-                return dispatch(setSendColors({
-                        status: 'error', 
-                        message: (result as IErrRes).message || {...empty}, 
-                        errors: result.errors || []
-                    }
-                ))
+                return dispatch(setSendColors(resErrorFiller(result)))
             }
             const result: IMsgRes = await response.json() //message, errors
-            dispatch(setSendColors({status: 'success', message: result.message || {...empty}}))
+            dispatch(setSendColors({...errorFetch}))
         } catch (e) {
-            dispatch(setSendColors({status: 'error', message: {en:`Error while saving color to db: ${e}`, ru: `Ошибка при сохранении цвета в бд: ${e}`}}))
+            fetchError({ 
+                e,
+                dispatch,
+                setter: setSendColors,
+                controller,
+                comp: {en: 'loading saving color to db', ru: 'сохранения цвета в бд'}
+            })
         }
     }
 }
@@ -117,9 +127,9 @@ export const sendColor = (color: ISendColor) => {
 
 export const editColor = (color: ISendColor, changeImages: boolean) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        if (getState().colors.send.status === 'fetching') return
-        const token = getState().user.token
-        dispatch(setSendColors(fetchingFetch))
+        const controller = new AbortController()
+        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.colors.update.timeout) //set time limit for fetch
+        dispatch(setSendColors({...fetchingFetch, controller}))  
         const sendForm = new FormData()   
         sendForm.append('data', JSON.stringify({name: color.name, _id: color._id}))
         if (changeImages) {
@@ -130,26 +140,28 @@ export const editColor = (color: ISendColor, changeImages: boolean) => {
         }
         try {
             const response: Response = await fetch(APIList.colors.update.url, {
+                signal: controller.signal,
                 method: APIList.colors.update.method,
                 headers: {
                     "enctype": 'multipart/form-data',
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${getState().user.token}`
                 },
                 body: sendForm
             })
+            clearTimeout(fetchTimeout)
             if (response.status !== 200) {
                 const result: IErrRes = await response.json() //message, errors
-                return dispatch(setSendColors({
-                        status: 'error', 
-                        message: (result as IErrRes).message || {...empty}, 
-                        errors: result.errors || []
-                    }
-                ))
+                return dispatch(setSendColors(resErrorFiller(result)))
             }
-            const result: IMsgRes = await response.json() //message, errors
-            dispatch(setSendColors({status: 'success', message: result.message || {...empty}}))
+            dispatch(setSendColors({...successFetch}))
         } catch (e) {
-            dispatch(setSendColors({status: 'error', message: {en:`Error while saving color to db: ${e}`, ru: `Ошибка при сохранении цвета в бд: ${e}`}}))
+            fetchError({ 
+                e,
+                dispatch,
+                setter: setSendColors,
+                controller,
+                comp: {en: 'loading saving color to db', ru: 'сохранения цвета в бд'}
+            })
         }
     }
 }
@@ -159,12 +171,14 @@ export const editColor = (color: ISendColor, changeImages: boolean) => {
 
 export const deleteColor = (_id: string) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        if (getState().colors.send.status === 'fetching') return
-        const token = getState().user.token
-        dispatch(setSendColors(fetchingFetch))       
+        const controller = new AbortController()
+        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.colors.delete.timeout) //set time limit for fetch
+        dispatch(setSendColors({...fetchingFetch, controller}))  
+        const token = getState().user.token 
         // to db
         try {
             const response: Response = await fetch(APIList.colors.delete.url, {
+                signal: controller.signal,
                 method: APIList.colors.delete.method,
                 headers: {
                     "Content-Type": 'application/json',
@@ -174,17 +188,17 @@ export const deleteColor = (_id: string) => {
             })
             if (response.status !== 200) {
                 const result: IErrRes = await response.json() //message, errors
-                return dispatch(setSendColors({
-                        status: 'error', 
-                        message: (result as IErrRes).message || {...empty}, 
-                        errors: result.errors || []
-                    }
-                ))
+                return dispatch(setSendColors(resErrorFiller(result)))
             }
-            const result: IMsgRes = await response.json() //message, errors
-            dispatch(setSendColors({status: 'success', message: result.message || {...empty}}))
+            dispatch(setSendColors({...successFetch}))
         } catch (e) {
-            dispatch(setSendColors({status: 'error', message: {en:`Error while deleting color from db: ${e}`, ru: `Ошибка при удалении цвета из бд: ${e}`}}))
+            fetchError({ 
+                e,
+                dispatch,
+                setter: setSendColors,
+                controller,
+                comp: {en: 'deleting color from db', ru: 'удаления цвета из бд'}
+            })
         }
     }
 }
