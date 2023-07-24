@@ -441,6 +441,8 @@ export interface IErrRes { //type for response with not 2XX status
     message: TLangText
 }
 
+
+
 export interface IMsgRes {  //type for response with message
     message: TLangText
 }

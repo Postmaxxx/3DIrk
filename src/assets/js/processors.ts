@@ -172,7 +172,7 @@ const focusMover = () => {
     }
 
 
-    const create = ({container='#root', itemsSelector='[data-selector="input"]'}: {container: string | HTMLElement, itemsSelector?: string}) => {
+    const create = ({container='#root', itemsSelector='[data-selector="input"]'}: {container: string | HTMLElement | HTMLFormElement, itemsSelector?: string}) => {
         if (typeof container === 'string') {
             focusableElements.splice(0, focusableElements.length, ...(document.querySelector(container)?.querySelectorAll(itemsSelector) || []) as HTMLElement[])
         }

@@ -57,10 +57,10 @@ router.put('/edit',
     fileSaver, 
     async (req, res) => {
         try {
-            const { header, date, short, text, _id } = JSON.parse(req.body.data)
-            const files = req.files as IMulterFile[] || undefined          
+            const files = req.files
+            const { header, date, short, text, _id, changeImages } = JSON.parse(req.body.data)
             
-            if (!files) { //if images was not sent save old images
+            if (!changeImages) { //if images was not sent save old images
                 await News.findOneAndUpdate({_id}, { header, date, short, text})
                 cache.news.obsolete = true
                 return res.status(200).json({message: {en: 'News changed', ru: 'Новость отредактирована'}})

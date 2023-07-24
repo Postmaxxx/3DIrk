@@ -1,4 +1,4 @@
-import { IAction, IContentState, IDispatch, IErrRes, IFetch, IFullState, } from "../../interfaces"
+import { IAction, IContentState, IDispatch, IErrRes, IFetch, IFullState, IMsgRes, } from "../../interfaces"
 import { actionsListContent } from './actionsList'
 import { APIList, DOMExceptions, fetchingFetch, successFetch } from "../../assets/js/consts";
 import { fetchError, resErrorFiller } from "../../../src/assets/js/processors";
@@ -50,7 +50,8 @@ export const sendSplider = (files: File[]) => {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setSendContent(resErrorFiller(result)))
             }
-            dispatch(setSendContent({...successFetch}))
+            const result: IMsgRes = await response.json() //message
+            dispatch(setSendContent({...successFetch, message: result.message}))
         } catch (e) {
             fetchError({ 
                 e,

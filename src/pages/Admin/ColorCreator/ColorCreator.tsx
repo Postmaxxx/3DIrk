@@ -30,7 +30,7 @@ interface IProps extends IPropsState, IPropsActions {}
 const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element => {
     const paramColorId = useParams().colorId || ''
     const navigate = useNavigate()
-    const _form = useRef<HTMLFormElement>(null)
+    const _formColor = useRef<HTMLFormElement>(null)
     const addFileBigRef = useRef<IAddFilesFunctions>(null)
     const addFileSmallRef = useRef<IAddFilesFunctions>(null)
     const modalRef = useRef<IModalFunctions>(null)
@@ -38,7 +38,6 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
     const [color, setColor] = useState<ISendColor>({...colorEmpty})
     const [submit, setSubmit] = useState<boolean>(false)
     const [changeImages, setChangeImages] = useState<boolean>(true)
-    const processedContainer = '[data-selector="form-color"]'
 
     const errChecker = useMemo(() => errorsChecker({lang}), [lang])
     const focuser = useMemo(() => focusMover(), [lang])
@@ -105,9 +104,9 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
     const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
         errChecker.clear()
         prevent(e)
-        if (!_form.current) return
+        if (!_formColor.current) return
         focuser.focusAll(); //run over all elements to get all errors
-        const errorFields = document.querySelector(processedContainer)?.querySelectorAll('.incorrect-value')
+        const errorFields = _formColor.current.querySelectorAll('.incorrect-value')
         if (errorFields && errorFields?.length > 0) {
             errChecker.add(lang === 'en' ? 'Some fields are filled incorrectly' : 'Некоторые поля заполнены неправильно')
         }       
@@ -174,7 +173,8 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
 
 
     useEffect(() => {       
-        focuser.create({container: processedContainer})
+        if (!_formColor.current) return
+        focuser.create({container: _formColor.current})
     }, [lang])
 
 
@@ -187,7 +187,7 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
                 <h1>{lang === 'en' ? 'Edit color' : 'Изменение цвета'}</h1>
                 :
                 <h1>{lang === 'en' ? 'Add new color' : 'Добавление нового цвета'}</h1>}
-                    <form ref={_form} data-selector='form-color'>
+                    <form ref={_formColor}>
                         <div className="input-block_header">
                             <span></span>
                             <h3 className='lang'>EN</h3>

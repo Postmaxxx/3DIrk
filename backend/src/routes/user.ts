@@ -4,7 +4,7 @@ import { ICartItem } from "../models/Cart"
 import { TLang, TLangText } from "../interfaces"
 import { IOrder, OrderType } from "../models/Orders"
 import { allPaths, orderStatus, sendNotificationsInTG, timeZoneDelta } from "../data/consts"
-import { foldersCleaner, foldersCreator } from "../processors/fsTools"
+import { foldersCleaner } from "../processors/fsTools"
 import { filesUploaderS3 } from "../processors/aws"
 const moment = require('moment');
 const { Router } = require("express")
@@ -26,32 +26,55 @@ const isAdmin = require('../middleware/isAdmin')
 
 
 
-const cartToFront = async (cart: IUser["cart"]) => {
+const cartToFront = async (cart: ICartItem[]) => {
     if (cart.length === 0 || !cart) {
-        return []
+        return {filteredCart: [], edited: false}
     }
-    const err = await cache.products.control.load()
-    if (err) {
-        throw new Error('Errors while loading products', {cause: err})
+    const errProducts = await cache.products.control.load()
+    if (errProducts) {
+        throw new Error('Errors while loading products', {cause: errProducts})
     }  
-    
-    return cart.map((item) => {
-        const fullProduct = cache.products.data.find(product => product._id.toString() === item.productId.toString())
-        
-        return fullProduct ? 
-            {
-                amount: item.amount,
-                fiber: item.fiberId.toString(),
-                color: item.colorId.toString(),
-                type: item.type,
-                product: fullProduct
-            }
-        :
-            null
-    }).filter(item => item.product) || [] //not null, all products with invalid id will be ignored
+    const errFibers = await cache.fibers.control.load()
+    if (errFibers) {
+        throw new Error('Errors while loading fibers', {cause: errFibers})
+    }
+    const errColors = await cache.colors.control.load()
+    if (errColors) {
+        throw new Error('Errors while loading colors', {cause: errColors})
+    }
+    let edited = false
 
+
+    const filteredCart = cart.map(checkItem => {
+        const product = cache.products.data.find(product => product._id.toString() === checkItem.productId.toString()) //does this product exist
+        if (!product) {
+            edited = true
+            return null
+        }
+        const fiberId = product.fibers.find(fiber => fiber.toString() === checkItem.fiberId.toString())// does this fiber exist for this product
+        if (!fiberId) {
+            edited = true
+            return null
+        }
+        const fiber = cache.fibers.data.find(el => el._id.toString() === fiberId.toString())
+        const colorId = fiber?.colors?.find(colorItem => colorItem.toString() === checkItem.colorId.toString())// does this color exist for this product fiber
+        if (!colorId) {
+            edited = true
+            return null
+        }
+        return {
+            amount: checkItem.amount,
+            fiber: checkItem.fiberId.toString(),
+            color: checkItem.colorId.toString(),
+            type: checkItem.type,
+            product
+        }
+    }).filter(item => item) || [] //not null, all products with invalid data will be ignored
+    
+    return {filteredCart, edited}
 }
  
+
 
 
 interface IOrderToTg {
@@ -61,10 +84,11 @@ interface IOrderToTg {
     dir: string
     files: IMulterFile[]
     res: Response
+    cart: ICartItem[]
 }
 
 
-const orderToTg = async ({lang, user, message, files, dir}: IOrderToTg) => {
+const orderToTg = async ({lang, user, message, files, dir, cart}: IOrderToTg) => {
     const urlMessage= `https://api.telegram.org/bot${process.env.tgToken}/sendMessage`;
     const urlDocument= `https://api.telegram.org/bot${process.env.tgToken}/sendDocument`;
     const textOrder: string = `
@@ -74,15 +98,14 @@ const orderToTg = async ({lang, user, message, files, dir}: IOrderToTg) => {
     ${lang === 'en' ? 'Email' : 'Почта'}: ${user.email}
     ${lang === 'en' ? 'Phone' : 'Телефон'}: ${user.phone}
     ${lang === 'en' ? 'Message' : 'Сообщение'}: ${message}`;
-    
-    
-    
-    const cartToTg = await cartToFront(user.cart)
-    const textCart = cartToTg.reduce((text: string, item: typeof cartToTg[number], i: number) => {
-        return text + `${i+1}) ${item.product.name[lang]}
+
+
+    const textCart = cart.reduce((text: string, item, i: number) => {
+        const fullProduct = cache.products.data.find(product => product._id.toString() === item.productId.toString())
+        return text + `${i+1}) ${fullProduct.name[lang]}
     ${lang === 'en' ? 'Options' : 'Версия'}: ${item.type[lang]} 
-    ${lang === 'en' ? 'Fiber' : 'Материал'}: ${cache.fibers.data.find(fiberItem => fiberItem._id.toString() === item.fiber)?.short.name[lang]}
-    ${lang === 'en' ? 'Color' : 'Цвет'}: ${cache.colors.data.find(color => color._id.toString() === item.color)?.name[lang]}
+    ${lang === 'en' ? 'Fiber' : 'Материал'}: ${cache.fibers.data.find(fiberItem => fiberItem._id.toString() === item.fiberId)?.short.name[lang]}
+    ${lang === 'en' ? 'Color' : 'Цвет'}: ${cache.colors.data.find(color => color._id.toString() === item.colorId)?.name[lang]}
     ${lang === 'en' ? 'Amount' : 'Количество'}: ${item.amount}\n\n`
     }, '')
     
@@ -177,7 +200,7 @@ const messageToTg = async ({message, files, dir}: IMessageToTg) => {
  
 
 
-//api/outh/register
+//api/auth/register
 router.post('/register', 
     [
         check('email', {en: 'Wrong email', ru: 'Неправильная почта'}).isEmail(),
@@ -253,23 +276,21 @@ router.post('/login',
                 { expiresIn: "1h"}
             )
                 
+            const cartToFE = await cartToFront(user.cart)
             const userToFront = {
                 name: user.name,
                 email: user.email,
                 phone: user.phone,
-                cart: await cartToFront(user.cart),
+                cart: cartToFE.filteredCart,
                 token,
                 isAdmin: false
             }
-            
 
             if (user.email === process.env.admEmail) {
                 userToFront.isAdmin = true
             }
             
-            
-            res.status(200).json({user: userToFront, message: {en: 'Login success', ru: 'Успешный вход'}})
-
+            res.status(200).json({user: userToFront})
         } catch (error) {
             res.status(500).json({ message:{en: `Something wrong with server (${error}), try again later`, ru: `Ошибка на сервере (${error}), попробуйте позже`}})
         }
@@ -295,13 +316,12 @@ router.post('/login-token',
                 { expiresIn: "1h"}
             )
            
-
+            const cartToFE = await cartToFront(user.cart)
             const userToFront = {
                 name: user.name,
                 email: user.email,
                 phone: user.phone,
-                cart: await cartToFront(user.cart),
-                //orders: user.orders,
+                cart: cartToFE.filteredCart,
                 token: newToken, //auto token prolong
                 isAdmin: false
             }
@@ -379,7 +399,7 @@ ${message}`
 )
 
 
-router.post('/orders', 
+router.post('/order', 
     [authMW],
     fileSaver,
     async (req, res) => {
@@ -395,6 +415,20 @@ router.post('/orders',
             await cache.products.control.load()
          
             const user: IUser = await User.findOne({ _id: userId})
+
+
+            //check are any non-exist properties in cart
+            const checkResult = await cartToFront(user.cart)
+            if (checkResult.edited) {
+                return res.status(409).json({ 
+                    message:{
+                        en: `Errors in your order, some products or features are unavailable now and was removed from your cart `,
+                        ru: `Ошибки в вашем заказе, некоторые позиции больше недоступны и были удалены из вашей корзины`
+                    },
+                    checkedCart: checkResult.filteredCart
+                })
+            }
+
             
             //send data to DB 
             const cartToSave: ICartItem[] = (user.cart as ICartItem[]).map(item => ({//convert string ids to ObjectIDs
@@ -449,7 +483,7 @@ router.post('/orders',
             
             //send data to TG
             if (sendNotificationsInTG) {
-                await orderToTg({lang, user, message, files, dir: allPaths.pathToTemp, res})
+                await orderToTg({lang, user, message, files, dir: allPaths.pathToTemp, res, cart: user.cart})
             } 
 
             await User.findOneAndUpdate( {_id: user._id}, {cart: []}) //clear user's cart if order successfully created
@@ -611,6 +645,60 @@ router.get('/users',
     }
 )
 
+
+
+
+
+
+interface ICheckItem {
+    productId: string
+    colorId: string
+    fiberId: string
+}
+
+router.post('/cart', //check does products exis
+    [authMW],
+    async(req, res) => { 
+        try {
+            const checkList: ICheckItem[] = JSON.parse(req.body.data).checkList
+            const errFibers = await cache.fibers.control.load()
+            if (errFibers) {
+                return res.status(500).json(errFibers)
+            }
+            const errColors = await cache.colors.control.load()
+            if (errColors) {
+                return res.status(500).json(errColors)
+            }   
+            const errProducts = await cache.products.control.load()
+            if (errProducts) {
+                return res.status(500).json(errProducts)
+            } 
+            const missedList = [] //list of items should be removed from user cart
+            checkList.forEach(checkItem => {
+                const product = cache.products.data.find(product => product._id === checkItem.productId) //does this product exist
+                if (!product) {
+                    missedList.push(checkItem)
+                    return
+                }
+                const fiberId = product.fibers.find(fiber => fiber === checkItem.fiberId)// does this fiber exist for this product
+                if (!fiberId) {
+                    missedList.push(checkItem)
+                    return
+                }
+                const fiber = cache.fibers.data.find(el => el._id === fiberId)
+                const colorId = fiber.colors.find(colorItem => colorItem === checkItem.colorId)// does this color exist for this product fiber
+                if (!colorId) {
+                    missedList.push(checkItem)
+                    return
+                }
+            })
+            console.log('missedList = ', missedList);
+            return res.status(200).json({missedList})    
+        } catch (error) {
+            res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})
+        }
+    }
+)
 
 
 

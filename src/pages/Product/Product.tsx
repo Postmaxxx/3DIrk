@@ -76,7 +76,7 @@ const Product: React.FC<IProps> = ({lang, setState, catalogState, colorsState, f
             if (paramProductId !== catalogState.category.product._id) {
                 checkAndLoad({
                     fetchData: catalogState.category.loadProduct,
-                    loadFunc: setState.catalog.loadCatalog,
+                    loadFunc: setState.catalog.loadProduct,
                     args: [paramProductId]
                 })
             } 

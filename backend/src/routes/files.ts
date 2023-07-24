@@ -3,7 +3,6 @@ import { filenameChanger } from "../processors/filenameChanger";
 import { IMulterFile } from "./user";
 
 const multer = require('multer');
-const sharp = require('sharp')
 
 
 const storageUser = multer.diskStorage({
@@ -16,7 +15,9 @@ const storageUser = multer.diskStorage({
 	}
 }); 
 
-const fileSaver = multer({ storage: storageUser }).array('files');
+const fileSaver = multer({ 
+	storage: storageUser,
+}).array('files');
 
 
 

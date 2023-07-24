@@ -43,6 +43,7 @@ const LazySpliderChanger = lazy(() => import("./pages/Admin/ContentCreator/conte
 interface IPropsState {
     lang: TLang
 	isAdmin: boolean
+	isAuth: boolean
 }
 
 interface IPropsActions {
@@ -58,7 +59,7 @@ interface IProps extends IPropsState, IPropsActions {}
 
 const MemoFooter = memo(Footer)
 
-const App:React.FC<IProps> = ({lang, isAdmin, setState}):JSX.Element => {
+const App:React.FC<IProps> = ({lang, isAdmin, isAuth, setState}):JSX.Element => {
 	
 	useEffect(() => {
 		setState.user.loginWithToken()
@@ -83,8 +84,8 @@ const App:React.FC<IProps> = ({lang, isAdmin, setState}):JSX.Element => {
 					<Route path=":fiberId" element={<Suspense fallback={<Preloader />}><LazyFiberPage /></Suspense>} />
 				</Route>
 				
-				<Route path="/order" element={<Suspense fallback={<Preloader />}><LazyOrderPage /></Suspense>} />
-				<Route path="/orders" element={<Suspense fallback={<Preloader />}><LazyOrdersPage /></Suspense>} />
+				<Route path="/order" element={<Suspense fallback={<Preloader />}>{isAuth ? <LazyOrderPage /> : <Unauthorized lang={lang} />}</Suspense>} />
+				<Route path="/orders" element={<Suspense fallback={<Preloader />}>{isAuth ? <LazyOrdersPage /> : <Unauthorized lang={lang} />}</Suspense>} />
 				<Route path="/contact_us" element={<Suspense fallback={<Preloader />}><LazyContactUs /></Suspense>} />
 
 				<Route path="/catalog">
@@ -120,6 +121,7 @@ const App:React.FC<IProps> = ({lang, isAdmin, setState}):JSX.Element => {
 const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
 	isAdmin: state.user.isAdmin,
+	isAuth: state.user.auth.status === 'success'
 })
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>):IPropsActions => ({

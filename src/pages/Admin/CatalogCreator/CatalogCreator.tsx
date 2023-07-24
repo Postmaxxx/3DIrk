@@ -35,7 +35,6 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, catalogState}): JSX.Elem
     const errChecker = useMemo(() => errorsChecker({lang}), [lang])
     const featurerRef = useRef<IFeaturerFunctions>(null)
     const _catalog = useRef<HTMLDivElement>(null)
-    const processedContainer = '[data-selector="catalog-features"]'
     const focuser = useMemo(() => focusMover(), [lang])
     
     const closeModal = useCallback(() => {
@@ -67,7 +66,7 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, catalogState}): JSX.Elem
         prevent(e)
         if (!featurerRef.current || !_catalog.current) return
         focuser.focusAll();//run over all elements to get all errors
-        const errorFields = document.querySelector(processedContainer)?.querySelectorAll('.incorrect-value')
+        const errorFields = _catalog.current.querySelectorAll('.incorrect-value')
         if (errorFields && errorFields?.length > 0) {
             errChecker.add(lang === 'en' ? 'Empty inputs exists' : 'Есть незаполненная поля')
         }
@@ -104,8 +103,9 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, catalogState}): JSX.Elem
 
 
     const onChangeFeaturesAmount = () => {  //select all inputs if new feature was added/ old one was removed  
-        focuser.create({container: processedContainer})
-        const allInputs = document.querySelector(processedContainer)?.querySelectorAll('[data-selector="input"]')
+        if (!_catalog.current) return
+        focuser.create({container: _catalog.current})
+        const allInputs = _catalog.current.querySelectorAll('[data-selector="input"]')
         allInputs?.forEach(input => {
             (input as HTMLInputElement | HTMLTextAreaElement).onblur = (e) => inputChecker({lang, min:inputsProps.category.min, max:inputsProps.category.max, el: e.target as HTMLInputElement});
         })
@@ -125,7 +125,7 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, catalogState}): JSX.Elem
                     <form>
 
                         <h2 className='section-header full-width'>{lang === 'en' ? 'CATEGORIES' : 'КАТЕГОРИИ'}</h2>           
-                        <div className="catalog" ref={_catalog} data-selector="catalog-features">
+                        <div className="catalog" ref={_catalog}>
                             <Featurer 
                                 lang={lang} 
                                 ref={featurerRef} 

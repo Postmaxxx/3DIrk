@@ -1,4 +1,4 @@
-import { IAction, ICartItem, ICartState, IDispatch, IErrRes, IFetch, IFullState, ILoggingForm, IUserLoginResOk, IUserState } from "../../interfaces";
+import { IAction, ICartItem, ICartState, IDispatch, IErrRes, IFetch, IFullState, ILoggingForm, IMsgRes, IProduct, IUserLoginResOk, IUserState } from "../../interfaces";
 import { actionsListUser } from './actionsList'
 import { APIList, DOMExceptions, fetchingFetch, successFetch } from "../../assets/js/consts";
 import moment from "moment";
@@ -121,7 +121,7 @@ export const loginWithToken = () => {
         const savedUser = localStorage.getItem('user')
         const currentToken: string = savedUser ? JSON.parse(savedUser).token : null
         if (!currentToken) {
-            return //dispatch(setUser({...user, auth: {status: 'error', message: {en: 'Token not found', ru: 'Токен не найден'}, errors: []}}))
+            return 
         }
         dispatch(setUser({...user, auth: fetchingFetch}))
         try {
@@ -189,7 +189,6 @@ export const sendOrder = ({message, files}: ISendOrder ) => {
         })
         sendForm.append('lang', lang)
         sendForm.append('message', message)
-        
         try {
             const response = await fetch(APIList.user.createOrder.url, {
                 signal: controller.signal,
@@ -202,10 +201,21 @@ export const sendOrder = ({message, files}: ISendOrder ) => {
             })
             clearTimeout(fetchTimeout)
             if (response.status !== 201) {
-                const result: IErrRes = await response.json() //message, errors
+                const result: IErrRes & {checkedCart: ICartItem[]}= await response.json() //message, errors
+                if (response.status === 409) { //update cart with the new 
+                    dispatch(setUser({
+                        cart: {
+                            ...user.cart,
+                            items: result.checkedCart,
+                            load: successFetch
+                        }
+                    }))
+                }
+
                 return dispatch(setSendOrder(resErrorFiller(result)))
             }
-            dispatch(setSendOrder({...successFetch}))
+            const result: IMsgRes = await response.json() //message
+            dispatch(setSendOrder({...successFetch, message: result.message}))
         } catch (e) {    
             fetchError({ 
                 e,
@@ -236,7 +246,6 @@ export const sendMessage = ({text, files}: ISendMessage ) => {
         })
         sendForm.append('lang', lang)
         sendForm.append('message', text)
-        
         try {
             const response = await fetch(APIList.user.createMessage.url, {
                 signal: controller.signal,
@@ -251,7 +260,8 @@ export const sendMessage = ({text, files}: ISendMessage ) => {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setSendOrder(resErrorFiller(result)))
             }
-            dispatch(setSendOrder({...successFetch}))
+            const result: IMsgRes = await response.json() //message
+            dispatch(setSendOrder({...successFetch, message: result.message}))
         } catch (e) {     
             fetchError({ 
                 e,
@@ -305,7 +315,6 @@ export const removeItem = <T extends ICartItem>(payload: T):IAction<T> => ({
 export const sendCart = () => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
         const { cart } = getState().user
-        const token = getState().user.token
         const controller = new AbortController()
         const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.user.updateCart.timeout) //set time limit for fetch
         dispatch(setSendCart({...fetchingFetch, controller}))       
@@ -323,7 +332,7 @@ export const sendCart = () => {
                 method: APIList.user.updateCart.method,
                 headers: {
                     "Content-Type": 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${getState().user.token}`
                 },
                 body: JSON.stringify({newCart: cartToSend})
             })
@@ -333,7 +342,8 @@ export const sendCart = () => {
                 return dispatch(setSendCart(resErrorFiller(result)))
             }
             dispatch(setCart({shouldUpdate: false}))
-            dispatch(setSendCart({...successFetch}))
+            const result: IMsgRes = await response.json() //message
+            dispatch(setSendCart({...successFetch, message: result.message}))
         } catch (e) {   
             fetchError({ 
                 e,
@@ -345,3 +355,57 @@ export const sendCart = () => {
         }
     }
 }
+
+
+
+interface ICheckItem {
+    productId: string
+    colorId: string
+    fiberId: string
+}
+/*
+export const checkCart = () => {
+    return async function(dispatch: IDispatch, getState: () => IFullState) {
+        const { cart } = getState().user
+        const checkList:ICheckItem[] = cart.items.map(item => ({
+            productId: item.product._id,
+            colorId: item.color,
+            fiberId: item.fiber
+        })) || []
+        const controller = new AbortController()
+        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.user.checkCart.timeout) //set time limit for fetch
+        dispatch(setSendCart({...fetchingFetch, controller}))         
+        try {
+            const response: Response = await fetch(APIList.user.updateCart.url, {
+                signal: controller.signal,
+                method: APIList.user.checkCart.method,
+                headers: {
+                    "Content-Type": 'application/json',
+                    'Authorization': `Bearer ${getState().user.token}`
+                },
+                body: JSON.stringify({checkList})
+            })
+            clearTimeout(fetchTimeout)
+            if (response.status !== 200) {
+                const result: IErrRes = await response.json() //message, errors
+                return dispatch(setSendCart(resErrorFiller(result)))
+            }
+            
+            const result: ICheckItem[] = await response.json()
+            console.log(result);
+            return
+            dispatch(setCart({
+                shouldUpdate: true
+            }))
+            dispatch(setSendCart({...successFetch}))
+        } catch (e) {   
+            fetchError({ 
+                e,
+                dispatch,
+                setter: setSendCart,
+                controller,
+                comp: {en: 'updating cart', ru: 'обновления корзины'}
+            })            
+        }
+    }
+}*/

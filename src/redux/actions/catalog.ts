@@ -1,6 +1,6 @@
 import { IAction, ICatalogItem, ICategory, IDispatch, IErrRes, IFetch, IFullState, IMsgRes, IProduct, ISendProduct, TId } from "../../interfaces"
 import { actionsListCatalog } from './actionsList'
-import { APIList, DOMExceptions, empty, fetchingFetch, successFetch } from "../../assets/js/consts";
+import { APIList, DOMExceptions, fetchingFetch, successFetch } from "../../assets/js/consts";
 import { fetchError, resErrorFiller } from "../../assets/js/processors";
 
 export const setLoadCatalog = <T extends IFetch>(payload: T):IAction<T> => ({
@@ -38,7 +38,7 @@ export const loadCatalog = () => {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setLoadCatalog(resErrorFiller(result)))
             }
-            const result = await response.json() //message, errors
+            const result = await response.json() //message
             dispatch(setCatalog(result.allCatalog || []))
             dispatch(setLoadCatalog({...successFetch}))
             return
@@ -78,8 +78,8 @@ export const sendCatalog = (newCatalog: (Omit<ICatalogItem, "total">)[]) => {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setSendCatalog(resErrorFiller(result)))
             }
-            const result = await response.json() //message, errors
-            dispatch(setSendCatalog({status: 'success', message: result.message || {...empty}}))
+            const result: IMsgRes = await response.json() //message
+            dispatch(setSendCatalog({...successFetch, ...result}))
         } catch (e) {
             fetchError({ 
                 e,
@@ -204,7 +204,7 @@ export const sendProduct = (product: ISendProduct) => {
                 method: APIList.product.create.method,
                 headers: {
                     "enctype": 'multipart/form-data',
-                    'Authorization': `Bearer ${getState().user}`
+                    'Authorization': `Bearer ${getState().user.token}`
                 },
                 body: sendForm
             })
@@ -213,9 +213,8 @@ export const sendProduct = (product: ISendProduct) => {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setSendProduct(resErrorFiller(result)))
             }
-
             const result: IMsgRes = await response.json() //message, errors
-            dispatch(setSendProduct({...successFetch}))
+            dispatch(setSendProduct({...successFetch, ...result}))
         } catch (e) {
             fetchError({ 
                 e,
@@ -238,7 +237,7 @@ export const editProduct = (product: ISendProduct, changeImages: boolean) => {
 
         const sendForm = new FormData()   
         const {files, ...productToSend} = product //exclude files from data
-        sendForm.append('data', JSON.stringify(productToSend))
+        sendForm.append('data', JSON.stringify({...productToSend, changeImages}))
         if (changeImages) {
             product.files.forEach(item => {
                 sendForm.append('files', item, item.name)
@@ -250,7 +249,7 @@ export const editProduct = (product: ISendProduct, changeImages: boolean) => {
                 method: APIList.product.update.method,
                 headers: {
                     "enctype": 'multipart/form-data',
-                    'Authorization': `Bearer ${getState().user}`
+                    'Authorization': `Bearer ${getState().user.token}`
                 },
                 body: sendForm
             })
@@ -261,7 +260,7 @@ export const editProduct = (product: ISendProduct, changeImages: boolean) => {
             }
 
             const result: IMsgRes = await response.json() //message, errors
-            dispatch(setSendProduct({...successFetch}))
+            dispatch(setSendProduct({...successFetch, ...result}))
         } catch (e) {
             fetchError({ 
                 e,
@@ -322,7 +321,7 @@ export const deleteProduct = (_id: TId) => {
                 method: APIList.product.delete.method,
                 headers: {
                     "Content-Type": 'application/json',
-                    'Authorization': `Bearer ${getState().user}`
+                    'Authorization': `Bearer ${getState().user.token}`
                 },
                 body: JSON.stringify({_id})
             })
@@ -331,7 +330,8 @@ export const deleteProduct = (_id: TId) => {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setSendProduct(resErrorFiller(result)))
             }
-            dispatch(setSendProduct({...successFetch}))
+            const result: IMsgRes = await response.json() //message
+            dispatch(setSendProduct({...successFetch, ...result}))
         } catch (e) {
             fetchError({ 
                 e,

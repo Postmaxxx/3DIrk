@@ -88,7 +88,7 @@ export const changeOrderStatus = (orderId: string, newStatus: OrderType) => {
                 return dispatch(setSendOrders(resErrorFiller(result)))
             }
             const result: IMsgRes = await response.json() //message, errors
-            dispatch(setSendOrders({...successFetch}))
+            dispatch(setSendOrders({...successFetch, message: result.message}))
         } catch (e) {
             fetchError({ 
                 e,

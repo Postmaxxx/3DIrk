@@ -65,7 +65,7 @@ const APIList = { //all routes to BE
             url: `${process.env.REACT_BACK_URL}/api/catalog/product`,
             method: "DELETE",
             timeout: 10000
-        }
+        },
     },
     news: {
         getSome: { //get some news, +?from=${FromIdex}&amount=${AmountOfNews}
@@ -186,7 +186,7 @@ const APIList = { //all routes to BE
             timeout: 10000
         },
         createOrder: { //create new order
-            url: `${process.env.REACT_BACK_URL}/api/user/orders`,
+            url: `${process.env.REACT_BACK_URL}/api/user/order`,
             method: 'POST',
             timeout: 10000
         },
@@ -199,7 +199,12 @@ const APIList = { //all routes to BE
             url: `${process.env.REACT_BACK_URL}/api/user/cart`,
             method: 'PUT',
             timeout: 10000
-        }
+        },
+        /*checkCart: { //check are products exist
+            url: `${process.env.REACT_BACK_URL}/api/user/cart`,
+            method: "POST",
+            timeout: 10000
+        },*/
     }
 
 }

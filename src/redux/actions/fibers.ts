@@ -1,4 +1,4 @@
-import { IAction, IDispatch, IErrRes, IFetch, IFiber, IFullState, ISendFiber, TLangText } from "../../interfaces"
+import { IAction, IDispatch, IErrRes, IFetch, IFiber, IFullState, IMsgRes, ISendFiber, TLangText } from "../../interfaces"
 import { actionsListFibers } from './actionsList'
 import { APIList, DOMExceptions, fetchingFetch, successFetch } from "../../assets/js/consts";
 import { fetchError, resErrorFiller } from "../../../src/assets/js/processors";
@@ -99,7 +99,8 @@ export const sendFiber = (newFiber: ISendFiber) => {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setSendFibers(resErrorFiller(result)))
             }
-            dispatch(setSendFibers({...successFetch}))
+            const result: IMsgRes = await response.json() //message
+            dispatch(setSendFibers({...successFetch, message: result.message}))
         } catch (e) { 
             fetchError({ 
                 e,
@@ -121,7 +122,7 @@ export const editFiber = (fiber: ISendFiber, changeImages: boolean) => {
         dispatch(setSendFibers({...fetchingFetch, controller}))  
         const sendForm = new FormData()   
         const {files, ...fiberToSend} = fiber //exclude files from data
-        sendForm.append('data', JSON.stringify(fiberToSend))
+        sendForm.append('data', JSON.stringify({...fiberToSend, changeImages}))
         if (changeImages) {
             fiber.files.forEach(item => {
                 sendForm.append('files', item, item.name)
@@ -143,7 +144,8 @@ export const editFiber = (fiber: ISendFiber, changeImages: boolean) => {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setSendFibers(resErrorFiller(result)))
             }
-            dispatch(setSendFibers({...successFetch}))
+            const result: IMsgRes = await response.json() //message
+            dispatch(setSendFibers({...successFetch, message: result.message}))
         } catch (e) { 
             fetchError({ 
                 e,
@@ -178,7 +180,8 @@ export const deleteFiber = (_id: string) => {
                 const result: IErrRes = await response.json()
                 return dispatch(setSendFibers(resErrorFiller(result)))
             }
-            dispatch(setSendFibers({...successFetch}))
+            const result: IMsgRes = await response.json() //message
+            dispatch(setSendFibers({...successFetch, message: result.message}))
         } catch (e) {           
             fetchError({ 
                 e,

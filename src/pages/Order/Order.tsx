@@ -2,7 +2,7 @@ import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import './order.scss'
-import { ICartState, IColorsState, IFetch, IFibersState, IFullState, TLang } from "../../interfaces";
+import { ICartItem, ICartState, IColor, IColorsState, IFetch, IFiber, IFibersState, IFullState, TLang } from "../../interfaces";
 import { useEffect, useRef, useCallback, useMemo } from 'react'
 import Modal, { IModalFunctions } from "../../components/Modal/Modal";
 import Message, { IMessageFunctions } from "../../components/Message/Message";
@@ -38,7 +38,7 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
     const modalMessageRef = useRef<IModalFunctions>(null)
     const messageRef = useRef<IMessageFunctions>(null)
     const addFilesRef = useRef<IAddFilesFunctions>(null)
-    const processedContainer = '[data-selector="order-form"]'
+    const _formOrder = useRef<HTMLFormElement>(null)
 
     const focuser = useMemo(() => focusMover(), [lang])
 
@@ -57,12 +57,13 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
 
  
 
-    const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
-        if (!_message.current || !messageRef.current || !modalMessageRef.current || !addFilesRef.current) return
+    const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+        if (!_message.current || !messageRef.current || !modalMessageRef.current || !addFilesRef.current || !_formOrder.current) return
+        //await checkCartIsActual(cart)
         prevent(e)
         //check errors
         focuser.focusAll();//run over all elements to get all errors
-        const errorFields = document.querySelector(processedContainer)?.querySelectorAll('.incorrect-value')
+        const errorFields = _formOrder.current.querySelectorAll('.incorrect-value')
         if (errorFields && errorFields?.length > 0) return
         setState.user.sendOrder({
             message: _message.current.value,
@@ -88,10 +89,42 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
 
 
     useEffect(() => {
-        focuser.create({container: processedContainer})
+        if (!_formOrder.current) return
+        focuser.create({container: _formOrder.current})
     }, [lang])
 
-    
+
+
+    const checkCartIsActual = async (cart: ICartState) => {
+        //await setState.user.checkCart()
+        /*await checkAndLoad({
+            fetchData: colorsState.load,
+			loadFunc: setState.colors.loadColors,
+            force: true
+		})
+        await checkAndLoad({
+            fetchData: fibersState.load,
+			loadFunc: setState.fibers.loadFibers,
+            force: true
+		})
+        const wrongProducts: ICartItem[] = []
+        const newCartItems = [...cart.items]
+        newCartItems.filter(item => {
+            const fiber: IFiber | undefined = fibersState.fibersList.find(fiberItem => fiberItem._id === item.fiber)
+            const color: IColor | undefined = colorsState.colors.find(color => color._id === item.color)
+            if (fiber && color) {
+                
+                return true
+            } else {
+                wrongProducts.push(item)
+                return false
+            }
+        })*/
+
+
+    }
+
+
     const onChangeText: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (e) => {
         (e.target as HTMLElement).parentElement?.classList.remove('incorrect-value') 
     }
@@ -103,11 +136,9 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
                 <div className="container">
                     <h1>{lang === 'en' ? 'Order 3D printing' : 'Заказать 3D печать'}</h1>
                     <div className="order__block">
-
-                        <form className="order__container" data-selector="order-form" >
+                        <form className="order__container" ref={_formOrder} >
                             <h2>{lang === 'en' ? 'Additional information' : 'Дополнительная информация'}</h2>
                             <div className="data-block">
-
                                 <div className="inputs-block">
                                     <div className="input-block message-block" data-selector="input-block">
                                         <label htmlFor="message">
@@ -128,21 +159,18 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
                                         <AddFiles lang={lang} ref={addFilesRef} multiple={true} id='allImages'/>
                                     </div>
                                 </div>
-
                             </div>
-
                             <div className="cart-content__container">
                                 <h3>{lang === 'en' ? 'Your cart' : 'Ваша корзина'}</h3>
                                 <CartContent />
                             </div>
-
                             <button 
                                 type="submit" 
                                 disabled={cart.load.status !== 'success' || fibersState.load.status !== 'success' || colorsState.load.status !== 'success' || sendOrder.status === 'fetching'} 
                                 className="button_order" 
                                 onClick={onSubmit}>
                                     {lang === 'en' ? 'Order' : "Отправить"}
-                                </button>
+                            </button>
                         </form>
                     </div>
                 </div>
@@ -153,8 +181,6 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
         </div>
     )
 }
-
-
 
 
 
@@ -174,7 +200,6 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>):IPropsActions => ({
 		user: bindActionCreators(allActions.user, dispatch),
 	}
 })
-  
   
     
 export default connect(mapStateToProps, mapDispatchToProps)(Order)

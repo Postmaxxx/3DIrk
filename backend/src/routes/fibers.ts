@@ -95,10 +95,10 @@ router.put('/edit',
     fileSaver,
     async (req, res) => {
         try {
-            const { name, text, short, params, proscons, colors, _id } = JSON.parse(req.body.data)
+            const { name, text, short, params, proscons, colors, _id, changeImages } = JSON.parse(req.body.data)
             const files = req.files as IMulterFile[] || undefined
             
-            if (!files) {//if images was not sent save old images
+            if (!changeImages) {//if images was not sent save old images
                 await Fiber.findOneAndUpdate({_id}, {name, text, short, params, proscons, colors})
                 cache.fibers.obsolete = true
                 return res.status(201).json({message: {en: 'Fiber updated', ru: 'Материал отредактирован'}})

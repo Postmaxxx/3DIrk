@@ -3,7 +3,7 @@ import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import './cart-content.scss'
 import { ICartItem, ICartState, IColor, IColorsState, IFibersState, IFullState, IProduct, TLang } from "../../interfaces";
-import { useState, useEffect, useRef,  useCallback, useMemo } from 'react'
+import { useRef,  useCallback, useMemo, Fragment } from 'react'
 import { NavLink } from "react-router-dom";
 import Delete from "../Delete/Delete";
 import AmountChanger from "../AmountChanger/AmountChanger";
@@ -34,19 +34,12 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 const CartContent: React.FC<IProps> = ({lang, cart, colorsState, fibersState, setState}): JSX.Element => {
-    const [cartReady, setCartReady] = useState<boolean>(false)
     const modalImageRef = useRef<IModalFunctions>(null)
     const imageModalRef = useRef<IImageModalFunctions>(null)
 
     const deleteItem = useCallback((item: ICartItem) => {
         setState.user.removeItem(item)
     }, [])
-
-    useEffect(() => {
-        if (colorsState.load.status === 'success' && fibersState.load.status === 'success' &&  cart.load.status === 'success') {
-            setCartReady(true)
-        }
-    }, [colorsState.load.status, fibersState.load.status, cart.load.status])
 
 
     const onAmountChange = useCallback((item: ICartItem, amount: number) => {
@@ -75,52 +68,55 @@ const CartContent: React.FC<IProps> = ({lang, cart, colorsState, fibersState, se
 
     const cartContent = useMemo(() => {
         return cart.items.map((item, i) => {
-            const fiber = fibersState.fibersList.find(fiberItem => fiberItem._id === item.fiber)?.short.name[lang]
+            const fiberName = fibersState.fibersList.find(fiberItem => fiberItem._id === item.fiber)?.short.name[lang]
             const color: IColor | undefined = colorsState.colors.find(color => color._id === item.color)
-            return(
-                <div className="cart__item" key={i}>
-                    <div className="img__container" onClick={(e) => onImageClick(e, item.product)}>
-                        <ImgWithPreloader src={`${item.product.images.paths.preview}/${item.product.images.files[0]}`} alt={item.product.images.files[0]}/>
-                    </div>
-
-                    <div className="item-descr__container">
-                        <div className="item__block">
-                            <NavLink className="item__product-link_img" to={`../catalog/${item.product._id}`} target="_blank" rel="noopener noreferrer" aria-label={lang === 'en' ? 'Go to product' : 'Перейти к товару'}>
-                                <span aria-label={lang === 'en' ? "Go to product page" : 'Перейти на страницу продукта'}>{item.product.name[lang]}</span>
-                            </NavLink>
-                        </div>
-                        {item.type ? 
-                            <div className="item__block">
-                                <span>{lang === 'en' ? 'Type' : 'Модификация'}:</span>
-                                <span className="fiber">{item.type[lang]}</span>
+            return (
+                <Fragment  key={i}>
+                    {color && fiberName &&
+                        <div className="cart__item">
+                            <div className="img__container" onClick={(e) => onImageClick(e, item.product)}>
+                                <ImgWithPreloader src={`${item.product.images.paths.preview}/${item.product.images.files[0]}`} alt={item.product.images.files[0]}/>
                             </div>
-                        : 
-                        null}
-                        <div className="item__block">
-                            <span>{lang === 'en' ? 'Fiber' : 'Материал'}:</span>
-                            <span className="fiber">{fiber}</span>
-                        </div>
-                        <div className="item__block">
-                            <span>{lang === 'en' ? 'Color' : 'Цвет'}:</span>
-                            <div className="colors__container" onClick={(e) => onColorClick(e, color)}> 
-                                <div className="color__container">
-                                    <img src={color?.url.thumb} alt={color?.name[lang]} />
+                
+                            <div className="item-descr__container">
+                                <div className="item__block">
+                                    <NavLink className="item__product-link_img" to={`../catalog/${item.product._id}`} target="_blank" rel="noopener noreferrer" aria-label={lang === 'en' ? 'Go to product' : 'Перейти к товару'}>
+                                        {item.product.name[lang]}
+                                    </NavLink>
                                 </div>
-                                <span className="color__name">({color?.name[lang]})</span>
+                                {item.type &&
+                                    <div className="item__block">
+                                        <span>{lang === 'en' ? 'Type' : 'Модификация'}:</span>
+                                        <span className="fiber">{item.type[lang]}</span>
+                                    </div>
+                                }
+                                <div className="item__block">
+                                    <span>{lang === 'en' ? 'Fiber' : 'Материал'}:</span>
+                                    <span className="fiber">{fiberName}</span>
+                                </div>
+                                <div className="item__block">
+                                    <span>{lang === 'en' ? 'Color' : 'Цвет'}:</span>
+                                    <div className="colors__container" onClick={(e) => onColorClick(e, color)}> 
+                                        <div className="color__container">
+                                            <img src={color.url.thumb} alt={color.name[lang]} />
+                                        </div>
+                                        <span className="color__name">({color.name[lang]})</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="item__amount-delete">
+                                <div className="delete__container">
+                                    <div className="delete__wrapper">
+                                        <Delete<ICartItem> remove={deleteItem} idInstance={item} lang={lang} disabled={false}/>
+                                    </div>
+                                </div>
+                                <div className="amount__container">
+                                    <AmountChanger<ICartItem> idInstance={item} initialAmount={item.amount} lang={lang} onChange={onAmountChange} />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div className="item__amount-delete">
-                        <div className="delete__container">
-                            <div className="delete__wrapper">
-                                <Delete<ICartItem> remove={deleteItem} idInstance={item} lang={lang} disabled={false}/>
-                            </div>
-                        </div>
-                        <div className="amount__container">
-                            <AmountChanger<ICartItem> idInstance={item} initialAmount={item.amount} lang={lang} onChange={onAmountChange} />
-                        </div>
-                    </div>
-                </div>
+                    }
+                </Fragment>
             )
         })
     }, [cart.items])
@@ -128,7 +124,7 @@ const CartContent: React.FC<IProps> = ({lang, cart, colorsState, fibersState, se
 
     return (
         <div className="cart-content">
-            {cartReady &&
+            {colorsState.load.status === 'success' && fibersState.load.status === 'success' &&  cart.load.status === 'success' &&
                 cart.items.length > 0 ? 
                     <>{cartContent}</>
                 : 

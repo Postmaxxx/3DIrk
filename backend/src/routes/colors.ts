@@ -64,12 +64,11 @@ router.put('/edit',
     isAdmin],
     fileSaver,
     async (req, res) => {
-        try {
-            const dataRaw: string = req.body.data           
-            const { name, _id } = JSON.parse(dataRaw)
+        try {       
+            const { name, _id, changeImages } = JSON.parse(req.body.data )
             const files = req.files as IMulterFile[] || undefined
             
-            if (!files) { //if images was not sent save old images
+            if (!changeImages) { //if images was not sent save old images
                 await Colors.findOneAndUpdate({_id}, {name})
                 cache.colors.obsolete = true
                 return res.status(200).json({message: {en: 'Color saved', ru: 'Цвет сохранен'}})

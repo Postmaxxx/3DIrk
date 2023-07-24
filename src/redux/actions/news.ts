@@ -1,4 +1,4 @@
-import { IAction, IDispatch, IErrRes, IFetch, IFullState, INewsItem, INewsItemShort,  ISendNewsItem } from "../../interfaces"
+import { IAction, IDispatch, IErrRes, IFetch, IFullState, IMsgRes, INewsItem, INewsItemShort,  ISendNewsItem } from "../../interfaces"
 import { actionsListNews } from './actionsList'
 import { APIList, DOMExceptions, fetchingFetch, successFetch } from "../../assets/js/consts";
 import { fetchError, resErrorFiller } from "../../../src/assets/js/processors";
@@ -69,7 +69,6 @@ export const loadSomeNews = (from: number, amount: number) => {
                     images: item.images
                 }
             })]))
-            
             dispatch(setTotalNews(result.total))
             dispatch(setLoadNews({...successFetch}))
         } catch (e) {
@@ -158,7 +157,8 @@ export const sendNews = (newsItem: ISendNewsItem) => {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setSendNews(resErrorFiller(result)))
             }
-            dispatch(setSendNews({...successFetch}))
+            const result: IMsgRes = await response.json() //message
+            dispatch(setSendNews({...successFetch, message: result.message}))
         } catch (e) {  
             fetchError({ 
                 e,
@@ -183,7 +183,7 @@ export const updateNews = (newsItem: ISendNewsItem, changeImages: boolean) => {
         const token = getState().user.token //get current user state
         const sendForm = new FormData()   
         const {files, ...newsToSend} = newsItem //exclude files from data
-        sendForm.append('data', JSON.stringify(newsToSend))
+        sendForm.append('data', JSON.stringify({...newsToSend, changeImages}))
         if (changeImages) {
             newsItem.files.forEach(item => {
                 sendForm.append('files', item, item.name)
@@ -204,7 +204,8 @@ export const updateNews = (newsItem: ISendNewsItem, changeImages: boolean) => {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setSendNews(resErrorFiller(result)))
             }
-            dispatch(setSendNews({...successFetch}))
+            const result: IMsgRes = await response.json() //message
+            dispatch(setSendNews({...successFetch, message: result. message}))
         } catch (e) {   
             fetchError({ 
                 e,
@@ -242,7 +243,8 @@ export const deleteNews = (_id: string) => {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setSendNews(resErrorFiller(result)))
             }
-            dispatch(setSendNews({...successFetch}))
+            const result: IMsgRes = await response.json() //message
+            dispatch(setSendNews({...successFetch, message: result.message}))
         } catch (e) {  
             fetchError({ 
                 e,

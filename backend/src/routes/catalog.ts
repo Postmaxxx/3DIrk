@@ -130,7 +130,7 @@ router.post('/product', //create
         try {
             const { price, name, text, text_short, fibers, mods, category } = JSON.parse(req.body.data)
             const files = req.files as IMulterFile[] || []  
-            const product: IProduct = new Product({ price, name, text, text_short, fibers, mods, category })
+            const product: IProduct = new Product({ price: Number(price), name, text, text_short, fibers, mods, category })
             const paths = await resizeAndSaveS3({
                 files,
                 clearDir: true,
@@ -164,10 +164,10 @@ router.put('/product', //create
     fileSaver,
     async(req, res) => { 
         try {
-            const { price, name, text, text_short, fibers, mods, category, _id } = JSON.parse(req.body.data)
+            const { price, name, text, text_short, fibers, mods, category, _id, changeImages } = JSON.parse(req.body.data)
             const files = req.files as IMulterFile[] || undefined
             
-            if (!files) {//if images was not sent save old images
+            if (!changeImages) {//if images was not sent save old images
                 await Product.findOneAndUpdate({_id}, { price, name, text, text_short, fibers, mods, category, _id })
                 cache.products.obsolete = true
                 cache.catalog.obsolete = true
@@ -269,6 +269,8 @@ router.delete('/product', //cdelete
         }
     }
 )
+
+
 
 
 

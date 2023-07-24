@@ -110,7 +110,7 @@ export const sendColor = (color: ISendColor) => {
                 return dispatch(setSendColors(resErrorFiller(result)))
             }
             const result: IMsgRes = await response.json() //message, errors
-            dispatch(setSendColors({...errorFetch}))
+            dispatch(setSendColors({...errorFetch, message: result.message}))
         } catch (e) {
             fetchError({ 
                 e,
@@ -131,7 +131,7 @@ export const editColor = (color: ISendColor, changeImages: boolean) => {
         const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.colors.update.timeout) //set time limit for fetch
         dispatch(setSendColors({...fetchingFetch, controller}))  
         const sendForm = new FormData()   
-        sendForm.append('data', JSON.stringify({name: color.name, _id: color._id}))
+        sendForm.append('data', JSON.stringify({name: color.name, _id: color._id, changeImages}))
         if (changeImages) {
             const colorFiles = [color.files.full, color.files.thumb]
             colorFiles.forEach(item => {
@@ -153,7 +153,8 @@ export const editColor = (color: ISendColor, changeImages: boolean) => {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setSendColors(resErrorFiller(result)))
             }
-            dispatch(setSendColors({...successFetch}))
+            const result: IMsgRes = await response.json() //message
+            dispatch(setSendColors({...successFetch, message: result.message}))
         } catch (e) {
             fetchError({ 
                 e,
@@ -190,7 +191,8 @@ export const deleteColor = (_id: string) => {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setSendColors(resErrorFiller(result)))
             }
-            dispatch(setSendColors({...successFetch}))
+            const result: IMsgRes = await response.json() //message
+            dispatch(setSendColors({...successFetch, message: result.message}))
         } catch (e) {
             fetchError({ 
                 e,

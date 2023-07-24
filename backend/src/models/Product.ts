@@ -7,7 +7,7 @@ interface IProduct extends Document {
     name: TLangText
     text: TLangText
     text_short: TLangText
-    price: TLangText
+    price: number
     images: {
         paths: {
             full: string
@@ -27,7 +27,7 @@ const productSchema = new Schema({
     name: {type: Object, required: true},
     text: {type: Object, required: true},
     text_short: {type: Object, required: true},
-    price: {type: Object, required: true},
+    price: {type: Number, required: true},
     images: {type: Object, required: true},
     fibers: [{type: Types.ObjectId, ref: 'Fiber', required: true}],
     mods: {type: Object, required: false},
