@@ -1,6 +1,6 @@
 import { TLang } from '../../interfaces'
 import './add-files.scss'
-import { useState, useEffect, useRef, forwardRef, useImperativeHandle, useCallback} from 'react'
+import { useState, useEffect, useRef, forwardRef, useImperativeHandle, useCallback, useMemo} from 'react'
 import iconFileQuestion from '../../assets/img/icon_file_question.svg'
 import Delete from "../../components/Delete/Delete";
 import { prevent } from '../../../src/assets/js/processors';
@@ -128,6 +128,25 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, multiple, id}, r
     }, [files])
 
 
+    const onRemoveClick = (index: number) => {
+        setFiles(prev => (prev.filter((item, i) => i !== index)))
+    }
+
+
+    const filesList = useMemo(() => {
+        return filesToShow.map((file, i) => {
+            return (
+                <div className="preview__item" key={file.name + i}>
+                    <div className="img__container">
+                        <img src={file.content} alt={file.name} />
+                    </div>
+                    <span className="file__descr">{file.name}</span>
+                    <button className="filesToShow" onClick={() => onRemoveClick(i)}>X</button>
+                </div>
+            )
+        })
+    }, [filesToShow])
+
 
     return (
         <div className="drop-area" ref={_dropArea}>
@@ -140,16 +159,7 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, multiple, id}, r
             </div>
             <input id={id} type="file" multiple={multiple} onChange={onSelectFiles} ref={_files}/>
             <div className="preview-gallery" ref={_filesGallery}>
-                {filesToShow.map((file, i) => {
-                    return (
-                        <div className="preview__item" key={file.name + i}>
-                            <div className="img__container">
-                                <img src={file.content} alt={file.name} />
-                            </div>
-                            <span className="file__descr">{file.name}</span>
-                        </div>
-                    )
-                })}
+                {filesList}
             </div>
 
             {files.length > 0 &&

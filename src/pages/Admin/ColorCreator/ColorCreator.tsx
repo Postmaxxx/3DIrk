@@ -35,8 +35,8 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
     const modalRef = useRef<IModalFunctions>(null)
     const messageRef = useRef<IMessageFunctions>(null)
     const colorPickerRef = useRef<IPickerFunctions>(null)
-    const nameEnRef = useRef<HTMLInputElement>(null)
-    const nameRuRef = useRef<HTMLInputElement>(null)
+    const _nameEn = useRef<HTMLInputElement>(null)
+    const _nameRu = useRef<HTMLInputElement>(null)
     const errChecker = useMemo(() => errorsChecker({lang}), [lang])
     const focuser = useMemo(() => focusMover(), [lang])
     const selectorRef = useRef<ISelectorFunctions>(null)
@@ -57,7 +57,11 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
         }
 	}, [colorsState.send.status])
 
+    const statusesList = useMemo(() => {
+        return Object.values(statuses)
+    }, []) 
 
+    
 
 
     useEffect(() => { //get last version of colors
@@ -70,22 +74,22 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
 
 
 
-    const initilalFillValues = async (_id: string) => {//fill values based on selected color
-        if (!nameEnRef.current || !nameRuRef.current || !selectorRef.current) return
+    const fillValues = async (_id: string) => {//fill values based on selected color
+        if (!_nameEn.current || !_nameRu.current || !selectorRef.current) return
         const selectedColor = colorsState.colors.find(item => item._id === _id)
         if (selectedColor) { //color exists
             const filesBig = await filesDownloader([selectedColor.url.full])
             const filesSmall = await filesDownloader([selectedColor.url.thumb])
             addFileBigRef.current?.replaceFiles(filesBig)
             addFileSmallRef.current?.replaceFiles(filesSmall)
-            selectorRef.current.setValue(selectedColor.active ? 'active' : 'suspended')
+            selectorRef.current.setValue(selectedColor.active ? statuses.active.value : statuses.suspended.value)
         } else { //new color
             addFileBigRef.current?.clearAttachedFiles()
             addFileSmallRef.current?.clearAttachedFiles()
             selectorRef.current.setValue('active')
         }
-        nameEnRef.current.value = selectedColor?.name?.en || ''
-        nameRuRef.current.value = selectedColor?.name?.ru || ''
+        _nameEn.current.value = selectedColor?.name?.en || ''
+        _nameRu.current.value = selectedColor?.name?.ru || ''
     }
 
 
@@ -93,7 +97,7 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
     const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
         errChecker.clear()
         prevent(e)
-        if (!_formColor.current || !nameEnRef.current || !nameRuRef.current || !selectorRef.current || !colorPickerRef.current) return       
+        if (!_formColor.current || !_nameEn.current || !_nameRu.current || !selectorRef.current || !colorPickerRef.current) return       
         focuser.focusAll(); //run over all elements to get all errors
         const errorFields = _formColor.current.querySelectorAll('.incorrect-value')
         if (errorFields && errorFields?.length > 0) {
@@ -114,8 +118,8 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
         const color = {
             _id: colorPickerRef.current.getSelected()[0] || '',
             name: {
-                en: nameEnRef.current.value,
-                ru: nameRuRef.current.value,
+                en: _nameEn.current.value,
+                ru: _nameRu.current.value,
             },
             files: {
                 full: addFileBigRef.current?.getFiles()[0] as File,
@@ -156,7 +160,7 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
 
 
     const onColorSelected = async (_id: string) => {
-        initilalFillValues(_id)
+        fillValues(_id)
     }
 
 
@@ -189,7 +193,7 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
                             <label>{lang === 'en' ? 'Name' : 'Название'}:</label>
                             <div className="input__wrapper" data-selector="input-block">
                                 <input 
-                                    ref={nameEnRef}
+                                    ref={_nameEn}
                                     data-selector="input"
                                     id="name_en" 
                                     onChange={onChangeInputs} 
@@ -198,7 +202,7 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
                             </div>
                             <div className="input__wrapper" data-selector="input-block">
                                 <input 
-                                    ref={nameRuRef}
+                                    ref={_nameRu}
                                     data-selector="input"
                                     id="name_ru" 
                                     onChange={onChangeInputs}
@@ -225,7 +229,7 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
                             lang={lang} 
                             id='selector_category' 
                             label={{en: 'Color status: ', ru: 'Состояние цвета: '}}
-                            data={statuses}
+                            data={statusesList}
                             onBlur={(e) => inputChecker({lang, notExact: '', el: e.target})}
                             defaultData={{...defaultSelectItem}}
                             saveValue={onChangeInputs}

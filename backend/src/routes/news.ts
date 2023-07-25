@@ -20,7 +20,7 @@ router.post('/create',
     fileSaver,
     async (req, res) => {       
         try {
-            const { header, date, short, text } = JSON.parse(req.body.news)
+            const { header, date, short, text } = JSON.parse(req.body.data)
             const files = req.files as IMulterFile[] || []           
             const news = new News({ header, date, short, text }) 
 
@@ -41,7 +41,7 @@ router.post('/create',
             
             await news.save()
             cache.news.obsolete = true
-            return res.status(201).json({message: {en: 'News posted', ru: 'Новость сохранена'}})
+            return res.status(201).json({message: {en: 'News created', ru: 'Новость создана'}})
         } catch (error) {
             return res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})
         }
@@ -56,16 +56,12 @@ router.put('/edit',
     [authMW, isAdmin],
     fileSaver, 
     async (req, res) => {
+        
         try {
             const files = req.files
-            const { header, date, short, text, _id, changeImages } = JSON.parse(req.body.data)
+            const { header, date, short, text, _id } = JSON.parse(req.body.data)
             
-            if (!changeImages) { //if images was not sent save old images
-                await News.findOneAndUpdate({_id}, { header, date, short, text})
-                cache.news.obsolete = true
-                return res.status(200).json({message: {en: 'News changed', ru: 'Новость отредактирована'}})
-            }
-
+            console.log(111);
             const paths = await resizeAndSaveS3({
                 files,
                 clearDir: true,
@@ -73,7 +69,7 @@ router.put('/edit',
                 baseFolder: `${allPaths.pathToImages}/${allPaths.pathToNews}/${_id}`,
                 formats: ['full', 'medium', 'small']
             })
-
+            
             const images = {
                 paths,
                 files: files.map(item => item.filename)
@@ -82,7 +78,6 @@ router.put('/edit',
             await News.findOneAndUpdate({_id}, { header, date, short, text, images})
             
             cache.news.obsolete = true
-
             return res.status(200).json({message: {en: 'News changed', ru: 'Новость отредактирована'}})
         } catch (error) {
             return res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})

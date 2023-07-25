@@ -1,4 +1,4 @@
-import { IFetch, IFiberParam, IMessageModal, ISendColor, ISendFiber, ISendProduct, TLangText } from "../../interfaces"
+import { IFetch, IFiberParam, IMessageModal, INewsItem, ISendColor, ISendFiber, ISendProduct, TLangText } from "../../interfaces"
 
 const timeModalClosing: number = 500 //transition of closing modal window
 
@@ -32,22 +32,23 @@ const defaultSelectItem = {
 
 const createNewItemId = 'createNew'
 
-const statuses = [
-    {
-        name: {
-            en: 'Suspended',
-            ru: 'Приостановлено'
-        },
-        value: 'suspended'
-    },
-    {
+const statuses = {
+    active: {
         name: {
             en: 'Active',
             ru: 'Активно'
         },
         value: 'active'
+    },
+    suspended: {
+        name: {
+            en: 'Suspended',
+            ru: 'Приостановлено'
+        },
+        value: 'suspended'
     }
-]
+}
+
 
 const imageExtentions: string[] = ['jpg', 'jpeg', 'bmp', 'svg', 'png', 'tiff', 'webp'] //files with these extentions will be treaten as images, preview will be loaded
 
@@ -542,12 +543,19 @@ const productEmpty: ISendProduct = {
     files: [] as File[],
 }
 
-const newsItemEmpty = {
+const newsItemEmpty: INewsItem = {
     header: {...empty},
     text: {...empty},
     short: {...empty},
     _id: '',
-    files: [],
+    images: {
+        paths: {
+            full: '',
+            medium: '',
+            small: ''
+        },
+        files: []
+    },
     date: new Date(),
 }
 

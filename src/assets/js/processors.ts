@@ -20,7 +20,7 @@ interface IErrorsChecker {
 const errorsChecker = ({lang = 'en'}: IErrorsChecker) => {
     const errors: string[] = []
 
-    const check = (el:  HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement , min = 0, max = 1000): {result: boolean, error: string} => {
+    /*const check = (el:  HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement , min = 0, max = 1000): {result: boolean, error: string} => {
         const err = {result: false, error: ''}
         if (el.value.length >= min && el.value.length <= max) return err // no error
         
@@ -39,7 +39,7 @@ const errorsChecker = ({lang = 'en'}: IErrorsChecker) => {
         }
         errors.push(err.error)
         return err //error exists
-    }
+    }*/
 
     const clearError = (el:  HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | HTMLSelectElement) => {
         if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
@@ -63,7 +63,7 @@ const errorsChecker = ({lang = 'en'}: IErrorsChecker) => {
 
     const clear = () => {errors.splice(0, errors.length)}
 
-    return { check, result, add, clear, clearError, amount }
+    return { result, add, clear, clearError, amount }
 }
 
 //---------------------------------------------------------------

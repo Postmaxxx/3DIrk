@@ -77,7 +77,7 @@ export const loadColors = () => {
                 dispatch,
                 setter: setLoadColors,
                 controller,
-                comp: {en: 'loading colors', ru: 'загрузки цветов'}
+                comp: {en: 'Error loading colors', ru: ' Ошибказагрузки цветов'}
             })
         }
     }
@@ -94,13 +94,11 @@ export const sendColor = (color: ISendColor) => {
         dispatch(setSendColors({...fetchingFetch, controller}))  
         
         const sendForm = new FormData()  
-        const {files, ...colorToBE} = color
-        sendForm.append('data', JSON.stringify(colorToBE))
+        const {files, ...colorToSend} = color
+        sendForm.append('data', JSON.stringify(colorToSend))
         
         const colorFiles = [color.files.full, color.files.thumb]
-        colorFiles.forEach(item => {
-            sendForm.append('files', item, item.name)
-        })
+        colorFiles.forEach(item => { sendForm.append('files', item, item.name) })
         try {
             const response: Response = await fetch(APIList.colors[typOfRequest].url, {
                 signal: controller.signal,
@@ -112,58 +110,11 @@ export const sendColor = (color: ISendColor) => {
                 body: sendForm
             })
             clearTimeout(fetchTimeout)
-            if (response.status !== 201) {
+            if (!response.ok) {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setSendColors(resErrorFiller(result)))
             }
             const result: IMsgRes = await response.json() //message, errors
-            dispatch(setSendColors({...errorFetch, message: result.message}))
-        } catch (e) {
-            fetchError({ 
-                e,
-                dispatch,
-                setter: setSendColors,
-                controller,
-                comp: {en: 'loading saving color to db', ru: 'сохранения цвета в бд'}
-            })
-        }
-    }
-}
-
-
-
-
-/*
-export const editColor = (color: ISendColor) => {
-    return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        const controller = new AbortController()
-        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.colors.update.timeout) //set time limit for fetch
-        dispatch(setSendColors({...fetchingFetch, controller}))  
-        const sendForm = new FormData()
-        
-        const {files, ...colorToBE} = color
-        sendForm.append('data', JSON.stringify(colorToBE))
-        
-        const colorFiles = [color.files.full, color.files.thumb]
-        colorFiles.forEach(item => {
-            sendForm.append('files', item, item.name)
-        })
-        try {
-            const response: Response = await fetch(APIList.colors.update.url, {
-                signal: controller.signal,
-                method: APIList.colors.update.method,
-                headers: {
-                    "enctype": 'multipart/form-data',
-                    'Authorization': `Bearer ${getState().user.token}`
-                },
-                body: sendForm
-            })
-            clearTimeout(fetchTimeout)
-            if (response.status !== 200) {
-                const result: IErrRes = await response.json() //message, errors
-                return dispatch(setSendColors(resErrorFiller(result)))
-            }
-            const result: IMsgRes = await response.json() //message
             dispatch(setSendColors({...successFetch, message: result.message}))
         } catch (e) {
             fetchError({ 
@@ -171,12 +122,13 @@ export const editColor = (color: ISendColor) => {
                 dispatch,
                 setter: setSendColors,
                 controller,
-                comp: {en: 'loading saving color to db', ru: 'сохранения цвета в бд'}
+                comp: {en: 'Error loading saving color to db', ru: 'Ошибка сохранения цвета в бд'}
             })
         }
     }
 }
-*/
+
+
 
 
 
@@ -209,7 +161,7 @@ export const deleteColor = (_id: string) => {
                 dispatch,
                 setter: setSendColors,
                 controller,
-                comp: {en: 'deleting color from db', ru: 'удаления цвета из бд'}
+                comp: {en: 'Error deleting color from db', ru: 'Ошибка удаления цвета из бд'}
             })
         }
     }

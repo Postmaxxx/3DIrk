@@ -325,12 +325,34 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, colorsState}): J
     }, [])
 
 
+
+    
+    const onFiberSelected = async (_id: string) => {
+        //initilalFillValues(_id)
+    }
+
+
+
     return (
         <div className="page page_creator_fiber">
             <div className="container_page">
                 <div className="container">
                     <h1>{paramFiberId ? lang === 'en' ? 'Edit fiber' : 'Редактирование материала' : lang === 'en' ? 'Add new fiber' : 'Добавление нового материала'}</h1>
                     <form>
+                        <h2 className='section-header full-width'>{lang === 'en' ? 'SELECT FIBER TO EDIT' : 'ВЫБЕРЕТЕ МАТЕРИАЛ ДЛЯ РЕДАКТИРОВАНИЯ'}</h2>           
+                        <div className="fiber-picker">
+                            {colorsState.load.status === 'success' ? 
+                                <Picker 
+                                    ref={colorPickerRef} 
+                                    items={colorsState.colors} 
+                                    lang={lang} 
+                                    multiple={false}
+                                    withNew={true}
+                                    onItemClick={onFiberSelected}
+                                    minSelected={1}/>
+                            :
+                                <Preloader />}
+                        </div>
                         <h2 className='section-header full-width'>{lang === 'en' ? 'DESCRIPTION' : 'ОПИСАНИЕ'}</h2>           
                         <div className="input-block_header">
                             <span></span>

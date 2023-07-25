@@ -1,4 +1,4 @@
-import { IAction, IDispatch, IErrRes, IFetch, IFullState, IMsgRes, INewsItem, INewsItemShort,  ISendNewsItem } from "../../interfaces"
+import { IAction, IDispatch, IErrRes, IFetch, IFullState, IMsgRes, INewsItem, INewsItemShort,  ISendNewsItem, TTypeRequest } from "../../interfaces"
 import { actionsListNews } from './actionsList'
 import { APIList, DOMExceptions, fetchingFetch, successFetch } from "../../assets/js/consts";
 import { fetchError, resErrorFiller } from "../../../src/assets/js/processors";
@@ -77,7 +77,7 @@ export const loadSomeNews = (from: number, amount: number) => {
                 dispatch,
                 setter: setLoadNews,
                 controller,
-                comp: {en: 'loading news', ru: 'загрузки новостей'}
+                comp: {en: 'Error loading news', ru: 'Ошибка загрузки новостей'}
             })
         }
     }
@@ -118,7 +118,7 @@ export const loadOneNews = (_id: string) => {
                 dispatch,
                 setter: setLoadOneNews,
                 controller,
-                comp: {en: 'loading this news', ru: 'загрузки этой новости'}
+                comp: {en: 'Error loading this news', ru: 'Ошибка загрузки этой новости'}
             })
         }
     }
@@ -129,23 +129,18 @@ export const loadOneNews = (_id: string) => {
 
 export const sendNews = (newsItem: ISendNewsItem) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
+        const typOfRequest: TTypeRequest = newsItem._id ? 'update' : 'create'
         const controller = new AbortController()
-        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.news.create.timeout) //set time limit for fetch
-        dispatch(setLoadOneNews({...fetchingFetch, controller})) 
-        dispatch(setSendNews(fetchingFetch))
-
+        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.news[typOfRequest].timeout) //set time limit for fetch
+        dispatch(setSendNews({...fetchingFetch, controller})) 
         const sendForm = new FormData()   
         const {files, ...newsToSend} = newsItem //exclude files from data
-        sendForm.append('news', JSON.stringify(newsToSend))
-        if (newsItem.files && newsItem.files?.length > 0) {
-            newsItem.files.forEach(item => {
-                sendForm.append('files', item, item.name)
-            })
-        }
+        sendForm.append('data', JSON.stringify(newsToSend))
+        newsItem.files.forEach(item => { sendForm.append('files', item, item.name) })
         try {
-            const response: Response = await fetch(APIList.news.create.url, {
+            const response: Response = await fetch(APIList.news[typOfRequest].url, {
                 signal: controller.signal,
-                method: APIList.news.create.method,
+                method: APIList.news[typOfRequest].method,
                 headers: {
                     'enctype': "multipart/form-data",
                     'Authorization': `Bearer ${getState().user.token}`
@@ -153,7 +148,7 @@ export const sendNews = (newsItem: ISendNewsItem) => {
                 body: sendForm
             })
             clearTimeout(fetchTimeout)
-            if (response.status !== 201) {
+            if (!response.ok) {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setSendNews(resErrorFiller(result)))
             }
@@ -165,7 +160,7 @@ export const sendNews = (newsItem: ISendNewsItem) => {
                 dispatch,
                 setter: setSendNews,
                 controller,
-                comp: {en: 'creating news', ru: 'создания новости'}
+                comp: {en: 'Error creating news', ru: 'Ошибка создания новости'}
             })         
         }
     }
@@ -173,7 +168,7 @@ export const sendNews = (newsItem: ISendNewsItem) => {
 
 
 
-
+/*
 
 export const updateNews = (newsItem: ISendNewsItem, changeImages: boolean) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
@@ -218,7 +213,7 @@ export const updateNews = (newsItem: ISendNewsItem, changeImages: boolean) => {
     }
 }
 
-
+*/
 
 
 
@@ -251,7 +246,7 @@ export const deleteNews = (_id: string) => {
                 dispatch,
                 setter: setSendNews,
                 controller,
-                comp: {en: 'deleting news', ru: 'удаления новости'}
+                comp: {en: 'Error deleting news', ru: 'Ошибка удаления новости'}
             })            
         }
     }

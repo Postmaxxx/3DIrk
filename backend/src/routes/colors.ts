@@ -48,7 +48,7 @@ router.post('/create',
             await color.save()
             cache.colors.obsolete = true
             cache.fibers.obsolete = true
-            return res.status(201).json({message: {en: 'Color saved', ru: 'Цвет сохранен'}})
+            return res.status(201).json({message: {en: 'Color created', ru: 'Цвет создан'}})
         } catch (e) {
             return res.status(500).json({ message:{en: `Something wrong with server ${e}, try again later`, ru: `Ошибка на сервере ${e}, попробуйте позже`}})
         }
@@ -90,7 +90,7 @@ router.put('/edit',
 
             cache.colors.obsolete = true
             cache.fibers.obsolete = true
-            return res.status(200).json({message: {en: 'Color saved', ru: 'Цвет сохранен'}})
+            return res.status(200).json({message: {en: 'Color changed', ru: 'Цвет изменен'}})
         } catch (e) {
             return res.status(500).json({ message:{en: `Something wrong with server ${e}, try again later`, ru: `Ошибка на сервере ${e}, попробуйте позже`}})
         }

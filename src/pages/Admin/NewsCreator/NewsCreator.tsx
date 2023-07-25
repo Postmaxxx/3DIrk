@@ -1,6 +1,6 @@
 import { IFetch, IFullState, INewsItem, ISendNewsItem, TLang } from '../../../interfaces';
 import './news-creator.scss'
-import { FC, useRef, useMemo, useCallback, useState } from "react";
+import { FC, useRef, useMemo, useCallback } from "react";
 import { connect } from "react-redux";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
@@ -10,10 +10,11 @@ import { useEffect } from "react";
 import { allActions } from "../../../redux/actions/all";
 import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFiles';
 import { inputsProps, navList, newsItemEmpty, resetFetch, timeModalClosing } from '../../../assets/js/consts';
-import { errorsChecker, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
+import { errorsChecker, filesDownloader, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import { useNavigate, useParams } from 'react-router-dom';
 import Preloader from '../../../components/Preloaders/Preloader';
 import inputChecker from "../../../../src/assets/js/inputChecker";
+import moment from 'moment';
 
 interface IPropsState {
     lang: TLang
@@ -36,22 +37,21 @@ interface IProps extends IPropsState, IPropsActions {}
 const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, setState}): JSX.Element => {
     const paramNewsId = useParams().newsId || ''
     const navigate = useNavigate()
-    const addFilesBigRef = useRef<IAddFilesFunctions>(null)
+    const addFilesRef = useRef<IAddFilesFunctions>(null)
     const modalRef = useRef<IModalFunctions>(null)
     const messageRef = useRef<IMessageFunctions>(null)
     const _form = useRef<HTMLFormElement>(null)
-    const [changeImages, setChangeImages] = useState<boolean>(true)
-    const [submit, setSubmit] = useState<boolean>(false)
-    const [newsItem, setNewsItem] = useState<ISendNewsItem>({...newsItemEmpty})
+    const _headerEn = useRef<HTMLInputElement>(null)
+    const _headerRu = useRef<HTMLInputElement>(null)
+    const _textShortEn = useRef<HTMLTextAreaElement>(null)
+    const _textShortRu = useRef<HTMLTextAreaElement>(null)
+    const _textEn = useRef<HTMLTextAreaElement>(null)
+    const _textRu = useRef<HTMLTextAreaElement>(null)
+    const _date = useRef<HTMLInputElement>(null)
     
     const focuser = useMemo(() => focusMover(), [lang])
     const errChecker = useMemo(() => errorsChecker({lang}), [lang])
 
-
-    const onChangeImages = (e: React.MouseEvent<HTMLElement>) => {
-        prevent(e)
-        setChangeImages(prev => !prev)
-    }
 
     
     const closeModal = useCallback(() => {
@@ -59,11 +59,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, setState}): JSX.
         setTimeout(() => messageRef.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
         if (modalRef.current?.getOwner() === 'sender') {
             if (send.status === 'success') {
-                setNewsItem({...clearForm})
-                addFilesBigRef.current?.clearAttachedFiles()
-                if (paramNewsId) {
-                    navigate(navList.account.admin.news.to, { replace: true });
-                }
+                navigate(navList.account.admin.news.to, { replace: true });
             }
             setState.news.setSendNews({...resetFetch})
             errChecker.clear()
@@ -88,40 +84,58 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, setState}): JSX.
     useEffect(() => { 
         if (paramNewsId) {//if edit
             setState.news.loadOneNews(paramNewsId)
-            setChangeImages(false)
-        } else {
-            setNewsItem({...clearForm})
-            setChangeImages(true)
-            addFilesBigRef.current?.clearAttachedFiles()
+        } else { //if new
+            setState.news.setDataOneNews({...newsItemEmpty})
+            fillValues({...newsItemEmpty})
         }
     }, [paramNewsId])
 
 
     useEffect(() => {
         if (loadOne.status === 'success') {
-            const {images, ...newsToState} = newsOne
-            setNewsItem({...newsToState, files:[]})
+            fillValues(newsOne)           
         }
     }, [loadOne])
 
+    
 
-    const onChangeText = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        e.target.id === 'header_en' && setNewsItem(prev => ({...prev, header: {...prev.header, en: e.target.value}}))
-        e.target.id === 'header_ru' && setNewsItem(prev => ({...prev, header: {...prev.header, ru: e.target.value}}))
-        e.target.id === 'text_short_en' && setNewsItem(prev => ({...prev, short: {...prev.short, en: e.target.value}}))
-        e.target.id === 'text_short_ru' && setNewsItem(prev => ({...prev, short: {...prev.short, ru: e.target.value}}))
-        e.target.id === 'text_en' && setNewsItem(prev => ({...prev, text: {...prev.text, en: e.target.value}}))
-        e.target.id === 'text_ru' && setNewsItem(prev => ({...prev, text: {...prev.text, ru: e.target.value}}))
-        e.target.id === 'date' && setNewsItem(prev => ({...prev, date: isNaN(Date.parse(e.target.value)) ? prev.date : new Date(e.target.value)}) )
+    const onChangeInputs = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        (e.target as HTMLElement).parentElement?.classList.remove('incorrect-value') 
     }
 
-    const clearForm = useMemo(() => ({...newsItemEmpty}), [])
+
+
+
+    
+    const fillValues = async (news: INewsItem) => {//fill values based on selected color
+        console.log(paramNewsId, news.header.en);
+        
+        if (!_headerEn.current || !_headerRu.current || !_textShortEn.current || !_textShortRu.current || 
+            !_textEn.current || !_textRu.current || !_date.current) return
+        if (paramNewsId) { //news exists
+            const files = await filesDownloader(
+                news.images.files.map(file => (`${news.images.paths.full}/${file}`))
+            )
+            addFilesRef.current?.replaceFiles(files)
+        } else { //new news
+            addFilesRef.current?.clearAttachedFiles()
+        }
+        
+        _headerEn.current.value = news?.header?.en || ''
+        _headerRu.current.value = news?.header?.ru || ''
+        _textShortEn.current.value = news?.short?.en || ''
+        _textShortRu.current.value = news?.short?.ru || ''
+        _textEn.current.value = news?.text?.en || ''
+        _textRu.current.value = news?.text?.ru || ''
+        _date.current.value =  moment(news?.date || '').format('YYYY-MM-DD')
+    }
 
 
 
     const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
         prevent(e)   
-        if (!_form.current) return
+        if (!_form.current || !_headerEn.current || !_headerRu.current || !_textShortEn.current || !_textShortRu.current || !_textEn.current ||
+            !_textRu.current || !_date.current ) return
         focuser.focusAll(); //run over all elements to get all errors
         const errorFields = _form.current.querySelectorAll('.incorrect-value')
         if (errorFields && errorFields?.length > 0) {
@@ -133,19 +147,27 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, setState}): JSX.
             return
         }   
         //if no errors
-        setNewsItem(prev => ({
-            ...prev, 
-            files: addFilesBigRef.current?.getFiles() || []
-        }))
-        setSubmit(true)
+        const newsItem: ISendNewsItem = {
+            _id: paramNewsId || '',
+            header: {
+                en: _headerEn.current.value,
+                ru: _headerRu.current.value,
+            },
+            text: {
+                en: _textEn.current.value,
+                ru: _textRu.current.value,
+            },
+            short: {
+                en: _textShortEn.current.value,
+                ru: _textShortRu.current.value,
+            },
+            date: new Date(_date.current.value),
+            files: addFilesRef.current?.getFiles() || []
+        }
+        setState.news.sendNews(newsItem)
     }
 
 
-    useEffect(() => {
-        if (!submit) return
-        paramNewsId ? setState.news.updateNews(newsItem, changeImages) : setState.news.sendNews(newsItem)
-        setSubmit(false)
-    }, [submit])
 
 
     useEffect(() => {       
@@ -173,22 +195,22 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, setState}): JSX.
                             <label>{lang === 'en' ? 'Header' : 'Заголовок'}:</label>
                             <div className="input__wrapper" data-selector="input-block">
                                 <input 
+                                    ref={_headerEn}
                                     data-selector="input"
                                     type="text" 
                                     id='header_en' 
-                                    onChange={(e) => onChangeText(e)}
-                                    onKeyDown={(e) => focuser.next(e)} 
-                                    value={newsItem.header.en}
+                                    onChange={onChangeInputs}
+                                    onKeyDown={focuser.next} 
                                     onBlur={(e) => inputChecker({lang, min:inputsProps.news.header.min, max:inputsProps.news.header.max, el: e.target})}/>
                             </div>
                             <div className="input__wrapper" data-selector="input-block">
                                 <input 
+                                    ref={_headerRu}
                                     data-selector="input"
                                     type="text" 
                                     id='header_ru' 
-                                    onChange={(e) => onChangeText(e)} 
-                                    onKeyDown={(e) => focuser.next(e)}
-                                    value={newsItem.header.ru}
+                                    onChange={onChangeInputs} 
+                                    onKeyDown={focuser.next}
                                     onBlur={(e) => inputChecker({lang, min:inputsProps.news.header.min, max:inputsProps.news.header.max, el: e.target})}/>
                             </div>
                         </div>
@@ -197,20 +219,20 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, setState}): JSX.
                             <label>{lang === 'en' ? 'Short text' : 'Краткий текст'}:</label>
                             <div className="input__wrapper" data-selector="input-block">
                                 <textarea 
+                                    ref={_textShortEn}
                                     data-selector="input"
                                     id='text_short_en' 
-                                    onChange={(e) => onChangeText(e)} 
-                                    onKeyDown={(e) => focuser.next(e)}
-                                    value={newsItem.short.en}
+                                    onChange={onChangeInputs} 
+                                    onKeyDown={focuser.next}
                                     onBlur={(e) => inputChecker({lang, min:inputsProps.news.textShort.min, max:inputsProps.news.textShort.max, el: e.target})}/>
                             </div>
                             <div className="input__wrapper" data-selector="input-block">
                                 <textarea 
+                                    ref={_textShortRu}
                                     data-selector="input"
                                     id='text_short_ru' 
-                                    onChange={(e) => onChangeText(e)} 
-                                    onKeyDown={(e) => focuser.next(e)}
-                                    value={newsItem.short.ru}
+                                    onChange={onChangeInputs} 
+                                    onKeyDown={focuser.next}
                                     onBlur={(e) => inputChecker({lang, min:inputsProps.news.textShort.min, max:inputsProps.news.textShort.max, el: e.target})}/>
                             </div>
                         </div>
@@ -219,20 +241,20 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, setState}): JSX.
                             <label>{lang === 'en' ? 'Full text' : 'Полный текст'}:</label>
                             <div className="input__wrapper" data-selector="input-block">
                                 <textarea 
+                                    ref={_textEn}
                                     data-selector="input"
                                     id='text_en' 
-                                    onChange={(e) => onChangeText(e)} 
-                                    onKeyDown={(e) => focuser.next(e)}
-                                    value={newsItem.text.en}
+                                    onChange={onChangeInputs} 
+                                    onKeyDown={focuser.next}
                                     onBlur={(e) => inputChecker({lang, min:inputsProps.news.textFull.min, max:inputsProps.news.textFull.max, el: e.target})}/>
                             </div>
                             <div className="input__wrapper" data-selector="input-block">
                                 <textarea 
+                                    ref={_textRu}
                                     data-selector="input"
                                     id='text_ru' 
-                                    onChange={(e) => onChangeText(e)} 
-                                    onKeyDown={(e) => focuser.next(e)}
-                                    value={newsItem.text.ru}
+                                    onChange={onChangeInputs} 
+                                    onKeyDown={focuser.next}
                                     onBlur={(e) => inputChecker({lang, min:inputsProps.news.textFull.min, max:inputsProps.news.textFull.max, el: e.target})}/>
                             </div>
                         </div>
@@ -241,24 +263,18 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, setState}): JSX.
                             <label>{lang === 'en' ? 'Date' : 'Дата'}:</label>
                             <div className="input__wrapper" data-selector="input-block">
                                 <input 
+                                    ref={_date}
                                     data-selector="input"
                                     type="date" 
                                     id="date" 
-                                    onChange={(e) => onChangeText(e)} 
-                                    onKeyDown={(e) => focuser.next(e)}
-                                    value={newsItem.date.toISOString().slice(0, 10)}
+                                    onChange={onChangeInputs} 
+                                    onKeyDown={focuser.next}
+                                    //value={newsItem.date.toISOString().slice(0, 10)}
                                     onBlur={(e) => inputChecker({lang, type: "date", el: e.target})}/>
                             </div>
                         </div>
-                        {changeImages ? 
-                            <>
-                                <h2 className='section-header full-width'>{lang === 'en' ? 'IMAGES' : 'ИЗОБРАЖЕНИЯ'}</h2>           
-                                <AddFiles lang={lang} ref={addFilesBigRef} multiple={true} id='allImages'/>
-                                {paramNewsId && <button className='button_blue change-images' onClick={onChangeImages}>Do not change images</button>}
-                            </>
-                        :
-                            <>{paramNewsId && <button className='button_blue change-images' onClick={onChangeImages}>Change all images</button>}</>
-                        }
+                        <h2 className='section-header full-width'>{lang === 'en' ? 'IMAGES' : 'ИЗОБРАЖЕНИЯ'}</h2>           
+                        <AddFiles lang={lang} ref={addFilesRef} multiple={true} id='allImages'/>
                         <button className='button_blue post' disabled={send.status === 'fetching'} onClick={e => onSubmit(e)}>
                             {send.status === 'fetching' ? 
                                 <Preloader />

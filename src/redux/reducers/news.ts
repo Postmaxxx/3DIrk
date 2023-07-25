@@ -28,9 +28,10 @@ const reducerNews = (state:INewsState = initialNewsState, action: IAction<any>):
                 newsList: [...action.payload]
             }
         case actionsListNews.SET_DATA_ONE_NEWS: 
+            console.log(action.payload);
             return {
                 ...state, 
-                newsOne: action.payload
+                newsOne: {...action.payload}
             }
         case actionsListNews.SET_TOTAL_NEWS: 
             return {

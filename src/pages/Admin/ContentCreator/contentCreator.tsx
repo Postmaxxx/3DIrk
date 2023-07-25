@@ -1,4 +1,4 @@
-import { IFetch, IFullState, TLang } from '../../../interfaces';
+import { IContentState, IFetch, IFullState, TLang } from '../../../interfaces';
 import './content-creator.scss'
 import { FC, useRef, useMemo, useCallback } from "react";
 import { connect } from "react-redux";
@@ -10,13 +10,13 @@ import { useEffect } from "react";
 import { allActions } from "../../../redux/actions/all";
 import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFiles';
 import { headerStatus, navList, resetFetch, timeModalClosing } from '../../../assets/js/consts';
-import { errorsChecker, prevent } from '../../../assets/js/processors';
+import { checkAndLoad, errorsChecker, filesDownloader, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import { useNavigate } from 'react-router-dom';
 import Preloader from '../../../components/Preloaders/Preloader';
 
 interface IPropsState {
     lang: TLang
-    send: IFetch
+    content: IContentState
 }
 
 
@@ -29,50 +29,66 @@ interface IPropsActions {
 
 interface IProps extends IPropsState, IPropsActions {}
 
-const SpliderChanger: FC<IProps> = ({lang, send, setState}): JSX.Element => {
+const SpliderChanger: FC<IProps> = ({lang, content, setState}): JSX.Element => {
     const navigate = useNavigate()
-    const addFiles = useRef<IAddFilesFunctions>(null)
+    const addFilesRef = useRef<IAddFilesFunctions>(null)
     const modalRef = useRef<IModalFunctions>(null)
     const messageRef = useRef<IMessageFunctions>(null)
     const _form = useRef<HTMLFormElement>(null)
 
     const errChecker = useMemo(() => errorsChecker({lang}), [lang])
 
+
+
     const closeModalMessage = useCallback(() => {
         modalRef.current?.closeModal()
         setTimeout(() => messageRef.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
         errChecker.clear()
-        if (send.status === 'success') {
-            addFiles.current?.clearAttachedFiles()
+        if (content.send.status === 'success') {
+            addFilesRef.current?.clearAttachedFiles()
             navigate(navList.home.to, { replace: true });
             setState.content.setSendContent(resetFetch)// clear fetch status
         }
         setState.content.setSendContent(resetFetch)// clear fetch status
-	}, [send.status, errChecker])
+	}, [content.send.status, errChecker])
+
+
 
 
     useEffect(() => {
-        if (send.status === 'idle' || send.status === 'fetching')  return
-        const errors: string[] = send.errors?.map(e => e[lang]) || []
-        messageRef.current?.update({
-            header: headerStatus[send.status][lang],
-            status: send.status,
-            text: [send.message[lang], ...errors]
-        })
-		modalRef.current?.openModal()
-    }, [send.status])
+        if (content.send.status === 'idle' || content.send.status === 'fetching')  return
+        messageRef.current?.update(modalMessageCreator(content.send, lang))
+		modalRef.current?.openModal('sender')
+    }, [content.send.status])
 
 
+    const fillValues = async () => {
+        const files = await filesDownloader(
+            content.splider.files.map(file => (`${content.splider.paths.full}/${file}`))
+        )
+        addFilesRef.current?.replaceFiles(files)
+    }
+
+    useEffect(() => {
+        checkAndLoad({
+			fetchData: content.load,
+			loadFunc: setState.content.loadSplider,
+            force: false
+		})
+    }, [])
 
 
+    useEffect(() => {
+        fillValues()
+    }, [content.load])
 
 
 
     const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
         prevent(e)   
-        if (!_form.current || !addFiles.current) return
+        if (!_form.current || !addFilesRef.current) return
 
-        if (addFiles.current.getFiles().length < 5) {
+        if (addFilesRef.current.getFiles().length < 5) {
             errChecker.add(lang === 'en' ? 'Should be at least 5 images' : 'Требуется не менее 5 изображений')
         }
 
@@ -82,7 +98,7 @@ const SpliderChanger: FC<IProps> = ({lang, send, setState}): JSX.Element => {
             return
         }
         //if no errors
-        setState.content.sendSplider(addFiles.current.getFiles())
+        setState.content.sendSplider(addFilesRef.current.getFiles())
     }
 
 
@@ -94,9 +110,9 @@ const SpliderChanger: FC<IProps> = ({lang, send, setState}): JSX.Element => {
                     <h1>{lang === 'en' ? 'Change splider' : 'Изменение галереи'}</h1> 
                     <form ref={_form}>
                         <h2 className='section-header full-width'>{lang === 'en' ? 'IMAGES' : 'ИЗОБРАЖЕНИЯ'}</h2>           
-                        <AddFiles lang={lang} ref={addFiles} multiple={true} id='allImages'/>
-                        <button className='button_blue post' disabled={send.status === 'fetching'} onClick={e => onSubmit(e)}>
-                            {send.status === 'fetching' ? 
+                        <AddFiles lang={lang} ref={addFilesRef} multiple={true} id='allImages'/>
+                        <button className='button_blue post' disabled={content.send.status === 'fetching'} onClick={e => onSubmit(e)}>
+                            {content.send.status === 'fetching' ? 
                                 <Preloader />
                             :
                                 <>{lang === 'en' ? 'Save splider' : "Сохранить галерею"}</>
@@ -119,7 +135,7 @@ const SpliderChanger: FC<IProps> = ({lang, send, setState}): JSX.Element => {
 
 const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
-    send: state.content.send,
+    content: state.content
 })
 
 
