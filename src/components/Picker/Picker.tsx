@@ -44,7 +44,7 @@ const Picker = forwardRef<IPickerFunctions, IProps>(({items, lang, onEditClick, 
             setSelectedItems(initialSelected)
         },
         getSelected() {
-            return Object.entries(selectedItems)?.filter(item => item[1])?.map(item => item[0]).map(el => (el === createNewItemId ? '' : el))
+            return Object.entries(selectedItems)?.filter(item => item[1])?.map(item => item[0]).map(el => (el === createNewItemId ? '' : el)) //return '' instead of createNewItemId 
         },
     }));
 

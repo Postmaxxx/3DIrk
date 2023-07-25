@@ -45,6 +45,7 @@ interface IFiber extends Document {
         price: number 
         priceGr: string
     }
+    active: boolean
 }
 
 const fiberSchema = new Schema({
@@ -54,7 +55,8 @@ const fiberSchema = new Schema({
     colors: [{type: Types.ObjectId, ref: 'Colors', required: true}],
     images: {type: Object, required: true},
     short: {type: Object, required: true},
-    params: {type: Object, required: true}
+    params: {type: Object, required: true},
+    active: {type: Boolean, required: false, default: true}
 })
 
 const Fiber: Model<IFiber> = model<IFiber>('Fibers', fiberSchema);

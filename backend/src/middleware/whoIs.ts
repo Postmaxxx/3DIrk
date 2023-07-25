@@ -5,7 +5,7 @@ module.exports = async (req, res, next) => {
     if (req.method === 'OPTIONS') {
         return next()
     }
-    try {
+    try {       
         const receivedToken = req.headers.authorization?.split(' ')?.[1]
         if (!receivedToken) {
             req.user = { _id: undefined, isAdmin: false }

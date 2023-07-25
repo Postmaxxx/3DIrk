@@ -1,4 +1,4 @@
-import { IAction, IDispatch, IErrRes, IFetch, IFiber, IFullState, IMsgRes, ISendFiber, TLangText } from "../../interfaces"
+import { IAction, IDispatch, IErrRes, IFetch, IFiber, IFullState, IMsgRes, ISendFiber, TLangText, TTypeRequest } from "../../interfaces"
 import { actionsListFibers } from './actionsList'
 import { APIList, DOMExceptions, fetchingFetch, successFetch } from "../../assets/js/consts";
 import { fetchError, resErrorFiller } from "../../../src/assets/js/processors";
@@ -72,22 +72,20 @@ export const loadFibers = () => {
 
 export const sendFiber = (newFiber: ISendFiber) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
+        const typeOfRequest: TTypeRequest = newFiber._id ? 'update' : 'create'
         const controller = new AbortController()
-        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.fibers.create.timeout) //set time limit for fetch
+        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.fibers[typeOfRequest].timeout) //set time limit for fetch
         dispatch(setSendFibers({...fetchingFetch, controller}))  
-
         const sendForm = new FormData()   
-        if (newFiber.files && newFiber.files.length > 0) {
-            newFiber.files.forEach(item => {
-                sendForm.append('files', item, item.name)
-            })
-        }
-        const {files, ...fiberToSend}  = newFiber //except files from data
+
+        const {files, ...fiberToSend} = newFiber //exclude files from data
         sendForm.append('data', JSON.stringify(fiberToSend))
+        newFiber.files.forEach(item => { sendForm.append('files', item, item.name)})
+
         try { 
-            const response: Response = await fetch(APIList.fibers.create.url, {
+            const response: Response = await fetch(APIList.fibers[typeOfRequest].url, {
                 signal: controller.signal,
-                method: APIList.fibers.create.method,
+                method: APIList.fibers[typeOfRequest].method,
                 headers: {
                     'enctype': "multipart/form-data",
                     'Authorization': `Bearer ${getState().user.token}`
@@ -95,7 +93,7 @@ export const sendFiber = (newFiber: ISendFiber) => {
                 body: sendForm
             })
             clearTimeout(fetchTimeout)
-            if (response.status !== 201) {
+            if (!response.ok) {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setSendFibers(resErrorFiller(result)))
             }
@@ -114,8 +112,8 @@ export const sendFiber = (newFiber: ISendFiber) => {
 }
 
 
-
-export const editFiber = (fiber: ISendFiber, changeImages: boolean) => {
+/*
+export const editFiber = (fiber: ISendFiber) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
         const controller = new AbortController()
         const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.fibers.update.timeout) //set time limit for fetch
@@ -158,7 +156,7 @@ export const editFiber = (fiber: ISendFiber, changeImages: boolean) => {
     }
 }
 
-
+*/
 
 export const deleteFiber = (_id: string) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {

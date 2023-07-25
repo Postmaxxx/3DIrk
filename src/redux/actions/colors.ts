@@ -40,6 +40,8 @@ interface IColorGet {
 
 export const loadColors = () => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
+        console.log(getState().user.token);
+        
         const controller = new AbortController()
         const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.colors.get.timeout) //set time limit for fetch
         dispatch(setLoadColors({...fetchingFetch, controller}))  
@@ -89,8 +91,8 @@ export const loadColors = () => {
 export const sendColor = (color: ISendColor) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
         const controller = new AbortController()
-        const typOfRequest: TTypeRequest = color._id ? 'update' : 'create'
-        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.colors[typOfRequest].timeout) //set time limit for fetch
+        const typeOfRequest: TTypeRequest = color._id ? 'update' : 'create'
+        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.colors[typeOfRequest].timeout) //set time limit for fetch
         dispatch(setSendColors({...fetchingFetch, controller}))  
         
         const sendForm = new FormData()  
@@ -100,9 +102,9 @@ export const sendColor = (color: ISendColor) => {
         const colorFiles = [color.files.full, color.files.thumb]
         colorFiles.forEach(item => { sendForm.append('files', item, item.name) })
         try {
-            const response: Response = await fetch(APIList.colors[typOfRequest].url, {
+            const response: Response = await fetch(APIList.colors[typeOfRequest].url, {
                 signal: controller.signal,
-                method: APIList.colors[typOfRequest].method,
+                method: APIList.colors[typeOfRequest].method,
                 headers: {
                     'enctype': "multipart/form-data",
                     'Authorization': `Bearer ${getState().user.token}`

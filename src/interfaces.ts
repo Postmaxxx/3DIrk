@@ -159,6 +159,7 @@ export interface IFiber {
     params: IFiberParam
     proscons: IProsCons
     colors: TId[] //list of colors ids
+    active?: boolean
 }
 
 export interface IFibersState {

@@ -17,6 +17,7 @@ import Selector, { ISelectorFunctions } from '../../../../src/components/Selecto
 interface IPropsState {
     lang: TLang
     colorsState: IColorsState
+    isAdmin: boolean
 }
 
 interface IPropsActions {
@@ -28,7 +29,7 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 
-const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element => {
+const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, setState}): JSX.Element => {
     const _formColor = useRef<HTMLFormElement>(null)
     const addFileBigRef = useRef<IAddFilesFunctions>(null)
     const addFileSmallRef = useRef<IAddFilesFunctions>(null)
@@ -62,15 +63,22 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
     }, []) 
 
     
-
-
     useEffect(() => { //get last version of colors
         checkAndLoad({
 			fetchData: colorsState.load,
 			loadFunc: setState.colors.loadColors,
             force: false
 		})
-    }, [])
+    }, [colorsState.load.status])
+
+    
+    useEffect(() => { //get last version of colors
+        checkAndLoad({
+			fetchData: colorsState.load,
+			loadFunc: setState.colors.loadColors,
+            force: true
+		})
+    }, [isAdmin])
 
 
 
@@ -227,7 +235,7 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
                         </div>
                         <Selector 
                             lang={lang} 
-                            id='selector_category' 
+                            id='selector_status' 
                             label={{en: 'Color status: ', ru: 'Состояние цвета: '}}
                             data={statusesList}
                             onBlur={(e) => inputChecker({lang, notExact: '', el: e.target})}
@@ -260,6 +268,7 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
 const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
     colorsState: state.colors,
+    isAdmin: state.user.isAdmin
 })
 
 

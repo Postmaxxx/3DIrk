@@ -21,9 +21,9 @@ router.post('/create',
     fileSaver,
     async (req, res) => {
         try {
-            const { name, status } = JSON.parse(req.body.data )
+            const { name, active } = JSON.parse(req.body.data )
             const files = req.files as IMulterFile[] || []
-            const color: IColor = new Colors({ name, status })
+            const color: IColor = new Colors({ name, active })
             const colorId = color._id
 
             const paths = await resizeAndSaveS3({
@@ -103,6 +103,7 @@ router.get('/load-all',
     async (req, res) => {
     try {
         const { isAdmin } = req.user
+
         const err = await cache.colors.control.load()
         if (err) {
             return res.status(500).json(err)

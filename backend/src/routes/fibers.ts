@@ -12,6 +12,7 @@ import { resizeAndSaveS3 } from "../processors/sharp";
 import { folderCleanerS3 } from "../processors/aws";
 const cache: IAllCache = require('../data/cache')
 const fileSaver = require('../routes/files')
+const whoIs = require('../middleware/whoIs')
 
 
 
@@ -21,9 +22,9 @@ router.post('/create',
     fileSaver, 
     async (req, res) => {       
         try {
-            const { name, text, short, params, images, proscons, colors } = JSON.parse(req.body.data)
+            const { name, text, short, params, images, proscons, colors, active } = JSON.parse(req.body.data)
             const files = req.files as IMulterFile[] || []  
-            const fiber: IFiber = new Fiber({ name, text, proscons, short, params, images,  colors })
+            const fiber: IFiber = new Fiber({ name, text, proscons, short, params, images,  colors, active })
             const paths = await resizeAndSaveS3({
                 files,
                 clearDir: true,
@@ -95,14 +96,8 @@ router.put('/edit',
     fileSaver,
     async (req, res) => {
         try {
-            const { name, text, short, params, proscons, colors, _id, changeImages } = JSON.parse(req.body.data)
-            const files = req.files as IMulterFile[] || undefined
-            
-            if (!changeImages) {//if images was not sent save old images
-                await Fiber.findOneAndUpdate({_id}, {name, text, short, params, proscons, colors})
-                cache.fibers.obsolete = true
-                return res.status(201).json({message: {en: 'Fiber updated', ru: 'Материал отредактирован'}})
-            }
+            const { name, text, short, params, proscons, colors, _id, active } = JSON.parse(req.body.data)
+            const files = req.files as IMulterFile[] || []
 
             const paths = await resizeAndSaveS3({
                 files,
@@ -112,13 +107,12 @@ router.put('/edit',
                 formats: ['full', 'small']
             })
 
-
             const images = {
                 paths,
                 files: files.map(item => item.filename)
             }
             
-            await Fiber.findOneAndUpdate({_id}, {name, text, short, params, proscons, colors, images}) 
+            await Fiber.findOneAndUpdate({_id}, {name, text, short, params, proscons, colors, images, active}) 
             cache.fibers.obsolete = true
             return res.status(201).json({message: {en: 'Fiber updated', ru: 'Материал отредактирован'}})
         } catch (error) {
@@ -129,13 +123,18 @@ router.put('/edit',
 
 
 
-router.get('/all', async (req, res) => {
+router.get('/all', 
+    [whoIs],
+    async (req, res) => {
     try {
+        const { isAdmin } = req.user
+        
         const err = await cache.fibers.control.load()
         if (err) {
             return res.status(500).json(err)
         }  
-        return res.status(200).json({fibers: cache.fibers.data, message: {en: `Fibers loaded`, ru: `Материалы загружены`}})
+        const filteredFibers = cache.fibers.data.filter(fiber => fiber.active) || []
+        return res.status(200).json({fibers: isAdmin ? cache.fibers.data : filteredFibers})
     } catch (e) {
         return res.status(500).json({ message:{en: `Something wrong with server ${e}, try again later`, ru: `Ошибка на сервере ${e}, попробуйте позже`}})
     }

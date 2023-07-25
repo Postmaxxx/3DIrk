@@ -129,18 +129,18 @@ export const loadOneNews = (_id: string) => {
 
 export const sendNews = (newsItem: ISendNewsItem) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        const typOfRequest: TTypeRequest = newsItem._id ? 'update' : 'create'
+        const typeOfRequest: TTypeRequest = newsItem._id ? 'update' : 'create'
         const controller = new AbortController()
-        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.news[typOfRequest].timeout) //set time limit for fetch
+        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.news[typeOfRequest].timeout) //set time limit for fetch
         dispatch(setSendNews({...fetchingFetch, controller})) 
         const sendForm = new FormData()   
         const {files, ...newsToSend} = newsItem //exclude files from data
         sendForm.append('data', JSON.stringify(newsToSend))
         newsItem.files.forEach(item => { sendForm.append('files', item, item.name) })
         try {
-            const response: Response = await fetch(APIList.news[typOfRequest].url, {
+            const response: Response = await fetch(APIList.news[typeOfRequest].url, {
                 signal: controller.signal,
-                method: APIList.news[typOfRequest].method,
+                method: APIList.news[typeOfRequest].method,
                 headers: {
                     'enctype': "multipart/form-data",
                     'Authorization': `Bearer ${getState().user.token}`

@@ -112,7 +112,7 @@ const Fiber: FC<IProps> = ({lang, fibersState, colorsState, setState, isAdmin}):
                 )
             }
         })
-    }, [])
+    }, [colorsState.colors])
 
 
     const renderFiberItem = useMemo(() => {

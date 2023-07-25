@@ -18,6 +18,7 @@ interface IProps {
     data?: IItem[]
     onBlur?: (e: React.FocusEvent<HTMLSelectElement>) => void
     saveValue?: (e: React.ChangeEvent<HTMLSelectElement>) => void
+    onClick?: (e: React.MouseEvent<HTMLSelectElement>) => void
 }
 
 
@@ -31,7 +32,7 @@ export interface ISelectorFunctions {
 
 
 
-const Selector = forwardRef<ISelectorFunctions, IProps>(({lang, id, label, defaultData={...defaultSelectItem}, data=[], onBlur, saveValue}, ref) => {
+const Selector = forwardRef<ISelectorFunctions, IProps>(({lang, id, label, defaultData={...defaultSelectItem}, data=[], onBlur, saveValue, onClick}, ref) => {
     useImperativeHandle(ref, () => ({
         setData(elements) {
             setStore(prev => ({...prev, items: elements}))
@@ -86,7 +87,8 @@ const Selector = forwardRef<ISelectorFunctions, IProps>(({lang, id, label, defau
                 id={id} 
                 defaultValue={store.value} 
                 onChange={onChange} 
-                onBlur={onBlur}>
+                onBlur={onBlur}
+                onClick={onClick}>
                     <option key={-1} value={store.item.value} disabled hidden>{store.item.name[lang]}</option>
                     {store.items.map((el, i) => <option key={i} value={el.value}>{el.name[lang]}</option>)}
             </select>
