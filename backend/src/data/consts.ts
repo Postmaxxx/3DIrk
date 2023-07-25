@@ -1,7 +1,14 @@
+import { TLangText } from "../interfaces"
+
 const minTimeBetweenSendings: number = 500 //in ms
 const sendNotificationsInTG: boolean = false
 const delayForFS = 1000
 const timeZoneDelta = 8
+
+const missedItem: TLangText = {
+    en: 'Item is missed in database',
+    ru: 'Объект отсутствует в базе данных'
+}
 
 const allPaths = {
     pathToServer: "http://localhost/data",
@@ -69,4 +76,4 @@ const sizes: IImageSizes = {//in px
 }
 
 export {minTimeBetweenSendings, sendNotificationsInTG, orderStatus, sizes, delayForFS, allPaths, timeZoneDelta,  
-    ISizesItem, IImageSizes}
+    ISizesItem, IImageSizes, missedItem}

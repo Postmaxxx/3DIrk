@@ -75,6 +75,24 @@ const prevent = (e: React.MouseEvent<HTMLElement | HTMLButtonElement> | DragEven
 
 //---------------------------------------------------------------
 
+const filesDownloader = async (urls: string[]): Promise<File[]> => {   
+      const results = await Promise.allSettled(urls.map(async (url) => {
+            const filename = url.substring(url.lastIndexOf('/') + 1)
+            const response = await fetch(url)
+            const blob = await response.blob()
+            const file = new File([blob], filename, { type: blob.type })
+            return file;
+      }))
+      const files: File[] = results
+        .filter((result) => result.status === 'fulfilled')
+        .map((result) => (result as PromiseFulfilledResult<File>).value)
+    
+      return files
+}
+
+
+
+//-----------------------------------------------------------
 
 const filenameChanger = (filename: string) => {
     return filename
@@ -217,4 +235,5 @@ const checkIfPhone = (value: string) => {
 
 
 export { ratingNumberToText, errorsChecker, prevent, filenameChanger, checkAndLoad, modalMessageCreator, 
-    focusMover, deepCopy, resErrorFiller, checkIfNumbers, checkIfEmail, checkIfPhone, fetchError}
+    focusMover, deepCopy, resErrorFiller, checkIfNumbers, checkIfEmail, checkIfPhone, fetchError, filesDownloader,
+    }

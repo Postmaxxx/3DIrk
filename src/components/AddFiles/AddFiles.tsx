@@ -14,7 +14,9 @@ interface IProps {
 
 export interface IAddFilesFunctions {
     clearAttachedFiles: () => void;
-    getFiles: () => File[]
+    getFiles: () => File[] //get all files from files[]
+    addFiles: (filesToAdd: File[]) => void //add files to files[]
+    replaceFiles: (filesToAdd: File[]) => void //add files to files[]
 }
 
 interface IFileToShow {
@@ -27,7 +29,13 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, multiple, id}, r
         clearAttachedFiles() {
             clearFiles()
         },
-        getFiles() {return files}
+        getFiles() {return files},
+        addFiles(filesToAdd: File[]) {
+            setFiles(prev => ([...prev, ...filesToAdd]))
+        },
+        replaceFiles(filesToAdd: File[]) {
+            setFiles([...filesToAdd])
+        }
     }));
     
 
@@ -132,9 +140,9 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, multiple, id}, r
             </div>
             <input id={id} type="file" multiple={multiple} onChange={onSelectFiles} ref={_files}/>
             <div className="preview-gallery" ref={_filesGallery}>
-                {filesToShow.map(file => {
+                {filesToShow.map((file, i) => {
                     return (
-                        <div className="preview__item" key={file.name}>
+                        <div className="preview__item" key={file.name + i}>
                             <div className="img__container">
                                 <img src={file.content} alt={file.name} />
                             </div>

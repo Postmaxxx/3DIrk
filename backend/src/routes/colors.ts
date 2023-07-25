@@ -12,6 +12,7 @@ const authMW = require('../middleware/auth')
 const { check, validationResult } = require('express-validator')
 const isAdmin = require('../middleware/isAdmin')
 const fileSaver = require('../routes/files')
+const whoIs = require('../middleware/whoIs')
 
 
 router.post('/create', 
@@ -20,11 +21,9 @@ router.post('/create',
     fileSaver,
     async (req, res) => {
         try {
-            const dataRaw: string = req.body.data           
-            const { name } = JSON.parse(dataRaw)
+            const { name, status } = JSON.parse(req.body.data )
             const files = req.files as IMulterFile[] || []
-
-            const color: IColor = new Colors({ name })
+            const color: IColor = new Colors({ name, status })
             const colorId = color._id
 
             const paths = await resizeAndSaveS3({
@@ -65,14 +64,8 @@ router.put('/edit',
     fileSaver,
     async (req, res) => {
         try {       
-            const { name, _id, changeImages } = JSON.parse(req.body.data )
-            const files = req.files as IMulterFile[] || undefined
-            
-            if (!changeImages) { //if images was not sent save old images
-                await Colors.findOneAndUpdate({_id}, {name})
-                cache.colors.obsolete = true
-                return res.status(200).json({message: {en: 'Color saved', ru: 'Цвет сохранен'}})
-            }
+            const { name, _id, active } = JSON.parse(req.body.data )
+            const files = req.files as IMulterFile[] || []
 
             const paths = await resizeAndSaveS3({
                 files,
@@ -93,11 +86,10 @@ router.put('/edit',
                 }
             }
 
-            await Colors.findOneAndUpdate({_id}, {name, images}) 
+            await Colors.findOneAndUpdate({_id}, {name, images, active}) 
 
             cache.colors.obsolete = true
             cache.fibers.obsolete = true
-            
             return res.status(200).json({message: {en: 'Color saved', ru: 'Цвет сохранен'}})
         } catch (e) {
             return res.status(500).json({ message:{en: `Something wrong with server ${e}, try again later`, ru: `Ошибка на сервере ${e}, попробуйте позже`}})
@@ -106,14 +98,17 @@ router.put('/edit',
 )
 
 
-
-router.get('/load-all', async (req, res) => {
+router.get('/load-all', 
+    [whoIs],
+    async (req, res) => {
     try {
+        const { isAdmin } = req.user
         const err = await cache.colors.control.load()
         if (err) {
             return res.status(500).json(err)
         }  
-        return res.status(200).json({colors: cache.colors.data, message: {en: 'Colors have been loaded', ru: 'Цвета загружены'}})
+        const filteredColors = cache.colors.data.filter(color => color.active) || []
+        return res.status(200).json({colors: isAdmin ? cache.colors.data : filteredColors})
     } catch (e) {
         return res.status(500).json({ message:{en: `Something wrong with server ${e}, try again later`, ru: `Ошибка на сервере ${e}, попробуйте позже`}})
     }

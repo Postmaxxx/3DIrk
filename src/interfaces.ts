@@ -89,6 +89,7 @@ export interface IColor {
         full: string
         thumb: string
     }
+    active?: boolean
 }
 
 //----------------------------------- pros / cons
@@ -315,6 +316,7 @@ export interface ISendColor {
         full: File, 
         thumb: File
     },
+    active: boolean
 }
 
 
@@ -474,4 +476,4 @@ export interface IContentState { //for other app content
 export type TImageSizes = 'thumb' | 'small' | 'medium' | 'full' | 'spliderMain' | 'preview' //all supported types of images.
 
 
-
+export type TTypeRequest = 'create' | 'update' 

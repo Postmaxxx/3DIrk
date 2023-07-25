@@ -3,7 +3,7 @@ import { IAllCache } from '../data/cache'
 import { ICartItem } from "../models/Cart"
 import { TLang, TLangText } from "../interfaces"
 import { IOrder, OrderType } from "../models/Orders"
-import { allPaths, orderStatus, sendNotificationsInTG, timeZoneDelta } from "../data/consts"
+import { allPaths, missedItem, orderStatus, sendNotificationsInTG, timeZoneDelta } from "../data/consts"
 import { foldersCleaner } from "../processors/fsTools"
 import { filesUploaderS3 } from "../processors/aws"
 const moment = require('moment');
@@ -74,7 +74,6 @@ const cartToFront = async (cart: ICartItem[]) => {
     return {filteredCart, edited}
 }
  
-
 
 
 interface IOrderToTg {
@@ -157,8 +156,8 @@ interface IMessageToTg {
 }
 
 const messageToTg = async ({message, files, dir}: IMessageToTg) => {
-    const urlMessage= `https://api.telegram.org/bot${process.env.tgToken}/sendMessage`;
-    const urlDocument= `https://api.telegram.org/bot${process.env.tgToken}/sendDocument`;
+    const urlMessage= `https://api.telegram.org/bot${process.env.tgToken}/sendMessage`
+    const urlDocument= `https://api.telegram.org/bot${process.env.tgToken}/sendDocument`
     try { //send text to TG
         const response = await fetch(urlMessage, {
             method: 'POST',
@@ -562,13 +561,11 @@ router.get('/orders',
     async (req, res) => {
         try {
             const {from, to, userId, status} = req.query
-            
             const { id, isAdmin } = req.user 
             await cache.fibers.control.load()
             await cache.colors.control.load()
             await cache.products.control.load()
 
-            
             const userList: IUser[] = !isAdmin ? 
             await User.find({user: id}) || [] 
             : userId === 'all' ? await User.find() || [] : await User.find({_id: userId}) || []
@@ -579,11 +576,11 @@ router.get('/orders',
                 user: {$in: userList},
                 status: {$in: statusList},
                 date: {$gte: new Date(from), $lte: new Date(to) }
-            })
+                })
                 .populate('user') // field name in Order referencing to User is 'user'
                 .exec() //merge
-
-            
+                
+                
             const usersToFront = orders.reduce((acc, order) => {//using {} instead of [] to increase the speed
                 const userId = order.user._id.toString()
                 if (!acc[userId]) {
@@ -595,12 +592,15 @@ router.get('/orders',
                 }
                 const cart = order.cart.map(cartItem => ({ //fill cart with the text using cache
                     productId: cartItem.productId,
-                    productName: cache.products.data.find(el => el._id.toString() === cartItem.productId.toString()).name,
-                    fiberName: cache.fibers.data.find(el => el._id.toString() === cartItem.fiberId.toString()).name,
-                    colorName: cache.colors.data.find(el => el._id.toString() === cartItem.colorId.toString()).name,
+                    productName: cache.products.data.find(el => el._id.toString() === cartItem.productId.toString())?.name || missedItem,
+                    fiberName: cache.fibers.data.find(el => el._id.toString() === cartItem.fiberId.toString())?.name || missedItem,
+                    colorName: cache.colors.data.find(el => el._id.toString() === cartItem.colorId.toString())?.name || missedItem,
                     amount: cartItem.amount,
                     type: cartItem.type
                 }))
+
+                
+                
                 acc[userId].orders.push({
                     _id: order._id,
                     date: order.date,

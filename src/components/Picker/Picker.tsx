@@ -1,7 +1,8 @@
 import { TImageSizes, TLang, TLangText } from '../../interfaces';
 import './picker.scss'
-import { useState, forwardRef, useImperativeHandle, useMemo  } from "react";
+import { useState, forwardRef, useImperativeHandle, useMemo } from "react";
 import { prevent } from '../../assets/js/processors';
+import { createNewItemId } from '../../../src/assets/js/consts';
 
 
 
@@ -19,8 +20,12 @@ interface IProps {
         name: TLangText
     }[]
     lang: TLang
+    multiple?: boolean
+    withNew?: boolean
+    minSelected?: number //min amount of items can't be unselected
     onEditClick?: (_id: string) => void
     onDeleteClick?: (_id: string) => void
+    onItemClick?: (_id: string) => void
 }
 
 
@@ -30,7 +35,7 @@ export interface IPickerFunctions {
 }
 
 
-const Picker = forwardRef<IPickerFunctions, IProps>(({items, lang, onEditClick, onDeleteClick}, ref) => {
+const Picker = forwardRef<IPickerFunctions, IProps>(({items, lang, onEditClick, onDeleteClick, onItemClick, multiple=true, withNew=false, minSelected=0}, ref) => {
     useImperativeHandle(ref, () => ({
         setSelected(_ids) {
             const initialSelected = _ids.reduce((acc, item) => {
@@ -39,45 +44,67 @@ const Picker = forwardRef<IPickerFunctions, IProps>(({items, lang, onEditClick, 
             setSelectedItems(initialSelected)
         },
         getSelected() {
-            return Object.entries(selectedItems).filter(item => item[1]).map(item => item[0])
+            return Object.entries(selectedItems)?.filter(item => item[1])?.map(item => item[0]).map(el => (el === createNewItemId ? '' : el))
         },
     }));
 
+
+
     const [selectedItems, setSelectedItems] = useState<{[key: string]: boolean}>({}) //obj is faster than [].find...
 
+    
 
-    const onItemClick = (id: string) => {
-        setSelectedItems(prev => ({...prev, [id]: !prev[id]}))
+    const itemClicked = (_id: string) => {
+        if (multiple) {
+            setSelectedItems(prev => {
+                return (prev[_id] && Object.values(prev)?.filter(value => value)?.length > minSelected) ? {...prev, [_id]: !prev[_id]} : {...prev, [_id]: true}
+            })
+        } else {
+            minSelected ? setSelectedItems({[_id]: true}) : setSelectedItems(prev => ({[_id]: !prev[_id]}))
+        }
+        onItemClick && onItemClick(_id)
     }
+
 
     const onDeleteItem = (e: React.MouseEvent<HTMLButtonElement>, _id: string) => {
         prevent(e)
         onDeleteClick && onDeleteClick(_id)
     }
 
-    const onEditItem = (e: React.MouseEvent<HTMLButtonElement>, _id: string) => {
+   const onEditItem = (e: React.MouseEvent<HTMLButtonElement>, _id: string) => {
         prevent(e)
         onEditClick && onEditClick(_id)
     }
 
 
     const contentMemo = useMemo(() => {
-        return items.map((item) => {
-            return (
-                <div className="item__container" key={item._id}>
-                    <div className={`image__container ${selectedItems[item._id] ? 'selected' : ''}`} onClick={() => onItemClick(item._id)}>
-                        {item.images && <img src={`${item.images.paths.small}/${item.images.files[0]}`} alt={item.name[lang]} />} {/*for fibers*/}
-                        {item.url && <img src={item.url.thumb} alt={item.name[lang]} />} {/*for colors*/}
+        return (
+            <>
+                {items.map((item) => {
+                    return (
+                        <div className="item__container" key={item._id}>
+                            <div className={`image__container ${selectedItems[item._id] ? 'selected' : ''}`} onClick={() => itemClicked(item._id)}>
+                                {item.images && <img src={`${item.images.paths.small}/${item.images.files[0]}`} alt={item.name[lang]} />} {/*for fibers*/}
+                                {item.url && <img src={item.url.thumb} alt={item.name[lang]} />} {/*for colors*/}
+                            </div>
+                            <span>{item.name[lang]}</span>
+                            <div className="buttons_control">
+                                {onEditClick && <button className="button_blue edit" onClick={(e) => onEditItem(e, item._id)}>E</button>}
+                                {onDeleteClick && <button className="button_blue delete" onClick={(e) => onDeleteItem(e, item._id)}>X</button>}
+                            </div>
+                        </div>
+                    )
+                })}
+                {withNew && 
+                    <div className="item__container">
+                        <div className={`image__container ${selectedItems.createNew ? 'selected' : ''}`} onClick={() => itemClicked(createNewItemId)}>
+                            +
+                        </div>
                     </div>
-                    <span>{item.name[lang]}</span>
-                    <div className="buttons_control">
-                        <button className="button_blue edit" onClick={(e) => onEditItem(e, item._id)}>E</button>
-                        <button className="button_blue delete" onClick={(e) => onDeleteItem(e, item._id)}>X</button>
-                    </div>
-                </div>
-            )
-        })
-    }, [items, lang, selectedItems ])
+                }
+            </>
+        )
+    }, [items, lang, selectedItems])
 
     return (
         <div className="items__container">

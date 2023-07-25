@@ -22,6 +22,32 @@ const socials: Record<string, string> = { //link to groups
 
 const maxAmountToOrder: number = 990 //max amount for amountChanger
 
+const defaultSelectItem = {
+    name: {
+        en: 'Select', 
+        ru: 'Выберете'
+    },
+    value: ''
+}
+
+const createNewItemId = 'createNew'
+
+const statuses = [
+    {
+        name: {
+            en: 'Suspended',
+            ru: 'Приостановлено'
+        },
+        value: 'suspended'
+    },
+    {
+        name: {
+            en: 'Active',
+            ru: 'Активно'
+        },
+        value: 'active'
+    }
+]
 
 const imageExtentions: string[] = ['jpg', 'jpeg', 'bmp', 'svg', 'png', 'tiff', 'webp'] //files with these extentions will be treaten as images, preview will be loaded
 
@@ -200,11 +226,6 @@ const APIList = { //all routes to BE
             method: 'PUT',
             timeout: 10000
         },
-        /*checkCart: { //check are products exist
-            url: `${process.env.REACT_BACK_URL}/api/user/cart`,
-            method: "POST",
-            timeout: 10000
-        },*/
     }
 
 }
@@ -537,6 +558,7 @@ const colorEmpty: ISendColor = {
         full: new File([], ""),
         thumb: new File([], "")
     },
+    active: true
 }
 
 const orderStatus = [
@@ -676,4 +698,5 @@ export { clearModalMessage, resetFetch, timeModalClosing,
     strengthMax, fiberEmpty, productEmpty, colorEmpty, gapBetweenRequests,
     orderStatus, usersPerPage, timeOffset, inputsProps, tipsTransition, socials,
     navList, newsItemEmpty, APIList, imageExtentions, maxAmountToOrder, loadNewsPerRequest,
-    exceptionTimeout, exceptionFetch, DOMExceptions}
+    exceptionTimeout, exceptionFetch, DOMExceptions, statuses, defaultSelectItem, 
+    createNewItemId}

@@ -71,7 +71,7 @@ const ProductDetails: React.FC<IProps> = ({lang, product, colors,productLoad, fi
         return {
             fiber: selectedFiber?._id,
             color: selectedColor,
-            type: product.mods.length > 0 ? selectorTypeRef.current?.getValue().name || {...empty} : noType
+            type: product.mods.length > 0 ? selectorTypeRef.current?.getItem().name || {...empty} : noType
         }
     }
 

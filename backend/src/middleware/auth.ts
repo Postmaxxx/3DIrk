@@ -2,12 +2,11 @@ const jwt = require('jsonwebtoken')
 const User = require("../models/User")
 
 module.exports = async (req, res, next) => {
-    
     if (req.method === 'OPTIONS') {
         return next()
     }
-    
     try {
+        req.test = '111'
         const receivedToken = req.headers.authorization?.split(' ')?.[1]
         if (!receivedToken) {
             return res.status(401).json({message: {en: 'No token (you are not authorized)', ru: 'Нет токена (вы не авторизован)'}, errors: []})

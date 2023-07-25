@@ -1,17 +1,18 @@
-import { IColorsState, IFullState, ISendColor, TLang } from '../../../interfaces';
+import { IColorsState, IFullState, TLang } from '../../../interfaces';
 import './color-creator.scss'
-import {  useRef, useMemo, FC, useEffect, useCallback, useState} from "react";
+import {  useRef, useMemo, FC, useEffect, useCallback} from "react";
 import { connect } from "react-redux";
 import { AnyAction, bindActionCreators, Dispatch } from "redux";
 import Message, { IMessageFunctions } from '../../../components/Message/Message';
 import { allActions } from "../../../redux/actions/all";
 import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFiles';
-import { checkAndLoad, errorsChecker, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
-import { colorEmpty, empty, inputsProps, navList, resetFetch, timeModalClosing } from '../../../assets/js/consts';
+import { checkAndLoad, errorsChecker, filesDownloader, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
+import { defaultSelectItem, inputsProps, resetFetch, statuses, timeModalClosing } from '../../../assets/js/consts';
 import Modal, { IModalFunctions } from '../../../components/Modal/Modal';
-import { useNavigate, useParams } from 'react-router-dom';
 import Preloader from '../../../components/Preloaders/Preloader';
 import inputChecker from '../../../../src/assets/js/inputChecker';
+import Picker, { IPickerFunctions } from '../../../../src/components/Picker/Picker';
+import Selector, { ISelectorFunctions } from '../../../../src/components/Selector/Selector';
 
 interface IPropsState {
     lang: TLang
@@ -28,19 +29,17 @@ interface IProps extends IPropsState, IPropsActions {}
 
 
 const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element => {
-    const paramColorId = useParams().colorId || ''
-    const navigate = useNavigate()
     const _formColor = useRef<HTMLFormElement>(null)
     const addFileBigRef = useRef<IAddFilesFunctions>(null)
     const addFileSmallRef = useRef<IAddFilesFunctions>(null)
     const modalRef = useRef<IModalFunctions>(null)
     const messageRef = useRef<IMessageFunctions>(null)
-    const [color, setColor] = useState<ISendColor>({...colorEmpty})
-    const [submit, setSubmit] = useState<boolean>(false)
-    const [changeImages, setChangeImages] = useState<boolean>(true)
-
+    const colorPickerRef = useRef<IPickerFunctions>(null)
+    const nameEnRef = useRef<HTMLInputElement>(null)
+    const nameRuRef = useRef<HTMLInputElement>(null)
     const errChecker = useMemo(() => errorsChecker({lang}), [lang])
     const focuser = useMemo(() => focusMover(), [lang])
+    const selectorRef = useRef<ISelectorFunctions>(null)
 
 
     const closeModal = useCallback(() => {
@@ -48,98 +47,85 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
         setTimeout(() => messageRef.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
         if (modalRef.current?.getOwner() === 'sender') {
             if (colorsState.send.status === 'success') {
-                setState.colors.loadColors() //reload colors if update db was succsessfull
-                if (paramColorId) { //return to home pahe
-                    navigate(navList.home.to, { replace: true });
-                }
+                checkAndLoad({//reload colors if update db was succsessfull
+                    fetchData: colorsState.load,
+                    loadFunc: setState.colors.loadColors,
+                    force: true
+                })
             }
             setState.colors.setSendColors(resetFetch)// clear fetch status
         }
-        if (modalRef.current?.getOwner() === 'filler') {
-            navigate(navList.home.to, { replace: true });
-        }
-	}, [colorsState.send.status, paramColorId])
+	}, [colorsState.send.status])
 
 
 
 
-    useEffect(() => { 
-        if (paramColorId) {//if edit
-            if (colorsState.load.status === 'success') {
-                setChangeImages(false)
-                fillColor(paramColorId)
-            } 
-        } else { //if new
-            setChangeImages(true)
-            setColor({...colorEmpty})
-        }
-    }, [paramColorId, colorsState.load.status])
-
-
-
-    useEffect(() => {
+    useEffect(() => { //get last version of colors
         checkAndLoad({
 			fetchData: colorsState.load,
 			loadFunc: setState.colors.loadColors,
+            force: false
 		})
-    }, [colorsState.load.status])
+    }, [])
 
 
 
-    const fillColor = (_id: string) => {
-        const color = colorsState.colors.find(color => color._id === _id)
-        if (!color) {
-            messageRef.current?.update({
-                header: 'Error',
-                status: 'error',
-                text: [lang === 'en' ? "Color was not found" : "Цвет не найден"]
-            })
-            modalRef.current?.openModal('filler')
-            return
+    const initilalFillValues = async (_id: string) => {//fill values based on selected color
+        if (!nameEnRef.current || !nameRuRef.current || !selectorRef.current) return
+        const selectedColor = colorsState.colors.find(item => item._id === _id)
+        if (selectedColor) { //color exists
+            const filesBig = await filesDownloader([selectedColor.url.full])
+            const filesSmall = await filesDownloader([selectedColor.url.thumb])
+            addFileBigRef.current?.replaceFiles(filesBig)
+            addFileSmallRef.current?.replaceFiles(filesSmall)
+            selectorRef.current.setValue(selectedColor.active ? 'active' : 'suspended')
+        } else { //new color
+            addFileBigRef.current?.clearAttachedFiles()
+            addFileSmallRef.current?.clearAttachedFiles()
+            selectorRef.current.setValue('active')
         }
-        setColor(prev => ({...prev, name: {...color.name}}))
+        nameEnRef.current.value = selectedColor?.name?.en || ''
+        nameRuRef.current.value = selectedColor?.name?.ru || ''
     }
+
 
 
     const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
         errChecker.clear()
         prevent(e)
-        if (!_formColor.current) return
+        if (!_formColor.current || !nameEnRef.current || !nameRuRef.current || !selectorRef.current || !colorPickerRef.current) return       
         focuser.focusAll(); //run over all elements to get all errors
         const errorFields = _formColor.current.querySelectorAll('.incorrect-value')
         if (errorFields && errorFields?.length > 0) {
             errChecker.add(lang === 'en' ? 'Some fields are filled incorrectly' : 'Некоторые поля заполнены неправильно')
         }       
-        if (!addFileBigRef.current?.getFiles().length && changeImages) {
+        if (!addFileBigRef.current?.getFiles().length) {
             errChecker.add(lang === 'en' ? 'File fullsize is missed' : 'Отсутствует файл полноразмера')
         }
-        if (!addFileSmallRef.current?.getFiles().length && changeImages) {
+        if (!addFileSmallRef.current?.getFiles().length) {
             errChecker.add(lang === 'en' ? 'File preview is missed' : 'Отсутствует файл предпросмотра')
         }
-        
         if (errChecker.amount() > 0) {
             messageRef.current?.update(errChecker.result())
             modalRef.current?.openModal("errorChecker")
             return
         }
-        
-        setColor(prev => ({
-            ...prev, 
-            _id: paramColorId,
+
+        const color = {
+            _id: colorPickerRef.current.getSelected()[0] || '',
+            name: {
+                en: nameEnRef.current.value,
+                ru: nameRuRef.current.value,
+            },
             files: {
-                    full: addFileBigRef.current?.getFiles()[0] as File,
-                    thumb: addFileSmallRef.current?.getFiles()[0] as File,
-                }
-        }))
-        setSubmit(true)
+                full: addFileBigRef.current?.getFiles()[0] as File,
+                thumb: addFileSmallRef.current?.getFiles()[0] as File,
+            },
+            active: selectorRef.current.getValue() === 'active' ? true : false
+        }
+        setState.colors.sendColor(color)
     }
 
-
-    useEffect(() => { //we need to wait until state will be fully updated before submiting
-        if (!submit) return
-        paramColorId ? setState.colors.editColor(color, changeImages) : setState.colors.sendColor(color)
-        setSubmit(false)
-    }, [submit])
 
 
 
@@ -148,7 +134,6 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
             messageRef.current?.update(modalMessageCreator(colorsState.send, lang))
             modalRef.current?.openModal("sender")
             if (colorsState.send.status === 'success') { //clear form if success
-                setColor(prev => ({...prev, name: {...empty}, _id: ''}))
                 addFileBigRef.current?.clearAttachedFiles()
                 addFileSmallRef.current?.clearAttachedFiles()
             }
@@ -157,37 +142,44 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
 
 
 
-    const onChangeImages = (e: React.MouseEvent<HTMLElement>) => {
-        prevent(e)
-        setChangeImages(prev => !prev)
-    }
-
-
     const onChangeInputs = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         (e.target as HTMLElement).parentElement?.classList.remove('incorrect-value') 
-        errChecker.clearError(e.target) 
-        e.target.id === "name_en" && setColor(prev => ({...prev, name: {...prev.name, en: e.target.value}}))
-        e.target.id === "name_ru" && setColor(prev => ({...prev, name: {...prev.name, ru: e.target.value}}))
     }
 
 
 
     useEffect(() => {       
         if (!_formColor.current) return
-        focuser.create({container: _formColor.current})
+        focuser.create({container: _formColor.current, itemsSelector: '[data-selector="select"], [data-selector="input"]'})
     }, [lang])
 
+
+
+    const onColorSelected = async (_id: string) => {
+        initilalFillValues(_id)
+    }
 
 
     return (
         <div className="page page_creator_color">
             <div className="container_page">
                 <div className="container">
-                {paramColorId ? 
-                <h1>{lang === 'en' ? 'Edit color' : 'Изменение цвета'}</h1>
-                :
-                <h1>{lang === 'en' ? 'Add new color' : 'Добавление нового цвета'}</h1>}
+                <h1>{lang === 'en' ? 'Edit colors' : 'Изменение цветов'}</h1>
                     <form ref={_formColor}>
+                        <h2 className='section-header full-width'>{lang === 'en' ? 'SELECT COLOR TO EDIT' : 'ВЫБЕРЕТЕ ЦВЕТ ДЛЯ РЕДАКТИРОВАНИЯ'}</h2>           
+                        <div className="colors-picker">
+                            {colorsState.load.status === 'success' ? 
+                                <Picker 
+                                    ref={colorPickerRef} 
+                                    items={colorsState.colors} 
+                                    lang={lang} 
+                                    multiple={false}
+                                    withNew={true}
+                                    onItemClick={onColorSelected}
+                                    minSelected={1}/>
+                            :
+                                <Preloader />}
+                        </div>
                         <div className="input-block_header">
                             <span></span>
                             <h3 className='lang'>EN</h3>
@@ -197,41 +189,48 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
                             <label>{lang === 'en' ? 'Name' : 'Название'}:</label>
                             <div className="input__wrapper" data-selector="input-block">
                                 <input 
+                                    ref={nameEnRef}
                                     data-selector="input"
                                     id="name_en" 
                                     onChange={onChangeInputs} 
-                                    value={color.name.en} 
-                                    onKeyDown={(e) => focuser.next(e)}
+                                    onKeyDown={focuser.next}
                                     onBlur={(e) => inputChecker({lang, min:inputsProps.color.min, max:inputsProps.color.max, el: e.target})}/>
                             </div>
                             <div className="input__wrapper" data-selector="input-block">
                                 <input 
+                                    ref={nameRuRef}
                                     data-selector="input"
                                     id="name_ru" 
                                     onChange={onChangeInputs}
-                                    onKeyDown={(e) => focuser.next(e)}
-                                    value={color.name.ru} 
+                                    onKeyDown={focuser.next}
                                     onBlur={(e) => inputChecker({lang, min:inputsProps.color.min, max:inputsProps.color.max, el: e.target})}/>
                             </div>
                         </div>
-                            {changeImages &&
-                                <>
-                                    <div className="input-block_header">
-                                        <span></span>
-                                        <h3 className='lang'>{lang === 'en' ? "FULLSIZE" : "ПОЛНОРАЗМЕР"}</h3>
-                                        <h3 className='lang'>{lang === 'en' ? "PREVIEW" : "ПРЕДПРОСМОТР"}</h3>
-                                    </div>
-                                    <div className="input-block">
-                                        <label>{lang === 'en' ? 'Image' : 'Картинка'}:</label>
-                                        <div className="input__wrapper">
-                                            <AddFiles lang={lang} ref={addFileBigRef} multiple={false} id='files_big'/>
-                                        </div>
-                                        <div className="input__wrapper">
-                                            <AddFiles lang={lang} ref={addFileSmallRef} multiple={false} id='files_small'/>
-                                        </div>
-                                    </div>
-                                </>}
-                        {paramColorId && <button className='button_blue change-images' onClick={onChangeImages}>{changeImages ? 'Do not change images' : 'Change all images'}</button>}
+
+                        <div className="input-block_header">
+                            <span></span>
+                            <h3 className='lang'>{lang === 'en' ? "FULLSIZE" : "ПОЛНОРАЗМЕР"}</h3>
+                            <h3 className='lang'>{lang === 'en' ? "PREVIEW" : "ПРЕДПРОСМОТР"}</h3>
+                        </div>
+                        <div className="input-block">
+                            <label>{lang === 'en' ? 'Image' : 'Картинка'}:</label>
+                            <div className="input__wrapper">
+                                <AddFiles lang={lang} ref={addFileBigRef} multiple={false} id='files_big'/>
+                            </div>
+                            <div className="input__wrapper">
+                                <AddFiles lang={lang} ref={addFileSmallRef} multiple={false} id='files_small'/>
+                            </div>
+                        </div>
+                        <Selector 
+                            lang={lang} 
+                            id='selector_category' 
+                            label={{en: 'Color status: ', ru: 'Состояние цвета: '}}
+                            data={statuses}
+                            onBlur={(e) => inputChecker({lang, notExact: '', el: e.target})}
+                            defaultData={{...defaultSelectItem}}
+                            saveValue={onChangeInputs}
+                            ref={selectorRef}
+                        />
                         <button 
                             className='button_blue button_post' 
                             disabled={colorsState.send.status === 'fetching'} 
@@ -239,7 +238,7 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, setState}): JSX.Element =>
                             {colorsState.send.status === 'fetching' ?
                                 <Preloader />
                             :
-                                paramColorId ? lang === 'en' ? 'Edit color' : "Изменить цвет" : lang === 'en' ? 'Add color' : "Добавить цвет"
+                                lang === 'en' ? 'Save changes' : "Сохранить изменения" 
                             }
                         </button>
                     </form>

@@ -13,12 +13,14 @@ interface IColor extends Document {
             full: string
             thumb: string
         }
-    }
+    },
+    active: boolean
 }
 
 const colorsSchema = new Schema({
     name: {type: Object, required: true},
-    images: {type: Object, required: true}
+    images: {type: Object, required: true},
+    active: {type: Boolean, required: false, default: true}
 })
 
 const Colors: Model<IColor> = model<IColor>('Colors', colorsSchema);

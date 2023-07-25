@@ -1,4 +1,4 @@
-import { IAction, IDispatch, IColor, IFetch, IFullState, IErrRes, TLangText, IMsgRes, ISendColor, } from "../../interfaces"
+import { IAction, IDispatch, IColor, IFetch, IFullState, IErrRes, TLangText, IMsgRes, ISendColor, TTypeRequest, } from "../../interfaces"
 import { actionsListColors } from './actionsList'
 import { APIList, DOMExceptions, errorFetch, fetchingFetch, successFetch } from "../../assets/js/consts";
 import { fetchError, resErrorFiller } from "../../../src/assets/js/processors";
@@ -22,7 +22,7 @@ export const setColors = <T extends IColor[]>(payload: T):IAction<T> => ({
 });
 
 
-interface IImages {
+interface IColorGet {
     images: {
         files: {
             full: string
@@ -34,7 +34,8 @@ interface IImages {
         }
     },
     name: TLangText,
-    _id: string
+    _id: string,
+    active: boolean
 }
 
 export const loadColors = () => {
@@ -47,6 +48,7 @@ export const loadColors = () => {
                 signal: controller.signal,
                 method: APIList.colors.get.method,
                 headers: {
+                    'Authorization': `Bearer ${getState().user.token}`,
                     "Content-Type": 'application/json',
                 }
             })
@@ -55,7 +57,7 @@ export const loadColors = () => {
                 const result: IErrRes = await response.json()
                 return dispatch(setLoadColors(resErrorFiller(result)))
             }
-            const result: {colors: IImages[], message: TLangText} = await response.json()
+            const result: {colors: IColorGet[]} = await response.json()
             const resultProcessed = result.colors.map((item) => {
                 return {
                     _id: item._id,
@@ -63,7 +65,8 @@ export const loadColors = () => {
                     url: {
                         full: `${item.images.paths.full}/${item.images.files.full}`,
                         thumb: `${item.images.paths.thumb}/${item.images.files.thumb}`
-                    }
+                    },
+                    active: item.active
                 }
             })
             dispatch(setColors(resultProcessed))
@@ -86,18 +89,22 @@ export const loadColors = () => {
 export const sendColor = (color: ISendColor) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
         const controller = new AbortController()
-        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.colors.create.timeout) //set time limit for fetch
+        const typOfRequest: TTypeRequest = color._id ? 'update' : 'create'
+        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.colors[typOfRequest].timeout) //set time limit for fetch
         dispatch(setSendColors({...fetchingFetch, controller}))  
-        const sendForm = new FormData()   
+        
+        const sendForm = new FormData()  
+        const {files, ...colorToBE} = color
+        sendForm.append('data', JSON.stringify(colorToBE))
+        
         const colorFiles = [color.files.full, color.files.thumb]
         colorFiles.forEach(item => {
             sendForm.append('files', item, item.name)
         })
-        sendForm.append('data', JSON.stringify({name: color.name}))
         try {
-            const response: Response = await fetch(APIList.colors.create.url, {
+            const response: Response = await fetch(APIList.colors[typOfRequest].url, {
                 signal: controller.signal,
-                method: APIList.colors.create.method,
+                method: APIList.colors[typOfRequest].method,
                 headers: {
                     'enctype': "multipart/form-data",
                     'Authorization': `Bearer ${getState().user.token}`
@@ -125,19 +132,22 @@ export const sendColor = (color: ISendColor) => {
 
 
 
-export const editColor = (color: ISendColor, changeImages: boolean) => {
+
+/*
+export const editColor = (color: ISendColor) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
         const controller = new AbortController()
         const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.colors.update.timeout) //set time limit for fetch
         dispatch(setSendColors({...fetchingFetch, controller}))  
-        const sendForm = new FormData()   
-        sendForm.append('data', JSON.stringify({name: color.name, _id: color._id, changeImages}))
-        if (changeImages) {
-            const colorFiles = [color.files.full, color.files.thumb]
-            colorFiles.forEach(item => {
-                sendForm.append('files', item, item.name)
-            })
-        }
+        const sendForm = new FormData()
+        
+        const {files, ...colorToBE} = color
+        sendForm.append('data', JSON.stringify(colorToBE))
+        
+        const colorFiles = [color.files.full, color.files.thumb]
+        colorFiles.forEach(item => {
+            sendForm.append('files', item, item.name)
+        })
         try {
             const response: Response = await fetch(APIList.colors.update.url, {
                 signal: controller.signal,
@@ -166,7 +176,7 @@ export const editColor = (color: ISendColor, changeImages: boolean) => {
         }
     }
 }
-
+*/
 
 
 
