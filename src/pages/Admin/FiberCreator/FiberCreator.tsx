@@ -313,6 +313,8 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, colorsS
             setFiber(deepCopy(fiberEmpty))
             addFilesRef.current?.clearAttachedFiles()
             selectorRef.current.setValue('active')
+            console.log('222');
+            
         }
     }
 

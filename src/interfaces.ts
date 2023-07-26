@@ -198,6 +198,7 @@ export interface IProduct {
     fibers: TId[] //array of fiber ids
     mods: TLangText[]
     category: TId
+    active?: boolean
 }
 
 

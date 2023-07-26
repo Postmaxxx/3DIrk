@@ -21,15 +21,18 @@ const loadCatalog = async ()=> {
             const rawCatalog: ({__v: string} & ICatalogItem)[] = await Catalog.find()
             
             const amounts: {[key:string]: number} = {}    
+            const amountsActive: {[key:string]: number} = {}    
             allProducts.data.forEach(product => {
                 amounts[product.category.toString()] ? amounts[product.category.toString()]++ : amounts[product.category.toString()] = 1     
+                amountsActive[product.category.toString()] && product.active ? amountsActive[product.category.toString()]++ : amountsActive[product.category.toString()] = 1     
             })
             
             allCatalog.data = rawCatalog.map(item => {
                 return {
                     _id: item._id,
                     name: item.name,
-                    total: amounts[item._id.toString()] || 0
+                    total: amounts[item._id.toString()] || 0,
+                    active: amountsActive[item._id.toString()] || 0,
                 }
             })
             allCatalog.obsolete = false

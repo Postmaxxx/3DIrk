@@ -1,4 +1,4 @@
-import { IAction, ICatalogItem, ICategory, IDispatch, IErrRes, IFetch, IFullState, IMsgRes, IProduct, ISendProduct, TId } from "../../interfaces"
+import { IAction, ICatalogItem, ICategory, IDispatch, IErrRes, IFetch, IFullState, IMsgRes, IProduct, ISendProduct, TId, TTypeRequest } from "../../interfaces"
 import { actionsListCatalog } from './actionsList'
 import { APIList, DOMExceptions, fetchingFetch, successFetch } from "../../assets/js/consts";
 import { fetchError, resErrorFiller } from "../../assets/js/processors";
@@ -26,11 +26,12 @@ export const loadCatalog = () => {
         const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.catalog.get.timeout) //set time limit for fetch
         dispatch(setLoadCatalog({...fetchingFetch, controller}))  
         try {
-            const response: Response = await fetch(`${APIList.catalog.get.url}${isAdmin ? '?full=true' : ''}`, {
+            const response: Response = await fetch(APIList.catalog.get.url, {
                 signal: controller.signal,
                 method: APIList.catalog.get.method,
                 headers: {
                     "Content-Type": 'application/json',
+                    'Authorization': `Bearer ${getState().user.token}`
                 },
             })
             clearTimeout(fetchTimeout)
@@ -58,8 +59,6 @@ export const loadCatalog = () => {
 
 export const sendCatalog = (newCatalog: (Omit<ICatalogItem, "total">)[]) => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
-        const { token } = getState().user
-
         const controller = new AbortController()
         const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.catalog.update.timeout) //set time limit for fetch
         dispatch(setSendCatalog({...fetchingFetch, controller}))  
@@ -69,7 +68,7 @@ export const sendCatalog = (newCatalog: (Omit<ICatalogItem, "total">)[]) => {
                 method: APIList.catalog.update.method,
                 headers: {
                     "Content-Type": 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${getState().user.token}`
                 },
                 body: JSON.stringify({newCatalog})
             })
@@ -130,6 +129,7 @@ export const loadCategory = ({_id, from, to}: ILoadCategory) => {
                 method: APIList.category.getSome.method,
                 headers: {
                     "Content-Type": 'application/json',
+                    'Authorization': `Bearer ${getState().user.token}`
                 }
             })
             clearTimeout(fetchTimeout)
@@ -176,7 +176,7 @@ export const setSendProduct = <T extends IFetch>(payload: T):IAction<T> => ({
 });
 
 
-export const setProduct = <T extends Partial<IProduct>>(payload: T):IAction<T> => ({
+export const setProduct = <T extends IProduct>(payload: T):IAction<T> => ({
     type: actionsListCatalog.SET_DATA_PRODUCT,
     payload
 });
@@ -185,23 +185,21 @@ export const setProduct = <T extends Partial<IProduct>>(payload: T):IAction<T> =
 
 export const sendProduct = (product: ISendProduct) => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
+        const typeOfRequest: TTypeRequest = product._id ? 'update' : 'create'
         const controller = new AbortController()
-        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.product.create.timeout) //set time limit for fetch
+        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.product[typeOfRequest].timeout) //set time limit for fetch
         dispatch(setSendProduct({...fetchingFetch, controller})) 
 
         const sendForm = new FormData()   
-        if (product.files && product.files.length > 0) {
-            product.files.forEach(item => {
-                sendForm.append('files', item, item.name)
-            })
-        }
+
         const {files, ...productToSend}  = product //except files from data
         sendForm.append('data', JSON.stringify(productToSend))
+        product.files.forEach(item => {sendForm.append('files', item, item.name) })
         
         try {
-            const response: Response = await fetch(APIList.product.create.url, {
+            const response: Response = await fetch(APIList.product[typeOfRequest].url, {
                 signal: controller.signal,
-                method: APIList.product.create.method,
+                method: APIList.product[typeOfRequest].method,
                 headers: {
                     "enctype": 'multipart/form-data',
                     'Authorization': `Bearer ${getState().user.token}`
@@ -209,7 +207,7 @@ export const sendProduct = (product: ISendProduct) => {
                 body: sendForm
             })
             clearTimeout(fetchTimeout)
-            if (response.status !== 201) {
+            if (!response.ok) {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setSendProduct(resErrorFiller(result)))
             }

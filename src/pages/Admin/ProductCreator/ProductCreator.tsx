@@ -1,4 +1,4 @@
-import { ICatalogState, IFibersState, IFullState, IProduct, ISendProduct, TLang } from '../../../interfaces';
+import { ICatalogState, IFibersState, IFullState, ISendProduct, TLang } from '../../../interfaces';
 import './product-creator.scss'
 import { FC, useRef, useMemo, useCallback } from "react";
 import { connect } from "react-redux";
@@ -22,7 +22,6 @@ interface IPropsState {
     lang: TLang
     fibersState: IFibersState
     catalogState: ICatalogState
-    product: IProduct
 }
 
 interface IPropsActions {
@@ -36,16 +35,17 @@ interface IProps extends IPropsState, IPropsActions {}
 
 
 
-const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState, product}): JSX.Element => {
+const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState}): JSX.Element => {
     const navigate = useNavigate()
     const modalRef = useRef<IModalFunctions>(null)
     const messageRef = useRef<IMessageFunctions>(null)
     const fiberPickerRef = useRef<IPickerFunctions>(null)
+    const productPickerRef = useRef<IPickerFunctions>(null)
     const addFilesRef = useRef<IAddFilesFunctions>(null)
     const modsRef = useRef<IFeaturerFunctions>(null)
     const selectorCategoryRef = useRef<ISelectorFunctions>(null)
     const selectorStatusRef = useRef<ISelectorFunctions>(null)
-    //const [product, setProduct] = useState<ISendProduct>({...productEmpty})
+    const [product, setProduct] = useState<ISendProduct>({...productEmpty})
     const [submit, setSubmit] = useState<boolean>(false)
     const focuserDescr = useMemo(() => focusMover(), [lang])
     const focuserMods = useMemo(() => focusMover(), [lang])
@@ -92,8 +92,13 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState, 
     const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => { 
         prevent(e)
         if (!_descr.current || !_mods.current || !fiberPickerRef.current) return
-        //check DESCRIPTION
+
         focuserDescr.focusAll(); //run over all elements to get all errors
+        //check CATEGORY
+        if (!selectorCategoryRef.current?.getValue()) {
+            errChecker.add(lang === 'en' ? 'Category not selected' : 'Категория не выбрана')
+        } 
+        //check DESCRIPTION
         const errorDescrFields = _descr.current.querySelectorAll('.incorrect-value')
         if (errorDescrFields && errorDescrFields?.length > 0) {
             errChecker.add(lang === 'en' ? 'Some fields in description are filled incorrectly' : 'Некоторые поля в описании заполнены неправильно')
@@ -119,44 +124,27 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState, 
             return
         }      
 
-        setState.catalog.setProduct({
-            mods: (modsRef.current as IFeaturerFunctions).getFeatures().map(item => ({en: item.name.en, ru: item.name.ru})),
-            //files: addFilesRef.current?.getFiles() || [], 
-            fibers: (fiberPickerRef.current as IPickerFunctions).getSelected(),
-        })
-        /*setProduct(prev => {
+        setProduct(prev => {
             return { 
                 ...prev, 
                 mods: (modsRef.current as IFeaturerFunctions).getFeatures().map(item => ({en: item.name.en, ru: item.name.ru})),
                 files: addFilesRef.current?.getFiles() || [], 
-                fibers: (fiberPickerRef.current as IPickerFunctions).getSelected()
+                fibers: (fiberPickerRef.current as IPickerFunctions).getSelected(),
+                active: selectorStatusRef.current?.getValue() === 'active' ? true : false,
+                category: selectorCategoryRef.current?.getValue() as string
             }
-        })*/
+        })
         setSubmit(true)
     }
 
 
     useEffect(() => {
         if (!submit) return
-        const productToSend: ISendProduct = {...catalogState.category.product, files: addFilesRef.current?.getFiles() || [],}
-        setState.catalog.sendProduct(productToSend)
+        setState.catalog.sendProduct(product)
         setSubmit(false)
     }, [submit])
 
 
-    /*const onDeleteFiber = useCallback((_id: string) => {
-        setState.fibers.deleteFiber(_id)
-    }, [])
-
-
-    const onEditFiber = useCallback((_id: string) => {
-        navigate(`${navList.account.admin.fiber.to}/${_id}`)
-    },[])*/
-
-
-   /* useEffect(() => {
-        fiberPickerRef.current?.setSelected(product.fibers)
-    }, [product.fibers])*/
 
 
     useEffect(() => {
@@ -164,11 +152,6 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState, 
     }, [product.mods])
 
 
-    /*useEffect(() => {
-        if (product.files?.length === 0) {
-            addFilesRef.current?.clearAttachedFiles()
-        }
-    }, [product.files])*/
 
 
     useEffect(() => {
@@ -216,6 +199,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState, 
                 }],
                 force: true
             })
+            productPickerRef.current?.setSelected() 
         } 
     }
 
@@ -246,83 +230,6 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState, 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-    const fillValues = async (_id: string) => {//fill values based on selected product
-        console.log(_id);
-        
-        if (!modsRef.current || !modsRef.current || !modsRef.current || !selectorStatusRef.current) return
-        if (_id) { 
-            const selectedProduct = catalogState.category.product
-            //mods
-            modsRef.current.setFeatures(selectedProduct.mods.map(item => ({name: item, _id: ''}))) //Ids doesn't matter for fiber, pros/cons are just arrays
-            //fibers 
-            fiberPickerRef.current?.setSelected(selectedProduct.fibers)
-            //files
-            const files = await filesDownloader(
-                selectedProduct.images.files.map(file => (`${selectedProduct.images.paths.full}/${file}`))
-            )
-            addFilesRef.current?.replaceFiles(files)    
-            setProduct({...catalogState.category.product, files}) //+descr part
-        } else {
-            //DESCRIPTION
-            setProduct(deepCopy(productEmpty))
-            //MODIFICATIONS
-            modsRef.current.setFeatures([]) //Ids doesn't matter for fiber, pros/cons are just arrays
-            //FIBERS 
-            fiberPickerRef.current?.setSelected([])
-            //FILES
-            addFilesRef.current?.clearAttachedFiles()
-            selectorStatusRef.current.setValue('active')
-        }
-
-        /*if (!_spec.current || !prosRef.current || !consRef.current || !selectorRef.current) return
-        const selectedFiber = fibersState.fibersList.find(item => item._id === _id)
-        if (selectedFiber) { //fiber exists
-            //specifications
-            _spec.current.querySelectorAll('input, select').forEach(item => {
-                (item as HTMLInputElement | HTMLSelectElement).value = String(selectedFiber.params[item.id] || '')
-            })
-            //proscons
-            prosRef.current.setFeatures(selectedFiber.proscons.pros.map(item => ({name: item, _id: ''}))) //Ids doesn't matter for fiber, pros/cons are just arrays
-            consRef.current.setFeatures(selectedFiber.proscons.cons.map(item => ({name: item, _id: ''}))) //Ids doesn't matter for fiber, pros/cons are just arrays
-            //colors 
-            colorPickerRef.current?.setSelected(selectedFiber.colors)
-            //files
-            const files = await filesDownloader(
-                selectedFiber.images.files.map(file => (`${selectedFiber.images.paths.full}/${file}`))
-            )
-            addFilesRef.current?.replaceFiles(files)
-            setFiber({...selectedFiber, files}) //for descr part
-            selectorRef.current.setValue(selectedFiber.active ? statuses.active.value : statuses.suspended.value)
-        } else { //new fiber
-            //specifications
-            _spec.current.querySelectorAll('input, select').forEach(item => {
-                (item as HTMLInputElement | HTMLSelectElement).value = ''
-            })
-            //proscons
-            prosRef.current.setFeatures([]) //Ids doesn't matter for fiber, pros/cons are just arrays
-            consRef.current.setFeatures([]) //Ids doesn't matter for fiber, pros/cons are just arrays
-            //colors 
-            colorPickerRef.current?.setSelected([])
-
-            setFiber(deepCopy(fiberEmpty))
-            addFilesRef.current?.clearAttachedFiles()
-            selectorRef.current.setValue('active')
-        }*/
-    }
-
     const onProductSelected = async (_id: string) => {
         if (_id) {
             if (catalogState.category.product._id !== _id) {
@@ -332,22 +239,33 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState, 
                     args: [_id],
                     force: true
                 })
-                const files = await filesDownloader(
-                    catalogState.category.product.images.files.map(file => (`${catalogState.category.product.images.paths.full}/${file}`))
-                )
-                setProduct({...catalogState.category.product, files})
+            } else {
+                fillData()
             }
         } else {
             setProduct(deepCopy(productEmpty))
+            fiberPickerRef.current?.setSelected([])
+            addFilesRef.current?.replaceFiles([])
+            selectorStatusRef.current?.setValue('active')
         }
     }
 
 
+    const fillData = async () => {
+        const files = await filesDownloader(
+            catalogState.category.product.images.files.map(file => (`${catalogState.category.product.images.paths.full}/${file}`))
+        )
+        addFilesRef.current?.replaceFiles(files)
+        fiberPickerRef.current?.setSelected(catalogState.category.product.fibers)
+        setProduct({...catalogState.category.product, files})
+        selectorStatusRef.current?.setValue(catalogState.category.product.active ? statuses.active.value : statuses.suspended.value)
+    }
+
+
     useEffect(() => {
-        console.log('3423423');
-        
-        fillValues(product._id)
-    }, [product._id])
+        fillData()
+    }, [catalogState.category.product._id])
+
 
 
 
@@ -372,7 +290,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState, 
                         </div>
                         <div className="fiber-picker">
                             <Picker 
-                                ref={fiberPickerRef} 
+                                ref={productPickerRef} 
                                 items={catalogState.category.products} 
                                 lang={lang} 
                                 multiple={false}
@@ -482,7 +400,11 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState, 
                         <h2 className='section-header full-width'>{lang === 'en' ? 'SELECT FIBERS' : 'ВЫБЕРЕТЕ МАТЕРИАЛЫ'}</h2>           
                         <div className="fibers-picker">
                             {fibersState.load.status === 'success' ? 
-                                <Picker ref={fiberPickerRef} items={fibersState.fibersList} lang={lang}/>
+                                <Picker 
+                                    ref={fiberPickerRef} 
+                                    items={fibersState.fibersList} 
+                                    lang={lang}
+                                    minSelected={1}/>
                             :
                                 <Preloader />}
                         </div>
@@ -523,7 +445,7 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
     fibersState: state.fibers,
     catalogState: state.catalog,
-    product: state.catalog.category.product
+
 })
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>):IPropsActions => ({

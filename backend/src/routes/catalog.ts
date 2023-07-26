@@ -14,18 +14,30 @@ const authMW = require('../middleware/auth')
 const { check, validationResult } = require('express-validator')
 const fileSaver = require('../routes/files')
 const isAdmin = require('../middleware/isAdmin')
+const whoIs = require('../middleware/whoIs')
 
 
-router.get('/list', async (req, res) => { 
+router.get('/list', 
+    [whoIs],
+    async (req, res) => { 
     try {
+        const { isAdmin } = req.user
         const err = await cache.catalog.control.load()
-        const { full } = req.query;
+
         if (err) {
             return res.status(500).json(err)
         } 
-        //!!!!!!!!!!!!! add check if no ACTIVE products
-        const catalogToSend = full ? cache.catalog.data : cache.catalog.data.filter(item => item.total > 0)
-        res.status(200).json({allCatalog: catalogToSend, full, message: {en: 'Catalog has been loaded', ru: 'Каталог был загружены'}})
+        
+        const catalogToSend = cache.catalog.data
+            .filter(item => isAdmin ? true : item.active > 0)//admin - all, user - only have active products
+            .map(item => ({ //total for admin - total amount products in category, for user - inly active
+                _id: item._id,
+                name: item.name,
+                total: isAdmin ? item.total : item.active
+        }))
+        
+        
+        res.status(200).json({allCatalog: catalogToSend, message: {en: 'Catalog has been loaded', ru: 'Каталог был загружены'}})
     } catch (error) {
         res.status(500).json({message: {en: 'Error reading catalog from db', ru: 'Ошибка при чтении каталога из БД'}})
     }
@@ -80,9 +92,13 @@ router.put('/list',
 )
 //-------------------------------------------------------------------------------------
 
-router.get('/category', async(req, res) => {
+router.get('/category', 
+    [whoIs],
+    async(req, res) => {
     try {
         const { _id, from, to } = req.query
+        const { isAdmin } = req.user
+        
         const err = await cache.products.control.load()
         if (err) {
             return res.status(500).json(err)
@@ -95,7 +111,7 @@ router.get('/category', async(req, res) => {
             return res.status(400).json({message: {en: `Category with this ${_id} does not exist`, ru: `Категория с данным ${_id} не найдена`}})
         }
 
-        const products =  cache.products.data.filter(item => item.category.toString() === _id)
+        const products = cache.products.data.filter(item => (item.category.toString() === _id) && (isAdmin ? true : item.active))
         
         if (fromIndex > products.length || fromIndex < 0 || (toIndex < fromIndex && toIndex !== -1)) {
             return res.status(400).json({message: {en: 'Wrong input range', ru: 'Неправильный входной диапазон'}})
@@ -129,9 +145,10 @@ router.post('/product', //create
     fileSaver,
     async(req, res) => { 
         try {
-            const { price, name, text, text_short, fibers, mods, category } = JSON.parse(req.body.data)
+            const { price, name, text, text_short, fibers, mods, category, active } = JSON.parse(req.body.data)
             const files = req.files as IMulterFile[] || []  
-            const product: IProduct = new Product({ price: Number(price), name, text, text_short, fibers, mods, category })
+            const product: IProduct = new Product({ price: Number(price), name, text, text_short, fibers, mods, category, active })
+            
             const paths = await resizeAndSaveS3({
                 files,
                 clearDir: true,
@@ -139,12 +156,12 @@ router.post('/product', //create
                 baseFolder: `${allPaths.pathToImages}/${allPaths.pathToProducts}/${product._id}`,
                 formats: ['full', 'small', 'medium', 'preview']
             })
-
+            
             product.images = {
                 paths,
                 files: files.map(item => item.filename)
             }
-
+            
             await product.save()
 
             cache.products.obsolete = true
@@ -152,6 +169,8 @@ router.post('/product', //create
 
             return res.status(201).json({message: {en: 'Product created', ru: 'Продукт создан'}})    
         } catch (error) {
+            console.log(error);
+            
             res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})
         }
     }
@@ -165,16 +184,9 @@ router.put('/product', //create
     fileSaver,
     async(req, res) => { 
         try {
-            const { price, name, text, text_short, fibers, mods, category, _id, changeImages } = JSON.parse(req.body.data)
+            const { price, name, text, text_short, fibers, mods, category, _id, active } = JSON.parse(req.body.data)
             const files = req.files as IMulterFile[] || undefined
             
-            if (!changeImages) {//if images was not sent save old images
-                await Product.findOneAndUpdate({_id}, { price, name, text, text_short, fibers, mods, category, _id })
-                cache.products.obsolete = true
-                cache.catalog.obsolete = true
-                return res.status(201).json({message: {en: 'Product updated', ru: 'Продукт отредактирован'}})
-            }
-
             const paths = await resizeAndSaveS3({
                 files,
                 clearDir: true,
@@ -188,7 +200,7 @@ router.put('/product', //create
                 files: files.map(item => item.filename)
             }
 
-            await Product.findOneAndUpdate({_id}, { price, name, text, text_short, fibers, mods, category, _id, images })
+            await Product.findOneAndUpdate({_id}, { price, name, text, text_short, fibers, mods, category, _id, images, active })
 
             cache.products.obsolete = true
             cache.catalog.obsolete = true
@@ -238,7 +250,7 @@ router.get('/product', async(req, res) => {
 
 
 
-router.delete('/product', //cdelete
+router.delete('/product', //delete
     [authMW, isAdmin,
         check('_id')
         .exists()

@@ -51,6 +51,7 @@ const reducerCatalog = (state: ICatalogState = initialCatalogState, action: IAct
                     ...dataCategory
                 }
             }
+
         case actionsListCatalog.SET_LOAD_STATUS_PRODUCT: 
             return {
                 ...state, 
@@ -67,6 +68,24 @@ const reducerCatalog = (state: ICatalogState = initialCatalogState, action: IAct
                     sendProduct: action.payload as IFetch
                 }
             }
+        case actionsListCatalog.SET_DATA_PRODUCT: 
+            const product = action.payload as IProduct
+            return {
+                ...state, 
+                category: {
+                    ...state.category,
+                    product: product
+                }
+            }
+
+        default: return state
+    }
+}
+
+export default reducerCatalog
+
+/*
+
         case actionsListCatalog.SET_DATA_PRODUCT:            
             const newProps: Partial<IProduct> = action.payload as IProduct
             const newProduct: IProduct = {...state.category.product}
@@ -79,10 +98,4 @@ const reducerCatalog = (state: ICatalogState = initialCatalogState, action: IAct
                     ...state.category,
                     product: newProduct
                 }
-            }
-
-        default: return state
-    }
-}
-
-export default reducerCatalog
+            }*/

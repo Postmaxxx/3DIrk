@@ -20,6 +20,7 @@ interface IProduct extends Document {
     fibers: string[]
     mods: TLangText[]
     category: string
+    active: boolean
 }
 
 
@@ -31,7 +32,8 @@ const productSchema = new Schema({
     images: {type: Object, required: true},
     fibers: [{type: Types.ObjectId, ref: 'Fiber', required: true}],
     mods: {type: Object, required: false},
-    category: {type: Types.ObjectId, ref: 'Catalog', required: true}
+    category: {type: Types.ObjectId, ref: 'Catalog', required: true},
+    active: {type: Boolean, required: false, default: true}
 })
 
 const Product: Model<IProduct> = model<IProduct>('Product', productSchema)
