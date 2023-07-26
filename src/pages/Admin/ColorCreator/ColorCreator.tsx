@@ -62,16 +62,8 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, setState}): JSX.E
         return Object.values(statuses)
     }, []) 
 
-    
-    useEffect(() => { //get last version of colors
-        checkAndLoad({
-			fetchData: colorsState.load,
-			loadFunc: setState.colors.loadColors,
-            force: false
-		})
-    }, [colorsState.load.status])
 
-    
+
     useEffect(() => { //get last version of colors
         checkAndLoad({
 			fetchData: colorsState.load,
@@ -79,6 +71,12 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, setState}): JSX.E
             force: true
 		})
     }, [isAdmin])
+
+
+
+    useEffect(() => {
+        colorsState.load.status === 'success' && colorPickerRef.current?.setSelected()
+    }, [colorsState.load.status, colorPickerRef.current])
 
 
 
@@ -188,7 +186,8 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, setState}): JSX.E
                                     multiple={false}
                                     withNew={true}
                                     onItemClick={onColorSelected}
-                                    minSelected={1}/>
+                                    minSelected={1}
+                                    markInactive={true}/>
                             :
                                 <Preloader />}
                         </div>

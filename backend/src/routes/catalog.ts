@@ -23,6 +23,7 @@ router.get('/list', async (req, res) => {
         if (err) {
             return res.status(500).json(err)
         } 
+        //!!!!!!!!!!!!! add check if no ACTIVE products
         const catalogToSend = full ? cache.catalog.data : cache.catalog.data.filter(item => item.total > 0)
         res.status(200).json({allCatalog: catalogToSend, full, message: {en: 'Catalog has been loaded', ru: 'Каталог был загружены'}})
     } catch (error) {
@@ -96,12 +97,12 @@ router.get('/category', async(req, res) => {
 
         const products =  cache.products.data.filter(item => item.category.toString() === _id)
         
-        if (fromIndex > products.length || fromIndex < 0 || toIndex < fromIndex) {
+        if (fromIndex > products.length || fromIndex < 0 || (toIndex < fromIndex && toIndex !== -1)) {
             return res.status(400).json({message: {en: 'Wrong input range', ru: 'Неправильный входной диапазон'}})
         }
-        
+        const indexEnd = toIndex === -1 ? products.length : Math.min(toIndex + 1, products.length)
         return res.status(200).json({
-            products: products.slice(fromIndex, Math.min(toIndex + 1, products.length)).map(item => ({
+            products: products.slice(fromIndex, indexEnd).map(item => ({
                 _id: item._id,
                 name: item.name,
                 price: item.price,

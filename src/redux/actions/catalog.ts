@@ -113,7 +113,7 @@ export const setCategory = <T extends Omit<ICategory, "loadCategory" | "sendProd
 interface ILoadCategory {
     _id: string,
     from: number,
-    to: number
+    to: number //-1 till the end
 }
 
 
@@ -176,7 +176,7 @@ export const setSendProduct = <T extends IFetch>(payload: T):IAction<T> => ({
 });
 
 
-export const setProduct = <T extends IProduct>(payload: T):IAction<T> => ({
+export const setProduct = <T extends Partial<IProduct>>(payload: T):IAction<T> => ({
     type: actionsListCatalog.SET_DATA_PRODUCT,
     payload
 });

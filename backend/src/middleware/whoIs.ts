@@ -11,11 +11,11 @@ module.exports = async (req, res, next) => {
             req.user = { _id: undefined, isAdmin: false }
             return next()
         }
-        const decoded = jwt.verify(receivedToken, process.env.jwtSecret)
+        const decoded = await jwt.verify(receivedToken, process.env.jwtSecret)
         if (!decoded) {
             req.user = { _id: undefined, isAdmin: false }
             return next()
-        }
+        } 
         if (decoded.iat > decoded.exp) {
             req.user = { _id: undefined, isAdmin: false }
             return next()
@@ -23,18 +23,17 @@ module.exports = async (req, res, next) => {
         const user = await User.findOne({_id: decoded.userId})       
         if (!user) {
             req.user = { _id: undefined, isAdmin: false }
-            return next()
+           return next()
         }
         req.user = {
             _id: decoded.userId,
             isAdmin: user.email === process.env.admEmail
         }
-        next()
+        return next()
     } catch (error) {
         req.user = { _id: undefined, isAdmin: false }
         next()
     }
-
 }
 
 export {}

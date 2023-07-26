@@ -133,6 +133,7 @@ router.get('/all',
         if (err) {
             return res.status(500).json(err)
         }  
+        
         const filteredFibers = cache.fibers.data.filter(fiber => fiber.active) || []
         return res.status(200).json({fibers: isAdmin ? cache.fibers.data : filteredFibers})
     } catch (e) {

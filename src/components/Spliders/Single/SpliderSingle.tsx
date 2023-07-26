@@ -57,9 +57,9 @@ const SpliderSingle: React.FC<IProps> = ({lang, catalogState, setState}): JSX.El
 
 
 
-	useEffect(() => {
+	/*useEffect(() => {
 		//setState.catalog.loadCategory({_id: catalog.category._id, from: 0, to: productsPerSlide})	
-	},[catalogState.category._id]);
+	},[catalogState.category._id]);*/
 
 
 	

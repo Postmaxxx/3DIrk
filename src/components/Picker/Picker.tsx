@@ -18,10 +18,12 @@ interface IProps {
             thumb: string
         }
         name: TLangText
+        active?: boolean
     }[]
     lang: TLang
-    multiple?: boolean
-    withNew?: boolean
+    markInactive?: boolean //mark inavtive
+    multiple?: boolean //is it possible to choose more than 1 tiem
+    withNew?: boolean //show img for new item
     minSelected?: number //min amount of items can't be unselected
     onEditClick?: (_id: string) => void
     onDeleteClick?: (_id: string) => void
@@ -30,14 +32,17 @@ interface IProps {
 
 
 export interface IPickerFunctions {
-    setSelected: (_ids: string[]) => void;
+    setSelected: (_ids?: string[]) => void; //[ids to select], if blank - select new
     getSelected: () => string[];
 }
 
 
-const Picker = forwardRef<IPickerFunctions, IProps>(({items, lang, onEditClick, onDeleteClick, onItemClick, multiple=true, withNew=false, minSelected=0}, ref) => {
+const Picker = forwardRef<IPickerFunctions, IProps>(({items, lang, onEditClick, onDeleteClick, onItemClick, multiple=true, withNew=false, minSelected=0, markInactive=false}, ref) => {
     useImperativeHandle(ref, () => ({
         setSelected(_ids) {
+            if (!_ids) {
+                return setSelectedItems({[createNewItemId]: true}) 
+            }
             const initialSelected = _ids.reduce((acc, item) => {
                 return {...acc, [item]: true}
             }, {} as {[key: string]: boolean})
@@ -62,7 +67,9 @@ const Picker = forwardRef<IPickerFunctions, IProps>(({items, lang, onEditClick, 
         } else {
             minSelected ? setSelectedItems({[_id]: true}) : setSelectedItems(prev => ({[_id]: !prev[_id]}))
         }
-        onItemClick && onItemClick(_id)
+        if (onItemClick) {
+            _id === createNewItemId ? onItemClick('') : onItemClick(_id)
+        }
     }
 
 
@@ -83,9 +90,11 @@ const Picker = forwardRef<IPickerFunctions, IProps>(({items, lang, onEditClick, 
                 {items.map((item) => {
                     return (
                         <div className="item__container" key={item._id}>
-                            <div className={`image__container ${selectedItems[item._id] ? 'selected' : ''}`} onClick={() => itemClicked(item._id)}>
-                                {item.images && <img src={`${item.images.paths.small}/${item.images.files[0]}`} alt={item.name[lang]} />} {/*for fibers*/}
-                                {item.url && <img src={item.url.thumb} alt={item.name[lang]} />} {/*for colors*/}
+                            <div 
+                                className={`image__container ${selectedItems[item._id] ? 'selected' : ''} ${markInactive && !item.active ? 'inactive' : ''}`} 
+                                onClick={() => itemClicked(item._id)}>
+                                    {item.images && <img src={`${item.images.paths.small}/${item.images.files[0]}`} alt={item.name[lang]} />} {/*for fibers*/}
+                                    {item.url && <img src={item.url.thumb} alt={item.name[lang]} />} {/*for colors*/}
                             </div>
                             <span>{item.name[lang]}</span>
                             <div className="buttons_control">

@@ -30,7 +30,7 @@ interface IProps extends IPropsState, IPropsActions {}
 const CatalogList: React.FC<IProps> = ({catalog, lang, selectedCategory, isAdmin, setState}): JSX.Element => {
 
 	const loadCategory = (_id: TId, total: number) => {
-		setState.catalog.loadCategory({_id, from: 0, to: total}) //load all products for category
+		setState.catalog.loadCategory({_id, from: 0, to: -1}) //load all products for category
 	};
 
 

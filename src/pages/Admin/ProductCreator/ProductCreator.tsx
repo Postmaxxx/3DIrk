@@ -1,4 +1,4 @@
-import { ICatalogState, IFibersState, IFullState, ISendProduct, TLang } from '../../../interfaces';
+import { ICatalogState, IFibersState, IFullState, IProduct, ISendProduct, TLang } from '../../../interfaces';
 import './product-creator.scss'
 import { FC, useRef, useMemo, useCallback } from "react";
 import { connect } from "react-redux";
@@ -10,9 +10,9 @@ import { useEffect, useState } from "react";
 import { allActions } from "../../../redux/actions/all";
 import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFiles';
 import Preloader from '../../../components/Preloaders/Preloader';
-import { useNavigate, useParams } from 'react-router-dom';
-import { inputsProps, navList, productEmpty, resetFetch, timeModalClosing } from '../../../assets/js/consts';
-import { checkAndLoad, checkIfNumbers, deepCopy, errorsChecker, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
+import { useNavigate } from 'react-router-dom';
+import { defaultSelectItem, inputsProps, navList, productEmpty, resetFetch, statuses, timeModalClosing } from '../../../assets/js/consts';
+import { checkAndLoad, checkIfNumbers, deepCopy, errorsChecker, filesDownloader, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import Picker, { IPickerFunctions } from '../../../components/Picker/Picker';
 import Featurer, { IFeaturerFunctions } from '../../../components/Featurer/Featurer';
 import Selector, { ISelectorFunctions } from '../../../components/Selector/Selector';
@@ -22,6 +22,7 @@ interface IPropsState {
     lang: TLang
     fibersState: IFibersState
     catalogState: ICatalogState
+    product: IProduct
 }
 
 interface IPropsActions {
@@ -35,33 +36,38 @@ interface IProps extends IPropsState, IPropsActions {}
 
 
 
-const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState}): JSX.Element => {
+const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState, product}): JSX.Element => {
     const navigate = useNavigate()
-    const paramProductId = useParams().productId || ''
     const modalRef = useRef<IModalFunctions>(null)
     const messageRef = useRef<IMessageFunctions>(null)
     const fiberPickerRef = useRef<IPickerFunctions>(null)
     const addFilesRef = useRef<IAddFilesFunctions>(null)
     const modsRef = useRef<IFeaturerFunctions>(null)
-    const _descr = useRef<HTMLDivElement>(null)
-    const selectorRef = useRef<ISelectorFunctions>(null)
-    const errChecker = useMemo(() => errorsChecker({lang}), [lang])
-    const [product, setProduct] = useState<ISendProduct>({...productEmpty})
+    const selectorCategoryRef = useRef<ISelectorFunctions>(null)
+    const selectorStatusRef = useRef<ISelectorFunctions>(null)
+    //const [product, setProduct] = useState<ISendProduct>({...productEmpty})
     const [submit, setSubmit] = useState<boolean>(false)
-    const [changeImages, setChangeImages] = useState<boolean>(true)
-    const _mods = useRef<HTMLDivElement>(null)
     const focuserDescr = useMemo(() => focusMover(), [lang])
     const focuserMods = useMemo(() => focusMover(), [lang])
     const _form = useRef<HTMLFormElement>(null)
+    const _descr = useRef<HTMLDivElement>(null)
+    const _mods = useRef<HTMLDivElement>(null)
     const _price = useRef<HTMLInputElement>(null)
+    
+    const errChecker = useMemo(() => errorsChecker({lang}), [lang])
+    const statusesList = useMemo(() => (Object.values(statuses)), []) 
 
     const closeModal = useCallback(() => {
         modalRef.current?.closeModal()
         setTimeout(() => messageRef.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal 
         if (modalRef.current?.getOwner() === 'sender') {
             if (catalogState.category.sendProduct.status === 'success') {
-                setProduct({...productEmpty})
-                setState.catalog.loadCatalog()
+                //setProduct({...productEmpty})
+                checkAndLoad({
+                    fetchData: catalogState.catalog.load,
+                    loadFunc: setState.catalog.loadCatalog,
+                    force: true
+                })
                 errChecker.clear() 
             }
             setState.catalog.setSendProduct(resetFetch)// clear fetch status
@@ -113,38 +119,44 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
             return
         }      
 
-        setProduct(prev => {
+        setState.catalog.setProduct({
+            mods: (modsRef.current as IFeaturerFunctions).getFeatures().map(item => ({en: item.name.en, ru: item.name.ru})),
+            //files: addFilesRef.current?.getFiles() || [], 
+            fibers: (fiberPickerRef.current as IPickerFunctions).getSelected(),
+        })
+        /*setProduct(prev => {
             return { 
                 ...prev, 
                 mods: (modsRef.current as IFeaturerFunctions).getFeatures().map(item => ({en: item.name.en, ru: item.name.ru})),
                 files: addFilesRef.current?.getFiles() || [], 
                 fibers: (fiberPickerRef.current as IPickerFunctions).getSelected()
             }
-        })
+        })*/
         setSubmit(true)
     }
 
 
     useEffect(() => {
         if (!submit) return
-        paramProductId ? setState.catalog.editProduct(product, changeImages) : setState.catalog.sendProduct(product)
+        const productToSend: ISendProduct = {...catalogState.category.product, files: addFilesRef.current?.getFiles() || [],}
+        setState.catalog.sendProduct(productToSend)
         setSubmit(false)
     }, [submit])
 
 
-    const onDeleteFiber = useCallback((_id: string) => {
+    /*const onDeleteFiber = useCallback((_id: string) => {
         setState.fibers.deleteFiber(_id)
     }, [])
 
 
     const onEditFiber = useCallback((_id: string) => {
         navigate(`${navList.account.admin.fiber.to}/${_id}`)
-    },[])
+    },[])*/
 
 
-    useEffect(() => {
+   /* useEffect(() => {
         fiberPickerRef.current?.setSelected(product.fibers)
-    }, [product.fibers])
+    }, [product.fibers])*/
 
 
     useEffect(() => {
@@ -152,43 +164,23 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
     }, [product.mods])
 
 
-    useEffect(() => {
+    /*useEffect(() => {
         if (product.files?.length === 0) {
             addFilesRef.current?.clearAttachedFiles()
         }
-    }, [product.files])
+    }, [product.files])*/
 
 
     useEffect(() => {
         if (catalogState.catalog.load.status === 'success') {
-            selectorRef.current?.setData(catalogState.catalog.list.map(item => ({value: item._id, name: item.name})))
+            selectorCategoryRef.current?.setData(catalogState.catalog.list.map(item => ({value: item._id, name: item.name})))
         }
     }, [catalogState.catalog.list])
 
 
     
-    useEffect(() => {
-        if (paramProductId) {// edit old product
-            if (catalogState.category.loadProduct.status === 'success') { //new product or edit old one
-                setProduct({
-                    ...catalogState.category.product,
-                    files: [],
-                })
-                setChangeImages(false)
-                selectorRef.current?.setValue(catalogState.category.product.category)
-            } 
-        }
-        else {
-            setProduct({...productEmpty})
-            setChangeImages(true)
-        }
-    }, [catalogState.category.loadProduct.status])
 
 
-    const onChangeImages = useCallback((e: React.MouseEvent<HTMLElement>) => {
-        prevent(e)
-        setChangeImages(prev => !prev)
-    }, [])
 
 
     useEffect(() => { 
@@ -196,23 +188,12 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
             fetchData: catalogState.catalog.load,
             loadFunc: setState.catalog.loadCatalog,
         })
-        if (fibersState.load.status !== 'success' || fibersState.load.status !== 'success') return //loadFibers in App
-        paramProductId ? setState.catalog.loadProduct(paramProductId) : setProduct({...productEmpty})
-    }, [catalogState.catalog.load.status, fibersState.load.status, paramProductId])
+        checkAndLoad({
+            fetchData: fibersState.load,
+            loadFunc: setState.fibers.loadFibers,
+        })
+    }, [])
 
-
-    const renderImages = useMemo(() => {
-        return (
-            changeImages ? 
-                <>
-                    <h2 className='section-header full-width'>{lang === 'en' ? 'IMAGES' : 'ИЗОБРАЖЕНИЯ'}</h2>           
-                    <AddFiles lang={lang} ref={addFilesRef} multiple={true} id='allImages'/>
-                    {paramProductId && <button className='button_blue change-images' onClick={onChangeImages}>Do not change images</button>}
-                </>
-            :
-                <>{paramProductId && <button className='button_blue change-images' onClick={onChangeImages}>Change all images</button>}</>
-        )
-    }, [changeImages, lang, paramProductId, onChangeImages])
 
 
     const onChangeInputs = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -223,7 +204,19 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
         e.target.id === "text_ru" && setProduct({...product, text: {...product.text, ru: e.target.value}})
         e.target.id === "text_short_en" && setProduct({...product, text_short: {...product.text_short, en: e.target.value}})
         e.target.id === "text_short_ru" && setProduct({...product, text_short: {...product.text_short, ru: e.target.value}})
-        e.target.id === "selector_category" && setProduct({...product, category: e.target.value})
+        if (e.target.id === "selector_category") {
+            setProduct({...product, category: e.target.value})
+            checkAndLoad({
+                fetchData: catalogState.category.loadCategory,
+                loadFunc: setState.catalog.loadCategory,
+                args: [{
+                    _id: e.target.value,
+                    from: 0,
+                    to: -1
+                }],
+                force: true
+            })
+        } 
     }
 
 
@@ -249,12 +242,145 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
     }, [])
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const fillValues = async (_id: string) => {//fill values based on selected product
+        console.log(_id);
+        
+        if (!modsRef.current || !modsRef.current || !modsRef.current || !selectorStatusRef.current) return
+        if (_id) { 
+            const selectedProduct = catalogState.category.product
+            //mods
+            modsRef.current.setFeatures(selectedProduct.mods.map(item => ({name: item, _id: ''}))) //Ids doesn't matter for fiber, pros/cons are just arrays
+            //fibers 
+            fiberPickerRef.current?.setSelected(selectedProduct.fibers)
+            //files
+            const files = await filesDownloader(
+                selectedProduct.images.files.map(file => (`${selectedProduct.images.paths.full}/${file}`))
+            )
+            addFilesRef.current?.replaceFiles(files)    
+            setProduct({...catalogState.category.product, files}) //+descr part
+        } else {
+            //DESCRIPTION
+            setProduct(deepCopy(productEmpty))
+            //MODIFICATIONS
+            modsRef.current.setFeatures([]) //Ids doesn't matter for fiber, pros/cons are just arrays
+            //FIBERS 
+            fiberPickerRef.current?.setSelected([])
+            //FILES
+            addFilesRef.current?.clearAttachedFiles()
+            selectorStatusRef.current.setValue('active')
+        }
+
+        /*if (!_spec.current || !prosRef.current || !consRef.current || !selectorRef.current) return
+        const selectedFiber = fibersState.fibersList.find(item => item._id === _id)
+        if (selectedFiber) { //fiber exists
+            //specifications
+            _spec.current.querySelectorAll('input, select').forEach(item => {
+                (item as HTMLInputElement | HTMLSelectElement).value = String(selectedFiber.params[item.id] || '')
+            })
+            //proscons
+            prosRef.current.setFeatures(selectedFiber.proscons.pros.map(item => ({name: item, _id: ''}))) //Ids doesn't matter for fiber, pros/cons are just arrays
+            consRef.current.setFeatures(selectedFiber.proscons.cons.map(item => ({name: item, _id: ''}))) //Ids doesn't matter for fiber, pros/cons are just arrays
+            //colors 
+            colorPickerRef.current?.setSelected(selectedFiber.colors)
+            //files
+            const files = await filesDownloader(
+                selectedFiber.images.files.map(file => (`${selectedFiber.images.paths.full}/${file}`))
+            )
+            addFilesRef.current?.replaceFiles(files)
+            setFiber({...selectedFiber, files}) //for descr part
+            selectorRef.current.setValue(selectedFiber.active ? statuses.active.value : statuses.suspended.value)
+        } else { //new fiber
+            //specifications
+            _spec.current.querySelectorAll('input, select').forEach(item => {
+                (item as HTMLInputElement | HTMLSelectElement).value = ''
+            })
+            //proscons
+            prosRef.current.setFeatures([]) //Ids doesn't matter for fiber, pros/cons are just arrays
+            consRef.current.setFeatures([]) //Ids doesn't matter for fiber, pros/cons are just arrays
+            //colors 
+            colorPickerRef.current?.setSelected([])
+
+            setFiber(deepCopy(fiberEmpty))
+            addFilesRef.current?.clearAttachedFiles()
+            selectorRef.current.setValue('active')
+        }*/
+    }
+
+    const onProductSelected = async (_id: string) => {
+        if (_id) {
+            if (catalogState.category.product._id !== _id) {
+                await checkAndLoad({
+                    fetchData: catalogState.category.loadProduct,
+                    loadFunc: setState.catalog.loadProduct,
+                    args: [_id],
+                    force: true
+                })
+                const files = await filesDownloader(
+                    catalogState.category.product.images.files.map(file => (`${catalogState.category.product.images.paths.full}/${file}`))
+                )
+                setProduct({...catalogState.category.product, files})
+            }
+        } else {
+            setProduct(deepCopy(productEmpty))
+        }
+    }
+
+
+    useEffect(() => {
+        console.log('3423423');
+        
+        fillValues(product._id)
+    }, [product._id])
+
+
+
     return (
         <div className="page page_creator_fiber">
             <div className="container_page">
                 <div className="container">
-                    <h1>{paramProductId ? lang === 'en' ? 'Edit product' : 'Редактирование товара' : lang === 'en' ? 'Add new product' : 'Добавление нового товара'}</h1>
+                    <h1>{lang === 'en' ? 'Edit products' : 'Редактирование товаров  '}</h1>
                     <form ref={_form}>
+                        <h2 className='section-header full-width'>{lang === 'en' ? 'SELECT PRODUCT TO EDIT' : 'ВЫБЕРЕТЕ ТОВАР ДЛЯ РЕДАКТИРОВАНИЯ'}</h2>           
+                        <div className="input-block">
+                            <label htmlFor="text-short_en">{lang === 'en' ? 'Category' : 'Категория'}:</label>
+                            <div className="input__wrapper" data-selector="input-block">
+                                <Selector 
+                                    lang={lang} 
+                                    id='selector_category' 
+                                    onBlur={(e) => inputChecker({lang, notExact: '', el: e.target})}
+                                    defaultData={{value: '', name: {en: 'Select', ru: 'Выберете'}}}
+                                    saveValue={onChangeInputs}
+                                    ref={selectorCategoryRef}/>
+                            </div>
+                        </div>
+                        <div className="fiber-picker">
+                            <Picker 
+                                ref={fiberPickerRef} 
+                                items={catalogState.category.products} 
+                                lang={lang} 
+                                multiple={false}
+                                withNew={true}
+                                onItemClick={onProductSelected}
+                                minSelected={1}
+                                markInactive={true}/>
+                        </div>
                         <h2 className='section-header full-width'>{lang === 'en' ? 'DESCRIPTION' : 'ОПИСАНИЕ'}</h2>           
                         <div className="input-block_header">
                             <span></span>
@@ -341,18 +467,6 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
                                         onBlur={(e) => inputChecker({lang, min:inputsProps.product.textShort.min, max:inputsProps.product.textShort.max, el: e.target})}/>
                                 </div>
                             </div>
-                            <div className="input-block">
-                                <label htmlFor="text-short_en">{lang === 'en' ? 'Category' : 'Категория'}:</label>
-                                <div className="input__wrapper" data-selector="input-block">
-                                <Selector 
-                                    lang={lang} 
-                                    id='selector_category' 
-                                    onBlur={(e) => inputChecker({lang, notExact: '', el: e.target})}
-                                    defaultData={{value: '', name: {en: 'Select', ru: 'Выберете'}}}
-                                    saveValue={onChangeInputs}
-                                    ref={selectorRef}/>
-                                </div>
-                            </div>
                         </div>
 
                         <h2 className='section-header full-width'>{lang === 'en' ? 'MODIFICATIONS' : 'МОДИФИКАЦИИ'}</h2>           
@@ -368,18 +482,30 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
                         <h2 className='section-header full-width'>{lang === 'en' ? 'SELECT FIBERS' : 'ВЫБЕРЕТЕ МАТЕРИАЛЫ'}</h2>           
                         <div className="fibers-picker">
                             {fibersState.load.status === 'success' ? 
-                                <Picker ref={fiberPickerRef} items={fibersState.fibersList} lang={lang} onEditClick={onEditFiber} onDeleteClick={onDeleteFiber}/>
+                                <Picker ref={fiberPickerRef} items={fibersState.fibersList} lang={lang}/>
                             :
                                 <Preloader />}
                         </div>
 
-                        {renderImages}
+                        <h2 className='section-header full-width'>{lang === 'en' ? 'IMAGES' : 'ИЗОБРАЖЕНИЯ'}</h2>           
+                        <AddFiles lang={lang} ref={addFilesRef} multiple={true} id='allImages'/>
+
+                        <Selector 
+                            lang={lang} 
+                            id='selector_status' 
+                            label={{en: 'Product status: ', ru: 'Состояние продукта: '}}
+                            data={statusesList}
+                            onBlur={(e) => inputChecker({lang, notExact: '', el: e.target})}
+                            defaultData={{...defaultSelectItem}}
+                            saveValue={onChangeInputs}
+                            ref={selectorStatusRef}
+                        />
                         
                         <button className='button_blue post' disabled={catalogState.category.sendProduct.status === 'fetching'} onClick={onSubmit}>
                             {catalogState.category.sendProduct.status === 'fetching' ? 
                                 <Preloader />
                             :
-                                <>{lang === 'en' ? paramProductId ? 'Save product' : 'Post product' : paramProductId ? "Сохранить товар" : "Отправить товар"}</>
+                                <>{lang === 'en' ? 'Save changes' : "Сохранить изменения"}</>
                             }
                         </button>
                     </form>
@@ -397,7 +523,7 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
     fibersState: state.fibers,
     catalogState: state.catalog,
-
+    product: state.catalog.category.product
 })
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>):IPropsActions => ({

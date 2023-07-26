@@ -2,7 +2,7 @@ import { IFetch, IFiberParam, IMessageModal, INewsItem, ISendColor, ISendFiber, 
 
 const timeModalClosing: number = 500 //transition of closing modal window
 
-const gapBetweenRequests: number = 3000 //time between requests in case of error
+const gapBetweenRequests: number = 7000 //time between requests in case of error
 
 const strengthMin:number = 1 //fiber strength min
 const strengthMax:number = 180 //fiber strength max

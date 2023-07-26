@@ -63,9 +63,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, colorsS
     const data3 = useMemo(() => selector["3"], [])
     const errChecker = useMemo(() => errorsChecker({lang}), [lang])
     const [submit, setSubmit] = useState<boolean>(false)
-    const statusesList = useMemo(() => {
-        return Object.values(statuses)
-    }, []) 
+    const statusesList = useMemo(() => (Object.values(statuses)), []) 
 
     const closeModal = useCallback(() => {
         modalRef.current?.closeModal()
@@ -100,11 +98,6 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, colorsS
     }, [fibersState.send.status])
 
 
-    useEffect(() => { //for delete color
-        if (colorsState.send.status === 'idle' || colorsState.send.status === 'fetching')  return
-        messageRef.current?.update(modalMessageCreator(colorsState.send, lang))
-        modalRef.current?.openModal('color')
-    }, [colorsState.send.status])
 
     
 
@@ -180,25 +173,6 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, colorsS
     }, [submit])
 
 
-    const onDeleteColor = useCallback((_id: string) => {
-        setState.colors.deleteColor(_id)
-    }, [])
-
-
-    const onEditColor = useCallback((_id: string) => {
-        navigate(`${navList.account.admin.color.to}/${_id}`)
-    }, [])
-
-
-
-    
-    useEffect(() => { //get last version of colors
-        checkAndLoad({
-			fetchData: colorsState.load,
-			loadFunc: setState.colors.loadColors,
-            force: false
-		})
-    }, [colorsState.load.status])
 
     
     useEffect(() => { //get last version of colors
@@ -207,20 +181,6 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, colorsS
 			loadFunc: setState.colors.loadColors,
             force: true
 		})
-    }, [isAdmin])
-
-
-    
-    useEffect(() => { //get last version of colors
-        checkAndLoad({
-			fetchData: fibersState.load,
-			loadFunc: setState.fibers.loadFibers,
-            force: false
-		})
-    }, [fibersState.load.status])
-
-    
-    useEffect(() => { //get last version of colors
         checkAndLoad({
 			fetchData: fibersState.load,
 			loadFunc: setState.fibers.loadFibers,
@@ -233,8 +193,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, colorsS
 
     const isChangeEvent = (e: any): e is React.ChangeEvent<HTMLInputElement> => {
         return (e as React.ChangeEvent<HTMLInputElement>).target !== undefined;
-    };
-
+    }
     const onChangeInputs = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> | React.MouseEvent<HTMLSelectElement>) => {
         (e.target as HTMLElement).parentElement?.classList.remove('incorrect-value') 
         if (isChangeEvent(e)) {
@@ -338,7 +297,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, colorsS
                 selectedFiber.images.files.map(file => (`${selectedFiber.images.paths.full}/${file}`))
             )
             addFilesRef.current?.replaceFiles(files)
-            setFiber({...selectedFiber, files}) //for descr part
+            setFiber({...selectedFiber, files}) // +descr part
             selectorRef.current.setValue(selectedFiber.active ? statuses.active.value : statuses.suspended.value)
         } else { //new fiber
             //specifications
@@ -357,10 +316,14 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, colorsS
         }
     }
 
-    const onFiberSelected = async (_id: string) => {
+    const onFiberSelected = (_id: string) => {
         fillValues(_id)
     }
 
+
+    useEffect(() => {
+        fibersState.load.status === 'success' && fiberPickerRef.current?.setSelected() 
+    }, [fibersState.load.status])
 
 
     return (
@@ -371,7 +334,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, colorsS
                     <form>
                         <h2 className='section-header full-width'>{lang === 'en' ? 'SELECT FIBER TO EDIT' : 'ВЫБЕРЕТЕ МАТЕРИАЛ ДЛЯ РЕДАКТИРОВАНИЯ'}</h2>           
                         <div className="fiber-picker">
-                            {colorsState.load.status === 'success' ? 
+                            {fibersState.load.status === 'success' ? 
                                 <Picker 
                                     ref={fiberPickerRef} 
                                     items={fibersState.fibersList} 
@@ -379,7 +342,8 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, colorsS
                                     multiple={false}
                                     withNew={true}
                                     onItemClick={onFiberSelected}
-                                    minSelected={1}/>
+                                    minSelected={1}
+                                    markInactive={true}/>
                             :
                                 <Preloader />}
                         </div>
@@ -511,9 +475,8 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, colorsS
                                 <Picker 
                                     ref={colorPickerRef} 
                                     items={colorsState.colors} 
-                                    lang={lang} 
-                                    onEditClick={onEditColor} 
-                                    onDeleteClick={onDeleteColor}/>
+                                    lang={lang}
+                                    minSelected={1}/>
                             :
                                 <Preloader />}
                         </div>
@@ -526,7 +489,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, colorsS
                         <Selector 
                             lang={lang} 
                             id='selector_status' 
-                            label={{en: 'Color status: ', ru: 'Состояние цвета: '}}
+                            label={{en: 'Fiber status: ', ru: 'Состояние материала: '}}
                             data={statusesList}
                             onBlur={(e) => inputChecker({lang, notExact: '', el: e.target})}
                             defaultData={{...defaultSelectItem}}

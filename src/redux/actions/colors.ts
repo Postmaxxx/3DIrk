@@ -1,6 +1,6 @@
 import { IAction, IDispatch, IColor, IFetch, IFullState, IErrRes, TLangText, IMsgRes, ISendColor, TTypeRequest, } from "../../interfaces"
 import { actionsListColors } from './actionsList'
-import { APIList, DOMExceptions, errorFetch, fetchingFetch, successFetch } from "../../assets/js/consts";
+import { APIList, DOMExceptions, fetchingFetch, successFetch } from "../../assets/js/consts";
 import { fetchError, resErrorFiller } from "../../../src/assets/js/processors";
 
 
@@ -40,8 +40,6 @@ interface IColorGet {
 
 export const loadColors = () => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        console.log(getState().user.token);
-        
         const controller = new AbortController()
         const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.colors.get.timeout) //set time limit for fetch
         dispatch(setLoadColors({...fetchingFetch, controller}))  

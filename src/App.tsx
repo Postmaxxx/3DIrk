@@ -3,7 +3,7 @@ import { Routes, Route, HashRouter } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import Preloader from "./components/Preloaders/Preloader"; 
 import "./assets/css/_base.scss";
-import { IFullState, IUserState, TId, TLang } from "./interfaces";
+import { IFetch, IFullState, IUserState, TId, TLang } from "./interfaces";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
@@ -15,6 +15,7 @@ import Homer from "./components/Homer/Homer";
 import LangSwitcher from "./components/LangSwitcher/LangSwitcher";
 import Offliner from "./components/Offliner/Offliner";
 import Unauthorized from "./components/Unauthorized/Unauthorized";
+import { checkAndLoad } from "./assets/js/processors";
 
 const LazyThemeSwitcher = lazy(() => import("./components/ThemeSwitcher/ThemeSwitcher"));
 const LazyLangSwitcher = lazy(() => import("./components/LangSwitcher/LangSwitcher"));
@@ -44,6 +45,7 @@ interface IPropsState {
     lang: TLang
 	isAdmin: boolean
 	isAuth: boolean
+	fibersLoad: IFetch
 }
 
 interface IPropsActions {
@@ -59,11 +61,15 @@ interface IProps extends IPropsState, IPropsActions {}
 
 const MemoFooter = memo(Footer)
 
-const App:React.FC<IProps> = ({lang, isAdmin, isAuth, setState}):JSX.Element => {
+const App:React.FC<IProps> = ({lang, isAdmin, isAuth, fibersLoad, setState}):JSX.Element => {
 	
 	useEffect(() => {
 		setState.user.loginWithToken()
-		setState.fibers.loadFibers()
+		checkAndLoad({
+			fetchData: fibersLoad,
+			loadFunc: setState.fibers.loadFibers,
+            force: false
+		})
 	}, [])
 
 
@@ -121,7 +127,8 @@ const App:React.FC<IProps> = ({lang, isAdmin, isAuth, setState}):JSX.Element => 
 const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
 	isAdmin: state.user.isAdmin,
-	isAuth: state.user.auth.status === 'success'
+	isAuth: state.user.auth.status === 'success',
+	fibersLoad: state.fibers.load
 })
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>):IPropsActions => ({

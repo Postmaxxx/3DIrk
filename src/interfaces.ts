@@ -165,7 +165,7 @@ export interface IFiber {
 export interface IFibersState {
     selected: TId //id
     showList: TId[] //list of id to show
-    load: IFetch //receiving data
+    load: IFetch //receiving data 
     send: IFetch //sending data
     fibersList: IFiber[]
 }
