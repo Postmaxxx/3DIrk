@@ -57,7 +57,7 @@ export const loadCatalog = () => {
 
 
 
-export const sendCatalog = (newCatalog: (Omit<ICatalogItem, "total">)[]) => {
+export const sendCatalog = (newCatalog: (Omit<ICatalogItem, "total" | "active">)[]) => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
         const controller = new AbortController()
         const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.catalog.update.timeout) //set time limit for fetch
@@ -111,14 +111,14 @@ export const setCategory = <T extends Omit<ICategory, "loadCategory" | "sendProd
 
 interface ILoadCategory {
     _id: string,
-    from: number,
-    to: number //-1 till the end
+    from?: number,
+    to?: number //-1 till the end
 }
 
 
 
 
-export const loadCategory = ({_id, from, to}: ILoadCategory) => {    
+export const loadCategory = ({_id, from=0, to=-1}: ILoadCategory) => {    
     return async function(dispatch: IDispatch, getState: () => IFullState) {
         const controller = new AbortController()
         const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.category.getSome.timeout) //set time limit for fetch

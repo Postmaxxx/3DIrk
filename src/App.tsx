@@ -16,6 +16,8 @@ import LangSwitcher from "./components/LangSwitcher/LangSwitcher";
 import Offliner from "./components/Offliner/Offliner";
 import Unauthorized from "./components/Unauthorized/Unauthorized";
 import { checkAndLoad } from "./assets/js/processors";
+import ThemeSwitcher from "./components/ThemeSwitcher/ThemeSwitcher";
+import PreloaderPage from "./components/Preloaders/PreloaderPage";
 
 const LazyThemeSwitcher = lazy(() => import("./components/ThemeSwitcher/ThemeSwitcher"));
 const LazyLangSwitcher = lazy(() => import("./components/LangSwitcher/LangSwitcher"));
@@ -73,48 +75,57 @@ const App:React.FC<IProps> = ({lang, isAdmin, isAuth, fibersLoad, setState}):JSX
 	}, [])
 
 
+	useEffect(() => {
+		checkAndLoad({
+			fetchData: fibersLoad,
+			loadFunc: setState.fibers.loadFibers,
+            force: true
+		})
+	}, [isAdmin])
+
+
 	return (
 		<HashRouter>
 			<LangSwitcher />
 			<Homer />
 			<Offliner lang={lang}/>
-			<Suspense fallback={<Preloader />}><LazyThemeSwitcher /></Suspense>
-			<Suspense fallback={<Preloader />}><LazyHeader /></Suspense>
+			<ThemeSwitcher />
+			<Header />
 		
 			<Routes>
-				<Route index path="/" element={<Suspense fallback={<Preloader />}><LazyHomePage /></Suspense>} />
+				<Route index path="/" element={<Suspense fallback={<PreloaderPage />}><LazyHomePage /></Suspense>} />
 				
 				<Route path="/fibers">
-					<Route index element={<Suspense fallback={<Preloader />}><LazyFibersPage /></Suspense>} />
-					<Route path="compare" element={<Suspense fallback={<Preloader />}><LazyFibersCompare /></Suspense>} />
-					<Route path=":fiberId" element={<Suspense fallback={<Preloader />}><LazyFiberPage /></Suspense>} />
+					<Route index element={<Suspense fallback={<PreloaderPage />}><LazyFibersPage /></Suspense>} />
+					<Route path="compare" element={<Suspense fallback={<PreloaderPage />}><LazyFibersCompare /></Suspense>} />
+					<Route path=":fiberId" element={<Suspense fallback={<PreloaderPage />}><LazyFiberPage /></Suspense>} />
 				</Route>
 				
-				<Route path="/order" element={<Suspense fallback={<Preloader />}>{isAuth ? <LazyOrderPage /> : <Unauthorized lang={lang} />}</Suspense>} />
-				<Route path="/orders" element={<Suspense fallback={<Preloader />}>{isAuth ? <LazyOrdersPage /> : <Unauthorized lang={lang} />}</Suspense>} />
-				<Route path="/contact_us" element={<Suspense fallback={<Preloader />}><LazyContactUs /></Suspense>} />
+				<Route path="/order" element={<Suspense fallback={<PreloaderPage />}>{isAuth ? <LazyOrderPage /> : <Unauthorized lang={lang} />}</Suspense>} />
+				<Route path="/orders" element={<Suspense fallback={<PreloaderPage />}>{isAuth ? <LazyOrdersPage /> : <Unauthorized lang={lang} />}</Suspense>} />
+				<Route path="/contact_us" element={<Suspense fallback={<PreloaderPage />}><LazyContactUs /></Suspense>} />
 
 				<Route path="/catalog">
-					<Route index element={<Suspense fallback={<Preloader />}><LazyCatalogPage /></Suspense>} />
-					<Route path=":productId" element={<Suspense fallback={<Preloader />}><LazyProduct /></Suspense>} />
+					<Route index element={<Suspense fallback={<PreloaderPage />}><LazyCatalogPage /></Suspense>} />
+					<Route path=":productId" element={<Suspense fallback={<PreloaderPage />}><LazyProduct /></Suspense>} />
 				</Route>
 
-				<Route path="news/:newsId" element={<Suspense fallback={<Preloader />}><LazyNewsDetails /></Suspense>} />
+				<Route path="news/:newsId" element={<Suspense fallback={<PreloaderPage />}><LazyNewsDetails /></Suspense>} />
 
 				<Route path="/admin">
-					<Route path="news-create" element={<Suspense fallback={<Preloader />}>{isAdmin ? <LazyNewsCreator /> : <Unauthorized lang={lang} />}</Suspense>} />
-					<Route path="news-create/:newsId" element={<Suspense fallback={<Preloader />}>{isAdmin ? <LazyNewsCreator /> : <Unauthorized lang={lang} />}</Suspense>} />
-					<Route path="fiber-create" element={<Suspense fallback={<Preloader />}>{isAdmin ? <LazyFiberCreator /> : <Unauthorized lang={lang} />}</Suspense>} />
-					<Route path="fiber-create/:fiberId" element={<Suspense fallback={<Preloader />}>{isAdmin ? <LazyFiberCreator /> : <Unauthorized lang={lang} />}</Suspense>} />
-					<Route path="color-create" element={<Suspense fallback={<Preloader />}>{isAdmin ? <LazyColorCreator /> : <Unauthorized lang={lang} />}</Suspense>} />
-					<Route path="color-create/:colorId" element={<Suspense fallback={<Preloader />}>{isAdmin ? <LazyColorCreator /> : <Unauthorized lang={lang} />}</Suspense>} />
-					<Route path="catalog-change" element={<Suspense fallback={<Preloader />}>{isAdmin ? <LazyCatalogCahnger /> : <Unauthorized lang={lang} />}</Suspense>} />
-					<Route path="product-create" element={<Suspense fallback={<Preloader />}>{isAdmin ? <LazyProductCreator /> : <Unauthorized lang={lang} />}</Suspense>} />
-					<Route path="product-create/:productId" element={<Suspense fallback={<Preloader />}>{isAdmin ? <LazyProductCreator /> : <Unauthorized lang={lang} />}</Suspense>} />
-					<Route path="splider-change" element={<Suspense fallback={<Preloader />}>{isAdmin ? <LazySpliderChanger /> : <Unauthorized lang={lang} />}</Suspense>} />
+					<Route path="news-create" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazyNewsCreator /> : <Unauthorized lang={lang} />}</Suspense>} />
+					<Route path="news-create/:newsId" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazyNewsCreator /> : <Unauthorized lang={lang} />}</Suspense>} />
+					<Route path="fiber-create" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazyFiberCreator /> : <Unauthorized lang={lang} />}</Suspense>} />
+					<Route path="fiber-create/:fiberId" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazyFiberCreator /> : <Unauthorized lang={lang} />}</Suspense>} />
+					<Route path="color-create" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazyColorCreator /> : <Unauthorized lang={lang} />}</Suspense>} />
+					<Route path="color-create/:colorId" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazyColorCreator /> : <Unauthorized lang={lang} />}</Suspense>} />
+					<Route path="catalog-change" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazyCatalogCahnger /> : <Unauthorized lang={lang} />}</Suspense>} />
+					<Route path="product-create" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazyProductCreator /> : <Unauthorized lang={lang} />}</Suspense>} />
+					<Route path="product-create/:productId" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazyProductCreator /> : <Unauthorized lang={lang} />}</Suspense>} />
+					<Route path="splider-change" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazySpliderChanger /> : <Unauthorized lang={lang} />}</Suspense>} />
 				</Route>
 
-				<Route path="/*" element={<Suspense fallback={<Preloader />}><P404 lang={lang}/></Suspense>} />
+				<Route path="/*" element={<Suspense fallback={<PreloaderPage />}><P404 lang={lang}/></Suspense>} />
 			</Routes>
 
 			<MemoFooter lang={lang}/>

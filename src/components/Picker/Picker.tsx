@@ -25,6 +25,7 @@ interface IProps {
     multiple?: boolean //is it possible to choose more than 1 tiem
     withNew?: boolean //show img for new item
     minSelected?: number //min amount of items can't be unselected
+    simulateClickOnSelect?: boolean //simulate manula select behavior when use setSelected
     onEditClick?: (_id: string) => void
     onDeleteClick?: (_id: string) => void
     onItemClick?: (_id: string) => void
@@ -37,16 +38,19 @@ export interface IPickerFunctions {
 }
 
 
-const Picker = forwardRef<IPickerFunctions, IProps>(({items, lang, onEditClick, onDeleteClick, onItemClick, multiple=true, withNew=false, minSelected=0, markInactive=false}, ref) => {
+const Picker = forwardRef<IPickerFunctions, IProps>(({items, lang, onEditClick, onDeleteClick, onItemClick, multiple=true, withNew=false, minSelected=0, markInactive=false, simulateClickOnSelect=false}, ref) => {
     useImperativeHandle(ref, () => ({
         setSelected(_ids) {
             if (!_ids) {
-                return setSelectedItems({[createNewItemId]: true}) 
+                setSelectedItems({[createNewItemId]: true}) 
+                simulateClickOnSelect && onItemClick && onItemClick('')
+                return
             }
             const initialSelected = _ids.reduce((acc, item) => {
                 return {...acc, [item]: true}
             }, {} as {[key: string]: boolean})
             setSelectedItems(initialSelected)
+            simulateClickOnSelect && _ids.forEach(_id => {onItemClick && onItemClick(_id) })
         },
         getSelected() {
             return Object.entries(selectedItems)?.filter(item => item[1])?.map(item => item[0]).map(el => (el === createNewItemId ? '' : el)) //return '' instead of createNewItemId 

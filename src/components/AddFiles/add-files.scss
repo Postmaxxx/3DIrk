@@ -112,7 +112,7 @@
 
 
 
-            & > .filesToShow {
+            & > .item__delete {
                 position: absolute;
                 top: 5px;
                 right: 5px;
@@ -123,6 +123,7 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                color: red;
             }
         }
 

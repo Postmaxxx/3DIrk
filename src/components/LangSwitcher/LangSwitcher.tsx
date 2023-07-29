@@ -23,6 +23,7 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 const LangSwitcher:React.FC<IProps> = ({lang, mobOpened, setState}): JSX.Element => {
+
     const _lang = useRef<HTMLDivElement>(null)
     const {add: addToHider, clear: clearHider} = useScrollHider()
 
@@ -45,7 +46,7 @@ const LangSwitcher:React.FC<IProps> = ({lang, mobOpened, setState}): JSX.Element
 
 
     return (
-        <div className={`lang-switcher ${lang === 'en' ? 'ru' : 'en'} ${mobOpened ? 'hide' : ''}`} onClick={handleChangeLang} ref={_lang}>
+        <div className={`lang-switcher ${mobOpened ? '' : 'hide'} ${lang === 'en' ? 'ru' : 'en'}`} onClick={handleChangeLang} ref={_lang}>
             <div className="lang-switcher__text lang_ru" data-lang='ru'>EN</div>
             <div className="lang-switcher__text lang_en" data-lang='en'>RU</div>
         </div>

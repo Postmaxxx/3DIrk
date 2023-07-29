@@ -72,8 +72,8 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, colorsS
         if (modalRef.current?.getOwner() === 'fiber') {
             setState.fibers.setSendFibers(resetFetch)// clear fetch status
             if (fibersState.send.status === 'success') {
-                setState.fibers.loadFibers()
-                navigate(navList.fibers.to, { replace: true })
+                //setState.fibers.loadFibers()
+                //navigate(navList.fibers.to, { replace: true })
                 window.location.reload()
             }
         }
@@ -172,18 +172,11 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, colorsS
         setSubmit(false)
     }, [submit])
 
-
-
     
     useEffect(() => { //get last version of colors
         checkAndLoad({
 			fetchData: colorsState.load,
 			loadFunc: setState.colors.loadColors,
-            force: true
-		})
-        checkAndLoad({
-			fetchData: fibersState.load,
-			loadFunc: setState.fibers.loadFibers,
             force: true
 		})
     }, [isAdmin])
@@ -364,7 +357,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, colorsS
                                         type="text" 
                                         id="name-short_en" 
                                         onChange={onChangeInputs} 
-                                        onKeyDown={(e) => focuserDescr.next(e)}
+                                        onKeyDown={focuserDescr.next}
                                         value={fiber.short.name.en}
                                         onBlur={(e) => inputChecker({lang, min:inputsProps.fiber.nameShort.min, max:inputsProps.fiber.nameShort.max, el: e.target})}/>
                                 </div>
@@ -374,7 +367,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, colorsS
                                         type="text" 
                                         id="name-short_ru" 
                                         onChange={onChangeInputs} 
-                                        onKeyDown={(e) => focuserDescr.next(e)}
+                                        onKeyDown={focuserDescr.next}
                                         value={fiber.short.name.ru}
                                         onBlur={(e) => inputChecker({lang, min:inputsProps.fiber.nameShort.min, max:inputsProps.fiber.nameShort.max, el: e.target})}/>
                                 </div>
@@ -387,7 +380,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, colorsS
                                         type="text" 
                                         id="name_en" 
                                         onChange={onChangeInputs} 
-                                        onKeyDown={(e) => focuserDescr.next(e)}
+                                        onKeyDown={focuserDescr.next}
                                         value={fiber.name.en}
                                         onBlur={(e) => inputChecker({lang, min:inputsProps.fiber.nameFull.min, max:inputsProps.fiber.nameFull.max, el: e.target})}/>
                                 </div>
@@ -397,7 +390,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, colorsS
                                         type="text" 
                                         id="name_ru" 
                                         onChange={onChangeInputs} 
-                                        onKeyDown={(e) => focuserDescr.next(e)}
+                                        onKeyDown={focuserDescr.next}
                                         value={fiber.name.ru}
                                         onBlur={(e) => inputChecker({lang, min:inputsProps.fiber.nameFull.min, max:inputsProps.fiber.nameFull.max, el: e.target})}/>
                                 </div>
@@ -409,7 +402,6 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, colorsS
                                         data-selector="input"
                                         id="text-short_en" 
                                         onChange={onChangeInputs}
-                                        onKeyDown={(e) => focuserDescr.next(e)} 
                                         value={fiber.short.text.en}
                                         onBlur={(e) => inputChecker({lang, min:inputsProps.fiber.textShort.min, max:inputsProps.fiber.textShort.max, el: e.target})}/>
                                 </div>
@@ -418,7 +410,6 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, colorsS
                                         data-selector="input"
                                         id="text-short_ru" 
                                         onChange={onChangeInputs} 
-                                        onKeyDown={(e) => focuserDescr.next(e)}
                                         value={fiber.short.text.ru}
                                         onBlur={(e) => inputChecker({lang, min:inputsProps.fiber.textShort.min, max:inputsProps.fiber.textShort.max, el: e.target})}/>
                                 </div>
@@ -430,7 +421,6 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, colorsS
                                         data-selector="input"
                                         id="text_en" 
                                         onChange={onChangeInputs} 
-                                        onKeyDown={(e) => focuserDescr.next(e)}
                                         value={fiber.text.en}
                                         onBlur={(e) => inputChecker({lang, min:inputsProps.fiber.textFull.min, max:inputsProps.fiber.textFull.max, el: e.target})}/>
                                 </div>
@@ -439,7 +429,6 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, colorsS
                                         data-selector="input"
                                         id="text_ru"
                                         onChange={onChangeInputs}
-                                        onKeyDown={(e) => focuserDescr.next(e)}
                                         value={fiber.text.ru}
                                         onBlur={(e) => inputChecker({lang, min:inputsProps.fiber.textFull.min, max:inputsProps.fiber.textFull.max, el: e.target})}/>
                                 </div>
@@ -478,7 +467,8 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, colorsS
                                     ref={colorPickerRef} 
                                     items={colorsState.colors} 
                                     lang={lang}
-                                    minSelected={1}/>
+                                    minSelected={1}
+                                    markInactive={true}/>
                             :
                                 <Preloader />}
                         </div>

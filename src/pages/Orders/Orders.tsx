@@ -87,10 +87,8 @@ const Orders = ({lang, colorsState, fibersState, ordersState, userState, setStat
         const dateFrom: string = new Date(_dateFrom.current.value).toISOString()
         const dateTo: string = moment(_dateTo.current.value).add(1, 'day').format("YYYY-MM-DDT00:00:00.000") + "Z";
         
-
         const dateTimeFrom = moment(dateFrom).add(timeOffset, 'hours').toISOString();
         const dateTimeTo = moment(dateTo).add(timeOffset, 'hours').toISOString();
-        
 
         checkAndLoad({
 			fetchData: ordersState.load,

@@ -1,6 +1,6 @@
 import { useState, useRef, useMemo } from "react";
 import { NavLink } from "react-router-dom";
-import { IFetch, IFiber, IFullState, TId, TLang } from "../../interfaces";
+import { IFiber, IFullState, TId, TLang } from "../../interfaces";
 import "./nav.scss"
 import navLogo from "../../assets/img/nav_logo.png"
 import { connect } from "react-redux";
@@ -80,32 +80,32 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
         <div className="nav__container">
             <ul>
                 <li>
-                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to={navList.home.to}>
+                    <NavLink className={({ isActive }) => isActive ? "selected" : ""} to={navList.home.to}>
                         {navList.home[lang]}
                     </NavLink>
                 </li>
 
                 <li className="extandable">
-                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to={navList.fibers.to}>
+                    <NavLink className={({ isActive }) => isActive ? "selected" : ""} to={navList.fibers.to}>
                         {navList.fibers[lang]}
                     </NavLink>
                     <ul className="sub_menu">
                         <li>
                             <ul className="submenu__content">
                                 <li>
-                                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to={navList.fibers.about.to} end>
+                                    <NavLink className={({ isActive }) => isActive ? "selected" : ""} to={navList.fibers.about.to} end>
                                         {navList.fibers.about[lang]}
                                     </NavLink>
                                 </li>
                                 <li>
-                                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to={navList.fibers.compare.to}>
+                                    <NavLink className={({ isActive }) => isActive ? "selected" : ""} to={navList.fibers.compare.to}>
                                         {navList.fibers.compare[lang]}
                                     </NavLink>
                                 </li>
-                                {fibersList.map(fiber => {
+                                {fibersList.filter(fiber => fiber.active).map(fiber => {
                                     return (
                                         <li key={fiber._id}>
-                                           <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to={`fibers/${fiber._id}`}>
+                                           <NavLink className={({ isActive }) => isActive ? "selected" : ""} to={`fibers/${fiber._id}`}>
                                                {fiber.short.name[lang]}
                                            </NavLink>
                                         </li>
@@ -115,21 +115,21 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
                         </li>
                     </ul>
                 </li>
-
                 <li>
-                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to={navList.catalog.to}>
+                    <NavLink className={({ isActive }) => isActive ? "selected" : ""} to={navList.catalog.to}>
                         {navList.catalog[lang]}
                     </NavLink>
                 </li>
-
                 {isAuth ? 
-                    <NavLink to={navList.account.cart.to}>
-                        {navList.account.cart[lang]}
-                        <div className="cart-informer__container"><CartInformer /></div>          
-                    </NavLink>
+                    <li>
+                        <NavLink className={({ isActive }) => isActive ? "selected" : ""} to={navList.account.cart.to}>
+                            {navList.account.cart[lang]}
+                        </NavLink>
+                        <CartInformer />        
+                    </li>
                 :
                     <li>
-                        <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to={navList.contacts.to}>
+                        <NavLink className={({ isActive }) => isActive ? "selected" : ""} to={navList.contacts.to}>
                             {navList.contacts[lang]}
                         </NavLink>
                     </li>
@@ -142,44 +142,44 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
                             <li>
                                 <ul className="submenu__content">
                                     <li>
-                                        <NavLink to={navList.account.orders.to}>
+                                        <NavLink className={({ isActive }) => isActive ? "selected" : ""} to={navList.account.orders.to}>
                                             {navList.account.orders[lang]}
                                         </NavLink>
                                     </li>
                                     <li>
-                                        <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to={navList.contacts.to}>
+                                        <NavLink className={({ isActive }) => isActive ? "selected" : ""} to={navList.contacts.to}>
                                             {navList.contacts[lang]}
                                         </NavLink>
                                     </li>
                                     {isAdmin && 
                                         <>
                                             <li>
-                                                <NavLink to={navList.account.admin.news.to} >
+                                                <NavLink className={({ isActive }) => isActive ? "selected" : ""} to={navList.account.admin.news.to} >
                                                     {navList.account.admin.news[lang]}
                                                 </NavLink>
                                             </li>
                                             <li>
-                                                <NavLink to={navList.account.admin.color.to} >
+                                                <NavLink className={({ isActive }) => isActive ? "selected" : ""} to={navList.account.admin.color.to} >
                                                     {navList.account.admin.color[lang]}
                                                 </NavLink>
                                             </li>
                                             <li>
-                                                <NavLink to={navList.account.admin.fiber.to} >
+                                                <NavLink className={({ isActive }) => isActive ? "selected" : ""} to={navList.account.admin.fiber.to} >
                                                     {navList.account.admin.fiber[lang]}
                                                 </NavLink>
                                             </li>
                                             <li>
-                                                <NavLink to={navList.account.admin.catalog.to} >
+                                                <NavLink className={({ isActive }) => isActive ? "selected" : ""} to={navList.account.admin.catalog.to} >
                                                     {navList.account.admin.catalog[lang]}
                                                 </NavLink>
                                             </li>
                                             <li>
-                                                <NavLink to={navList.account.admin.product.to} >
+                                                <NavLink className={({ isActive }) => isActive ? "selected" : ""} to={navList.account.admin.product.to} >
                                                     {navList.account.admin.product[lang]}
                                                 </NavLink>
                                             </li>
                                             <li>
-                                                <NavLink to={navList.account.admin.content.to} >
+                                                <NavLink className={({ isActive }) => isActive ? "selected" : ""} to={navList.account.admin.content.to} >
                                                     {navList.account.admin.content[lang]}
                                                 </NavLink>
                                             </li>
@@ -232,7 +232,7 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
             </div>
             <ul>
                 <li>
-                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to={navList.home.to} onClick={navToggleMobile}>
+                    <NavLink className={({ isActive }) => isActive ? "selected" : ""} to={navList.home.to} onClick={navToggleMobile}>
                         {navList.home[lang]}
                     </NavLink>
                 </li>
@@ -242,7 +242,7 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
                     <div>
                         <ul className="nav__subnav">
                             <li>
-                                <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} 
+                                <NavLink className={({ isActive }) => isActive ? "selected" : ""} 
                                     onClick={navToggleMobile}
                                     to={navList.fibers.about.to}
                                     end>
@@ -250,17 +250,17 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
                                 </NavLink>
                             </li>
                             <li>
-                                <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} 
+                                <NavLink className={({ isActive }) => isActive ? "selected" : ""} 
                                     onClick={navToggleMobile}
                                     to={navList.fibers.compare.to}
                                     end>
                                         {navList.fibers.compare[lang]}
                                 </NavLink>
                             </li>
-                            {fibersList.map((fiber) => {
+                            {fibersList.filter(fiber => fiber.active).map((fiber) => {
                                 return (
                                     <li key={fiber._id}>
-                                        <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} 
+                                        <NavLink className={({ isActive }) => isActive ? "selected" : ""} 
                                             onClick={navToggleMobile}
                                             to={`fibers/${fiber.short.name.en}`}
                                             end>
@@ -274,20 +274,20 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
                 </li>
 
                 <li>
-                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to={navList.catalog.to} onClick={navToggleMobile}>
+                    <NavLink className={({ isActive }) => isActive ? "selected" : ""} to={navList.catalog.to} onClick={navToggleMobile}>
                         {navList.catalog[lang]}
                     </NavLink>
                 </li>
                 {isAuth ?
                     <li className="narrow">
-                        <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to='/order' onClick={navToggleMobile}>
-                            {lang === 'en' ? 'CART' : 'КОРЗИНА'}
+                        <NavLink className={({ isActive }) => isActive ? "selected" : ""} to={navList.cart.to} onClick={navToggleMobile}>
+                            {navList.cart[lang]}
                         </NavLink>
-                        <div className="cart-informer__container"><CartInformer /></div>          
+                        <CartInformer />        
                     </li>
                 :
                     <li>
-                        <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to={navList.contacts.to} onClick={navToggleMobile}>
+                        <NavLink className={({ isActive }) => isActive ? "selected" : ""} to={navList.contacts.to} onClick={navToggleMobile}>
                             {navList.contacts[lang]}
                         </NavLink>
                     </li>
@@ -296,58 +296,58 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
                 
                 {isAuth ? 
                     <li className={`${expandedNavItems.includes('cabinet') ? 'expanded' : ''}`}>
-                        <span onClick={() => onNavWithSubClicked('cabinet')}>{lang === 'en' ? 'ACCOUNT' : 'КАБИНЕТ '}</span>
+                        <span onClick={() => onNavWithSubClicked('cabinet')}>{navList.account[lang]}</span>
                         <div>
                             <ul className="nav__subnav noscroll">
                                 <li>
-                                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}  
+                                    <NavLink className={({ isActive }) => isActive ? "selected" : ""}  
                                         to={navList.account.orders.to} 
                                         onClick={navToggleMobile}>
                                             {navList.account.orders[lang]}
                                     </NavLink>
                                 </li>
                                 <li>
-                                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}} to={navList.contacts.to} onClick={navToggleMobile}>
+                                    <NavLink className={({ isActive }) => isActive ? "selected" : ""} to={navList.contacts.to} onClick={navToggleMobile}>
                                         {navList.contacts[lang]}
                                     </NavLink>
                                 </li>
                                 <li>
-                                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}  
+                                    <NavLink className={({ isActive }) => isActive ? "selected" : ""}  
                                         to={navList.account.admin.news.to} 
                                         onClick={navToggleMobile}>
                                             {navList.account.admin.news[lang]}
                                     </NavLink>
                                 </li>
                                 <li>
-                                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}  
+                                    <NavLink className={({ isActive }) => isActive ? "selected" : ""}  
                                         to={navList.account.admin.color.to} 
                                         onClick={navToggleMobile}>
                                             {navList.account.admin.color[lang]}
                                     </NavLink>
                                 </li>
                                 <li>
-                                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}  
+                                    <NavLink className={({ isActive }) => isActive ? "selected" : ""}  
                                         to={navList.account.admin.fiber.to} 
                                         onClick={navToggleMobile}>
                                             {navList.account.admin.fiber[lang]}
                                     </NavLink>
                                 </li>
                                 <li>
-                                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}  
+                                    <NavLink className={({ isActive }) => isActive ? "selected" : ""} 
                                         to={navList.account.admin.catalog.to} 
                                         onClick={navToggleMobile}>
                                             {navList.account.admin.catalog[lang]}
                                     </NavLink>
                                 </li>
                                 <li>
-                                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}  
+                                    <NavLink className={({ isActive }) => isActive ? "selected" : ""} 
                                         to={navList.account.admin.product.to} 
                                         onClick={navToggleMobile}>
                                             {navList.account.admin.product[lang]}
                                     </NavLink>
                                 </li>
                                 <li>
-                                    <NavLink className={({ isActive }) => {return isActive ? "selected" : ""}}  
+                                    <NavLink className={({ isActive }) => isActive ? "selected" : ""}  
                                         to={navList.account.admin.content.to} 
                                         onClick={navToggleMobile}>
                                             {navList.account.admin.content[lang]}

@@ -10,7 +10,7 @@ import { allActions } from "../../redux/actions/all";
 import Selector, { ISelectorFunctions } from '../Selector/Selector';
 import inputChecker from '../../../src/assets/js/inputChecker';
 import ColorSelector from '../ColorSelector/ColorSelector';
-import { empty } from '../../../src/assets/js/consts';
+import { defaultSelectItem, empty } from '../../../src/assets/js/consts';
 
 interface IPropsState {
 	lang: TLang
@@ -36,7 +36,6 @@ interface IProps extends IPropsState, IPropsActions {}
 const ProductDetails: React.FC<IProps> = ({lang, product, colors,productLoad, fibers }): JSX.Element => {
     const [selectedFiber, setSelectedFiber] = useState<IFiber>()
     const [selectedColor, setSelectedColor] = useState<IColor["_id"]>('')
-    const [selectedType, setSelectedType] = useState<TLangText>({...empty})
     const noType: TLangText = useMemo(() => ({en: '-', ru: '-'}), [])
     const selectorTypeRef = useRef<ISelectorFunctions>(null)
     const selectorFiberRef = useRef<ISelectorFunctions>(null)
@@ -80,13 +79,13 @@ const ProductDetails: React.FC<IProps> = ({lang, product, colors,productLoad, fi
         <div className="details__descr">
             <h2>{lang === 'en' ? 'Features' : 'Характеристики'}:</h2>
             <div className="features__container">
-                <div className="feature">
+                <div className="feature text_simple">
                     <span>{lang === 'en' ? 'Description' : 'Описание'}: </span>
                     {productDescr}
                 </div>
 
 
-                <div className="feature">
+                <div className="feature text_simple">
                     <span>{lang === 'en' ? 'Price' : 'Цена'}: </span>
                     <span>{product.price}</span>
                 </div>
@@ -96,19 +95,19 @@ const ProductDetails: React.FC<IProps> = ({lang, product, colors,productLoad, fi
                         <Selector 
                             lang={lang} 
                             id='selector_type' 
-                            label={{en: 'Version', ru: 'Версия'}}
+                            label={{en: 'Version: ', ru: 'Версия: '}}
                             onBlur={(e) => inputChecker({lang, notExact: '-', el: e.target})}
-                            defaultData={{value: '-', name: {...empty}}}
+                            defaultData={{...defaultSelectItem}}
                             ref={selectorTypeRef}/>
                     </div>
                 }
                 <div className="feature wrap_xs">
                     <Selector 
                         lang={lang} 
-                        id='seelctor_fiber' 
-                        label={{en: 'Fiber', ru: 'Материал'}}
+                        id='selector_fiber' 
+                        label={{en: 'Fiber: ', ru: 'Материал: '}}
                         onBlur={(e) => inputChecker({lang, notExact: 'wrongType', el: e.target})}
-                        defaultData={{value: 'wrongType', name: {en: 'Select type', ru: 'Выберете тип'}}}
+                        defaultData={{...defaultSelectItem}}
                         ref={selectorFiberRef}
                         saveValue={onChangeFiber}
                     />
@@ -123,7 +122,7 @@ const ProductDetails: React.FC<IProps> = ({lang, product, colors,productLoad, fi
                 </div>
                 {selectedFiber &&
                     <div className="colors__container wrap_xs">
-                        <span>{lang === 'en' ? 'Available colors' : 'Доступные цвета'}: </span>
+                        <span>{lang === 'en' ? 'Available colors: ' : 'Доступные цвета: '}: </span>
                         <div className="colors__wrapper">
                             <ColorSelector lang={lang} colors={colors.colors.filter(color => selectedFiber?.colors.includes(color._id))} onSelect={onSelectColor}/>
                         </div>

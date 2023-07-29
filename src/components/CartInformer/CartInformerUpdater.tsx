@@ -42,7 +42,7 @@ const CartInformerUpdater: React.FC<IProps> = ({cart, setState}): JSX.Element =>
     return (
         <>
             {cart.load.status === 'success' && itemsInCart > 0 && 
-                <div className="cart-informer-updater">
+                <div className="cart-informer">
                     <span>+{itemsInCart}</span>
                 </div>
             }

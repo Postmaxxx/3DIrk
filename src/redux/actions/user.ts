@@ -77,7 +77,7 @@ export const login = ({email, password}: Pick<ILoggingForm, "email" | "password"
                     body: JSON.stringify({email, password})
                 })
             clearTimeout(fetchTimeout)
-            if (response.status !== 200) {
+            if (!response.ok) {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setAuth(resErrorFiller(result)))
             }
@@ -91,7 +91,7 @@ export const login = ({email, password}: Pick<ILoggingForm, "email" | "password"
                 cart: {
                     ...user.cart,
                     items: result.user.cart,
-                    load: successFetch
+                    load: successFetch,
                 }
             }))
             dispatch(setAuth({...successFetch}))
@@ -134,11 +134,12 @@ export const loginWithToken = () => {
                     },
                 })
             clearTimeout(fetchTimeout)
-            if (response.status !== 200) {
+            if (!response.ok) {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setAuth(resErrorFiller(result)))
             }
             const result: IUserLoginResOk = await response.json() //message, errors
+            
             dispatch(setUser({
                 name: result.user.name,
                 email: result.user.email,
@@ -148,7 +149,8 @@ export const loginWithToken = () => {
                 cart: {
                     ...user.cart,
                     items: result.user.cart,
-                    load: successFetch
+                    load: successFetch,
+                    fixed: result.user.cartFixed
                 }
             }))
             dispatch(setAuth({...successFetch}))
@@ -200,18 +202,18 @@ export const sendOrder = ({message, files}: ISendOrder ) => {
                 body: sendForm
             })
             clearTimeout(fetchTimeout)
-            if (response.status !== 201) {
-                const result: IErrRes & {checkedCart: ICartItem[]}= await response.json() //message, errors
+            if (!response.ok) {
+                const result: IErrRes & {fixedCart: ICartItem[]}= await response.json() //message, errors
                 if (response.status === 409) { //update cart with the new 
-                    dispatch(setUser({
+                    return dispatch(setUser({
                         cart: {
                             ...user.cart,
-                            items: result.checkedCart,
-                            load: successFetch
+                            items: result.fixedCart,
+                            load: successFetch,
+                            fixed: true
                         }
                     }))
                 }
-
                 return dispatch(setSendOrder(resErrorFiller(result)))
             }
             const result: IMsgRes = await response.json() //message
@@ -363,49 +365,3 @@ interface ICheckItem {
     colorId: string
     fiberId: string
 }
-/*
-export const checkCart = () => {
-    return async function(dispatch: IDispatch, getState: () => IFullState) {
-        const { cart } = getState().user
-        const checkList:ICheckItem[] = cart.items.map(item => ({
-            productId: item.product._id,
-            colorId: item.color,
-            fiberId: item.fiber
-        })) || []
-        const controller = new AbortController()
-        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.user.checkCart.timeout) //set time limit for fetch
-        dispatch(setSendCart({...fetchingFetch, controller}))         
-        try {
-            const response: Response = await fetch(APIList.user.updateCart.url, {
-                signal: controller.signal,
-                method: APIList.user.checkCart.method,
-                headers: {
-                    "Content-Type": 'application/json',
-                    'Authorization': `Bearer ${getState().user.token}`
-                },
-                body: JSON.stringify({checkList})
-            })
-            clearTimeout(fetchTimeout)
-            if (response.status !== 200) {
-                const result: IErrRes = await response.json() //message, errors
-                return dispatch(setSendCart(resErrorFiller(result)))
-            }
-            
-            const result: ICheckItem[] = await response.json()
-            console.log(result);
-            return
-            dispatch(setCart({
-                shouldUpdate: true
-            }))
-            dispatch(setSendCart({...successFetch}))
-        } catch (e) {   
-            fetchError({ 
-                e,
-                dispatch,
-                setter: setSendCart,
-                controller,
-                comp: {en: 'updating cart', ru: 'обновления корзины'}
-            })            
-        }
-    }
-}*/

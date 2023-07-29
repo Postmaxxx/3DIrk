@@ -223,7 +223,6 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, setState}): JSX.
                                     data-selector="input"
                                     id='text_short_en' 
                                     onChange={onChangeInputs} 
-                                    onKeyDown={focuser.next}
                                     onBlur={(e) => inputChecker({lang, min:inputsProps.news.textShort.min, max:inputsProps.news.textShort.max, el: e.target})}/>
                             </div>
                             <div className="input__wrapper" data-selector="input-block">
@@ -232,7 +231,6 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, setState}): JSX.
                                     data-selector="input"
                                     id='text_short_ru' 
                                     onChange={onChangeInputs} 
-                                    onKeyDown={focuser.next}
                                     onBlur={(e) => inputChecker({lang, min:inputsProps.news.textShort.min, max:inputsProps.news.textShort.max, el: e.target})}/>
                             </div>
                         </div>
@@ -245,7 +243,6 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, setState}): JSX.
                                     data-selector="input"
                                     id='text_en' 
                                     onChange={onChangeInputs} 
-                                    onKeyDown={focuser.next}
                                     onBlur={(e) => inputChecker({lang, min:inputsProps.news.textFull.min, max:inputsProps.news.textFull.max, el: e.target})}/>
                             </div>
                             <div className="input__wrapper" data-selector="input-block">
@@ -254,7 +251,6 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, setState}): JSX.
                                     data-selector="input"
                                     id='text_ru' 
                                     onChange={onChangeInputs} 
-                                    onKeyDown={focuser.next}
                                     onBlur={(e) => inputChecker({lang, min:inputsProps.news.textFull.min, max:inputsProps.news.textFull.max, el: e.target})}/>
                             </div>
                         </div>

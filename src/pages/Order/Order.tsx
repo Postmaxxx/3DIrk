@@ -2,7 +2,7 @@ import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import './order.scss'
-import { ICartItem, ICartState, IColor, IColorsState, IFetch, IFiber, IFibersState, IFullState, TLang } from "../../interfaces";
+import { ICartState, IColorsState, IFetch, IFibersState, IFullState, TLang } from "../../interfaces";
 import { useEffect, useRef, useCallback, useMemo } from 'react'
 import Modal, { IModalFunctions } from "../../components/Modal/Modal";
 import Message, { IMessageFunctions } from "../../components/Message/Message";
@@ -10,7 +10,7 @@ import CartContent from "../../components/CartContent/CartContent";
 import AddFiles, { IAddFilesFunctions } from "../../components/AddFiles/AddFiles";
 import { allActions } from "../../redux/actions/all";
 import { inputsProps, resetFetch, timeModalClosing} from "../../assets/js/consts";
-import { checkAndLoad, focusMover, modalMessageCreator, prevent } from "../../assets/js/processors";
+import { checkAndLoad, deepCopy, errorsChecker, focusMover, modalMessageCreator, prevent } from "../../assets/js/processors";
 import inputChecker from "../../../src/assets/js/inputChecker";
 
 interface IPropsState {
@@ -41,30 +41,46 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
     const _formOrder = useRef<HTMLFormElement>(null)
 
     const focuser = useMemo(() => focusMover(), [lang])
-
+    const errChecker = useMemo(() => errorsChecker({lang}), [lang])
 
     const closeModalMessage = useCallback(() => {
+        console.log(777);
+        
         if (!_message.current) return
         modalMessageRef.current?.closeModal()
         setTimeout(() => messageRef.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
-        if (sendOrder.status === 'success') {
-            addFilesRef.current?.clearAttachedFiles()
-            _message.current.value = ''
-            setState.user.setCart({items: []})
+        if (modalMessageRef.current?.getOwner() === 'order') {
+            if (sendOrder.status === 'success') {
+                addFilesRef.current?.clearAttachedFiles()
+                _message.current.value = ''
+                setState.user.setCart({items: []})
+            }
+            setState.user.setSendOrder(deepCopy(resetFetch))
         }
-        setState.user.setSendOrder(resetFetch)
+        if (modalMessageRef.current?.getOwner() === 'cartFixer') {
+            setState.user.setSendOrder(deepCopy(resetFetch))
+        }
+        if (modalMessageRef.current?.getOwner() === 'cartFixer') {
+            setState.user.setCart({fixed: false})
+        }
 	}, [sendOrder.status])
 
  
 
     const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
         if (!_message.current || !messageRef.current || !modalMessageRef.current || !addFilesRef.current || !_formOrder.current) return
-        //await checkCartIsActual(cart)
         prevent(e)
         //check errors
         focuser.focusAll();//run over all elements to get all errors
         const errorFields = _formOrder.current.querySelectorAll('.incorrect-value')
-        if (errorFields && errorFields?.length > 0) return
+        errorFields?.length > 0 &&  errChecker.add(lang === 'en' ? 'Some fields in additional information are filled incorrectly' : 'Некоторые поля в дополнительной информации заполнены неправильно')
+        cart.items.length === 0 && errChecker.add(lang === 'en' ? 'Your cart is empty' : 'Ваша корзина пуста')
+        if (errChecker.amount() > 0) { //show modal with error
+            messageRef.current?.update(errChecker.result())
+            modalMessageRef.current?.openModal('submit')
+            return
+        }
+        setState.user.sendCart() //update cart before order
         setState.user.sendOrder({
             message: _message.current.value,
             files: addFilesRef.current.getFiles(),
@@ -73,10 +89,23 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
 
 
     useEffect(() => {
-        if (sendOrder.status === 'success' || sendOrder.status === 'error') {
-            messageRef.current?.update(modalMessageCreator(sendOrder, lang))
-            modalMessageRef.current?.openModal('order')
-        }
+        if (!cart.fixed) return
+        messageRef.current?.update({
+            header: lang === 'en' ? "Warning" :  "Внимание", 
+            status: 'warning', 
+            text: [lang === 'en' ? 
+                'Some items have been removed from your cart as unavalable for order. Check your cart and repeat your order.' 
+                : 'Неуоторые товары были удалены из вашей корзины т.к. они больше недоступны для заказа. Проверьте вашу корзину и сделайте заказ еще раз.']}) 
+        modalMessageRef.current?.openModal('cartFixer')
+    }, [cart.fixed])
+
+
+
+
+    useEffect(() => {
+        if (sendOrder.status === 'fetching' || sendOrder.status === 'idle') return
+        messageRef.current?.update(modalMessageCreator(sendOrder, lang)) //if error/success - show modal
+        modalMessageRef.current?.openModal('order')
     }, [sendOrder.status])
 
 
@@ -95,40 +124,10 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
 
 
 
-    const checkCartIsActual = async (cart: ICartState) => {
-        //await setState.user.checkCart()
-        /*await checkAndLoad({
-            fetchData: colorsState.load,
-			loadFunc: setState.colors.loadColors,
-            force: true
-		})
-        await checkAndLoad({
-            fetchData: fibersState.load,
-			loadFunc: setState.fibers.loadFibers,
-            force: true
-		})
-        const wrongProducts: ICartItem[] = []
-        const newCartItems = [...cart.items]
-        newCartItems.filter(item => {
-            const fiber: IFiber | undefined = fibersState.fibersList.find(fiberItem => fiberItem._id === item.fiber)
-            const color: IColor | undefined = colorsState.colors.find(color => color._id === item.color)
-            if (fiber && color) {
-                
-                return true
-            } else {
-                wrongProducts.push(item)
-                return false
-            }
-        })*/
-
-
-    }
-
 
     const onChangeText: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (e) => {
         (e.target as HTMLElement).parentElement?.classList.remove('incorrect-value') 
     }
-
 
     return (
         <div className="page_order">
@@ -169,7 +168,7 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
                                 disabled={cart.load.status !== 'success' || fibersState.load.status !== 'success' || colorsState.load.status !== 'success' || sendOrder.status === 'fetching'} 
                                 className="button_order" 
                                 onClick={onSubmit}>
-                                    {lang === 'en' ? 'Order' : "Отправить"}
+                                    {lang === 'en' ? 'Order' : "Заказать"}
                             </button>
                         </form>
                     </div>

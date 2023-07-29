@@ -13,6 +13,7 @@ import { allActions } from "../../../redux/actions/all";
 interface IPropsState {
 	lang: TLang
 	catalogState: ICatalogState
+	isAdmin: boolean
 }
 
 
@@ -26,7 +27,7 @@ interface IPropsActions {
 
 interface IProps extends IPropsState, IPropsActions {}
 
-const SpliderSingle: React.FC<IProps> = ({lang, catalogState, setState}): JSX.Element => {
+const SpliderSingle: React.FC<IProps> = ({lang, catalogState, isAdmin, setState}): JSX.Element => {
 	
 	const spliderSingle = useRef<Splide>();
 	const _splideMain = useRef<HTMLDivElement>(null);
@@ -42,7 +43,7 @@ const SpliderSingle: React.FC<IProps> = ({lang, catalogState, setState}): JSX.El
 		perMove: 1,
 		pagination: true,
 		arrows: true,
-		drag: false,
+		drag: true,
 		speed: 500,
 		wheel: false,
 		wheelSleep: 300,
@@ -56,10 +57,6 @@ const SpliderSingle: React.FC<IProps> = ({lang, catalogState, setState}): JSX.El
 	};
 
 
-
-	/*useEffect(() => {
-		//setState.catalog.loadCategory({_id: catalog.category._id, from: 0, to: productsPerSlide})	
-	},[catalogState.category._id]);*/
 
 
 	
@@ -85,7 +82,6 @@ const SpliderSingle: React.FC<IProps> = ({lang, catalogState, setState}): JSX.El
 		if (document.body.offsetWidth < 993) {
 			setProductsPerSlide(4)
 		}
-		
 		
 		spliderSingle.current = new Splide(_splideMain.current, optionsMain);
 		
@@ -150,7 +146,8 @@ const SpliderSingle: React.FC<IProps> = ({lang, catalogState, setState}): JSX.El
 
 const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
-	catalogState: state.catalog
+	catalogState: state.catalog,
+	isAdmin: state.user.isAdmin
 })
 
 

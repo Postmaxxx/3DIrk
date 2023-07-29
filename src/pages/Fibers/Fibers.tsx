@@ -8,7 +8,6 @@ import Preloader from '../../components/Preloaders/Preloader';
 import { NavLink } from 'react-router-dom';
 import FiberPreview from '../../components/FiberPreview/FiberPreview';
 import { allActions } from "../../redux/actions/all";
-import { checkAndLoad } from '../../assets/js/processors';
 import { navList } from '../../../src/assets/js/consts';
 import FetchError from '../../components/ErrorFetch/ErrorFetch';
 
@@ -27,19 +26,11 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 const Fibers:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Element => { 
-    
-    useEffect(() => {
-        checkAndLoad({
-			fetchData: fibersState.load,
-			loadFunc: setState.fibers.loadFibers,
-		})
-    }, [fibersState.load.status])
-
 
 
     const listOfFibers = useMemo(() => (
         <div className="fibers__container">
-            {fibersState.fibersList.map((fiber, i) => {
+            {fibersState.fibersList.filter(fiber => fiber.active).map((fiber, i) => {
                 return (
                     <NavLink to={`${navList.fibers.to}/${fiber._id}`} aria-label={lang === 'en' ? '(About fiber)' : ' (О материале)'} key={fiber._id}>
                         <FiberPreview {...{fiber}} lang={lang} key={i}/>  
@@ -49,7 +40,6 @@ const Fibers:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Element => {
     ), [fibersState.fibersList, lang, fibersState.load.status])
 
     
-
     return (
         <div className="page page_fibers">
             <div className="container_page">

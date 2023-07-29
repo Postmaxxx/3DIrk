@@ -53,6 +53,7 @@ const Product: React.FC<IProps> = ({lang, setState, catalogState, colorsState, f
     }, [catalogState.category.sendProduct.status])
 
 
+
     const closeModalMessage = useCallback(() => {
         modalMessageRef.current?.closeModal()
         setTimeout(() => messageRef.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
@@ -77,7 +78,8 @@ const Product: React.FC<IProps> = ({lang, setState, catalogState, colorsState, f
                 checkAndLoad({
                     fetchData: catalogState.category.loadProduct,
                     loadFunc: setState.catalog.loadProduct,
-                    args: [paramProductId]
+                    args: [paramProductId],
+                    force: true
                 })
             } 
             setLoaded(false)
@@ -97,25 +99,14 @@ const Product: React.FC<IProps> = ({lang, setState, catalogState, colorsState, f
                 <div className="container">
                     <h1>{catalogState.category.product.name[lang]}</h1>
                     {loaded ? 
-                        <>
-                            <div className="details__block">
-                                <div className="details__splider">
-                                    <SpliderPreview images={catalogState.category.product.images} sizePreview='preview' sizeMain="medium"  />
-                                </div>
-                                <div className="details__descr-order">
-                                    <ProductDetails />
-                                </div>
+                        <div className="details__block">
+                            <div className="details__splider">
+                                <SpliderPreview images={catalogState.category.product.images} sizePreview='preview' sizeMain="medium"  />
                             </div>
-
-                            {isAdmin && 
-                                <div className="buttons">
-                                    <NavLink className="button_edit" to={`../..${navList.account.admin.product.to}/${catalogState.category.product._id}`}>
-                                        <IconEdit />
-                                    </NavLink>
-                                    <Delete<IProduct> remove={onDelete} idInstance={catalogState.category.product} lang={lang} disabled={catalogState.category.sendProduct.status === 'fetching'}/>
-                                </div>
-                            }
-                        </>
+                            <div className="details__descr-order">
+                                <ProductDetails />
+                            </div>
+                        </div>
                     :
                         <Preloader />}
                 </div>

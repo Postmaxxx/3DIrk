@@ -1,5 +1,5 @@
 import { TLang, TLangText } from "../../interfaces"
-import { useRef, useEffect, useState, forwardRef, useImperativeHandle } from "react";
+import { useRef, useState, forwardRef, useImperativeHandle } from "react";
 import './selector.scss'
 import { defaultSelectItem, empty } from "../../assets/js/consts";
 
@@ -48,11 +48,11 @@ const Selector = forwardRef<ISelectorFunctions, IProps>(({lang, id, label, defau
         },
         setValue(value) { //select item if item.value === value
             setStore(prev => ({...prev, value: value}))
-            if (!select.current) return
+            if (!selectRef.current) return
             if (value) {
-                select.current.selectedIndex = store.items.findIndex(el => el.value === value) + 1  
+                selectRef.current.selectedIndex = store.items.findIndex(el => el.value === value) + 1  
             } else {
-                select.current.selectedIndex = 0
+                selectRef.current.selectedIndex = 0
             }
         },
     }));
@@ -65,25 +65,26 @@ const Selector = forwardRef<ISelectorFunctions, IProps>(({lang, id, label, defau
     }
 
     const [store, setStore] = useState<IStore>({items: data || [], item: defaultData || {value: '', name: {...empty}}, value: ''})
-    const select = useRef<HTMLSelectElement>(null)
+    const selectRef = useRef<HTMLSelectElement>(null)
 
     const onChange = (e: React.ChangeEvent<HTMLSelectElement>) => {  
         setStore(prev => ({
             ...prev, 
-            item: {value: e.target.value, name: (prev.items.find(el => el.value === e.target.value) as IItem).name},
+            item: {value: e.target.value, name: (prev.items.find(el => el.value === e.target.value) as IItem)?.name || {en: '', ru: ''}},
             value: e.target.value
         }))
         saveValue && saveValue(e)
         e.target.parentElement?.classList.remove('incorrect-value') 
     }
+
      
     
     return (
         <div className="selector" data-selector="input-block">
-            {label && <label htmlFor={id}>{label[lang]}: </label>}
+            {label && <label htmlFor={id}>{label[lang]}</label>}
             <select 
                 data-selector="select"
-                ref={select} 
+                ref={selectRef} 
                 id={id} 
                 defaultValue={store.value} 
                 onChange={onChange} 

@@ -55,14 +55,14 @@ const CatalogList: React.FC<IProps> = ({catalog, lang, selectedCategory, isAdmin
 			<div className="list">
 				{catalog.load.status === 'success' &&
 					<ul>
-						{catalog.list.map((category: ICatalogItem): JSX.Element => {
+						{catalog.list.filter(category => category.active).map((category: ICatalogItem): JSX.Element => {
 							return (
 								<li 
 									key={category._id} 
 									className={category._id === selectedCategory ? "selected" : ""}
 									onClick={():void => loadCategory(category._id, category.total)}
 								>
-									{category.name[lang]} ({category.total || 0})
+									{category.name[lang]} ({category.active || 0})
 								</li>
 							);
 						})}

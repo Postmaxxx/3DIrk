@@ -101,7 +101,7 @@ const Fiber: FC<IProps> = ({lang, fibersState, colorsState, setState, isAdmin}):
     const firberColors = useCallback((fiber: IFiber) => {
         return fiber.colors.map((color, i) => {
             const colorData: IColor | undefined = colorsState.colors.find(colorItem => colorItem._id === color)
-            if (colorData) {
+            if (colorData && colorData.active) {
                 return (
                     <div key={i} className='color__container' onClick={(e) => onImageClick(e, colorData)}>
                         <div className="img-container">
@@ -142,16 +142,11 @@ const Fiber: FC<IProps> = ({lang, fibersState, colorsState, setState, isAdmin}):
                         </div>
                         
                         <div className="buttons">
-                            {isAdmin && 
-                                <NavLink className="button_edit" to={`../..${navList.account.admin.fiber.to}/${fiber._id}`}>
-                                    <IconEdit />
-                                </NavLink>}
                             <NavLink
                                 className="button_blue link_compareList"
                                 to={navList.fibers.compare.to}>
                                     {lang === 'en' ? 'Watch in comparasing' : 'Посмотреть в сравнении'}
                             </NavLink>
-                            {isAdmin && <Delete<IFiber> remove={onDelete} idInstance={fiber} lang={lang} disabled={fibersState.send.status === 'fetching'}/>}
                         </div>
                     </div>
                 </div>

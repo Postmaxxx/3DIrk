@@ -142,6 +142,7 @@ const fetchError = ({dispatch, setter, comp, e, controller}: IFetchError) => {
 
 const modalMessageCreator = (source: IFetch, lang: TLang) => { //create all keys for Message
     const errors: string[] = source.errors?.map(e => e[lang]) || []
+    console.log(source, errors);
     return {
         header: headerStatus[source.status as "success" | "error"][lang],
         status: source.status,

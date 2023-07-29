@@ -122,7 +122,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
                                                     id="name" 
                                                     type="text" 
                                                     ref={_name} 
-                                                    onKeyDown={(e) => focuser.next(e)}
+                                                    onKeyDown={focuser.next}
                                                     onChange={onChangeText}
                                                     onBlur={(e) => inputChecker({lang, min:inputsProps.name.min, max:inputsProps.name.max, el: e.target})}/>
                                             </div>}
@@ -136,7 +136,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
                                                     id="phone"
                                                     type="tel" 
                                                     ref={_phone} 
-                                                    onKeyDown={(e) => focuser.next(e)}
+                                                    onKeyDown={focuser.next}
                                                     onChange={onChangeText}
                                                     onBlur={(e) => inputChecker({lang, min:inputsProps.phone.min, max:inputsProps.phone.max, type: 'phone', el: e.target})}/>
                                             </div>
@@ -151,7 +151,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
                                                     id="email" 
                                                     type="email" 
                                                     ref={_email} 
-                                                    onKeyDown={(e) => focuser.next(e)}
+                                                    onKeyDown={focuser.next}
                                                     onChange={onChangeText}
                                                     onBlur={(e) => inputChecker({lang, min:inputsProps.email.min, max:inputsProps.email.max,  type: 'email', el: e.target})}/>
                                             </div>

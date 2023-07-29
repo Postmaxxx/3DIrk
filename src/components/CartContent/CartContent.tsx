@@ -119,7 +119,7 @@ const CartContent: React.FC<IProps> = ({lang, cart, colorsState, fibersState, se
                 </Fragment>
             )
         })
-    }, [cart.items])
+    }, [cart.items, fibersState.fibersList, colorsState.colors])
         
 
     return (

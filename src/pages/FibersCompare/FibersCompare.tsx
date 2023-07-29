@@ -38,14 +38,10 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
     const [fibersList, setFibersList] = useState<IFiber[]>([]) //for sort fibers
 
     useEffect(() => {
-        checkAndLoad({
-			fetchData: fibersState.load,
-			loadFunc: setState.fibers.loadFibers,
-		})
         if (fibersState.load.status === 'success') {
             setFibersList(fibersState.fibersList)
             clearSelected()
-            setShowList(fibersState.fibersList.map(fiber => fiber._id))
+            //setShowList(fibersState.fibersList.map(fiber => fiber._id))
         }        
     }, [fibersState.load.status])
    
@@ -77,7 +73,7 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
 
     const clearSelected = () => {
         setFiltered(false)  
-        setShowList(fibersState.fibersList.map(fiber => fiber._id))
+        setShowList(fibersState.fibersList.filter(fiber => fiber.active).map(fiber => fiber._id))
         clearCheckboxes()
     }
 

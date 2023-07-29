@@ -30,11 +30,6 @@ router.get('/list',
         
         const catalogToSend = cache.catalog.data
             .filter(item => isAdmin ? true : item.active > 0)//admin - all, user - only have active products
-            .map(item => ({ //total for admin - total amount products in category, for user - inly active
-                _id: item._id,
-                name: item.name,
-                total: isAdmin ? item.total : item.active
-        }))
         
         
         res.status(200).json({allCatalog: catalogToSend, message: {en: 'Catalog has been loaded', ru: 'Каталог был загружены'}})
@@ -128,7 +123,8 @@ router.get('/category',
                     paths: {
                         small: item.images.paths.small
                     }
-                }
+                },
+                active: item.active
             }))
         })
 
@@ -238,7 +234,8 @@ router.get('/product', async(req, res) => {
             images: product.images,    
             fibers: product.fibers,    
             mods: product.mods,
-            category: product.category
+            category: product.category,
+            active: product.active
         }
         })
 

@@ -212,7 +212,8 @@ export interface IProductShort { //for gallery
             small: string
         }
         files: string[]
-    }
+    },
+    active?: boolean
 }
 
 
@@ -230,6 +231,7 @@ export interface ICatalogItem { //one category name
     name: TLangText
     total: number //total amount of products in category
     _id: TId
+    active: number //amount of active products in category
 }
 
 export interface ICatalog{
@@ -348,6 +350,7 @@ export interface ICartState {
     send: IFetch
     items: ICartItem[]
     shouldUpdate: boolean //if true it means client updated cart and it must be sent to BE
+    fixed: boolean //cart was fixed by server
 }
 
 
@@ -436,7 +439,7 @@ export interface IFullState {
 //////////////////////////////////for intercommunicate with BackEnd
 export interface IUserLoginResOk {
     message: TLangText
-    user: Pick<IUserState, 'name' | 'email' | 'phone' | 'token' | 'isAdmin'> & {cart: ICartItem[]}
+    user: Pick<IUserState, 'name' | 'email' | 'phone' | 'token' | 'isAdmin'> & {cart: ICartItem[]} & {cartFixed: boolean}
 }
 
 

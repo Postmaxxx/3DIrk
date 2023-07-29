@@ -128,7 +128,8 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, multiple, id}, r
     }, [files])
 
 
-    const onRemoveClick = (index: number) => {
+    const onRemoveClick = (e: React.MouseEvent<HTMLButtonElement>,index: number) => {
+        prevent(e)
         setFiles(prev => (prev.filter((item, i) => i !== index)))
     }
 
@@ -141,7 +142,7 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, multiple, id}, r
                         <img src={file.content} alt={file.name} />
                     </div>
                     <span className="file__descr">{file.name}</span>
-                    <button className="filesToShow" onClick={() => onRemoveClick(i)}>X</button>
+                    <button className="item__delete" onClick={(e) => onRemoveClick(e, i)}>X</button>
                 </div>
             )
         })

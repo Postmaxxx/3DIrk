@@ -15,7 +15,6 @@ interface IProps extends IPropsState {
 
 
 const Gallery: React.FC<IProps> = ({lang, products}):JSX.Element => {
-
     const cards = useMemo(() => products.map(product => {
         return (
             <NavLink
@@ -23,7 +22,7 @@ const Gallery: React.FC<IProps> = ({lang, products}):JSX.Element => {
                 key={product._id}
                 >
                 <div className='gallery__item' >
-                    <div className="img__container">
+                    <div className={`img__container ${product.active ? '' : 'inactive'}`}>
                         <ImgWithPreloader src={`${product.images.paths.small}/${product.images.files[0]}`} alt={product.images.files[0]}/>
                     </div>
                     <div className="descr__container">
