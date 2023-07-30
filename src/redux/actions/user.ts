@@ -1,4 +1,4 @@
-import { IAction, ICartItem, ICartState, IDispatch, IErrRes, IFetch, IFullState, ILoggingForm, IMsgRes, IProduct, IUserLoginResOk, IUserState } from "../../interfaces";
+import { IAction, ICartItem, ICartState, IDispatch, IErrRes, IFetch, IFullState, ILoggingForm, IMsgRes, IUserLoginResOk, IUserState } from "../../interfaces";
 import { actionsListUser } from './actionsList'
 import { APIList, DOMExceptions, fetchingFetch, successFetch } from "../../assets/js/consts";
 import moment from "moment";
@@ -92,6 +92,7 @@ export const login = ({email, password}: Pick<ILoggingForm, "email" | "password"
                     ...user.cart,
                     items: result.user.cart,
                     load: successFetch,
+                    fixed: result.user.fixed
                 }
             }))
             dispatch(setAuth({...successFetch}))
@@ -150,7 +151,7 @@ export const loginWithToken = () => {
                     ...user.cart,
                     items: result.user.cart,
                     load: successFetch,
-                    fixed: result.user.cartFixed
+                    fixed: result.user.fixed
                 }
             }))
             dispatch(setAuth({...successFetch}))
@@ -203,14 +204,14 @@ export const sendOrder = ({message, files}: ISendOrder ) => {
             })
             clearTimeout(fetchTimeout)
             if (!response.ok) {
-                const result: IErrRes & {fixedCart: ICartItem[]}= await response.json() //message, errors
+                const result: IErrRes & {cart: ICartItem[]} & {fixed: ICartState["fixed"]}= await response.json() //message, errors
                 if (response.status === 409) { //update cart with the new 
                     return dispatch(setUser({
                         cart: {
                             ...user.cart,
-                            items: result.fixedCart,
+                            items: result.cart,
                             load: successFetch,
-                            fixed: true
+                            fixed: result.fixed
                         }
                     }))
                 }

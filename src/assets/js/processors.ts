@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom';
 import { Dispatch } from "redux";
 import { IAction, IDispatch, IErrRes, IFetch, TFetchStatus, TLang, TLangText } from "../../interfaces";
 import { DOMExceptions, empty, exceptionTimeout, gapBetweenRequests, headerStatus, selector } from "./consts";
@@ -233,6 +234,8 @@ const checkIfEmail = (value: string) => {
 const checkIfPhone = (value: string) => {
     return /^\+?[0-9]*$/.test(value)
 }
+
+
 
 
 export { ratingNumberToText, errorsChecker, prevent, filenameChanger, checkAndLoad, modalMessageCreator, 

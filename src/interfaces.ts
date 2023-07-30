@@ -1,4 +1,5 @@
 import { AnyAction } from "redux";
+import { IModalFunctions } from "./components/Modal/ModalNew";
 
 //================================================================================
 export type TTheme = 'dark' | 'light'
@@ -304,6 +305,7 @@ export interface IBaseState {
     lang: TLang
     mobOpened: boolean //mobile nav panel opened
     desktopOpened: boolean //desktop nav panel opened
+    modal: React.RefObject<IModalFunctions>
 }
 
 
@@ -350,7 +352,7 @@ export interface ICartState {
     send: IFetch
     items: ICartItem[]
     shouldUpdate: boolean //if true it means client updated cart and it must be sent to BE
-    fixed: boolean //cart was fixed by server
+    fixed: TLangText[] //errors list of cart errors from server
 }
 
 
@@ -439,7 +441,7 @@ export interface IFullState {
 //////////////////////////////////for intercommunicate with BackEnd
 export interface IUserLoginResOk {
     message: TLangText
-    user: Pick<IUserState, 'name' | 'email' | 'phone' | 'token' | 'isAdmin'> & {cart: ICartItem[]} & {cartFixed: boolean}
+    user: Pick<IUserState, 'name' | 'email' | 'phone' | 'token' | 'isAdmin'> & {cart: ICartItem[]} & {fixed: ICartState["fixed"]}
 }
 
 
@@ -468,7 +470,7 @@ export interface ICarouselMax { //for CarouselMax
         full: string
         spliderMain: string
     },
-    files: string[]
+    files: string[],
 }
 
 export interface IContentState { //for other app content 
@@ -482,3 +484,18 @@ export type TImageSizes = 'thumb' | 'small' | 'medium' | 'full' | 'spliderMain' 
 
 
 export type TTypeRequest = 'create' | 'update' 
+
+
+/*
+export interface IModalOpen {
+    owner: string,
+    children: JSX.Element
+}
+
+export interface IModal {
+    escExit: boolean
+    ref: React.RefObject<IModalFunctions>
+    close: () => void
+    open: (owner: string) => void
+    children: JSX.Element
+}*/

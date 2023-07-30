@@ -1,4 +1,5 @@
-import { IAction } from "../../interfaces"
+import { IModalFunctions } from "src/components/Modal/ModalNew"
+import { IAction, IBaseState } from "../../interfaces"
 import { actionsListBase } from './actionsList'
 
 export const setLangEn = <T>(): IAction<T> => ({
@@ -44,3 +45,9 @@ export const setNavToggleDt = <T>():IAction<T> => ({
     type: actionsListBase.SET_NAV_DT_TOGGLE,
 });
 
+
+
+export const setModal = <T extends React.RefObject<IModalFunctions>>(payload: T):IAction<T> => ({
+    type: actionsListBase.SET_MODAL,
+    payload
+});

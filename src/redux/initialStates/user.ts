@@ -15,7 +15,7 @@ const initialUserState = {
         send: resetFetch,
         items: [],
         shouldUpdate: false,
-        fixed: false
+        fixed: []
     }
     //orders: []
 } satisfies IUserState

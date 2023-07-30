@@ -61,7 +61,7 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
             setState.user.setSendOrder(deepCopy(resetFetch))
         }
         if (modalMessageRef.current?.getOwner() === 'cartFixer') {
-            setState.user.setCart({fixed: false})
+            setState.user.setCart({fixed: []})
         }
 	}, [sendOrder.status])
 
@@ -89,13 +89,14 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
 
 
     useEffect(() => {
-        if (!cart.fixed) return
+        if (cart.fixed.length === 0) return
         messageRef.current?.update({
             header: lang === 'en' ? "Warning" :  "Внимание", 
             status: 'warning', 
             text: [lang === 'en' ? 
-                'Some items have been removed from your cart as unavalable for order. Check your cart and repeat your order.' 
-                : 'Неуоторые товары были удалены из вашей корзины т.к. они больше недоступны для заказа. Проверьте вашу корзину и сделайте заказ еще раз.']}) 
+                'Some items have been removed from your cart as unavalable for order:' 
+                : 'Некоторые товары были удалены из вашей корзины т.к. они больше недоступны для заказа:',
+            ...cart.fixed.map((item, i) => (`${i+1}) ${item[lang]}`))]}) 
         modalMessageRef.current?.openModal('cartFixer')
     }, [cart.fixed])
 

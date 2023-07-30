@@ -10,6 +10,7 @@ export const actionsListBase = {
     SET_NAV_DT_OPEN: 'SET_NAV_DT_OPEN',
     SET_NAV_DT_CLOSE: 'SET_NAV_DT_CLOSE',
     SET_NAV_DT_TOGGLE: 'SET_NAV_DT_TOGGLE',
+    SET_MODAL: 'SET_MODAL',
 }
 
 export const actionsListNews = {

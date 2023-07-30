@@ -54,7 +54,7 @@ const AddToCart: React.FC<IProps> = ({getData, product, lang, cart, setState}): 
         errChecker.clear() 
         !getData().color && errChecker.add(lang === 'en' ? 'Please choose the color' : 'Пожалуйста, выберите цвет');
         !getData().fiber && errChecker.add(lang === 'en' ? 'Please choose the fiber' : 'Пожалуйста, выберите материал');
-        (getData().type?.en === '') && errChecker.add(lang === 'en' ? 'Please choose the type' : 'Пожалуйста, выберите версию');
+        (getData().type?.en === '') && errChecker.add(lang === 'en' ? 'Please choose the type' : 'Пожалуйста, выберите тип');
         !amount && errChecker.add(lang === 'en' ? 'Please set the amount' : 'Пожалуйста, укажите количество')
 
         if (errChecker.amount() > 0) {

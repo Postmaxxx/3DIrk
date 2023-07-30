@@ -59,19 +59,20 @@ const reducerUser = (state:IUserState = initialUserState, action: IAction<any>):
 
         case actionsListUser.ADD_ITEM_CART: 
             const newItem = action.payload as ICartItem
-            let itemExist: boolean = false;
+            let itemInCart: boolean = false;
             const newItems: ICartItem[] = state.cart.items.map(item => {
                 let itemTheSame = true
                 if (item.color !== newItem.color) {itemTheSame = false}
                 if (item.fiber !== newItem.fiber) {itemTheSame = false}
-                if (item.product !== newItem.product) {itemTheSame = false}
-                if (JSON.stringify(item.type.en) !== JSON.stringify(newItem.type.en)) {itemTheSame = false}
+                if (item.product._id !== newItem.product._id) {itemTheSame = false}
+                if (item.type.en !== newItem.type.en) {itemTheSame = false}
 
                 if (!itemTheSame) return item
-                itemExist = true
+                itemInCart = true
+                
                 return {...item, amount: item.amount + newItem.amount }
             })
-            !itemExist && newItems.push(newItem)
+            !itemInCart && newItems.push(newItem)
             return {
                 ...state, 
                 cart: {

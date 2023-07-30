@@ -1,5 +1,5 @@
 import NewsBlock from '../../components/NewsBlock/NewsBlock';
-import SpliderMax from '../../components/CarouselMax/CarouselMax';
+import CarouselMax from '../../components/CarouselMax/CarouselMax';
 import './home.scss'
 import { connect } from "react-redux";
 import { IContentState, IFullState, TLang } from "../../interfaces";
@@ -9,22 +9,25 @@ import { allActions } from '../../redux/actions/all';
 import { useEffect } from "react";
 import Preloader from '../../components/Preloaders/Preloader';
 import { checkAndLoad } from '../../assets/js/processors';
+import { IModalFunctions } from '../../../src/components/Modal/ModalNew';
+import MessageNew from '../../../src/components/Message/MessageNew';
 
 
 interface IPropsState {
     lang: TLang
     contentState: IContentState
+    modal: React.RefObject<IModalFunctions>
 }
 
 interface IPropsActions {
     setState: {
-        content: typeof allActions.content
+        content: typeof allActions.content,
     }
 }
 
 interface IProps extends IPropsState, IPropsActions {}
 
-const Home:React.FC<IProps> = ({lang, contentState, setState} : IProps): JSX.Element => {
+const Home:React.FC<IProps> = ({lang, contentState, setState, modal} : IProps): JSX.Element => {
 
     useEffect(() => {
         checkAndLoad({
@@ -33,13 +36,31 @@ const Home:React.FC<IProps> = ({lang, contentState, setState} : IProps): JSX.Ele
 			force: false
 		})
     }, [contentState.load.status])
+
+
+
+
+    const onNewClose = () => {
+        modal.current?.closeAll()
+        console.log('closed')
+    }
+
+    const openModalNew = () => {
+        modal.current?.openModal({
+            name: 'test',
+            onClose: onNewClose,
+            children: <MessageNew text={"Text text text text text text text text text text text text"} header={'HEADER'} buttonClose={{action: onNewClose, text: 'CLOSEME!!!!'}}/>
+        })
+    }
     
+
     return (
         <div className='page page_home'>
             <div className="container_page">
                 <div className="container">
                     <div className='page_home'>
                         <div className="block_text">
+                            <button onClick={openModalNew}>OPEN MODAL 2</button>
                             {lang === 'en' ? 
                                 <>
                                     <h1>Header</h1>
@@ -59,7 +80,7 @@ const Home:React.FC<IProps> = ({lang, contentState, setState} : IProps): JSX.Ele
                             }
                         </div>
                         <div className="slider__container">
-                            {contentState.load.status === 'success' && contentState.splider?.files?.length > 0 && <SpliderMax content={contentState.splider} />}
+                            {contentState.load.status === 'success' && contentState.splider?.files?.length > 0 && <CarouselMax content={contentState.splider}/>}
                             {contentState.load.status === 'fetching' && <Preloader />}
                             
                         </div>
@@ -74,7 +95,8 @@ const Home:React.FC<IProps> = ({lang, contentState, setState} : IProps): JSX.Ele
 
 const mapStateToProps = (state: IFullState):IPropsState => ({
     lang: state.base.lang,
-    contentState: state.content
+    contentState: state.content,
+    modal: state.base.modal
 })
 
 

@@ -43,39 +43,34 @@ const cartToFront = async (cart: ICartItem[]) => {
     if (errColors) {
         throw new Error('Errors while loading colors', {cause: errColors})
     }
-    let edited = false // will the cart be modified due to irrelevant data or not
-
-
+    
+    const fixed: TLangText[] = []
     const filteredCart = cart.map(cartItem => {
-        const product: IProduct = cache.products.data.find(item => item._id.toString() === cartItem.productId.toString() && item.active) //does this product exist and available for ordering
-        if (!product) {
-            edited = true
-            return null
-        }
+        let unavailable = false //if item is unavailable to order
+        
+        const product: IProduct = cache.products.data.find(item => item._id.toString() === cartItem.productId.toString()) //does this product exist and available for ordering
+        !product?.active && (unavailable = true)
 
         const fiberInProduct = product.fibers.find(fiberId => fiberId.toString() === cartItem.fiberId.toString())  //check is this fiber available for this product
-        if (!fiberInProduct) {
-            edited = true
-            return null
-        }
-        const fiber = cache.fibers.data.find(item => cartItem.fiberId.toString() === item.id.toString() && item.active)  //does this fiber exist and available for ordering
-        if (!fiber) {
-            edited = true
-            return null
-        }
+        !fiberInProduct && (unavailable = true)
+        
+        const fiber = cache.fibers.data.find(item => cartItem.fiberId.toString() === item.id.toString())  //does this fiber exist and available for ordering
+        !fiber?.active && (unavailable = true)
 
 
         const colorInFiber = fiber.colors.find(colorId => colorId.toString() === cartItem.colorId.toString())  //check is this color available for this fiber
-        if (!colorInFiber) {
-            edited = true
+        !colorInFiber && (unavailable = true)
+        
+        const color = cache.colors.data.find(color => color._id.toString() === cartItem.colorId.toString())  //does this color exist and available for ordering
+        !color?.active && (unavailable = true)
+        
+        if (unavailable) {
+            fixed.push({
+                en: `Product: ${product.name.en}, fiber: ${fiber.name.en}, color: ${color.name.en}, type: ${cartItem.type.en}, amount: ${cartItem.amount}`,
+                ru: `Товар: ${product.name.ru}, материал: ${fiber.name.ru}, цвет: ${color.name.ru}, тип: ${cartItem.type.ru}, количество: ${cartItem.amount}`
+            })
             return null
         }
-        const color = cache.colors.data.find(colorId => colorId._id.toString() === cartItem.colorId.toString() && colorId.active)  //does this color exist and available for ordering
-        if (!color) {
-            edited = true
-            return null
-        }
-
         return {
             fiber: cartItem.fiberId.toString(),
             color: cartItem.colorId.toString(),
@@ -85,7 +80,7 @@ const cartToFront = async (cart: ICartItem[]) => {
         }
     }).filter(item => item) || [] // all products with invalid data will be ignored
     
-    return {filteredCart, edited}
+    return {filteredCart, fixed}
 }
  
 
@@ -295,7 +290,7 @@ router.post('/login',
                 email: user.email,
                 phone: user.phone,
                 cart: cartToFE.filteredCart,
-                cartFixed: cartToFE.edited,
+                fixed: cartToFE.fixed,
                 token,
                 isAdmin: false
             }
@@ -303,7 +298,7 @@ router.post('/login',
             if (user.email === process.env.admEmail) {
                 userToFront.isAdmin = true
             }
-            cartToFE.edited ? res.status(226).json({user: userToFront}) : res.status(200).json({user: userToFront})
+            res.status(200).json({user: userToFront})      
         } catch (error) {
             res.status(500).json({ message:{en: `Something wrong with server (${error}), try again later`, ru: `Ошибка на сервере (${error}), попробуйте позже`}})
         }
@@ -335,16 +330,17 @@ router.post('/login-token',
                 email: user.email,
                 phone: user.phone,
                 cart: cartToFE.filteredCart,
-                //cartFixed: cartToFE.edited,
+                fixed: cartToFE.fixed,
                 token: newToken, //auto token prolong
                 isAdmin: false
             }
+            
             
             if (user.email === process.env.admEmail) {
                 userToFront.isAdmin = true
             }
             
-            res.status(200).json({user: userToFront, message: {en: 'Login success', ru: 'Успешный вход'}})      
+            res.status(200).json({user: userToFront})      
         } catch (error) {
             res.status(500).json({ message:{en: `Something wrong with server (${error}), try again later`, ru: `Ошибка на сервере (${error}), попробуйте позже`}})
         }
@@ -432,16 +428,16 @@ router.post('/order', //checking and creating an order if everything is ok
 
             //check are there any non-exist properties in cart
             const checkResult = await cartToFront(user.cart)
-            if (checkResult.edited) { //if cart was fixed send back fixed cart
+            if (checkResult.fixed.length > 0) { //if cart was fixed send back fixed cart
                 return res.status(409).json({ 
                     message:{
-                        en: `Errors in your order, some products or features are unavailable now and was removed from your cart `,
-                        ru: `Ошибки в вашем заказе, некоторые позиции больше недоступны и были удалены из вашей корзины`
+                        en: `Errors in your order, some products or features are unavailable now and was removed from your cart: `,
+                        ru: `Ошибки в вашем заказе, некоторые позиции больше недоступны и были удалены из вашей корзины: `
                     },
-                    fixedCart: checkResult.filteredCart
+                    cart: checkResult.filteredCart,
+                    fixed: checkResult.fixed
                 })
             }
-
             
             //send data to DB 
             const cartToSave: ICartItem[] = (user.cart as ICartItem[]).map(item => ({//convert string ids to ObjectIDs
@@ -551,7 +547,7 @@ interface IOrdersCartItem {
     type: TLangText
 }
 
-
+ 
 
 interface IOrdersItem {
     _id: string
@@ -566,7 +562,7 @@ interface IOrdersItem {
 interface IOrdersUser {
     info: IFilterUser
     orders: IOrdersItem[]
-}
+} 
 
 
 
@@ -670,49 +666,6 @@ interface ICheckItem {
     fiberId: string
 }
 
-router.post('/cart', //check does products exis
-    [authMW],
-    async(req, res) => { 
-        try {
-            const checkList: ICheckItem[] = JSON.parse(req.body.data).checkList
-            const errFibers = await cache.fibers.control.load()
-            if (errFibers) {
-                return res.status(500).json(errFibers)
-            }
-            const errColors = await cache.colors.control.load()
-            if (errColors) {
-                return res.status(500).json(errColors)
-            }   
-            const errProducts = await cache.products.control.load()
-            if (errProducts) {
-                return res.status(500).json(errProducts)
-            } 
-            const missedList = [] //list of items should be removed from user cart
-            checkList.forEach(checkItem => {
-                const product = cache.products.data.find(product => product._id === checkItem.productId) //does this product exist
-                if (!product) {
-                    missedList.push(checkItem)
-                    return
-                }
-                const fiberId = product.fibers.find(fiber => fiber === checkItem.fiberId)// does this fiber exist for this product
-                if (!fiberId) {
-                    missedList.push(checkItem)
-                    return
-                }
-                const fiber = cache.fibers.data.find(el => el._id === fiberId)
-                const colorId = fiber.colors.find(colorItem => colorItem === checkItem.colorId)// does this color exist for this product fiber
-                if (!colorId) {
-                    missedList.push(checkItem)
-                    return
-                }
-            })
-            console.log('missedList = ', missedList);
-            return res.status(200).json({missedList})    
-        } catch (error) {
-            res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})
-        }
-    }
-)
 
 
 

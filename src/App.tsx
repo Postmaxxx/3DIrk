@@ -1,4 +1,4 @@
-import { useEffect, memo } from "react";
+import { useEffect, memo, useRef } from "react";
 import { Routes, Route, HashRouter } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import Preloader from "./components/Preloaders/Preloader"; 
@@ -18,6 +18,8 @@ import Unauthorized from "./components/Unauthorized/Unauthorized";
 import { checkAndLoad } from "./assets/js/processors";
 import ThemeSwitcher from "./components/ThemeSwitcher/ThemeSwitcher";
 import PreloaderPage from "./components/Preloaders/PreloaderPage";
+import ModalNew, { IModalFunctions } from "./components/Modal/ModalNew";
+
 
 const LazyThemeSwitcher = lazy(() => import("./components/ThemeSwitcher/ThemeSwitcher"));
 const LazyLangSwitcher = lazy(() => import("./components/LangSwitcher/LangSwitcher"));
@@ -56,6 +58,7 @@ interface IPropsActions {
         user: typeof allActions.user
         colors: typeof allActions.colors
 		order: typeof allActions.order
+		base: typeof allActions.base
     }
 }
 
@@ -64,7 +67,8 @@ interface IProps extends IPropsState, IPropsActions {}
 const MemoFooter = memo(Footer)
 
 const App:React.FC<IProps> = ({lang, isAdmin, isAuth, fibersLoad, setState}):JSX.Element => {
-	
+	const modalRef = useRef<IModalFunctions>(null)
+
 	useEffect(() => {
 		setState.user.loginWithToken()
 		checkAndLoad({
@@ -72,6 +76,7 @@ const App:React.FC<IProps> = ({lang, isAdmin, isAuth, fibersLoad, setState}):JSX
 			loadFunc: setState.fibers.loadFibers,
             force: false
 		})
+		setState.base.setModal(modalRef)
 	}, [])
 
 
@@ -82,6 +87,8 @@ const App:React.FC<IProps> = ({lang, isAdmin, isAuth, fibersLoad, setState}):JSX
             force: true
 		})
 	}, [isAdmin])
+
+
 
 
 	return (
@@ -129,6 +136,8 @@ const App:React.FC<IProps> = ({lang, isAdmin, isAuth, fibersLoad, setState}):JSX
 			</Routes>
 
 			<MemoFooter lang={lang}/>
+			
+			<ModalNew ref={modalRef}></ModalNew>
 		</HashRouter>
 
   );
@@ -148,6 +157,7 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>):IPropsActions => ({
 		colors: bindActionCreators(allActions.colors, dispatch),
 		user: bindActionCreators(allActions.user, dispatch),
 		order: bindActionCreators(allActions.order, dispatch),
+		base: bindActionCreators(allActions.base, dispatch),
 	}
 })
   
