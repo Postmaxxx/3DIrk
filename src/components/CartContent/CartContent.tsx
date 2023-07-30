@@ -3,23 +3,23 @@ import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import './cart-content.scss'
 import { ICartItem, ICartState, IColor, IColorsState, IFibersState, IFullState, IProduct, TLang } from "../../interfaces";
-import { useRef,  useCallback, useMemo, Fragment } from 'react'
+import { useCallback, useMemo, Fragment } from 'react'
 import { NavLink } from "react-router-dom";
 import Delete from "../Delete/Delete";
 import AmountChanger from "../AmountChanger/AmountChanger";
 import PreloaderW from "../Preloaders/PreloaderW";
 import ImgWithPreloader from "../../assets/js/ImgWithPreloader";
-import Modal, { IModalFunctions } from "../Modal/Modal";
-import { IImageModalFunctions } from "../ImageModal/ImageModal";
 import { allActions } from "../../redux/actions/all";
-import ImageModal from "../ImageModal/ImageModal";
 import ErrorMock from "../ErrorFetch/ErrorFetch";
+import ImageModalNew from "../ImageModal/ImageModalNew";
+import { IModalFunctions } from "../Modal/ModalNew";
 
 interface IPropsState {
     lang: TLang,
     colorsState: IColorsState
     fibersState: IFibersState
     cart: ICartState
+    modal: IModalFunctions | null
 }
 
 interface IPropsActions {
@@ -33,9 +33,8 @@ interface IPropsActions {
 
 interface IProps extends IPropsState, IPropsActions {}
 
-const CartContent: React.FC<IProps> = ({lang, cart, colorsState, fibersState, setState}): JSX.Element => {
-    const modalImageRef = useRef<IModalFunctions>(null)
-    const imageModalRef = useRef<IImageModalFunctions>(null)
+const CartContent: React.FC<IProps> = ({lang, cart, colorsState, modal, fibersState, setState}): JSX.Element => {
+
 
     const deleteItem = useCallback((item: ICartItem) => {
         setState.user.removeItem(item)
@@ -46,24 +45,25 @@ const CartContent: React.FC<IProps> = ({lang, cart, colorsState, fibersState, se
         setState.user.changeItem({...item, amount})
     }, [])
 
+
     const onImageClick = (e: React.MouseEvent, product: IProduct) => {
         if (!product) return
         e.stopPropagation()
-        imageModalRef.current?.update({url: `${product.images.paths.full}/${product.images.files[0]}`, text: product.name[lang]})
-        modalImageRef.current?.openModal('product')
+        modal?.openModal({
+            name: 'productClicked',
+            children: <ImageModalNew url={`${product.images.paths.full}/${product.images.files[0]}`}/>
+        })
     }
     
     const onColorClick = (e: React.MouseEvent, color: IColor | undefined) => {
         if (!color) return
         e.stopPropagation()
-        imageModalRef.current?.update({url: color.url.full, text: color.name[lang]})
-        modalImageRef.current?.openModal('color')
+        modal?.openModal({
+            name: 'colorClicked',
+            children: <ImageModalNew url={color.url.full}/>
+        })
     }
 
-    
-    const closeModalImage = useCallback(() => {
-        modalImageRef.current?.closeModal()
-	}, [])
 
 
     const cartContent = useMemo(() => {
@@ -133,10 +133,6 @@ const CartContent: React.FC<IProps> = ({lang, cart, colorsState, fibersState, se
             
             {cart.load.status === 'fetching' && <PreloaderW />}
             {cart.load.status === 'error' && <ErrorMock lang={lang} fetchData={cart.load}/>}
-
-            <Modal escExit={true} ref={modalImageRef} onClose={closeModalImage}>
-                <ImageModal ref={imageModalRef} />
-            </Modal>
         </div>
     )
 }
@@ -147,6 +143,7 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
     colorsState: state.colors,
     fibersState: state.fibers,
+    modal: state.base.modal.current
 })
 
 

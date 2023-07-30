@@ -68,7 +68,6 @@ const ModalNew = forwardRef<IModalFunctions, IProps>(({}, ref) => {
                     <path d="M8.49512 23.4586L24.5049 9.54144"  strokeWidth="2" strokeLinecap="square"/>
                 </svg>
             </button>
-            {modals.length}
 			<div className="content">
                 {modals[0]?.children}
             </div>

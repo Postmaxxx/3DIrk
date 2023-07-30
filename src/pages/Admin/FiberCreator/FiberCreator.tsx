@@ -4,8 +4,6 @@ import { FC, Fragment, useRef, useMemo, useCallback } from "react";
 import { connect } from "react-redux";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
-import Modal, { IModalFunctions } from '../../../components/Modal/Modal';
-import Message, { IMessageFunctions } from '../../../components/Message/Message';
 import { useEffect, useState } from "react";
 import { allActions } from "../../../redux/actions/all";
 import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFiles';
@@ -13,17 +11,20 @@ import Selector, { ISelectorFunctions } from '../../../components/Selector/Selec
 import { fibersProperties } from '../../../assets/data/fibersProperties';
 import Preloader from '../../../components/Preloaders/Preloader';
 import { useNavigate } from 'react-router-dom';
-import { defaultSelectItem, fiberEmpty, inputsProps, navList, resetFetch, selector, statuses, timeModalClosing } from '../../../assets/js/consts';
+import { defaultSelectItem, fiberEmpty, inputsProps, resetFetch, selector, statuses } from '../../../assets/js/consts';
 import { checkAndLoad, deepCopy, errorsChecker, filesDownloader, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import Picker, { IPickerFunctions } from '../../../components/Picker/Picker';
 import Featurer, { IFeaturerFunctions } from '../../../components/Featurer/Featurer';
 import inputChecker from '../../../../src/assets/js/inputChecker';
+import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
+import MessageNew from '../../../../src/components/Message/MessageNew';
 
 interface IPropsState {
     lang: TLang
     fibersState: IFibersState
     colorsState: IColorsState
     isAdmin: boolean
+    modal: IModalFunctions | null
 }
 
 
@@ -38,10 +39,8 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 
-const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, colorsState}): JSX.Element => {
+const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, colorsState}): JSX.Element => {
     const navigate = useNavigate()
-    const modalRef = useRef<IModalFunctions>(null)
-    const messageRef = useRef<IMessageFunctions>(null)
     const colorPickerRef = useRef<IPickerFunctions>(null)
     const fiberPickerRef = useRef<IPickerFunctions>(null)
     const addFilesRef = useRef<IAddFilesFunctions>(null)
@@ -65,36 +64,29 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, colorsS
     const [submit, setSubmit] = useState<boolean>(false)
     const statusesList = useMemo(() => (Object.values(statuses)), []) 
 
+
+
     const closeModal = useCallback(() => {
-        modalRef.current?.closeModal()
-        setTimeout(() => messageRef.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal 
-        errChecker.clear() 
-        if (modalRef.current?.getOwner() === 'fiber') {
+        if (modal?.getName() === 'fiberSendStatus') {
             setState.fibers.setSendFibers(resetFetch)// clear fetch status
             if (fibersState.send.status === 'success') {
-                //setState.fibers.loadFibers()
-                //navigate(navList.fibers.to, { replace: true })
                 window.location.reload()
             }
         }
-        if (modalRef.current?.getOwner() === 'color') {
-            if (colorsState.send.status === 'success') {
-                setState.colors.loadColors()
-            }
-            setState.colors.setSendColors(resetFetch)// clear fetch status
-        }
-        if (modalRef.current?.getOwner() === 'missedId') {
-            navigate(navList.fibers.to, { replace: true })
-            window.location.reload()
-        }
+        errChecker.clear() 
+        modal?.closeCurrent()
 	}, [fibersState.send.status, colorsState.send.status, errChecker])
+
 
 
     
     useEffect(() => {
         if (fibersState.send.status === 'idle' || fibersState.send.status === 'fetching')  return
-        messageRef.current?.update(modalMessageCreator(fibersState.send, lang))
-        modalRef.current?.openModal('fiber')
+        modal?.openModal({
+            name: 'fiberSendStatus',
+            onClose: closeModal,
+            children: <MessageNew {...modalMessageCreator(fibersState.send, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
+        })
     }, [fibersState.send.status])
 
 
@@ -144,8 +136,11 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, colorsS
         }
         
         if (errChecker.amount() > 0) {
-            messageRef.current?.update(errChecker.result())
-            modalRef.current?.openModal('submit')
+            modal?.openModal({
+                name: 'errorChecker',
+                onClose: closeModal,
+                children: <MessageNew {...errChecker.result()} buttonClose={{action: closeModal, text: 'Close'}}/>
+            })
             return
         }
 
@@ -473,10 +468,8 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, colorsS
                                 <Preloader />}
                         </div>
 
-
                         <h2 className='section-header full-width'>{lang === 'en' ? 'IMAGES' : 'ИЗОБРАЖЕНИЯ'}</h2>           
                         <AddFiles lang={lang} ref={addFilesRef} multiple={true} id='allImages'/>
-                        
                         
                         <Selector 
                             lang={lang} 
@@ -498,9 +491,6 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, colorsS
                         </button>
                     </form>
                 </div>
-                <Modal escExit={true} ref={modalRef} onClose={closeModal}>
-                    <Message buttonText={lang === 'en' ? `Close` : `Закрыть`} buttonAction={closeModal} ref={messageRef}/>
-                </Modal>
             </div>
         </div>
     )
@@ -512,7 +502,8 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
     fibersState: state.fibers,
     colorsState : state.colors,
-    isAdmin: state.user.isAdmin
+    isAdmin: state.user.isAdmin,
+    modal: state.base.modal.current
 })
 
 

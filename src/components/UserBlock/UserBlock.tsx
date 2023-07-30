@@ -1,4 +1,4 @@
-import { IFullState, IUserState, TLang } from '../../interfaces'
+/*import { IFullState, IUserState, TLang } from '../../interfaces'
 import Modal from '../Modal/Modal'
 import './user-block.scss'
 import { useState, useRef, useEffect } from 'react'
@@ -14,6 +14,7 @@ import { allActions } from "../../redux/actions/all";
 interface IPropsState {
     lang: TLang,
     userState: IUserState
+    
 }
 
 interface IPropsActions {
@@ -107,4 +108,4 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
 })
   
     
-export default connect(mapStateToProps, mapDispatchToProps)(UserBlock)
+export default connect(mapStateToProps, mapDispatchToProps)(UserBlock)*/

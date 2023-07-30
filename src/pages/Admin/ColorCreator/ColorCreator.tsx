@@ -3,21 +3,22 @@ import './color-creator.scss'
 import {  useRef, useMemo, FC, useEffect, useCallback} from "react";
 import { connect } from "react-redux";
 import { AnyAction, bindActionCreators, Dispatch } from "redux";
-import Message, { IMessageFunctions } from '../../../components/Message/Message';
 import { allActions } from "../../../redux/actions/all";
 import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFiles';
 import { checkAndLoad, errorsChecker, filesDownloader, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
-import { defaultSelectItem, inputsProps, resetFetch, statuses, timeModalClosing } from '../../../assets/js/consts';
-import Modal, { IModalFunctions } from '../../../components/Modal/Modal';
+import { defaultSelectItem, inputsProps, resetFetch, statuses } from '../../../assets/js/consts';
 import Preloader from '../../../components/Preloaders/Preloader';
 import inputChecker from '../../../../src/assets/js/inputChecker';
 import Picker, { IPickerFunctions } from '../../../../src/components/Picker/Picker';
 import Selector, { ISelectorFunctions } from '../../../../src/components/Selector/Selector';
+import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
+import MessageNew from '../../../../src/components/Message/MessageNew';
 
 interface IPropsState {
     lang: TLang
     colorsState: IColorsState
     isAdmin: boolean
+    modal: IModalFunctions | null
 }
 
 interface IPropsActions {
@@ -29,12 +30,10 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 
-const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, setState}): JSX.Element => {
+const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState}): JSX.Element => {
     const _formColor = useRef<HTMLFormElement>(null)
     const addFileBigRef = useRef<IAddFilesFunctions>(null)
     const addFileSmallRef = useRef<IAddFilesFunctions>(null)
-    const modalRef = useRef<IModalFunctions>(null)
-    const messageRef = useRef<IMessageFunctions>(null)
     const colorPickerRef = useRef<IPickerFunctions>(null)
     const _nameEn = useRef<HTMLInputElement>(null)
     const _nameRu = useRef<HTMLInputElement>(null)
@@ -44,9 +43,7 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, setState}): JSX.E
 
 
     const closeModal = useCallback(() => {
-        modalRef.current?.closeModal()
-        setTimeout(() => messageRef.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
-        if (modalRef.current?.getOwner() === 'sender') {
+        if (modal?.getName() === 'colorSend') {
             if (colorsState.send.status === 'success') {
                 checkAndLoad({//reload colors if update db was succsessfull
                     fetchData: colorsState.load,
@@ -56,6 +53,8 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, setState}): JSX.E
             }
             setState.colors.setSendColors(resetFetch)// clear fetch status
         }
+        errChecker.clear()
+        modal?.closeCurrent()
 	}, [colorsState.send.status])
 
     const statusesList = useMemo(() => {
@@ -116,8 +115,11 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, setState}): JSX.E
             errChecker.add(lang === 'en' ? 'File preview is missed' : 'Отсутствует файл предпросмотра')
         }
         if (errChecker.amount() > 0) {
-            messageRef.current?.update(errChecker.result())
-            modalRef.current?.openModal("errorChecker")
+            modal?.openModal({ //if error/success - show modal about send order
+                name: 'errorChecker',
+                onClose: closeModal,
+                children: <MessageNew {...errChecker.result()} buttonClose={{action: closeModal, text: 'Close'}}/>
+            })
             return
         }
 
@@ -141,8 +143,11 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, setState}): JSX.E
 
     useEffect(() => {
         if (colorsState.send.status === 'success' || colorsState.send.status === 'error') {
-            messageRef.current?.update(modalMessageCreator(colorsState.send, lang))
-            modalRef.current?.openModal("sender")
+            modal?.openModal({ //if error/success - show modal about send order
+                name: 'colorSend',
+                onClose: closeModal,
+                children: <MessageNew {...modalMessageCreator(colorsState.send, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
+            })
             if (colorsState.send.status === 'success') { //clear form if success
                 addFileBigRef.current?.clearAttachedFiles()
                 addFileSmallRef.current?.clearAttachedFiles()
@@ -254,9 +259,6 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, setState}): JSX.E
                         </button>
                     </form>
                 </div>
-                <Modal escExit={true} ref={modalRef} onClose={closeModal}>
-                    <Message buttonText={lang === 'en' ? `Close` : `Закрыть`} buttonAction={closeModal} ref={messageRef}/>
-                </Modal>
             </div>
         </div>
     )
@@ -267,7 +269,8 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, setState}): JSX.E
 const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
     colorsState: state.colors,
-    isAdmin: state.user.isAdmin
+    isAdmin: state.user.isAdmin,
+    modal: state.base.modal.current
 })
 
 

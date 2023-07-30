@@ -4,16 +4,18 @@ import { useRef, useState, useCallback } from "react";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import Modal, { IModalFunctions } from "../../components/Modal/Modal";
-import Message, { IMessageFunctions } from '../Message/Message';
 import AmountChanger from '../AmountChanger/AmountChanger';
 import { allActions } from "../../redux/actions/all";
 import { errorsChecker } from '../../../src/assets/js/processors';
 import { useMemo } from 'react'
+import { IModalFunctions } from '../Modal/ModalNew';
+import MessageNew from '../Message/MessageNew';
+import { useNavigate } from 'react-router-dom';
 
 interface IPropsState {
     cart: ICartState
     lang: TLang
+    modal: IModalFunctions | null
 }
 
 interface IParentProps {
@@ -38,15 +40,14 @@ interface IProps extends IPropsState, IParentProps, IPropsActions {}
 
 
 
-const AddToCart: React.FC<IProps> = ({getData, product, lang, cart, setState}): JSX.Element => {
+const AddToCart: React.FC<IProps> = ({getData, product, lang, cart, modal, setState}): JSX.Element => {
+    const navigate = useNavigate()
     const [amount, setAmount] = useState<number>(1)
     const [amountChangerReset, setAmountChangerReset] = useState<{amount: number}>({amount: 1})
-    const modalRef = useRef<IModalFunctions>(null)
-    const messageRef  = useRef<IMessageFunctions>(null)
     const errChecker = useMemo(() => errorsChecker({lang}), [lang])
 
-    const closeModalMessage = useCallback(() => {
-		modalRef.current?.closeModal()
+    const closeModal = useCallback(() => {
+		modal?.closeCurrent()
 	}, [])
      
         
@@ -58,8 +59,11 @@ const AddToCart: React.FC<IProps> = ({getData, product, lang, cart, setState}): 
         !amount && errChecker.add(lang === 'en' ? 'Please set the amount' : 'Пожалуйста, укажите количество')
 
         if (errChecker.amount() > 0) {
-            messageRef.current?.update(errChecker.result())
-            modalRef.current?.openModal('submit')
+            modal?.openModal({ //if error/success - show modal about send order
+                name: 'cartAddError',
+                onClose: closeModal,
+                children: <MessageNew {...errChecker.result()} buttonClose={{action: closeModal, text: 'Close'}}/>
+            })
             return
         }
 
@@ -73,13 +77,18 @@ const AddToCart: React.FC<IProps> = ({getData, product, lang, cart, setState}): 
 
         setAmountChangerReset({amount: 1})
         const amountItemsInCart = cart.items.reduce((total, item) => total + item.amount, 0) + amount
-        messageRef.current?.update({
-            status: 'success',
-            header: lang === 'en' ? 'Added' : 'Добавлено',
-            text: lang === 'en' ? [`This item has been added to your сart.`, `You now have ${amountItemsInCart} item${amountItemsInCart > 1 ? 's' : ''} in your сart`, ] : [`Этот товар был успешно добавлен в Вашу корзину.`, `Сейчас у Вас товаров в корзине: ${amountItemsInCart}`, ]
+        modal?.openModal({ //if error/success - show modal about send order
+            name: 'cartAdder',
+            onClose: closeModal,
+            children: <MessageNew 
+                status={'success'}
+                header={lang === 'en' ? 'Added' : 'Добавлено'}
+                text={lang === 'en' ? [`This item has been added to your сart.`, `You now have ${amountItemsInCart} item${amountItemsInCart > 1 ? 's' : ''} in your сart`, ] : [`Этот товар был успешно добавлен в Вашу корзину.`, `Сейчас у Вас товаров в корзине: ${amountItemsInCart}`, ]}
+                buttonClose={{action: closeModal, text: 'Close'}}
+                buttonAdd={{action: () => {closeModal(); navigate('/order')}, text: 'Go to cart'}}
+                />
         })
-        
-        modalRef.current?.openModal()
+
     }
 
 
@@ -97,16 +106,14 @@ const AddToCart: React.FC<IProps> = ({getData, product, lang, cart, setState}): 
                 </div>
                 <button className='button_news' title='Add to cart' onClick={addToCart}>{lang === 'en' ? 'Add to cart' : 'Добавить в корзину'}</button>
             </div>
-            <Modal escExit={true} ref={modalRef} onClose={closeModalMessage}>
-                <Message buttonText={lang === 'en' ? `Close` : `Закрыть`} buttonAction={closeModalMessage} ref={messageRef}/>
-            </Modal>
         </>
     )
 }
 
 const mapStateToProps = (state: IFullState): IPropsState => ({
     cart: state.user.cart,
-    lang: state.base.lang
+    lang: state.base.lang,
+    modal: state.base.modal.current
 })
 
 

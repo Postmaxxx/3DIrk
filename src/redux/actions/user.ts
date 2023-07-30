@@ -92,7 +92,7 @@ export const login = ({email, password}: Pick<ILoggingForm, "email" | "password"
                     ...user.cart,
                     items: result.user.cart,
                     load: successFetch,
-                    fixed: result.user.fixed
+                    fixed: result.user.fixed || []
                 }
             }))
             dispatch(setAuth({...successFetch}))
@@ -151,7 +151,7 @@ export const loginWithToken = () => {
                     ...user.cart,
                     items: result.user.cart,
                     load: successFetch,
-                    fixed: result.user.fixed
+                    fixed: result.user.fixed || []
                 }
             }))
             dispatch(setAuth({...successFetch}))

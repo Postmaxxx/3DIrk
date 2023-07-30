@@ -3,11 +3,9 @@ import Splide from "@splidejs/splide";
 import ImgWithPreloader from '../../../assets/js/ImgWithPreloader';
 import { ISpliderOptions, TImageSizes } from '../../../interfaces';
 import "@splidejs/react-splide/css";
-import Modal, { IModalFunctions } from '../../../components/Modal/Modal';
-import { IImageModalFunctions } from '../../ImageModal/ImageModal';
 import { useRef, useEffect, MouseEvent } from 'react'
-import ImageModal from '../../ImageModal/ImageModal';
-import { timeModalClosing } from '../../../assets/js/consts';
+import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
+import ImageModalNew from '../../../../src/components/ImageModal/ImageModalNew';
 
 
 
@@ -18,6 +16,7 @@ interface IProps {
 	}
     imagesPerSlide: number
 	defaultSize?: TImageSizes
+    modal: IModalFunctions | null
 }
 
 interface IContainerSize {
@@ -27,13 +26,11 @@ interface IContainerSize {
 
 
 
-const SpliderCommon: React.FC<IProps> = ({images, defaultSize='full', imagesPerSlide=1}): JSX.Element => {
+const SpliderCommon: React.FC<IProps> = ({images, defaultSize='full', imagesPerSlide=1, modal}): JSX.Element => {
 	
 	const splideCommon = useRef<Splide>();
 	const containerSize = useRef<IContainerSize>();
 	const _splideFabric = useRef<any>();
-    const modal_image = useRef<IModalFunctions>(null)
-    const image = useRef<IImageModalFunctions>(null)
 
     const options: Partial<ISpliderOptions> = {
         //type   : 'loop',
@@ -65,16 +62,13 @@ const SpliderCommon: React.FC<IProps> = ({images, defaultSize='full', imagesPerS
 	const handleImgClick = (e: MouseEvent<HTMLDivElement>) => {
 		if ((e.target as HTMLImageElement).tagName === 'IMG') {
 			const id = Number(((e.target as HTMLImageElement).id));
-			image.current?.update({url: `${images.paths.full}/${images.files[id]}`, text: images.files[id]})
-			modal_image.current?.openModal()
+			modal?.openModal({
+				name: 'spliderCommonModal',
+				children: <ImageModalNew url={`${images.paths.full}/${images.files[id]}`}/>
+			})
 		}
 	}
 
-
-    const closeModalImage = () => {
-        modal_image.current?.closeModal()
-        setTimeout(() => image.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
-	}
 
 
 	useEffect(() => {
@@ -110,9 +104,6 @@ const SpliderCommon: React.FC<IProps> = ({images, defaultSize='full', imagesPerS
                     </ul>
                 </div>
             </div>
-			<Modal escExit={true} ref={modal_image} onClose={closeModalImage}>
-				<ImageModal ref={image} />
-            </Modal>
         </div>
 	)
 };

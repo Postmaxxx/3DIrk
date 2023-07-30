@@ -1,24 +1,22 @@
 import './color-selector.scss'
 import { IColor, TLang } from "../../interfaces";
-import { useState, useRef, useCallback } from 'react'
-import Modal, { IModalFunctions } from '../Modal/Modal';
-import { IImageModalFunctions } from '../ImageModal/ImageModal';
-import ImageModal from '../ImageModal/ImageModal';
-import { timeModalClosing } from '../../assets/js/consts';
+import { useState } from 'react'
+import { IModalFunctions } from '../Modal/ModalNew';
+import ImageModalNew from '../ImageModal/ImageModalNew';
 
 
 interface IPropsState {
     colors: IColor[]
     lang: TLang
     onSelect: (id: IColor['_id']) => void
+    modal: IModalFunctions | null
 }
 
 
-const ColorSelector: React.FC<IPropsState> = ({lang, colors, onSelect}): JSX.Element => {
+const ColorSelector: React.FC<IPropsState> = ({lang, modal, colors, onSelect}): JSX.Element => {
     const [currentColor, setCurrentColor] = useState<IColor>()
     const [expanded, setExpanded] = useState<boolean>(false)
-    const modalRef = useRef<IModalFunctions>(null)
-    const imageRef = useRef<IImageModalFunctions>(null)
+
     
     const onCurrentClick = () => {
         setExpanded(prev => !prev)
@@ -33,16 +31,13 @@ const ColorSelector: React.FC<IPropsState> = ({lang, colors, onSelect}): JSX.Ele
 
     const onImageClick = (e: React.MouseEvent , color: IColor) => {
         e.stopPropagation()
-        imageRef.current?.update({url: color.url.full, text: color.name[lang]})
-        modalRef.current?.openModal()
+        modal?.openModal({
+            name: 'spliderCommonModal',
+            children: <ImageModalNew url={color.url.full}/>
+        })
     }
 
 
-
-    const closeModalImage = useCallback(() => {
-        modalRef.current?.closeModal()
-        setTimeout(() => imageRef.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
-	}, [])
 
 
     return (
@@ -75,9 +70,6 @@ const ColorSelector: React.FC<IPropsState> = ({lang, colors, onSelect}): JSX.Ele
                     )
                 })}
             </div>
-            <Modal escExit={true} ref={modalRef} onClose={closeModalImage}>
-				<ImageModal ref={imageRef} />
-            </Modal>
         </div>
     )
 

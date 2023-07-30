@@ -1,5 +1,3 @@
-import { createPortal } from 'react-dom';
-import { Dispatch } from "redux";
 import { IAction, IDispatch, IErrRes, IFetch, TFetchStatus, TLang, TLangText } from "../../interfaces";
 import { DOMExceptions, empty, exceptionTimeout, gapBetweenRequests, headerStatus, selector } from "./consts";
 
@@ -141,15 +139,25 @@ const fetchError = ({dispatch, setter, comp, e, controller}: IFetchError) => {
 }
 
 
-const modalMessageCreator = (source: IFetch, lang: TLang) => { //create all keys for Message
+const modalMessageFromFetch = (source: IFetch, lang: TLang) => { //create all keys for Message
     const errors: string[] = source.errors?.map(e => e[lang]) || []
-    console.log(source, errors);
     return {
         header: headerStatus[source.status as "success" | "error"][lang],
         status: source.status,
         text: [source.message[lang], ...errors]
     }
 }
+
+
+const modalMessageCreator = (source: IFetch, lang: TLang) => { //create all keys for Message
+    const errors: string[] = source.errors?.map(e => e[lang]) || []
+    return {
+        header: headerStatus[source.status as "success" | "error"][lang],
+        status: source.status,
+        text: [source.message[lang], ...errors]
+    }
+}
+
 
 export interface IFocusNext {
     e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -238,6 +246,6 @@ const checkIfPhone = (value: string) => {
 
 
 
-export { ratingNumberToText, errorsChecker, prevent, filenameChanger, checkAndLoad, modalMessageCreator, 
+export { ratingNumberToText, errorsChecker, prevent, filenameChanger, checkAndLoad, modalMessageFromFetch, modalMessageCreator, 
     focusMover, deepCopy, resErrorFiller, checkIfNumbers, checkIfEmail, checkIfPhone, fetchError, filesDownloader,
     }

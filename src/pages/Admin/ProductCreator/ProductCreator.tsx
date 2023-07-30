@@ -4,23 +4,24 @@ import { FC, useRef, useMemo, useCallback } from "react";
 import { connect } from "react-redux";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
-import Modal, { IModalFunctions } from '../../../components/Modal/Modal';
-import Message, { IMessageFunctions } from '../../../components/Message/Message';
 import { useEffect, useState } from "react";
 import { allActions } from "../../../redux/actions/all";
 import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFiles';
 import Preloader from '../../../components/Preloaders/Preloader';
-import { defaultSelectItem, inputsProps, productEmpty, resetFetch, statuses, timeModalClosing } from '../../../assets/js/consts';
+import { defaultSelectItem, inputsProps, productEmpty, resetFetch, statuses } from '../../../assets/js/consts';
 import { checkAndLoad, checkIfNumbers, deepCopy, errorsChecker, filesDownloader, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import Picker, { IPickerFunctions } from '../../../components/Picker/Picker';
 import Featurer, { IFeaturerFunctions } from '../../../components/Featurer/Featurer';
 import Selector, { ISelectorFunctions } from '../../../components/Selector/Selector';
 import inputChecker from '../../../../src/assets/js/inputChecker';
+import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
+import MessageNew from '../../../../src/components/Message/MessageNew';
 
 interface IPropsState {
     lang: TLang
     fibersState: IFibersState
     catalogState: ICatalogState
+    modal: IModalFunctions | null
 }
 
 interface IPropsActions {
@@ -34,9 +35,7 @@ interface IProps extends IPropsState, IPropsActions {}
 
 
 
-const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState}): JSX.Element => {
-    const modalRef = useRef<IModalFunctions>(null)
-    const messageRef = useRef<IMessageFunctions>(null)
+const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalogState}): JSX.Element => {
     const fiberPickerRef = useRef<IPickerFunctions>(null)
     const productPickerRef = useRef<IPickerFunctions>(null)
     const addFilesRef = useRef<IAddFilesFunctions>(null)
@@ -49,14 +48,12 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
     const _form = useRef<HTMLFormElement>(null)
     const _mods = useRef<HTMLDivElement>(null)
     
-
     const errChecker = useMemo(() => errorsChecker({lang}), [lang])
     const statusesList = useMemo(() => (Object.values(statuses)), []) 
 
+
     const closeModal = useCallback(() => {
-        modalRef.current?.closeModal()
-        setTimeout(() => messageRef.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal 
-        if (modalRef.current?.getOwner() === 'sender') {
+        if (modal?.getName()  === 'sendProduct') {
             if (catalogState.category.sendProduct.status === 'success') {
                 checkAndLoad({ //force update category
                     fetchData: catalogState.category.loadCategory,
@@ -64,13 +61,11 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
                     args: [{ _id: catalogState.category._id }],
                     force: true
                 })
-                errChecker.clear() 
             }
             setState.catalog.setSendProduct(resetFetch)// clear fetch status
         }
-        if (modalRef.current?.getOwner() === 'errorChecker') {
-            errChecker.clear() 
-        }
+        errChecker.clear() 
+        modal?.closeCurrent()
 	}, [catalogState.category.sendProduct.status, errChecker])
 
     
@@ -78,8 +73,11 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
     
     useEffect(() => {
         if (catalogState.category.sendProduct.status === 'idle' || catalogState.category.sendProduct.status === 'fetching')  return
-        messageRef.current?.update(modalMessageCreator(catalogState.category.sendProduct, lang))
-        modalRef.current?.openModal('sender')
+        modal?.openModal({
+            name: 'sendProduct',
+            onClose: closeModal,
+            children: <MessageNew {...modalMessageCreator(catalogState.category.sendProduct, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
+        })
     }, [catalogState.category.sendProduct.status])
 
 
@@ -104,8 +102,11 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
         }
 
         if (errChecker.amount() > 0) {
-            messageRef.current?.update(errChecker.result())
-            modalRef.current?.openModal('errorChecker')
+            modal?.openModal({
+                name: 'errorChecker',
+                onClose: closeModal,
+                children: <MessageNew {...errChecker.result()} buttonClose={{action: closeModal, text: 'Close'}}/>
+            })
             return
         }      
 
@@ -393,9 +394,6 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, catalogState})
                         </button>
                     </form>
                 </div>
-                <Modal escExit={true} ref={modalRef} onClose={closeModal} >
-                    <Message buttonText={lang === 'en' ? `Close` : `Закрыть`} buttonAction={closeModal} ref={messageRef}/>
-                </Modal>
             </div>
         </div>
     )
@@ -406,7 +404,7 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
     fibersState: state.fibers,
     catalogState: state.catalog,
-
+    modal: state.base.modal.current
 })
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>):IPropsActions => ({

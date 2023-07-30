@@ -1,22 +1,21 @@
 import { AnyAction, Dispatch, bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { useEffect, useMemo, useRef, useState, } from "react";
+import { useEffect, useRef} from "react";
 import "@splidejs/react-splide/css";
 import "./splider-preview.scss";
 import { IFullState, ISpliderOptions, TImageSizes, TLang } from "../../../interfaces";
 import Splide from "@splidejs/splide";
 import ImgWithPreloader from "../../../assets/js/ImgWithPreloader";
-
-import Modal, { IModalFunctions } from "../../../components/Modal/Modal";
 import { allActions } from "../../../redux/actions/all";
-import ImageModal, { IImageModalFunctions } from "../../ImageModal/ImageModal";
+import { IModalFunctions } from "../../../../src/components/Modal/ModalNew";
+import ImageModalNew from "../../../../src/components/ImageModal/ImageModalNew";
 
 
 
 
 interface IPropsState {
 	lang: TLang,
-
+    modal: IModalFunctions | null
 }
 
 
@@ -35,22 +34,15 @@ interface IProps extends IPropsState, IPropsActions {
 	sizePreview?: TImageSizes
 	sizeMain?: TImageSizes
 }
-/*
-interface IContainerSize {
-	width: number
-	height: number
-}
-*/
 
-const SpliderPreview: React.FC<IProps> = ({ lang, images, setState, sizePreview='preview', sizeMain='medium'}): JSX.Element => {
+
+const SpliderPreview: React.FC<IProps> = ({ modal, images, sizePreview='preview', sizeMain='medium'}): JSX.Element => {
 	const _splideMain = useRef<HTMLDivElement>(null);
 	const _splideThumbs = useRef<HTMLDivElement>(null);
 	const splideMain = useRef<Splide>();
 	const splideThumb = useRef<Splide>();
-	//const [modal, setModal] = useState<boolean>(false)
-	const modal_image = useRef<IModalFunctions>(null)
-    const imageModal = useRef<IImageModalFunctions>(null)
-		
+
+	
 	const optionsThumbs: Partial<ISpliderOptions> = {
 		lazyLoad	: false,
 		perPage		: 5,
@@ -117,8 +109,10 @@ const SpliderPreview: React.FC<IProps> = ({ lang, images, setState, sizePreview=
 	const onImageClick = (e: React.MouseEvent , filename: string) => {
         if (!filename) return
         e.stopPropagation()
-        imageModal.current?.update({url: `${images.paths.full}/${filename}`, text: filename})
-        modal_image.current?.openModal()
+		modal?.openModal({
+			name: 'spliderPreview',
+			children: <ImageModalNew url={`${images.paths.full}/${filename}`}/>
+		})
     }
 
 
@@ -136,12 +130,6 @@ const SpliderPreview: React.FC<IProps> = ({ lang, images, setState, sizePreview=
 		};
 		
 	}, []);
-
-
-	
-    const closeModalImage = () => {
-        modal_image.current?.closeModal()
-	}
 
 
 	return (
@@ -173,10 +161,6 @@ const SpliderPreview: React.FC<IProps> = ({ lang, images, setState, sizePreview=
 					</ul>
 				</div>
 			</div>
-			<Modal escExit={true} ref={modal_image} onClose={closeModalImage}>
-				<ImageModal ref={imageModal} />
-            </Modal>
-
         </div>
 	);
 };
@@ -185,7 +169,8 @@ const SpliderPreview: React.FC<IProps> = ({ lang, images, setState, sizePreview=
 
 const mapStateToProps = (state: IFullState): IPropsState  => {
 	return {
-		lang: state.base.lang
+		lang: state.base.lang,
+		modal: state.base.modal.current
 	};
 };
 

@@ -1,30 +1,28 @@
 import './fiber.scss'
 import { NavLink, useNavigate, useParams  } from 'react-router-dom';
-import { useEffect, useRef, useMemo,useCallback, FC } from 'react';
+import { useEffect, useMemo,useCallback, FC } from 'react';
 import { AnyAction, bindActionCreators, Dispatch } from "redux";
 import { connect } from "react-redux";
 import Preloader from '../../components/Preloaders/Preloader';
 import { TLang, IFullState, IFiber, IFibersState, IColorsState, IColor } from "../../interfaces";
 import { allActions } from "../../redux/actions/all";
-import Modal, { IModalFunctions } from '../../components/Modal/Modal';
-import Message, { IMessageFunctions } from '../../components/Message/Message';
-import { navList, resetFetch, timeModalClosing } from '../../assets/js/consts';
-import ErrorMock from '../../components/ErrorFetch/ErrorFetch';
+import { navList, resetFetch } from '../../assets/js/consts';
 import SpliderCommon from '../../components/Spliders/Common/SpliderCommon';
 import Features from '../../components/Params/Params';
 import Proscons from '../../components/Proscons/Proscons';
-import IconEdit from '../../components/IconEdit/IconEdit';
-import Delete from '../../components/Delete/Delete';
-import ImageModal, { IImageModalFunctions } from '../../components/ImageModal/ImageModal';
 import ImgWithPreloader from '../../assets/js/ImgWithPreloader';
 import { checkAndLoad, modalMessageCreator } from '../../assets/js/processors';
 import ErrorFetch from '../../components/ErrorFetch/ErrorFetch';
+import { IModalFunctions } from '../../../src/components/Modal/ModalNew';
+import MessageNew from '../../../src/components/Message/MessageNew';
+import ImageModalNew from '../../../src/components/ImageModal/ImageModalNew';
 
 interface IPropsState {
     lang: TLang,
     fibersState: IFibersState
     colorsState: IColorsState
     isAdmin: boolean
+    modal: IModalFunctions | null
 }
 
 interface IPropsActions {
@@ -37,49 +35,44 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 
-const Fiber: FC<IProps> = ({lang, fibersState, colorsState, setState, isAdmin}):JSX.Element => {
+const Fiber: FC<IProps> = ({lang, fibersState, colorsState, setState, modal, isAdmin}):JSX.Element => {
     const paramFiberId = useParams().fiberId || ''
     const navigate = useNavigate()
-    const modalMessageRef = useRef<IModalFunctions>(null)
-    const messageRef = useRef<IMessageFunctions>(null)
-    const modalImageRef = useRef<IModalFunctions>(null)
-    const imageRef = useRef<IImageModalFunctions>(null)
     
 
-    const onDelete = (item: IFiber) => { 
-        setState.fibers.deleteFiber(item._id)
-    }
-
-
     useEffect(() => {
-        if (fibersState.send.status === 'success' || fibersState.send.status === 'error') {
-            messageRef.current?.update(modalMessageCreator(fibersState.send, lang))
-            modalMessageRef.current?.openModal()
+        if (modal?.getName() === 'fiberSend') {
+            if (fibersState.send.status === 'success' || fibersState.send.status === 'error') {
+                modal?.openModal({ //if error/success - show modal about send order
+                    name: 'fiberSend',
+                    onClose: closeModal,
+                    children: <MessageNew {...modalMessageCreator(fibersState.send, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
+                })
+            }
+            setState.fibers.setSendFibers(resetFetch)// clear fetch status
         }
     }, [fibersState.send.status])
 
 
-    const closeModalMessage = useCallback(() => {
-        modalMessageRef.current?.closeModal()
-        setTimeout(() => messageRef.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
-        setState.fibers.setSendFibers(resetFetch)
-        if (fibersState.send.status === 'success') {
-            navigate(navList.fibers.to, { replace: true });
-            window.location.reload()
+    const closeModal = useCallback(() => {
+        if (modal?.getName() === 'fiberSend') {
+            setState.fibers.setSendFibers(resetFetch)
+            if (fibersState.send.status === 'success') {
+                navigate(navList.fibers.to, { replace: true });
+                window.location.reload()
+            }
         }
+        modal?.closeCurrent()
 	}, [fibersState.send.status])
 
-
-    const closeModalImage = useCallback(() => {
-        modalImageRef.current?.closeModal()
-        setTimeout(() => imageRef.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
-	}, [])
 
     
     const onImageClick = (e: React.MouseEvent , color: IColor) => {
         e.stopPropagation()
-        imageRef.current?.update({url: color.url.full, text: color.name[lang]})
-        modalImageRef.current?.openModal()
+        modal?.openModal({
+            name: 'onFiberImageClick',
+            children: <ImageModalNew url={color.url.full}/>
+        })
     }
 
 
@@ -121,7 +114,7 @@ const Fiber: FC<IProps> = ({lang, fibersState, colorsState, setState, isAdmin}):
             <div className="fiber__item">
                 <h2>{fiber.short.name[lang]} ({fiber.name[lang]})</h2>
                 <div className='fiber__splider__container'>
-                    <SpliderCommon images={fiber.images} defaultSize='small' imagesPerSlide={fiber.images.files?.length > 3 ? 3 : fiber.images.files?.length}/>
+                    <SpliderCommon images={fiber.images} defaultSize='small' imagesPerSlide={fiber.images.files?.length > 3 ? 3 : fiber.images.files?.length} modal={modal}/>
                 </div>
                 <div className="fiber__descr__container">
                     <div className="block_text">
@@ -166,14 +159,7 @@ const Fiber: FC<IProps> = ({lang, fibersState, colorsState, setState, isAdmin}):
                     {fibersState.load.status === 'fetching' && <Preloader />}
                     {fibersState.load.status === 'error' && <ErrorFetch fetchData={fibersState.load} lang={lang} />}
                 </div>
-            </div>
-            <Modal escExit={true} ref={modalMessageRef} onClose={closeModalMessage}>
-                <Message buttonText={lang === 'en' ? `Close` : `Закрыть`} buttonAction={closeModalMessage} ref={messageRef}/>
-            </Modal>
-            <Modal escExit={true} ref={modalImageRef} onClose={closeModalImage}>
-				<ImageModal ref={imageRef} />
-            </Modal>
-            
+            </div>           
         </div>
     )
 }
@@ -183,7 +169,8 @@ const mapStateToProps = (state: IFullState): IPropsState  => ({
     lang: state.base.lang,
     fibersState: state.fibers,
     colorsState: state.colors,
-    isAdmin: state.user.isAdmin
+    isAdmin: state.user.isAdmin,
+    modal: state.base.modal.current
 })
 
 

@@ -4,20 +4,21 @@ import { FC, useRef, useMemo, useCallback } from "react";
 import { connect } from "react-redux";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
-import Modal, { IModalFunctions } from '../../../components/Modal/Modal';
-import Message, { IMessageFunctions } from '../../../components/Message/Message';
 import { useEffect,  } from "react";
 import { allActions } from "../../../redux/actions/all";
 import Preloader from '../../../components/Preloaders/Preloader';
-import { inputsProps, resetFetch, timeModalClosing } from '../../../assets/js/consts';
+import { inputsProps, resetFetch } from '../../../assets/js/consts';
 import { checkAndLoad, errorsChecker, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import Featurer, { IFeaturerFunctions } from '../../../components/Featurer/Featurer';
 import inputChecker from '../../../assets/js/inputChecker';
+import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
+import MessageNew from '../../../../src/components/Message/MessageNew';
 
 
 interface IPropsState {
     lang: TLang
     catalogState: ICatalogState
+    modal: IModalFunctions | null
 }
 
 interface IPropsActions {
@@ -29,35 +30,36 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 
-const CategoriesChanger: FC<IProps> = ({lang, setState, catalogState}): JSX.Element => {
-    const modalRef = useRef<IModalFunctions>(null)
-    const messageRef = useRef<IMessageFunctions>(null)
+const CategoriesChanger: FC<IProps> = ({lang, setState, modal, catalogState}): JSX.Element => {
     const errChecker = useMemo(() => errorsChecker({lang}), [lang])
     const featurerRef = useRef<IFeaturerFunctions>(null)
     const _catalog = useRef<HTMLDivElement>(null)
     const focuser = useMemo(() => focusMover(), [lang])
     
     const closeModal = useCallback(() => {
-        modalRef.current?.closeModal()
-        setTimeout(() => messageRef.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal 
-        if (modalRef.current?.getOwner() === 'sender') {
+        if (modal?.getName() === 'catalogSend') {
             if (catalogState.catalog.send.status === 'success') {
                 setState.catalog.loadCatalog() //reload catalog
                 errChecker.clear()        
             }
         }
-        if (modalRef.current?.getOwner() === 'errorChecker') {
+        if (modal?.getName() === 'errorChecker') {
             errChecker.clear()
         }
         setState.catalog.setSendCatalog(resetFetch)// clear fetch status
+        errChecker.clear()
+        modal?.closeCurrent()
 	}, [catalogState.catalog.send.status, errChecker])
 
 
 
     useEffect(() => { 
         if (catalogState.catalog.send.status === 'idle' || catalogState.catalog.send.status === 'fetching') return
-        messageRef.current?.update(modalMessageCreator(catalogState.catalog.send, lang))
-        modalRef.current?.openModal("sender")
+        modal?.openModal({ //if error/success - show modal about send order
+            name: 'catalogSend',
+            onClose: closeModal,
+            children: <MessageNew {...modalMessageCreator(catalogState.catalog.send, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
+        })
     }, [catalogState.catalog.send.status])
 
 
@@ -71,8 +73,11 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, catalogState}): JSX.Elem
             errChecker.add(lang === 'en' ? 'Empty inputs exists' : 'Есть незаполненная поля')
         }
         if (errChecker.amount() > 0) {
-            messageRef.current?.update({...errChecker.result(), text: [lang === 'en' ? 'Some fields are empty' : 'Присутствуют пустые поля']})
-            modalRef.current?.openModal("errorChecker")    
+            modal?.openModal({ //if error/success - show modal about send order
+                name: 'errorChecker',
+                onClose: closeModal,
+                children: <MessageNew {...errChecker.result()} text={[lang === 'en' ? 'Some fields are empty' : 'Присутствуют пустые поля']} buttonClose={{action: closeModal, text: 'Close'}}/>
+            })  
             return
         }
         setState.catalog.sendCatalog(featurerRef.current.getFeatures())        
@@ -143,9 +148,6 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, catalogState}): JSX.Elem
                         </button>
                     </form>
                 </div>
-                <Modal escExit={true} ref={modalRef} onClose={closeModal}>
-                    <Message buttonText={lang === 'en' ? `Close` : `Закрыть`} buttonAction={closeModal} ref={messageRef}/>
-                </Modal>
             </div>
         </div>
     )
@@ -155,7 +157,8 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, catalogState}): JSX.Elem
 
 const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
-    catalogState: state.catalog
+    catalogState: state.catalog,
+    modal: state.base.modal.current
 })
 
 

@@ -11,7 +11,7 @@ interface IProps {
         action: () => void
     }
     header?: string
-    text?: string
+    text?: string[]
     status?: string
 }
 
@@ -21,7 +21,7 @@ const MessageNew: React.FC<IProps> = ({buttonAdd, buttonClose, header, status, t
         <div className={`message__container ${status || ''}`}>
             <h3>{header || ''}</h3>
             <div className="text-block">
-                {text || ''}
+                {text && text.map((currentText, index) => <p key={index}>{currentText}</p>)}
             </div>
             {buttonAdd && <button onClick={buttonAdd?.action}>{buttonAdd?.text}</button>}
             {buttonClose && <button onClick={buttonClose?.action}>{buttonClose?.text}</button>}

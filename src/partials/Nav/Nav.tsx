@@ -7,11 +7,11 @@ import { connect } from "react-redux";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import CartInformer from "../../components/CartInformer/CartInformerUpdater";
-import Modal, { IModalFunctions } from "../../components/Modal/Modal";
 import Auth from "../../components/Auth/Auth";
 import { allActions } from "../../redux/actions/all";
 import initialUserState from "../../../src/redux/initialStates/user";
 import { navList } from "../../../src/assets/js/consts";
+import { IModalFunctions } from "../../../src/components/Modal/ModalNew";
 
 
 interface IPropsState {
@@ -21,6 +21,7 @@ interface IPropsState {
     fibersList: IFiber[]
     isAdmin: boolean
     isAuth: boolean
+    modal: IModalFunctions | null
 }
 
 
@@ -35,10 +36,9 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 
-const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersList, isAdmin, isAuth}): JSX.Element => {
+const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersList, isAdmin, modal, isAuth}): JSX.Element => {
     const _blur = useRef<HTMLDivElement>(null)
     const [expandedNavItems, setExpandedNavItems] = useState<TId[]>([])
-    const modalRef = useRef<IModalFunctions>(null)
 
 
     const navToggle = () => {
@@ -60,13 +60,17 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
 
 
     const closeModal = () => {
-        modalRef.current?.closeModal()
+        modal?.closeCurrent()
 	}
 
 
     const onClickNotLink = (action: string) => {
         if (action === 'login' && !isAuth) {
-            modalRef.current?.openModal()
+            modal?.openModal({
+				name: 'spliderCommonModal',
+                onClose: closeModal,
+				children: <Auth onCancel={closeModal}/>
+			})
         }
         if (action === 'logout') {
             setState.user.setUser({...initialUserState})
@@ -74,6 +78,8 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
             window.location.reload()
         }
     }
+
+
 
     const desktopNav = useMemo(() => {
         return <nav className={desktopOpened ? "nav_desktop opened" : "nav_desktop"}>
@@ -374,9 +380,6 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
         <>
             {desktopNav}
             {mobileNav}
-            <Modal escExit={true} ref={modalRef}>
-                <Auth onCancel={closeModal}/>
-            </Modal> 
         </>
     )
 }
@@ -388,7 +391,8 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
     desktopOpened: state.base.desktopOpened,
     fibersList: state.fibers.fibersList,
     isAdmin: state.user.isAdmin,
-    isAuth: state.user.auth.status === 'success'
+    isAuth: state.user.auth.status === 'success',
+    modal: state.base.modal.current
 })
   
   

@@ -4,23 +4,24 @@ import { FC, useRef, useMemo, useCallback } from "react";
 import { connect } from "react-redux";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
-import Modal, { IModalFunctions } from '../../../components/Modal/Modal';
-import Message, { IMessageFunctions } from '../../../components/Message/Message';
 import { useEffect } from "react";
 import { allActions } from "../../../redux/actions/all";
 import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFiles';
-import { inputsProps, navList, newsItemEmpty, resetFetch, timeModalClosing } from '../../../assets/js/consts';
+import { inputsProps, navList, newsItemEmpty, resetFetch } from '../../../assets/js/consts';
 import { errorsChecker, filesDownloader, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import { useNavigate, useParams } from 'react-router-dom';
 import Preloader from '../../../components/Preloaders/Preloader';
 import inputChecker from "../../../../src/assets/js/inputChecker";
 import moment from 'moment';
+import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
+import MessageNew from '../../../../src/components/Message/MessageNew';
 
 interface IPropsState {
     lang: TLang
     send: IFetch
     newsOne: INewsItem
     loadOne: IFetch
+    modal: IModalFunctions | null
 }
 
 
@@ -34,12 +35,10 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 
-const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, setState}): JSX.Element => {
+const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}): JSX.Element => {
     const paramNewsId = useParams().newsId || ''
     const navigate = useNavigate()
     const addFilesRef = useRef<IAddFilesFunctions>(null)
-    const modalRef = useRef<IModalFunctions>(null)
-    const messageRef = useRef<IMessageFunctions>(null)
     const _form = useRef<HTMLFormElement>(null)
     const _headerEn = useRef<HTMLInputElement>(null)
     const _headerRu = useRef<HTMLInputElement>(null)
@@ -55,19 +54,15 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, setState}): JSX.
 
     
     const closeModal = useCallback(() => {
-        modalRef.current?.closeModal()
-        setTimeout(() => messageRef.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
-        if (modalRef.current?.getOwner() === 'sender') {
+        if (modal?.getName() === 'newsSend') {
             if (send.status === 'success') {
                 navigate(navList.account.admin.news.to, { replace: true });
             }
             setState.news.setSendNews({...resetFetch})
-            errChecker.clear()
-        }
-        if (modalRef.current?.getOwner() === 'errorChecker') {
-            errChecker.clear()
         }
         setState.news.setSendNews(resetFetch)// clear fetch status
+        errChecker.clear()
+        modal?.closeCurrent()
 	}, [send.status, paramNewsId, errChecker])
 
 
@@ -75,8 +70,11 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, setState}): JSX.
 
     useEffect(() => {
         if (send.status === 'idle' || send.status === 'fetching')  return
-        messageRef.current?.update(modalMessageCreator(send, lang))
-		modalRef.current?.openModal("sender")
+        modal?.openModal({
+            name: 'newsSend',
+            onClose: closeModal,
+            children: <MessageNew {...modalMessageCreator(send, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
+        })
     }, [send.status])
 
 
@@ -84,7 +82,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, setState}): JSX.
     useEffect(() => { 
         if (paramNewsId) {//if edit
             setState.news.loadOneNews(paramNewsId)
-        } else { //if new
+        } else { //if create
             setState.news.setDataOneNews({...newsItemEmpty})
             fillValues({...newsItemEmpty})
         }
@@ -142,8 +140,11 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, setState}): JSX.
             errChecker.add(lang === 'en' ? 'Some fields are filled incorrectly' : 'Некоторые поля заполнены неправильно')
         }    
         if (errChecker.amount() > 0) {
-            messageRef.current?.update(errChecker.result())
-            modalRef.current?.openModal("errorChecker")
+            modal?.openModal({
+                name: 'errorChecker',
+                onClose: closeModal,
+                children: <MessageNew {...errChecker.result()} buttonClose={{action: closeModal, text: 'Close'}}/>
+            })
             return
         }   
         //if no errors
@@ -280,9 +281,6 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, setState}): JSX.
                         </button>
                     </form>
                 </div>
-                <Modal escExit={true} ref={modalRef} onClose={closeModal}>
-                    <Message buttonText={lang === 'en' ? `Close` : `Закрыть`} buttonAction={closeModal} ref={messageRef}/>
-                </Modal>
             </div>
 
         </div>
@@ -297,7 +295,8 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
     send: state.news.send,
     newsOne: state.news.newsOne,
-    loadOne: state.news.loadOne
+    loadOne: state.news.loadOne,
+    modal: state.base.modal.current
 })
 
 

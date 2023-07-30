@@ -4,14 +4,14 @@ import { connect } from "react-redux";
 import './order.scss'
 import { ICartState, IColorsState, IFetch, IFibersState, IFullState, TLang } from "../../interfaces";
 import { useEffect, useRef, useCallback, useMemo } from 'react'
-import Modal, { IModalFunctions } from "../../components/Modal/Modal";
-import Message, { IMessageFunctions } from "../../components/Message/Message";
 import CartContent from "../../components/CartContent/CartContent";
 import AddFiles, { IAddFilesFunctions } from "../../components/AddFiles/AddFiles";
 import { allActions } from "../../redux/actions/all";
-import { inputsProps, resetFetch, timeModalClosing} from "../../assets/js/consts";
+import { inputsProps, resetFetch} from "../../assets/js/consts";
 import { checkAndLoad, deepCopy, errorsChecker, focusMover, modalMessageCreator, prevent } from "../../assets/js/processors";
 import inputChecker from "../../../src/assets/js/inputChecker";
+import { IModalFunctions } from "../../../src/components/Modal/ModalNew";
+import MessageNew from "../../../src/components/Message/MessageNew";
 
 interface IPropsState {
     lang: TLang,
@@ -19,6 +19,7 @@ interface IPropsState {
     fibersState: IFibersState
     cart: ICartState
     sendOrder: IFetch
+    modal: IModalFunctions | null
 }
 
 interface IPropsActions {
@@ -33,42 +34,36 @@ interface IProps extends IPropsState, IPropsActions {}
 
 
 
-const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState, setState}): JSX.Element => {
+const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState, modal, setState}): JSX.Element => {
     const _message = useRef<HTMLTextAreaElement>(null)
-    const modalMessageRef = useRef<IModalFunctions>(null)
-    const messageRef = useRef<IMessageFunctions>(null)
     const addFilesRef = useRef<IAddFilesFunctions>(null)
     const _formOrder = useRef<HTMLFormElement>(null)
 
     const focuser = useMemo(() => focusMover(), [lang])
     const errChecker = useMemo(() => errorsChecker({lang}), [lang])
 
-    const closeModalMessage = useCallback(() => {
-        console.log(777);
-        
-        if (!_message.current) return
-        modalMessageRef.current?.closeModal()
-        setTimeout(() => messageRef.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
-        if (modalMessageRef.current?.getOwner() === 'order') {
+
+
+    const closeModalMessage = useCallback(() => {        
+        if (modal?.getName() === 'sendOrder') {
             if (sendOrder.status === 'success') {
                 addFilesRef.current?.clearAttachedFiles()
-                _message.current.value = ''
                 setState.user.setCart({items: []})
             }
             setState.user.setSendOrder(deepCopy(resetFetch))
         }
-        if (modalMessageRef.current?.getOwner() === 'cartFixer') {
+        if (modal?.getName() === 'cartFixer') {
             setState.user.setSendOrder(deepCopy(resetFetch))
         }
-        if (modalMessageRef.current?.getOwner() === 'cartFixer') {
-            setState.user.setCart({fixed: []})
+        if (modal?.getName() === 'errorsInForm') {
         }
+        modal?.closeCurrent()
 	}, [sendOrder.status])
 
  
 
     const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
-        if (!_message.current || !messageRef.current || !modalMessageRef.current || !addFilesRef.current || !_formOrder.current) return
+        if (!_message.current ||  !modal || !addFilesRef.current || !_formOrder.current) return
         prevent(e)
         //check errors
         focuser.focusAll();//run over all elements to get all errors
@@ -76,8 +71,11 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
         errorFields?.length > 0 &&  errChecker.add(lang === 'en' ? 'Some fields in additional information are filled incorrectly' : 'Некоторые поля в дополнительной информации заполнены неправильно')
         cart.items.length === 0 && errChecker.add(lang === 'en' ? 'Your cart is empty' : 'Ваша корзина пуста')
         if (errChecker.amount() > 0) { //show modal with error
-            messageRef.current?.update(errChecker.result())
-            modalMessageRef.current?.openModal('submit')
+            modal?.openModal({
+                name: 'errorsInForm',
+                onClose: closeModalMessage,
+                children: <MessageNew {...errChecker.result()} buttonClose={{action: closeModalMessage, text: 'Close'}}/>
+            })
             return
         }
         setState.user.sendCart() //update cart before order
@@ -89,15 +87,20 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
 
 
     useEffect(() => {
-        if (cart.fixed.length === 0) return
-        messageRef.current?.update({
-            header: lang === 'en' ? "Warning" :  "Внимание", 
-            status: 'warning', 
-            text: [lang === 'en' ? 
-                'Some items have been removed from your cart as unavalable for order:' 
-                : 'Некоторые товары были удалены из вашей корзины т.к. они больше недоступны для заказа:',
-            ...cart.fixed.map((item, i) => (`${i+1}) ${item[lang]}`))]}) 
-        modalMessageRef.current?.openModal('cartFixer')
+        if (cart.fixed?.length === 0) return //nothing was fixed
+        modal?.openModal({
+            name: 'cartFixer',
+            onClose: closeModalMessage,
+            children: <MessageNew 
+                header={lang === 'en' ? "Warning" :  "Внимание"}
+                status='warning'
+                text={[lang === 'en' ? 
+                    'Some items have been removed from your cart as unavalable for order:' 
+                    : 'Некоторые товары были удалены из вашей корзины т.к. они больше недоступны для заказа:',
+                ...cart.fixed.map((item, i) => (`${i+1}) ${item[lang]}`))]}
+                buttonClose={{action: closeModalMessage, text: 'Close'}}
+            />
+        })
     }, [cart.fixed])
 
 
@@ -105,8 +108,11 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
 
     useEffect(() => {
         if (sendOrder.status === 'fetching' || sendOrder.status === 'idle') return
-        messageRef.current?.update(modalMessageCreator(sendOrder, lang)) //if error/success - show modal
-        modalMessageRef.current?.openModal('order')
+        modal?.openModal({ //if error/success - show modal about send order
+            name: 'sendOrder',
+            onClose: closeModalMessage,
+            children: <MessageNew {...modalMessageCreator(sendOrder, lang)} buttonClose={{action: closeModalMessage, text: 'Close'}}/>
+        })
     }, [sendOrder.status])
 
 
@@ -175,9 +181,6 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
                     </div>
                 </div>
             </div>
-            <Modal escExit={true} ref={modalMessageRef} onClose={closeModalMessage}>
-                <Message buttonText={lang === 'en' ? `Close` : `Закрыть`} buttonAction={closeModalMessage} ref={messageRef}/>
-            </Modal>
         </div>
     )
 }
@@ -190,6 +193,7 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
     sendOrder: state.user.sendOrder,
     colorsState: state.colors,
     fibersState: state.fibers,
+    modal: state.base.modal.current
 })
 
 

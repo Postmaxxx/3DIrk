@@ -4,17 +4,18 @@ import { connect } from "react-redux";
 import './contact-us.scss'
 import {  IFullState,  IUserState, TLang } from "../../interfaces";
 import {  useEffect, useRef, useMemo, useCallback } from 'react'
-import Modal, { IModalFunctions } from "../../components/Modal/Modal";
 import AddFiles, { IAddFilesFunctions } from "../../components/AddFiles/AddFiles";
 import { allActions } from "../../redux/actions/all";
-import Message, { IMessageFunctions } from "../../components/Message/Message";
 import { inputsProps, resetFetch, timeModalClosing } from "../../assets/js/consts";
 import { focusMover, modalMessageCreator, prevent } from "../../assets/js/processors";
 import inputChecker from "../../../src/assets/js/inputChecker";
+import { IModalFunctions } from "../../../src/components/Modal/ModalNew";
+import MessageNew from "../../../src/components/Message/MessageNew";
 
 interface IPropsState {
     lang: TLang,
     userState: IUserState
+    modal: IModalFunctions | null
 }
 
 interface IPropsActions {
@@ -27,13 +28,11 @@ interface IProps extends IPropsState, IPropsActions {}
 
 
 
-const ContactUs:React.FC<IProps> = ({lang, userState, setState}): JSX.Element => {
+const ContactUs:React.FC<IProps> = ({lang, userState, modal, setState}): JSX.Element => {
     const _name = useRef<HTMLInputElement>(null)
     const _email = useRef<HTMLInputElement>(null)
     const _phone = useRef<HTMLInputElement>(null)
     const _message = useRef<HTMLTextAreaElement>(null)
-    const modalMessageRef = useRef<IModalFunctions>(null)
-    const messageRef = useRef<IMessageFunctions>(null)
     const addFilesRef = useRef<IAddFilesFunctions>(null)
     const formContact = useRef<HTMLFormElement>(null)
     const focuser = useMemo(() => focusMover(), [lang])
@@ -41,8 +40,6 @@ const ContactUs:React.FC<IProps> = ({lang, userState, setState}): JSX.Element =>
     
     const closeModalMessage = useCallback(() => {
         if (!_message.current || !addFilesRef.current ) return
-        modalMessageRef.current?.closeModal()
-        setTimeout(() => messageRef.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
         if (userState.sendOrder.status === 'success') { //clear all inputs
             if (userState.auth.status !== 'success') { //if user unauthorized
                 if (!_name.current || !_email.current || !_phone.current) return
@@ -53,6 +50,7 @@ const ContactUs:React.FC<IProps> = ({lang, userState, setState}): JSX.Element =>
             _message.current.value = ''
             addFilesRef.current.clearAttachedFiles()
         }
+        modal?.closeCurrent()
         setState.user.setSendOrder({...resetFetch})
 	}, [userState.sendOrder.status])
 
@@ -82,8 +80,11 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
 
     useEffect(() => {
         if (userState.sendOrder.status === 'success' || userState.sendOrder.status === 'error') { //show modal after fetch with the fetch result 
-            messageRef.current?.update(modalMessageCreator(userState.sendOrder, lang))
-            modalMessageRef.current?.openModal('order')
+            modal?.openModal({
+                name: 'messageSend',
+                onClose: closeModalMessage,
+                children: <MessageNew {...modalMessageCreator(userState.sendOrder, lang)} buttonClose={{action: closeModalMessage, text: 'Close'}}/>
+            })
         }
     }, [userState.sendOrder.status])
 
@@ -190,9 +191,6 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
                     </div>
                 </div>
             </div>
-            <Modal escExit={true} ref={modalMessageRef} onClose={closeModalMessage}>
-                <Message buttonText={lang === 'en' ? `Close` : `Закрыть`} buttonAction={closeModalMessage} ref={messageRef}/>
-            </Modal>
         </div>
     )
 }
@@ -204,6 +202,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
 const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
     userState: state.user,
+    modal: state.base.modal.current
 })
 
 

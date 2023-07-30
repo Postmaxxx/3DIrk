@@ -1,9 +1,9 @@
 import './carouselmax.scss'
-import { useEffect,useRef, useState,useCallback, useMemo, memo } from 'react';
+import { useEffect,useRef, useState,useCallback } from 'react';
 import ImgWithPreloader from '../../assets/js/ImgWithPreloader'
 import { ICarouselMax } from '../../interfaces';
-import Modal, { IModalFunctions } from "../Modal/Modal";
-import ImageModal, { IImageModalFunctions } from "../ImageModal/ImageModal";
+import { IModalFunctions } from '../Modal/ModalNew';
+import ImageModalNew from '../ImageModal/ImageModalNew';
 
 
 interface IOptions {
@@ -45,10 +45,11 @@ const options: IOptions = {
 
 interface ISliderMax {
     content: ICarouselMax
+    modal: IModalFunctions | null
 }
 
 
-const SliderMax = ({content}: ISliderMax) => {
+const SliderMax = ({content, modal}: ISliderMax) => {
     const _carouselRef = useRef<HTMLDivElement>(null)
     const [ribbonPos, setRibbonPos] = useState<number>(0) //initial ribbon position
     const [state, setState] = useState<IOptions>({...options})
@@ -64,8 +65,7 @@ const SliderMax = ({content}: ISliderMax) => {
     const newDx = useRef<number>(0) //new ribbon position, for calculating ribbonDx
     const mouseSpeed = useRef<number>(0) //mouseSpeed, pixels between measurements
     const [firstRender, setFirstRender] = useState<boolean>(true)
-    const modalRef = useRef<IModalFunctions>(null)
-    const imageModalRef = useRef<IImageModalFunctions>(null)
+
 
 
     useEffect (() => {//initial settings, set all parameters for carousel like container width, total amount of images, ...
@@ -149,16 +149,19 @@ const SliderMax = ({content}: ISliderMax) => {
 
 
     const onImageExpand = (urlFull: string) => {
-        imageModalRef.current?.update({url: urlFull, text: ''})
-        modalRef.current?.openModal()
+        modal?.openModal({
+            name: 'carouselMax',
+            onClose: closeModalImage,
+            children: <ImageModalNew url={urlFull}/>
+        })
         isMoving.current = 0 //deny background moving after open modal
     }
 
 
     const closeModalImage = useCallback(() => {
-        modalRef.current?.closeModal()
         isMoving.current = 1 //allow moving after close modal
-	}, [modalRef])
+        modal?.closeCurrent()
+	}, [])
 
     const onResize = () => {
         setFirstRender(true)
@@ -188,11 +191,6 @@ const SliderMax = ({content}: ISliderMax) => {
 
 
 
-    const modalMemo = useMemo(() => (
-        <Modal escExit={true} ref={modalRef} onClose={closeModalImage}>
-            <ImageModal ref={imageModalRef} />
-        </Modal>
-    ), [])
 
 
     return (
@@ -227,7 +225,6 @@ const SliderMax = ({content}: ISliderMax) => {
                     )
                 })}
             </div>
-            {modalMemo}
         </div>
     )
 }

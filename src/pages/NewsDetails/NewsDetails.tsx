@@ -5,21 +5,22 @@ import Preloader from '../../components/Preloaders/Preloader';
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import { useRef, useEffect, FC, useMemo, useCallback } from "react";
+import { useEffect, FC, useMemo, useCallback } from "react";
 import SpliderCommon from '../../components/Spliders/Common/SpliderCommon';
 import { allActions } from "../../redux/actions/all";
 import Delete from '../../components/Delete/Delete';
-import Modal, { IModalFunctions } from "../../components/Modal/Modal";
-import Message, { IMessageFunctions } from '../../components/Message/Message';
 import IconEdit from '../../components/IconEdit/IconEdit';
-import { navList, resetFetch, timeModalClosing } from '../../assets/js/consts';
-import { modalMessageCreator } from '../../../src/assets/js/processors';
+import { navList, resetFetch } from '../../assets/js/consts';
+import { modalMessageFromFetch } from '../../../src/assets/js/processors';
+import { IModalFunctions } from '../../../src/components/Modal/ModalNew';
+import MessageNew from '../../../src/components/Message/MessageNew';
 
 
 interface IPropsState {
     lang: TLang
     isAdmin: boolean
     newsState: INewsState
+    modal: IModalFunctions | null
 }
 
 
@@ -32,11 +33,9 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 
-const NewsDetails: FC<IProps> = ({lang, setState, newsState, isAdmin }): JSX.Element => {
+const NewsDetails: FC<IProps> = ({lang, setState, newsState, modal, isAdmin }): JSX.Element => {
     const paramNewsId = useParams().newsId || ''
     const navigate = useNavigate()
-    const modalRef = useRef<IModalFunctions>(null)
-    const messageRef = useRef<IMessageFunctions>(null)
 
 
     useEffect(() => {
@@ -51,24 +50,32 @@ const NewsDetails: FC<IProps> = ({lang, setState, newsState, isAdmin }): JSX.Ele
 
 
     const closeModal = useCallback(() => {
-        modalRef.current?.closeModal()
-        setTimeout(() => messageRef.current?.clear(), timeModalClosing)  //otherwise message content changes before closing modal
-        setState.news.setSendNews(resetFetch)
-        if (newsState.send.status === 'success') {
-            navigate(navList.home.to, { replace: true });
-            window.location.reload()
+        if (modal?.getName() === 'deleteNews') {
+            setState.news.setSendNews(resetFetch)
+            if (newsState.send.status === 'success') {
+                navigate(navList.home.to, { replace: true });
+                window.location.reload()
+            }
+            setState.news.setSendNews(resetFetch)
         }
+        modal?.closeCurrent()
 	}, [newsState.send.status])
 
 
     useEffect(() => { 
         if (newsState.send.status === 'success' || newsState.send.status === 'error') {//if admin delete news
-            messageRef.current?.update(modalMessageCreator(newsState.send, lang))
-            modalRef.current?.openModal()
+            modal?.openModal({
+                name: 'deleteNews',
+                onClose: closeModal,
+                children: <MessageNew {...modalMessageFromFetch(newsState.send, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
+            })
         }
         if (newsState.loadOne.status === 'error') { //if fail to load news
-            messageRef.current?.update(modalMessageCreator(newsState.loadOne, lang))
-            modalRef.current?.openModal()
+            modal?.openModal({
+                name: 'loadNews',
+                onClose: closeModal,
+                children: <MessageNew {...modalMessageFromFetch(newsState.loadOne, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
+            })
         }
     }, [newsState.send.status, newsState.loadOne.status])
 
@@ -91,7 +98,11 @@ const NewsDetails: FC<IProps> = ({lang, setState, newsState, isAdmin }): JSX.Ele
                                     })}
                                 </div>
                                 <div className="images__container">
-                                    <SpliderCommon images={newsState.newsOne.images} defaultSize='medium' imagesPerSlide={Math.min(newsState.newsOne.images.files.length, 3)}/>
+                                    <SpliderCommon 
+                                        images={newsState.newsOne.images} 
+                                        defaultSize='medium' 
+                                        imagesPerSlide={Math.min(newsState.newsOne.images.files.length, 3)}
+                                        modal={modal}/>
                                 </div>
                             </>
                         </div>
@@ -133,9 +144,6 @@ const NewsDetails: FC<IProps> = ({lang, setState, newsState, isAdmin }): JSX.Ele
                     {renderNews}
                     {renderButtons}
                 </div>
-                <Modal escExit={true} ref={modalRef}>
-                    <Message buttonText={lang === 'en' ? `Close` : `Закрыть`} buttonAction={closeModal} ref={messageRef}/>
-                </Modal>
             </div>
         </div>
     )
@@ -145,6 +153,7 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
     isAdmin: state.user.isAdmin,
     newsState: state.news,
+    modal: state.base.modal.current
 })
 
 

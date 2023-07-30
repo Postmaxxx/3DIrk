@@ -11,6 +11,7 @@ import Selector, { ISelectorFunctions } from '../Selector/Selector';
 import inputChecker from '../../../src/assets/js/inputChecker';
 import ColorSelector from '../ColorSelector/ColorSelector';
 import { defaultSelectItem, empty } from '../../../src/assets/js/consts';
+import { IModalFunctions } from '../Modal/ModalNew';
 
 interface IPropsState {
 	lang: TLang
@@ -18,6 +19,7 @@ interface IPropsState {
     productLoad: IFetch
     colors: IColorsState
     fibers: IFibersState
+    modal: IModalFunctions | null
 }
 
 interface IPropsActions {
@@ -33,7 +35,7 @@ interface IProps extends IPropsState, IPropsActions {}
 
 
 
-const ProductDetails: React.FC<IProps> = ({lang, product, colors,productLoad, fibers }): JSX.Element => {
+const ProductDetails: React.FC<IProps> = ({lang, product, colors,productLoad, modal, fibers }): JSX.Element => {
     const [selectedFiber, setSelectedFiber] = useState<IFiber>()
     const [selectedColor, setSelectedColor] = useState<IColor["_id"]>('')
     const noType: TLangText = useMemo(() => ({en: '-', ru: '-'}), [])
@@ -124,7 +126,7 @@ const ProductDetails: React.FC<IProps> = ({lang, product, colors,productLoad, fi
                     <div className="colors__container wrap_xs">
                         <span>{lang === 'en' ? 'Available colors: ' : 'Доступные цвета: '}: </span>
                         <div className="colors__wrapper">
-                            <ColorSelector lang={lang} colors={colors.colors.filter(color => selectedFiber?.colors.includes(color._id))} onSelect={onSelectColor}/>
+                            <ColorSelector lang={lang} colors={colors.colors.filter(color => selectedFiber?.colors.includes(color._id))} onSelect={onSelectColor} modal={modal}/>
                         </div>
                     </div>
                 }
@@ -144,7 +146,8 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
 	product: state.catalog.category.product,
     colors: state.colors,
     fibers: state.fibers,
-    productLoad: state.catalog.category.loadProduct
+    productLoad: state.catalog.category.loadProduct,
+    modal: state.base.modal.current
 })
 
 
