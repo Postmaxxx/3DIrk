@@ -55,6 +55,9 @@ interface IStateSwitcher {
 
 
 
+
+
+
 interface IPropsState {
     lang: TLang
 	mobOpened: boolean
@@ -72,7 +75,69 @@ interface IProps extends IPropsState, IPropsActions {}
 const ThemeSwitcher: React.FC<IProps> = ({mobOpened, lang, setState}): JSX.Element => {
 
 	const _themeSwitcherCont = useRef<HTMLDivElement>(null);
+
+
+	const _themeSwitcherContNew = useRef<HTMLDivElement>(null);
+	const _contentSwitcherNew = useRef<HTMLDivElement>(null);
     const {add: addToHider, clear: clearHider} = useScrollHider()
+	const state = useRef<Partial<IStateSwitcher>>({
+		isChanging: false,
+		theme: 'dark'
+	}) //false - dark, true - light
+
+
+	interface IParams {
+		width: number
+		height: number
+		circleSize: number
+		duration: number
+		theme: TTheme
+		numberOfStars: number
+		starsBlinkingDuration: number[]
+		clouds: ICloud[]
+		starsBlinkingAnimation: string
+		isChanging: boolean
+		saveState: string
+	}
+
+	const params: IParams  = {
+		width: 70,
+		height: 40,
+		circleSize: 14,
+		duration: 2000,
+		theme: "light",
+		numberOfStars: 30,
+		saveState: "",
+		starsBlinkingDuration: [0.9, 1.2, 1.4, 1.6, 1.8, 2.1], //default durations
+		isChanging: false,
+		starsBlinkingAnimation: `
+			0% { opacity: .2 }
+			50% { opacity: .8 }
+			100% { opacity: .2 }`,
+		clouds: [ //default styles for clouds
+			{
+				width: 30, //px
+				gap: 15, //px
+				top: 0, //in percent of height
+				speed: 7, //sec for 1 cycle, less -> faster
+				opacity: 1, //transparent for line
+			},
+			{
+				width: 25,
+				gap: 20,
+				top: 25,
+				speed: 4,
+				opacity: 0.85,
+			},
+			{
+				width: 20,
+				gap: 20,
+				top: 40,
+				speed: 5,
+				opacity: 0.7,
+			},
+		]
+	};
 
 
 
@@ -323,7 +388,9 @@ const ThemeSwitcher: React.FC<IProps> = ({mobOpened, lang, setState}): JSX.Eleme
 				}`);
 			});    
 		};
-		
+
+
+
 		
 		
 		const createThemeSwitcherHtml = (currentTheme: TTheme) => {
@@ -346,6 +413,8 @@ const ThemeSwitcher: React.FC<IProps> = ({mobOpened, lang, setState}): JSX.Eleme
 			const _contentSwitcher = document.createElement("div");
 			_contentSwitcher.classList.add("content-switcher");
 			_contentSwitcher.classList.add(currentTheme !== "dark" ? "theme_light" : "");
+
+
 			stateSW._themeSwitcher.appendChild(_contentSwitcher);
 			const _dark = document.createElement("div");
 			const _light = document.createElement("div");
@@ -441,7 +510,7 @@ const ThemeSwitcher: React.FC<IProps> = ({mobOpened, lang, setState}): JSX.Eleme
 					}
 					stateSW._themeSwitcherInput?.addEventListener("change", setNewTheme);
 				});
-		};
+		}; 
 	
 		const destroyThemeSwitcher = () => {
 			stateSW._themeSwitcherInput?.removeEventListener("change", setNewTheme);
@@ -488,12 +557,135 @@ const ThemeSwitcher: React.FC<IProps> = ({mobOpened, lang, setState}): JSX.Eleme
 	},[]);
 
 
-	useEffect(() => {
+	/*useEffect(() => {
 		mobOpened ? _themeSwitcherCont.current?.classList.remove('hide') : _themeSwitcherCont.current?.classList.add('hide')
-	}, [mobOpened])
+	}, [mobOpened])*/
 	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	const classSwitcher = (classRemove: string, classAdd: string, delay: number): Promise<void> => { //class +/- for _contentSwitcher using delay
+		return new Promise((res) => {
+			setTimeout((): void => {
+				classRemove && _contentSwitcherNew.current?.classList.remove(classRemove);
+				classAdd && _contentSwitcherNew.current?.classList.add(classAdd);
+				res();
+			}, delay);
+		});
+	};
+
+
+	const changeTheme = () => { //main switcher
+		if (!state.current || state.current.isChanging) return
+		//stateSW.saveState && localStorage.setItem(stateSW.saveState, stateSW.theme as TTheme);
+		state.current.isChanging = true;
+		document.body.classList.toggle("dark", state.current.theme === "dark")
+		if (state.current.theme === "light") {
+			setState.base.setThemeLight();
+			classSwitcher("", "theme_light_1", 0)
+				.then(() => classSwitcher("theme_light_1", "theme_light_2", (params.duration || 1)/ 4))
+				.then(() => {classSwitcher("theme_light_2", "theme_light", 30); state.current.isChanging = false;});
+		} else {
+			setState.base.setThemeDark();
+			classSwitcher("theme_light", "theme_light_back_1", 0)
+				.then(() => classSwitcher("theme_light_back_1", "theme_light_back_2", (params.duration || 1) / 4))
+				.then(() => {classSwitcher("theme_light_back_2", "", 30); state.current.isChanging = false;});
+		}
+	};
+
+
+	const setNewTheme = () => {
+		if (!state.current) return
+		state.current.theme =  state.current.theme === "light" ? "dark" : "light"
+		console.log(state.current.theme);
+		changeTheme();
+	};
+
+
+	const currentTheme = 'dark' 
+
+	const stars = new Array(params.numberOfStars).fill('').map(item => {
+		let size = Math.floor(Math.random()*20 + 1);
+		size = size > 13 ? Math.floor(size / 3) : size; //to create more small stars than big
+		const x = Math.floor(Math.random() * (params.width as number))
+		const y = Math.floor(Math.random() * (params.height as number))
+		const blinkDuration = Math.floor(Math.random() * (params.starsBlinkingDuration?.length as number))//different duration of blinking
+		return (
+			<img 
+				className={`theme_dark__star-${blinkDuration}`} 
+				alt="" 
+				src={star}
+				style={{
+					position: "absolute", 
+					left: `${x}px`, 
+					top: `${y}px`, 
+					width: `${size}px`, 
+					aspectRatio: '1'
+				}}/>
+		)
+	})
+
+
+
+	const listOfClouds: string[] = new Array(Math.ceil((params.width as number) / (params.clouds[params.clouds.length - 1].width + params.clouds[params.clouds.length - 1].gap) + 2)).fill(""); //list of clouds in a cloud-raw, depends on the cloud size and gap between clouds + some reserve
+	const clouds = params.clouds?.map((line, index: number) => {
+		return (
+			<div className={`clouds-${index}`}>
+				{listOfClouds.map(() => {
+					return (
+						<img 
+							className="cloud"
+							src={cloud} 
+							alt=""/>
+					)
+				})}
+			</div>
+		)
+	});
+
+
+
+	const newTS = (
+		<label htmlFor="">
+			<div className="theme-switcher">
+				<div className={`content-switcher ${currentTheme !== "dark" ? "theme_light" : ""}`} ref={_contentSwitcherNew}>
+					<div className="dark">
+						{stars}
+					</div>
+					<div className="light">
+						{clouds}
+					</div>
+				</div>
+			</div>
+			<input type="checkbox" name="" id="" aria-label="Change the site theme" onClick={setNewTheme}/>
+		</label>
+	)
+
+
+
+
+
 	return (
-		<div className='theme-switcher__container' ref={_themeSwitcherCont}></div>
+		<>
+			<div className='theme-switcher__container' ref={_themeSwitcherCont} style={{display: 'none !important'}}></div>
+			
+			<div className={`theme-switcher__container_new ${mobOpened ? "" : "hide"}`} ref={_themeSwitcherContNew}>
+				{newTS}
+			</div>
+		</>
 	);
 };
 

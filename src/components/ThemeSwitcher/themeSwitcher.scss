@@ -62,3 +62,67 @@
 }
 
 
+.theme-switcher__container_new {
+    position: fixed;
+    right: 20px;
+    top: 400px;
+    width: 70px;
+    height: 40px;
+    overflow: hidden;
+    z-index: 5500;
+    transition: background-color $transition_theme, left $nav_mobile_delay, right $nav_mobile_delay, opacity $nav_mobile_delay;
+    & * {
+        -webkit-user-drag: none !important;
+        user-select: none !important;  
+    }
+
+    @include respond-to(sm) {
+        transform: scale(0.85);
+        top: calc($header_height + 55px);
+        right: 25%;
+        //left: initial;
+        transition: background-color $transition_theme, left $nav_mobile_delay $transition_nav, right $nav_mobile_delay $transition_nav, opacity $nav_mobile_delay $transition_nav;
+    }
+    
+    @include respond-to(xs) {
+        transform: scale(0.7);
+    }
+
+    &.scrolled {
+        right: -70px;
+
+        @include respond-to(sm) {
+            right: 25%;
+            left: initial
+        }
+    }
+
+    &.hide {
+        @include respond-to(sm) {
+            right: 75%;
+            opacity: 0;
+            transition: background-color $transition_theme, right $nav_mobile_delay, opacity $nav_mobile_delay;
+        }
+    }
+
+
+
+
+    & input {
+        visibility: visible;
+        opacity: 0;
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        top: 0;
+        left: 0;
+        z-index: 5000;
+    }
+
+    & > .theme-switcher {
+        width: 100%;
+        height: 100%;
+    }
+
+
+}
