@@ -39,7 +39,11 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, modal, catalogState}): J
     const closeModal = useCallback(() => {
         if (modal?.getName() === 'catalogSend') {
             if (catalogState.catalog.send.status === 'success') {
-                setState.catalog.loadCatalog() //reload catalog
+                checkAndLoad({
+                    fetchData: catalogState.catalog.load,
+                    loadFunc: setState.catalog.loadCatalog,
+                    force: true
+                })
                 errChecker.clear()        
             }
         }

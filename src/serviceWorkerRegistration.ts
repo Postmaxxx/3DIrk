@@ -21,12 +21,11 @@ async function registerValidSW(swUrl: string, config: {scope: string}) {
 		});
 		regSW.update(); //update if changed
 		//console.log("ServiceWorker registered successfully", regSW);
-		navigator.serviceWorker.oncontrollerchange = (ev) => {
-			//console.log("New ServiceWorker activated");
+		navigator.serviceWorker.oncontrollerchange = (ev) => { //New ServiceWorker activated
 			window.location.reload();
 		};
 	} catch (error) {
-		//console.log("ServiceWorker register fail:", error);
+		console.log("ServiceWorker register fail:", error);
 	}
 }
 

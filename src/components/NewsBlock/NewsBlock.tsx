@@ -7,6 +7,7 @@ import { AnyAction, Dispatch, bindActionCreators } from 'redux';
 import { allActions } from "../../redux/actions/all";
 import Preloader from '../Preloaders/Preloader';
 import { loadNewsPerRequest } from '../../../src/assets/js/consts';
+import { checkAndLoad } from '../../../src/assets/js/processors';
 
 
 interface IPropsState {
@@ -24,8 +25,13 @@ interface IProps extends IPropsState, IPropsActions {}
 
 const NewsBlock:React.FC<IProps>  = ({lang, news, setState}): JSX.Element => {
     
-    const showMoreNews = () => {
-        setState.news.loadSomeNews(news.newsList.length, loadNewsPerRequest) //from, amount
+    const showMoreNews = () => {        
+		checkAndLoad({
+			fetchData: news.load,
+			loadFunc: setState.news.loadSomeNews,
+            args: [news.newsList.length, loadNewsPerRequest],
+            force: true
+		})
     }
 
     useEffect(()=> {

@@ -5,7 +5,7 @@ import Preloader from '../../components/Preloaders/Preloader';
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import { ICatalogState, IColorsState, IFibersState, IFullState, TLang } from "../../interfaces";
+import { ICatalogState, IColorsState, IFetch, IFibersState, IFullState, TLang } from "../../interfaces";
 import SpliderPreview from "../../components/Spliders/Preview/SpliderPreview";
 import ProductDetails from "../../components/ProductDetails/ProductDetails";
 import { allActions } from "../../redux/actions/all";
@@ -15,8 +15,8 @@ import { checkAndLoad } from "../../assets/js/processors";
 interface IPropsState {
 	lang: TLang
     catalogState: ICatalogState
-    colorsState: IColorsState
     fibersState: IFibersState
+    colorLoad: IFetch
 }
 
 interface IPropsActions {
@@ -31,18 +31,18 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 
-const Product: React.FC<IProps> = ({lang, setState, catalogState, colorsState, fibersState}): JSX.Element => {
+const Product: React.FC<IProps> = ({lang, setState, catalogState, colorLoad, fibersState}): JSX.Element => {
     const paramProductId = useParams().productId || ''
     const [loaded, setLoaded] = useState<boolean>(false)
 
 
 
     useEffect(() => {
-        if (colorsState.load.status === 'success' && fibersState.load.status === 'success' && catalogState.category.loadProduct.status === 'success' && paramProductId === catalogState.category.product._id) {
+        if (colorLoad.status === 'success' && fibersState.load.status === 'success' && catalogState.category.loadProduct.status === 'success' && paramProductId === catalogState.category.product._id) {
             setLoaded(true)
         } else {
             checkAndLoad({
-                fetchData: colorsState.load,
+                fetchData: colorLoad,
                 loadFunc: setState.colors.loadColors,
             })
             if (paramProductId !== catalogState.category.product._id) {
@@ -55,7 +55,7 @@ const Product: React.FC<IProps> = ({lang, setState, catalogState, colorsState, f
             } 
             setLoaded(false)
         }
-    },[fibersState.load.status, colorsState.load.status, catalogState.category.loadProduct.status, paramProductId])
+    },[fibersState.load.status, colorLoad.status, catalogState.category.loadProduct.status, paramProductId])
     
 
     return (
@@ -85,7 +85,7 @@ const Product: React.FC<IProps> = ({lang, setState, catalogState, colorsState, f
 const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
     catalogState: state.catalog,
-    colorsState: state.colors,
+    colorLoad: state.colors.load,
     fibersState: state.fibers,
 })
 

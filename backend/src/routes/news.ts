@@ -94,7 +94,7 @@ router.get('/get-amount', async (req, res) => {
         if (err) {
             return res.status(500).json(err)
         }
-        return res.status(200).json({amount: cache.news.data.length, message: {en: '', ru: ''}})
+        return res.status(200).json({total: cache.news.data.length})
     } catch (e) {
         return res.status(500).json({ message:{en: `Something wrong with server ${e}, try again later`, ru: `Ошибка на сервере ${e}, попробуйте позже`}})
     }
@@ -138,7 +138,7 @@ router.get('/get-some',
         
         const newsToRes =  cache.news.data.slice(since, to)
         
-        return res.status(200).json({news: newsToRes, message: {en: `${newsToRes.length} news loaded`, ru: `Новостей загружено: ${newsToRes.length}`}})
+        return res.status(200).json({news: newsToRes, total: cache.news.data.length, message: {en: `${newsToRes.length} news loaded`, ru: `Новостей загружено: ${newsToRes.length}`}})
 
     } catch (error) {
         return res.status(400).json({message: {en: `Error with server while getting news`, ru: `Ошибка при получении новостей с сервера`}})

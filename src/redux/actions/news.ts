@@ -168,55 +168,6 @@ export const sendNews = (newsItem: ISendNewsItem) => {
 
 
 
-/*
-
-export const updateNews = (newsItem: ISendNewsItem, changeImages: boolean) => {
-    return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        const controller = new AbortController()
-        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.news.update.timeout) //set time limit for fetch
-        dispatch(setSendNews({...fetchingFetch, controller})) 
-        const token = getState().user.token //get current user state
-        const sendForm = new FormData()   
-        const {files, ...newsToSend} = newsItem //exclude files from data
-        sendForm.append('data', JSON.stringify({...newsToSend, changeImages}))
-        if (changeImages) {
-            newsItem.files.forEach(item => {
-                sendForm.append('files', item, item.name)
-            })
-        }
-        try {
-            const response: Response = await fetch(APIList.news.update.url, {
-                signal: controller.signal,
-                method: APIList.news.update.method,
-                headers: {
-                    'enctype': "multipart/form-data",
-                    'Authorization': `Bearer ${token}`
-                },
-                body: sendForm
-            })
-            clearTimeout(fetchTimeout)
-            if (response.status !== 200) {
-                const result: IErrRes = await response.json() //message, errors
-                return dispatch(setSendNews(resErrorFiller(result)))
-            }
-            const result: IMsgRes = await response.json() //message
-            dispatch(setSendNews({...successFetch, message: result. message}))
-        } catch (e) {   
-            fetchError({ 
-                e,
-                dispatch,
-                setter: setSendNews,
-                controller,
-                comp: {en: 'updating news', ru: 'редактирования новости'}
-            })          
-        }
-    }
-}
-
-*/
-
-
-
 
 export const deleteNews = (_id: string) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {

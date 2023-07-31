@@ -1,9 +1,8 @@
 import { useEffect, memo, useRef } from "react";
 import { Routes, Route, HashRouter } from "react-router-dom";
 import { Suspense, lazy } from "react";
-import Preloader from "./components/Preloaders/Preloader"; 
 import "./assets/css/_base.scss";
-import { IFetch, IFullState, IUserState, TId, TLang } from "./interfaces";
+import { IFetch, IFullState, TLang } from "./interfaces";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
@@ -21,11 +20,6 @@ import PreloaderPage from "./components/Preloaders/PreloaderPage";
 import ModalNew, { IModalFunctions } from "./components/Modal/ModalNew";
 
 
-const LazyThemeSwitcher = lazy(() => import("./components/ThemeSwitcher/ThemeSwitcher"));
-const LazyLangSwitcher = lazy(() => import("./components/LangSwitcher/LangSwitcher"));
-const LazyHomer = lazy(() => import("./components/Homer/Homer"));
-const LazyHeader = lazy(() => import('./partials/Header/Header'));
-const LazyFooter = lazy(() => import('./partials/Footer/Footer'));
 const LazyHomePage = lazy(() => import("./pages/Home/Home"));
 const LazyFibersPage = lazy(() => import("./pages/Fibers/Fibers"));
 const LazyFiberPage = lazy(() => import("./pages/Fiber/Fiber"));
@@ -35,7 +29,6 @@ const LazyCatalogPage = lazy(() => import("./pages/Catalog/Catalog"));
 const LazyProduct = lazy(() => import("./pages/Product/Product"));
 const LazyNewsDetails = lazy(() => import("./pages/NewsDetails/NewsDetails"));
 const LazyFibersCompare= lazy(() => import("./pages/FibersCompare/FibersCompare"));
-//const LazyOffliner= lazy(() => import("./components/Offliner/Offliner"));
 const LazyNewsCreator = lazy(() => import("./pages/Admin/NewsCreator/NewsCreator"));
 const LazyColorCreator = lazy(() => import("./pages/Admin/ColorCreator/ColorCreator"));
 const LazyFiberCreator = lazy(() => import("./pages/Admin/FiberCreator/FiberCreator"));
@@ -43,6 +36,7 @@ const LazyContactUs = lazy(() => import("./pages/ContactUs/ContactUs"));
 const LazyCatalogCahnger = lazy(() => import("./pages/Admin/CatalogCreator/CatalogCreator"));
 const LazyProductCreator = lazy(() => import("./pages/Admin/ProductCreator/ProductCreator"));
 const LazySpliderChanger = lazy(() => import("./pages/Admin/ContentCreator/contentCreator"));
+
 
 
 interface IPropsState {
@@ -56,8 +50,6 @@ interface IPropsActions {
     setState: {
         fibers: typeof allActions.fibers
         user: typeof allActions.user
-        colors: typeof allActions.colors
-		order: typeof allActions.order
 		base: typeof allActions.base
     }
 }
@@ -71,11 +63,6 @@ const App:React.FC<IProps> = ({lang, isAdmin, isAuth, fibersLoad, setState}):JSX
 
 	useEffect(() => {
 		setState.user.loginWithToken()
-		checkAndLoad({
-			fetchData: fibersLoad,
-			loadFunc: setState.fibers.loadFibers,
-            force: false
-		})
 		setState.base.setModal(modalRef)
 	}, [])
 
@@ -87,8 +74,6 @@ const App:React.FC<IProps> = ({lang, isAdmin, isAuth, fibersLoad, setState}):JSX
             force: true
 		})
 	}, [isAdmin])
-
-
 
 
 	return (
@@ -154,14 +139,11 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>):IPropsActions => ({
     setState: {
 		fibers: bindActionCreators(allActions.fibers, dispatch),
-		colors: bindActionCreators(allActions.colors, dispatch),
 		user: bindActionCreators(allActions.user, dispatch),
-		order: bindActionCreators(allActions.order, dispatch),
 		base: bindActionCreators(allActions.base, dispatch),
 	}
 })
   
-  
-    
+      
 export default connect(mapStateToProps, mapDispatchToProps)(App)
 
