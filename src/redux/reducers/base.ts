@@ -12,6 +12,10 @@ const reducerBase = (state:IBaseState = initialBaseState, action: IAction<any>):
             return {
                 ...state, lang: 'ru'
             }
+        case actionsListBase.SET_THEME: 
+            return {
+                ...state, theme: action.payload
+            }
         case actionsListBase.SET_THEME_LIGHT: 
             return {
                 ...state, theme: 'light'
@@ -19,11 +23,6 @@ const reducerBase = (state:IBaseState = initialBaseState, action: IAction<any>):
         case actionsListBase.SET_THEME_DARK: 
             return {
                 ...state, theme: 'dark'
-            }
-        case actionsListBase.SET_THEME_TOGGLE: 
-            const newTheme = state.theme === 'light' ? 'dark' : 'light'
-            return {
-                ...state, theme: newTheme
             }
         case actionsListBase.SET_NAV_MOB_OPEN: 
             return {
@@ -72,7 +71,7 @@ const reducerBase = (state:IBaseState = initialBaseState, action: IAction<any>):
                 ...state,
                 modal: newModal
             }*/
-        default: return state
+        default: return {...state}
     }
 }
 

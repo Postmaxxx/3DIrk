@@ -18,37 +18,6 @@ interface IErrorsChecker {
 
 const errorsChecker = ({lang = 'en'}: IErrorsChecker) => {
     const errors: string[] = []
-
-    /*const check = (el:  HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement , min = 0, max = 1000): {result: boolean, error: string} => {
-        const err = {result: false, error: ''}
-        if (el.value.length >= min && el.value.length <= max) return err // no error
-        
-        err.result = true
-        if (el.value.length < min) {
-            err.error = `${el.dataset[lang]} ${lang === 'en' ? `is shorter than ${min} symbols` : `меньше ${min} симв.`}`
-        }
-        if (el.value.length > max) {
-            err.error = `${el.dataset[lang]} ${lang === 'en' ? `is longer than ${max} symbols` : `больше ${max} симв.`}`
-        }
-        if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-            el.parentElement?.classList.add('error')
-        }
-        if (el.tagName === 'SELECT') {
-            el.parentElement?.parentElement?.classList.add('error')
-        }
-        errors.push(err.error)
-        return err //error exists
-    }*/
-
-    const clearError = (el:  HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | HTMLSelectElement) => {
-        if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-            el.parentElement?.classList.remove('error')
-        }
-        if (el.tagName === 'SELECT') {
-            el.parentElement?.parentElement?.classList.remove('error')
-        }
-    }
-
     
     const add = (err: string): void => {errors.push(err)}
 
@@ -62,7 +31,7 @@ const errorsChecker = ({lang = 'en'}: IErrorsChecker) => {
 
     const clear = () => {errors.splice(0, errors.length)}
 
-    return { result, add, clear, clearError, amount }
+    return { result, add, clear, amount }
 }
 
 //---------------------------------------------------------------

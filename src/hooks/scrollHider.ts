@@ -6,11 +6,8 @@ export const useScrollHider = () => {
    
     const onScroll = () => {   
         list.forEach(item => {
-            if (document.body.scrollTop > item.threshold || document.documentElement.scrollTop > item.threshold) {
-                item.el.classList.add('scrolled')
-            } else {
-                item.el.classList.remove('scrolled')
-            }
+            const scrolled = document.body.scrollTop > item.threshold || document.documentElement.scrollTop > item.threshold
+            item.el.classList.toggle('scrolled', scrolled)
         })
     }
 

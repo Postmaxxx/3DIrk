@@ -12,12 +12,8 @@ const Homer = () => {
     };
 
     function scrollHomer() {
-        if (!_homer.current) return
-		if (document.body.scrollTop > 500 || document.documentElement.scrollTop > 500) {
-			_homer.current.classList.add("show");
-		} else {
-			_homer.current.classList.remove("show")
-		}
+        const show = document.body.scrollTop > 500 || document.documentElement.scrollTop > 500
+        _homer.current?.classList.toggle("show", show);
     }
 
     const onHomerClicked = () => {

@@ -3,7 +3,7 @@ import { IBaseState } from "../../interfaces"
 import {RefObject} from 'react'
 
 const initialBase = {
-    theme: 'light',
+    theme: 'dark',
     lang: 'ru',
     mobOpened: false,
     desktopOpened: true,

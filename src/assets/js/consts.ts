@@ -69,24 +69,24 @@ const APIList = { //all routes to BE
         getSome: { //get some products from one category (short format), ?_id=${CategoryId}&from=${NumberFrom}&to=${NumberTo}
             url: `${process.env.REACT_BACK_URL}/api/catalog/category`,
             method: "GET",
-            timeout: 15000
+            timeout: 20000
         }
     },
     product: {
         create: { //create product
             url: `${process.env.REACT_BACK_URL}/api/catalog/product`,
             method: "POST",
-            timeout: 30000
+            timeout: 60000
         },
         update: { //update existed product
             url: `${process.env.REACT_BACK_URL}/api/catalog/product`,
             method: "PUT",
-            timeout: 30000
+            timeout: 60000
         },
         get: { //get one product
             url: `${process.env.REACT_BACK_URL}/api/catalog/product`,
             method: "GET",
-            timeout: 10000
+            timeout: 15000
         },
         delete: { //delete one product
             url: `${process.env.REACT_BACK_URL}/api/catalog/product`,
@@ -98,12 +98,12 @@ const APIList = { //all routes to BE
         getSome: { //get some news, +?from=${FromIdex}&amount=${AmountOfNews}
             url: `${process.env.REACT_BACK_URL}/api/news/get-some`,
             method: "GET",
-            timeout: 10000
+            timeout: 15000
         },
         getOne: { //get some news, +?from=${FromIdex}&amount=${AmountOfNews}
             url: `${process.env.REACT_BACK_URL}/api/news/get-one`,
             method: "GET",
-            timeout: 10000
+            timeout: 15000
         },
         create: { //create newsItem
             url: `${process.env.REACT_BACK_URL}/api/news/create`,
@@ -118,24 +118,24 @@ const APIList = { //all routes to BE
         delete: { //update newsItem
             url: `${process.env.REACT_BACK_URL}/api/news/delete`,
             method: "DELETE",
-            timeout: 30000
+            timeout: 10000
         },
     },
     colors: {
         get: { //load all colors
             url: `${process.env.REACT_BACK_URL}/api/colors/load-all`,
             method: "GET",
-            timeout: 10000
+            timeout: 20000
         },
         create: { //create newsItem
             url: `${process.env.REACT_BACK_URL}/api/colors/create`,
             method: "POST",
-            timeout: 10000
+            timeout: 30000
         },
         update: { //update newsItem
             url: `${process.env.REACT_BACK_URL}/api/colors/edit`,
             method: "PUT",
-            timeout: 10000
+            timeout: 30000
         },
         delete: { //delete newsItem
             url: `${process.env.REACT_BACK_URL}/api/colors/delete`,
@@ -148,12 +148,12 @@ const APIList = { //all routes to BE
             update: { //update carousel
                 url: `${process.env.REACT_BACK_URL}/api/content/splider`,
                 method: 'PUT',
-                timeout: 30000
+                timeout: 60000
             },
             get: { //load carousel
                 url: `${process.env.REACT_BACK_URL}/api/content/splider`,
                 method: 'GET',
-                timeout: 10000
+                timeout: 20000
             }
         }
     },
@@ -161,22 +161,22 @@ const APIList = { //all routes to BE
         get: { //load all fibers
             url: `${process.env.REACT_BACK_URL}/api/fibers/all`,
             method: 'GET',
-            timeout: 10000
+            timeout: 20000
         },
         create: { //create fiber
             url: `${process.env.REACT_BACK_URL}/api/fibers/create`,
             method: 'POST',
-            timeout: 30000
+            timeout: 60000
         },
         update: { //update fiber
             url: `${process.env.REACT_BACK_URL}/api/fibers/edit`,
             method: 'PUT',
-            timeout: 30000
+            timeout: 60000
         },
         delete: { //delete fiber
             url: `${process.env.REACT_BACK_URL}/api/fibers/delete`,
             method: 'DELETE',
-            timeout: 30000
+            timeout: 10000
         },
     },
     orders: {
@@ -193,7 +193,7 @@ const APIList = { //all routes to BE
         getUsers: { //load all customers
             url: `${process.env.REACT_BACK_URL}/api/user/users`,
             method: 'GET',
-            timeout: 10000
+            timeout: 20000
         }
     },
     user: {
@@ -215,17 +215,17 @@ const APIList = { //all routes to BE
         createOrder: { //create new order
             url: `${process.env.REACT_BACK_URL}/api/user/order`,
             method: 'POST',
-            timeout: 10000
+            timeout: 60000
         },
         createMessage: {// create new message
             url: `${process.env.REACT_BACK_URL}/api/user/message`,
             method: 'POST',
-            timeout: 10000
+            timeout: 60000
         },
         updateCart: { // update cart content on BE
             url: `${process.env.REACT_BACK_URL}/api/user/cart`,
             method: 'PUT',
-            timeout: 10000
+            timeout: 20000
         },
     }
 

@@ -1,4 +1,5 @@
 export const actionsListBase = {
+    SET_THEME: 'SET_THEME',
     SET_THEME_DARK: 'SET_THEME_DARK',
     SET_THEME_LIGHT: 'SET_THEME_LIGHT',
     SET_THEME_TOGGLE: 'SET_THEME_TOGGLE',

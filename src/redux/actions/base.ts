@@ -1,5 +1,5 @@
 import { IModalFunctions } from "src/components/Modal/ModalNew"
-import { IAction, IBaseState } from "../../interfaces"
+import { IAction, IBaseState, TTheme } from "../../interfaces"
 import { actionsListBase } from './actionsList'
 
 export const setLangEn = <T>(): IAction<T> => ({
@@ -20,7 +20,10 @@ export const setThemeDark = <T>(): IAction<T> => ({
 export const setThemeToggle = <T>(): IAction<T> => ({
     type: actionsListBase.SET_THEME_TOGGLE,
 })
-
+export const setTheme = <T extends TTheme>(payload: T): IAction<T> => ({
+    type: actionsListBase.SET_THEME,
+    payload
+})
 
 
 export const setNavOpenMob = <T>():IAction<T> => ({
