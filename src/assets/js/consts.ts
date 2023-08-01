@@ -2,10 +2,12 @@ import { IFetch, IFiberParam, IMessageModal, INewsItem, ISendColor, ISendFiber, 
 
 const timeModalClosing: number = 500 //transition of closing modal window
 
-const gapBetweenRequests: number = 5000 //time between requests in case of error
+const gapBetweenRequests: number = 3000 //time between requests in case of error
 
 const strengthMin:number = 1 //fiber strength min
 const strengthMax:number = 180 //fiber strength max
+
+const gapForOrders: number = 1 //months
 
 const usersPerPage:number = 2 //for Admin for AllOrders page
 
@@ -572,19 +574,31 @@ const colorEmpty: ISendColor = {
 const orderStatus = [
     {
         value: 'new',
-        name: 'New'
+        name: {
+            en: 'New',
+            ru: 'Новый'
+        }
     },
     {
         value: 'working',
-        name: 'In progress'
+        name: {
+            en: 'In progress',
+            ru: 'В работе'
+        }
     },
     {
         value: 'finished',
-        name: 'Finished'
+        name: {
+            en: 'Finished',
+            ru: 'Выполненные'
+        }
     },
     {
         value: 'canceled',
-        name: 'Canceled'
+        name: {
+            en: 'Canceled',
+            ru: 'Отмененные'
+        }
     },
 ]
 
@@ -712,4 +726,4 @@ export { clearModalMessage, resetFetch, timeModalClosing,
     orderStatus, usersPerPage, timeOffset, inputsProps, tipsTransition, socials,
     navList, newsItemEmpty, APIList, imageExtentions, maxAmountToOrder, loadNewsPerRequest,
     exceptionTimeout, exceptionFetch, DOMExceptions, statuses, defaultSelectItem, 
-    createNewItemId}
+    createNewItemId, gapForOrders}

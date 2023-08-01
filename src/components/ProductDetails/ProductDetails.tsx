@@ -4,14 +4,15 @@ import { useRef, useEffect, useState, useMemo } from "react";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import AddToCart, { IAddToCart } from '../AddToCart/AddToCart';
+import AddToCart from '../AddToCart/AddToCart';
 import { NavLink } from 'react-router-dom';
 import { allActions } from "../../redux/actions/all";
-import Selector, { ISelectorFunctions } from '../Selector/Selector';
+import Selector, { IItem, ISelectorFunctions } from '../Selector/Selector';
 import inputChecker from '../../../src/assets/js/inputChecker';
 import ColorSelector from '../ColorSelector/ColorSelector';
 import { defaultSelectItem, empty } from '../../../src/assets/js/consts';
 import { IModalFunctions } from '../Modal/ModalNew';
+import { deepCopy } from '../../../src/assets/js/processors';
 
 interface IPropsState {
 	lang: TLang
@@ -20,6 +21,7 @@ interface IPropsState {
     colors: IColorsState
     fibers: IFibersState
     modal: IModalFunctions | null
+    isAuth: boolean
 }
 
 interface IPropsActions {
@@ -27,7 +29,6 @@ interface IPropsActions {
         fibers: typeof allActions.fibers
         catalog: typeof allActions.catalog
         colors: typeof allActions.colors
-
     }
 }
 
@@ -35,17 +36,24 @@ interface IProps extends IPropsState, IPropsActions {}
 
 
 
-const ProductDetails: React.FC<IProps> = ({lang, product, colors,productLoad, modal, fibers }): JSX.Element => {
+const ProductDetails: React.FC<IProps> = ({lang, product, colors,productLoad, modal, fibers, isAuth }): JSX.Element => {
+    const [selectedType, setSelectedType] = useState<TLangText>(deepCopy(empty))
     const [selectedFiber, setSelectedFiber] = useState<IFiber>()
     const [selectedColor, setSelectedColor] = useState<IColor["_id"]>('')
-    const noType: TLangText = useMemo(() => ({en: '-', ru: '-'}), [])
     const selectorTypeRef = useRef<ISelectorFunctions>(null)
     const selectorFiberRef = useRef<ISelectorFunctions>(null)
-
+    
     const onChangeFiber: React.ChangeEventHandler<HTMLSelectElement> = (e) => {
         setSelectedFiber(fibers.fibersList.find(fiber => fiber._id === e.target.value))
         setSelectedColor('')        
     }
+
+
+
+    const onChangeType = (item: IItem) => {
+        setSelectedType(item.name)    
+    }
+
 
 
     const onSelectColor = (colorId: IColor["_id"]) => {
@@ -65,17 +73,22 @@ const ProductDetails: React.FC<IProps> = ({lang, product, colors,productLoad, mo
        
 
     const productDescr = product.text[lang].split('\n').map((text, i) => <p key={i}>{text}</p>)
+   
 
-
-
-    const dataToCart = (): IAddToCart => {
-        return {
+    const dataToCart = 
+        {
             fiber: selectedFiber?._id,
             color: selectedColor,
-            type: product.mods.length > 0 ? selectorTypeRef.current?.getItem().name || {...empty} : noType
+            product,
+            type: selectedType
         }
-    }
+    
 
+    
+
+    const colorsList = useMemo(() => {
+        return colors.colors.filter(color => selectedFiber?.colors.includes(color._id))
+    },[colors.colors, selectedFiber?.colors])
 
     return (
         <div className="details__descr">
@@ -92,6 +105,7 @@ const ProductDetails: React.FC<IProps> = ({lang, product, colors,productLoad, mo
                     <span>{product.price}</span>
                 </div>
 
+
                 {product.mods.length > 0 &&
                     <div className="feature wrap_xs">
                         <Selector 
@@ -100,7 +114,8 @@ const ProductDetails: React.FC<IProps> = ({lang, product, colors,productLoad, mo
                             label={{en: 'Version: ', ru: 'Версия: '}}
                             onBlur={(e) => inputChecker({lang, notExact: '-', el: e.target})}
                             defaultData={{...defaultSelectItem}}
-                            ref={selectorTypeRef}/>
+                            ref={selectorTypeRef}
+                            saveItem={onChangeType}/>
                     </div>
                 }
                 <div className="feature wrap_xs">
@@ -108,7 +123,7 @@ const ProductDetails: React.FC<IProps> = ({lang, product, colors,productLoad, mo
                         lang={lang} 
                         id='selector_fiber' 
                         label={{en: 'Fiber: ', ru: 'Материал: '}}
-                        onBlur={(e) => inputChecker({lang, notExact: 'wrongType', el: e.target})}
+                        onBlur={(e) => inputChecker({lang, notExact: '', el: e.target})}
                         defaultData={{...defaultSelectItem}}
                         ref={selectorFiberRef}
                         saveValue={onChangeFiber}
@@ -126,14 +141,13 @@ const ProductDetails: React.FC<IProps> = ({lang, product, colors,productLoad, mo
                     <div className="colors__container wrap_xs">
                         <span>{lang === 'en' ? 'Available colors: ' : 'Доступные цвета: '}: </span>
                         <div className="colors__wrapper">
-                            <ColorSelector lang={lang} colors={colors.colors.filter(color => selectedFiber?.colors.includes(color._id))} onSelect={onSelectColor} modal={modal}/>
+                            <ColorSelector lang={lang} colors={colorsList} onSelect={onSelectColor} modal={modal}/>
                         </div>
                     </div>
                 }
-    
                 
             </div>
-            <AddToCart getData={dataToCart} product={product}/>
+            {isAuth && <AddToCart data={{...dataToCart}} />}
         </div>
     )
 }
@@ -147,7 +161,8 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
     colors: state.colors,
     fibers: state.fibers,
     productLoad: state.catalog.category.loadProduct,
-    modal: state.base.modal.current
+    modal: state.base.modal.current,
+    isAuth: state.user.auth.status === 'success'
 })
 
 

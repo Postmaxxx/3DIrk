@@ -1,5 +1,5 @@
 import './splider-single.scss'
-import { ICatalogState, IFullState, IProduct, IProductShort, ISpliderOptions, TId, TLang,} from "../../../interfaces";
+import { ICatalogState, IFullState, IProductShort, ISpliderOptions, TLang,} from "../../../interfaces";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
@@ -8,6 +8,7 @@ import Splide from "@splidejs/splide";
 import Preloader from '../../../components/Preloaders/Preloader';
 import Gallery from '../../../components/Gallery/Gallery';
 import { allActions } from "../../../redux/actions/all";
+import ErrorFetch from '../../../../src/components/ErrorFetch/ErrorFetch';
 
 
 interface IPropsState {
@@ -79,9 +80,7 @@ const SpliderSingle: React.FC<IProps> = ({lang, catalogState, isAdmin, setState}
 	useEffect(() => {
 		if (!_splideMain.current) return
 
-		if (document.body.offsetWidth < 993) {
-			setProductsPerSlide(4)
-		}
+		document.body.offsetWidth < 993 && setProductsPerSlide(4)
 		
 		spliderSingle.current = new Splide(_splideMain.current, optionsMain);
 		
@@ -107,7 +106,6 @@ const SpliderSingle: React.FC<IProps> = ({lang, catalogState, isAdmin, setState}
 		spliderSingle.current.mount();
 		
 		spliderSingle.current?.go(page);
-
 		
 		return () => {
 			spliderSingle.current?.destroy();
@@ -115,26 +113,28 @@ const SpliderSingle: React.FC<IProps> = ({lang, catalogState, isAdmin, setState}
 	}, [productSlides])
 
 
-
+	const products = useMemo(() => {
+		return productSlides.map((products, i): JSX.Element => {
+			return (
+				<li className="splide__slide" key={i}>
+					<Gallery products={products}/>
+				</li>
+			)
+		})
+	}, [productSlides])
 
 	return (
 		<div className="splider_single__container">
-			{catalogState.category.loadCategory.status === 'success' ? 
-				<div className="splide splider_single" ref={_splideMain} aria-label="">
+			{catalogState.category.loadCategory.status === 'success' && 
+				<div className="splide splider_single" ref={_splideMain}>
 					<div className="splide__track">
 						<ul className="splide__list">
-							{productSlides.map((products, i): JSX.Element => {
-								return (
-									<li className="splide__slide" key={i}>
-										<Gallery products={products}/>
-									</li>
-								)
-							})}
+							{products}
 						</ul>
 					</div>
-				</div>
-			:
-				<Preloader />}
+				</div>}
+			{catalogState.category.loadCategory.status === 'fetching' && <Preloader />}
+			{catalogState.category.loadCategory.status === 'error' && <ErrorFetch lang={lang} fetchData={catalogState.category.loadCategory} />}
 		</div>
 	)
 

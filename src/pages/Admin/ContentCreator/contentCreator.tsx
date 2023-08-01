@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import { allActions } from "../../../redux/actions/all";
 import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFiles';
 import { navList, resetFetch } from '../../../assets/js/consts';
-import { checkAndLoad, errorsChecker, filesDownloader, modalMessageCreator, prevent } from '../../../assets/js/processors';
+import { checkAndLoad, deepCopy, errorsChecker, filesDownloader, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import { useNavigate } from 'react-router-dom';
 import Preloader from '../../../components/Preloaders/Preloader';
 import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
@@ -44,9 +44,9 @@ const SpliderChanger: FC<IProps> = ({lang, content, modal, setState}): JSX.Eleme
             if (content.send.status === 'success') {
                 addFilesRef.current?.clearAttachedFiles()
                 navigate(navList.home.to, { replace: true });
-                setState.content.setSendContent(resetFetch)// clear fetch status
+                setState.content.setSendContent(deepCopy(resetFetch))// clear fetch status
             }
-            setState.content.setSendContent(resetFetch)// clear fetch status
+            setState.content.setSendContent(deepCopy(resetFetch))// clear fetch status
         }
         errChecker.clear()
         modal?.closeCurrent()

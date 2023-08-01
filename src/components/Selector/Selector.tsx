@@ -1,10 +1,10 @@
 import { TLang, TLangText } from "../../interfaces"
-import { useRef, useState, forwardRef, useImperativeHandle } from "react";
+import { useRef, useState, forwardRef, useImperativeHandle, useMemo } from "react";
 import './selector.scss'
 import { defaultSelectItem, empty } from "../../assets/js/consts";
 
 
-interface IItem {
+export interface IItem {
     value: string
     name: TLangText
 }
@@ -18,6 +18,7 @@ interface IProps {
     data?: IItem[]
     onBlur?: (e: React.FocusEvent<HTMLSelectElement>) => void
     saveValue?: (e: React.ChangeEvent<HTMLSelectElement>) => void
+    saveItem?: (itemNew: IItem) => void
     onClick?: (e: React.MouseEvent<HTMLSelectElement>) => void
 }
 
@@ -32,7 +33,7 @@ export interface ISelectorFunctions {
 
 
 
-const Selector = forwardRef<ISelectorFunctions, IProps>(({lang, id, label, defaultData={...defaultSelectItem}, data=[], onBlur, saveValue, onClick}, ref) => {
+const Selector = forwardRef<ISelectorFunctions, IProps>(({lang, id, label, defaultData={...defaultSelectItem}, data=[], onBlur, saveValue, saveItem,  onClick}, ref) => {
     useImperativeHandle(ref, () => ({
         setData(elements) {
             setStore(prev => ({...prev, items: elements}))
@@ -67,18 +68,26 @@ const Selector = forwardRef<ISelectorFunctions, IProps>(({lang, id, label, defau
     const [store, setStore] = useState<IStore>({items: data || [], item: defaultData || {value: '', name: {...empty}}, value: ''})
     const selectRef = useRef<HTMLSelectElement>(null)
 
-    const onChange = (e: React.ChangeEvent<HTMLSelectElement>) => {  
-        setStore(prev => ({
-            ...prev, 
-            item: {value: e.target.value, name: (prev.items.find(el => el.value === e.target.value) as IItem)?.name || {en: '', ru: ''}},
-            value: e.target.value
-        }))
+    const onChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        var itemNew: IItem = {value: e.target.value, name: (store.items.find(el => el.value === e.target.value) as IItem)?.name || {en: '', ru: ''}}
+        setStore(prev => {
+            return {
+                ...prev, 
+                item: itemNew,
+                value: e.target.value
+            }
+        })
+        saveItem && saveItem(itemNew)
         saveValue && saveValue(e)
         e.target.parentElement?.classList.remove('incorrect-value') 
     }
 
      
+    const options = useMemo(() => {
+        return store.items.map((el, i) => <option key={i} value={el.value}>{el.name[lang]}</option>)
+    }, [store.items, lang])
     
+
     return (
         <div className="selector" data-selector="input-block">
             {label && <label htmlFor={id}>{label[lang]}</label>}
@@ -91,7 +100,7 @@ const Selector = forwardRef<ISelectorFunctions, IProps>(({lang, id, label, defau
                 onBlur={onBlur}
                 onClick={onClick}>
                     <option key={-1} value={store.item.value} disabled hidden>{store.item.name[lang]}</option>
-                    {store.items.map((el, i) => <option key={i} value={el.value}>{el.name[lang]}</option>)}
+                    {options}
             </select>
         </div>
     )

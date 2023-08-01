@@ -8,6 +8,7 @@ import { IAllCache } from '../data/cache'
 import { allPaths } from '../data/consts'
 import { folderCleanerS3 } from '../processors/aws'
 import { foldersCleaner } from '../processors/fsTools'
+import { makeDelay } from '../processors/makeDelay'
 import { resizeAndSaveS3 } from '../processors/sharp'
 import { IMulterFile } from './user'
 const cache: IAllCache = require('../data/cache')
@@ -176,7 +177,6 @@ router.get('/get-one',
         if (!newsToRes) {
             return res.status(401).json({message: {en: `No news with the id: ${_id} has been found`, ru: `Новость с _id: ${_id} не найдена`}})
         }
-    
         return res.status(200).json({news: newsToRes, message: {en: `news loaded: ${_id}`, ru: `Новостей загружена: ${_id}`}})
 
     } catch (e) {

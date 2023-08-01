@@ -1,4 +1,4 @@
-import { ICatalogState,  IFullState, TLang } from '../../../interfaces';
+import { ICatalog, ICatalogState,  IFullState, TLang } from '../../../interfaces';
 import './catalog-creator.scss'
 import { FC, useRef, useMemo, useCallback } from "react";
 import { connect } from "react-redux";
@@ -17,7 +17,7 @@ import MessageNew from '../../../../src/components/Message/MessageNew';
 
 interface IPropsState {
     lang: TLang
-    catalogState: ICatalogState
+    catalog: ICatalog
     modal: IModalFunctions | null
 }
 
@@ -30,7 +30,7 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 
-const CategoriesChanger: FC<IProps> = ({lang, setState, modal, catalogState}): JSX.Element => {
+const CategoriesChanger: FC<IProps> = ({lang, setState, modal, catalog}): JSX.Element => {
     const errChecker = useMemo(() => errorsChecker({lang}), [lang])
     const featurerRef = useRef<IFeaturerFunctions>(null)
     const _catalog = useRef<HTMLDivElement>(null)
@@ -38,33 +38,30 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, modal, catalogState}): J
     
     const closeModal = useCallback(() => {
         if (modal?.getName() === 'catalogSend') {
-            if (catalogState.catalog.send.status === 'success') {
+            if (catalog.send.status === 'success') {
                 checkAndLoad({
-                    fetchData: catalogState.catalog.load,
+                    fetchData: catalog.load,
                     loadFunc: setState.catalog.loadCatalog,
                     force: true
                 })
                 errChecker.clear()        
             }
+            setState.catalog.setSendCatalog(resetFetch)
         }
-        if (modal?.getName() === 'errorChecker') {
-            errChecker.clear()
-        }
-        setState.catalog.setSendCatalog(resetFetch)// clear fetch status
         errChecker.clear()
         modal?.closeCurrent()
-	}, [catalogState.catalog.send.status, errChecker])
+	}, [catalog.send.status, errChecker])
 
 
 
     useEffect(() => { 
-        if (catalogState.catalog.send.status === 'idle' || catalogState.catalog.send.status === 'fetching') return
+        if (catalog.send.status === 'idle' || catalog.send.status === 'fetching') return
         modal?.openModal({ //if error/success - show modal about send order
             name: 'catalogSend',
             onClose: closeModal,
-            children: <MessageNew {...modalMessageCreator(catalogState.catalog.send, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
+            children: <MessageNew {...modalMessageCreator(catalog.send, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
         })
-    }, [catalogState.catalog.send.status])
+    }, [catalog.send.status])
 
 
 
@@ -90,19 +87,19 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, modal, catalogState}): J
 
     const fillValues = () => {      
         if (!featurerRef.current) return
-        featurerRef.current.setFeatures(catalogState.catalog.list)
+        featurerRef.current.setFeatures(catalog.list)
     }
 
 
     useEffect(() => {
         checkAndLoad({
-			fetchData: catalogState.catalog.load,
+			fetchData: catalog.load,
 			loadFunc: setState.catalog.loadCatalog,
 		})
-        if (catalogState.catalog.load.status === 'success') {
+        if (catalog.load.status === 'success') {
             fillValues()
         }
-    }, [catalogState.catalog.load.status])
+    }, [catalog.load.status])
 
     
 
@@ -143,8 +140,8 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, modal, catalogState}): J
                                 onEnter={focuser.next}/>
                         </div>
 
-                        <button className='button_blue post' disabled={catalogState.catalog.send.status === 'fetching'} onClick={onSubmit}>
-                            {catalogState.catalog.send.status === 'fetching' ? 
+                        <button className='button_blue post' disabled={catalog.send.status === 'fetching'} onClick={onSubmit}>
+                            {catalog.send.status === 'fetching' ? 
                                 <Preloader />
                             :
                                 <>{lang === 'en' ? 'Save list' : 'Сохранить список'}</>
@@ -161,7 +158,7 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, modal, catalogState}): J
 
 const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
-    catalogState: state.catalog,
+    catalog: state.catalog.catalog,
     modal: state.base.modal.current
 })
 

@@ -12,7 +12,6 @@ import { fibersProperties } from '../../assets/data/fibersProperties';
 import { allActions } from "../../redux/actions/all";
 import { strengthMax, strengthMin, tipsTransition } from '../../assets/js/consts';
 import ImgWithPreloader from '../../assets/js/ImgWithPreloader';
-import { checkAndLoad } from '../../assets/js/processors';
 import ErrorFetch from '../../components/ErrorFetch/ErrorFetch';
 
 
@@ -41,7 +40,6 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
         if (fibersState.load.status === 'success') {
             setFibersList(fibersState.fibersList)
             clearSelected()
-            //setShowList(fibersState.fibersList.map(fiber => fiber._id))
         }        
     }, [fibersState.load.status])
    
@@ -56,8 +54,7 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
             .filter(item => (item as HTMLInputElement).checked)
             .map(input => (input as HTMLInputElement).dataset.fiberselect as IFiber['_id']) 
         if (selectedFibers.length < 2) {
-                setSelectError(true)
-            return
+            return setSelectError(true)
         }
         setShowList(selectedFibers)
         setFiltered(true)
@@ -81,29 +78,26 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
 
     const onCheckbox = () => {
         setSelectError(false)
-        if (filtered) {
-            setSelectedMore(true)
-        }
+        filtered && setSelectedMore(true)
     }
 
 
     const onCellClick = (id: IFiber['_id'], propertyName: string) => { 
         setState.fibers.setSelectedFiber(id)
-        if (propertyName) {
-            setSelectedProperty(propertyName)
-        }
+        propertyName && setSelectedProperty(propertyName)
     }
 
 
     const sortByProperty = (_id: string) => {
         setFibersList(prev => {
-            let reverse: boolean = true //if newFibers already sorted in reverse order 
-            const newFibers = prev.sort((fiberA, fiberB) => { 
+            let reversed: boolean = true //if newFibers already sorted in reverse order 
+            const newFibers = [...prev]
+            newFibers.sort((fiberA, fiberB) => { 
                 const delta = (fiberA.params[_id] as number) - (fiberB.params[_id] as number)
-                delta < 0 && (reverse = false)
+                delta < 0 && (reversed = false)
                 return delta
             })
-            return reverse ? [...newFibers.reverse()] : [...newFibers]
+            return reversed ? newFibers.reverse() : newFibers
         })
     }
 
@@ -134,10 +128,7 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
                             <ImgWithPreloader src={`${fiber.images.paths.small}/${fiber.images.files[0]}`} alt={fiber.images.files[0]}  />
                             <span>{fiber.short.name[lang]}</span>
                         </div>
-                        <NavLink 
-                            to={`../${fiber._id}`}
-                            className='button_blue'
-                            >
+                        <NavLink to={`../${fiber._id}`} className='button_blue'>
                                 {lang === 'en' ? 'Learn more' : 'Подробнее'}
                         </NavLink>
                     </div>

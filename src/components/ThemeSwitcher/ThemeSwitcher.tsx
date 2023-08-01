@@ -34,6 +34,18 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 
+interface IParams {
+	width: number
+	height: number
+	circleSize: number
+	duration: number
+	numberOfStars: number
+	clouds: ICloud[]
+	isChanging: boolean
+	saveState: string
+	typesOfBlink: number
+}
+
 const ThemeSwitcher: React.FC<IProps> = ({mobOpened, lang, theme, setState}): JSX.Element => {
 
 	const _themeSwitcherCont = useRef<HTMLDivElement>(null);
@@ -46,73 +58,57 @@ const ThemeSwitcher: React.FC<IProps> = ({mobOpened, lang, theme, setState}): JS
 		isChanging: false,
 	}) 
 
-
-	interface IParams {
-		width: number
-		height: number
-		circleSize: number
-		duration: number
-		numberOfStars: number
-		clouds: ICloud[]
-		isChanging: boolean
-		saveState: string
-		typesOfBlink: number
-	}
-
-	const params: IParams  = {
-		width: 70,
-		height: 40,
-		circleSize: 14,
-		duration: 2000,
-		numberOfStars: 30,
-		saveState: "theme",
-		typesOfBlink: 6,
-		isChanging: false,
-		clouds: [ //default styles for clouds
-			{
-				width: 30, //px
-				gap: 15, //px
-				top: 0, //in percent of height
-				speed: 7, //sec for 1 cycle, less -> faster
-				opacity: 1, //transparent for line
-			},
-			{
-				width: 25,
-				gap: 20,
-				top: 25,
-				speed: 4,
-				opacity: 0.85,
-			},
-			{
-				width: 20,
-				gap: 20,
-				top: 40,
-				speed: 5,
-				opacity: 0.7,
-			},
-		]
-	};
+	const params: IParams = useMemo(() => (
+		{
+			width: 70,
+			height: 40,
+			circleSize: 14,
+			duration: 2000,
+			numberOfStars: 30,
+			saveState: "theme",
+			typesOfBlink: 6,
+			isChanging: false,
+			clouds: [ //default styles for clouds
+				{
+					width: 30, //px
+					gap: 15, //px
+					top: 0, //in percent of height
+					speed: 7, //sec for 1 cycle, less -> faster
+					opacity: 1, //transparent for line
+				},
+				{
+					width: 25,
+					gap: 20,
+					top: 25,
+					speed: 4,
+					opacity: 0.85,
+				},
+				{
+					width: 20,
+					gap: 20,
+					top: 40,
+					speed: 5,
+					opacity: 0.7,
+				},
+			]
+		}
+	), [])
 
 
-	
-
-	useEffect(() => {
-		if (!_themeSwitcherCont.current) return
-		addToHider(_themeSwitcherCont.current, 50)
-		return () => clearHider()
-	},[]);
-	
 
 	useEffect(() => {
 		themeRef.current = localStorage.getItem(params.saveState) as TTheme
 		applyTheme()
-	},[]);
+		if (!_themeSwitcherCont.current) return
+		addToHider(_themeSwitcherCont.current, 50)
+		return () => clearHider()
+	},[])
+
 
 	useEffect(() => {
 		mobOpened ? _themeSwitcherCont.current?.classList.remove('hide') : _themeSwitcherCont.current?.classList.add('hide')
 	}, [mobOpened])
 	
-
 
 
 
@@ -126,6 +122,7 @@ const ThemeSwitcher: React.FC<IProps> = ({mobOpened, lang, theme, setState}): JS
 		});
 	};
 
+	
 	
 	const applyTheme = () => { //main switcher
 		if (!state.current || state.current.isChanging) return

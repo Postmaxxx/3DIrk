@@ -29,7 +29,6 @@ interface IProps extends IPropsState, IPropsActions {}
 
 const Home:React.FC<IProps> = ({lang, contentState, setState, modal} : IProps): JSX.Element => {
 
-
     useEffect(() => {
         checkAndLoad({
 			fetchData: contentState.load,

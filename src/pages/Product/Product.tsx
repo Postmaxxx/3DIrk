@@ -5,18 +5,20 @@ import Preloader from '../../components/Preloaders/Preloader';
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import { ICatalogState, IColorsState, IFetch, IFibersState, IFullState, TLang } from "../../interfaces";
+import { IFetch, IFullState, IProduct, TLang } from "../../interfaces";
 import SpliderPreview from "../../components/Spliders/Preview/SpliderPreview";
 import ProductDetails from "../../components/ProductDetails/ProductDetails";
 import { allActions } from "../../redux/actions/all";
 import { checkAndLoad } from "../../assets/js/processors";
+import ErrorFetch from "../../../src/components/ErrorFetch/ErrorFetch";
 
 
 interface IPropsState {
 	lang: TLang
-    catalogState: ICatalogState
-    fibersState: IFibersState
+    fibersLoad: IFetch
     colorLoad: IFetch
+    catalogProduct: IProduct
+    catalogLoadProduct: IFetch
 }
 
 interface IPropsActions {
@@ -31,23 +33,23 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 
-const Product: React.FC<IProps> = ({lang, setState, catalogState, colorLoad, fibersState}): JSX.Element => {
+const Product: React.FC<IProps> = ({lang, setState, colorLoad, catalogProduct, fibersLoad, catalogLoadProduct}): JSX.Element => {
     const paramProductId = useParams().productId || ''
     const [loaded, setLoaded] = useState<boolean>(false)
 
 
 
     useEffect(() => {
-        if (colorLoad.status === 'success' && fibersState.load.status === 'success' && catalogState.category.loadProduct.status === 'success' && paramProductId === catalogState.category.product._id) {
+        if (colorLoad.status === 'success' && fibersLoad.status === 'success' && catalogLoadProduct.status === 'success' && paramProductId === catalogProduct._id) {
             setLoaded(true)
         } else {
             checkAndLoad({
                 fetchData: colorLoad,
                 loadFunc: setState.colors.loadColors,
             })
-            if (paramProductId !== catalogState.category.product._id) {
+            if (paramProductId !== catalogProduct._id) {
                 checkAndLoad({
-                    fetchData: catalogState.category.loadProduct,
+                    fetchData: catalogLoadProduct,
                     loadFunc: setState.catalog.loadProduct,
                     args: [paramProductId],
                     force: true
@@ -55,25 +57,31 @@ const Product: React.FC<IProps> = ({lang, setState, catalogState, colorLoad, fib
             } 
             setLoaded(false)
         }
-    },[fibersState.load.status, colorLoad.status, catalogState.category.loadProduct.status, paramProductId])
+    },[fibersLoad.status, colorLoad.status, catalogLoadProduct.status, paramProductId])
     
 
     return (
         <div className="page page_product-details">
             <div className="container_page">
                 <div className="container">
-                    <h1>{catalogState.category.product.name[lang]}</h1>
-                    {loaded ? 
+                    <h1>{catalogProduct.name[lang]}</h1>
+                    {loaded ?
                         <div className="details__block">
                             <div className="details__splider">
-                                <SpliderPreview images={catalogState.category.product.images} sizePreview='preview' sizeMain="medium"  />
+                                <SpliderPreview images={catalogProduct.images} sizePreview='preview' sizeMain="medium"  />
                             </div>
                             <div className="details__descr-order">
                                 <ProductDetails />
                             </div>
                         </div>
                     :
-                        <Preloader />}
+                        <>
+                            {colorLoad.status === 'error' || fibersLoad.status === 'error' || catalogLoadProduct.status === 'error' ? 
+                                <ErrorFetch lang={lang} fetchData={{status: 'error', message: {en: 'Error occured while loading product, try again later', ru: 'Произошла ошибка при загрузке продукта, попробуйте позже'}}} />
+                            :
+                                <Preloader />}
+                        </>
+                    }
                 </div>
             </div>
         </div>
@@ -84,9 +92,10 @@ const Product: React.FC<IProps> = ({lang, setState, catalogState, colorLoad, fib
 
 const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
-    catalogState: state.catalog,
     colorLoad: state.colors.load,
-    fibersState: state.fibers,
+    fibersLoad: state.fibers.load,
+    catalogProduct: state.catalog.category.product,
+    catalogLoadProduct: state.catalog.category.loadProduct
 })
 
 

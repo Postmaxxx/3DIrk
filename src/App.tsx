@@ -76,6 +76,8 @@ const App:React.FC<IProps> = ({lang, isAdmin, isAuth, fibersLoad, setState}):JSX
 	}, [isAdmin])
 
 
+
+
 	return (
 		<HashRouter>
 			<LangSwitcher />

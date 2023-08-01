@@ -68,10 +68,10 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
 
     const closeModal = useCallback(() => {
         if (modal?.getName() === 'fiberSendStatus') {
-            setState.fibers.setSendFibers(resetFetch)// clear fetch status
             if (fibersState.send.status === 'success') {
                 window.location.reload()
             }
+            setState.fibers.setSendFibers(resetFetch)// clear fetch status
         }
         errChecker.clear() 
         modal?.closeCurrent()
@@ -157,7 +157,6 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
                 active: selectorRef.current?.getValue() === 'active' ? true : false
             })
         )
-        // to backend 
         setSubmit(true)     
     }
 

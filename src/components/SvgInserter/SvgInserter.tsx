@@ -1,16 +1,15 @@
 import './svg-inserter.scss'
 
-export type TSvgTypes = 'minus' | 'ok' | 'con' | 'pro' | 'plus' | 'question'
+export type TSvgTypes = 'minus' | 'con' | 'pro' | 'plus' | 'question'
 
 interface ISvgInserter {
     type: TSvgTypes
-    value?: number
     color?: string
 
 }
 
 
-const SvgInserter: React.FC<ISvgInserter> = ({color, type, value}): JSX.Element => {
+const SvgInserter: React.FC<ISvgInserter> = ({color, type}): JSX.Element => {
     let icon: JSX.Element
     
     switch (type) {
@@ -52,16 +51,6 @@ const SvgInserter: React.FC<ISvgInserter> = ({color, type, value}): JSX.Element 
                         c-100.8,0-182.1,27.3-244.1,82c-52.8,46.6-84.9,101.8-96.2,165.5C139.69,266.1,152.39,283.5,170.89,285.8z"/>
                 </svg>
             break;
-
-
-
-
-
-
-
-
-
-
         default:
             icon = <></>
             break;

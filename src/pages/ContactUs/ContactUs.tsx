@@ -6,11 +6,12 @@ import {  IFullState,  IUserState, TLang } from "../../interfaces";
 import {  useEffect, useRef, useMemo, useCallback } from 'react'
 import AddFiles, { IAddFilesFunctions } from "../../components/AddFiles/AddFiles";
 import { allActions } from "../../redux/actions/all";
-import { inputsProps, resetFetch, timeModalClosing } from "../../assets/js/consts";
-import { focusMover, modalMessageCreator, prevent } from "../../assets/js/processors";
+import { inputsProps, resetFetch } from "../../assets/js/consts";
+import { deepCopy, focusMover, modalMessageCreator, prevent } from "../../assets/js/processors";
 import inputChecker from "../../../src/assets/js/inputChecker";
 import { IModalFunctions } from "../../../src/components/Modal/ModalNew";
 import MessageNew from "../../../src/components/Message/MessageNew";
+import Preloader from "../../../src/components/Preloaders/Preloader";
 
 interface IPropsState {
     lang: TLang,
@@ -25,7 +26,6 @@ interface IPropsActions {
 }
 
 interface IProps extends IPropsState, IPropsActions {}
-
 
 
 const ContactUs:React.FC<IProps> = ({lang, userState, modal, setState}): JSX.Element => {
@@ -51,7 +51,7 @@ const ContactUs:React.FC<IProps> = ({lang, userState, modal, setState}): JSX.Ele
             addFilesRef.current.clearAttachedFiles()
         }
         modal?.closeCurrent()
-        setState.user.setSendOrder({...resetFetch})
+        setState.user.setSendOrder(deepCopy(resetFetch))
 	}, [userState.sendOrder.status])
 
 
@@ -184,7 +184,11 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
                                     disabled={userState.sendOrder.status === 'fetching'} 
                                     className="button_order" 
                                     onClick={onSubmit}>
-                                        {lang === 'en' ? 'Send' : "Отправить"}
+                                        {userState.sendOrder.status === 'fetching' ? 
+                                            <Preloader />
+                                            :
+                                            lang === 'en' ? 'Save changes' : "Сохранить изменения" 
+                                        }
                                 </button>
                             </form>
                         </div>

@@ -3,7 +3,7 @@ import Splide from "@splidejs/splide";
 import ImgWithPreloader from '../../../assets/js/ImgWithPreloader';
 import { ISpliderOptions, TImageSizes } from '../../../interfaces';
 import "@splidejs/react-splide/css";
-import { useRef, useEffect, MouseEvent } from 'react'
+import { useRef, useEffect, MouseEvent, useMemo } from 'react'
 import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
 import ImageModalNew from '../../../../src/components/ImageModal/ImageModalNew';
 
@@ -33,7 +33,6 @@ const SpliderCommon: React.FC<IProps> = ({images, defaultSize='full', imagesPerS
 	const _splideFabric = useRef<any>();
 
     const options: Partial<ISpliderOptions> = {
-        //type   : 'loop',
         perPage: imagesPerSlide,
         gap: '5%',
 		rewind: true,
@@ -85,22 +84,26 @@ const SpliderCommon: React.FC<IProps> = ({images, defaultSize='full', imagesPerS
 
 	
 
+	
+	const imagesCommon = useMemo(() => {
+		return images.files?.map((file, i) => {
+			return (
+				<li className="splide__slide" key={i} data-path={images.paths.full}>
+					<div className="splide__slide-container">
+						<ImgWithPreloader src={images.paths[defaultSize] ? `${images.paths[defaultSize]}/${file}` : `${images.paths.full}/${file}`} alt={file} id={String(i)}/>
+					</div>
+				</li>
+			);
+		})
+	}, [images.files])
+
 
 	return (
         <div className='splider_common__wrapper' onClick={(e) => handleImgClick(e)}>
             <div className="splide" ref={_splideFabric} aria-label="The carousel">
                 <div className="splide__track">
                     <ul className="splide__list">
-                        {images.files?.map((file, i) => {
-                            return (
-                                <li className="splide__slide" key={i} data-path={images.paths.full}>
-                                    <div className="splide__slide-container">
-										<ImgWithPreloader src={images.paths[defaultSize] ? `${images.paths[defaultSize]}/${file}` : `${images.paths.full}/${file}`} alt={file} id={String(i)}/>
-                                    </div>
-                                </li>
-                            );
-                        })
-                        }
+                        {imagesCommon}
                     </ul>
                 </div>
             </div>

@@ -49,14 +49,48 @@ const NewsDetails: FC<IProps> = ({lang, setState, newsState, modal, isAdmin }): 
     }, [paramNewsId])
 
 
-    const onDelete = (item: INewsItem) => {
+    /*useEffect(() => {
+        checkAndLoad({
+            fetchData: newsState.loadOne,
+            loadFunc: setState.news.loadOneNews,
+            args: [paramNewsId],
+            force: false
+        })
+    }, [newsState.loadOne])*/
+
+
+    const onDelete = useCallback((item: INewsItem) => {
         setState.news.deleteNews(item._id)
+    }, [newsState.newsList])
+
+    /*
+        /*const getNewsOne = (delay: number) => {
+        setTimeout(() => {
+            newsState.loadOne.controller?.abort(DOMExceptions.byFetch) //force
+            setState.news.loadOneNews(paramNewsId)
+        }, delay)
     }
+    
+    useEffect(() => {
+        getNewsOne(0)
+        return () => {setState.news.setLoadOneNews(resetFetch)}
+    }, [paramNewsId])
+
+
+    useEffect(() => {
+        if (newsState.loadOne.status === 'error') {
+            getNewsOne(gapBetweenRequests)
+        }
+    }, [newsState.loadOne])
+
+
+    const onDelete = useCallback((item: INewsItem) => {
+        setState.news.deleteNews(item._id)
+    }, [])*/
 
 
     const closeModal = useCallback(() => {
         if (modal?.getName() === 'deleteNews') {
-            setState.news.setSendNews(resetFetch)
             if (newsState.send.status === 'success') {
                 navigate(navList.home.to, { replace: true });
                 window.location.reload()
@@ -81,8 +115,9 @@ const NewsDetails: FC<IProps> = ({lang, setState, newsState, modal, isAdmin }): 
                 onClose: closeModal,
                 children: <MessageNew {...modalMessageFromFetch(newsState.loadOne, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
             })
+            
         }
-    }, [newsState.send.status, newsState.loadOne.status])
+    }, [newsState.send, newsState.loadOne])
 
 
     
@@ -98,9 +133,7 @@ const NewsDetails: FC<IProps> = ({lang, setState, newsState, modal, isAdmin }): 
                         <div className="news__details">
                             <>
                                 <div className="block_text">
-                                    {newsState.newsOne.text[lang].split('\n').map((text, i) => {
-                                        return <p key={i}>{text}</p>
-                                    })}
+                                    {newsState.newsOne.text[lang].split('\n').map((text, i) => <p key={i}>{text}</p>)}
                                 </div>
                                 <div className="images__container">
                                     <SpliderCommon 

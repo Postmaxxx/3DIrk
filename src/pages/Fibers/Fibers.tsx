@@ -25,7 +25,7 @@ interface IPropsActions {
 
 interface IProps extends IPropsState, IPropsActions {}
 
-const Fibers:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Element => { 
+const Fibers:React.FC<IProps> = ({lang, fibersState}):JSX.Element => { 
 
 
     const listOfFibers = useMemo(() => (

@@ -1,6 +1,6 @@
 import { AnyAction, Dispatch, bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { useEffect, useRef} from "react";
+import { useEffect, useRef, useMemo} from "react";
 import "@splidejs/react-splide/css";
 import "./splider-preview.scss";
 import { IFullState, ISpliderOptions, TImageSizes, TLang } from "../../../interfaces";
@@ -51,7 +51,6 @@ const SpliderPreview: React.FC<IProps> = ({ modal, images, sizePreview='preview'
 		pagination 	: false,
 		isNavigation: true,
 		focus		: "center",
-		//trimSpace: true,
 		direction   : 'ltr',
 		wheel       : true,
 		releaseWheel: true,
@@ -95,15 +94,6 @@ const SpliderPreview: React.FC<IProps> = ({ modal, images, sizePreview='preview'
 	};
 
 
-    /*const showSlide = (slideToGo: number | string) => {
-		splideThumb.current?.go(slideToGo);
-	};*/
-
-
-	/*function modalKeyListener (e: KeyboardEvent) {
-		e.keyCode === 37 && showSlide("<");
-		e.keyCode === 39 && showSlide(">");
-	}*/
 
 
 	const onImageClick = (e: React.MouseEvent , filename: string) => {
@@ -128,36 +118,45 @@ const SpliderPreview: React.FC<IProps> = ({ modal, images, sizePreview='preview'
 			splideThumb.current?.destroy();
 			splideMain.current?.destroy();
 		};
-		
 	}, []);
 
 
+	const imagesPreview = useMemo(() => {
+		return images.files.map((filename,i) => {
+			return (
+				<li className="splide__slide" key={filename} onClick={(e) => onImageClick(e, filename)}>
+					<ImgWithPreloader src={`${images.paths[sizeMain]}/${filename}`} alt={filename} />
+				</li>
+			);
+		})
+	}, [images.files])
+
+
+	const imagesThumb = useMemo(() => {
+		return images.files.map((filename, i) => {
+			return (
+				<li className="splide__slide" key={filename}>
+					<ImgWithPreloader src={`${images.paths[sizePreview]}/${filename}`} alt={filename} />
+				</li>
+			);
+
+		})
+	}, [images.files])
+
+	
 	return (
         <div className="splider_preview">
 			<div id="spliderMain" className="splide" ref={_splideMain}>
 				<div className="splide__track">
 					<ul className="splide__list">
-						{images.files.map((filename,i) => {
-							return (
-								<li className="splide__slide" key={filename} onClick={(e) => onImageClick(e, filename)}>
-									<ImgWithPreloader src={`${images.paths[sizeMain]}/${filename}`} alt={filename} />
-								</li>
-							);
-						})}
+						{imagesPreview}
 					</ul>
 				</div>
 			</div>
 			<div id="spliderThumbs" className="splide" ref={_splideThumbs}>
 				<div className="splide__track">
 					<ul className="splide__list">
-						{images.files.map((filename, i) => {
-							return (
-								<li className="splide__slide" key={filename}>
-									<ImgWithPreloader src={`${images.paths[sizePreview]}/${filename}`} alt={filename} />
-								</li>
-							);
-		
-						})}
+						{imagesThumb}
 					</ul>
 				</div>
 			</div>

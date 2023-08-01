@@ -54,7 +54,7 @@ export const loadSomeNews = (from: number, amount: number) => {
                 },
             })
             clearTimeout(fetchTimeout)
-            if (response.status !== 200) {
+            if (!response.ok) {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setLoadNews(resErrorFiller(result)))
             }
@@ -100,10 +100,12 @@ export const loadOneNews = (_id: string) => {
                     "Content-Type": 'application/json',
                 },
             })
-            if (response.status !== 200) {
+            if (!response.ok) {
+                console.log('2');
                 const result: IErrRes = await response.json()
                 return dispatch(setLoadOneNews(resErrorFiller(result)))
             }
+            
             clearTimeout(fetchTimeout)
             const result = await response.json()
             dispatch(setDataOneNews({
@@ -185,7 +187,7 @@ export const deleteNews = (_id: string) => {
                 body: JSON.stringify({_id})
             })
             clearTimeout(fetchTimeout)
-            if (response.status !== 200) {
+            if (!response.ok) {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setSendNews(resErrorFiller(result)))
             }

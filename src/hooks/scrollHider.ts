@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 
 export const useScrollHider = () => {
-    const [list, selList] = useState<{el: HTMLElement, threshold: number}[]>([])
+    const [list, setList] = useState<{el: HTMLElement, threshold: number}[]>([])
    
     const onScroll = () => {   
         list.forEach(item => {
@@ -12,11 +12,11 @@ export const useScrollHider = () => {
     }
 
     const add = (newEl: HTMLElement, threshold: number) => {
-        selList(prev => [...prev, {el: newEl, threshold}])
+        setList(prev => [...prev, {el: newEl, threshold}])
     }
 
     const clear = () => {
-        selList([])
+        setList([])
     }
 
 

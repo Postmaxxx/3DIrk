@@ -237,7 +237,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
                 <div className="container">
                     <h1>{lang === 'en' ? 'Edit products' : 'Редактирование товаров  '}</h1>
                     <form ref={_form}>
-                        <h2 className='section-header full-width'>{lang === 'en' ? 'SELECT PRODUCT TO EDIT' : 'ВЫБЕРЕТЕ ТОВАР ДЛЯ РЕДАКТИРОВАНИЯ'}</h2>           
+                        <h2 className='section-header full-width'>{lang === 'en' ? 'SELECT PRODUCT TO EDIT' : 'ВЫБЕРИТЕ ТОВАР ДЛЯ РЕДАКТИРОВАНИЯ'}</h2>           
                         <div className="input-block">
                             <label htmlFor="text-short_en">{lang === 'en' ? 'Category' : 'Категория'}:</label>
                             <div className="selector" data-selector="input-block">

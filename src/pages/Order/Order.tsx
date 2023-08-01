@@ -2,7 +2,7 @@ import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import './order.scss'
-import { ICartState, IColorsState, IFetch, IFibersState, IFullState, TLang } from "../../interfaces";
+import { ICartState, IFetch, IFullState, TLang } from "../../interfaces";
 import { useEffect, useRef, useCallback, useMemo } from 'react'
 import CartContent from "../../components/CartContent/CartContent";
 import AddFiles, { IAddFilesFunctions } from "../../components/AddFiles/AddFiles";
@@ -15,8 +15,8 @@ import MessageNew from "../../../src/components/Message/MessageNew";
 
 interface IPropsState {
     lang: TLang,
-    colorsState: IColorsState
-    fibersState: IFibersState
+    colorsLoad: IFetch
+    fibersLoad: IFetch
     cart: ICartState
     sendOrder: IFetch
     modal: IModalFunctions | null
@@ -34,7 +34,7 @@ interface IProps extends IPropsState, IPropsActions {}
 
 
 
-const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState, modal, setState}): JSX.Element => {
+const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsLoad, fibersLoad, modal, setState}): JSX.Element => {
     const _message = useRef<HTMLTextAreaElement>(null)
     const addFilesRef = useRef<IAddFilesFunctions>(null)
     const _formOrder = useRef<HTMLFormElement>(null)
@@ -118,10 +118,10 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
 
     useEffect(() => {
         checkAndLoad({
-			fetchData: colorsState.load,
+			fetchData: colorsLoad,
 			loadFunc: setState.colors.loadColors,
 		})
-    }, [colorsState.load.status])
+    }, [colorsLoad.status])
 
 
     useEffect(() => {
@@ -136,6 +136,7 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
         (e.target as HTMLElement).parentElement?.classList.remove('incorrect-value') 
     }
 
+    
     return (
         <div className="page_order">
             <div className='container_page'>
@@ -172,7 +173,7 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsState, fibersState
                             </div>
                             <button 
                                 type="submit" 
-                                disabled={cart.load.status !== 'success' || fibersState.load.status !== 'success' || colorsState.load.status !== 'success' || sendOrder.status === 'fetching'} 
+                                disabled={cart.load.status !== 'success' || fibersLoad.status !== 'success' || colorsLoad.status !== 'success' || sendOrder.status === 'fetching'} 
                                 className="button_order" 
                                 onClick={onSubmit}>
                                     {lang === 'en' ? 'Order' : "Заказать"}
@@ -191,8 +192,8 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
     cart: state.user.cart,
     sendOrder: state.user.sendOrder,
-    colorsState: state.colors,
-    fibersState: state.fibers,
+    colorsLoad: state.colors.load,
+    fibersLoad: state.fibers.load,
     modal: state.base.modal.current
 })
 

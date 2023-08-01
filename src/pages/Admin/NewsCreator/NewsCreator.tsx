@@ -272,7 +272,6 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
                                     id="date" 
                                     onChange={onChangeInputs} 
                                     onKeyDown={focuser.next}
-                                    //value={newsItem.date.toISOString().slice(0, 10)}
                                     onBlur={(e) => inputChecker({lang, type: "date", el: e.target})}/>
                             </div>
                         </div>

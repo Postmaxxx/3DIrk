@@ -1,6 +1,6 @@
 import './fiber.scss'
 import { NavLink, useNavigate, useParams  } from 'react-router-dom';
-import { useEffect, useMemo,useCallback, FC } from 'react';
+import { useEffect, useMemo,useCallback } from 'react';
 import { AnyAction, bindActionCreators, Dispatch } from "redux";
 import { connect } from "react-redux";
 import Preloader from '../../components/Preloaders/Preloader';
@@ -11,7 +11,7 @@ import SpliderCommon from '../../components/Spliders/Common/SpliderCommon';
 import Features from '../../components/Params/Params';
 import Proscons from '../../components/Proscons/Proscons';
 import ImgWithPreloader from '../../assets/js/ImgWithPreloader';
-import { checkAndLoad, modalMessageCreator } from '../../assets/js/processors';
+import { checkAndLoad, deepCopy, modalMessageCreator } from '../../assets/js/processors';
 import ErrorFetch from '../../components/ErrorFetch/ErrorFetch';
 import { IModalFunctions } from '../../../src/components/Modal/ModalNew';
 import MessageNew from '../../../src/components/Message/MessageNew';
@@ -35,32 +35,29 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 
-const Fiber: FC<IProps> = ({lang, fibersState, colorsState, setState, modal, isAdmin}):JSX.Element => {
+const Fiber: React.FC<IProps> = ({lang, fibersState, colorsState, setState, modal, isAdmin}):JSX.Element => {
     const paramFiberId = useParams().fiberId || ''
     const navigate = useNavigate()
     
 
     useEffect(() => {
-        if (modal?.getName() === 'fiberSend') {
-            if (fibersState.send.status === 'success' || fibersState.send.status === 'error') {
-                modal?.openModal({ //if error/success - show modal about send order
-                    name: 'fiberSend',
-                    onClose: closeModal,
-                    children: <MessageNew {...modalMessageCreator(fibersState.send, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
-                })
-            }
-            setState.fibers.setSendFibers(resetFetch)// clear fetch status
+        if (fibersState.send.status === 'success' || fibersState.send.status === 'error') {
+            modal?.openModal({ //if error/success - show modal about send order
+                name: 'fiberSend',
+                onClose: closeModal,
+                children: <MessageNew {...modalMessageCreator(fibersState.send, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
+            })
         }
     }, [fibersState.send.status])
 
 
     const closeModal = useCallback(() => {
         if (modal?.getName() === 'fiberSend') {
-            setState.fibers.setSendFibers(resetFetch)
             if (fibersState.send.status === 'success') {
                 navigate(navList.fibers.to, { replace: true });
                 window.location.reload()
             }
+            setState.fibers.setSendFibers(deepCopy(resetFetch))
         }
         modal?.closeCurrent()
 	}, [fibersState.send.status])
@@ -145,7 +142,7 @@ const Fiber: FC<IProps> = ({lang, fibersState, colorsState, setState, modal, isA
                 </div>
             </div>)
         :
-            <ErrorFetch lang={lang} fetchData={{status: 'error', message: {en: 'Fiber not found', ru: 'Данный материал не найден'}}} />
+            <ErrorFetch lang={lang} fetchData={{status: 'error', message: {en: 'Fiber has not been found', ru: 'Данный материал не найден'}}} />
     }, [paramFiberId, lang, fibersState.load.status, colorsState.load.status, fibersState.selected, isAdmin])
 
 

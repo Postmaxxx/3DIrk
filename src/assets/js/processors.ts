@@ -76,7 +76,7 @@ export interface ICheckAndLoad {
 }
 
 
-const checkAndLoad = async ({fetchData, loadFunc, args=[], force=false}: ICheckAndLoad) => {
+/*const checkAndLoad = async ({fetchData, loadFunc, args=[], force=false}: ICheckAndLoad) => {
     if (force) {
         await fetchData.controller && fetchData.controller?.abort(DOMExceptions.byFetch) //cancel current fetch if it continues 
         loadFunc.apply(undefined, args || []) //create new fetch
@@ -86,6 +86,17 @@ const checkAndLoad = async ({fetchData, loadFunc, args=[], force=false}: ICheckA
         }
         if (fetchData.status === 'error') { // create a delay before trying new request       
             setTimeout(() => {loadFunc.apply(undefined, args || [])}, gapBetweenRequests)
+        }
+    }
+}*/
+
+const checkAndLoad = async ({fetchData, loadFunc, args=[], force=false}: ICheckAndLoad) => {
+    if (force) {
+        await fetchData.controller && fetchData.controller?.abort(DOMExceptions.byFetch) //cancel current fetch if it continues 
+        loadFunc.apply(undefined, args || [])
+    } else { //fetch data only once or refetch in case of any error with delay
+        if (fetchData.status === 'idle' || fetchData.status === 'error') {
+            loadFunc.apply(undefined, args || [])
         }
     }
 }

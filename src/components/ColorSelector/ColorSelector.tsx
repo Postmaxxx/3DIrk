@@ -3,6 +3,7 @@ import { IColor, TLang } from "../../interfaces";
 import { useState } from 'react'
 import { IModalFunctions } from '../Modal/ModalNew';
 import ImageModalNew from '../ImageModal/ImageModalNew';
+import { useEffect } from 'react'
 
 
 interface IPropsState {
@@ -16,6 +17,10 @@ interface IPropsState {
 const ColorSelector: React.FC<IPropsState> = ({lang, modal, colors, onSelect}): JSX.Element => {
     const [currentColor, setCurrentColor] = useState<IColor>()
     const [expanded, setExpanded] = useState<boolean>(false)
+
+    useEffect(() => {
+        setCurrentColor(undefined)
+    }, [colors])
 
     
     const onCurrentClick = () => {

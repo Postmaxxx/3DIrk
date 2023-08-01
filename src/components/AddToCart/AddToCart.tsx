@@ -1,6 +1,6 @@
 import { ICartState, IColor, IFiber, IFullState, IProduct, TLang, TLangText } from '../../interfaces';
 import './add-to-cart.scss'
-import { useRef, useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
@@ -19,14 +19,15 @@ interface IPropsState {
 }
 
 interface IParentProps {
-    product: IProduct
-    getData: () => IAddToCart
+    data: {
+        type: TLangText
+        fiber: IFiber['_id'] | undefined
+        color: IColor['_id']
+        product: IProduct        
+    }
 }
 
 export interface IAddToCart {
-    type: TLangText
-    fiber: IFiber['_id'] | undefined
-    color: IColor['_id']
 }
 
 interface IPropsActions {
@@ -40,7 +41,7 @@ interface IProps extends IPropsState, IParentProps, IPropsActions {}
 
 
 
-const AddToCart: React.FC<IProps> = ({getData, product, lang, cart, modal, setState}): JSX.Element => {
+const AddToCart: React.FC<IProps> = ({data, lang, cart, modal, setState}): JSX.Element => {
     const navigate = useNavigate()
     const [amount, setAmount] = useState<number>(1)
     const [amountChangerReset, setAmountChangerReset] = useState<{amount: number}>({amount: 1})
@@ -53,9 +54,9 @@ const AddToCart: React.FC<IProps> = ({getData, product, lang, cart, modal, setSt
         
     const addToCart = () => { 
         errChecker.clear() 
-        !getData().color && errChecker.add(lang === 'en' ? 'Please choose the color' : 'Пожалуйста, выберите цвет');
-        !getData().fiber && errChecker.add(lang === 'en' ? 'Please choose the fiber' : 'Пожалуйста, выберите материал');
-        (getData().type?.en === '') && errChecker.add(lang === 'en' ? 'Please choose the type' : 'Пожалуйста, выберите тип');
+        !data.color && errChecker.add(lang === 'en' ? 'Please choose the color' : 'Пожалуйста, выберите цвет');
+        !data.fiber && errChecker.add(lang === 'en' ? 'Please choose the fiber' : 'Пожалуйста, выберите материал');
+        (data.type?.en === '') && errChecker.add(lang === 'en' ? 'Please choose the type' : 'Пожалуйста, выберите тип');
         !amount && errChecker.add(lang === 'en' ? 'Please set the amount' : 'Пожалуйста, укажите количество')
 
         if (errChecker.amount() > 0) {
@@ -68,11 +69,11 @@ const AddToCart: React.FC<IProps> = ({getData, product, lang, cart, modal, setSt
         }
 
         setState.user.addItem({
-            product, 
             amount, 
-            fiber: getData().fiber as string, 
-            color: getData().color,
-            type: getData().type, 
+            product: data.product, 
+            fiber: data.fiber as string, 
+            color: data.color,
+            type: data.type, 
         })
 
         setAmountChangerReset({amount: 1})
@@ -102,7 +103,7 @@ const AddToCart: React.FC<IProps> = ({getData, product, lang, cart, modal, setSt
             <div className="cart-adder">
                 <span>{lang === 'en' ? 'Amount' : 'Количество'}: </span>
                 <div className="amount-changer__container">
-                    <AmountChanger<IProduct['_id']> idInstance={product._id} initialAmount={amount} reset={amountChangerReset} lang={lang} onChange={onAmountChange} />
+                    <AmountChanger<IProduct['_id']> idInstance={data.product._id} initialAmount={amount} reset={amountChangerReset} lang={lang} onChange={onAmountChange} />
                 </div>
                 <button className='button_news' title='Add to cart' onClick={addToCart}>{lang === 'en' ? 'Add to cart' : 'Добавить в корзину'}</button>
             </div>
