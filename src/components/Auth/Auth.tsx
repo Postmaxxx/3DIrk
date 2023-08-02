@@ -4,14 +4,11 @@ import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { IFullState, ILoggingForm, IUserState, TLang } from '../../interfaces';
-import { setUser, register, login } from "../../redux/actions/user"
 import { inputsProps, resetFetch } from '../../assets/js/consts';
-import { focusMover, prevent } from '../../assets/js/processors';
+import { deepCopy, focusMover, prevent } from '../../assets/js/processors';
 import Hider from '../InputHider/InputHider';
 import inputChecker from '../../assets/js/inputChecker';
-
-const actionsListUser = { setUser, register, login }
-
+import { allActions } from "../../redux/actions/all";
 
 interface IPropsState {
     lang: TLang,
@@ -20,7 +17,7 @@ interface IPropsState {
 
 interface IPropsActions {
     setState: {
-        user: typeof actionsListUser
+        user: typeof allActions.user
     }
 }
 
@@ -42,7 +39,8 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
     const onChangeText: React.ChangeEventHandler<HTMLInputElement> = (e) => {
         const key = e.target.name as keyof ILoggingForm
         setForm({...form, [key]: e.target.value});
-        (e.target as HTMLElement).parentElement?.classList.remove('incorrect-value')            
+        (e.target as HTMLElement).parentElement?.classList.remove('incorrect-value')
+        setState.user.setAuth(deepCopy(resetFetch))
     }
 
 
@@ -190,7 +188,7 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({
     setState: {
-		user: bindActionCreators(actionsListUser, dispatch),
+		user: bindActionCreators(allActions.user, dispatch),
 	}
 })
   

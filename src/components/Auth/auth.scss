@@ -4,13 +4,17 @@
 .login {
     align-self: flex-start;
     margin-top: 100px;
-    padding: 30px;
+    padding: 25px;
     background-color: var(--main);
     border-radius: $brad_lg;
+    max-height: 80%;
+    overflow-y: auto;
     
     @include respond-to(xs) {
         width: 90%;
+        margin-top: 80px;
         border-radius: $brad_md;
+        padding: 20px;
     }
 
 
@@ -25,6 +29,10 @@
             padding-bottom: 20px;
             border-bottom: 1px solid var(--text);
 
+            @include respond-to(xs) {
+                padding-bottom: 10px;
+            }
+
             & > button {
                 text-transform: uppercase;
                 background-color: transparent;
@@ -36,6 +44,10 @@
 
                 @include respond-to(sm) {
                     font-size: 1rem;
+                }
+
+                @include respond-to(xs) {
+                    font-size: .8rem;
                 }
 
 
@@ -77,12 +89,12 @@
                     bottom: 0px;
 
                     @include respond-to(sm) {
-                        scale: 0.8;
+                        scale: 0.75;
                         bottom: -3px;
                     }
 
-                    @include respond-to(sm) {
-                        scale: 0.7;
+                    @include respond-to(xs) {
+                        scale: 0.55;
                         bottom: -4px;
                     }
 
@@ -96,28 +108,26 @@
                 margin-top: 15px;
                 
                 & > .errors__header {
-                    font-size: 18px;
+                    font-size: 1.1rem;
                     font-weight: 600;
                     display: block;
+
+                    @include respond-to(xs) {
+                        font-size: 1rem;
+                    }
                 }
                 
-                & > .errors__name {
-                    font-size: 18px;
-                    font-weight: 600;
-                }
-
-
-                & > ul {
+                & > .errors__list {
                     & > li {
-                        margin-left: 1em;
+                        margin-left: .9rem;
                         font-weight: 600;
                         &::before {
                             content: "\2022"; 
                             color: $color_danger; 
                             font-weight: bold; 
                             display: inline-block; 
-                            width: 1em; 
-                            margin-left: -1em; 
+                            width: 1rem; 
+                            margin-left: -1rem; 
                         }
                     }
                 }
@@ -134,13 +144,6 @@
 
                 & > button {
                     width: 100%;
-
-
-
-                    &.disabled {
-                        opacity: 0.5;
-                        cursor: not-allowed;
-                    }
                 }
             }
         }

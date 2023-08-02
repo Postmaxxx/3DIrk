@@ -31,8 +31,8 @@
     }
 
     @include respond-to(xs) {
-        font-size: .9rem;
-        padding: 5px 30px;
+        font-size: .8rem;
+        padding: 3px 20px;
     }
 
     &:hover {
@@ -40,7 +40,7 @@
     }
 
     &:disabled {
-        opacity: .4;
+        opacity: .5;
         cursor: not-allowed;
     }
 
@@ -168,41 +168,41 @@
 .block_input {
     width: 100%;
     position: relative;
-    padding-top: 30px;
+    padding-top: 15px;
 
     &:first-child {
-        padding-top: 20px;
+        padding-top: 15px;
     }
 
     @include respond-to(sm) {
-        padding-top: 20px;
+        padding-top: 10px;
     }
 
     & > label {
         display: block;
-        font-size: 1.1rem;
+        font-size: 1rem;
         transition: color $transition_theme;
         font-weight: 600;
         color: var(--text);
-        margin-bottom: 5px;
+        margin-bottom: 3px;
         
         @include respond-to(sm) {
-            font-size: 1rem;
+            font-size: .9rem;
             margin-bottom: 3px;
         }
 
         @include respond-to(xs) {
-            font-size: .9rem;
+            font-size: .8rem;
             margin-bottom: 2px;
         }
     }
 
 
     & > input {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
         width: 100%;
         outline: none;
-        padding: 5px 10px;
+        padding: 3px 7px;
         background-color: var(--inputs-bg);
         color: $black;
         transition: background-color $transition_theme, border $transition_base;
@@ -211,17 +211,22 @@
         font-weight: 500;
 
         @include respond-to(sm) {
-            font-size: 1.1rem;
+            font-size: 1rem;
             padding: 3px 5px;
         }
 
         @include respond-to(xs) {
-            font-size: 1rem;
+            font-size: .8rem;
+            padding: 2px 3px;
             border-radius: $brad_sm;
         }
 
         &:focus{
             border: 2px solid $black;
+
+            @include respond-to(xs) {
+                border: 1px solid $black;
+            }
         }
     }
 
@@ -237,16 +242,16 @@
             font-weight: 600;
             
             @include respond-to(sm) {
-                font-size: .8rem;
+                font-size: .7rem;
             }
 
             @include respond-to(xs) {
-                font-size: .7rem;
+                font-size: .6rem;
             }
         }
     
         & > input, textarea, select {
-            animation: inputshake 0.2s ease-in-out 0s 2;
+            animation: inputshake $transition-fast ease-in-out 0s 2;
             background-color: rgb(238, 167, 167) !important;
         }
     }
