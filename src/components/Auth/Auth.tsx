@@ -43,7 +43,6 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
         const key = e.target.name as keyof ILoggingForm
         setForm({...form, [key]: e.target.value});
         (e.target as HTMLElement).parentElement?.classList.remove('incorrect-value')            
-        setState.user.setUser({auth: resetFetch});
     }
 
 
@@ -55,11 +54,10 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
 
     const onSubmit: React.EventHandler<any> = (e) => {
         prevent(e)
-
         //check errors
         focuser.focusAll(); //run over all elements to get all errors
-        const errorFields = document.querySelector(processedContainer)?.querySelectorAll('.incorrect-value')
-        if (errorFields && errorFields?.length > 0) return
+        const errorFields = document.querySelector(processedContainer)?.querySelectorAll('.incorrect-value') || []
+        if (errorFields?.length > 0) return
 
         register ? setState.user.register(form) : setState.user.login(form)
     }
@@ -91,20 +89,19 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
                 </div>
                 <form className='login__form' data-selector="auth-form">
                     {register &&
-                        <div className="input-block" data-selector="input-block">
-                            <label htmlFor="name">{lang === 'en' ? 'Your name' : 'Ваше имя'}</label>
-                            <input 
-                                data-selector="input"
-                                className="input-element"
-                                name="name"
-                                id="user_user_name" 
-                                type="text" 
-                                onChange={onChangeText}
-                                value={form.name}
-                                onKeyDown={focuser.next}
-                                onBlur={(e) => inputChecker({lang, min: inputsProps.name.min, max:inputsProps.name.max, el: e.target})}/>
-                        </div>}
-                    <div className="input-block" data-selector="input-block">
+                    <div className="block_input" data-selector="input-block">
+                        <label htmlFor="name">{lang === 'en' ? 'Your name' : 'Ваше имя'}</label>
+                        <input 
+                            data-selector="input"
+                            name="name"
+                            id="user_user_name" 
+                            type="text" 
+                            onChange={onChangeText}
+                            value={form.name}
+                            onKeyDown={focuser.next}
+                            onBlur={(e) => inputChecker({lang, min: inputsProps.name.min, max:inputsProps.name.max, el: e.target})}/>
+                    </div>}
+                    <div className="block_input" data-selector="input-block">
                         <label htmlFor="user_email">{lang === 'en' ? 'Your email' : 'Ваша почта'}</label>
                         <input 
                             data-selector="input"
@@ -118,7 +115,7 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
                             onBlur={(e) => inputChecker({lang, min:inputsProps.email.min, max:inputsProps.email.max, type: 'email', el: e.target})}/>
                     </div>
                     {register &&
-                        <div className="input-block" data-selector="input-block">
+                        <div className="block_input" data-selector="input-block">
                             <label htmlFor="user_phone">{lang === 'en' ? 'Your phone' : 'Ваш телефон'}</label>
                             <input 
                                 data-selector="input"
@@ -132,7 +129,7 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
                                 onBlur={(e) => inputChecker({lang, min:inputsProps.phone.min, max:inputsProps.phone.max, type: 'phone', el: e.target})}/>
                         </div>
                     }
-                    <div className="input-block" data-selector="input-block">
+                    <div className="block_input" data-selector="input-block">
                         <label htmlFor="user_password">{lang === 'en' ? 'Your password' : 'Ваш пароль'}</label>
                         <input 
                             data-selector="input"
@@ -147,7 +144,7 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
                         <Hider hidden={hideInput} onClick={() => setHideInput(prev => !prev)} />
                     </div>
                     {register &&
-                        <div className="input-block" data-selector="input-block">
+                        <div className="block_input" data-selector="input-block">
                             <label htmlFor="user_repassword">{lang === 'en' ? 'Your password' : 'Ваш пароль'}</label>
                             <input 
                                 data-selector="input"
@@ -170,14 +167,14 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
                         </div>
                     }
                     <div className="control__container">
-                        <button className='button_blue' type="submit" onClick={onSubmit} disabled={userState.auth.status === 'fetching'}>
+                        <button className='button_blue color_reverse' type="submit" onClick={onSubmit} disabled={userState.auth.status === 'fetching'}>
                             {register ? 
                                 lang === 'en' ? 'Register' : 'Регистрация' 
                                 :  
                                 lang === 'en' ? 'Login' : 'Вход'
                             }
                         </button>
-                        <button className='button_blue' onClick={onCancelClick}>{lang === 'en' ? 'Cancel' : 'Отмена'}</button>
+                        <button className='button_blue color_reverse' onClick={onCancelClick}>{lang === 'en' ? 'Cancel' : 'Отмена'}</button>
                     </div>
                 </form>
             </div>

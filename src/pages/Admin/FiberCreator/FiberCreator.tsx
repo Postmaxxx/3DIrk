@@ -101,29 +101,29 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
         //check DESCRIPTION
         focuserDescr.focusAll(); //run over all elements to get all errors
         const errorDescrFields = _descr.current.querySelectorAll('.incorrect-value')
-        if (errorDescrFields && errorDescrFields?.length > 0) {
+        if (errorDescrFields?.length > 0) {
             errChecker.add(lang === 'en' ? 'Some fields in description are filled incorrectly' : 'Некоторые поля в описании заполнены неправильно')
         }  
         //check Specifications
         focuserSpec.focusAll(); //run over all elements to get all errors
         const errorSpecFields = _spec.current.querySelectorAll('.incorrect-value')
-        if (errorSpecFields && errorSpecFields?.length > 0) {
+        if (errorSpecFields?.length > 0) {
             errChecker.add(lang === 'en' ? 'Some fields in specifications are filled incorrectly' : 'Некоторые поля в параметрах заполнены неправильно')
         }  
         const allSpec = {} as IFiberParam; //create {} with all specs
-        _spec.current.querySelectorAll('input, select').forEach(item => {     
+        _spec.current.querySelectorAll('input, select')?.forEach(item => {     
             allSpec[item.id] = (item as HTMLInputElement | HTMLSelectElement).value 
         })
         //check Pros
         focuserPros.focusAll(); //run over all elements to get all errors
-        const errorProsFields = _pros.current.querySelectorAll('.incorrect-value')
-        if (errorProsFields && errorProsFields?.length > 0) {
+        const errorProsFields = _pros.current.querySelectorAll('.incorrect-value') 
+        if (errorProsFields?.length > 0) {
             errChecker.add(lang === 'en' ? 'Some fields in pros are filled incorrectly' : 'Некоторые поля в плюсах заполнены неправильно')
         }  
         //check Cons
         focuserCons.focusAll(); //run over all elements to get all errors
         const errorConsFields = _cons.current.querySelectorAll('.incorrect-value')
-        if (errorConsFields && errorConsFields?.length > 0) {
+        if (errorConsFields?.length > 0) {
             errChecker.add(lang === 'en' ? 'Some fields in cons are filled incorrectly' : 'Некоторые поля в минусах заполнены неправильно')
         }  
         //check Images
@@ -271,7 +271,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
         const selectedFiber = fibersState.fibersList.find(item => item._id === _id)
         if (selectedFiber) { //fiber exists
             //specifications
-            _spec.current.querySelectorAll('input, select').forEach(item => {
+            _spec.current.querySelectorAll('input, select')?.forEach(item => {
                 (item as HTMLInputElement | HTMLSelectElement).value = String(selectedFiber.params[item.id] || '')
             })
             //proscons
@@ -288,7 +288,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
             selectorRef.current.setValue(selectedFiber.active ? statuses.active.value : statuses.suspended.value)
         } else { //new fiber
             //specifications
-            _spec.current.querySelectorAll('input, select').forEach(item => {
+            _spec.current.querySelectorAll('input, select')?.forEach(item => {
                 (item as HTMLInputElement | HTMLSelectElement).value = ''
             })
             //proscons

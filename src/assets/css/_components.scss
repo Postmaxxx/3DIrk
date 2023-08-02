@@ -1,14 +1,21 @@
 @use "./variables" as *;
 
+.button_link {
+    background-color: transparent;
+    padding: 0;
+    margin: 0;
+    border: none;
+}
+
 .button_blue {
     align-self: flex-start;
     padding: 8px 50px;
-    border-radius: 10px;
+    border-radius: $brad_lg;
     color: var(--text);
     background-color: var(--main);
     transition: background-color $transition_theme, color $transition_theme, box-shadow $transition_fast;
-    font-size: 18px;
-    font-weight: 700;
+    font-size: 1.1rem;
+    font-weight: 600;
     border: none;
     cursor: pointer;
     display: flex;
@@ -16,13 +23,34 @@
     position: relative;
     border-radius: 5px; 
     min-height: 40px;
+    justify-content: center;
+
+    @include respond-to(sm) {
+        font-size: 1rem;
+        padding: 6px 40px;
+    }
+
+    @include respond-to(xs) {
+        font-size: .9rem;
+        padding: 5px 30px;
+    }
 
     &:hover {
-        box-shadow: 0px 0px 15px 0px var(--main);;
+        box-shadow: 0px 0px 15px 0px var(--main);
     }
 
     &:disabled {
         opacity: .4;
+        cursor: not-allowed;
+    }
+
+    &.color_reverse {
+        color: var(--text_reverse);
+        background-color: var(--main_em);
+        
+        &:hover {
+            box-shadow: 0px 0px 15px 0px var(--main_em);
+        }
     }
 }
 
@@ -81,7 +109,7 @@
 
 
     &:hover {
-        box-shadow: 0px 0px 20px var(--main_vv)
+        box-shadow: 0px 0px 20px var(--main_em)
     }
 }
 
@@ -132,10 +160,105 @@
     }
 
     &:hover {
-        border-color: 1px solid var(--main_vv);
+        border-color: 1px solid var(--main_em);
         transition: border $transition_fast;
     }
 }
+
+.block_input {
+    width: 100%;
+    position: relative;
+    padding-top: 30px;
+
+    &:first-child {
+        padding-top: 20px;
+    }
+
+    @include respond-to(sm) {
+        padding-top: 20px;
+    }
+
+    & > label {
+        display: block;
+        font-size: 1.1rem;
+        transition: color $transition_theme;
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 5px;
+        
+        @include respond-to(sm) {
+            font-size: 1rem;
+            margin-bottom: 3px;
+        }
+
+        @include respond-to(xs) {
+            font-size: .9rem;
+            margin-bottom: 2px;
+        }
+    }
+
+
+    & > input {
+        font-size: 1.2rem;
+        width: 100%;
+        outline: none;
+        padding: 5px 10px;
+        background-color: var(--inputs-bg);
+        color: $black;
+        transition: background-color $transition_theme, border $transition_base;
+        border: 2px solid transparent;
+        border-radius: $brad_md;
+        font-weight: 500;
+
+        @include respond-to(sm) {
+            font-size: 1.1rem;
+            padding: 3px 5px;
+        }
+
+        @include respond-to(xs) {
+            font-size: 1rem;
+            border-radius: $brad_sm;
+        }
+
+        &:focus{
+            border: 2px solid $black;
+        }
+    }
+
+    &.incorrect-value {
+        &::after {
+            content: attr(data-error-text);
+            font-size: .9rem;
+            color: var(--text);
+            position: absolute;
+            top: calc(100%);
+            left: 50%;
+            transform: translateX(-50%);
+            font-weight: 600;
+            
+            @include respond-to(sm) {
+                font-size: .8rem;
+            }
+
+            @include respond-to(xs) {
+                font-size: .7rem;
+            }
+        }
+    
+        & > input, textarea, select {
+            animation: inputshake 0.2s ease-in-out 0s 2;
+            background-color: rgb(238, 167, 167) !important;
+        }
+    }
+
+    @keyframes inputshake {
+        0% { margin-left: 0rem; }
+        25% { margin-left: 0.5rem; }
+        75% { margin-left: -0.5rem; }
+        100% { margin-left: 0rem; }
+    }
+}
+
 
 
 

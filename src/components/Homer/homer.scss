@@ -4,7 +4,7 @@
 .homer {
     width: 40px;
     height: 40px;
-    background-color: var(--main_vv);
+    background-color: var(--main_em);
     position: fixed;
     bottom: 30px;
     right: 0;
@@ -19,7 +19,7 @@
     cursor: pointer;
 
     & > svg {
-        fill: var(--text_vv);
+        fill: var(--text_reverse);
         transition: fill $transition_theme;
     }
 

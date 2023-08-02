@@ -20,7 +20,7 @@
         box-sizing: border-box;
         content: '';
         border: 6px solid transparent;
-        border-top: 6px solid var(--main_vv);
+        border-top: 6px solid var(--main_em);
         height: 12px;
         width: 12px;
         position: absolute;
@@ -77,7 +77,7 @@
                     width: 30px;
                     flex-shrink: 0;
                     /*& path {
-                        fill: var(--main_vv);
+                        fill: var(--main_em);
                     }*/
                 }
 
@@ -106,7 +106,7 @@
             width: 30px;
             flex-shrink: 0;
             & path {
-                fill: var(--main_vv);
+                fill: var(--main_em);
             }
         }*/
 
@@ -122,7 +122,7 @@
     }
 
     & .current {
-        border: 1px solid var(--main_vv);
+        border: 1px solid var(--main_em);
         height: 100%;
         width: 100%;
         border-radius: 5px;
@@ -157,7 +157,7 @@
             max-height: none;
             max-height: 300px;
             overflow: auto;
-            border: 1px solid var(--main_vv);
+            border: 1px solid var(--main_em);
             border-top: none;
             transition: max-height $transition_fast, border 0s 0s;
 

@@ -12,7 +12,7 @@
     align-items: center;
     justify-content: center;
     visibility: hidden;
-    transition: $transition_nav_menu;
+    transition: $transition_nav;
     background-color: rgba(#222, 0.95);
     opacity: 0;
 
@@ -40,7 +40,7 @@
         align-items: center;
         justify-content: center;
         transform: scale(0);
-        transition: $transition_nav_menu;
+        transition: $transition_nav;
         
     }
 

@@ -112,7 +112,7 @@ const ProductDetails: React.FC<IProps> = ({lang, product, colors,productLoad, mo
                             lang={lang} 
                             id='selector_type' 
                             label={{en: 'Version: ', ru: 'Версия: '}}
-                            onBlur={(e) => inputChecker({lang, notExact: '-', el: e.target})}
+                            onBlur={(e) => inputChecker({lang, notExact: '', el: e.target})}
                             defaultData={{...defaultSelectItem}}
                             ref={selectorTypeRef}
                             saveItem={onChangeType}/>
@@ -139,7 +139,7 @@ const ProductDetails: React.FC<IProps> = ({lang, product, colors,productLoad, mo
                 </div>
                 {selectedFiber &&
                     <div className="colors__container wrap_xs">
-                        <span>{lang === 'en' ? 'Available colors: ' : 'Доступные цвета: '}: </span>
+                        <span>{lang === 'en' ? 'Available colors' : 'Доступные цвета'}: </span>
                         <div className="colors__wrapper">
                             <ColorSelector lang={lang} colors={colorsList} onSelect={onSelectColor} modal={modal}/>
                         </div>

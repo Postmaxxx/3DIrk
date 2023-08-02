@@ -70,7 +70,7 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, modal, catalog}): JSX.El
         if (!featurerRef.current || !_catalog.current) return
         focuser.focusAll();//run over all elements to get all errors
         const errorFields = _catalog.current.querySelectorAll('.incorrect-value')
-        if (errorFields && errorFields?.length > 0) {
+        if (errorFields?.length > 0) {
             errChecker.add(lang === 'en' ? 'Empty inputs exists' : 'Есть незаполненная поля')
         }
         if (errChecker.amount() > 0) {

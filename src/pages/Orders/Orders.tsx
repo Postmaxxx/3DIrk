@@ -46,7 +46,7 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
 
 
     useEffect(() => {
-        setTotalPages(new Array(Math.ceil(ordersState.users.length / usersPerPage)).fill('').map((item, i) => String(i+1)))
+        setTotalPages(new Array(Math.ceil(ordersState.users.length / usersPerPage) || 1).fill('')?.map((item, i) => String(i+1)))
         setPage(0)
     }, [ordersState.users])
 
@@ -142,7 +142,7 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
 
     const userTable = ordersState.users
         .filter((user, i) => (i >= page*usersPerPage && i < (page+1)*usersPerPage))
-        .map((user, i: number) => {
+        ?.map((user, i: number) => {
             return (
                 <div className="block_user" key={user.userInfo._id}>
                     <h3 className='user__header'>{user.userInfo.name}</h3>
@@ -202,7 +202,7 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
 
     const userList = useMemo(() => {
         return (
-            ordersState.userList.list.map(item => (
+            ordersState.userList.list?.map(item => (
                 <option key={item._id} value={item._id}>{item.name} - {item.email}</option>
             ))
         )

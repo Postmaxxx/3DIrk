@@ -27,7 +27,7 @@ const Params: React.FC<IProps> = ({params, lang, fiber}): JSX.Element => {
     const renderPropery = useMemo(() => {
         return fibersProperties
             .filter(param => param._id !== 'maxTemp')
-            .map((param) => {
+            ?.map((param) => {
                 return (
                     <div className="param__container" key={param._id}>
                         {switchType(param)}

@@ -21,18 +21,18 @@ const Footer: FC<IFooter>  = ({lang}):JSX.Element => {
                         <span className='footer__copyright'>PrintIrk © 2023</span>
                         <div className="footer__social">
                             <span>{lang === 'en' ? "We are in socials" : "Мы в соцсетях"}: </span>
-                            <div className="social_links">
+                            <div className="social__links">
                                 <a href={socials.telegram}>
-                                    <img src={iconTelegram} alt="Our Telegram" title="Join us in Telegram"/>
+                                    <img src={iconTelegram} alt={lang === 'en' ? "Our Telegram" : 'Наш Telegram'} title={lang === 'en' ? "Join us in Telegram" : 'Присоединяйтесь к нам в Telegram'}/>
                                 </a>
                                 <a href={socials.vk}>
-                                    <img src={iconWhatsapp} alt="Our VK" title="Join us in VK"/>
+                                    <img src={iconWhatsapp} alt={lang === 'en' ? "Our VK" : 'Наш VK'} title={lang === 'en' ? "Join us in VK" : 'Присоединяйтесь к нам в VK'}/>
                                 </a>
                                 <a href={socials.instagram}>
-                                    <img src={iconInstagram} alt="Our Instagram" title="Join us in Instagram"/>
+                                    <img src={iconInstagram} alt={lang === 'en' ? "Our Instagram" : 'Наш Instagram'} title={lang === 'en' ? "Join us in Instagram" : 'Присоединяйтесь к нам в Instagram'}/>
                                 </a>
                                 <a href={socials.youtube}>
-                                    <img src={iconYoutube} alt="Our Youtube" title="Our Youtube channel"/>
+                                    <img src={iconYoutube} alt={lang === 'en' ? "Our Youtube" : 'Наш Youtube'} title={lang === 'en' ? "Join us in Youtube" : 'Присоединяйтесь к нам в Youtube'}/>
                                 </a>
                             </div>
                         </div>

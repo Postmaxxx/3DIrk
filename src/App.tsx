@@ -18,6 +18,7 @@ import { checkAndLoad } from "./assets/js/processors";
 import ThemeSwitcher from "./components/ThemeSwitcher/ThemeSwitcher";
 import PreloaderPage from "./components/Preloaders/PreloaderPage";
 import ModalNew, { IModalFunctions } from "./components/Modal/ModalNew";
+import useScreenMeter from "./hooks/screenMeter";
 
 
 const LazyHomePage = lazy(() => import("./pages/Home/Home"));
@@ -75,15 +76,14 @@ const App:React.FC<IProps> = ({lang, isAdmin, isAuth, fibersLoad, setState}):JSX
 		})
 	}, [isAdmin])
 
-
-
+	const screenWidth = useScreenMeter()
 
 	return (
 		<HashRouter>
-			<LangSwitcher />
+			{!screenWidth.sm && <LangSwitcher />}
+			{!screenWidth.sm && <ThemeSwitcher />}
 			<Homer />
 			<Offliner lang={lang}/>
-			<ThemeSwitcher />
 			<Header />
 		
 			<Routes>

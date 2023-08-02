@@ -63,7 +63,7 @@ const ContactUs:React.FC<IProps> = ({lang, userState, modal, setState}): JSX.Ele
         //check errors
         focuser.focusAll(); //run over all elements to get all errors
         const errorFields = formContact.current.querySelectorAll('.incorrect-value')
-        if (errorFields && errorFields?.length > 0) return
+        if (errorFields?.length > 0) return
         const files = addFilesRef.current.getFiles() // attached files
 
         const textOrder: string = 

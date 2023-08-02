@@ -30,7 +30,7 @@
 
             @include respond-to(md) {
                 grid-template-columns: 100px 1fr;
-                border-bottom: 1px solid var(--main_vv);
+                border-bottom: 1px solid var(--main_em);
                 margin-top: 30px;
                 padding-bottom: 35px;
 
@@ -186,7 +186,7 @@
             margin-right: auto;
             margin-left: auto;
             margin-top: 40px;
-            background-color: var(--main_vv);
+            background-color: var(--main_em);
         }
 
 
@@ -194,7 +194,7 @@
             margin-left: auto;
             margin-top: 30px;
             width: fit-content; 
-            background-color: var(--main_vv);
+            background-color: var(--main_em);
 
             @include respond-to(xs) {
                 width: 100%;

@@ -58,7 +58,7 @@ export const loadColors = () => {
                 return dispatch(setLoadColors(resErrorFiller(result)))
             }
             const result: {colors: IColorGet[]} = await response.json()
-            const resultProcessed = result.colors.map((item) => {
+            const resultProcessed = result.colors?.map((item) => {
                 return {
                     _id: item._id,
                     name: item.name,

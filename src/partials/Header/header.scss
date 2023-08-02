@@ -8,7 +8,7 @@ header {
     position: sticky;
     top: 0;
     z-index: 5000;
-    border-bottom: 2px solid var(--main_vv);
+    border-bottom: 2px solid var(--main_em);
     & * {
         -webkit-user-drag: none !important;
         user-select: none !important;  
@@ -23,7 +23,7 @@ header {
         transition: $transition_theme;
 
 
-        & .logo-link {
+        & .header__link {
             height: 100%;
             display: flex;
             align-items: center;

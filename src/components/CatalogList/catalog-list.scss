@@ -6,7 +6,7 @@
     display: flex;
     align-items: center;
     margin-right: 4%;
-    border-right: 1px solid var(--main_vv);
+    border-right: 1px solid var(--main_em);
     transition: border $transition_theme;
     padding-right: 30px;
     height: 100%;
@@ -15,7 +15,7 @@
 
     @include respond-to(sm) {
         border-right: none;
-        border-top: 2px solid var(--main_vv);
+        border-top: 2px solid var(--main_em);
         transition: border $transition_theme;
         padding-right: 0;
         margin-right: 0;
@@ -27,7 +27,7 @@
             content: '';
             width: 30%;
             height: 1px;
-            background-color: var(--main_vv);
+            background-color: var(--main_em);
             transition: background-color $transition_theme;
 
             position: absolute;
@@ -87,8 +87,8 @@
                 }
     
                 &.selected {
-                    background-color: var(--main_vv);
-                    color: var(--text_vv)
+                    background-color: var(--main_em);
+                    color: var(--text_reverse)
                 }
             }
         }

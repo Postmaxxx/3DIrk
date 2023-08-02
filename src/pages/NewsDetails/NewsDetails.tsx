@@ -133,7 +133,7 @@ const NewsDetails: FC<IProps> = ({lang, setState, newsState, modal, isAdmin }): 
                         <div className="news__details">
                             <>
                                 <div className="block_text">
-                                    {newsState.newsOne.text[lang].split('\n').map((text, i) => <p key={i}>{text}</p>)}
+                                    {newsState.newsOne.text[lang].split('\n')?.map((text, i) => <p key={i}>{text}</p>)}
                                 </div>
                                 <div className="images__container">
                                     <SpliderCommon 

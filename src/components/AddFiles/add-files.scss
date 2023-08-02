@@ -13,7 +13,7 @@
     //padding-bottom: 20px;
     //padding-top: 30px;
     border-radius: 4px;
-    background-color: var(--main_vv);
+    background-color: var(--main_em);
     transition: background-color $transition_theme;
     padding: 30px 20px;
 
@@ -86,7 +86,7 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                border: 2px solid var(--main_vv);
+                border: 2px solid var(--main_em);
                 transition: border $transition-theme;
                 border-radius: 5px;
 

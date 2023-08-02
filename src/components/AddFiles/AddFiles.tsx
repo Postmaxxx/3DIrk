@@ -64,9 +64,7 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, multiple, id}, r
     const dragLeave = (e: DragEvent) => {
         preventDefaults(e)
         dragCounter--
-        if (dragCounter === 0) {
-            _dropArea.current?.classList.remove('active')
-        }
+        dragCounter === 0 && _dropArea.current?.classList.remove('active')
     }
 
     

@@ -97,7 +97,7 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsLoad, fibersLoad, 
                 text={[lang === 'en' ? 
                     'Some items have been removed from your cart as unavalable for order:' 
                     : 'Некоторые товары были удалены из вашей корзины т.к. они больше недоступны для заказа:',
-                ...cart.fixed.map((item, i) => (`${i+1}) ${item[lang]}`))]}
+                ...cart.fixed?.map((item, i) => (`${i+1}) ${item[lang]}`))]}
                 buttonClose={{action: closeModalMessage, text: 'Close'}}
             />
         })

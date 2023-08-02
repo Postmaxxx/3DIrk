@@ -15,45 +15,45 @@ $duration: 2000ms;
 .theme-switcher__container {
     position: fixed;
     right: 20px;
-    top: 100px;
+    top: 80px;
     width: 70px;
     height: 40px;
     overflow: hidden;
-    z-index: 5500;
     transition: background-color $transition_theme, left $nav_mobile_delay, right $nav_mobile_delay, opacity $nav_mobile_delay;
+    z-index: 5000;
+
     & * {
         -webkit-user-drag: none !important;
         user-select: none !important;  
     }
+    
+    @include respond-to(md) {
+        top: 75px;
+        transform: scale(0.85);
+    }
 
     @include respond-to(sm) {
-        transform: scale(0.85);
-        top: calc($header_height + 55px);
-        right: 25%;
-        //left: initial;
-        transition: background-color $transition_theme, left $nav_mobile_delay $transition_nav, right $nav_mobile_delay $transition_nav, opacity $nav_mobile_delay $transition_nav;
+        z-index: 5500;
+        transform: scale(0.70);
+        position: relative;
+        left: initial;
+        right: initial;
+        top: initial;
+
     }
     
     @include respond-to(xs) {
-        transform: scale(0.7);
+        transform: scale(0.6);
     }
 
     &.scrolled {
         right: -70px;
 
         @include respond-to(sm) {
-            right: 25%;
-            left: initial
+            right: initial;
         }
     }
 
-    &.hide {
-        @include respond-to(sm) {
-            right: 75%;
-            opacity: 0;
-            transition: background-color $transition_theme, right $nav_mobile_delay, opacity $nav_mobile_delay;
-        }
-    }
 
 
 

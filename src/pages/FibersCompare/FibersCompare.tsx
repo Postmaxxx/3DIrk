@@ -45,14 +45,14 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
    
 
     const clearCheckboxes = useCallback(() => {
-        Array.from(document.querySelectorAll('[data-fiberselect]')).forEach(item => (item as HTMLInputElement).checked = false)
+        Array.from(document.querySelectorAll('[data-fiberselect]'))?.forEach(item => (item as HTMLInputElement).checked = false)
     }, [])
 
 
     const compareSelected = useCallback(() => {       
         const selectedFibers:IFiber['_id'][] = Array.from(document.querySelectorAll('[data-fiberselect]'))
-            .filter(item => (item as HTMLInputElement).checked)
-            .map(input => (input as HTMLInputElement).dataset.fiberselect as IFiber['_id']) 
+            ?.filter(item => (item as HTMLInputElement).checked)
+            ?.map(input => (input as HTMLInputElement).dataset.fiberselect as IFiber['_id']) 
         if (selectedFibers.length < 2) {
             return setSelectError(true)
         }
@@ -70,7 +70,7 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
 
     const clearSelected = () => {
         setFiltered(false)  
-        setShowList(fibersState.fibersList.filter(fiber => fiber.active).map(fiber => fiber._id))
+        setShowList(fibersState.fibersList.filter(fiber => fiber.active)?.map(fiber => fiber._id))
         clearCheckboxes()
     }
 
@@ -120,7 +120,7 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
 
     const renderFiberList = useMemo(() => fibersList
         .filter(fiber => showList.includes(fiber._id))
-        .map((fiber) => {
+        ?.map((fiber) => {
             return (
                 <Fragment key={fiber._id}>
                     <div className={`cell col-name ${fiber._id === fibersState.selected ? "selected" : ""}`} onClick={e => onCellClick(fiber._id, '')} >

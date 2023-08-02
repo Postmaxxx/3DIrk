@@ -1,5 +1,6 @@
 import { IFetch, IFiberParam, IMessageModal, INewsItem, ISendColor, ISendFiber, ISendProduct, TLangText } from "../../interfaces"
 
+
 const timeModalClosing: number = 500 //transition of closing modal window
 
 const gapBetweenRequests: number = 3000 //time between requests in case of error

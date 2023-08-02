@@ -17,21 +17,19 @@ $gap_to_text: 5px;
 
 
     & .nav__container {
-        //border: 2px solid green;
-        //overflow: hidden;
         height: 100%;
         display: flex;
         align-items: center;
-        transform: translateX(calc(100% - 70px)); 
+        transform: translateX(calc(100% - 50px)); 
         transition: $transition_nav;
         background-image: url('../../assets/img/nav_line_down.png');
         background-size: 10px;
         background-repeat: repeat-x;
         
-        & > ul {
+        & .nav__list {
             margin-left: $gap_to_text;
             height: 100%;
-            margin-right: 110px;
+            margin-right: 70px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -43,63 +41,60 @@ $gap_to_text: 5px;
             }
     
     
-            & > li {
-                font-size: 1.4rem;
+            & .nav-item {
                 position: relative;
-
-                @include respond-to(md) {
-                    font-size: 1rem;
-                }
 
                 &::before, &::after {
                     content: '';
                     top: 100%;
                     width: 3px;
                     height: 0;
-                    background-color: var(--main_vv);
+                    background-color: var(--main_em);
                     position: absolute;
                     transition: all $transition_subMenu 2*$transition_subMenu;
                     border-radius: 2px;
                     transform-origin: 0 0;
+                    left: -$gap_to_text;
                 }
 
-                &::before {
-                    left: -$gap_to_text;
-                    transform-origin: 0 0;
-                }
 
                 &::after {
+                    left: initial;
                     right: -$gap_to_text;
                     transform-origin: 100% 0;
                 }
 
-                & > a {
+
+                & > a, & > .nav-item__text {
+                    font-size: 1.1rem;
                     position: relative;
-                    color: var(--text);
+                    color: var(--text_nav);
                     text-transform: uppercase;
                     transition: all $transition_subMenu;
                     display: block;
                     font-weight: 700;
                     cursor: pointer;
 
+                    @include respond-to(md) {
+                        font-size: 1rem;
+                    }
+
                     &::before, &::after {
                         content: '';
                         bottom: 0;
-                        width: calc(50% + $gap_to_text);
+                        width: calc(55% + $gap_to_text);
                         height: 3px;
-                        background-color: var(--main_vv);
+                        background-color: var(--main_em);
                         position: absolute;
                         transition: all $transition_subMenu 2*$transition_subMenu;
                         border-radius: 2px;
                         transform-origin: 0 0;
+                        left: -$gap_to_text;
                     }
 
-                    &::before {
-                        left: -$gap_to_text;
-                        transform-origin: 0 0;
-                    }
 
                     &::after {
+                        left: initial;
                         right: -$gap_to_text;
                         transform-origin: 100% 0;
                     }
@@ -107,17 +102,17 @@ $gap_to_text: 5px;
                     
 
                     &.selected {
-                        color: var(--text_contrast);
+                        color: var(--text_nav_selected);
                     }
 
 
                 }
 
-                ul.sub_menu {
+                ul.submenu {
                     
-                    & li {
+                    & .submenu__item {
                         position: absolute;
-                        background-color: var(--main);;
+                        background-color: var(--main);
                         left: 50%;
                         transform-origin: top center;
                         transform: translate(-50%, 0);
@@ -127,50 +122,57 @@ $gap_to_text: 5px;
                         display: grid;
                         grid-template-rows: 0fr;
                         overflow: hidden;
+                        border-bottom-left-radius: $brad_md;
+                        border-bottom-right-radius: $brad_md;
                         
                         
                         & > .submenu__content {
                             min-height: 0;
-                            padding-left: 20px;
-                            padding-right: 20px;
+                            padding-left: 10px;
+                            padding-right: 10px;
                             overflow: hidden;
                             border: 0px solid transparent;
                             transition: border 0s 2*$transition_subMenu, padding $transition_subMenu 1*$transition_subMenu, margin $transition_subMenu $transition_subMenu;
                     
                             
-                            & > li {
+                            & .submenu__item__point {
+                                background-color: var(--main);
+                                transform-origin: top center;
+                                box-sizing: border-box;
+                                overflow: hidden;
                                 display: block;
                                 position: relative;
                                 left: 50%;
                                 transform: translate(-50%, 0);
                                 width: 0;
-                                //overflow: hidden;
                                 display: flex;
                                 flex-direction: column;
                                 align-items: center;
-                                transition: width $transition_subMenu 0s;
                                 padding-top: 10px;
+                                transition: width $transition_subMenu 0s;
                     
                     
                                 & > a {
-                                    //text-transform: uppercase;
+                                    font-size: 1.1rem;
                                     display: block;
                                     white-space: nowrap;
                                     text-align: center;
                                     cursor: pointer;
                                     position: relative;
-                    
-                                    /*transform: scaleX(0);
-                                    transition: transform $transition_subMenu 0s;*/
+                                    font-weight: 600;
+
+                                    @include respond-to(md) {
+                                        font-size: .9rem;
+                                    }
                     
                                     &:hover {
-                                        color: var(--text_vv);
+                                        color: var(--text_reverse);
                                         transition: color $transition_fast;
                                     }
 
 
                                     &.selected {
-                                        color: var(--text_vv);  
+                                        color: var(--text_reverse);  
                                     }
 
 
@@ -187,7 +189,13 @@ $gap_to_text: 5px;
                 }
 
 
-
+                &.extandable {
+                    & > a, & > .nav-item__text {
+                        &::before, &::after {
+                            width: calc(49% + $gap_to_text);
+                        }
+                    }
+                }
 
 
                 &.extandable:hover {
@@ -197,7 +205,7 @@ $gap_to_text: 5px;
                         transition: all $transition_subMenu;
                     }
 
-                    & > a {
+                    & > a, & > .nav-item__text {
                         &::before, &::after {
                             width: 0;
                             transition: all $transition_subMenu;
@@ -205,31 +213,41 @@ $gap_to_text: 5px;
                         
                     }
 
-                    & ul.sub_menu {
+                    & ul.submenu {
 
-                        & li {
+                        & .submenu__item {
                             grid-template-rows: 1fr;
                             transform: translate(-50%, 0px);
-                            width: 240px;
+                            width: 200px;
                             transition: transform $transition_subMenu $transition_subMenu, grid-template-rows $transition_subMenu $transition_subMenu, width $transition_subMenu 2*$transition_subMenu;
                             
+                            @include respond-to(md) {
+                                width: 150px;
+                            }
+
                             & > .submenu__content {
-                                padding-top: 20px;
-                                margin-top: 23px;
-                                border-right: 3px solid var(--main_vv);
-                                border-left: 3px solid var(--main_vv);
-                                border-bottom: 3px solid var(--main_vv);
-                                padding-bottom: 30px;
+                                padding-top: 15px;
+                                margin-top: 17px;
+                                border-right: 3px solid var(--main_em);
+                                border-left: 3px solid var(--main_em);
+                                border-bottom: 3px solid var(--main_em);
+                                border-bottom-left-radius: $brad_md;
+                                border-bottom-right-radius: $brad_md;
+                                padding-bottom: 20px;
                                 transition: padding $transition_subMenu 1*$transition_subMenu, margin $transition_subMenu $transition_subMenu, border 0s $transition_subMenu;
     
+    
+                                @include respond-to(md) {
+                                    margin-top: 18px;
+                                    padding-top: 10px;
+                                    padding-bottom: 15px;
+                                }
+
                                 & > li {
+                                    transform: translate(-50%, 0px);
                                     width: 100%;
                                     transition: width $transition_subMenu 2*$transition_subMenu;
-    
-                                    & > a {
-                                        /*transform: scaleX(1);
-                                        transition: transform $transition_subMenu 2*$transition_subMenu;*/
-                                    }
+
                                 }
                             }
     
@@ -245,15 +263,22 @@ $gap_to_text: 5px;
                     max-width: 40px;
                     height: 40px;
                     border-radius: 20px;
-                    border: 2px solid var(--main_vv);
+                    border: 2px solid var(--main_em);
 
                 }
 
 
                 & .cart-informer {
                     position: absolute;
-                    top: -12px;
-                    left: calc(100% + 3px);
+                    //top: -8px;
+                    left: calc(100% + 2px);
+                    font-size: .9rem;
+                    bottom: 40%;
+                    color: var(--cart_informer);
+
+                    @include respond-to(md) {
+                        font-size: 0.7rem;
+                    }
                 }
 
             }
@@ -305,7 +330,7 @@ $gap_to_text: 5px;
             & > img {
                 height: 100%;
                 transform: rotate(13deg);
-                transition: $transition_nav;
+                transition: $transition_nav_style;
             }
 
 
@@ -320,16 +345,13 @@ $gap_to_text: 5px;
                     transform: translateY(-50%);
                 
                     transition-duration: 0s;
-                    transition-delay: 0.5s;
+                    transition-delay: $transition_nav_style;
                 
                     &:before,
                     &:after {
                         position: absolute;
                         content: '';
-                        /*transition-property: margin, transform;
-                        transition-duration: 0.5s;
-                        transition-delay: 0.5s, 0s;*/
-                        transition: margin 0.5s 0.5s, transform 0.5s 0s;
+                        transition: margin $transition_nav_style $transition_nav, transform $transition_nav_style 0s;
                     }
                 
                     &:before { margin-top: -10px; }
@@ -344,7 +366,6 @@ $gap_to_text: 5px;
                     height: 3px;
                     background-color: #000;
                     display: block;
-                    //transition-delay: 0s, 0.5s;
                     border-radius: 2px;
                 }
             }
@@ -368,19 +389,19 @@ $gap_to_text: 5px;
             
             & .nav__sign {
                 & span {
-                    transition-delay: 0.5s;
+                    transition-delay: $transition_nav;
                     background-color: rgba(0,0,0,0);
 
                     &:before {
                         margin-top: 0;
                         transform: rotate(45deg);
-                        transition-delay: 0s, 0.5s;
+                        transition-delay: 0s, $transition_nav;
                     }
                 
                     &:after {
                         margin-top: 0;
                         transform: rotate(-45deg);
-                        transition-delay: 0s, 0.5s;
+                        transition-delay: 0s, $transition_nav;
                     }
                 }
 
@@ -398,6 +419,27 @@ $gap_to_text: 5px;
 
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //======================================================== MOBILE ============================================
@@ -421,40 +463,50 @@ $gap_to_text: 5px;
         z-index: -1;
         position: absolute;
         background-color: rgba(#333, 0);
-        transition: background-color $transition_nav 0s, height $transition_nav $transition_nav-time;
+        transition: background-color $transition_nav_style 0s, height $transition_nav_style $transition_nav;
     }
 
 
     & > .nav__container {
         position: absolute;
         top: 100%;
-        left: 0;
+        right: 20px;
         transform: translateY(-100%);
-        //display: flex;
-        //align-items: stretch;
-        transition: transform $transition_nav $nav_mobile_delay, background-color $transition_theme;
+
+        transition: transform $transition_nav_style 0s, background-color $transition_theme;
         width: calc(100% - 20px * 2);
         background-color: var(--main);
-        margin-left: 20px;
-        margin-right: 20px;
         z-index: -1;
         height: auto;
-        width: calc(100% - 40px);
-        border-left: 4px solid var(--main_vv);
-        border-bottom: 4px solid var(--main_vv);
-        border-top: 2px solid var(--main_vv);
+        width: 300px;
+        border-left: 4px solid var(--main_em);
+        border-bottom: 4px solid var(--main_em);
+        border-top: 2px solid var(--main_em);
+        border-bottom-left-radius: $brad_md;
+
+        @include respond-to(xs) {
+            width: calc(100% - 40px);
+        }
 
         & > .switchers__container {
-            height: 70px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            height: 55px;
             width: 80%;
-            margin-top: 40px;
+            margin-top: 20px;
             margin-bottom: 20px;
-            background-color: var(--main_vv);
+            background-color: var(--main_em);
             transition:  background-color $transition_theme;
             border-radius: 40px;
             margin-left: auto;
             margin-right: auto;
             margin-bottom: 20px;
+
+            @include respond-to(xs) {
+                height: 50px;
+            }
         }
         
 
@@ -467,16 +519,15 @@ $gap_to_text: 5px;
             height: 100%;
         }
 
-        & > ul {
+        & .nav__list {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
-            font-weight: 600;
             padding-bottom: 20px;
             height: 100%;
             width: 100%;
-            border-top: 2px solid var(--main_vv);
+            border-top: 2px solid var(--main_em);
 
             max-height: calc(100vh - 250px);
             overflow-x: hidden;
@@ -484,37 +535,40 @@ $gap_to_text: 5px;
 
     
     
-            & > li {
+            & > .nav-item {
                 width: 100%;
                 margin-top: 10px;
                 margin-bottom: 10px;
                 position: relative;
                 
-                & > a, span {
+                & > a, .nav-item__text, button {
                     text-align: center;
-                    font-size: 2.4rem;
+                    font-size: 1.3rem;
                     position: relative;
-                    transition: 1s;
+                    font-weight: 600;
+                    //transition:calc($transition_nav * 2);
                     color: var(--text);
-                    transition: color $transition-theme;
+                    //transition: color $transition-theme;
                     text-transform: uppercase;
-                    transition: $transition_nav_menu;
+                    transition: $transition_nav;
                     display: block;
                     cursor: pointer;
+                    margin-left: auto;
+                    margin-right: auto;
                     
 
                     @include respond-to(xs) {
-                        font-size: 1.8rem;
+                        font-size: 1.1rem;
                     }
                     
                     &:hover {
-                        color: var(--text_contrast);
-                        transition: color $transition-theme;
+                        color: var(--text_reverse);
+                        transition: color $transition-fast;
                         //transform: translateY(12px);
                     }
 
                     &.selected { 
-                        color: var(--text_contrast);
+                        color: var(--text_reverse);
                         transition: color $transition-theme;
                         text-decoration: underline;
                     }
@@ -522,18 +576,18 @@ $gap_to_text: 5px;
                 }
 
 
-                & > span {
+                & > .nav-item__text {
                     
-                    &::before, &::after {
+                    &::before {
                         content: '';
                         position: absolute;
-                        height: 20px;
-                        width: 20px;
-                        left: 7%;
+                        height: 10px;
+                        width: 10px;
                         top: 50%;
+                        right: 10px;
                         transform: translate(-50%, -75%) rotate(-45deg);
-                        border-left: 3px solid var(--text);
-                        border-bottom: 3px solid var(--text);
+                        border-left: 2px solid var(--text);
+                        border-bottom: 2px solid var(--text);
                         transition: transform $transition_fast, border $transition_theme;
                         
                         @include respond-to(xs) {
@@ -542,28 +596,24 @@ $gap_to_text: 5px;
                         }
                     }
 
-                    &::after {
-                        right: 7%;
-                        left: initial;
-                    }
 
 
                 }
 
-                & > div {
+                & .submenu__container {
                     overflow: hidden;
                     display: grid;
                     grid-template-rows: 0fr;
                     transition: grid $transition_fast;
 
 
-                    & > .nav__subnav {
+                    & > .submenu {
                         overflow: hidden;
                         display: flex;
                         flex-direction: column;
                         align-items: center;
     
-                        & > li {
+                        & > .submenu__item {
                             margin-top: 20px;
                             text-align: center;
                             display: inline-block;
@@ -580,31 +630,31 @@ $gap_to_text: 5px;
                                 transform: translate(-50%);
                             }
     
-                            & > a, span {
-                                
+                            & > a, span, button {
                                 text-align: center;
-                                font-size: 1.5rem;
+                                font-size: .9rem;
                                 position: relative;
-                                transition: 1s;
+                                font-weight: 600;
+                                //transition: calc($transition_nav * 2);
                                 color: var(--text);
-                                transition: color $transition-theme;
+                                //transition: color $transition-theme;
                                 text-transform: uppercase;
-                                transition: $transition_nav_menu;
+                                transition: $transition_nav;
                                 display: block;
                                 cursor: pointer;
                 
                                 @include respond-to(xs) {
-                                    font-size: 1.2rem;
+                                    font-size: .8rem;
                                 }
                                 
                                 &:hover {
-                                    color: var(--text_contrast);
-                                    transition: color $transition-theme;
+                                    color: var(--text_reverse);
+                                    transition: color $transition-fast;
                                     //transform: translateY(12px);
                                 }
                 
                                 &.selected {
-                                    color: var(--text_contrast);
+                                    color: var(--text_reverse);
                                     transition: color $transition-theme;
                                     font-weight: 800;
                                 }
@@ -638,9 +688,12 @@ $gap_to_text: 5px;
                     position: absolute;
                     top: -5px;
                     left: 100%;
+                    font-size: .9rem;
+                    color: var(--cart_informer);
 
-                    & > span {
-                        font-size: 16px;
+
+                    @include respond-to(xs) {
+                        font-size: .8rem;
                     }
                 }
 
@@ -649,7 +702,7 @@ $gap_to_text: 5px;
             & > .line {
                 width: 20%;
                 height: 2px;
-                background-color: var(--main_vv);
+                background-color: var(--main_em);
 
                 &:last-child {
                     display: none;
@@ -664,7 +717,7 @@ $gap_to_text: 5px;
             right: -10px;
             height: calc(100% + $header_height);
             transform: translateY(-100%);
-            transition: $transition_nav;
+            transition: $transition_nav_style;
             width: 10px;
             background-color: var(--main);
             background-image: url('../../assets/img/nav_line_right.png');
@@ -715,7 +768,7 @@ $gap_to_text: 5px;
             & > img {
                 height: 100%;
                 transform: rotate(13deg);
-                transition: transform $transition_nav $nav_mobile_delay;
+                transition: transform $transition_nav_style 0s;
 
             }
 
@@ -731,15 +784,15 @@ $gap_to_text: 5px;
                     transform: translateY(-50%);
                 
                     transition-duration: 0s;
-                    transition-delay: 0.5s;
+                    transition-delay: $transition_nav;
                 
                     &:before,
                     &:after {
                         position: absolute;
                         content: '';
                         transition-property: margin, transform;
-                        transition-duration: 0.5s;
-                        transition-delay: 0.5s, 0s;
+                        transition-duration: $transition_nav;
+                        transition-delay: $transition_nav, 0s;
                     }
                 
                     &:before { margin-top: -10px; }
@@ -768,16 +821,15 @@ $gap_to_text: 5px;
 
     &.opened {
         
-
         & .blur {
             height: 100vh;
             background-color: rgba(#333, 0.9);
-            transition: background-color $transition_nav, height 0s 0s;
+            transition: background-color $transition_nav_style, height 0s 0s;
         }
         
         & .nav__container {
             transform: translateY(0);
-            transition: transform $transition_nav, background-color $transition_theme;
+            transition: transform $transition_nav_style, background-color $transition_theme;
         } 
 
         & .nav__container_right {
@@ -788,26 +840,26 @@ $gap_to_text: 5px;
             
             & .nav__sign {
                 & span {
-                    transition-delay: 0.5s;
+                    transition-delay: $transition_nav;
                     background-color: rgba(0,0,0,0);
 
                     &:before {
                         margin-top: 0;
                         transform: rotate(45deg);
-                        transition-delay: 0s, 0.5s;
+                        transition-delay: 0s, $transition_nav;
                     }
                 
                     &:after {
                         margin-top: 0;
                         transform: rotate(-45deg);
-                        transition-delay: 0s, 0.5s;
+                        transition-delay: 0s, $transition_nav;
                     }
                 }
             }
             
             & > img {
                 transform: rotate(540deg);
-                transition: transform $transition_nav;
+                transition: transform $transition_nav_style;
             }
             
         }

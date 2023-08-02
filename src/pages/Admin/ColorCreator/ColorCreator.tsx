@@ -105,7 +105,7 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
         if (!_formColor.current || !_nameEn.current || !_nameRu.current || !selectorRef.current || !colorPickerRef.current) return       
         focuser.focusAll(); //run over all elements to get all errors
         const errorFields = _formColor.current.querySelectorAll('.incorrect-value')
-        if (errorFields && errorFields?.length > 0) {
+        if (errorFields?.length > 0) {
             errChecker.add(lang === 'en' ? 'Some fields are filled incorrectly' : 'Некоторые поля заполнены неправильно')
         }       
         if (!addFileBigRef.current?.getFiles().length) {

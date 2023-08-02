@@ -116,14 +116,14 @@ export const login = ({email, password}: Pick<ILoggingForm, "email" | "password"
 export const loginWithToken = () => {   
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
         const { user } = getState() //get current user state        
-        const controller = new AbortController()
-        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.user.loginToken.timeout) //set time limit for fetch
-        dispatch(setAuth({...fetchingFetch, controller}))    
         const savedUser = localStorage.getItem('user')
         const currentToken: string = savedUser ? JSON.parse(savedUser).token : null
         if (!currentToken) {
             return 
         }
+        const controller = new AbortController()
+        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.user.loginToken.timeout) //set time limit for fetch
+        dispatch(setAuth({...fetchingFetch, controller}))    
         dispatch(setUser({...user, auth: fetchingFetch}))
         try {
             const response: Response = await fetch(APIList.user.loginToken.url, {

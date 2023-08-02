@@ -176,11 +176,11 @@ const SliderMax = ({content, modal}: ISliderMax) => {
         _carouselRef.current?.addEventListener('mousemove', mouseMove)
         _carouselRef.current?.addEventListener('mouseenter', mouseEnter)
         _carouselRef.current?.addEventListener('mouseleave', mouseLeave)
-        document.addEventListener("resize", onResize)
+        window.addEventListener("resize", onResize)
 
         return (()=> {
             clearInterval(ribbonMoveInterval)
-            document.removeEventListener("resize", onResize)
+            window.removeEventListener("resize", onResize)
             _carouselRef.current?.removeEventListener('mousedown', mouseDown)
             _carouselRef.current?.removeEventListener('mouseup', mouseUp)
             _carouselRef.current?.removeEventListener('mousemove', mouseMove)

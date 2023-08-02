@@ -89,7 +89,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
         //check form
         focuser.focusAll(); //run over all elements to get all errors
         const errorDescrFields = _form.current.querySelectorAll('.incorrect-value')
-        if (errorDescrFields && errorDescrFields?.length > 0) {
+        if (errorDescrFields?.length > 0) {
             errChecker.add(lang === 'en' ? 'Some fields are filled incorrectly' : 'Некоторые поля заполнены неправильно')
         } 
         //check fibers  

@@ -30,7 +30,7 @@ const Fibers:React.FC<IProps> = ({lang, fibersState}):JSX.Element => {
 
     const listOfFibers = useMemo(() => (
         <div className="fibers__container">
-            {fibersState.fibersList.filter(fiber => fiber.active).map((fiber, i) => {
+            {fibersState.fibersList.filter(fiber => fiber.active)?.map((fiber, i) => {
                 return (
                     <NavLink to={`${navList.fibers.to}/${fiber._id}`} aria-label={lang === 'en' ? '(About fiber)' : ' (О материале)'} key={fiber._id}>
                         <FiberPreview {...{fiber}} lang={lang} key={i}/>  

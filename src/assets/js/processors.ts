@@ -53,7 +53,7 @@ const filesDownloader = async (urls: string[]): Promise<File[]> => {
       }))
       const files: File[] = results
         .filter((result) => result.status === 'fulfilled')
-        .map((result) => (result as PromiseFulfilledResult<File>).value)
+        ?.map((result) => (result as PromiseFulfilledResult<File>).value)
     
       return files
 }

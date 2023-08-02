@@ -142,7 +142,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
             !_textRu.current || !_date.current ) return
         focuser.focusAll(); //run over all elements to get all errors
         const errorFields = _form.current.querySelectorAll('.incorrect-value')
-        if (errorFields && errorFields?.length > 0) {
+        if (errorFields?.length > 0) {
             errChecker.add(lang === 'en' ? 'Some fields are filled incorrectly' : 'Некоторые поля заполнены неправильно')
         }    
         if (errChecker.amount() > 0) {

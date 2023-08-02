@@ -48,12 +48,12 @@ const AddToCart: React.FC<IProps> = ({data, lang, cart, modal, setState}): JSX.E
     const errChecker = useMemo(() => errorsChecker({lang}), [lang])
 
     const closeModal = useCallback(() => {
-		modal?.closeCurrent()
+        modal?.closeCurrent()
+        errChecker.clear() 
 	}, [])
      
         
     const addToCart = () => { 
-        errChecker.clear() 
         !data.color && errChecker.add(lang === 'en' ? 'Please choose the color' : 'Пожалуйста, выберите цвет');
         !data.fiber && errChecker.add(lang === 'en' ? 'Please choose the fiber' : 'Пожалуйста, выберите материал');
         (data.type?.en === '') && errChecker.add(lang === 'en' ? 'Please choose the type' : 'Пожалуйста, выберите тип');
@@ -85,8 +85,8 @@ const AddToCart: React.FC<IProps> = ({data, lang, cart, modal, setState}): JSX.E
                 status={'success'}
                 header={lang === 'en' ? 'Added' : 'Добавлено'}
                 text={lang === 'en' ? [`This item has been added to your сart.`, `You now have ${amountItemsInCart} item${amountItemsInCart > 1 ? 's' : ''} in your сart`, ] : [`Этот товар был успешно добавлен в Вашу корзину.`, `Сейчас у Вас товаров в корзине: ${amountItemsInCart}`, ]}
-                buttonClose={{action: closeModal, text: 'Close'}}
-                buttonAdd={{action: () => {closeModal(); navigate('/order')}, text: 'Go to cart'}}
+                buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть  '}}
+                buttonAdd={{action: () => {closeModal(); navigate('/order')}, text: lang === 'en' ? 'Go to cart' : 'Перейти в корзину'}}
                 />
         })
 

@@ -30,7 +30,7 @@
 
             @include respond-to(md) {
                 grid-template-columns: 100px 1fr;
-                border-bottom: 1px solid var(--main_vv);
+                border-bottom: 1px solid var(--main_em);
                 margin-top: 30px;
                 padding-bottom: 35px;
 
@@ -215,7 +215,7 @@
 
         & .colors-picker {
             width: 90%;
-            background-color: var(--main_vv);
+            background-color: var(--main_em);
             border-radius: 5px;
             padding: 30px 20px;
             margin-left: auto;
@@ -263,7 +263,7 @@
                     margin-top: 10px;   
                     font-size: 14px;
                     word-break: break-word;
-                    color: var(--text_vv);
+                    color: var(--text_reverse);
                     @include respond-to(sm) {
                         font-size: 10px;
                    }
@@ -334,7 +334,7 @@
             margin-top: 20px;
             margin-right: auto;
             margin-left: auto;
-            background-color: var(--main_vv);
+            background-color: var(--main_em);
 
             @include respond-to(xs) {
                 width: 100%;
@@ -349,7 +349,7 @@
             margin-right: auto;
             margin-left: auto;
             margin-top: 40px;
-            background-color: var(--main_vv);
+            background-color: var(--main_em);
         }
 
         
@@ -357,7 +357,7 @@
             margin-left: auto;
             margin-top: 30px;
             width: fit-content; 
-            background-color: var(--main_vv);
+            background-color: var(--main_em);
             &:disabled {
                 opacity: 0.4;
             }
@@ -379,7 +379,7 @@
             padding: 5px 10px;
             border-radius: 4px;
             //background-color: var(--inputs-bg);
-            border: 1px solid var(--main_vv);
+            border: 1px solid var(--main_em);
             background-color: var(--text_contrast);
             color: var(--text);
             transition: background-color 1s, border 1s;

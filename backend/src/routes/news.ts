@@ -8,7 +8,6 @@ import { IAllCache } from '../data/cache'
 import { allPaths } from '../data/consts'
 import { folderCleanerS3 } from '../processors/aws'
 import { foldersCleaner } from '../processors/fsTools'
-import { makeDelay } from '../processors/makeDelay'
 import { resizeAndSaveS3 } from '../processors/sharp'
 import { IMulterFile } from './user'
 const cache: IAllCache = require('../data/cache')
@@ -92,9 +91,7 @@ router.put('/edit',
 router.get('/get-amount', async (req, res) => {
     try {
         const err = await cache.news.control.load()
-        if (err) {
-            return res.status(500).json(err)
-        }
+        if (err) return res.status(500).json(err)
         return res.status(200).json({total: cache.news.data.length})
     } catch (e) {
         return res.status(500).json({ message:{en: `Something wrong with server ${e}, try again later`, ru: `Ошибка на сервере ${e}, попробуйте позже`}})

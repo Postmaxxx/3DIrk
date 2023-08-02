@@ -37,7 +37,7 @@ const ColorSelector: React.FC<IPropsState> = ({lang, modal, colors, onSelect}): 
     const onImageClick = (e: React.MouseEvent , color: IColor) => {
         e.stopPropagation()
         modal?.openModal({
-            name: 'spliderCommonModal',
+            name: 'colorSelector',
             children: <ImageModalNew url={color.url.full}/>
         })
     }
