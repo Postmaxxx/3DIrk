@@ -4,42 +4,41 @@
     background-color: var(--bg);
     transition: background-color $transition-theme;
     flex-grow: 1;
-    
-    & .page_home {
 
+    & section.intro {
+        & > p:first-of-type {
+            @include margin_first_p;
+        }
+    }
 
-        & .slider__container {
-            margin-top: 50px;
-            height: 400px;
-            position: relative;
-            -webkit-user-drag: none;
-            user-select: none;
+    & .slider__container {
+        margin-top: 60px;
+        height: 400px;
+        position: relative;
+        -webkit-user-drag: none;
+        user-select: none;
 
-            @include respond-to(md) {
-                height: 320px;
-            }
-
-            @include respond-to(sm) {
-                height: 250px;
-            }
-
-            @include respond-to(xs) {
-                height: 170px;
-            }
-
+        @include respond-to(md) {
+            height: 320px;
         }
 
+        @include respond-to(sm) {
+            margin-top: 40px;
+            height: 250px;
+        }
 
-        & h2 {
+        @include respond-to(xs) {
+            height: 170px;
+        }
+
+    }
+
+
+    & .news {
+        margin-top: 100px;
+
+        @include respond-to(xs) {
             margin-top: 80px;
-            //font-family: Arial, Helvetica, sans-serif;
-            text-align: center;
-            color: var(--main_em);
-
-        }
-
-        & .news {
-            margin-top: 30px;
         }
     }
 }

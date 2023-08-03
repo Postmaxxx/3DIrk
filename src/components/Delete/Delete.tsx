@@ -54,8 +54,8 @@ const Delete = <T,>({remove, idInstance, lang, disabled}: IProps<T>):JSX.Element
                         <path d="M660.8,852.2l45.9-551.3c0-16.9-10.3-30.6-23-30.6s-23,13.7-23,30.6l-45.9,551.3c0,16.9,10.3,30.6,23,30.6S660.8,869.1,660.8,852.2z"/>
                     </svg>
                     <div className={`confirmation__container ${confirmation ? 'active' : ''}`}>
-                        <button onClick={onDeleteClick}>{lang === 'en' ? 'Delete' : 'Удалить'}</button>
-                        <button onClick={onCancelClick}>{lang === 'en' ? 'Cancel' : 'Отмена'}</button>
+                        <button className="button_delete_confirm" onClick={onDeleteClick}>{lang === 'en' ? 'Delete' : 'Удалить'}</button>
+                        <button className="button_delete_cancel" onClick={onCancelClick}>{lang === 'en' ? 'Cancel' : 'Отмена'}</button>
                     </div>
                 </div>
             

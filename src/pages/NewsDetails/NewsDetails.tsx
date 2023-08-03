@@ -49,44 +49,12 @@ const NewsDetails: FC<IProps> = ({lang, setState, newsState, modal, isAdmin }): 
     }, [paramNewsId])
 
 
-    /*useEffect(() => {
-        checkAndLoad({
-            fetchData: newsState.loadOne,
-            loadFunc: setState.news.loadOneNews,
-            args: [paramNewsId],
-            force: false
-        })
-    }, [newsState.loadOne])*/
 
 
     const onDelete = useCallback((item: INewsItem) => {
         setState.news.deleteNews(item._id)
     }, [newsState.newsList])
 
-    /*
-        /*const getNewsOne = (delay: number) => {
-        setTimeout(() => {
-            newsState.loadOne.controller?.abort(DOMExceptions.byFetch) //force
-            setState.news.loadOneNews(paramNewsId)
-        }, delay)
-    }
-    
-    useEffect(() => {
-        getNewsOne(0)
-        return () => {setState.news.setLoadOneNews(resetFetch)}
-    }, [paramNewsId])
-
-
-    useEffect(() => {
-        if (newsState.loadOne.status === 'error') {
-            getNewsOne(gapBetweenRequests)
-        }
-    }, [newsState.loadOne])
-
-
-    const onDelete = useCallback((item: INewsItem) => {
-        setState.news.deleteNews(item._id)
-    }, [])*/
 
 
     const closeModal = useCallback(() => {
@@ -128,14 +96,12 @@ const NewsDetails: FC<IProps> = ({lang, setState, newsState, modal, isAdmin }): 
                     <>
                         <div className="block_text">
                             <h1>{newsState.newsOne.header[lang]}</h1>
-                            <span className='date'>{String(newsState.newsOne.date.toISOString().slice(0, 10))}</span>
+                            <span className='news__date'>{String(newsState.newsOne.date.toISOString().slice(0, 10))}</span>
+                            {newsState.newsOne.text[lang].split('\n')?.map((text, i) => <p key={i}>{text}</p>)}
                         </div>
                         <div className="news__details">
                             <>
-                                <div className="block_text">
-                                    {newsState.newsOne.text[lang].split('\n')?.map((text, i) => <p key={i}>{text}</p>)}
-                                </div>
-                                <div className="images__container">
+                                <div className="images">
                                     <SpliderCommon 
                                         images={newsState.newsOne.images} 
                                         defaultSize='medium' 

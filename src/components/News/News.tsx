@@ -12,20 +12,20 @@ interface IProps {
 
 const News:React.FC<IProps> = ({newsPiece, lang}):JSX.Element => {
     return (
-        <div className="news card">
-            <div className="img__container">
+        <div className="news-item">
+            <div className="img-cont">
                 {newsPiece.images.files.length > 0 &&
                     <ImgWithPreloader src={`${newsPiece.images.paths.small}/${newsPiece.images.files[0]}`} alt={newsPiece.header[lang]} />
                 }
             </div>
             <div className="news__content">
-                <div className="news_text">
+                <div className="news__text">
                     <span>{String(newsPiece.date.toISOString().slice(0, 10))}</span>
                     <h3>{newsPiece.header[lang]}</h3>
                     <p>{newsPiece.short[lang]}</p>
                 </div>
                 <NavLink
-                    className="button_news"
+                    className="button_blue button_news"
                     to={`news/${newsPiece._id}`}
                     key={newsPiece._id}>
                         {lang === 'en' ? 'Read more...' : 'Подробнее...'}

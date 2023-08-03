@@ -28,61 +28,53 @@ body {
 
 
 h1 {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
     text-align: center;
     transition: color $transition_theme;
     font-family: Arial, Helvetica, sans-serif;
     color: var(--main_em);
 
     @include respond-to(sm) {
-        font-size: 32px;
+        font-size: 1.9rem;
     }
 
     @include respond-to(xs) {
-        font-size: 28px;
+        font-size: 1.6rem;
     }
 }
 
 h2 {
-    font-size: 2rem;
+    font-size: 1.8rem;
     transition: color $transition_theme;
     font-family: Arial, Helvetica, sans-serif;
     color: var(--main_em);
+    text-align: center;
 
     @include respond-to(sm) {
-        font-size: 26px;
+        font-size: 1.5rem;
     }
 
     @include respond-to(xs) {
-        font-size: 22px;
+        font-size: 1.3rem;
     }
 }
 
 
 h3 {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     transition: color $transition_theme;
     color: var(--main_em);
 
     @include respond-to(sm) {
-        font-size: 22px;
+        font-size: 1.2rem;
     }
 
     @include respond-to(xs) {
-        font-size: 20px;
+        font-size: 1rem;
     }
 }
 
-span {
-    transition: color $transition_theme;
-    color: var(--text);
-    font-size: 16px;
-    
-    @include respond-to(xs) {
-        font-size: 14px;
-    }
 
-}
 
 label {
     transition: color $transition_theme;
@@ -116,17 +108,40 @@ sup {
 }
 
 p {
-    font-size: 18px;
-    text-indent: 3rem;
+    font-size: 1.1rem;
     transition: color $transition_theme;
-    margin-top: 20px;
-
-    @include respond-to(xs) {
-        font-size: 16px;
+    margin-top: .8rem;
+    text-indent: 2.8rem;
+    font-weight: 500;
+    
+    @include respond-to(md) {
+        text-indent: 2.4rem;
+        font-size: 1rem;
     }
 
-    &:first-of-type {
-        margin-top: 0px;
+    @include respond-to(sm) {
+        text-indent: 2.2rem;
+        font-size: 1rem;
+    }
+    
+    @include respond-to(xs) {
+        text-indent: 1.7rem;
+        font-size: .9rem;
+    }
+}
+
+
+span {
+    font-size: 1.1rem;
+    transition: color $transition_theme;
+    font-weight: 500;
+    
+    @include respond-to(sm) {
+        font-size: 1rem;
+    }
+    
+    @include respond-to(xs) {
+        font-size: .9rem;
     }
 }
 
@@ -134,7 +149,16 @@ p {
     width: 100%;
     flex-grow: 1;
     padding-top: 100px;
-    padding-bottom: 50px;
+    padding-bottom: 100px;
+
+    @include respond-to(sm) {
+        padding-top: 50px;
+        padding-bottom: 80px;
+    }
+
+    @include respond-to(xs) {
+        padding-bottom: 50px;
+    }
 }
 
 .container {
@@ -143,9 +167,12 @@ p {
     margin-left: auto;
     margin-right: auto;
     height: 100%;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding: 0 20px;
     color: var(--text);
+
+    @include respond-to(xs) {
+        padding: 0 10px;
+    }
 }
 
 
@@ -153,7 +180,7 @@ p {
     width: 80%;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 40px;
+    //margin-top: 40px;
     overflow-wrap: break-word;
 
     @include respond-to(sm) {
@@ -186,7 +213,13 @@ button {
 }
 
 
+.hidden {
+    display: none;
+}
 
+.invisible {
+    visibility: hidden;
+}
 
 [data-selector=input-block] {
     position: relative;

@@ -32,7 +32,11 @@
                 height: 100%;
                 overflow: hidden;
                 position: relative;
-                border-radius: 5px;
+                border-radius: $brad_lg;
+
+                @include respond-to(xs) {
+                    border-radius: $brad_md;
+                }
 
 
                 & .img__inner-container {
@@ -58,8 +62,17 @@
                 cursor: pointer;
                 transition: transform $transition_fast;
 
+                @include respond-to(xs) {
+                    height: 15px;
+                    width: 15px;
+                }
+
                 & > svg > path {
                     fill: var(--main);
+                    stroke: $black;
+                    stroke-width: 5px;
+                    stroke-dasharray: 2,2;
+                    stroke-linejoin: round;
                 }
 
                 &:hover {

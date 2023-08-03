@@ -66,7 +66,7 @@ $gap_to_text: 5px;
 
 
                 & > a, & > .nav-item__text {
-                    font-size: 1.1rem;
+                    font-size: 1.2rem;
                     position: relative;
                     color: var(--text_nav);
                     text-transform: uppercase;
@@ -76,7 +76,7 @@ $gap_to_text: 5px;
                     cursor: pointer;
 
                     @include respond-to(md) {
-                        font-size: 1rem;
+                        font-size: 1.1rem;
                     }
 
                     &::before, &::after {
@@ -227,7 +227,7 @@ $gap_to_text: 5px;
 
                             & > .submenu__content {
                                 padding-top: 15px;
-                                margin-top: 17px;
+                                margin-top: 16px;
                                 border-right: 3px solid var(--main_em);
                                 border-left: 3px solid var(--main_em);
                                 border-bottom: 3px solid var(--main_em);
@@ -238,7 +238,7 @@ $gap_to_text: 5px;
     
     
                                 @include respond-to(md) {
-                                    margin-top: 18px;
+                                    margin-top: 17px;
                                     padding-top: 10px;
                                     padding-bottom: 15px;
                                 }

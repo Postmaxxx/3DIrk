@@ -2,7 +2,7 @@ import './fibers.scss'
 import { AnyAction, bindActionCreators, Dispatch } from "redux";
 import { connect } from "react-redux";
 import { TLang, IFullState, IFibersState } from "../../interfaces";
-import { useEffect,useMemo } from 'react';
+import { useMemo } from 'react';
 import "@splidejs/react-splide/css";    
 import Preloader from '../../components/Preloaders/Preloader';
 import { NavLink } from 'react-router-dom';
@@ -29,7 +29,7 @@ const Fibers:React.FC<IProps> = ({lang, fibersState}):JSX.Element => {
 
 
     const listOfFibers = useMemo(() => (
-        <div className="fibers__container">
+        <div className="fibers">
             {fibersState.fibersList.filter(fiber => fiber.active)?.map((fiber, i) => {
                 return (
                     <NavLink to={`${navList.fibers.to}/${fiber._id}`} aria-label={lang === 'en' ? '(About fiber)' : ' (О материале)'} key={fiber._id}>

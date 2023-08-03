@@ -103,96 +103,92 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
 
 
     return (
-        <div className="page_order">
+        <div className="page_contact">
             <div className='container_page'>
                 <div className="container">
-                    <div className="page_order">
+                    <div className="block_text">
                         <h1>{lang === 'en' ? 'Send us a message' : 'Написать нам'}</h1>
-                        <div className="order__block">
-
-                            <form className="order__container" ref={formContact}>
-                                <div className="data-block">
-
-                                    <div className="inputs-block">
-                                        {userState.auth.status !== 'success' && 
-                                            <div className="input-block" data-selector="input-block">
-                                                <label htmlFor="name">{lang === 'en' ? 'Your name*' : 'Ваше имя*'}</label>
-                                                <input 
-                                                    data-selector="input"
-                                                    className="input-element" 
-                                                    id="name" 
-                                                    type="text" 
-                                                    ref={_name} 
-                                                    onKeyDown={focuser.next}
-                                                    onChange={onChangeText}
-                                                    onBlur={(e) => inputChecker({lang, min:inputsProps.name.min, max:inputsProps.name.max, el: e.target})}/>
-                                            </div>}
-                                            
-                                        {userState.auth.status !== 'success' && 
-                                            <div className="input-block" data-selector="input-block">
-                                                <label htmlFor="phone">{lang === 'en' ? 'Your phone' : 'Ваш телефон'}</label>
-                                                <input 
-                                                    data-selector="input"
-                                                    className="input-element" 
-                                                    id="phone"
-                                                    type="tel" 
-                                                    ref={_phone} 
-                                                    onKeyDown={focuser.next}
-                                                    onChange={onChangeText}
-                                                    onBlur={(e) => inputChecker({lang, min:inputsProps.phone.min, max:inputsProps.phone.max, type: 'phone', el: e.target})}/>
-                                            </div>
-                                        }
-
-                                        {userState.auth.status !== 'success' && 
-                                            <div className="input-block" data-selector="input-block">
-                                                <label htmlFor="email">{lang === 'en' ? 'Your email*' : 'Ваша почта*'}</label>
-                                                <input 
-                                                    data-selector="input"
-                                                    className="input-element" 
-                                                    id="email" 
-                                                    type="email" 
-                                                    ref={_email} 
-                                                    onKeyDown={focuser.next}
-                                                    onChange={onChangeText}
-                                                    onBlur={(e) => inputChecker({lang, min:inputsProps.email.min, max:inputsProps.email.max,  type: 'email', el: e.target})}/>
-                                            </div>
-                                        }
-                                        <div className="input-block message-block" data-selector="input-block">
-                                            <label htmlFor="message">
-                                                {lang === 'en' ? 'Your message (at least 10 symbols)*' : 'Ваше сообщение (минимум 10 символов)*'}
-                                            </label>
-                                            <textarea 
+                    </div>
+                        <form className="contact__form" ref={formContact}>
+                            <div className="user-inputs">
+                                <div className="user-inputs__texts">
+                                    {userState.auth.status !== 'success' && 
+                                        <div className="block_input" data-selector="input-block">
+                                            <label htmlFor="name">{lang === 'en' ? 'Your name*' : 'Ваше имя*'}</label>
+                                            <input 
                                                 data-selector="input"
                                                 className="input-element" 
-                                                id="message" 
-                                                ref={_message} 
+                                                id="name" 
+                                                type="text" 
+                                                ref={_name} 
+                                                onKeyDown={focuser.next}
                                                 onChange={onChangeText}
-                                                onBlur={(e) => inputChecker({lang, min:inputsProps.message.min, max:inputsProps.message.max, el: e.target})}/>
+                                                onBlur={(e) => inputChecker({lang, min:inputsProps.name.min, max:inputsProps.name.max, el: e.target})}/>
+                                        </div>}
+                                        
+                                    {userState.auth.status !== 'success' && 
+                                        <div className="block_input" data-selector="input-block">
+                                            <label htmlFor="phone">{lang === 'en' ? 'Your phone' : 'Ваш телефон'}</label>
+                                            <input 
+                                                data-selector="input"
+                                                className="input-element" 
+                                                id="phone"
+                                                type="tel" 
+                                                ref={_phone} 
+                                                onKeyDown={focuser.next}
+                                                onChange={onChangeText}
+                                                onBlur={(e) => inputChecker({lang, min:inputsProps.phone.min, max:inputsProps.phone.max, type: 'phone', orEmpty: true, el: e.target})}/>
                                         </div>
-                                    </div>
-                                    <div className="files-block">
-                                        <div className="input-block files">
-                                            <label htmlFor="files">{lang === 'en' ? 'Attach files' : 'Прикрепить файлы'}</label>
-                                            <AddFiles lang={lang} ref={addFilesRef} multiple={true} id='files'/>
-                                        </div>
-                                    </div>
+                                    }
 
+                                    {userState.auth.status !== 'success' && 
+                                        <div className="block_input" data-selector="input-block">
+                                            <label htmlFor="email">{lang === 'en' ? 'Your email*' : 'Ваша почта*'}</label>
+                                            <input 
+                                                data-selector="input"
+                                                className="input-element" 
+                                                id="email" 
+                                                type="email" 
+                                                ref={_email} 
+                                                onKeyDown={focuser.next}
+                                                onChange={onChangeText}
+                                                onBlur={(e) => inputChecker({lang, min:inputsProps.email.min, max:inputsProps.email.max,  type: 'email', el: e.target})}/>
+                                        </div>
+                                    }
+                                    <div className="block_input expandable" data-selector="input-block">
+                                        <label htmlFor="message">
+                                            {lang === 'en' ? 'Your message*' : 'Ваше сообщение*'}
+                                        </label>
+                                        <textarea 
+                                            data-selector="input"
+                                            className="input-element" 
+                                            id="message" 
+                                            ref={_message} 
+                                            onChange={onChangeText}
+                                            onBlur={(e) => inputChecker({lang, min:inputsProps.message.min, max:inputsProps.message.max, el: e.target})}/>
+                                    </div>
+                                </div>
+                                <div className="user-inputs__files">
+                                    <div className="block_input files">
+                                        <label htmlFor="files">{lang === 'en' ? 'Attach files' : 'Прикрепить файлы'}</label>
+                                        <AddFiles lang={lang} ref={addFilesRef} multiple={true} id='files'/>
+                                    </div>
                                 </div>
 
-                                <button 
-                                    type="submit" 
-                                    disabled={userState.sendOrder.status === 'fetching'} 
-                                    className="button_order" 
-                                    onClick={onSubmit}>
-                                        {userState.sendOrder.status === 'fetching' ? 
-                                            <Preloader />
-                                            :
-                                            lang === 'en' ? 'Save changes' : "Сохранить изменения" 
-                                        }
-                                </button>
-                            </form>
-                        </div>
-                    </div>
+                            </div>
+
+                            <button 
+                                type="submit" 
+                                disabled={userState.sendOrder.status === 'fetching'} 
+                                className="button_blue color_reverse  button_contact" 
+                                onClick={onSubmit}>
+                                    {userState.sendOrder.status === 'fetching' ? 
+                                        <Preloader />
+                                        :
+                                        lang === 'en' ? 'Save changes' : "Сохранить изменения" 
+                                    }
+                            </button>
+                        </form>
                 </div>
             </div>
         </div>

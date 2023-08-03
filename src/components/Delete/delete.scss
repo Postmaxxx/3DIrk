@@ -11,12 +11,20 @@
     //height: 100%;
     position: relative;
 
+    @include respond-to(sm) {
+        scale: 0.8;
+    }
+
+    @include respond-to(xs) {
+        scale: 0.65;
+    }
+
     & svg {
         top: 0;
         left: 0;
-        fill: var(--text);
+        fill: var(--text_reverse);
         position: absolute;
-        transition: transform $transition_fast;
+        transition: transform $transition_fast,fill $transition_theme;;
         height: 100%;
         width: 100%;
     }
@@ -40,40 +48,33 @@
         //visibility: hidden;
         transition: transform $transition-fast;
 
-        & button {
+        & .button_delete_confirm, .button_delete_cancel {
             padding: 0px 10px;
             cursor: pointer;
             font-size: 16px;
             border: none;
             border-radius: 5px;
-            
-            
-            &:nth-of-type(1) {
-                background-color: rgba($color_danger, 0.4);
-
-                &:hover {
-                    font-weight: 900;
-                    background-color: rgba($color_danger, 1);
-                }
+            background-color: rgba($color_danger, 0.4);
+    
+            &:hover {
+                font-weight: 900;
+                background-color: rgba($color_danger, 1);
             }
-
-            &:nth-of-type(2) {
-                margin-top: 5px;
-                background-color: rgba($color_success, 0.4);
-
-                &:hover {
-                    font-weight: 900;
-                    background-color: rgba($color_success, 1);
-                }
-            }
-
-
         }
+
+        & .button_delete_cancel {
+            margin-top: 5px;
+            background-color: rgba($color_success, 0.4);
+    
+            &:hover {
+                background-color: rgba($color_success, 1);
+            }
+        }
+
 
 
         &.active {
             transform: translate(-50%, -50%) scale(1);
-            //visibility: visible;
         }
     }
 }

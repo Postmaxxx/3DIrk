@@ -31,7 +31,7 @@
     }
 
     @include respond-to(xs) {
-        font-size: .8rem;
+        font-size: .9rem;
         padding: 3px 20px;
     }
 
@@ -52,41 +52,6 @@
             box-shadow: 0px 0px 15px 0px var(--main_em);
         }
     }
-}
-
-.button_news {
-    align-self: flex-start;
-    padding: 8px 60px 8px 20px;
-    border-radius: 10px;
-    color: var(--text);//;
-    background-color: var(--main);
-    transition: background-color $transition_theme, color $transition_theme, box-shadow $transition_fast;
-    font-size: 18px;
-    font-weight: 700;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    position: relative;
-    border-radius: 5px;
-
-
-    & > svg  {
-        max-height: 80%;
-        right: 0;
-        margin-right: 25px;
-        fill: var(--text);
-        position: absolute;
-        transition: margin .2s;
-    }
-
-    &:hover {
-        & > svg {
-            margin-right: 15px;
-        }
-        box-shadow: 0px 0px 15px 0px var(--main);;
-    }
-    
 }
 
 
@@ -137,33 +102,6 @@
 }
 
 
-.card {
-    width: 100%;
-    border: 1px solid var(--main);
-    transition: border $transition_theme;
-    border-radius: 5px;
-    padding-bottom: 20px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    //background-color: rgba(#286181, 0.1);
-    padding-left: 10px;
-    padding-right: 10px;
-    padding-top: 10px;
-    padding-bottom: 20px;
-
-    @include respond-to(xs) {
-        max-width: none;
-        //margin-left: 0px;
-        //margin-right: 0px;
-    }
-
-    &:hover {
-        border-color: 1px solid var(--main_em);
-        transition: border $transition_fast;
-    }
-}
 
 .block_input {
     width: 100%;
@@ -198,7 +136,7 @@
     }
 
 
-    & > input {
+    & > input, textarea {
         font-size: 1.1rem;
         width: 100%;
         outline: none;
@@ -228,6 +166,11 @@
                 border: 1px solid $black;
             }
         }
+    }
+
+    & > textarea {
+        min-height: 5rem;
+        resize: vertical;
     }
 
     &.incorrect-value {
@@ -261,6 +204,15 @@
         25% { margin-left: 0.5rem; }
         75% { margin-left: -0.5rem; }
         100% { margin-left: 0rem; }
+    }
+
+
+    &.expandable {
+        flex-grow: 1;
+
+        & textarea {
+            height: calc(100% - 22px); //textarea grows more than space for it
+        }
     }
 }
 

@@ -10,7 +10,6 @@ import { useEffect } from "react";
 import Preloader from '../../components/Preloaders/Preloader';
 import { checkAndLoad } from '../../assets/js/processors';
 import { IModalFunctions } from '../../../src/components/Modal/ModalNew';
-import MessageNew from '../../../src/components/Message/MessageNew';
 
 
 interface IPropsState {
@@ -43,7 +42,7 @@ const Home:React.FC<IProps> = ({lang, contentState, setState, modal} : IProps): 
         <div className='page page_home'>
             <div className="container_page">
                 <div className="container">
-                    <div className='page_home'>
+                    <section className="intro">
                         <div className="block_text">
                             {lang === 'en' ? 
                                 <>
@@ -63,13 +62,12 @@ const Home:React.FC<IProps> = ({lang, contentState, setState, modal} : IProps): 
                                 </>    
                             }
                         </div>
-                        <div className="slider__container">
-                            {contentState.load.status === 'success' && contentState.splider?.files?.length > 0 && <CarouselMax content={contentState.splider} modal={modal}/>}
-                            {contentState.load.status === 'fetching' && <Preloader />}
-                            
-                        </div>
-                        <NewsBlock />
+                    </section>
+                    <div className="slider__container">
+                        {contentState.load.status === 'success' && contentState.splider?.files?.length > 0 && <CarouselMax content={contentState.splider} modal={modal}/>}
+                        {contentState.load.status === 'fetching' && <Preloader />}
                     </div>
+                    <NewsBlock />
                 </div>
             </div>
         </div>

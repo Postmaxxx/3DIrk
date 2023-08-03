@@ -41,6 +41,7 @@
         & > .splide__arrows {
             & > .splide__arrow {
                 transition: $transition_fast;
+                
                 & > svg {
                     fill: var(--main);
                     transition: margin $transition_fast;
