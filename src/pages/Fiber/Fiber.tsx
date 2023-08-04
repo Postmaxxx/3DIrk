@@ -8,7 +8,7 @@ import { TLang, IFullState, IFiber, IFibersState, IColorsState, IColor } from ".
 import { allActions } from "../../redux/actions/all";
 import { navList, resetFetch } from '../../assets/js/consts';
 import SpliderCommon from '../../components/Spliders/Common/SpliderCommon';
-import Features from '../../components/Params/Params';
+import FiberParams from '../../components/FiberParams/FiberParams';
 import Proscons from '../../components/Proscons/Proscons';
 import ImgWithPreloader from '../../assets/js/ImgWithPreloader';
 import { checkAndLoad, deepCopy, modalMessageCreator } from '../../assets/js/processors';
@@ -68,7 +68,7 @@ const Fiber: React.FC<IProps> = ({lang, fibersState, colorsState, setState, moda
         e.stopPropagation()
         modal?.openModal({
             name: 'onFiberImageClick',
-            children: <ImageModalNew url={color.url.full}/>
+            children: <ImageModalNew url={color.url.full} text={color.name[lang]}/>
         })
     }
 
@@ -93,8 +93,8 @@ const Fiber: React.FC<IProps> = ({lang, fibersState, colorsState, setState, moda
             const colorData: IColor | undefined = colorsState.colors.find(colorItem => colorItem._id === color)
             if (colorData && colorData.active) {
                 return (
-                    <div key={i} className='color__container' onClick={(e) => onImageClick(e, colorData)}>
-                        <div className="img-container">
+                    <div key={i} className='color' onClick={(e) => onImageClick(e, colorData)}>
+                        <div className="color__img-cont">
                             <ImgWithPreloader src={colorData.url.thumb} alt={colorData.name[lang]}/>
                         </div>
                         <span className='color__descr'>{colorData.name[lang]}</span>
@@ -108,39 +108,36 @@ const Fiber: React.FC<IProps> = ({lang, fibersState, colorsState, setState, moda
     const renderFiberItem = useMemo(() => {
         const fiber = fibersState.fibersList.find(item => item._id === fibersState.selected)  
         return fiber ? (
-            <div className="fiber__item">
-                <h2>{fiber.short.name[lang]} ({fiber.name[lang]})</h2>
-                <div className='fiber__splider__container'>
+            <article className="fiber">
+                <h1>{fiber.short.name[lang]} ({fiber.name[lang]})</h1>
+                <section className='fiber__images-text'>
                     <SpliderCommon images={fiber.images} defaultSize='small' imagesPerSlide={fiber.images.files?.length > 3 ? 3 : fiber.images.files?.length} modal={modal}/>
-                </div>
-                <div className="fiber__descr__container">
                     <div className="block_text">
                         {fiber.text[lang].split('\n').map((textItem, i) => <p key={textItem}>{textItem}</p>)}
-                        <div className="features__container">
-                            <h3>{lang === 'en' ? 'Features' : 'Характеристики'}</h3>
-                            <Features params={fiber.params} fiber={fiber} lang={lang}/>
-                        </div>
-                        <div className="colors">
-                            <h3>{lang === 'en' ? 'Available colors' : 'Доступные цвета'}</h3>
-                            <div className="colors__container">
-                                {firberColors(fiber)}
-                            </div>
-                        </div>
-                        <div className="proscons">
-                            <h3>{lang === 'en' ? 'Pros and сons' : 'Плюсы и минусы'}</h3>
-                            <Proscons {...fiber.proscons} lang={lang}/>
-                        </div>
-                        
-                        <div className="buttons">
-                            <NavLink
-                                className="button_blue link_compareList"
-                                to={navList.fibers.compare.to}>
-                                    {lang === 'en' ? 'Watch in comparasing' : 'Посмотреть в сравнении'}
-                            </NavLink>
-                        </div>
                     </div>
+                </section>
+                <div className="block_text">
+                    <section className="features">
+                        <h3>{lang === 'en' ? 'Features' : 'Характеристики'}</h3>
+                        <FiberParams params={fiber.params} fiber={fiber} lang={lang}/>
+                    </section>
+                    <section className="colors">
+                        <h3>{lang === 'en' ? 'Available colors' : 'Доступные цвета'}</h3>
+                        <div className="colors__items">
+                            {firberColors(fiber)}
+                        </div>
+                    </section>
+                    <section className="proscons-cont">
+                        <h3>{lang === 'en' ? 'Pros and сons' : 'Плюсы и минусы'}</h3>
+                        <Proscons {...fiber.proscons} lang={lang}/>
+                    </section>
                 </div>
-            </div>)
+                <NavLink
+                    className="button_blue link_compare"
+                    to={navList.fibers.compare.to}>
+                        {lang === 'en' ? 'Watch in comparasing' : 'Посмотреть в сравнении'}
+                </NavLink>
+            </article>)
         :
             <ErrorFetch lang={lang} fetchData={{status: 'error', message: {en: 'Fiber has not been found', ru: 'Данный материал не найден'}}} />
     }, [paramFiberId, lang, fibersState.load.status, colorsState.load.status, fibersState.selected, isAdmin])

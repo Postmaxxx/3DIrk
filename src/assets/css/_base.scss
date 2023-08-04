@@ -64,13 +64,14 @@ h3 {
     font-size: 1.4rem;
     transition: color $transition_theme;
     color: var(--main_em);
+    text-align: center;
 
     @include respond-to(sm) {
         font-size: 1.2rem;
     }
 
     @include respond-to(xs) {
-        font-size: 1rem;
+        font-size: 1.1rem;
     }
 }
 
@@ -93,6 +94,7 @@ ul {
 
     & > li {
         transition: color $transition_theme;
+        @include fs_base;
     }
 } 
 
@@ -108,7 +110,6 @@ sup {
 }
 
 p {
-    font-size: 1.1rem;
     transition: color $transition_theme;
     margin-top: .8rem;
     text-indent: 2.8rem;
@@ -116,33 +117,24 @@ p {
     
     @include respond-to(md) {
         text-indent: 2.4rem;
-        font-size: 1rem;
     }
 
     @include respond-to(sm) {
         text-indent: 2.2rem;
-        font-size: 1rem;
     }
     
     @include respond-to(xs) {
         text-indent: 1.7rem;
-        font-size: .9rem;
     }
+
+    @include fs_base;
 }
 
 
 span {
-    font-size: 1.1rem;
     transition: color $transition_theme;
     font-weight: 500;
-    
-    @include respond-to(sm) {
-        font-size: 1rem;
-    }
-    
-    @include respond-to(xs) {
-        font-size: .9rem;
-    }
+    @include fs_base;
 }
 
 .container_page {

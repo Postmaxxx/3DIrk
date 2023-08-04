@@ -1,5 +1,5 @@
 import { IFiber, IFiberParam, TLang } from '../../interfaces'
-import './params.scss'
+import './fiber-params.scss'
 import { ratingNumberToText } from '../../assets/js/processors'
 import { IFiberProperties, fibersProperties } from '../../assets/data/fibersProperties'
 import { useMemo } from "react";
@@ -10,7 +10,7 @@ interface IProps {
     lang: TLang
 }
 
-const Params: React.FC<IProps> = ({params, lang, fiber}): JSX.Element => {
+const FibersParams: React.FC<IProps> = ({params, lang, fiber}): JSX.Element => {
 
     const switchType = (param: IFiberProperties) => {
         if (param._id === "minTemp") {
@@ -38,10 +38,10 @@ const Params: React.FC<IProps> = ({params, lang, fiber}): JSX.Element => {
     }, [lang, fiber])
 
     return (
-        <div className="params">
+        <div className="fiber-params">
             {renderPropery}
         </div>
     )
 }
 
-export default Params
+export default FibersParams

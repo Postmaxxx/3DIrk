@@ -1,7 +1,7 @@
 @use '/src/assets/css/variables' as *;
 
 
-.proscons__container {
+.proscons{
     display: grid;
     grid-template-columns: 1fr 1fr;
     width: 100%;
@@ -14,21 +14,10 @@
         grid-template-columns: 1fr;
     }
 
-    @include respond-to(xs) {
-    }
 
     & > ul {
-        //width: 45%;
-        font-size: 18px;
-
         @include respond-to(sm) {
             width: 100%;
-            font-size: 16px;
-        }
-
-        @include respond-to(xs) {
-            width: 100%;
-            //font-size: 14px;
         }
     }
 
@@ -37,10 +26,14 @@
             position: relative;
             margin-left: 25px;
             margin-top: 10px;
+
+            &:first-of-type {
+                margin-top: 0;
+            }
+
             &::before {
                 position: absolute;
                 left: -25px;
-                //transform: translate(0, -50%);
                 top: .25rem;
                 display: inline-block;
                 content: '';
@@ -49,6 +42,7 @@
                 background-size: 100% 100%;
             }
         }
+
     }
 
 
@@ -61,7 +55,7 @@
     & .cons {
 
         @include respond-to(sm) {
-            margin-top: 20px;
+            margin-top: 40px;
         }
 
         li::before {

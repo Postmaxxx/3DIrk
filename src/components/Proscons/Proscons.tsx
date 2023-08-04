@@ -9,7 +9,7 @@ interface IProps {
 
 const Proscons = ({pros, cons, lang} : IProps) => {
     return (
-        <div className="proscons__container">
+        <div className="proscons">
             <ul className='pros'>
                 {pros.length > 0 ? pros.map((item,i) => <li key={i}>{item[lang]}</li>) : null}
             </ul>

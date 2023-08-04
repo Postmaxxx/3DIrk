@@ -22,9 +22,9 @@ const RatingLine: React.FC<IRatingLine> = ({colorValue='', value=0, min=0, max=1
     }, [])
 
     return (
-        <div className="rating_value" ref={_rating}>
-            <div className="value__container">
-                <div className={`rating__value ${colorValue ? `color_${colorValue}` : ''}`} ref={_value}></div>
+        <div className="rating_line" ref={_rating}>
+            <div className="rating_line__line">
+                <div className={`rating_line__value ${colorValue ? `color_${colorValue}` : ''}`} ref={_value}></div>
                 <div className="border_inner border_inner_1"></div>
                 <div className="border_inner border_inner_2"></div>
                 <div className="border_inner border_inner_3"></div>
@@ -32,7 +32,7 @@ const RatingLine: React.FC<IRatingLine> = ({colorValue='', value=0, min=0, max=1
             </div>
 
 
-            <div className="rating__legend">
+            <div className="rating_line__legend">
                 <span>{text}<span>{measurment}</span></span>
             </div>
         </div>

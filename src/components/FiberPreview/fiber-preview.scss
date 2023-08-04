@@ -29,16 +29,13 @@
         margin-top: 10px;
         width: 100%;
 
+        & h3 {
+            text-align: left;
+        }
+
         & span {
             display: block;
             margin-top: 5px;
-
-            &:first-child {
-                margin-top: 0;
-                font-size: 20px;
-                color: var(--main_em);
-                font-weight: 900;
-            }
         }
     }
 }

@@ -1,8 +1,7 @@
 @use '/src/assets/css/variables' as *;
 
 
-.params {
-    margin-top: 50px;
+.fiber-params {
     width: 100%;
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -32,16 +31,8 @@
     
             & > span:nth-of-type(1) {
                 font-weight: 400;
-                font-size: 18px;
-
-                @include respond-to(sm) {
-                    font-size: 16px;
-                }
-
-                @include respond-to(xs) {
-                    font-size: 14px;
-                }
             }
+
             & > span:nth-of-type(2) {
                 flex-grow: 1;
                 margin-left: 10px;
@@ -52,14 +43,7 @@
             }            
             & > span:nth-of-type(3) {
                 font-weight: 700;
-                font-size: 18px;
                 text-align: end;
-                @include respond-to(sm) {
-                    font-size: 16px;
-                }
-                @include respond-to(xs) {
-                       font-size: 14px;
-                }
             }
         }
     }

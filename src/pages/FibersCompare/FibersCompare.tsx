@@ -64,7 +64,8 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
 
 
     useEffect(() => {
-        setTimeout(() => {setSelectError(false)}, tipsTransition)
+        const tip = setTimeout(() => {setSelectError(false)}, tipsTransition)
+        return () => clearTimeout(tip)
     }, [selectError])
 
 
@@ -105,12 +106,12 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
     const renderProperties = useMemo(() => {
         return fibersProperties.map((property) => {
             return property._id !== 'priceGr' && 
-                <div className="cell row-name fixed-left with-tip padding_no" key={property._id}>
+                <div className="cell row-name fixed-left padding_no" key={property._id}>
                     <button onClick={() => sortByProperty(property._id)}>
                         <span>{property.name[lang]}</span>
-                        <div className='tip' tip-text={property.tip[lang]}>
+                        {/*<div className='tip' tip-text={property.tip[lang]}>
                             <SvgInserter type={'question'}/>
-                        </div>
+                        </div>*/}
                     </button>
                 </div>
         }
@@ -124,11 +125,11 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
             return (
                 <Fragment key={fiber._id}>
                     <div className={`cell col-name ${fiber._id === fibersState.selected ? "selected" : ""}`} onClick={e => onCellClick(fiber._id, '')} >
-                        <div className="img__container">
+                        <div className="img-cont">
                             <ImgWithPreloader src={`${fiber.images.paths.small}/${fiber.images.files[0]}`} alt={fiber.images.files[0]}  />
-                            <span>{fiber.short.name[lang]}</span>
                         </div>
-                        <NavLink to={`../${fiber._id}`} className='button_blue'>
+                        <span className='fiber-name'>{fiber.short.name[lang]}</span>
+                        <NavLink to={`../${fiber._id}`} className='button_blue button_sort'>
                                 {lang === 'en' ? 'Learn more' : 'Подробнее'}
                         </NavLink>
                     </div>
@@ -147,7 +148,7 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
                                         {property._id === "stiffnes" && <div className="rating__container"><RatingLine colorValue='red' value={fiber.params[property._id]} text={`${fiber.params[property._id]}`} measurment={property.unit[lang]}/></div>}
                                         {property._id === "durability" && <div className="rating__container"><RatingLine colorValue='green' value={fiber.params[property._id]} text={`${fiber.params[property._id]}`} measurment={property.unit[lang]}/></div>}
                                         {property._id === "resistantImpact" && <div className="rating__container"><RatingLine colorValue='lilac' value={fiber.params[property._id]} text={`${fiber.params[property._id]}`} measurment={property.unit[lang]}/></div>}
-                                        {(property._id === "minTemp" || property._id === "maxTemp" || property._id === "thermalExpansion" || property._id === "density") && <span>{fiber.params[property._id]} <span>{property.unit[lang]}</span></span>}
+                                        {(property._id === "minTemp" || property._id === "maxTemp" || property._id === "thermalExpansion" || property._id === "density") && <span className='values_numeric'>{fiber.params[property._id]} <span>{property.unit[lang]}</span></span>}
                                         {(property._id === "flexible" 
                                         || property._id === "elastic"
                                         || property._id === "soft"
@@ -190,8 +191,8 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
                             <div className="table">
                                 <div className="cell row-name fixed-left"></div>
                                 <div className="cell row-name fixed-left selectors">
-                                    {(filtered && !selectedMore) && <button className='button_blue' onClick={clearSelected}>{lang === 'en' ? 'Show all' : 'Показать все'}</button>}
-                                    {(!filtered || selectedMore) && <button className='button_blue' onClick={compareSelected}>{lang === 'en' ? 'Compare' : 'Сравнить'}</button>}
+                                    {(filtered && !selectedMore) && <button className='button_blue button_reset' onClick={clearSelected}>{lang === 'en' ? 'Show all' : 'Показать все'}</button>}
+                                    {(!filtered || selectedMore) && <button className='button_blue button_compare' onClick={compareSelected}>{lang === 'en' ? 'Compare' : 'Сравнить'}</button>}
                                     {selectError && <span className='error-message'>{lang === 'en' ? `select > 1` : `выберите > 1`}</span>}
                                 </div>
                                 {renderProperties}

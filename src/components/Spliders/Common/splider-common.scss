@@ -36,6 +36,9 @@
         & > .splide__pagination   {
             position: absolute;
             bottom: -8%;
+            & li > button {
+                background-color: var(--main_em);
+            }
         }
     
         & > .splide__arrows {
@@ -43,7 +46,7 @@
                 transition: $transition_fast;
                 
                 & > svg {
-                    fill: var(--main);
+                    fill: $dark;
                     transition: margin $transition_fast;
                 }
                 

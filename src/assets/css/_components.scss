@@ -22,17 +22,26 @@
     align-items: center;
     position: relative;
     border-radius: 5px; 
-    min-height: 40px;
+    //min-height: 1rem;
     justify-content: center;
+
+
+    @include respond-to(md) {
+        font-size: 1rem;
+        padding: 6px 40px;
+        //min-height: 35px;
+    }
 
     @include respond-to(sm) {
         font-size: 1rem;
         padding: 6px 40px;
+        //min-height: 30px;
     }
 
     @include respond-to(xs) {
         font-size: .9rem;
         padding: 3px 20px;
+        //min-height: 25px;
     }
 
     &:hover {

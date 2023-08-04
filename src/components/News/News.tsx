@@ -12,7 +12,7 @@ interface IProps {
 
 const News:React.FC<IProps> = ({newsPiece, lang}):JSX.Element => {
     return (
-        <div className="news-item">
+        <article className="news-item">
             <div className="img-cont">
                 {newsPiece.images.files.length > 0 &&
                     <ImgWithPreloader src={`${newsPiece.images.paths.small}/${newsPiece.images.files[0]}`} alt={newsPiece.header[lang]} />
@@ -34,7 +34,7 @@ const News:React.FC<IProps> = ({newsPiece, lang}):JSX.Element => {
                         </svg>
                 </NavLink>
             </div> 
-        </div>
+        </article>
     )
 }
 
