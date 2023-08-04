@@ -21,13 +21,13 @@ const Gallery: React.FC<IProps> = ({lang, products}):JSX.Element => {
                 to={product._id}
                 key={product._id}
                 >
-                <div className='gallery__item' >
-                    <div className={`img__container ${product.active ? '' : 'inactive'}`}>
+                <div className='gallery__card' >
+                    <div className={`gallery__card__img-cont ${product.active ? '' : 'inactive'}`}>
                         <ImgWithPreloader src={`${product.images.paths.small}/${product.images.files[0]}`} alt={product.images.files[0]}/>
                     </div>
-                    <div className="descr__container">
+                    <div className="gallery__card__text">
                         <span className='name'>{product.name[lang]}</span>
-                        <span className='price'>{lang === 'en' ? 'Price' : 'Цена'}: {product.price[lang]}</span>
+                        <span className='price'>{lang === 'en' ? 'Price from' : 'Цена от'}: {product.price[lang]}</span>
                     </div>
                 </div>
             </NavLink>
@@ -36,7 +36,7 @@ const Gallery: React.FC<IProps> = ({lang, products}):JSX.Element => {
 
 
     return (
-        <div className="gallery__container">
+        <div className="gallery">
             {cards}
         </div>
     )

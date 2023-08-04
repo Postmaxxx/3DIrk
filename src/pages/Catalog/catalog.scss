@@ -16,29 +16,34 @@
                 margin-left: 0;
             }
         }
-    
-        .splider_catalog__main {
-            height: 750px;
-            margin-top: 150px;
-            margin-bottom: 50px;
-            display: flex;
-            align-items: stretch;
-            width: 100%;
-            position: relative;
-        
-       
-            @include respond-to(md) {
-                height: 650px;
-            }
-        
-            @include respond-to(sm) {
+
+        .catalog {
+            margin-top: 120px;
+            margin-bottom: 70px;
+            
+            .catalog__content {
                 margin-top: 40px;
-                height: auto;
-                flex-direction: column;
+                height: 750px;
+                display: flex;
+                align-items: stretch;
+                width: 100%;
+                position: relative;
+            
+           
+                @include respond-to(md) {
+                    height: 650px;
+                }
+            
+                @include respond-to(sm) {
+                    margin-top: 40px;
+                    height: auto;
+                    flex-direction: column;
+                }
+        
+        
             }
-    
-    
         }
+    
     
     
     

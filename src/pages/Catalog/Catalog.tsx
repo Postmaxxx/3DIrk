@@ -4,30 +4,45 @@ import "@splidejs/react-splide/css";
 import CategoriesList from '../../components/CatalogList/CatalogList';
 import CatalogIntro from '../../components/CatalogIntro/CatalogIntro';
 import { memo } from 'react';
+import { connect } from "react-redux";
+import { IFullState, TLang } from 'src/interfaces';
 
 
 const CatalogIntroMemo = memo(CatalogIntro)
 const CategoriesListMemo = memo(CategoriesList)
 const SpliderSingleMemo = memo(SpliderSingle)
 
-const Catalog = (): JSX.Element => {
+interface IPropsState {
+    lang: TLang
+}
+
+const Catalog: React.FC<IPropsState> = ({lang}): JSX.Element => {
     return (
         <div className="page page_catalog">
             <div className="container_page">
                 <div className="container">
-                    <CatalogIntroMemo />
-                    <div className="splider_catalog__main">
-                        <CategoriesListMemo />
-                        <SpliderSingleMemo />
+                    <div className="block_text">
+                        <h1>{lang === 'en' ? 'Header' : 'Заголовок'}</h1>
                     </div>
+                    <CatalogIntroMemo />
+                    <section className="catalog">
+                        <div className="block_text">
+                            <h1>{lang === 'en' ? 'Our catalog' : 'Наш каталог'}</h1>
+                        </div>
+                        <div className="catalog__content">
+                            <CategoriesListMemo />
+                            <SpliderSingleMemo />
+                        </div>
+                    </section>
                 </div>
             </div>
         </div>
     )
 }
 
+const mapStateToProps = (state: IFullState):IPropsState => ({
+    lang: state.base.lang,
+})
 
+export default connect(mapStateToProps)(Catalog)
 
-  
-  
-export default Catalog

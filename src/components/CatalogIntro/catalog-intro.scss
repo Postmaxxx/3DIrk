@@ -2,69 +2,50 @@
 
 
 .catalog-intro {
-    text-align: center;
+    display: flex;
+    align-items: center;
+    padding-top: 40px;
     width: 100%;
-
-    h1 {
+    
+    
+    @include respond-to(sm) {
+        flex-direction: column;
+    }
+    
+    & h2 {
         color: var(--main_em);
     }
-
-    .descr {
-        display: flex;
-        align-items: center;
-        padding-top: 40px;
-        width: 100%;
-        
-        
-        @include respond-to(sm) {
-            flex-direction: column;
-        }
-        
-        & h2 {
-            color: var(--main_em);
-        }
-        
-        .img__container {
-            width: 45%;
-            border-radius: 15px;
-            overflow: hidden;
-            min-height: 200px;
-            position: relative;
-
-            @include respond-to(sm) {
-                min-height: 100px;
-                max-width: 400px;
-                width: 100%;
-            }
-            
-            & > img {
-                width: 100%;
     
-            }
-        }
+    .catalog-intro__image {
+        width: 45%;
+        border-radius: 15px;
+        overflow: hidden;
+        min-height: 200px;
+        position: relative;
 
-
-        & .descr__text {
-            max-width: 50%;
-            margin-left: clamp(40px, 5%, 80px);
-
-            @include respond-to(sm) {
-                max-width: none;
-                margin-top: 30px;
-            }
-
-            & ul {
-                margin-top: 20px;
-                text-align: left;
-                list-style-type: disc;
-
-                & > li {
-                    margin-top: 10px;
-                    font-size: 18px;
-                }
-            }
+        @include respond-to(sm) {
+            min-height: 100px;
+            max-width: 400px;
+            width: 100%;
         }
         
+        & > img {
+            width: 100%;
+            }
     }
+
+
+    & .catalog-intro__text {
+        max-width: 50%;
+        margin-left: clamp(40px, 5%, 80px);
+
+        @include respond-to(sm) {
+            max-width: none;
+            margin-top: 30px;
+            margin-left: 0;
+        }
+
+    }
+    
     
 }

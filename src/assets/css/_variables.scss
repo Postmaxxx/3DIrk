@@ -170,6 +170,22 @@ body {
 }
 
 
+@mixin fs_bigger {
+    font-size: 1.3rem;
+    
+    @include respond-to(md) {
+        font-size: 1.2rem;
+    }
+
+    @include respond-to(sm) {
+        font-size: 1.1rem;
+    }
+    
+    @include respond-to(xs) {
+        font-size: 1rem;
+    }
+}
+
 
  
 @mixin scroll_thin {

@@ -181,7 +181,7 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
     return (
         <div className="page page_compare">
             <div className="container_page">
-                <div className="container_compare">
+                <section className="fibers-compare">
                     <div className="block_text">
                         <h1>{lang === 'en' ? 'Filaments comparison' : 'Сравнение филаментов'}</h1>
                         <p>{lang === 'en' ? 'You can click at the feature on the left to sort fibers in forward or reverse order by clicked feature' : 'Вы можете кликнуть по свойству слева чтобы отсортировать материалы по данному свойству'}</p>
@@ -202,7 +202,7 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
                         {fibersState.load.status === 'fetching' && <Preloader />}
                         {fibersState.load.status === 'error' && <ErrorFetch fetchData={fibersState.load} lang={lang} />}
                     </div>
-                </div>
+                </section>
             </div>
         </div>
     )

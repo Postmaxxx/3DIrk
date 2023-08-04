@@ -1,7 +1,7 @@
 @use "/src/assets/css/variables" as *;
 
 
-.splider_single__container {
+.splider_catalog {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -15,7 +15,6 @@
         max-height: 90%;
 
         @include respond-to(sm) {
-            //height: 50vw;
             max-height: none;
         }
 
@@ -26,26 +25,46 @@
         & .splide__arrows { 
             width: 100%;
             position: absolute;
-            top: calc(100% + 5px);
+            top: calc(100% + 20px);
             height: fit-content;
+
+            @include respond-to(sm) {
+                top: calc(100% - 4px );
+                transform: translateY(-50%);
+            }
+
+            @include respond-to(xs) {
+                display: none;
+            }
 
             & .splide__arrow {
                 background-color: transparent;
                 transition: $transition_base;
-                //height: 100%;
                 border-radius: 0;
                 -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
                 transform: translate(0, 0);
+                height: 30px;
+                aspect-ratio: 1;
+
+                @include respond-to(sm) {
+                    width: 17px;
+                }
 
                 &:disabled {
                     width: 0;
                 }
                 
                 & > svg {
-                    width: 50px;
-                    height: auto;
+                    height: 100%;
+                    width: 100%;
                     fill: var(--main_em);
                     transition: $transition_base;
+
+
+                    @include respond-to(xs) {
+                        display: none;
+                    }
+
                 }
                 &:hover {
                     & svg {
@@ -76,7 +95,7 @@
                 &  > li {
                     width: 100%;
                     display: flex;
-                    align-items: center;
+                    align-items: flex-start;
                     justify-content: center;                   
                 }
             }
@@ -85,19 +104,21 @@
 
         & .splide__pagination--custom {
            bottom: unset;
+            margin-top: 20px;
 
-            @include respond-to(xs) {
+            @include respond-to(sm) {
+                margin-top: 0;
                 //display: none;
             }
 
             & .splide__pagination__page  {
-                font-size: 20px;
                 background-color: transparent;
                 margin: 0px 12px;
                 height: auto;
                 width: auto;
                 color: var(--main_em);
                 font-weight: 700;
+                @include fs_base;
 
                 @include respond-to(xs) {
                     width: 15px;
@@ -107,7 +128,7 @@
 
 
                 &.is-active {
-                    font-size: 32px;
+                    @include fs_bigger;
                     opacity: 1;
                     font-weight: 800;
                     transform: none;

@@ -3,12 +3,13 @@ import { ICatalogState, IFullState, IProductShort, ISpliderOptions, TLang,} from
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import React, { useRef, useEffect, useState, useMemo } from "react";
+import React, { useRef, useEffect, useState, useMemo, useCallback } from "react";
 import Splide from "@splidejs/splide";
 import Preloader from '../../../components/Preloaders/Preloader';
 import Gallery from '../../../components/Gallery/Gallery';
 import { allActions } from "../../../redux/actions/all";
 import ErrorFetch from '../../../../src/components/ErrorFetch/ErrorFetch';
+import useScreenMeter from '../../../../src/hooks/screenMeter';
 
 
 interface IPropsState {
@@ -42,6 +43,7 @@ const SpliderSingle: React.FC<IProps> = ({lang, catalogState, isAdmin, setState}
 		perPage: 1,
 		fixedWidth: "100%",
 		perMove: 1,
+		gap: '5%',
 		pagination: true,
 		arrows: true,
 		drag: true,
@@ -58,6 +60,7 @@ const SpliderSingle: React.FC<IProps> = ({lang, catalogState, isAdmin, setState}
 	};
 
 
+	const screenWidth = useScreenMeter()
 
 
 	
@@ -72,15 +75,19 @@ const SpliderSingle: React.FC<IProps> = ({lang, catalogState, isAdmin, setState}
 	},[catalogState.category.loadCategory.status, catalogState.category._id]);
 	
 	
-	
-	
 
-	
 	
 	useEffect(() => {
 		if (!_splideMain.current) return
 
-		document.body.offsetWidth < 993 && setProductsPerSlide(4)
+		if ((screenWidth.md && !screenWidth.sm) || screenWidth.xs) {
+			setProductsPerSlide(4)
+		}
+		if (screenWidth.sm && !screenWidth.xs) {
+			setProductsPerSlide(6)
+		}
+		
+
 		
 		spliderSingle.current = new Splide(_splideMain.current, optionsMain);
 		
@@ -113,6 +120,9 @@ const SpliderSingle: React.FC<IProps> = ({lang, catalogState, isAdmin, setState}
 	}, [productSlides])
 
 
+
+
+
 	const products = useMemo(() => {
 		return productSlides.map((products, i): JSX.Element => {
 			return (
@@ -124,7 +134,7 @@ const SpliderSingle: React.FC<IProps> = ({lang, catalogState, isAdmin, setState}
 	}, [productSlides])
 
 	return (
-		<div className="splider_single__container">
+		<div className="splider_catalog">
 			{catalogState.category.loadCategory.status === 'success' && 
 				<div className="splide splider_single" ref={_splideMain}>
 					<div className="splide__track">
