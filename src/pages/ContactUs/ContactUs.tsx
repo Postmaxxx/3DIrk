@@ -182,7 +182,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
                             <button 
                                 type="submit" 
                                 disabled={userState.sendOrder.status === 'fetching'} 
-                                className="button_blue color_reverse  button_contact" 
+                                className="button_blue button_contact" 
                                 onClick={onSubmit}>
                                     {userState.sendOrder.status === 'fetching' ? 
                                         <Preloader />

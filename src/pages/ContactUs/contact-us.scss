@@ -5,49 +5,6 @@
     transition: background-color $transition-theme;
     flex-grow: 1;
 
-        -top: 20px;
-        & h1 {
-        text-align: center;
-    }
-
-
-    .contact__form {
-
-
-
-        .cart-content__container {
-            width: 100%;
-            margin-top: 60px;
-
-            & h3 {
-                text-align: center;
-                color: var(--text);
-                margin-bottom: 10px;
-            }
-        }
-
-
-
-        & > .button_contact {
-            margin-top: 40px;
-            
-            @include respond-to(sm) {
-                margin-top: 30px;
-            }
-
-            @include respond-to(xs) {
-                width: 100%;
-                margin-top: 50px;
-            }
-
-            &:disabled {
-                opacity: 0.3;
-            }
-
-        }
-
-
-    }
 
 }    
 

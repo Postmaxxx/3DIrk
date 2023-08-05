@@ -5,10 +5,6 @@
     transition: background-color $transition-theme;
     flex-grow: 1;
 
-      
-    & h1 {
-        text-align: center;
-    }
 
     .cart__content {
         width: 100%;
@@ -23,20 +19,6 @@
         }
     }
 
-
-    & .button_order {
-        margin-top: 40px;
-        margin-left: auto;
-
-        @include respond-to(sm) {
-            margin-top: 30px;
-        }
-
-        @include respond-to(xs) {
-            width: 100%;
-            padding: 6px 20px;
-        }
-    }
 
 
 }    

@@ -3,7 +3,7 @@
 
 .page_creator_fiber {
 
-    & form {
+   /* & form {
         margin-top: 70px;
         gap: 30px 40px;
         background-color: var(--main);
@@ -218,14 +218,7 @@
             }
         }
 
-    }
+    }*/
 
 
-    & > .fetching {
-        position: fixed;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-    }
 }

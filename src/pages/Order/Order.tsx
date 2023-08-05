@@ -144,7 +144,7 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsLoad, fibersLoad, 
                     <div className="block_text">
                         <h1>{lang === 'en' ? 'Order 3D printing' : 'Заказать 3D печать'}</h1>
                     </div>
-                    <form className="form_full order" ref={_formOrder} >
+                    <form className="form_full form_order" ref={_formOrder} >
                         <div className="block_text">
                             <h2>{lang === 'en' ? 'Additional information' : 'Дополнительная информация'}</h2>
                         </div>

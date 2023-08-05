@@ -113,11 +113,15 @@ const SpliderChanger: FC<IProps> = ({lang, content, modal, setState}): JSX.Eleme
         <div className="page page_creator_content">
             <div className="container_page">
                 <div className="container">
-                    <h1>{lang === 'en' ? 'Change splider' : 'Изменение галереи'}</h1> 
-                    <form ref={_form}>
-                        <h2 className='section-header full-width'>{lang === 'en' ? 'IMAGES' : 'ИЗОБРАЖЕНИЯ'}</h2>           
-                        <AddFiles lang={lang} ref={addFilesRef} multiple={true} id='allImages'/>
-                        <button className='button_blue post' disabled={content.send.status === 'fetching'} onClick={e => onSubmit(e)}>
+                    <h1>{lang === 'en' ? 'Change content' : 'Изменение контента'}</h1> 
+                    <form className='form_full form_content' ref={_form}>
+                        <div className="block_text">
+                            <h2 className='section-header full-width'>{lang === 'en' ? 'Carousel' : 'Карусель'}</h2>           
+                        </div>
+                        <div className="form__inputs">
+                            <AddFiles lang={lang} ref={addFilesRef} multiple={true} id='allImages'/>
+                        </div>
+                        <button className='button_blue button_light button_post' disabled={content.send.status === 'fetching'} onClick={e => onSubmit(e)}>
                             {content.send.status === 'fetching' ? 
                                 <Preloader />
                             :
