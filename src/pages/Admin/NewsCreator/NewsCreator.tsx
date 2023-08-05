@@ -184,7 +184,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
 
 
     return (
-        <div className="page page_creator_fiber">
+        <div className="page page_creator_news">
             <div className="container_page">
                 <div className="container">
                     {paramNewsId ? 
@@ -192,82 +192,78 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
                     :
                         <h1>{lang === 'en' ? 'Post news' : 'Добавление новости'}</h1>
                     }
-                    <form className='form_full' ref={_form}>
-                        <div className="block_input_header">
-                            <span></span>
-                            <h3 className='lang'>EN</h3>
-                            <h3 className='lang'>RU</h3>
+                    <form className='form_full form_add-news' ref={_form}>
+                        <div className="block_text">
+                            <h2>{lang === 'en' ? 'Add information' : 'Добавьте информацию'}</h2>
                         </div>
-                        <div className="form__inputs_3">
 
-
-                            <div className="block_input">
-                                <label>{lang === 'en' ? 'Header' : 'Заголовок'}:</label>
-                                <div className="input__wrapper" data-selector="input-block">
-                                    <input 
-                                        ref={_headerEn}
-                                        data-selector="input"
-                                        type="text" 
-                                        id='header_en' 
-                                        onChange={onChangeInputs}
-                                        onKeyDown={focuser.next} 
-                                        onBlur={(e) => inputChecker({lang, min:inputsProps.news.header.min, max:inputsProps.news.header.max, el: e.target})}/>
-                                </div>
-                                <div className="input__wrapper" data-selector="input-block">
-                                    <input 
-                                        ref={_headerRu}
-                                        data-selector="input"
-                                        type="text" 
-                                        id='header_ru' 
-                                        onChange={onChangeInputs} 
-                                        onKeyDown={focuser.next}
-                                        onBlur={(e) => inputChecker({lang, min:inputsProps.news.header.min, max:inputsProps.news.header.max, el: e.target})}/>
-                                </div>
+                        <div className="form__inputs form__inputs_sm-wide">
+                            <div className="block_input" data-selector="input-block">
+                                <label htmlFor="header_en">{lang === 'en' ? "Header en" : "Заголовок en"}</label>
+                                <input 
+                                    ref={_headerEn}
+                                    data-selector="input"
+                                    type="text" 
+                                    id='header_en' 
+                                    onChange={onChangeInputs}
+                                    onKeyDown={focuser.next} 
+                                    onBlur={(e) => inputChecker({lang, min:inputsProps.news.header.min, max:inputsProps.news.header.max, el: e.target})}/>
                             </div>
-
-                            <div className="block_input">
-                                <label>{lang === 'en' ? 'Short text' : 'Краткий текст'}:</label>
-                                <div className="input__wrapper" data-selector="input-block">
-                                    <textarea 
+                            <div className="block_input" data-selector="input-block">
+                                <label htmlFor="header_ru">{lang === 'en' ? "Header ru" : "Заголовок ru"}</label>
+                                <input 
+                                    ref={_headerRu}
+                                    data-selector="input"
+                                    type="text" 
+                                    id='header_ru' 
+                                    onChange={onChangeInputs} 
+                                    onKeyDown={focuser.next}
+                                    onBlur={(e) => inputChecker({lang, min:inputsProps.news.header.min, max:inputsProps.news.header.max, el: e.target})}/>
+                            </div>
+                        </div>
+                        <div className="form__inputs form__inputs_sm-wide">
+                            <div className="block_input" data-selector="input-block">
+                                <label htmlFor="header_en">{lang === 'en' ? 'Short text en' : 'Краткий текст en'}</label>
+                                <textarea 
                                         ref={_textShortEn}
                                         data-selector="input"
                                         id='text_short_en' 
                                         onChange={onChangeInputs} 
                                         onBlur={(e) => inputChecker({lang, min:inputsProps.news.textShort.min, max:inputsProps.news.textShort.max, el: e.target})}/>
-                                </div>
-                                <div className="input__wrapper" data-selector="input-block">
-                                    <textarea 
+                            </div>
+                            <div className="block_input" data-selector="input-block">
+                                <label htmlFor="header_ru">{lang === 'en' ? 'Short text ru' : 'Краткий текст ru'}</label>
+                                <textarea 
                                         ref={_textShortRu}
                                         data-selector="input"
                                         id='text_short_ru' 
                                         onChange={onChangeInputs} 
                                         onBlur={(e) => inputChecker({lang, min:inputsProps.news.textShort.min, max:inputsProps.news.textShort.max, el: e.target})}/>
-                                </div>
                             </div>
-
-                            <div className="block_input">
-                                <label>{lang === 'en' ? 'Full text' : 'Полный текст'}:</label>
-                                <div className="input__wrapper" data-selector="input-block">
-                                    <textarea 
-                                        ref={_textEn}
-                                        data-selector="input"
-                                        id='text_en' 
-                                        onChange={onChangeInputs} 
-                                        onBlur={(e) => inputChecker({lang, min:inputsProps.news.textFull.min, max:inputsProps.news.textFull.max, el: e.target})}/>
-                                </div>
-                                <div className="input__wrapper" data-selector="input-block">
-                                    <textarea 
-                                        ref={_textRu}
-                                        data-selector="input"
-                                        id='text_ru' 
-                                        onChange={onChangeInputs} 
-                                        onBlur={(e) => inputChecker({lang, min:inputsProps.news.textFull.min, max:inputsProps.news.textFull.max, el: e.target})}/>
-                                </div>
+                        </div>
+                        <div className="form__inputs form__inputs_sm-wide">
+                            <div className="block_input" data-selector="input-block">
+                                <label htmlFor="header_en">{lang === 'en' ? 'Full text en' : 'Полный текст en'}</label>
+                                <textarea 
+                                    ref={_textEn}
+                                    data-selector="input"
+                                    id='text_en' 
+                                    onChange={onChangeInputs} 
+                                    onBlur={(e) => inputChecker({lang, min:inputsProps.news.textFull.min, max:inputsProps.news.textFull.max, el: e.target})}/>
                             </div>
-
+                            <div className="block_input" data-selector="input-block">
+                                <label htmlFor="header_ru">{lang === 'en' ? 'Full text ru' : 'Полный текст ru'}</label>
+                                <textarea 
+                                    ref={_textRu}
+                                    data-selector="input"
+                                    id='text_ru' 
+                                    onChange={onChangeInputs} 
+                                    onBlur={(e) => inputChecker({lang, min:inputsProps.news.textFull.min, max:inputsProps.news.textFull.max, el: e.target})}/>
+                            </div>
+                        </div>
+                        <div className="form__inputs form__inputs_sm-wide">
                             <div className="block_input">
                                 <label>{lang === 'en' ? 'Date' : 'Дата'}:</label>
-                                <div className="input__wrapper" data-selector="input-block">
                                     <input 
                                         ref={_date}
                                         data-selector="input"
@@ -276,11 +272,23 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
                                         onChange={onChangeInputs} 
                                         onKeyDown={focuser.next}
                                         onBlur={(e) => inputChecker({lang, type: "date", el: e.target})}/>
-                                </div>
                             </div>
-                            <h2 className='section-header full-width'>{lang === 'en' ? 'IMAGES' : 'ИЗОБРАЖЕНИЯ'}</h2>           
+                        </div>
+                        <div className="block_text">
+                            <h2>{lang === 'en' ? 'Add images' : 'Добавьте изображения'}</h2>
+                        </div>
+                        <div className="form__inputs">
                             <AddFiles lang={lang} ref={addFilesRef} multiple={true} id='allImages'/>
                         </div>
+
+
+
+
+
+
+
+
+
                         <button className='button_blue button_light' disabled={send.status === 'fetching'} onClick={e => onSubmit(e)}>
                             {send.status === 'fetching' ? 
                                 <Preloader />

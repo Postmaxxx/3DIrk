@@ -226,18 +226,29 @@
         padding: 50px 20px;
     }
 
-    & > .block_text > h2 {
-        text-align: center;
-        color: var(--text);
-        font-family: Nunito;
+    & .block_text  {
+
+        &:not(:first-child) {
+            margin-top: 60px;
+        }
+
+        h2 {
+            text-align: center;
+            color: var(--text);
+            font-family: Nunito;
+        }
     }
 
     & > .form__inputs {
-        margin-top: 30px;
         width: 100%;
         display: flex;
         align-items: stretch;
         justify-content: space-between;
+        margin-top: 20px;
+
+        &:first-child {
+            margin-top: 30px;
+        }
 
         @include respond-to(sm) {
             flex-direction: column;
@@ -257,7 +268,6 @@
 
         & > .form__inputs__files {
             width: 47%;
-
             
             @include respond-to(sm) {
                 width: 100%;
@@ -269,10 +279,38 @@
                 flex-direction: column;   
             }
         }
+
+
+        & > .block_input {
+            width: 47%;
+            //border: 2px solid red;
+            display: flex;
+            align-items: stretch;
+            flex-direction: column;
+
+            & > textarea {
+                flex-grow: 1;
+            }
+        }
+
+        &_sm-wide {
+            @include respond-to(sm) {
+                flex-direction: row;
+            }
+            @include respond-to(xs) {
+                flex-direction: column;
+            }
+
+            & > .block_input {
+                @include respond-to(xs) {
+                    width: 100%;
+                }
+            }
+        }
     }
 
 
-    & .form__inputs_3 {
+    /*& .form__inputs_3 {
         & .block_input, .block_input_header {
             display: grid;
             grid-template-columns: 150px 1fr 1fr;
@@ -343,7 +381,7 @@
         }
 
 
-    }
+    }*/
 
     & > button {
         @extend .button_blue;
