@@ -12,43 +12,22 @@
         flex-wrap: wrap;
     }
 
-    & > span:first-of-type {
-        font-size: 22px;
+    & > span {
         font-weight: 700;
     }
 
 
-    & .amount-changer__container {
-            margin-left: 20px;
-            margin-right: 20px;
-        & input {
-            font-size: 22px;
-
-            @include respond-to(sm) {
-                font-size: 20px;
-            }
-        }
+    & .amount-changer-wrapper {
+        margin-left: 20px;
+        margin-right: 20px;
     }
 
-    & .button_news {
-        justify-content: center;
-        padding: 10px 40px;
-        position:initial;
-
-        @include respond-to(md) {
-            margin-top: 20px;
-            width: 100%;
-        }
-
-        @include respond-to(sm) {
-            width: 65%;
-            margin-top: 30px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
+    & .button_add-cart {
         @include respond-to(xs) {
+            margin-top: 30px;
             width: 100%;
+            padding-top: 8px;
+            padding-bottom: 8px;
         }
     }
     

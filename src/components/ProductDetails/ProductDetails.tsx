@@ -72,7 +72,8 @@ const ProductDetails: React.FC<IProps> = ({lang, product, colors,productLoad, mo
     },[fibers.load.status, colors.load.status, productLoad.status])
        
 
-    const productDescr = product.text[lang].split('\n').map((text, i) => <p key={i}>{text}</p>)
+    //const productDescr = product.text[lang].split('\n').map((text, i) => <p key={i}>{text}</p>)
+    const productDescr = <p>{product.text[lang]}</p>
    
 
     const dataToCart = 
@@ -91,9 +92,9 @@ const ProductDetails: React.FC<IProps> = ({lang, product, colors,productLoad, mo
     },[colors.colors, selectedFiber?.colors])
 
     return (
-        <div className="details__descr">
+        <div className="product__info">
             <h2>{lang === 'en' ? 'Features' : 'Характеристики'}:</h2>
-            <div className="features__container">
+            <div className="features">
                 <div className="feature text_simple">
                     <span>{lang === 'en' ? 'Description' : 'Описание'}: </span>
                     {productDescr}
@@ -130,7 +131,7 @@ const ProductDetails: React.FC<IProps> = ({lang, product, colors,productLoad, mo
                     />
                     {selectedFiber &&
                         <NavLink 
-                            className='fiber-link'    
+                            className='link_fiber'    
                             to={`../../fibers/${selectedFiber._id}`} 
                             aria-label={lang === 'en' ? '(About selected fiber)' : ' (О выбранном материале)'}>
                                 {lang === 'en' ? '(About)' : '(Подробнее)'}
@@ -138,11 +139,8 @@ const ProductDetails: React.FC<IProps> = ({lang, product, colors,productLoad, mo
                     }
                 </div>
                 {selectedFiber &&
-                    <div className="colors__container wrap_xs">
-                        <span>{lang === 'en' ? 'Available colors' : 'Доступные цвета'}: </span>
-                        <div className="colors__wrapper">
-                            <ColorSelector lang={lang} colors={colorsList} onSelect={onSelectColor} modal={modal}/>
-                        </div>
+                    <div className="feature colors__container wrap_xs">
+                        <ColorSelector lang={lang} colors={colorsList} onSelect={onSelectColor} modal={modal}/>
                     </div>
                 }
                 

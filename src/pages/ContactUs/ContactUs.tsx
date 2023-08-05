@@ -107,11 +107,14 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
             <div className='container_page'>
                 <div className="container">
                     <div className="block_text">
-                        <h1>{lang === 'en' ? 'Send us a message' : 'Написать нам'}</h1>
+                        <h1>{lang === 'en' ? 'Contact us' : 'Свяжитесь с нами'}</h1>
                     </div>
-                        <form className="contact__form" ref={formContact}>
-                            <div className="user-inputs">
-                                <div className="user-inputs__texts">
+                        <form className="form_full contact__form" ref={formContact}>
+                            <div className="block_text">
+                                <h2>{lang === 'en' ? 'Write us a message' : 'Напишите нам сообщение'}</h2>
+                            </div>
+                            <div className="form__inputs">
+                                <div className="form__inputs__texts">
                                     {userState.auth.status !== 'success' && 
                                         <div className="block_input" data-selector="input-block">
                                             <label htmlFor="name">{lang === 'en' ? 'Your name*' : 'Ваше имя*'}</label>
@@ -168,13 +171,12 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
                                             onBlur={(e) => inputChecker({lang, min:inputsProps.message.min, max:inputsProps.message.max, el: e.target})}/>
                                     </div>
                                 </div>
-                                <div className="user-inputs__files">
+                                <div className="form__inputs__files">
                                     <div className="block_input files">
                                         <label htmlFor="files">{lang === 'en' ? 'Attach files' : 'Прикрепить файлы'}</label>
                                         <AddFiles lang={lang} ref={addFilesRef} multiple={true} id='files'/>
                                     </div>
                                 </div>
-
                             </div>
 
                             <button 

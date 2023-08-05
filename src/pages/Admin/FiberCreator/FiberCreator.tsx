@@ -209,7 +209,6 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
                                     id={item._id} 
                                     label={item.name}
                                     data={item.type === '10' ? data10 : item.type === '5' ? data5 : data3 }
-                                    onClick={onChangeInputs}
                                     onBlur={(e) => inputChecker({lang, notExact: '', el: e.target})}/>
                             </div>
                         :

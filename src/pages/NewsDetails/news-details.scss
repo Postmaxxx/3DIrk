@@ -54,24 +54,34 @@
     }
     
     
-    & .buttons {
+    & .buttons_control {
         display: flex;
-        width: 100%;
         justify-content: center;
         align-items: center;
-        margin-top: 50px;
+        margin: 50px auto 0;
 
         & .button_edit {
             margin-right: 20px;
-            height: 40px;
             width: 45px;
+            aspect-ratio: 1;
+
+            @include respond-to(sm) {
+                width: 40px;
+            }
+
+            @include respond-to(xs) {
+                width: 30px;
+            }
         }
 
 
-        & > .button_delete__container {
+        & > .button_delete {
             width: 30px;
             height: 30px;
             margin-left: 30px;
+            & > svg > path {
+                fill: var(--text);
+            }
         }
     }
 

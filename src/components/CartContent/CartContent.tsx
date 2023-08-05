@@ -51,7 +51,7 @@ const CartContent: React.FC<IProps> = ({lang, cart, colorsState, modal, fibersSt
         e.stopPropagation()
         modal?.openModal({
             name: 'productClicked',
-            children: <ImageModalNew url={`${product.images.paths.full}/${product.images.files[0]}`}/>
+            children: <ImageModalNew url={`${product.images.paths.full}/${product.images.files[0]}`} text={product.name[lang]}/>
         })
     }
     
@@ -60,7 +60,7 @@ const CartContent: React.FC<IProps> = ({lang, cart, colorsState, modal, fibersSt
         e.stopPropagation()
         modal?.openModal({
             name: 'colorClicked',
-            children: <ImageModalNew url={color.url.full}/>
+            children: <ImageModalNew url={color.url.full} />
         })
     }
 
@@ -74,45 +74,46 @@ const CartContent: React.FC<IProps> = ({lang, cart, colorsState, modal, fibersSt
                 <Fragment  key={i}>
                     {color && fiberName &&
                         <div className="cart__item">
-                            <div className="img__container" onClick={(e) => onImageClick(e, item.product)}>
+                            <div className="wrapper_img" onClick={(e) => onImageClick(e, item.product)}>
                                 <ImgWithPreloader src={`${item.product.images.paths.preview}/${item.product.images.files[0]}`} alt={item.product.images.files[0]}/>
                             </div>
                 
-                            <div className="item-descr__container">
-                                <div className="item__block">
-                                    <NavLink className="item__product-link_img" to={`../catalog/${item.product._id}`} target="_blank" rel="noopener noreferrer" aria-label={lang === 'en' ? 'Go to product' : 'Перейти к товару'}>
-                                        {item.product.name[lang]}
-                                    </NavLink>
+                            <div className="item__descriptions">
+                                <div className="description">
+                                    <span className="description__name">{lang === 'en' ? 'Product: ' : 'Товар: '} 
+                                        <NavLink className="item__product-link" to={`../catalog/${item.product._id}`} target="_blank" rel="noopener noreferrer" aria-label={lang === 'en' ? 'Go to product' : 'Перейти к товару'}>
+                                            {item.product.name[lang]}
+                                        </NavLink>
+                                    </span>
+                                    {/*<span className="product">{item.product.name[lang]}</span>*/}
                                 </div>
                                 {item.type &&
-                                    <div className="item__block">
-                                        <span>{lang === 'en' ? 'Type' : 'Модификация'}:</span>
-                                        <span className="fiber">{item.type[lang]}</span>
+                                    <div className="description">
+                                        <span className="description__name">{lang === 'en' ? 'Type: ' : 'Модификация: '}
+                                            <span className="fiber">{item.type[lang]}</span>
+                                        </span>
                                     </div>
                                 }
-                                <div className="item__block">
-                                    <span>{lang === 'en' ? 'Fiber' : 'Материал'}:</span>
-                                    <span className="fiber">{fiberName}</span>
+                                <div className="description">
+                                    <span className="description__name">{lang === 'en' ? 'Fiber: ' : 'Материал: '}
+                                        <span className="fiber">{fiberName}</span>
+                                    </span>
                                 </div>
-                                <div className="item__block">
-                                    <span>{lang === 'en' ? 'Color' : 'Цвет'}:</span>
-                                    <div className="colors__container" onClick={(e) => onColorClick(e, color)}> 
-                                        <div className="color__container">
+                                <div className="description">
+                                    <span className="description__name">{lang === 'en' ? 'Color' : 'Цвет'}:</span>
+                                    <div className="color" onClick={(e) => onColorClick(e, color)}> 
+                                        <div className="wrapper_img">
                                             <img src={color.url.thumb} alt={color.name[lang]} />
                                         </div>
-                                        <span className="color__name">({color.name[lang]})</span>
+                                        <span className="color__name">{color.name[lang]}</span>
                                     </div>
                                 </div>
                             </div>
-                            <div className="item__amount-delete">
-                                <div className="delete__container">
-                                    <div className="delete__wrapper">
-                                        <Delete<ICartItem> remove={deleteItem} idInstance={item} lang={lang} disabled={false}/>
-                                    </div>
-                                </div>
-                                <div className="amount__container">
-                                    <AmountChanger<ICartItem> idInstance={item} initialAmount={item.amount} lang={lang} onChange={onAmountChange} />
-                                </div>
+                            <div className="item__remover">
+                                <Delete<ICartItem> remove={deleteItem} idInstance={item} lang={lang} disabled={false}/>
+                            </div>
+                            <div className="amount-wrapper">
+                                <AmountChanger<ICartItem> idInstance={item} initialAmount={item.amount} lang={lang} onChange={onAmountChange} />
                             </div>
                         </div>
                     }
@@ -123,7 +124,7 @@ const CartContent: React.FC<IProps> = ({lang, cart, colorsState, modal, fibersSt
         
 
     return (
-        <div className="cart-content">
+        <div className="cart">
             {colorsState.load.status === 'success' && fibersState.load.status === 'success' &&  cart.load.status === 'success' &&
                 cart.items.length > 0 ? 
                     <>{cartContent}</>

@@ -102,10 +102,10 @@ const AddToCart: React.FC<IProps> = ({data, lang, cart, modal, setState}): JSX.E
         <>
             <div className="cart-adder">
                 <span>{lang === 'en' ? 'Amount' : 'Количество'}: </span>
-                <div className="amount-changer__container">
+                <div className="amount-changer-wrapper">
                     <AmountChanger<IProduct['_id']> idInstance={data.product._id} initialAmount={amount} reset={amountChangerReset} lang={lang} onChange={onAmountChange} />
                 </div>
-                <button className='button_news' title='Add to cart' onClick={addToCart}>{lang === 'en' ? 'Add to cart' : 'Добавить в корзину'}</button>
+                <button className='button_blue button_add-cart' title='Add to cart' onClick={addToCart}>{lang === 'en' ? 'Add to cart' : 'В корзину'}</button>
             </div>
         </>
     )

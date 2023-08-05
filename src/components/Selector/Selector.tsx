@@ -89,7 +89,7 @@ const Selector = forwardRef<ISelectorFunctions, IProps>(({lang, id, label, defau
     
 
     return (
-        <div className="selector" data-selector="input-block">
+        <div className="selector block_input" data-selector="input-block">
             {label && <label htmlFor={id}>{label[lang]}</label>}
             <select 
                 data-selector="select"
@@ -98,7 +98,7 @@ const Selector = forwardRef<ISelectorFunctions, IProps>(({lang, id, label, defau
                 defaultValue={store.value} 
                 onChange={onChange} 
                 onBlur={onBlur}
-                onClick={onClick}>
+                onClick={(e) => {(e.target as HTMLElement).parentElement?.classList.remove('incorrect-value'); onClick && onClick(e)}}>
                     <option key={-1} value={store.item.value} disabled hidden>{store.item.name[lang]}</option>
                     {options}
             </select>

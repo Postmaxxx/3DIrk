@@ -18,13 +18,25 @@ interface IProps {
 
 const MessageNew: React.FC<IProps> = ({buttonAdd, buttonClose, header, status, text}): JSX.Element => {
     return (
-        <div className={`message__container ${status || ''}`}>
+        <div className={`message_modal ${status || ''}`}>
             <h3>{header || ''}</h3>
-            <div className="text-block">
+            <div className="message_modal__text">
                 {text && text.map((currentText, index) => <p key={index}>{currentText}</p>)}
             </div>
-            {buttonAdd && <button onClick={buttonAdd?.action}>{buttonAdd?.text}</button>}
-            {buttonClose && <button onClick={buttonClose?.action}>{buttonClose?.text}</button>}
+            <div className="message_modal__buttons">
+                {buttonAdd && 
+                    <button 
+                        className="button_blue button_light"
+                        onClick={buttonAdd?.action}>
+                            {buttonAdd?.text}
+                    </button>}
+                {buttonClose && 
+                    <button 
+                        className="button_blue button_light"
+                        onClick={buttonClose?.action}>
+                        {buttonClose?.text}
+                    </button>}
+            </div>
         </div>
     )
 }

@@ -6,6 +6,11 @@ export type TTheme = 'dark' | 'light'
 export type TLang = 'en' | 'ru'
 export type TId = string //id of any element
 
+export interface ILink {
+    name: TLangText,
+    url: string
+}
+
 //---------------------------------------redux
 export interface IAction<T> {
     type: string;
@@ -36,10 +41,7 @@ export interface IMessageModal {
     text: string[]
 }
 
-export interface IImageModal {
-    url: string,
-    text: string
-}
+
 
 
 

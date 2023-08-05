@@ -1,5 +1,5 @@
 import { INewsItem, TLang } from "../../interfaces";
-import './news.scss'
+import './news-item.scss'
 import { NavLink } from "react-router-dom";
 import ImgWithPreloader from "../../assets/js/ImgWithPreloader";
 

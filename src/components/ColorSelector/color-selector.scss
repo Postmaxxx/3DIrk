@@ -1,19 +1,19 @@
 @use '/src/assets/css/variables' as *;
 
 
-.color-selector {
+.selector_color {
     //margin-left: 10px;
-    font-size: 18px;
-    font-weight: 700;
     outline: none;
     height: 100%;
     //width: 300px;
     position: relative;
-    min-width: 300px;
+    //min-width: 300px;
+    @include fs_base;
+    flex-grow: 1;
 
     @include respond-to(xs) {
         width: 100%;
-        min-width: auto;
+        //min-width: auto;
     }
 
     &::after {
@@ -25,14 +25,14 @@
         width: 12px;
         position: absolute;
         top: 50%;
-        right: 10px;
+        right: 0;
         transform: translate(-50%, -25%);
         pointer-events: none;
         transition: border $transition_theme, transform $transition_fast;
     }
 
 
-    & .option {
+    & .color {
         //height: 50px;
         cursor: pointer;
         display: flex;
@@ -50,10 +50,9 @@
             padding-bottom: 5px;
         }
         
-        & .img__container {
-            width: 40px;
+        & .img-cont {
+            aspect-ratio: 4/3;
             height: 30px;
-            overflow: hidden;
             margin-right: 10px;
             border-radius: 5px;
             overflow: hidden;
@@ -85,10 +84,9 @@
         }
         
         
-        & > span {
+        & > .color__name {
             transition: color $transition_fast;
-            font-size: 16px;
-            margin-right: 25px;
+            margin-right: 5px;
 
             &:nth-of-type(2) {
                 font-weight: 400;
@@ -124,20 +122,24 @@
     & .current {
         border: 1px solid var(--main_em);
         height: 100%;
-        width: 100%;
+        //width: 100%;
         border-radius: 5px;
         position: relative; 
 
-        & > .img__container {   
-            width: 40px;
-            height: 100%;
+        & > .img-cont {
+            height: 26px;
         }
+        
+        & > span {
+            @include fs_base;
+        }   
 
     }
 
 
 
     & > .list {
+        z-index: 1000;
         width: 100%;
         max-height: 0;
         overflow: hidden;
@@ -160,6 +162,7 @@
             border: 1px solid var(--main_em);
             border-top: none;
             transition: max-height $transition_fast, border 0s 0s;
+            @include scroll_thin;
 
             @include respond-to(sm) {
                 max-height: 400px;

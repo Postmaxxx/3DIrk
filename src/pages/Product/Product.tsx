@@ -66,13 +66,11 @@ const Product: React.FC<IProps> = ({lang, setState, colorLoad, catalogProduct, f
                 <div className="container">
                     <h1>{catalogProduct.name[lang]}</h1>
                     {loaded ?
-                        <div className="details__block">
-                            <div className="details__splider">
+                        <div className="product">
+                            <div className="product__images">
                                 <SpliderPreview images={catalogProduct.images} sizePreview='preview' sizeMain="medium"  />
                             </div>
-                            <div className="details__descr-order">
-                                <ProductDetails />
-                            </div>
+                            <ProductDetails />
                         </div>
                     :
                         <>

@@ -151,6 +151,8 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
 
 
     const onChangeInputs = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        console.log(e.target.value);
+        
         e.target.id === "name_en" && setProduct({...product, name: {...product.name, en: e.target.value}})
         e.target.id === "name_ru" && setProduct({...product, name: {...product.name, ru: e.target.value}})
         e.target.id === "price" && checkIfNumbers(e.target.value) && setProduct({...product, price: Number(e.target.value)}) //save as string, but check it while submiting
@@ -314,6 +316,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
                                     <textarea 
                                         data-selector="input"
                                         id="text_en" 
+                                        wrap='hard'
                                         onChange={onChangeInputs} 
                                         value={product.text.en} 
                                         onBlur={(e) => inputChecker({lang, min:inputsProps.product.textFull.min, max:inputsProps.product.textFull.max, el: e.target})}/>

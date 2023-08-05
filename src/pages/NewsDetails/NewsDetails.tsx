@@ -120,7 +120,7 @@ const NewsDetails: FC<IProps> = ({lang, setState, newsState, modal, isAdmin }): 
 
     const renderButtons = useMemo(() => {
         return (
-            <div className="buttons">
+            <div className="buttons_control">
                 {isAdmin && newsState.newsOne && newsState.loadOne.status === 'success' &&
                     <NavLink className="button_edit" to={`../..${navList.account.admin.news.to}/${newsState.newsOne._id}`}>
                         <IconEdit />

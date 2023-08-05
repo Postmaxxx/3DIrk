@@ -1,7 +1,7 @@
 import './news_block.scss'
 import { useEffect, Fragment, useMemo } from 'react'
 import { connect } from "react-redux";
-import News from '../News/News'
+import News from '../NewsItem/NewsItem'
 import { IFullState, INewsState, TLang } from '../../interfaces'
 import { AnyAction, Dispatch, bindActionCreators } from 'redux';
 import { allActions } from "../../redux/actions/all";
