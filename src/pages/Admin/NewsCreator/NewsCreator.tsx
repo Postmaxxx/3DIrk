@@ -196,7 +196,6 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
                         <div className="block_text">
                             <h2>{lang === 'en' ? 'Add information' : 'Добавьте информацию'}</h2>
                         </div>
-
                         <div className="form__inputs form__inputs_sm-wide">
                             <div className="block_input" data-selector="input-block">
                                 <label htmlFor="header_en">{lang === 'en' ? "Header en" : "Заголовок en"}</label>
@@ -221,9 +220,11 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
                                     onBlur={(e) => inputChecker({lang, min:inputsProps.news.header.min, max:inputsProps.news.header.max, el: e.target})}/>
                             </div>
                         </div>
+
+                        
                         <div className="form__inputs form__inputs_sm-wide">
                             <div className="block_input" data-selector="input-block">
-                                <label htmlFor="header_en">{lang === 'en' ? 'Short text en' : 'Краткий текст en'}</label>
+                                <label htmlFor="text_short_en">{lang === 'en' ? 'Short text en' : 'Краткий текст en'}</label>
                                 <textarea 
                                         ref={_textShortEn}
                                         data-selector="input"
@@ -232,7 +233,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
                                         onBlur={(e) => inputChecker({lang, min:inputsProps.news.textShort.min, max:inputsProps.news.textShort.max, el: e.target})}/>
                             </div>
                             <div className="block_input" data-selector="input-block">
-                                <label htmlFor="header_ru">{lang === 'en' ? 'Short text ru' : 'Краткий текст ru'}</label>
+                                <label htmlFor="text_short_ru">{lang === 'en' ? 'Short text ru' : 'Краткий текст ru'}</label>
                                 <textarea 
                                         ref={_textShortRu}
                                         data-selector="input"
@@ -243,7 +244,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
                         </div>
                         <div className="form__inputs form__inputs_sm-wide">
                             <div className="block_input" data-selector="input-block">
-                                <label htmlFor="header_en">{lang === 'en' ? 'Full text en' : 'Полный текст en'}</label>
+                                <label htmlFor="text_en">{lang === 'en' ? 'Full text en' : 'Полный текст en'}</label>
                                 <textarea 
                                     ref={_textEn}
                                     data-selector="input"
@@ -252,7 +253,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
                                     onBlur={(e) => inputChecker({lang, min:inputsProps.news.textFull.min, max:inputsProps.news.textFull.max, el: e.target})}/>
                             </div>
                             <div className="block_input" data-selector="input-block">
-                                <label htmlFor="header_ru">{lang === 'en' ? 'Full text ru' : 'Полный текст ru'}</label>
+                                <label htmlFor="text_ru">{lang === 'en' ? 'Full text ru' : 'Полный текст ru'}</label>
                                 <textarea 
                                     ref={_textRu}
                                     data-selector="input"
@@ -263,7 +264,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
                         </div>
                         <div className="form__inputs form__inputs_sm-wide">
                             <div className="block_input">
-                                <label>{lang === 'en' ? 'Date' : 'Дата'}:</label>
+                                <label htmlFor='date'>{lang === 'en' ? 'Date' : 'Дата'}:</label>
                                     <input 
                                         ref={_date}
                                         data-selector="input"
@@ -280,13 +281,6 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
                         <div className="form__inputs">
                             <AddFiles lang={lang} ref={addFilesRef} multiple={true} id='allImages'/>
                         </div>
-
-
-
-
-
-
-
 
 
                         <button className='button_blue button_light' disabled={send.status === 'fetching'} onClick={e => onSubmit(e)}>

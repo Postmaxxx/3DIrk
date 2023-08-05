@@ -180,9 +180,11 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
             <div className="container_page">
                 <div className="container">
                 <h1>{lang === 'en' ? 'Edit colors' : 'Изменение цветов'}</h1>
-                    <form ref={_formColor}>
-                        <h2 className='section-header full-width'>{lang === 'en' ? 'SELECT COLOR TO EDIT' : 'ВЫБЕРЕТЕ ЦВЕТ ДЛЯ РЕДАКТИРОВАНИЯ'}</h2>           
-                        <div className="colors-picker">
+                    <form className='form_full form_add-color' ref={_formColor}>
+                        <div className="block_text">
+                            <h2 className='section-header full-width'>{lang === 'en' ? 'Select color to edit' : 'Выберите цвет для редактирования'}</h2>           
+                        </div>
+                        <div className="picker picker_colors">
                             {colorsState.load.status === 'success' ? 
                                 <Picker 
                                     ref={colorPickerRef} 
@@ -196,14 +198,13 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
                             :
                                 <Preloader />}
                         </div>
-                        <div className="input-block_header">
-                            <span></span>
-                            <h3 className='lang'>EN</h3>
-                            <h3 className='lang'>RU</h3>
+
+                        <div className="block_text">
+                            <h2>{lang === 'en' ? 'Add information' : 'Добавьте информацию'}</h2>
                         </div>
-                        <div className="input-block">
-                            <label>{lang === 'en' ? 'Name' : 'Название'}:</label>
-                            <div className="input__wrapper" data-selector="input-block">
+                        <div className="form__inputs form__inputs_sm-wide">
+                            <div className="block_input" data-selector="input-block">
+                                <label htmlFor="name_en">{lang === 'en' ? 'Name en' : 'Название en'}</label>
                                 <input 
                                     ref={_nameEn}
                                     data-selector="input"
@@ -212,43 +213,47 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
                                     onKeyDown={focuser.next}
                                     onBlur={(e) => inputChecker({lang, min:inputsProps.color.min, max:inputsProps.color.max, el: e.target})}/>
                             </div>
-                            <div className="input__wrapper" data-selector="input-block">
+                            <div className="block_input" data-selector="input-block">
+                                <label htmlFor="name_ru">{lang === 'en' ? 'Name ru' : 'Название ru'}</label>
                                 <input 
-                                    ref={_nameRu}
-                                    data-selector="input"
-                                    id="name_ru" 
-                                    onChange={onChangeInputs}
-                                    onKeyDown={focuser.next}
-                                    onBlur={(e) => inputChecker({lang, min:inputsProps.color.min, max:inputsProps.color.max, el: e.target})}/>
+                                   ref={_nameRu}
+                                   data-selector="input"
+                                   id="name_ru" 
+                                   onChange={onChangeInputs}
+                                   onKeyDown={focuser.next}
+                                   onBlur={(e) => inputChecker({lang, min:inputsProps.color.min, max:inputsProps.color.max, el: e.target})}/>
                             </div>
+                        </div>
+                        <div className="form__inputs form__inputs_sm-wide">
+                            <Selector 
+                                lang={lang} 
+                                id='selector_status' 
+                                label={{en: 'Color status: ', ru: 'Состояние цвета: '}}
+                                data={statusesList}
+                                onBlur={(e) => inputChecker({lang, notExact: '', el: e.target})}
+                                defaultData={{...defaultSelectItem}}
+                                saveValue={onChangeInputs}
+                                ref={selectorRef}
+                            />
                         </div>
 
-                        <div className="input-block_header">
-                            <span></span>
-                            <h3 className='lang'>{lang === 'en' ? "FULLSIZE" : "ПОЛНОРАЗМЕР"}</h3>
-                            <h3 className='lang'>{lang === 'en' ? "PREVIEW" : "ПРЕДПРОСМОТР"}</h3>
+                        <div className="block_text">
+                            <h2>{lang === 'en' ? 'Add image full-size' : 'Добавьте полноразмерное изображение'}</h2>
                         </div>
-                        <div className="input-block">
-                            <label>{lang === 'en' ? 'Image' : 'Картинка'}:</label>
-                            <div className="input__wrapper">
-                                <AddFiles lang={lang} ref={addFileBigRef} multiple={false} id='files_big'/>
-                            </div>
-                            <div className="input__wrapper">
-                                <AddFiles lang={lang} ref={addFileSmallRef} multiple={false} id='files_small'/>
-                            </div>
+                        <div className="form__inputs">
+                            <AddFiles lang={lang} ref={addFileBigRef} multiple={false} id='files_big'/>
                         </div>
-                        <Selector 
-                            lang={lang} 
-                            id='selector_status' 
-                            label={{en: 'Color status: ', ru: 'Состояние цвета: '}}
-                            data={statusesList}
-                            onBlur={(e) => inputChecker({lang, notExact: '', el: e.target})}
-                            defaultData={{...defaultSelectItem}}
-                            saveValue={onChangeInputs}
-                            ref={selectorRef}
-                        />
+
+                        <div className="block_text">
+                            <h2>{lang === 'en' ? 'Add image thumb-size' : 'Добавьте миниатюру'}</h2>
+                        </div>
+                        <div className="form__inputs">
+                            <AddFiles lang={lang} ref={addFileSmallRef} multiple={false} id='files_small'/>
+                        </div>
+
+
                         <button 
-                            className='button_blue button_post' 
+                            className='button_blue button_light' 
                             disabled={colorsState.send.status === 'fetching'} 
                             onClick={onSubmit}>
                             {colorsState.send.status === 'fetching' ?

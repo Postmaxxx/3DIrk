@@ -4,17 +4,19 @@
 .selector {
     width: 100%;
     display: flex;
-    align-items: center;
+    align-items: stretch;
+    flex-direction: column;
 
     & > label {
         margin-right: 10px;
     }
 
     & > select {
-        background-color: var(--bg);
+        //background-color: var(--bg);
         cursor: pointer;
         flex-grow: 1;   
-        width: fit-content;
+        //width: fit-content;
+        width: 100%;
         font-weight: 600;
         border: 1px solid var(--main_em);
         transition: border $transition_theme, background-color $transition_theme;
