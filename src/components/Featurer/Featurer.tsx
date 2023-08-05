@@ -13,8 +13,9 @@ interface IItem {
 
 interface IProps {
     lang: TLang
+    type?: "input" | "textarea"
     amountChanged?: (newAmount: number) => void
-    valueChanged?: (target: HTMLInputElement) => void
+    valueChanged?: (target: HTMLInputElement | HTMLTextAreaElement) => void
     onEnter?: (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => void
 }
 
@@ -26,7 +27,7 @@ export interface IFeaturerFunctions {
 
 
 
-const Featurer = forwardRef<IFeaturerFunctions, IProps>(({lang, amountChanged, valueChanged, onEnter}, ref) => {
+const Featurer = forwardRef<IFeaturerFunctions, IProps>(({lang, type="input", amountChanged, valueChanged, onEnter}, ref) => {
     useImperativeHandle(ref, () => ({
         setFeatures(items) {
             setFeatures(items || [])
@@ -39,7 +40,7 @@ const Featurer = forwardRef<IFeaturerFunctions, IProps>(({lang, amountChanged, v
 
     const [features, setFeatures] = useState<IItem[]>([])
 
-    const onEditFeature = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    const onEditFeature = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index: number) => {
         e.target.parentElement?.classList.remove('error')
         setFeatures(prev => {
             const newFeatures = [...prev];
@@ -81,38 +82,56 @@ const Featurer = forwardRef<IFeaturerFunctions, IProps>(({lang, amountChanged, v
 
 
     return (
-        <div className="features__container">
-            <div className="features">
+        <div className="features">
+            <div className="features__list">
                 {features.map((item, i) => {
                     return (
                         <div className="block_feature full-width" key={i}>
-                            <div className="input__wrapper" data-selector="input-block">
+                            <div className="block_input" data-selector="input-block">
                                 <label>{lang === 'en' ? 'Value EN' : 'Значение EN'}</label>
-                                <input 
-                                    data-selector="input"
-                                    name="en" 
-                                    type="text" 
-                                    onChange={(e) => onEditFeature(e, i)} 
-                                    onKeyDown={onKeyDown}
-                                    value={item.name.en}/>
+                                {type === "input" ? 
+                                    <input 
+                                        data-selector="input"
+                                        name="en" 
+                                        type="text" 
+                                        onChange={(e) => onEditFeature(e, i)} 
+                                        onKeyDown={onKeyDown}
+                                        value={item.name.en}/>
+                                :
+                                    <textarea 
+                                        data-selector="input"
+                                        name="en" 
+                                        onChange={(e) => onEditFeature(e, i)} 
+                                        onKeyDown={onKeyDown}
+                                        value={item.name.en}/>
+                                }
                             </div>
-                            <div className="input__wrapper" data-selector="input-block">
+                            <div className="block_input" data-selector="input-block">
                                 <label>{lang === 'en' ? 'Value RU' : 'Значение RU'}</label>
-                                <input 
-                                    data-selector="input"
-                                    name="ru" 
-                                    type="text" 
-                                    onKeyDown={onKeyDown}
-                                    onChange={(e) => onEditFeature(e, i)} 
-                                    value={item.name.ru}/>
+                                {type === "input" ? 
+                                    <input 
+                                        data-selector="input"
+                                        name="ru" 
+                                        type="text" 
+                                        onKeyDown={onKeyDown}
+                                        onChange={(e) => onEditFeature(e, i)} 
+                                        value={item.name.ru}/>
+                                :
+                                    <textarea 
+                                        data-selector="input"
+                                        name="ru" 
+                                        onKeyDown={onKeyDown}
+                                        onChange={(e) => onEditFeature(e, i)} 
+                                        value={item.name.ru}/>
+                                }
                             </div>
-                            <button className="button_blue del" onClick={(e) => {onDeleteFeature(e, i)}}>X</button>
+                            <button className="button_blue color_reverse button_feature_delete" onClick={(e) => {onDeleteFeature(e, i)}}>X</button>
                         </div>
     
                     )
                 })}
             </div>
-            <button className='button_blue add' onClick={onAddFeature}>{lang === 'en' ? '+' : '+'}</button>
+            <button className='button_blue color_reverse button_feature_add' onClick={onAddFeature}>{lang === 'en' ? '+' : '+'}</button>
         </div>
     )
 })

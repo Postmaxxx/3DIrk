@@ -259,7 +259,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
 
 
 
-    const onChangeFeature = useCallback((target: HTMLInputElement) => {       
+    const onChangeFeature = useCallback((target: HTMLInputElement | HTMLTextAreaElement) => {       
         target.parentElement?.classList.remove('incorrect-value') 
     }, [])
 

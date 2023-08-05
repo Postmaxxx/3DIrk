@@ -15,6 +15,7 @@
 
 body {
     width: 100%;
+    @include scroll_thin;
     &.noscroll {
         overflow: hidden;
     }

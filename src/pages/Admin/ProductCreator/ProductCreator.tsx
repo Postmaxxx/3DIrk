@@ -192,7 +192,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
     }, [])
 
 
-    const onChangeFeature = useCallback((target: HTMLInputElement) => {       
+    const onChangeFeature = useCallback((target: HTMLInputElement | HTMLTextAreaElement) => {       
         target.parentElement?.classList.remove('incorrect-value') 
     }, [])
 

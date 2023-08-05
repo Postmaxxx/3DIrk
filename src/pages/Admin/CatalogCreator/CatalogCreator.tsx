@@ -118,7 +118,7 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, modal, catalog}): JSX.El
     }
 
 
-    const onChangeFeature = (target: HTMLInputElement) => {       
+    const onChangeFeature = (target: HTMLInputElement | HTMLTextAreaElement) => {       
         target.parentElement?.classList.remove('incorrect-value') 
     }
 
@@ -128,16 +128,18 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, modal, catalog}): JSX.El
             <div className="container_page">
                 <div className="container">
                     <h1>{lang === 'en' ? 'Change categoies' : 'Изменение категорий'}</h1>
-                    <form>
-
-                        <h2 className='section-header full-width'>{lang === 'en' ? 'CATEGORIES' : 'КАТЕГОРИИ'}</h2>           
+                    <form className='form_full form_add-color' >
+                        <div className="block_text">
+                            <h2 className='section-header full-width'>{lang === 'en' ? 'dsfsd' : 'КАТЕГОРИИ'}</h2>           
+                        </div>
                         <div className="catalog" ref={_catalog}>
                             <Featurer 
                                 lang={lang} 
                                 ref={featurerRef} 
                                 amountChanged={onChangeFeaturesAmount}
                                 valueChanged={onChangeFeature}
-                                onEnter={focuser.next}/>
+                                onEnter={focuser.next}
+                                type='textarea'/>
                         </div>
 
                         <button className='button_blue post' disabled={catalog.send.status === 'fetching'} onClick={onSubmit}>

@@ -96,9 +96,9 @@
     position: relative;
     padding-top: 15px;
 
-    &:first-child {
-        padding-top: 15px;
-    }
+    /*&:first-child {
+        padding-top: 10px;
+    }*/
 
     @include respond-to(sm) {
         padding-top: 10px;
@@ -297,6 +297,8 @@
             }
         }
 
+        
+
         &_sm-wide {
             @include respond-to(sm) {
                 flex-direction: row;
@@ -309,6 +311,14 @@
                 @include respond-to(xs) {
                     width: 100%;
                 }
+            }
+        }
+    }
+
+    & .block_feature {
+        & > .block_input {
+            & > textarea {
+                //fle
             }
         }
     }
