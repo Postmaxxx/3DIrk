@@ -137,7 +137,7 @@
 
         @include respond-to(sm) {
             font-size: 1rem;
-            padding: 3px 5px;
+            padding: 3px 5px !important;
         }
 
         @include respond-to(xs) {
@@ -174,6 +174,7 @@
             left: 50%;
             transform: translateX(-50%);
             font-weight: 600;
+            width: 100%;
             
             @include respond-to(sm) {
                 font-size: .7rem;
@@ -230,33 +231,43 @@
         padding: 50px 20px;
     }
 
-    & .block_text  {
 
+    & section {
+        margin-top: 60px;
+    }
+
+    & .block_text  {
         &:not(:first-child) {
             margin-top: 60px;
         }
 
-        h2 {
+        & h2 {
             text-align: center;
             color: var(--text);
             font-family: Nunito;
+            margin-bottom: 20px;
         }
     }
 
-    & > .form__inputs {
+
+
+
+    & .form__inputs {
         width: 100%;
         display: flex;
         align-items: stretch;
         justify-content: space-between;
         margin-top: 20px;
 
-        &:first-child {
-            margin-top: 30px;
-        }
 
         @include respond-to(sm) {
             flex-direction: column;
         }
+
+        & .block_inputs_3 {
+            margin-top: 20px;
+        }
+    
 
         & .form__inputs__texts {
             width: 47%;
@@ -343,6 +354,27 @@
         }
     }
 
+}
+
+
+.block_inputs_3 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+
+
+    & > .block_input {
+        width: 30%;
+
+        @include respond-to(sm) {
+            width: 47%;
+        }
+
+        @include respond-to(xs) {
+            width: 100%;
+        }
+    }
 }
 
 

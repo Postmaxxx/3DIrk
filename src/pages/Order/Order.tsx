@@ -171,7 +171,9 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsLoad, fibersLoad, 
                             </div>
                         </div>
                         <section className="cart__content">
-                            <h3>{lang === 'en' ? 'Your cart' : 'Ваша корзина'}</h3>
+                            <div className="block_text">
+                                <h2>{lang === 'en' ? 'Your cart' : 'Ваша корзина'}</h2>
+                            </div>
                             <CartContent />
                         </section>
                         <button 

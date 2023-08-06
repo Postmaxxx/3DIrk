@@ -130,7 +130,7 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, modal, catalog}): JSX.El
                     <h1>{lang === 'en' ? 'Change categoies' : 'Изменение категорий'}</h1>
                     <form className='form_full form_add-color' >
                         <div className="block_text">
-                            <h2 className='section-header full-width'>{lang === 'en' ? 'dsfsd' : 'КАТЕГОРИИ'}</h2>           
+                            <h2 className='full-width'>{lang === 'en' ? 'List' : 'Список'}</h2>           
                         </div>
                         <div className="catalog" ref={_catalog}>
                             <Featurer 
@@ -142,7 +142,7 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, modal, catalog}): JSX.El
                                 type='textarea'/>
                         </div>
 
-                        <button className='button_blue post' disabled={catalog.send.status === 'fetching'} onClick={onSubmit}>
+                        <button className='button_blue button_post' disabled={catalog.send.status === 'fetching'} onClick={onSubmit}>
                             {catalog.send.status === 'fetching' ? 
                                 <Preloader />
                             :
