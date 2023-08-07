@@ -39,7 +39,7 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
     const _nameRu = useRef<HTMLInputElement>(null)
     const errChecker = useMemo(() => errorsChecker({lang}), [lang])
     const focuser = useMemo(() => focusMover(), [lang])
-    const selectorRef = useRef<ISelectorFunctions>(null)
+    const selectorStatusRef = useRef<ISelectorFunctions>(null)
 
 
     const closeModal = useCallback(() => {
@@ -80,18 +80,19 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
 
 
     const fillValues = async (_id: string) => {//fill values based on selected color
-        if (!_nameEn.current || !_nameRu.current || !selectorRef.current) return
+        if (!_nameEn.current || !_nameRu.current || !selectorStatusRef.current) return
         const selectedColor = colorsState.colors.find(item => item._id === _id)
         if (selectedColor) { //color exists
             const filesBig = await filesDownloader([selectedColor.url.full])
             const filesSmall = await filesDownloader([selectedColor.url.thumb])
             addFileBigRef.current?.replaceFiles(filesBig)
             addFileSmallRef.current?.replaceFiles(filesSmall)
-            selectorRef.current.setValue(selectedColor.active ? statuses.active.value : statuses.suspended.value)
+            selectorStatusRef.current.setValue(selectedColor.active ? statuses.active.value : statuses.suspended.value)
         } else { //new color
             addFileBigRef.current?.clearAttachedFiles()
             addFileSmallRef.current?.clearAttachedFiles()
-            selectorRef.current.setValue('active')
+            selectorStatusRef.current.setItem({...defaultSelectItem})
+            selectorStatusRef.current.setValue('')
         }
         _nameEn.current.value = selectedColor?.name?.en || ''
         _nameRu.current.value = selectedColor?.name?.ru || ''
@@ -102,7 +103,7 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
     const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
         errChecker.clear()
         prevent(e)
-        if (!_formColor.current || !_nameEn.current || !_nameRu.current || !selectorRef.current || !colorPickerRef.current) return       
+        if (!_formColor.current || !_nameEn.current || !_nameRu.current || !selectorStatusRef.current || !colorPickerRef.current) return       
         focuser.focusAll(); //run over all elements to get all errors
         const errorFields = _formColor.current.querySelectorAll('.incorrect-value')
         if (errorFields?.length > 0) {
@@ -133,7 +134,7 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
                 full: addFileBigRef.current?.getFiles()[0] as File,
                 thumb: addFileSmallRef.current?.getFiles()[0] as File,
             },
-            active: selectorRef.current.getValue() === 'active' ? true : false
+            active: selectorStatusRef.current.getValue() === 'active' ? true : false
         }
         setState.colors.sendColor(color)
     }
@@ -233,7 +234,7 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
                                 onBlur={(e) => inputChecker({lang, notExact: '', el: e.target})}
                                 defaultData={{...defaultSelectItem}}
                                 saveValue={onChangeInputs}
-                                ref={selectorRef}
+                                ref={selectorStatusRef}
                             />
                         </div>
 

@@ -55,7 +55,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
     const focuserSpec = useMemo(() => focusMover(), [lang])
     const focuserPros = useMemo(() => focusMover(), [lang])
     const focuserCons = useMemo(() => focusMover(), [lang])
-    const selectorRef = useRef<ISelectorFunctions>(null)
+    const selectorStatusRef = useRef<ISelectorFunctions>(null)
 
     const data10 = useMemo(() => selector["10"], [])
     const data5 = useMemo(() => selector["5"], [])
@@ -154,7 +154,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
                     pros: (prosRef.current as IFeaturerFunctions).getFeatures().map(item => ({en: item.name.en, ru: item.name.ru})),
                     cons: (consRef.current as IFeaturerFunctions).getFeatures().map(item => ({en: item.name.en, ru: item.name.ru}))
                 },
-                active: selectorRef.current?.getValue() === 'active' ? true : false
+                active: selectorStatusRef.current?.getValue() === 'active' ? true : false
             })
         )
         setSubmit(true)     
@@ -266,7 +266,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
 
 
     const fillValues = async (_id: string) => {//fill values based on selected color
-        if (!_spec.current || !prosRef.current || !consRef.current || !selectorRef.current) return
+        if (!_spec.current || !prosRef.current || !consRef.current || !selectorStatusRef.current) return
         const selectedFiber = fibersState.fibersList.find(item => item._id === _id)
         if (selectedFiber) { //fiber exists
             //specifications
@@ -284,7 +284,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
             )
             addFilesRef.current?.replaceFiles(files)
             setFiber({...selectedFiber, files}) // +descr part
-            selectorRef.current.setValue(selectedFiber.active ? statuses.active.value : statuses.suspended.value)
+            selectorStatusRef.current.setValue(selectedFiber.active ? statuses.active.value : statuses.suspended.value)
         } else { //new fiber
             //specifications
             _spec.current.querySelectorAll('input, select')?.forEach(item => {
@@ -298,9 +298,9 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
 
             setFiber(deepCopy(fiberEmpty))
             addFilesRef.current?.clearAttachedFiles()
-            selectorRef.current.setValue('active')
-            console.log('222');
-            
+            selectorStatusRef.current.setItem({...defaultSelectItem})
+            selectorStatusRef.current.setValue('')
+            //selectorStatusRef.current.setValue(statuses.active.value)
         }
     }
 
@@ -445,7 +445,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
                                     onBlur={(e) => inputChecker({lang, notExact: '', el: e.target})}
                                     defaultData={{...defaultSelectItem}}
                                     saveValue={onChangeInputs}
-                                    ref={selectorRef}
+                                    ref={selectorStatusRef}
                                 />
                             </div>
                         </section>

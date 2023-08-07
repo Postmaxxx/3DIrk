@@ -270,10 +270,9 @@ $gap_to_text: 5px;
 
                 & .cart-informer {
                     position: absolute;
-                    //top: -8px;
                     left: calc(100% + 2px);
-                    font-size: .9rem;
-                    bottom: 40%;
+                    font-size: .8rem;
+                    bottom: 45%;
                     color: var(--cart_informer);
 
                     @include respond-to(md) {

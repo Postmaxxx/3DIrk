@@ -22,12 +22,12 @@
         transition: border $transition_theme, background-color $transition_theme;
         outline: none;
         border-radius: $brad_md;
-        padding: 5px 10px;
-        @include fs_base;
+        //padding: 5px 10px;
+        //@include fs_base;
 
-        @include respond-to(md) {
-            padding: 5px 8px;
-        }
+        //@include respond-to(md) {
+        //    padding: 5px 8px;
+        //}
     }
     
 }

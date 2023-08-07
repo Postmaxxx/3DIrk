@@ -112,7 +112,7 @@ const ProductDetails: React.FC<IProps> = ({lang, product, colors,productLoad, mo
                         <Selector 
                             lang={lang} 
                             id='selector_type' 
-                            label={{en: 'Version: ', ru: 'Версия: '}}
+                            label={{en: 'Type: ', ru: 'Версия: '}}
                             onBlur={(e) => inputChecker({lang, notExact: '', el: e.target})}
                             defaultData={{...defaultSelectItem}}
                             ref={selectorTypeRef}

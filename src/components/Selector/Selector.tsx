@@ -87,6 +87,7 @@ const Selector = forwardRef<ISelectorFunctions, IProps>(({lang, id, label, defau
         return store.items.map((el, i) => <option key={i} value={el.value}>{el.name[lang]}</option>)
     }, [store.items, lang])
     
+  
 
     return (
         <div className="selector block_input" data-selector="input-block">
