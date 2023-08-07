@@ -206,6 +206,10 @@
             height: calc(100% - 22px); //textarea grows more than space for it
         }
     }
+
+    &.hide {
+        display: none;
+    }
 }
 
 
@@ -258,10 +262,15 @@
         align-items: stretch;
         justify-content: space-between;
         margin-top: 20px;
-
-
+        
+        
         @include respond-to(sm) {
             flex-direction: column;
+            //margin-top: 10px;
+        }
+        
+        @include respond-to(xs) {
+            //margin-top: 20px;
         }
 
         & .block_inputs_3 {
@@ -359,6 +368,56 @@
 
 
     & > .block_input {
+        width: 30%;
+
+        @include respond-to(sm) {
+            width: 47%;
+        }
+
+        @include respond-to(xs) {
+            width: 100%;
+        }
+    }
+}
+
+.block_inputs_4 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+
+
+    & > .block_input {
+        width: 22%;
+
+        @include respond-to(md) {
+            width: 47%;
+        }
+
+        @include respond-to(sm) {
+            width: 47%;
+        }
+
+        @include respond-to(xs) {
+            width: 100%;
+        }
+    }
+}
+
+
+.block_inputs_mixed {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+
+
+    & > .block_input {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+
         width: 30%;
 
         @include respond-to(sm) {

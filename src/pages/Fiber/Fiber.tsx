@@ -127,7 +127,7 @@ const Fiber: React.FC<IProps> = ({lang, fibersState, colorsState, setState, moda
                             {firberColors(fiber)}
                         </div>
                     </section>
-                    <section className="proscons-cont">
+                    <section className="proscons-wrapper">
                         <h3>{lang === 'en' ? 'Pros and сons' : 'Плюсы и минусы'}</h3>
                         <Proscons {...fiber.proscons} lang={lang}/>
                     </section>

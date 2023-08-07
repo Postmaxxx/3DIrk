@@ -3,7 +3,7 @@ import './picker.scss'
 import { useState, forwardRef, useImperativeHandle, useMemo } from "react";
 import { prevent } from '../../assets/js/processors';
 import { createNewItemId } from '../../../src/assets/js/consts';
-
+import iconPlus from '../../assets/img/icon_plus.svg'
 
 
 interface IProps {
@@ -93,9 +93,9 @@ const Picker = forwardRef<IPickerFunctions, IProps>(({items, lang, onEditClick, 
             <>
                 {items.map((item) => {
                     return (
-                        <div className="item__container" key={item._id}>
+                        <div className={`picker__item ${selectedItems[item._id] ? 'selected' : ''} ${markInactive && !item.active ? 'inactive' : ''}`} key={item._id}>
                             <div 
-                                className={`image__container ${selectedItems[item._id] ? 'selected' : ''} ${markInactive && !item.active ? 'inactive' : ''}`} 
+                                className="image" 
                                 onClick={() => itemClicked(item._id)}>
                                     {item.images && <img src={`${item.images.paths.small}/${item.images.files[0]}`} alt={item.name[lang]} />} {/*for fibers*/}
                                     {item.url && <img src={item.url.thumb} alt={item.name[lang]} />} {/*for colors*/}
@@ -109,10 +109,11 @@ const Picker = forwardRef<IPickerFunctions, IProps>(({items, lang, onEditClick, 
                     )
                 })}
                 {withNew && 
-                    <div className="item__container">
-                        <div className={`image__container ${selectedItems.createNew ? 'selected' : ''}`} onClick={() => itemClicked(createNewItemId)}>
-                            +
+                    <div className={`picker__item ${selectedItems.createNew ? 'selected' : ''}`}>
+                        <div className="image" onClick={() => itemClicked(createNewItemId)}>
+                            <img src={iconPlus} alt={lang === 'en' ? "Create new" : 'Создать новый'} />
                         </div>
+                        <span>{lang === 'en' ? 'Add new' : 'Создать'}</span>
                     </div>
                 }
             </>
@@ -120,7 +121,7 @@ const Picker = forwardRef<IPickerFunctions, IProps>(({items, lang, onEditClick, 
     }, [items, lang, selectedItems])
 
     return (
-        <div className="items__container">
+        <div className="picker__items">
             {contentMemo}
         </div>
     )

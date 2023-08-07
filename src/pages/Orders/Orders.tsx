@@ -8,7 +8,7 @@ import {Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'reac
 import { gapForOrders, orderStatus, timeOffset, usersPerPage } from '../../assets/js/consts';
 import moment from "moment";
 import Preloader from '../../components/Preloaders/Preloader';
-import { checkAndLoad } from '../../assets/js/processors';
+import { checkAndLoad, prevent } from '../../assets/js/processors';
 import { NavLink } from 'react-router-dom';
 
 
@@ -65,15 +65,16 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
 
         if (colorsLoad.status === 'success' && fibersLoad.status === 'success') {
             setLoaded(true)
-            if (!_user.current || !_dateFrom.current || !_dateTo.current) return
+            if (!_dateFrom.current || !_dateTo.current) return           
             _dateFrom.current.value = moment().subtract(gapForOrders, 'months').format('YYYY-MM-DD')
             _dateTo.current.value = moment().format('YYYY-MM-DD')
         }
     }, [colorsLoad.status, fibersLoad.status, ordersState.userList.load.status, loaded])
 
 
-    const loadOrders = (): void => {
-        if (!_user.current || !_dateFrom.current || !_dateTo.current || !_status.current) return
+    const loadOrders = (e: React.MouseEvent<HTMLButtonElement>): void => {
+        prevent(e);
+        if (!_dateFrom.current || !_dateTo.current || !_status.current) return
         if (!_dateFrom.current.value) {
             return alert('Wrong date from')
         }
@@ -90,7 +91,7 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
         checkAndLoad({
 			fetchData: ordersState.load,
 			loadFunc: setState.orders.loadOrders,
-            args: [{userId: _user.current.value, status: _status.current.value, from: dateTimeFrom, to: dateTimeTo}],
+            args: [{userId: _user.current?.value || '', status: _status.current.value, from: dateTimeFrom, to: dateTimeTo}],
             force: true
 		})
     }
@@ -145,19 +146,25 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
         ?.map((user, i: number) => {
             return (
                 <div className="block_user" key={user.userInfo._id}>
-                    <h3 className='user__header'>{user.userInfo.name}</h3>
-                    <span className='user__subheader'>
-                        <a href={`mailto: ${user.userInfo.email}`} type="email">{user.userInfo.email}</a> / 
-                        <a href={`tel: ${user.userInfo.phone}`} type="email"> {user.userInfo.phone}</a>
-                    </span>
-                    <div className="orders">
+                        <div className="block_text user__info">
+                            <h2 className='user__header'>{user.userInfo.name}</h2>
+                            <span className='user__subheader'>
+                                <a href={`mailto: ${user.userInfo.email}`} type="email">{user.userInfo.email}</a> / 
+                                <a href={`tel: ${user.userInfo.phone}`} type="email"> {user.userInfo.phone}</a>
+                            </span>
+                        </div>
+                    <div className="orders__list">
                         {user.orders.map((order) => {
                             return (
                                 <div className='order' key={order._id}>
-                                    <div className='order__date-status'>
-                                        <h4>{lang === 'en' ? 'Date' : 'Дата'}: {moment(order.date).add(-timeOffset, 'hours').format('YYYY-MM-DD')}</h4>
-                                        <label>{lang === 'en' ? 'Status' : 'Статус'}: 
+                                    <div className='block_inputs_mixed order__date-status'>
+                                        <div className="block_input">
+                                            <h4>{lang === 'en' ? 'Date' : 'Дата'}: {moment(order.date).add(-timeOffset, 'hours').format('YYYY-MM-DD')}</h4>
+                                        </div>
+                                        <div className="block_input">
+                                            <label htmlFor={`order-${order._id}`}>{lang === 'en' ? 'Status' : 'Статус'}: </label>
                                             <select 
+                                                id={`order-${order._id}`}
                                                 name="statusSelector" 
                                                 defaultValue={order.status} 
                                                 onChange={(e) => {onStatusChange({e, 
@@ -165,29 +172,30 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
                                             >
                                                 {statuses}
                                             </select>
-                                        </label>
+                                        </div>
                                     </div>
         
-                                    <div className="order__cart">
-                                        <div className="cell head first">{lang === 'en' ? 'Product' : 'Продукт'}</div>
-                                        <div className="cell head">{lang === 'en' ? 'Fiber' : 'Материал'}</div>
-                                        <div className="cell head">{lang === 'en' ? 'Color' : 'Цвет'}</div>
-                                        <div className="cell head">{lang === 'en' ? 'Type' : 'Тип'}</div>
-                                        <div className="cell head">{lang === 'en' ? 'Amount' : 'Кол-во'}</div>
-                                        {orderCart(order)}
-                                    </div>
+                                    {order.cart.length > 0 &&
+                                        <div className="order__cart">
+                                            <div className="cell head first">{lang === 'en' ? 'Product' : 'Продукт'}</div>
+                                            <div className="cell head">{lang === 'en' ? 'Fiber' : 'Материал'}</div>
+                                            <div className="cell head">{lang === 'en' ? 'Color' : 'Цвет'}</div>
+                                            <div className="cell head">{lang === 'en' ? 'Type' : 'Тип'}</div>
+                                            <div className="cell head">{lang === 'en' ? 'Amt' : 'Кол-во'}</div>
+                                            {orderCart(order)}
+                                        </div>
+                                    }
 
                                     {order.message.length > 0 &&
-                                        <div className="order__message-container">
-                                            <p className='order__message'>{lang === 'en' ? "Message" : "Сообщение"}: {order.message}</p>
-                                        </div>}
+                                        <p className="order__message"><strong>{lang === 'en' ? "Message" : "Сообщение"}:</strong> {order.message}</p>
+                                    }
                                     {order.attachedFiles.length > 0 &&
-                                        <>
+                                        <div className='files'>
                                             <h4 className='files__header'>{lang === 'en' ? "Attached files" : "Прикрепленные файлы"}</h4>
-                                            <div className="files-container">
+                                            <div className="files__list">
                                                 {filesList(order)}
                                             </div>
-                                        </>
+                                        </div>
                                     }
         
                                 </div>
@@ -200,23 +208,65 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
 
 
 
-    const userList = useMemo(() => {
+    const userFilter = useMemo(() => {
         return (
-            ordersState.userList.list?.map(item => (
-                <option key={item._id} value={item._id}>{item.name} - {item.email}</option>
-            ))
+            <>
+                <label htmlFor="user">{lang === 'en' ? 'Select user' : 'Выберите пользователя'}</label>
+                <select name="user" id="user" ref={_user}>
+                    {isAdmin  && <option value="all" defaultValue='all'>{lang === 'en' ? 'All' : 'Все'}</option>}
+                    {ordersState.userList.list?.map(item => (
+                        <option key={item._id} value={item._id}>{item.name} - {item.email}</option>
+                    ))}
+                </select>
+            </>
         )
-    }, [ordersState.userList.list])
+    }, [ordersState.userList.list, lang])
 
 
-    const pagesList = useMemo(() => totalPages.map((item, i) => {
-        return <button 
-            className={`pagination__page-number ${i === page ? 'selected' : ''}`} 
-            key={item} 
-            onClick={(e) => setPage(i)}>
-                {item}
-            </button>
-    }), [page, totalPages])
+    const statusesFilter = useMemo(() => {
+        return (
+            <>
+                <label htmlFor="status">{lang === 'en' ? 'Select status' : 'Выберите статус'}</label>
+                <select name="status" id="status" ref={_status}>
+                    <option value="all" defaultValue='all'>{lang === 'en' ? 'All' : 'Все'}</option>
+                    {statuses}
+                </select>
+            </>
+        )
+    }, [lang])
+
+
+    const dateFromFilter = <>
+            <label htmlFor="date-from">{lang === 'en' ? 'Date from' : 'С даты'}</label>
+            <input type="date" id='date-from' ref={_dateFrom}/>
+        </>
+
+
+    const dateToFilter = <>
+                <label htmlFor="date-to">{lang === 'en' ? 'Date to' : 'По дату'}</label>
+                <input type="date" id='date-to' ref={_dateTo}/>
+            </>
+
+
+
+    const pagination = useMemo(() => {
+        return (
+            totalPages.length > 1 &&
+                <div className="pagination">
+                    {totalPages.map((item, i) => {
+                        return (
+                            <button 
+                                className={`pagination__page-number ${i === page ? 'selected' : ''}`} 
+                                key={item} 
+                                onClick={(e) => setPage(i)}>
+                                    {item}
+                            </button>
+                        )
+                    })}
+                </div>
+            
+        )
+    }, [page, totalPages])
     
 
 
@@ -226,49 +276,46 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
         <div className="page_orders">
             <div className='container_page'>
                 <div className="container">
-                    <h1>{lang === 'en' ? `All orders` : `Все заказы`}</h1>
-                    {loaded &&  <>
-                        <div className="filters">
-                            <div className={`filter__item ${isAdmin ? '' : 'hidden'}`}>
-                                <label htmlFor="user">{lang === 'en' ? 'Select user' : 'Выберите пользователя'}
-                                    <select name="user" id="user" ref={_user}>
-                                        {isAdmin  && <option value="all" defaultValue='all'>{lang === 'en' ? 'All' : 'Все'}</option>}
-                                        {userList}
-                                    </select>
-                                </label>
+                    <div className="block_text">
+                        <h1>{lang === 'en' ? `All orders` : `Все заказы`}</h1>
+                    </div>
+                    {loaded && <>
+                        <form className='form_full form_filters'>
+                            <div className="block_text">
+                                <h2>{lang === 'en' ? 'Select the search parameters' : 'Введите критерии поиска'}</h2>           
                             </div>
-                            <div className="filter__item">
-                                <label htmlFor="status">{lang === 'en' ? 'Select status' : 'Выберите статус'}
-                                    <select name="status" id="status" ref={_status}>
-                                        <option value="all" defaultValue='all'>{lang === 'en' ? 'All' : 'Все'}</option>
-                                        {statuses}
-                                    </select>
-                                </label>
-                            </div>
-                            <div className="filter__item">
-                                <label htmlFor="date-from">{lang === 'en' ? 'Date from' : 'С даты'}
-                                    <input type="date" id='date-from' ref={_dateFrom}/>
-                                </label>
-                            </div>
-                            <div className="filter__item">
-                                <label htmlFor="date-to">{lang === 'en' ? 'Date to' : 'По дату'}
-                                    <input type="date" id='date-to' ref={_dateTo}/>
-                                </label>
+                            <div className={`block_inputs_${isAdmin ? '4' : '3'}`}>
+                                <div className={`block_input ${isAdmin ? "" : "hide"}`}>
+                                    {userFilter}
+                                </div>
+                                <div className="block_input">
+                                    {statusesFilter}
+                                </div>
+                                <div className="block_input">
+                                    {dateFromFilter}
+                                </div>
+                                <div className="block_input">
+                                    {dateToFilter}
+                                </div>
+
                             </div>
                             <button className='button_blue' onClick={loadOrders}>{lang === 'en' ? 'Load orders' : 'Загрузить заказы'}</button>
-                        </div>
-                        <div className="orders__container">
-                            {ordersState.users.length > 0 && ordersState.load.status ==='success' ? 
-                                userTable 
-                             : 
-                                ordersState.load.status === 'success' && <span className="empty-informer">{lang === 'en' ? 'Nothing has been found' : 'Ничего не найдено'}</span>
-                            }
-                            <div className="pagination__container">
-                                {pagesList}
+                        </form>
+                        
+                        {ordersState.users.length > 0 && ordersState.load.status ==='success' ? 
+                            <div className="orders form_full">
+                                {userTable}
                             </div>
-                        </div>
+                        : 
+                            ordersState.load.status === 'success' && 
+                                <div className="orders form_full">
+                                    <span className="informer_empty">{lang === 'en' ? 'Nothing has been found' : 'Ничего не найдено'}</span>
+                                </div>
+                            
+                        }
+                        {ordersState.load.status === 'fetching' && <Preloader />}
+                        {pagination}
                     </>}
-                    {ordersState.load.status === 'fetching' && <Preloader />}
                     
                 </div>
             </div>

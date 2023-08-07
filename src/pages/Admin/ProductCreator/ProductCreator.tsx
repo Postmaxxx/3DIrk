@@ -210,7 +210,6 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
             setProduct(deepCopy(productEmpty))
             addFilesRef.current?.replaceFiles([])
             fiberPickerRef.current?.setSelected([])
-            //selectorStatusRef.current?.setValue(statuses.active.value)
             selectorStatusRef.current?.setItem({...defaultSelectItem})
             selectorStatusRef.current?.setValue('')
         }
@@ -264,7 +263,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
                             <div className="block_text">
                                 <h2>{lang === 'en' ? 'Select product' : 'Выберите товар'}</h2>           
                             </div>
-                            <div className="fiber-picker">
+                            <div className="picker_product">
                                 <Picker 
                                     ref={productPickerRef} 
                                     items={selectorCategoryRef.current?.value ? catalogState.category.products : []} 
@@ -412,7 +411,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
                         </section>
 
                         
-                        <button className='button_blue post' disabled={catalogState.category.sendProduct.status === 'fetching'} onClick={onSubmit}>
+                        <button className='button_blue button_post' disabled={catalogState.category.sendProduct.status === 'fetching'} onClick={onSubmit}>
                             {catalogState.category.sendProduct.status === 'fetching' ? 
                                 <Preloader />
                             :
