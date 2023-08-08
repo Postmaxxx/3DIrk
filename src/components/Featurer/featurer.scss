@@ -65,6 +65,8 @@
         margin-top:  30px;
         margin-right: auto;
         margin-left: auto;
+        font-weight: 800;
+        @include fs_bigger;
 
         @include respond-to(xs) {
             //width: 100%;

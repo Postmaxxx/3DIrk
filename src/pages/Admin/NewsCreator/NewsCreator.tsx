@@ -194,7 +194,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
                     }
                     <form className='form_full form_add-news' ref={_form}>
                         <div className="block_text">
-                            <h2>{lang === 'en' ? 'Add information' : 'Добавьте информацию'}</h2>
+                            <h3>{lang === 'en' ? 'Add information' : 'Добавьте информацию'}</h3>
                         </div>
                         <div className="form__inputs form__inputs_sm-wide">
                             <div className="block_input" data-selector="input-block">
@@ -276,7 +276,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
                             </div>
                         </div>
                         <div className="block_text">
-                            <h2>{lang === 'en' ? 'Add images' : 'Добавьте изображения'}</h2>
+                            <h3>{lang === 'en' ? 'Add images' : 'Добавьте изображения'}</h3>
                         </div>
                         <div className="form__inputs">
                             <AddFiles lang={lang} ref={addFilesRef} multiple={true} id='allImages'/>

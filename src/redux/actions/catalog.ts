@@ -21,7 +21,6 @@ export const setCatalog = <T extends ICatalogItem[]>(payload: T):IAction<T> => (
 
 export const loadCatalog = () => {   
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        const isAdmin = getState().user.isAdmin
         const controller = new AbortController()
         const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.catalog.get.timeout) //set time limit for fetch
         dispatch(setLoadCatalog({...fetchingFetch, controller}))  
@@ -124,7 +123,8 @@ export const loadCategory = ({_id, from=0, to=-1}: ILoadCategory) => {
         const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.category.getSome.timeout) //set time limit for fetch
         dispatch(setLoadCategory({...fetchingFetch, controller}))  
         try {
-            const response = await fetch(`${APIList.category.getSome.url}?_id=${_id}&from=${from}&to=${to}`, {
+            const url = `${APIList.category.getSome.url}?` + new URLSearchParams({from: `${from}`, _id, to: `${to}`,})
+            const response = await fetch(url, {
                 signal: controller.signal,
                 method: APIList.category.getSome.method,
                 headers: {
@@ -279,7 +279,8 @@ export const loadProduct = (_id: string) => {
         const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.product.get.timeout) //set time limit for fetch
         dispatch(setLoadProduct({...fetchingFetch, controller}))
         try {
-            const response: Response = await fetch(`${APIList.product.get.url}?_id=${_id}`, {
+            const url = `${APIList.product.get.url}?` + new URLSearchParams({_id})
+            const response: Response = await fetch(url, {
                 signal: controller.signal,
                 method: APIList.product.get.method,
                 headers: {

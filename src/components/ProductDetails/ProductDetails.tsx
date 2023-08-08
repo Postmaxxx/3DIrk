@@ -93,7 +93,7 @@ const ProductDetails: React.FC<IProps> = ({lang, product, colors,productLoad, mo
 
     return (
         <div className="product__info">
-            <h2>{lang === 'en' ? 'Features' : 'Характеристики'}:</h2>
+            <h3>{lang === 'en' ? 'Features' : 'Характеристики'}:</h3>
             <div className="features">
                 <div className="feature text_simple">
                     <span>{lang === 'en' ? 'Description' : 'Описание'}: </span>

@@ -183,7 +183,7 @@ const APIList = { //all routes to BE
         },
     },
     orders: {
-        getSome: { //load orders, ?from=${FromDate}&to=${ToDate}&userId=${UserId}&status=${OrderStatus}`
+        getSome: { //load orders, ?from=${FromDate}&to=${ToDate}&userId=${UserId}&status=${orderStatuses}`
             url: `${process.env.REACT_BACK_URL}/api/user/orders`,
             method: 'GET',
             timeout: 60000
@@ -572,12 +572,12 @@ const colorEmpty: ISendColor = {
     active: true
 }
 
-const orderStatus = [
+const orderStatuses = [
     {
         value: 'new',
         name: {
             en: 'New',
-            ru: 'Новый'
+            ru: 'Новые'
         }
     },
     {
@@ -724,7 +724,7 @@ const DOMExceptions = {
 export { clearModalMessage, resetFetch, timeModalClosing, 
     fetchingFetch, errorFetch, successFetch, headerStatus, empty, selector, strengthMin, 
     strengthMax, fiberEmpty, productEmpty, colorEmpty, gapBetweenRequests,
-    orderStatus, usersPerPage, timeOffset, inputsProps, tipsTransition, socials,
+    orderStatuses, usersPerPage, timeOffset, inputsProps, tipsTransition, socials,
     navList, newsItemEmpty, APIList, imageExtentions, maxAmountToOrder, loadNewsPerRequest,
     exceptionTimeout, exceptionFetch, DOMExceptions, statuses, defaultSelectItem, 
     createNewItemId, gapForOrders}

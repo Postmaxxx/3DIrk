@@ -111,7 +111,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
                     </div>
                         <form className="form_full contact__form" ref={formContact}>
                             <div className="block_text">
-                                <h2>{lang === 'en' ? 'Write us a message' : 'Напишите нам сообщение'}</h2>
+                                <h3>{lang === 'en' ? 'Write us a message' : 'Напишите нам сообщение'}</h3>
                             </div>
                             <div className="form__inputs">
                                 <div className="form__inputs__texts">

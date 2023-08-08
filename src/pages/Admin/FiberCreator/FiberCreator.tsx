@@ -321,26 +321,24 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
                 <h1>{lang === 'en' ? 'Edit fibers' : 'Изменение материалов'}</h1>
                     <form className='form_full form_add-fiber'>
                         <div className="block_text">
-                            <h2>{lang === 'en' ? 'Select fiber to edit' : 'Выберите материал для редактирования'}</h2>           
+                            <h3>{lang === 'en' ? 'Select fiber to edit' : 'Выберите материал для редактирования'}</h3>           
                         </div>
-                        <div className="fiber-picker">
-                            {fibersState.load.status === 'success' ? 
-                                <Picker 
-                                    ref={fiberPickerRef} 
-                                    items={fibersState.fibersList} 
-                                    lang={lang} 
-                                    multiple={false}
-                                    withNew={true}
-                                    onItemClick={onFiberSelected}
-                                    minSelected={1}
-                                    markInactive={true}/>
-                            :
-                                <Preloader />}
-                        </div>
+                        {fibersState.load.status === 'success' ? 
+                            <Picker 
+                                ref={fiberPickerRef} 
+                                items={fibersState.fibersList} 
+                                lang={lang} 
+                                multiple={false}
+                                withNew={true}
+                                onItemClick={onFiberSelected}
+                                minSelected={1}
+                                markInactive={true}/>
+                        :
+                            <Preloader />}
 
                         <section className="fiber_descr" ref={_descr}>
                             <div className="block_text">
-                                <h2>{lang === 'en' ? 'Fiber description' : 'Описание материала'}</h2>           
+                                <h3>{lang === 'en' ? 'Fiber description' : 'Описание материала'}</h3>           
                             </div>
                             <div className="form__inputs form__inputs_sm-wide">
                                 <div className="block_input" data-selector="input-block">
@@ -433,7 +431,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
                         </section>
                         <section className="fiber_specifications" ref={_spec}>
                             <div className="block_text">
-                                <h2>{lang === 'en' ? 'Fiber scpecifications' : 'Характеристики материала'}</h2>           
+                                <h3>{lang === 'en' ? 'Fiber specifications' : 'Характеристики материала'}</h3>           
                             </div>
                             <div className="block_inputs_3">
                                 {renderSpec}
@@ -451,7 +449,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
                         </section>
                         <section className="fiber_pros" ref={_descr}>
                             <div className="block_text">
-                                <h2>{lang === 'en' ? 'Fiber pros' : 'Плюсы материала'}</h2>           
+                                <h3>{lang === 'en' ? 'Fiber pros' : 'Плюсы материала'}</h3>           
                             </div>
                             <div className="fiber_pros" ref={_pros}>
                                 <Featurer 
@@ -464,7 +462,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
                         </section>
                         <section className="fiber_cons" ref={_descr}>
                             <div className="block_text">
-                                <h2>{lang === 'en' ? 'Fiber cons' : 'Минусы материала'}</h2>           
+                                <h3>{lang === 'en' ? 'Fiber cons' : 'Минусы материала'}</h3>           
                             </div>
                             <div className="fiber_cons" ref={_cons}>
                                 <Featurer 
@@ -478,24 +476,22 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
 
                         <section className="fiber_colors" ref={_descr}>
                             <div className="block_text">
-                                <h2>{lang === 'en' ? 'Select all applicable colors' : 'Выберите все применимые цвета'}</h2>           
+                                <h3>{lang === 'en' ? 'Select all applicable colors' : 'Выберите все применимые цвета'}</h3>           
                             </div>
-                            <div className="picker_colors">
-                                {colorsState.load.status === 'success' ? 
-                                    <Picker 
-                                        ref={colorPickerRef} 
-                                        items={colorsState.colors} 
-                                        lang={lang}
-                                        minSelected={1}
-                                        markInactive={true}/>
-                                :
-                                    <Preloader />}
-                            </div>
+                            {colorsState.load.status === 'success' ? 
+                                <Picker 
+                                    ref={colorPickerRef} 
+                                    items={colorsState.colors} 
+                                    lang={lang}
+                                    minSelected={1}
+                                    markInactive={true}/>
+                            :
+                                <Preloader />}
                         </section>
 
                         <section className="fiber_images" ref={_descr}>
                             <div className="block_text">
-                                <h2>{lang === 'en' ? 'Add images' : 'Выберите изображения'}</h2>           
+                                <h3>{lang === 'en' ? 'Add images' : 'Выберите изображения'}</h3>           
                             </div>
                             <AddFiles lang={lang} ref={addFilesRef} multiple={true} id='allImages'/>
                         </section>

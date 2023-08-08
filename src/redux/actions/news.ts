@@ -39,14 +39,15 @@ export const setTotalNews = <T extends number>(payload: T):IAction<T> => ({
 });
 
 
-export const loadSomeNews = (from: number, amount: number) => {
+export const loadSomeNews = ({from, amount} :{from: number, amount: number}) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
         const controller = new AbortController()
         const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.news.getSome.timeout) //set time limit for fetch
         dispatch(setLoadNews({...fetchingFetch, controller}))  
         const news = getState().news
         try {
-            const response: Response = await fetch(`${APIList.news.getSome.url}?from=${from}&amount=${amount}`, {
+            const url = `${APIList.news.getSome.url}?` + new URLSearchParams({from: `${from}`, amount: `${amount}`})
+            const response: Response = await fetch(url, {
                 signal: controller.signal,
                 method: APIList.news.getSome.method,
                 headers: {
@@ -93,7 +94,8 @@ export const loadOneNews = (_id: string) => {
         const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.news.getOne.timeout) //set time limit for fetch
         dispatch(setLoadOneNews({...fetchingFetch, controller}))  
         try {
-            const response: Response = await fetch(`${APIList.news.getOne.url}?_id=${_id}`, {
+            const url = `${APIList.news.getOne.url}?` + new URLSearchParams({_id})
+            const response: Response = await fetch(url, {
                 signal: controller.signal,
                 method: APIList.news.getOne.method,
                 headers: {

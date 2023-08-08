@@ -250,7 +250,7 @@
 
                         & span {
                             text-align: left;
-                            font-weight: 700;
+                            font-weight: 600;
                             @include fs_smaller;
                         }
                     }
@@ -347,7 +347,7 @@
 
                     & .fiber-name {
                         color: var(--text);
-                        font-weight: 700;
+                        font-weight: 600;
                         font-size: .9rem;
                         margin-top: 5px;
     
@@ -364,7 +364,7 @@
 
                         & > span {
                             color: var(--main_em);
-                            font-weight: 700;
+                            font-weight: 600;
                         }
                     }
 

@@ -167,21 +167,20 @@
     &.incorrect-value {
         &::after {
             content: attr(data-error-text);
-            font-size: .9rem;
+            font-size: .8rem;
             color: var(--text);
             position: absolute;
             top: calc(100%);
             left: 50%;
             transform: translateX(-50%);
-            font-weight: 600;
             width: 100%;
             
             @include respond-to(sm) {
-                font-size: .7rem;
+                font-size: .6rem;
             }
 
             @include respond-to(xs) {
-                font-size: .6rem;
+                font-size: .5rem;
             }
         }
     
@@ -207,14 +206,15 @@
         }
     }
 
-    &.hide {
-        display: none;
+
+    &_right {
+        justify-content: flex-end;
     }
 }
 
 
 .form_full {
-    padding: 40px 50px 50px;
+    padding: 30px 40px 40px;
     margin: 40px auto 0;
     width: 85%;
     border-radius: $brad_lg;
@@ -245,11 +245,10 @@
             margin-top: 60px;
         }
 
-        & h2 {
+        & h2, h3 {
             text-align: center;
             color: var(--text);
             font-family: Nunito;
-            margin-bottom: 20px;
         }
     }
 
@@ -261,7 +260,7 @@
         display: flex;
         align-items: stretch;
         justify-content: space-between;
-        margin-top: 20px;
+        //margin-top: 20px;
         
         
         @include respond-to(sm) {
@@ -317,7 +316,7 @@
             }
         }
 
-        
+
 
         &_sm-wide {
             @include respond-to(sm) {
@@ -333,6 +332,10 @@
                 }
             }
         }
+    }
+
+    & .files-adder, .picker, .cart {
+        margin-top: 20px;
     }
 
 
@@ -417,7 +420,6 @@
         flex-direction: row;
         align-items: center;
         gap: 10px;
-
         width: 30%;
 
         @include respond-to(sm) {

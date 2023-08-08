@@ -27,7 +27,7 @@ const Catalog: React.FC<IPropsState> = ({lang}): JSX.Element => {
                     <CatalogIntroMemo />
                     <section className="catalog">
                         <div className="block_text">
-                            <h1>{lang === 'en' ? 'Our catalog' : 'Наш каталог'}</h1>
+                            <h2>{lang === 'en' ? 'Our catalog' : 'Наш каталог'}</h2>
                         </div>
                         <div className="catalog__content">
                             <CategoriesListMemo />

@@ -103,7 +103,7 @@
 
 
         & .splide__pagination--custom {
-           bottom: unset;
+            bottom: unset;
             margin-top: 20px;
 
             @include respond-to(sm) {
@@ -118,7 +118,7 @@
                 width: auto;
                 color: var(--main_em);
                 font-weight: 700;
-                @include fs_base;
+                @include fs_smaller;
 
                 @include respond-to(xs) {
                     width: 15px;
@@ -130,10 +130,9 @@
                 &.is-active {
                     @include fs_bigger;
                     opacity: 1;
-                    font-weight: 800;
+                    font-weight: 700;
                     transform: none;
                     color: var(--lang-text_add);
-                    //background-color: rgba(var(--main_em_RGB), 0.95);
                 }
             }
         }

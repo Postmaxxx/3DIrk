@@ -3,7 +3,7 @@ import { IAllCache } from '../data/cache'
 import { ICartItem } from "../models/Cart"
 import { TLang, TLangText } from "../interfaces"
 import { IOrder, OrderType } from "../models/Orders"
-import { allPaths, missedItem, orderStatus, sendNotificationsInTG, timeZoneDelta } from "../data/consts"
+import { allPaths, missedItem, sendNotificationsInTG, timeZoneDelta, orderStatus } from "../data/consts"
 import { foldersCleaner } from "../processors/fsTools"
 import { filesUploaderS3 } from "../processors/aws"
 import { IProduct } from "../models/Product"
@@ -571,14 +571,16 @@ router.get('/orders',
     async (req, res) => {
         try {
             const {from, to, userId, status} = req.query
+            
             const { id, isAdmin } = req.user 
             await cache.fibers.control.load()
             await cache.colors.control.load()
             await cache.products.control.load()
-
+            
             const userList: IUser[] = !isAdmin ? 
-            await User.find({user: id}) || [] 
-            : userId === 'all' ? await User.find() || [] : await User.find({_id: userId}) || []
+                await User.find({_id: id}) || [] 
+            : 
+                userId === 'all' ? await User.find() || [] : await User.find({_id: userId}) || []
             
             const statusList: string[] = status !== 'all' ? [status] : [...orderStatus]
 

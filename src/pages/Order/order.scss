@@ -5,6 +5,9 @@
     transition: background-color $transition-theme;
     flex-grow: 1;
 
+    .files-adder {
+        margin-top: 0;
+    }
 
     .cart__content {
         width: 100%;

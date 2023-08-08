@@ -130,7 +130,7 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, modal, catalog}): JSX.El
                     <h1>{lang === 'en' ? 'Change categoies' : 'Изменение категорий'}</h1>
                     <form className='form_full form_add-color' >
                         <div className="block_text">
-                            <h2 className='full-width'>{lang === 'en' ? 'List' : 'Список'}</h2>           
+                            <h3 className='full-width'>{lang === 'en' ? 'List' : 'Список'}</h3>           
                         </div>
                         <div className="catalog" ref={_catalog}>
                             <Featurer 

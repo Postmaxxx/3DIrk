@@ -7,35 +7,10 @@
     transition: background-color $transition-theme;
     flex-grow: 1;
 
-    /*& .filters {
-        margin-top: 40px;
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-
-        & .filter__item {
-            & label {
-                display: flex;
-                flex-direction: column;
-
-
-                & input, select {
-                    margin-top: 5px;
-                    color: red;
-                }
-    
-                & select {
-                    width: 200px;
-                }
-            }
-
-            &.hidden {
-                display: none;
-            }
-        }
-
-    }*/
+    & input, select {
+        padding: 0;
+        @include fs_smaller;
+    }
 
     .orders {
         margin-top: 50px;
@@ -100,19 +75,16 @@
                 position: relative;
 
                 & * {
-                    color: $black !important;
+                    color: $black;
                 }
 
 
-                /*&::before {
-                    content: '';
-                    position: absolute;
-                    bottom: 100%;
-                    left: 50%;
-                    width: 3px;
-                    height: 30px;
-                    background-color: #fff;
-                }*/
+                .order__date {
+                    @include respond-to(xs) {
+                        margin-top: 10px;
+                    }
+                }
+
 
                 &:nth-of-type(1) {
                     margin-top: 20px;
@@ -121,12 +93,7 @@
                     }
                 }
 
-                & .order__date-status {
-                    grid-column: 1/-1;
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                }
+
     
                 & .order__cart {
                     margin-top: 20px;
@@ -193,10 +160,14 @@
                         grid-template-columns: 1fr 1fr 1fr;
                         border: 1px solid var(--main_em);
                         border-radius: 10px;
-                        //padding: 20px;
         
                         & > .cell {
                             padding: 10px;
+                            @include fs_smaller;
+
+                            @include respond-to(xs) {
+                                padding: 7px 5px;
+                            }
 
                             &:hover {
                                 text-decoration: underline;
@@ -245,14 +216,15 @@
             justify-content: center;
             width: 25px;
             height: 25px;
-            opacity: 0.8;
+            color: var(--main_em);
             @include fs_smaller;
+            font-weight: 700;
             
             &.selected {
-                font-weight: 700;
-                opacity: 1;
-                border: 1px solid var(--text);
-                border-radius: 50%;
+                //border: 1px solid var(--text);
+                //border-radius: 50%;
+                color: var(--lang-text_add);
+                @include fs_bigger;
             }
         }
     }

@@ -121,7 +121,7 @@ const Picker = forwardRef<IPickerFunctions, IProps>(({items, lang, onEditClick, 
     }, [items, lang, selectedItems])
 
     return (
-        <div className="picker__items">
+        <div className="picker">
             {contentMemo}
         </div>
     )

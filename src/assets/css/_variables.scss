@@ -143,23 +143,6 @@ body {
 
 
 @mixin fs_base {
-    font-size: 1.1rem;
-    
-    @include respond-to(md) {
-        font-size: 1rem;
-    }
-
-    @include respond-to(sm) {
-        font-size: 1rem;
-    }
-    
-    @include respond-to(xs) {
-        font-size: .9rem;
-    }
-}
-
-
-@mixin fs_smaller {
     font-size: 1rem;
     
     @include respond-to(md) {
@@ -176,19 +159,36 @@ body {
 }
 
 
-@mixin fs_bigger {
-    font-size: 1.3rem;
+@mixin fs_smaller {
+    font-size: .9rem;
     
     @include respond-to(md) {
-        font-size: 1.2rem;
+        font-size: .8rem;
     }
 
     @include respond-to(sm) {
-        font-size: 1.1rem;
+        font-size: .8rem;
     }
     
     @include respond-to(xs) {
+        font-size: .7rem;
+    }
+}
+
+
+@mixin fs_bigger {
+    font-size: 1.2rem;
+    
+    @include respond-to(md) {
+        font-size: 1.1rem;
+    }
+
+    @include respond-to(sm) {
         font-size: 1rem;
+    }
+    
+    @include respond-to(xs) {
+        font-size: .9rem;
     }
 }
 
@@ -217,14 +217,14 @@ body {
 
 
 @mixin margin_first_p {
-    margin-top: 2.5rem;
+    margin-top: 2.2rem;
                 
     @include respond-to(sm) {
-        margin-top: 2rem;
+        margin-top: 1.8rem;
     }
 
     @include respond-to(xs) {
-        margin-top: 1.5rem;
+        margin-top: 1.3rem;
     }
 }
 

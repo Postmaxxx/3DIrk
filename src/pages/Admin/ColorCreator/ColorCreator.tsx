@@ -183,25 +183,23 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
                 <h1>{lang === 'en' ? 'Edit colors' : 'Изменение цветов'}</h1>
                     <form className='form_full form_add-color' ref={_formColor}>
                         <div className="block_text">
-                            <h2 className='section-header full-width'>{lang === 'en' ? 'Select color to edit' : 'Выберите цвет для редактирования'}</h2>           
+                            <h3 className='section-header full-width'>{lang === 'en' ? 'Select color to edit' : 'Выберите цвет для редактирования'}</h3>           
                         </div>
-                        <div className="picker picker_colors">
-                            {colorsState.load.status === 'success' ? 
-                                <Picker 
-                                    ref={colorPickerRef} 
-                                    items={colorsState.colors} 
-                                    lang={lang} 
-                                    multiple={false}
-                                    withNew={true}
-                                    onItemClick={onColorSelected}
-                                    minSelected={1}
-                                    markInactive={true}/>
-                            :
-                                <Preloader />}
-                        </div>
+                        {colorsState.load.status === 'success' ? 
+                            <Picker 
+                                ref={colorPickerRef} 
+                                items={colorsState.colors} 
+                                lang={lang} 
+                                multiple={false}
+                                withNew={true}
+                                onItemClick={onColorSelected}
+                                minSelected={1}
+                                markInactive={true}/>
+                        :
+                            <Preloader />}
 
                         <div className="block_text">
-                            <h2>{lang === 'en' ? 'Add information' : 'Добавьте информацию'}</h2>
+                            <h3>{lang === 'en' ? 'Add information' : 'Добавьте информацию'}</h3>
                         </div>
                         <div className="form__inputs form__inputs_sm-wide">
                             <div className="block_input" data-selector="input-block">
@@ -239,14 +237,14 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
                         </div>
 
                         <div className="block_text">
-                            <h2>{lang === 'en' ? 'Add image full-size' : 'Добавьте полноразмерное изображение'}</h2>
+                            <h3>{lang === 'en' ? 'Add image full-size' : 'Добавьте полноразмерное изображение'}</h3>
                         </div>
                         <div className="form__inputs">
                             <AddFiles lang={lang} ref={addFileBigRef} multiple={false} id='files_big'/>
                         </div>
 
                         <div className="block_text">
-                            <h2>{lang === 'en' ? 'Add image thumb-size' : 'Добавьте миниатюру'}</h2>
+                            <h3>{lang === 'en' ? 'Add image thumb-size' : 'Добавьте миниатюру'}</h3>
                         </div>
                         <div className="form__inputs">
                             <AddFiles lang={lang} ref={addFileSmallRef} multiple={false} id='files_small'/>

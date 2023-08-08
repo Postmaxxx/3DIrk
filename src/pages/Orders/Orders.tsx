@@ -4,8 +4,8 @@ import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { IFetch, IFullState, IOrdersItem, IOrdersState, OrderType, TLang } from '../../interfaces';
-import {Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { gapForOrders, orderStatus, timeOffset, usersPerPage } from '../../assets/js/consts';
+import {Fragment, useEffect, useMemo, useRef, useState } from 'react'
+import { gapForOrders, orderStatuses, timeOffset, usersPerPage } from '../../assets/js/consts';
 import moment from "moment";
 import Preloader from '../../components/Preloaders/Preloader';
 import { checkAndLoad, prevent } from '../../assets/js/processors';
@@ -91,7 +91,7 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
         checkAndLoad({
 			fetchData: ordersState.load,
 			loadFunc: setState.orders.loadOrders,
-            args: [{userId: _user.current?.value || '', status: _status.current.value, from: dateTimeFrom, to: dateTimeTo}],
+            args: [{userId: _user.current?.value, status: _status.current.value, from: dateTimeFrom, to: dateTimeTo}],
             force: true
 		})
     }
@@ -112,7 +112,7 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
         return order.cart.map((cartItem, i) => (
             <Fragment key={i}>
                 <div className="cell first">
-                    <NavLink to={`../catalog/${cartItem.productId}`}>
+                    <NavLink to={`../catalog/${cartItem.productId}`} >
                         {cartItem.productName[lang]}
                     </NavLink>
                 </div>
@@ -137,11 +137,11 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
 
 
     const statuses = useMemo(() => {
-        return orderStatus.map(status => <option key={status.name[lang]} value={status.value}>{status.name[lang]}</option>)
+        return orderStatuses.map(status => <option key={status.name[lang]} value={status.value}>{status.name[lang]}</option>)
     }, [lang])
 
 
-    const userTable = ordersState.users
+    const usersTable = ordersState.users
         .filter((user, i) => (i >= page*usersPerPage && i < (page+1)*usersPerPage))
         ?.map((user, i: number) => {
             return (
@@ -158,21 +158,24 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
                             return (
                                 <div className='order' key={order._id}>
                                     <div className='block_inputs_mixed order__date-status'>
-                                        <div className="block_input">
-                                            <h4>{lang === 'en' ? 'Date' : 'Дата'}: {moment(order.date).add(-timeOffset, 'hours').format('YYYY-MM-DD')}</h4>
-                                        </div>
-                                        <div className="block_input">
-                                            <label htmlFor={`order-${order._id}`}>{lang === 'en' ? 'Status' : 'Статус'}: </label>
-                                            <select 
-                                                id={`order-${order._id}`}
-                                                name="statusSelector" 
-                                                defaultValue={order.status} 
-                                                onChange={(e) => {onStatusChange({e, 
-                                                orderId: order._id})}}
-                                            >
-                                                {statuses}
-                                            </select>
-                                        </div>
+                                        <span className='order__date'>{lang === 'en' ? 'Date' : 'Дата'}: {moment(order.date).add(-timeOffset, 'hours').format('YYYY-MM-DD')}</span>
+                                        {isAdmin ? 
+                                            <div className="block_input">
+                                                <label htmlFor={`order-${order._id}`}>{lang === 'en' ? 'Status' : 'Статус'}: </label>
+                                                <select 
+                                                    id={`order-${order._id}`}
+                                                    name="statusSelector" 
+                                                    defaultValue={order.status} 
+                                                    onChange={(e) => {onStatusChange({e, orderId: order._id})}}
+                                                >
+                                                    {statuses}
+                                                </select>
+                                            </div>
+                                            : 
+                                            <div className="block_input block_input_right">
+                                                <span>{lang === 'en' ? 'Status' : 'Статус'}: <strong>{orderStatuses.find(status => status.value === order.status)?.name[lang]}</strong></span>
+                                            </div>}
+
                                     </div>
         
                                     {order.cart.length > 0 &&
@@ -181,7 +184,7 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
                                             <div className="cell head">{lang === 'en' ? 'Fiber' : 'Материал'}</div>
                                             <div className="cell head">{lang === 'en' ? 'Color' : 'Цвет'}</div>
                                             <div className="cell head">{lang === 'en' ? 'Type' : 'Тип'}</div>
-                                            <div className="cell head">{lang === 'en' ? 'Amt' : 'Кол-во'}</div>
+                                            <div className="cell head">{lang === 'en' ? 'Amt' : 'Кол'}</div>
                                             {orderCart(order)}
                                         </div>
                                     }
@@ -252,18 +255,19 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
     const pagination = useMemo(() => {
         return (
             totalPages.length > 1 &&
-                <div className="pagination">
+                <ul className="pagination">
                     {totalPages.map((item, i) => {
                         return (
-                            <button 
-                                className={`pagination__page-number ${i === page ? 'selected' : ''}`} 
-                                key={item} 
-                                onClick={(e) => setPage(i)}>
-                                    {item}
-                            </button>
+                            <li key={item}>
+                                <button
+                                    className={`pagination__page-number ${i === page ? 'selected' : ''}`} 
+                                    onClick={(e) => setPage(i)}>
+                                        {item}
+                                </button>
+                            </li>
                         )
                     })}
-                </div>
+                </ul>
             
         )
     }, [page, totalPages])
@@ -282,10 +286,10 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
                     {loaded && <>
                         <form className='form_full form_filters'>
                             <div className="block_text">
-                                <h2>{lang === 'en' ? 'Select the search parameters' : 'Введите критерии поиска'}</h2>           
+                                <h3>{lang === 'en' ? 'Select the search parameters' : 'Введите критерии поиска'}</h3>           
                             </div>
                             <div className={`block_inputs_${isAdmin ? '4' : '3'}`}>
-                                <div className={`block_input ${isAdmin ? "" : "hide"}`}>
+                                <div className={`block_input ${isAdmin ? "" : "no-display"}`}>
                                     {userFilter}
                                 </div>
                                 <div className="block_input">
@@ -304,7 +308,7 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
                         
                         {ordersState.users.length > 0 && ordersState.load.status ==='success' ? 
                             <div className="orders form_full">
-                                {userTable}
+                                {usersTable}
                             </div>
                         : 
                             ordersState.load.status === 'success' && 

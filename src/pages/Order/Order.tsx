@@ -146,7 +146,7 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsLoad, fibersLoad, 
                     </div>
                     <form className="form_full form_order" ref={_formOrder} >
                         <div className="block_text">
-                            <h2>{lang === 'en' ? 'Additional information' : 'Дополнительная информация'}</h2>
+                            <h3>{lang === 'en' ? 'Additional information' : 'Дополнительная информация'}</h3>
                         </div>
                         <div className="form__inputs">
                             <div className="form__inputs__texts">
@@ -172,7 +172,7 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsLoad, fibersLoad, 
                         </div>
                         <section className="cart__content">
                             <div className="block_text">
-                                <h2>{lang === 'en' ? 'Your cart' : 'Ваша корзина'}</h2>
+                                <h3>{lang === 'en' ? 'Your cart' : 'Ваша корзина'}</h3>
                             </div>
                             <CartContent />
                         </section>

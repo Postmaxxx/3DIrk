@@ -116,7 +116,7 @@ const SpliderChanger: FC<IProps> = ({lang, content, modal, setState}): JSX.Eleme
                     <h1>{lang === 'en' ? 'Change content' : 'Изменение контента'}</h1> 
                     <form className='form_full form_content' ref={_form}>
                         <div className="block_text">
-                            <h2 className='section-header full-width'>{lang === 'en' ? 'Carousel' : 'Карусель'}</h2>           
+                            <h3 className='section-header full-width'>{lang === 'en' ? 'Carousel' : 'Карусель'}</h3>           
                         </div>
                         <div className="form__inputs">
                             <AddFiles lang={lang} ref={addFilesRef} multiple={true} id='allImages'/>

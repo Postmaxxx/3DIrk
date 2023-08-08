@@ -29,7 +29,7 @@ const NewsBlock:React.FC<IProps>  = ({lang, news, setState}): JSX.Element => {
 		checkAndLoad({
 			fetchData: news.load,
 			loadFunc: setState.news.loadSomeNews,
-            args: [news.newsList.length, loadNewsPerRequest],
+            args: [{from: news.newsList.length, amount: loadNewsPerRequest}],
             force: true
 		})
     }

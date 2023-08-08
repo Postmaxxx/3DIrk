@@ -37,7 +37,8 @@ export const loadOrders = ({from, to, userId, status}: ILoadOrders) => {
         const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.orders.getSome.timeout) //set time limit for fetch
         dispatch(setLoadOrders({...fetchingFetch, controller}))  
         try {
-            const response: Response = await fetch(`${APIList.orders.getSome.url}?from=${from}&to=${to}&userId=${userId}&status=${status}`, {
+            const url = `${APIList.orders.getSome.url}?` + new URLSearchParams({from, to, userId, status})
+            const response: Response = await fetch(url, {
                 signal: controller.signal,
                 method: APIList.orders.getSome.method,
                 headers: {

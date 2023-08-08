@@ -2,7 +2,7 @@
 
 
 
-.picker__items {
+.picker {
     width: 100%;
     background-color: var(--main_em);
     border-radius: 5px;
@@ -103,15 +103,15 @@
         &.selected {
             & .image {
                 & > img {
-                    border-radius: $brad_md;
+                    //border-radius: $brad_md;
                     border: 3px solid var(--contrast_rev);
                 }
             }
 
             & span {
                 font-weight: 700;
-                border: 2px solid var(--contrast_rev);
-                border-radius: $brad_md;
+                border-bottom: 2px solid var(--contrast_rev);
+                //border-radius: $brad_md;
             }
         }
 
