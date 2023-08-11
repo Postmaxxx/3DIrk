@@ -501,3 +501,16 @@ export interface IModal {
     open: (owner: string) => void
     children: JSX.Element
 }*/
+
+export interface ISizesItem {
+    h: number
+    w: number
+}
+export interface IImageSizes {
+    thumb: ISizesItem
+    preview: ISizesItem
+    small: ISizesItem
+    medium: ISizesItem
+    big: ISizesItem
+    full: ISizesItem
+}

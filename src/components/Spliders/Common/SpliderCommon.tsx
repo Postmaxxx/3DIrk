@@ -1,11 +1,11 @@
 import './splider-common.scss'
 import Splide from "@splidejs/splide";
-import ImgWithPreloader from '../../../assets/js/ImgWithPreloader';
 import { ISpliderOptions, TImageSizes } from '../../../interfaces';
 import "@splidejs/react-splide/css";
 import { useRef, useEffect, MouseEvent, useMemo } from 'react'
 import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
 import ImageModalNew from '../../../../src/components/ImageModal/ImageModalNew';
+import PicWithPreloader from '../../../../src/assets/js/PicWithPreloader';
 
 
 
@@ -14,7 +14,7 @@ interface IProps {
 		paths: Partial<Record<TImageSizes, string>>
         files: string[]
 	}
-    imagesPerSlide: number
+    imagesPerSlide?: number
 	defaultSize?: TImageSizes
     modal: IModalFunctions | null
 }
@@ -31,6 +31,7 @@ const SpliderCommon: React.FC<IProps> = ({images, defaultSize='full', imagesPerS
 	const splideCommon = useRef<Splide>();
 	const containerSize = useRef<IContainerSize>();
 	const _splideFabric = useRef<any>();
+	const spliderCreated = useRef<boolean>(false);
 
     const options: Partial<ISpliderOptions> = {
         perPage: imagesPerSlide,
@@ -76,7 +77,8 @@ const SpliderCommon: React.FC<IProps> = ({images, defaultSize='full', imagesPerS
 			height:  _splideFabric.current.offsetHeight,
 		};
 		splideCommon.current = new Splide(_splideFabric.current, options);
-		splideCommon.current.mount();		
+		splideCommon.current.mount();
+		spliderCreated.current = true		
 		return () => {
     		splideCommon.current?.destroy();		
 		};
@@ -89,8 +91,8 @@ const SpliderCommon: React.FC<IProps> = ({images, defaultSize='full', imagesPerS
 		return images.files?.map((file, i) => {
 			return (
 				<li className="splide__slide" key={i} data-path={images.paths.full}>
-					<div className="splide__slide-container">
-						<ImgWithPreloader src={images.paths[defaultSize] ? `${images.paths[defaultSize]}/${file}` : `${images.paths.full}/${file}`} alt={file} id={String(i)}/>
+					<div className="splide__slide-content">
+						{spliderCreated.current && <PicWithPreloader pathList={images.paths} image={file} alt={file} id={`${i}`}/>}
 					</div>
 				</li>
 			);
@@ -100,7 +102,7 @@ const SpliderCommon: React.FC<IProps> = ({images, defaultSize='full', imagesPerS
 
 	return (
         <div className='splider_common__wrapper' onClick={(e) => handleImgClick(e)}>
-            <div className="splide" ref={_splideFabric} aria-label="The carousel">
+            <div className="splide" ref={_splideFabric} aria-label="The slider of images">
                 <div className="splide__track">
                     <ul className="splide__list">
                         {imagesCommon}

@@ -26,12 +26,12 @@ router.post('/create',
             const color: IColor = new Colors({ name, active })
             const colorId = color._id
 
-            const paths = await resizeAndSaveS3({
+            const { paths, filesList } = await resizeAndSaveS3({
                 files,
                 clearDir: true,
                 saveFormat: 'webp',
                 baseFolder: `${allPaths.pathToImages}/${allPaths.pathToColors}/${colorId}`,
-                formats: ['full', 'thumb']
+                sizes: ['full', 'thumb']
             })
 
             color.images = {
@@ -40,8 +40,8 @@ router.post('/create',
                     thumb: paths.thumb
                 },
                 files: {
-                   full: files[0].filename,
-                   thumb: files[1].filename 
+                   full: filesList[0],
+                   thumb: filesList[1] 
                 }
             }
             
@@ -67,12 +67,12 @@ router.put('/edit',
             const { name, _id, active } = JSON.parse(req.body.data )
             const files = req.files as IMulterFile[] || []
 
-            const paths = await resizeAndSaveS3({
+            const { paths, filesList } = await resizeAndSaveS3({
                 files,
                 clearDir: true,
                 saveFormat: 'webp',
                 baseFolder: `${allPaths.pathToImages}/${allPaths.pathToColors}/${_id}`,
-                formats: ['full', 'thumb']
+                sizes: ['full', 'thumb']
             })
 
             const images = {
@@ -81,8 +81,8 @@ router.put('/edit',
                     thumb: paths.thumb
                 },
                 files: {
-                   full: files[0].filename,
-                   thumb: files[1].filename 
+                   full: filesList[0],
+                   thumb: filesList[1] 
                 }
             }
 

@@ -41,28 +41,32 @@ interface IImageSizes {
     preview: ISizesItem
     small: ISizesItem
     medium: ISizesItem
+    big: ISizesItem
     full: ISizesItem
-    //big: ISizesItem
     spliderMain: ISizesItem
 }
 
 
-const sizes: IImageSizes = {//in px
+const sizes: IImageSizes = {
     thumb: {
         h: 40,
         w: 40
     },
     preview: {
-        h: 100,
+        h: 120,
         w: 100
     },
     small: {
-        w: 300,
-        h: 300
+        w: 350,
+        h: 250
     },
     medium: {
         h: 600,
-        w: 600
+        w: 450
+    },
+    big: {
+        h: 1000,
+        w: 800
     },
     full: {
         h: 1920,
@@ -72,8 +76,18 @@ const sizes: IImageSizes = {//in px
         w: 720,
         h: 400
     }
-    
 }
+
+
+/*
+const sizes = sizesList.reduce((acc, item) => {
+    acc[item.name] = {
+        h: item.height,
+        w: item.width
+    }
+    return acc
+}, {}) */
+
 
 export {minTimeBetweenSendings, sendNotificationsInTG, orderStatus, sizes, delayForFS, allPaths, timeZoneDelta,  
     ISizesItem, IImageSizes, missedItem}

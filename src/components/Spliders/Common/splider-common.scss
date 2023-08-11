@@ -10,17 +10,21 @@
         & .splide__track {
             height: 100%;
     
-            & > ul {
+            & > .splide__list {
                 
-                &  > li {
+                &  > .splide__slide {
                     display: flex;
                     align-items: center;
                     justify-content: center;
+                    position: relative;
     
-                    & .splide__slide-container {
+                    & .splide__slide-content {
+                        width: 100%;
                         height: 100%;
                         border-radius: 5px;
                         overflow: hidden;
+                        position: relative;
+
                         
                         & > img {
                             cursor: zoom-in;

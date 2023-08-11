@@ -7,7 +7,7 @@ const { check, validationResult } = require('express-validator')
 const isAdmin = require('../middleware/isAdmin')
 import { IAllCache } from '../data/cache'
 import { makeDelay } from "../processors/makeDelay";
-import { allPaths, delayForFS } from "../data/consts";
+import { allPaths } from "../data/consts";
 import { foldersCleaner} from "../processors/fsTools";
 import { resizeAndSaveS3 } from "../processors/sharp";
 import { IMulterFile } from "./user";
@@ -27,19 +27,19 @@ router.put('/splider',
         try {           
             const files: IMulterFile[] = req.files
 
-            const paths = await resizeAndSaveS3({
+            const { paths, filesList } = await resizeAndSaveS3({
                 files,
                 clearDir: true,
                 saveFormat: 'webp',
                 baseFolder: `${allPaths.pathToImages}/${allPaths.pathToSplider}`,
-                formats: ['full', 'spliderMain']
+                sizes: ['full', 'spliderMain']
             })
 
             await foldersCleaner([allPaths.pathToTemp])
             
             const splider = {
                 paths,
-                files: files.map(item => item.filename)
+                files: filesList
             }
             
             const exist = await Content.findOne()

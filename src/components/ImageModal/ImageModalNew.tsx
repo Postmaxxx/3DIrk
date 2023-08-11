@@ -1,7 +1,6 @@
 import { useState, useRef} from 'react'
 import "./image-modal.scss"
 import Preloader from '../Preloaders/Preloader'
-import { ILink } from '../../../src/interfaces'
 import { NavLink } from 'react-router-dom'
 
 

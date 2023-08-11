@@ -7,6 +7,7 @@ const isAdmin = require('../middleware/isAdmin')
 import { IAllCache } from '../data/cache'
 import { allPaths } from '../data/consts'
 import { folderCleanerS3 } from '../processors/aws'
+import { extChanger } from '../processors/filenameChanger'
 import { foldersCleaner } from '../processors/fsTools'
 import { resizeAndSaveS3 } from '../processors/sharp'
 import { IMulterFile } from './user'
@@ -24,17 +25,17 @@ router.post('/create',
             const files = req.files as IMulterFile[] || []           
             const news = new News({ header, date, short, text }) 
 
-            const paths = await resizeAndSaveS3({
+            const { paths, filesList } = await resizeAndSaveS3({
                 files,
                 clearDir: true,
                 saveFormat: 'webp',
                 baseFolder: `${allPaths.pathToImages}/${allPaths.pathToNews}/${news._id}`,
-                formats: ['full', 'medium', 'small']
+                sizes: ['full', "big", 'medium', 'small', "preview", "thumb"]
             })
 
             news.images = {
                 paths,
-                files: files.map(item => item.filename)
+                files: filesList
             }
 
             await foldersCleaner([allPaths.pathToTemp])
@@ -61,18 +62,17 @@ router.put('/edit',
             const files = req.files
             const { header, date, short, text, _id } = JSON.parse(req.body.data)
             
-            console.log(111);
-            const paths = await resizeAndSaveS3({
+            const { paths, filesList } = await resizeAndSaveS3({
                 files,
                 clearDir: true,
                 saveFormat: 'webp',
                 baseFolder: `${allPaths.pathToImages}/${allPaths.pathToNews}/${_id}`,
-                formats: ['full', 'medium', 'small']
+                sizes: ['full', 'medium', 'small', "preview", "thumb"]
             })
             
             const images = {
                 paths,
-                files: files.map(item => item.filename)
+                files: filesList
             }
 
             await News.findOneAndUpdate({_id}, { header, date, short, text, images})

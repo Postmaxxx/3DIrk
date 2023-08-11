@@ -25,17 +25,17 @@ router.post('/create',
             const { name, text, short, params, images, proscons, colors, active } = JSON.parse(req.body.data)
             const files = req.files as IMulterFile[] || []  
             const fiber: IFiber = new Fiber({ name, text, proscons, short, params, images,  colors, active })
-            const paths = await resizeAndSaveS3({
+            const {paths, filesList} = await resizeAndSaveS3({
                 files,
                 clearDir: true,
                 saveFormat: 'webp',
                 baseFolder: `${allPaths.pathToImages}/${allPaths.pathToFibers}/${fiber._id}`,
-                formats: ['full', 'small']
+                sizes: ['full', 'small']
             })
 
             fiber.images = {
                 paths,
-                files: files.map(item => item.filename)
+                files: filesList
             }
 
             await fiber.save()
@@ -99,17 +99,17 @@ router.put('/edit',
             const { name, text, short, params, proscons, colors, _id, active } = JSON.parse(req.body.data)
             const files = req.files as IMulterFile[] || []
 
-            const paths = await resizeAndSaveS3({
+            const { paths, filesList } = await resizeAndSaveS3({
                 files,
                 clearDir: true,
                 saveFormat: 'webp',
                 baseFolder: `${allPaths.pathToImages}/${allPaths.pathToFibers}/${_id}`,
-                formats: ['full', 'small']
+                sizes: ['full', 'small']
             })
 
             const images = {
                 paths,
-                files: files.map(item => item.filename)
+                files: filesList
             }
             
             await Fiber.findOneAndUpdate({_id}, {name, text, short, params, proscons, colors, images, active}) 

@@ -145,17 +145,17 @@ router.post('/product', //create
             const files = req.files as IMulterFile[] || []  
             const product: IProduct = new Product({ price: Number(price), name, text, text_short, fibers, mods, category, active })
             
-            const paths = await resizeAndSaveS3({
+            const { paths, filesList } = await resizeAndSaveS3({
                 files,
                 clearDir: true,
                 saveFormat: 'webp',
                 baseFolder: `${allPaths.pathToImages}/${allPaths.pathToProducts}/${product._id}`,
-                formats: ['full', 'small', 'medium', 'preview']
+                sizes: ['full', 'small', 'medium', 'preview']
             })
             
             product.images = {
                 paths,
-                files: files.map(item => item.filename)
+                files: filesList
             }
             
             await product.save()
@@ -183,17 +183,17 @@ router.put('/product', //create
             const { price, name, text, text_short, fibers, mods, category, _id, active } = JSON.parse(req.body.data)
             const files = req.files as IMulterFile[] || undefined
             
-            const paths = await resizeAndSaveS3({
+            const { paths, filesList } = await resizeAndSaveS3({
                 files,
                 clearDir: true,
                 saveFormat: 'webp',
                 baseFolder: `${allPaths.pathToImages}/${allPaths.pathToProducts}/${_id}`,
-                formats: ['full', 'small', 'medium', 'preview']
+                sizes: ['full', 'small', 'medium', 'preview']
             })
 
             const images = {
                 paths,
-                files: files.map(item => item.filename)
+                files: filesList
             }
 
             await Product.findOneAndUpdate({_id}, { price, name, text, text_short, fibers, mods, category, _id, images, active })

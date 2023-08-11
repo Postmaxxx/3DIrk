@@ -1,4 +1,4 @@
-import { IFetch, IFiberParam, IMessageModal, INewsItem, ISendColor, ISendFiber, ISendProduct, TLangText } from "../../interfaces"
+import { IFetch, IFiberParam, IImageSizes, IMessageModal, INewsItem, ISendColor, ISendFiber, ISendProduct, TLangText } from "../../interfaces"
 
 
 const timeModalClosing: number = 500 //transition of closing modal window
@@ -721,10 +721,81 @@ const DOMExceptions = {
     byUser: new DOMException(exceptionUser.message, exceptionUser.name)
 }
 
+
+/*
+const sizesList = [
+    {
+        name: 'thumb',
+        width: 40,
+        height: 40
+    },
+    {
+        name: 'preview',
+        width: 120,
+        height: 100
+    },
+    {
+        name: 'small',
+        width: 350,
+        height: 250
+    },
+    {
+        name: 'medium',
+        width: 600,
+        height: 450
+    },
+    {
+        name: 'big',
+        width: 1000,
+        height: 800
+    },
+    {
+        name: 'full',
+        width: 1920,
+        height: 1080
+    },
+]*/
+
+const sizes: IImageSizes = {
+    thumb: {
+        h: 40,
+        w: 40
+    },
+    preview: {
+        h: 120,
+        w: 100
+    },
+    small: {
+        w: 350,
+        h: 250
+    },
+    medium: {
+        h: 600,
+        w: 450
+    },
+    big: {
+        h: 1000,
+        w: 800
+    },
+    full: {
+        h: 1920,
+        w: 1080
+    }
+}
+
+const sizesList = Object.entries(sizes)
+    .map(([key, value]) => ({
+        name: key as keyof IImageSizes,
+        w: value.w,
+        h: value.h
+    }))
+    .sort((prev, curr) => prev.w - curr.w)
+
+
 export { clearModalMessage, resetFetch, timeModalClosing, 
     fetchingFetch, errorFetch, successFetch, headerStatus, empty, selector, strengthMin, 
     strengthMax, fiberEmpty, productEmpty, colorEmpty, gapBetweenRequests,
     orderStatuses, usersPerPage, timeOffset, inputsProps, tipsTransition, socials,
     navList, newsItemEmpty, APIList, imageExtentions, maxAmountToOrder, loadNewsPerRequest,
     exceptionTimeout, exceptionFetch, DOMExceptions, statuses, defaultSelectItem, 
-    createNewItemId, gapForOrders}
+    createNewItemId, gapForOrders, sizes, sizesList}

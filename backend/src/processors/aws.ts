@@ -82,6 +82,8 @@ const folderCleanerS3 = async (bucketName, folderName) => {
     }
     try {
         const objects = await getListObjectsS3(bucketName, folderName)
+        console.log(objects);
+        
         if (objects.length === 0) return
         await deleteObjectsS3(objects)
     } catch (error) {

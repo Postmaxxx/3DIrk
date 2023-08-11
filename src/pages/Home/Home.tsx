@@ -11,7 +11,6 @@ import Preloader from '../../components/Preloaders/Preloader';
 import { checkAndLoad } from '../../assets/js/processors';
 import { IModalFunctions } from '../../../src/components/Modal/ModalNew';
 
-
 interface IPropsState {
     lang: TLang
     contentState: IContentState

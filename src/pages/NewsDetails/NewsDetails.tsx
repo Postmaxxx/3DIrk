@@ -89,7 +89,7 @@ const NewsDetails: FC<IProps> = ({lang, setState, newsState, modal, isAdmin }): 
 
 
     
-    const renderNews = useMemo(() => {
+    const newsContent = useMemo(() => {
         return (
             <>
                 {newsState.loadOne.status === 'success' &&
@@ -104,7 +104,6 @@ const NewsDetails: FC<IProps> = ({lang, setState, newsState, modal, isAdmin }): 
                                 <div className="images">
                                     <SpliderCommon 
                                         images={newsState.newsOne.images} 
-                                        defaultSize='medium' 
                                         imagesPerSlide={Math.min(newsState.newsOne.images.files.length, 3)}
                                         modal={modal}/>
                                 </div>
@@ -118,7 +117,7 @@ const NewsDetails: FC<IProps> = ({lang, setState, newsState, modal, isAdmin }): 
     }, [lang, newsState.newsOne, newsState.loadOne.status])
 
 
-    const renderButtons = useMemo(() => {
+    const controls = useMemo(() => {
         return (
             <div className="buttons_control">
                 {isAdmin && newsState.newsOne && newsState.loadOne.status === 'success' &&
@@ -145,8 +144,8 @@ const NewsDetails: FC<IProps> = ({lang, setState, newsState, modal, isAdmin }): 
         <div className="page page_news-details">
             <div className="container_page">
                 <div className="container">
-                    {renderNews}
-                    {renderButtons}
+                    {newsContent}
+                    {controls}
                 </div>
             </div>
         </div>
