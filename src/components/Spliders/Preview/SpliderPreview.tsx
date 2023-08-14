@@ -1,14 +1,14 @@
 import { AnyAction, Dispatch, bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { useEffect, useRef, useMemo} from "react";
+import { useEffect, useRef, useMemo, useState} from "react";
 import "@splidejs/react-splide/css";
 import "./splider-preview.scss";
 import { IFullState, ISpliderOptions, TImageSizes, TLang } from "../../../interfaces";
 import Splide from "@splidejs/splide";
-import ImgWithPreloader from "../../../assets/js/ImgWithPreloader";
 import { allActions } from "../../../redux/actions/all";
 import { IModalFunctions } from "../../../../src/components/Modal/ModalNew";
 import ImageModalNew from "../../../../src/components/ImageModal/ImageModalNew";
+import PicWithPreloader from "../../../../src/assets/js/PicWithPreloader";
 
 
 
@@ -31,16 +31,18 @@ interface IProps extends IPropsState, IPropsActions {
 		paths: Partial<Record<TImageSizes, string>>
 		files: string[]
 	}
-	sizePreview?: TImageSizes
-	sizeMain?: TImageSizes
+	biggestSize?: TImageSizes
 }
 
 
-const SpliderPreview: React.FC<IProps> = ({ modal, images, sizePreview='preview', sizeMain='medium'}): JSX.Element => {
+const SpliderPreview: React.FC<IProps> = ({ modal, images, biggestSize='full'}): JSX.Element => {
 	const _splideMain = useRef<HTMLDivElement>(null);
 	const _splideThumbs = useRef<HTMLDivElement>(null);
 	const splideMain = useRef<Splide>();
 	const splideThumb = useRef<Splide>();
+	const [spliderMainCreated, setSpliderMainCreated] = useState<boolean>(false);
+	const [spliderThumbCreated, setSpliderThumbCreated] = useState<boolean>(false);
+
 
 	
 	const optionsThumbs: Partial<ISpliderOptions> = {
@@ -108,12 +110,13 @@ const SpliderPreview: React.FC<IProps> = ({ modal, images, sizePreview='preview'
 
 	useEffect(() => {
         if (!_splideThumbs.current || !_splideMain.current) return
-		splideThumb.current = new Splide(_splideThumbs.current, optionsThumbs);
-		splideMain.current = new Splide(_splideMain.current, optionsMain);
-		splideMain.current.sync(splideThumb.current);
-		splideMain.current.mount();
-		splideThumb.current.mount();
-        
+		splideThumb.current = new Splide(_splideThumbs.current, optionsThumbs)
+		splideMain.current = new Splide(_splideMain.current, optionsMain)
+		splideMain.current.sync(splideThumb.current)
+		splideMain.current.mount()
+		splideThumb.current.mount()
+        setSpliderMainCreated(true)
+		setSpliderThumbCreated(true)
 		return () => {
 			splideThumb.current?.destroy();
 			splideMain.current?.destroy();
@@ -125,23 +128,23 @@ const SpliderPreview: React.FC<IProps> = ({ modal, images, sizePreview='preview'
 		return images.files.map((filename,i) => {
 			return (
 				<li className="splide__slide" key={filename} onClick={(e) => onImageClick(e, filename)}>
-					<ImgWithPreloader src={`${images.paths[sizeMain]}/${filename}`} alt={filename} />
+					{spliderThumbCreated && <PicWithPreloader pathList={images.paths} image={filename} alt={filename} id={filename}/>}
 				</li>
 			);
 		})
-	}, [images.files])
+	}, [images.files, spliderThumbCreated])
 
 
 	const imagesThumb = useMemo(() => {
 		return images.files.map((filename, i) => {
 			return (
 				<li className="splide__slide" key={filename}>
-					<ImgWithPreloader src={`${images.paths[sizePreview]}/${filename}`} alt={filename} />
+					{spliderMainCreated && <PicWithPreloader pathList={images.paths} image={filename} alt={filename} id={filename}/>}
 				</li>
 			);
 
 		})
-	}, [images.files])
+	}, [images.files, spliderMainCreated])
 
 	
 	return (

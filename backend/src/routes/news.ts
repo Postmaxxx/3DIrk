@@ -7,7 +7,6 @@ const isAdmin = require('../middleware/isAdmin')
 import { IAllCache } from '../data/cache'
 import { allPaths } from '../data/consts'
 import { folderCleanerS3 } from '../processors/aws'
-import { extChanger } from '../processors/filenameChanger'
 import { foldersCleaner } from '../processors/fsTools'
 import { resizeAndSaveS3 } from '../processors/sharp'
 import { IMulterFile } from './user'
@@ -67,7 +66,7 @@ router.put('/edit',
                 clearDir: true,
                 saveFormat: 'webp',
                 baseFolder: `${allPaths.pathToImages}/${allPaths.pathToNews}/${_id}`,
-                sizes: ['full', 'medium', 'small', "preview", "thumb"]
+                sizes: ['full', "big", 'medium', 'small', "preview", "thumb"]
             })
             
             const images = {

@@ -30,7 +30,7 @@ router.post('/create',
                 clearDir: true,
                 saveFormat: 'webp',
                 baseFolder: `${allPaths.pathToImages}/${allPaths.pathToFibers}/${fiber._id}`,
-                sizes: ['full', 'small']
+                sizes: ['full', "big", 'medium', 'small', "preview", "thumb"]
             })
 
             fiber.images = {
@@ -104,7 +104,7 @@ router.put('/edit',
                 clearDir: true,
                 saveFormat: 'webp',
                 baseFolder: `${allPaths.pathToImages}/${allPaths.pathToFibers}/${_id}`,
-                sizes: ['full', 'small']
+                sizes: ['full', "big", 'medium', 'small', "preview", "thumb"]
             })
 
             const images = {

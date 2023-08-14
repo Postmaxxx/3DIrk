@@ -1,18 +1,14 @@
-import { IContent } from "../models/Content";
 const { Router } = require("express")
 const Content = require("../models/Content")
 const router = Router()
 const authMW = require('../middleware/auth')
-const { check, validationResult } = require('express-validator')
 const isAdmin = require('../middleware/isAdmin')
 import { IAllCache } from '../data/cache'
-import { makeDelay } from "../processors/makeDelay";
 import { allPaths } from "../data/consts";
 import { foldersCleaner} from "../processors/fsTools";
 import { resizeAndSaveS3 } from "../processors/sharp";
 import { IMulterFile } from "./user";
 const cache: IAllCache = require('../data/cache')
-var fs = require('fs');
 const fileSaver = require('../routes/files')
 const sharp = require('sharp')
 sharp.cache(false);
@@ -32,7 +28,7 @@ router.put('/splider',
                 clearDir: true,
                 saveFormat: 'webp',
                 baseFolder: `${allPaths.pathToImages}/${allPaths.pathToSplider}`,
-                sizes: ['full', 'spliderMain']
+                sizes: ['full', 'carouselMaxFull', 'carouselMaxMedium', 'carouselMaxSmall']
             })
 
             await foldersCleaner([allPaths.pathToTemp])

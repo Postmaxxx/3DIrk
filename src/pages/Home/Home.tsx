@@ -1,5 +1,4 @@
 import NewsBlock from '../../components/NewsBlock/NewsBlock';
-import CarouselMax from '../../components/CarouselMax/CarouselMax';
 import './home.scss'
 import { connect } from "react-redux";
 import { IContentState, IFullState, TLang } from "../../interfaces";
@@ -10,6 +9,7 @@ import { useEffect } from "react";
 import Preloader from '../../components/Preloaders/Preloader';
 import { checkAndLoad } from '../../assets/js/processors';
 import { IModalFunctions } from '../../../src/components/Modal/ModalNew';
+import CarouselMaxAdaptive from '../../../src/components/CarouselMax/CarouselMaxAdaptive';
 
 interface IPropsState {
     lang: TLang
@@ -63,7 +63,7 @@ const Home:React.FC<IProps> = ({lang, contentState, setState, modal} : IProps): 
                         </div>
                     </section>
                     <div className="slider__container">
-                        {contentState.load.status === 'success' && contentState.splider?.files?.length > 0 && <CarouselMax content={contentState.splider} modal={modal}/>}
+                        {contentState.load.status === 'success' && contentState.splider?.files?.length > 0 && <CarouselMaxAdaptive content={contentState.splider} modal={modal}/>}
                         {contentState.load.status === 'fetching' && <Preloader />}
                     </div>
                     <NewsBlock />

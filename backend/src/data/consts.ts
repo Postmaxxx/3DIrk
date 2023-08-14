@@ -43,7 +43,9 @@ interface IImageSizes {
     medium: ISizesItem
     big: ISizesItem
     full: ISizesItem
-    spliderMain: ISizesItem
+   carouselMaxFull: ISizesItem
+   carouselMaxMedium: ISizesItem
+   carouselMaxSmall: ISizesItem
 }
 
 
@@ -72,9 +74,17 @@ const sizes: IImageSizes = {
         h: 1920,
         w: 1080
     },
-    spliderMain: {
-        w: 720,
+    carouselMaxFull: {
+        w: 730,
         h: 400
+    },
+    carouselMaxMedium: {
+        w: 420,
+        h: 250
+    },
+    carouselMaxSmall: {
+        w: 230,
+        h: 170
     }
 }
 

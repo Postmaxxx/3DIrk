@@ -26,7 +26,7 @@ const News:React.FC<IProps> = ({newsPiece, lang}):JSX.Element => {
         <article className="news-item">
             <div className="img-cont">
                 {newsPiece.images.files.length > 0 &&
-                    <PicWithPreloader pathList={newsPiece.images.paths} image={newsPiece.images.files[0]} alt={newsPiece.header[lang]} id={newsPiece.header[lang]}/>
+                    <PicWithPreloader pathList={newsPiece.images.paths} image={newsPiece.images.files[0]} alt={newsPiece.header[lang]}/>
                 }
             </div>
             <div className="news__content">

@@ -1,6 +1,6 @@
 import { IFiber, TLang } from '../../interfaces'
 import './fiber-preview.scss'
-import ImgWithPreloader from '../../assets/js/ImgWithPreloader'
+import PicWithPreloader from '../../assets/js/PicWithPreloader'
 
 
 interface IProps {
@@ -12,7 +12,7 @@ const FiberPreview = ({fiber, lang}: IProps) => {
     return (
         <div className="fiber">
             <div className="img-cont">
-                <ImgWithPreloader src={`${fiber.images.paths.small}/${fiber.images.files[0]}`} alt={fiber.images.files[0]} />
+                <PicWithPreloader pathList={fiber.images.paths} image={fiber.images.files[0]} alt={fiber.images.files[0]}/>
             </div>
             <div className="fiber__info">
                 <h3>{fiber.short.name[lang]}</h3>

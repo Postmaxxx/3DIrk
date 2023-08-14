@@ -68,7 +68,7 @@ const Product: React.FC<IProps> = ({lang, setState, colorLoad, catalogProduct, f
                     {loaded ?
                         <div className="product">
                             <div className="product__images">
-                                <SpliderPreview images={catalogProduct.images} sizePreview='preview' sizeMain="medium"  />
+                                <SpliderPreview images={catalogProduct.images}  />
                             </div>
                             <ProductDetails />
                         </div>

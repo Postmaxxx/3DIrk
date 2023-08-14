@@ -3,23 +3,16 @@ import Preloader from "../../components/Preloaders/Preloader";
 import { sizesList } from "./consts";
 import { IImageSizes } from "../../interfaces";
  
-/*interface IImage {
-	width: number
-	url: string
-}*/
-
 export type TPartialPathList = {
     [key in keyof IImageSizes]?: string;
 };
 
 interface IProps {
-	//images: IImage[]
 	pathList: TPartialPathList
 	alt?: string
 	id?: string
 	image: string
 }
-
 
 
 const PictureWithPreloader: React.FC<IProps> = ({pathList, alt, id, image}: IProps):JSX.Element => {
@@ -42,8 +35,6 @@ const PictureWithPreloader: React.FC<IProps> = ({pathList, alt, id, image}: IPro
 	//sizesList is sorted by increasing width
 	//search first existed (in pathList) sizename with width for this sizename >= container.width. or just get the last one in the list (the biggest) otherwise
 	const bestSizeName = sizesList.find(size => size.w >= (containerWidth || 0) && pathList[size.name])?.name || sizesList[sizesList.length - 1].name
-	console.log(containerWidth);
-	
 	
 	return (
 		<>
@@ -60,5 +51,3 @@ const PictureWithPreloader: React.FC<IProps> = ({pathList, alt, id, image}: IPro
 const PicWithPreloader = memo(PictureWithPreloader)
  
 export default PicWithPreloader;
-
-//<img ref={_img} src={images.find(image => image.width >= containerWidth)?.url || images[images.length-1].url} alt={alt} onLoad={hasLoaded} style={{display: loaded ? "block" : "none"}} id={id} />

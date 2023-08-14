@@ -11,8 +11,8 @@ import RatingMoney from '../../components/RatingMoney/RatingMoney';
 import { fibersProperties } from '../../assets/data/fibersProperties';
 import { allActions } from "../../redux/actions/all";
 import { strengthMax, strengthMin, tipsTransition } from '../../assets/js/consts';
-import ImgWithPreloader from '../../assets/js/ImgWithPreloader';
 import ErrorFetch from '../../components/ErrorFetch/ErrorFetch';
+import PicWithPreloader from '../../../src/assets/js/PicWithPreloader';
 
 
 interface IPropsState {
@@ -126,7 +126,7 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
                 <Fragment key={fiber._id}>
                     <div className={`cell col-name ${fiber._id === fibersState.selected ? "selected" : ""}`} onClick={e => onCellClick(fiber._id, '')} >
                         <div className="img-cont">
-                            <ImgWithPreloader src={`${fiber.images.paths.small}/${fiber.images.files[0]}`} alt={fiber.images.files[0]}  />
+                            <PicWithPreloader pathList={fiber.images.paths} image={fiber.images.files[0]} alt={fiber.name[lang]}/>
                         </div>
                         <span className='fiber-name'>{fiber.short.name[lang]}</span>
                         <NavLink to={`../${fiber._id}`} className='button_blue button_sort'>

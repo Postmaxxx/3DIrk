@@ -1,9 +1,9 @@
 import './gallery.scss'
 import { connect } from "react-redux";
 import { IFullState, IProductShort, TLang } from "../../interfaces";
-import ImgWithPreloader from '../../assets/js/ImgWithPreloader';
 import { NavLink } from 'react-router-dom';
 import { useMemo } from 'react'
+import PicWithPreloader from '../../../src/assets/js/PicWithPreloader';
 
 interface IPropsState {
 	lang: TLang
@@ -23,7 +23,7 @@ const Gallery: React.FC<IProps> = ({lang, products}):JSX.Element => {
                 >
                 <div className='gallery__card' >
                     <div className={`gallery__card__img-cont ${product.active ? '' : 'inactive'}`}>
-                        <ImgWithPreloader src={`${product.images.paths.small}/${product.images.files[0]}`} alt={product.images.files[0]}/>
+                        <PicWithPreloader pathList={product.images.paths} image={product.images.files[0]} alt={product.name[lang]}/>
                     </div>
                     <div className="gallery__card__text">
                         <span className='name'>{product.name[lang]}</span>

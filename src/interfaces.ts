@@ -470,7 +470,9 @@ export interface ILoggingForm { //for form login/register form
 export interface ICarouselMax { //for CarouselMax
     paths: {
         full: string
-        spliderMain: string
+        carouselMaxFull?: ISizesItem
+        carouselMaxMedium?: ISizesItem
+        carouselMaxSmall?: ISizesItem
     },
     files: string[],
 }
@@ -513,4 +515,10 @@ export interface IImageSizes {
     medium: ISizesItem
     big: ISizesItem
     full: ISizesItem
+}
+
+export interface ICarouselMaxSizes {
+    carouselMaxFull: ISizesItem
+    carouselMaxMedium: ISizesItem
+    carouselMaxSmall: ISizesItem
 }

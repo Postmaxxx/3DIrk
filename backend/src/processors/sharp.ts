@@ -31,7 +31,25 @@ const imagesResizerUploaderS3 = async ({files = [], format = 'webp', sizesConver
             filesList.push(newFileName)
             for (const size of sizesConvertTo) {
                 let resized
-                if (size.type !== 'spliderMain') {
+                if (size.type === 'carouselMaxFull' || size.type === 'carouselMaxMedium' || size.type === 'carouselMaxSmall') {
+                    resized = await sharp(filePathName)
+                        .resize({
+                            width: sizes[size.type].w,
+                            height: sizes[size.type].h,
+                            fit: 'outside',
+                            withoutEnlargement: true,
+                            position: 'centre'
+                        })
+                        .resize({
+                            width: sizes[size.type].w,
+                            height: sizes[size.type].h,
+                            withoutEnlargement: true,
+                            fit: 'cover',
+                            position: 'centre'
+                        })  
+                        .toFormat(format)
+                        .toBuffer()
+                } else {
                     resized = await sharp(filePathName) //original path, temp folder
                         .resize({
                             width: sizes[size.type].w,
@@ -41,26 +59,6 @@ const imagesResizerUploaderS3 = async ({files = [], format = 'webp', sizesConver
                         }) 
                         .toFormat(format)
                         .toBuffer()
-                } else {
-                    if (size.type === 'spliderMain') {
-                        resized = await sharp(filePathName)
-                            .resize({
-                                width: sizes[size.type].w,
-                                height: sizes[size.type].h,
-                                fit: 'outside',
-                                withoutEnlargement: true,
-                                position: 'centre'
-                            })
-                            .resize({
-                                width: sizes[size.type].w,
-                                height: sizes[size.type].h,
-                                withoutEnlargement: true,
-                                fit: 'cover',
-                                position: 'centre'
-                            })  
-                            .toFormat(format)
-                            .toBuffer()
-                    }
                 }
 
                 
@@ -93,7 +91,7 @@ const imagesResizerUploaderS3 = async ({files = [], format = 'webp', sizesConver
 
 interface IResizeAndSave {
     baseFolder: string
-    sizes: (keyof IImageSizes)[] // ["thumb", "preview", "small", "medium", "full", "spliderMain"]
+    sizes: (keyof IImageSizes)[] // ["thumb", "preview", "small", "medium", "full", "carouselMax"]
     saveFormat?: string
     clearDir?: boolean
     files: IMulterFile[]

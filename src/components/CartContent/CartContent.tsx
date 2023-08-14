@@ -8,11 +8,11 @@ import { NavLink } from "react-router-dom";
 import Delete from "../Delete/Delete";
 import AmountChanger from "../AmountChanger/AmountChanger";
 import PreloaderW from "../Preloaders/PreloaderW";
-import ImgWithPreloader from "../../assets/js/ImgWithPreloader";
 import { allActions } from "../../redux/actions/all";
 import ErrorMock from "../ErrorFetch/ErrorFetch";
 import ImageModalNew from "../ImageModal/ImageModalNew";
 import { IModalFunctions } from "../Modal/ModalNew";
+import PicWithPreloader from "../../../src/assets/js/PicWithPreloader";
 
 interface IPropsState {
     lang: TLang,
@@ -75,7 +75,7 @@ const CartContent: React.FC<IProps> = ({lang, cart, colorsState, modal, fibersSt
                     {color && fiberName &&
                         <div className="cart__item">
                             <div className="wrapper_img" onClick={(e) => onImageClick(e, item.product)}>
-                                <ImgWithPreloader src={`${item.product.images.paths.preview}/${item.product.images.files[0]}`} alt={item.product.images.files[0]}/>
+                                <PicWithPreloader pathList={item.product.images.paths} image={item.product.images.files[0]} alt={item.product.name[lang]}/>
                             </div>
                 
                             <div className="item__descriptions">

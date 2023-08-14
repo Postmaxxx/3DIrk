@@ -106,12 +106,12 @@ const Fiber: React.FC<IProps> = ({lang, fibersState, colorsState, setState, moda
 
 
     const renderFiberItem = useMemo(() => {
-        const fiber = fibersState.fibersList.find(item => item._id === fibersState.selected)  
+        const fiber = fibersState.fibersList.find(item => item._id === fibersState.selected)         
         return fiber ? (
             <article className="fiber">
                 <h1>{fiber.short.name[lang]} ({fiber.name[lang]})</h1>
                 <section className='fiber__images-text'>
-                    <SpliderCommon images={fiber.images} defaultSize='small' imagesPerSlide={fiber.images.files?.length > 3 ? 3 : fiber.images.files?.length} modal={modal}/>
+                    <SpliderCommon images={fiber.images} imagesPerSlide={fiber.images.files?.length > 3 ? 3 : fiber.images.files?.length} modal={modal}/>
                     <div className="block_text">
                         {fiber.text[lang].split('\n').map((textItem, i) => <p key={textItem}>{textItem}</p>)}
                     </div>
@@ -140,7 +140,7 @@ const Fiber: React.FC<IProps> = ({lang, fibersState, colorsState, setState, moda
             </article>)
         :
             <ErrorFetch lang={lang} fetchData={{status: 'error', message: {en: 'Fiber has not been found', ru: 'Данный материал не найден'}}} />
-    }, [paramFiberId, lang, fibersState.load.status, colorsState.load.status, fibersState.selected, isAdmin])
+    }, [paramFiberId, lang, fibersState.load.status, colorsState.load.status, fibersState.selected, isAdmin, fibersState.fibersList])
 
 
 

@@ -2,7 +2,7 @@ import './splider-common.scss'
 import Splide from "@splidejs/splide";
 import { ISpliderOptions, TImageSizes } from '../../../interfaces';
 import "@splidejs/react-splide/css";
-import { useRef, useEffect, MouseEvent, useMemo } from 'react'
+import { useRef, useEffect, MouseEvent, useMemo, useState } from 'react'
 import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
 import ImageModalNew from '../../../../src/components/ImageModal/ImageModalNew';
 import PicWithPreloader from '../../../../src/assets/js/PicWithPreloader';
@@ -15,7 +15,7 @@ interface IProps {
         files: string[]
 	}
     imagesPerSlide?: number
-	defaultSize?: TImageSizes
+	biggestSize?: TImageSizes
     modal: IModalFunctions | null
 }
 
@@ -26,12 +26,12 @@ interface IContainerSize {
 
 
 
-const SpliderCommon: React.FC<IProps> = ({images, defaultSize='full', imagesPerSlide=1, modal}): JSX.Element => {
+const SpliderCommon: React.FC<IProps> = ({images, biggestSize='full', imagesPerSlide=1, modal}): JSX.Element => {
 	
 	const splideCommon = useRef<Splide>();
 	const containerSize = useRef<IContainerSize>();
 	const _splideFabric = useRef<any>();
-	const spliderCreated = useRef<boolean>(false);
+	const [spliderCreated, setSpliderCreated] = useState<boolean>(false);
 
     const options: Partial<ISpliderOptions> = {
         perPage: imagesPerSlide,
@@ -64,7 +64,7 @@ const SpliderCommon: React.FC<IProps> = ({images, defaultSize='full', imagesPerS
 			const id = Number(((e.target as HTMLImageElement).id));
 			modal?.openModal({
 				name: 'spliderCommonModal',
-				children: <ImageModalNew url={`${images.paths.full}/${images.files[id]}`}/>
+				children: <ImageModalNew url={`${biggestSize ?  images.paths[biggestSize] : images.paths.full}/${images.files[id]}`}/>
 			})
 		}
 	}
@@ -78,26 +78,24 @@ const SpliderCommon: React.FC<IProps> = ({images, defaultSize='full', imagesPerS
 		};
 		splideCommon.current = new Splide(_splideFabric.current, options);
 		splideCommon.current.mount();
-		spliderCreated.current = true		
+		setSpliderCreated(true)
 		return () => {
     		splideCommon.current?.destroy();		
 		};
 	}, []);
 
 	
-
-	
 	const imagesCommon = useMemo(() => {
 		return images.files?.map((file, i) => {
 			return (
-				<li className="splide__slide" key={i} data-path={images.paths.full}>
+				<li className="splide__slide" key={i}>
 					<div className="splide__slide-content">
-						{spliderCreated.current && <PicWithPreloader pathList={images.paths} image={file} alt={file} id={`${i}`}/>}
+						{spliderCreated && <PicWithPreloader pathList={images.paths} image={file} alt={file} id={`${i}`}/>}
 					</div>
 				</li>
 			);
 		})
-	}, [images.files])
+	}, [images.files, spliderCreated])
 
 
 	return (
