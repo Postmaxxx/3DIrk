@@ -4,12 +4,12 @@ import { IContentState } from "../../interfaces"
 const initialContentState = {
     send: resetFetch,
     load: resetFetch,
-    splider: {
-        paths: {
-            full: '',
-            spliderMain: ''
-        },
-        files: []
+    carousel: {
+        images: {
+            files: [],
+            sizes: [],
+            basePath: ''
+        }
     }
 } satisfies IContentState
 

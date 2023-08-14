@@ -5,7 +5,7 @@ const authMW = require('../middleware/auth')
 const { check, validationResult } = require('express-validator')
 const isAdmin = require('../middleware/isAdmin')
 import { IAllCache } from '../data/cache'
-import { allPaths } from '../data/consts'
+import { allPaths, imageSizes, newsImageSizes } from '../data/consts'
 import { folderCleanerS3 } from '../processors/aws'
 import { foldersCleaner } from '../processors/fsTools'
 import { resizeAndSaveS3 } from '../processors/sharp'
@@ -24,17 +24,23 @@ router.post('/create',
             const files = req.files as IMulterFile[] || []           
             const news = new News({ header, date, short, text }) 
 
-            const { paths, filesList } = await resizeAndSaveS3({
+            const basePath = `${allPaths.pathToImages}/${allPaths.pathToNews}/${news._id}`
+            const { filesList } = await resizeAndSaveS3({
                 files,
-                clearDir: true,
+                clearDir: false,
                 saveFormat: 'webp',
-                baseFolder: `${allPaths.pathToImages}/${allPaths.pathToNews}/${news._id}`,
-                sizes: ['full', "big", 'medium', 'small', "preview", "thumb"]
+                basePath,
+                sizes: newsImageSizes
             })
 
             news.images = {
-                paths,
-                files: filesList
+                files: filesList,
+                basePath: `${process.env.pathToStorage}/${basePath}`,
+                sizes: newsImageSizes.map(size => ({
+                    subFolder: size,
+                    w: imageSizes[size].w,
+                    h: imageSizes[size].h,
+                }))
             }
 
             await foldersCleaner([allPaths.pathToTemp])
@@ -60,19 +66,29 @@ router.put('/edit',
         try {
             const files = req.files
             const { header, date, short, text, _id } = JSON.parse(req.body.data)
+
+            const basePath = `${allPaths.pathToImages}/${allPaths.pathToNews}/${_id}`
             
-            const { paths, filesList } = await resizeAndSaveS3({
+            const { filesList } = await resizeAndSaveS3({
                 files,
                 clearDir: true,
                 saveFormat: 'webp',
-                baseFolder: `${allPaths.pathToImages}/${allPaths.pathToNews}/${_id}`,
-                sizes: ['full', "big", 'medium', 'small', "preview", "thumb"]
+                basePath,
+                sizes: newsImageSizes
             })
             
+
             const images = {
-                paths,
-                files: filesList
+                files: filesList,
+                basePath: `${process.env.pathToStorage}/${basePath}`,
+                sizes: newsImageSizes.map(size => ({
+                    subFolder: size,
+                    w: imageSizes[size].w,
+                    h: imageSizes[size].h,
+                }))
             }
+
+
 
             await News.findOneAndUpdate({_id}, { header, date, short, text, images})
             
@@ -133,9 +149,21 @@ router.get('/get-some',
             return res.status(400).json({message: {en: `"From" is more than total amount of news`, ru: `"From" больше чем общее количество новостей`}})
         }
         
-        const newsToRes =  cache.news.data.slice(since, to)
-        
-        return res.status(200).json({news: newsToRes, total: cache.news.data.length, message: {en: `${newsToRes.length} news loaded`, ru: `Новостей загружено: ${newsToRes.length}`}})
+        const newsToRes = cache.news.data.slice(since, to)
+        //change images.files length to 1, we need only one image for preview
+        return res.status(200).json({
+            news: newsToRes.map(news => ({
+                _id: news._id,
+                header: news.header,
+                date: news.date,
+                short: news.short,
+                images: {
+                    ...news.images,
+                    files: [news.images.files[0]],
+                }
+            })), 
+            total: cache.news.data.length, 
+            message: {en: `${newsToRes.length} news loaded`, ru: `Новостей загружено: ${newsToRes.length}`}})
 
     } catch (error) {
         return res.status(400).json({message: {en: `Error with server while getting news`, ru: `Ошибка при получении новостей с сервера`}})
@@ -206,8 +234,6 @@ router.delete('/delete',
             const { _id } = req.body 
             
             const newsToDelete = await News.findOneAndDelete({_id}) 
-            console.log(newsToDelete);
-            console.log(`${process.env.pathToStorage}/${allPaths.pathToImages}/${allPaths.pathToNews}/${newsToDelete._id}/`);
             
             if (!newsToDelete) {
                 return res.status(404).json({message: {en: `News has not found`, ru: `Новость не найдена`}})

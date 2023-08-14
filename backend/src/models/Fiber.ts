@@ -1,5 +1,5 @@
 import { Document, Schema, Model, model, Types } from 'mongoose';
-import { TLangText } from '../interfaces';
+import { TImageSizes, TLangText } from '../interfaces';
 
 interface IFiber extends Document {
     _id: string
@@ -12,9 +12,8 @@ interface IFiber extends Document {
     colors: [string]
     images: {
         paths: {
-            full: string
-            small: string
-        },
+            [key in TImageSizes]: string;
+        }
         files: string[]
     }
     short: {

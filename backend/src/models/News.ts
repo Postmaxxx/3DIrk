@@ -1,3 +1,4 @@
+import { IImageSubFolder, TImageSizes } from './../interfaces';
 import { Document, Schema, Model, model } from 'mongoose';
 import { TLangText } from '../interfaces';
 
@@ -8,14 +9,12 @@ interface INews extends Document {
     short: TLangText
     text: TLangText
     images: {
-        paths: {
-            full: string
-            medium: string
-            small: string
-        },
+        basePath: string
         files: string[]
+        sizes: IImageSubFolder[]
     }
 }
+
 
 const newsSchema = new Schema({
     date: {type: Date, required: true},

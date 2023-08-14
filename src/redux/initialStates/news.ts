@@ -12,12 +12,9 @@ const initialNews = {
         short: {...empty},
         text: {...empty},
         images: {
-            paths: {
-                full: '',
-                medium: '',
-                small: '',
-            },
-            files: []
+            basePath: '',
+            files: [],
+            sizes: []
         }
     },
     total: 0,

@@ -1,9 +1,10 @@
-import { ICatalogItem } from "../interfaces"
+import { ICatalogItem, IImageSubFolder, TLangText } from "../interfaces"
 import { IColor } from "../models/Color"
 import { IContent } from "../models/Content"
 import { IFiber } from "../models/Fiber"
 import { INews } from "../models/News"
 import { IProduct } from "../models/Product"
+import { imageSizes } from "./consts"
 const Product = require("../models/Product")
 const Catalog = require("../models/Catalog")
 const News = require("../models/News")
@@ -73,9 +74,18 @@ const loadColors = async () => {
 
 const loadNews = async () => {
     if (allNews.obsolete) {
-        try {  
+        try {
             const newsList: INews[] = await News.find()
-            allNews.data = newsList.sort((a,b) => (a.date > b.date) ? -1 : 1)
+            allNews.data = newsList
+                .sort((a,b) => (a.date > b.date) ? -1 : 1)
+                .map(news => ({
+                    _id: news._id,
+                    header: news.header,
+                    date: news.date,
+                    short: news.short,
+                    text: news.text, 
+                    images: news.images
+                }))
             allNews.obsolete = false
         } catch (e) {
             return {message: {en: `Error while loading news from db: ${e}`, ru: `Ошибка при получении новостей из базы данных: ${e}`}}
@@ -89,8 +99,9 @@ const loadContent = async () => {
     if (allContent.obsolete) {
         try {  
             const content: IContent = await Content.findOne({})
-            //console.log(content.splider);
-            allContent.data.splider = content.splider
+            allContent.data.carousel = {
+                images: content.carousel.images
+            }
             allContent.obsolete = false
         } catch (e) {
             return {message: {en: `Error while loading content from db: ${e}`, ru: `Ошибка при получении контента из базы данных: ${e}`}}
@@ -165,8 +176,24 @@ const allColors:IAllColors = {
 }
 
 
+
+
+
+interface INewsToFE {
+    _id: string
+    date: Date
+    header: TLangText
+    short: TLangText
+    text: TLangText
+    images: {
+        basePath: string
+        files: string[]
+        sizes: IImageSubFolder[]
+    }
+}
+
 interface IAllNews {
-    data: INews[]
+    data: INewsToFE[]
     obsolete: boolean
     control: {
         load: typeof loadNews
@@ -190,7 +217,7 @@ interface IAllContent {
 }
 const allContent = {
     data: {
-        splider: {}
+        carousel: {}
     },
     obsolete: true,
     control: {

@@ -4,7 +4,7 @@ const router = Router()
 const authMW = require('../middleware/auth')
 const isAdmin = require('../middleware/isAdmin')
 import { IAllCache } from '../data/cache'
-import { allPaths } from "../data/consts";
+import { allPaths, carouselSizes, imageSizes } from "../data/consts";
 import { foldersCleaner} from "../processors/fsTools";
 import { resizeAndSaveS3 } from "../processors/sharp";
 import { IMulterFile } from "./user";
@@ -15,7 +15,7 @@ sharp.cache(false);
 
 
 
-router.put('/splider', 
+router.put('/carousel', 
     [authMW, isAdmin],
     fileSaver,
     async (req, res) => {
@@ -23,28 +23,37 @@ router.put('/splider',
         try {           
             const files: IMulterFile[] = req.files
 
-            const { paths, filesList } = await resizeAndSaveS3({
+            const basePath = `${allPaths.pathToImages}/${allPaths.pathToCarousel}`
+            const { filesList } = await resizeAndSaveS3({
                 files,
                 clearDir: true,
                 saveFormat: 'webp',
-                baseFolder: `${allPaths.pathToImages}/${allPaths.pathToSplider}`,
-                sizes: ['full', 'carouselMaxFull', 'carouselMaxMedium', 'carouselMaxSmall']
+                basePath,
+                sizes: carouselSizes
             })
-
+            
             await foldersCleaner([allPaths.pathToTemp])
             
-            const splider = {
-                paths,
-                files: filesList
+            const carousel = {
+                images: {
+                    files: filesList,
+                    basePath: `${process.env.pathToStorage}/${basePath}`,
+                    sizes: carouselSizes.map(size => ({
+                        subFolder: size,
+                        w: imageSizes[size]?.w,
+                        h: imageSizes[size]?.h,
+                    }))
+                }
             }
             
             const exist = await Content.findOne()
             if (!exist) {
-                const content = new Content({splider})
+                
+                const content = new Content({carousel})
                 await content.save()
                 return res.status(200).json({message: {en: 'Content changed', ru: 'Контент отредактирован'}})
             } 
-            await Content.findOneAndUpdate({}, {splider})
+            await Content.findOneAndUpdate({}, {carousel})
             
             cache.content.obsolete = true
 
@@ -58,16 +67,17 @@ router.put('/splider',
 
 
 
-router.get('/splider', 
+router.get('/carousel', 
     async (req, res) => {
         try {
             const err = await cache.content.control.load()
+            
             if (err) {
                 return res.status(500).json(err)
             }
-            const splider = cache.content.data.splider
+            const carousel = cache.content.data.carousel
             
-            return res.status(200).json(splider)
+            return res.status(200).json({carousel})
         } catch (error) {
             return res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})
         }

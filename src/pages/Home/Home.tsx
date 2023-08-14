@@ -30,7 +30,7 @@ const Home:React.FC<IProps> = ({lang, contentState, setState, modal} : IProps): 
     useEffect(() => {
         checkAndLoad({
 			fetchData: contentState.load,
-			loadFunc: setState.content.loadSplider,
+			loadFunc: setState.content.loadCarousel,
 			force: false
 		})
     }, [contentState.load.status])
@@ -63,10 +63,10 @@ const Home:React.FC<IProps> = ({lang, contentState, setState, modal} : IProps): 
                         </div>
                     </section>
                     <div className="slider__container">
-                        {contentState.load.status === 'success' && contentState.splider?.files?.length > 0 && <CarouselMaxAdaptive content={contentState.splider} modal={modal}/>}
+                        {contentState.load.status === 'success' && contentState?.carousel?.images?.files?.length > 0 && <CarouselMaxAdaptive content={contentState.carousel} modal={modal}/>}
                         {contentState.load.status === 'fetching' && <Preloader />}
                     </div>
-                    <NewsBlock />
+                    {/*<NewsBlock />*/}
                 </div>
             </div>
         </div>

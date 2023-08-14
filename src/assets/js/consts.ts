@@ -149,12 +149,12 @@ const APIList = { //all routes to BE
     content: {
         carouselMax: {
             update: { //update carousel
-                url: `${process.env.REACT_BACK_URL}/api/content/splider`,
+                url: `${process.env.REACT_BACK_URL}/api/content/carousel`,
                 method: 'PUT',
                 timeout: 60000
             },
             get: { //load carousel
-                url: `${process.env.REACT_BACK_URL}/api/content/splider`,
+                url: `${process.env.REACT_BACK_URL}/api/content/carousel`,
                 method: 'GET',
                 timeout: 20000
             }
@@ -552,11 +552,8 @@ const newsItemEmpty: INewsItem = {
     short: {...empty},
     _id: '',
     images: {
-        paths: {
-            full: '',
-            medium: '',
-            small: ''
-        },
+        sizes: [],
+        basePath: '',
         files: []
     },
     date: new Date(),
@@ -756,7 +753,7 @@ const sizesList = [
     },
 ]*/
 
-const sizes: IImageSizes = {
+/*const sizes: IImageSizes = {
     thumb: {
         h: 40,
         w: 40
@@ -781,15 +778,15 @@ const sizes: IImageSizes = {
         h: 1920,
         w: 1080
     }
-}
+}*/
 
-const sizesList = Object.entries(sizes)
+/*const sizesList = Object.entries(sizes)
     .map(([key, value]) => ({
         name: key as keyof IImageSizes,
         w: value.w,
         h: value.h
     }))
-    .sort((prev, curr) => prev.w - curr.w)
+    .sort((prev, curr) => prev.w - curr.w)*/
 
 
 export { clearModalMessage, resetFetch, timeModalClosing, 
@@ -798,4 +795,4 @@ export { clearModalMessage, resetFetch, timeModalClosing,
     orderStatuses, usersPerPage, timeOffset, inputsProps, tipsTransition, socials,
     navList, newsItemEmpty, APIList, imageExtentions, maxAmountToOrder, loadNewsPerRequest,
     exceptionTimeout, exceptionFetch, DOMExceptions, statuses, defaultSelectItem, 
-    createNewItemId, gapForOrders, sizes, sizesList}
+    createNewItemId, gapForOrders}

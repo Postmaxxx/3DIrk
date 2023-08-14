@@ -11,6 +11,18 @@ export interface ILink {
     url: string
 }
 
+
+export interface IImageSizePath {
+    subFolder: string
+    w: number,
+    h: number
+}
+export interface IImages {
+    files: string[]
+    basePath: string
+    sizes: IImageSizePath[]
+}
+
 //---------------------------------------redux
 export interface IAction<T> {
     type: string;
@@ -264,14 +276,7 @@ export interface INewsItem { //for detail view on news detail page
     date: Date
     short: TLangText
     text: TLangText
-    images: {
-        paths: {
-            full: string
-            medium: string
-            small: string
-        }
-        files: string[]
-    }
+    images: IImages
 }
 
 export interface INewsItemShort { // for preview news on main page
@@ -279,15 +284,7 @@ export interface INewsItemShort { // for preview news on main page
     header: TLangText
     date: Date
     short: TLangText
-    text: TLangText
-    images: {
-        paths: {
-            full: string
-            medium: string
-            small: string
-        }
-        files: string[]
-    }
+    images: IImages
 }
 
 export interface INewsState {
@@ -468,23 +465,17 @@ export interface ILoggingForm { //for form login/register form
 }
 
 export interface ICarouselMax { //for CarouselMax
-    paths: {
-        full: string
-        carouselMaxFull?: ISizesItem
-        carouselMaxMedium?: ISizesItem
-        carouselMaxSmall?: ISizesItem
-    },
-    files: string[],
+    images: IImages
 }
 
 export interface IContentState { //for other app content 
-    splider: ICarouselMax
+    carousel: ICarouselMax
     send: IFetch
     load: IFetch
 }
 
 
-export type TImageSizes = 'thumb' | 'small' | 'medium' | 'full' | 'spliderMain' | 'preview' //all supported types of images.
+//export type TImageSizes = 'thumb' | 'small' | 'medium' | 'full' | 'spliderMain' | 'preview' //all supported types of images.
 
 
 export type TTypeRequest = 'create' | 'update' 
@@ -515,9 +506,6 @@ export interface IImageSizes {
     medium: ISizesItem
     big: ISizesItem
     full: ISizesItem
-}
-
-export interface ICarouselMaxSizes {
     carouselMaxFull: ISizesItem
     carouselMaxMedium: ISizesItem
     carouselMaxSmall: ISizesItem

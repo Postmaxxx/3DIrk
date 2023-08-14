@@ -1,21 +1,22 @@
 import { useEffect, useRef, useState, memo } from "react";
 import Preloader from "../../components/Preloaders/Preloader";
-import { sizesList } from "./consts";
-import { IImageSizes } from "../../interfaces";
+import { IImageSizePath, IImageSizes } from "../../interfaces";
  
 export type TPartialPathList = {
     [key in keyof IImageSizes]?: string;
 };
 
 interface IProps {
-	pathList: TPartialPathList
+	basePath: string
+	sizes: IImageSizePath[]
 	alt?: string
 	id?: string
 	image: string
 }
 
 
-const PictureWithPreloader: React.FC<IProps> = ({pathList, alt, id, image}: IProps):JSX.Element => {
+const PictureWithPreloader: React.FC<IProps> = ({basePath, sizes = [], alt = '', id, image}: IProps):JSX.Element => {
+	
 	
 	const [loaded, setLoaded] = useState(false);
 	const _img = useRef<HTMLImageElement>(null);
@@ -34,16 +35,20 @@ const PictureWithPreloader: React.FC<IProps> = ({pathList, alt, id, image}: IPro
 
 	//sizesList is sorted by increasing width
 	//search first existed (in pathList) sizename with width for this sizename >= container.width. or just get the last one in the list (the biggest) otherwise
-	const bestSizeName = sizesList.find(size => size.w >= (containerWidth || 0) && pathList[size.name])?.name || sizesList[sizesList.length - 1].name
+	//const bestSizeName = sizesList?.find(size => size.w >= (containerWidth || 0) && pathList[size.name])?.name || sizesList[sizesList.length - 1].name
+	const bestSizePath = sizes.find(size => size.w >= (containerWidth || 0))?.subFolder || sizes[sizes.length - 1].subFolder
 	
+
+
 	return (
 		<>
 			{loaded || <Preloader />}
 			{containerWidth ? 
-				<img ref={_img} src={`${pathList[bestSizeName]}/${image}`} alt={alt} onLoad={hasLoaded} style={{display: loaded ? "block" : "none"}} id={id} />
+				<img ref={_img} src={`${basePath}/${bestSizePath}/${image}`} alt={alt} onLoad={hasLoaded} style={{display: loaded ? "block" : "none"}} id={id} />
 				: 
-				<div ref={_spacer} style={{width: '100%', height: '100%', position: 'absolute', top: '0', left: '0', border: '3px solid red'}}></div> //use mock to calculate the size of container
+				<div ref={_spacer} style={{width: '100%', height: '100%', position: 'absolute', top: '0', left: '0'}}></div> //use mock to calculate the size of container
 			}
+			
 		</>
 	);
 };

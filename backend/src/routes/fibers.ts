@@ -17,7 +17,7 @@ const whoIs = require('../middleware/whoIs')
 
 
 
-router.post('/create', 
+/*router.post('/create', 
     [authMW, isAdmin],
     fileSaver, 
     async (req, res) => {       
@@ -25,6 +25,7 @@ router.post('/create',
             const { name, text, short, params, images, proscons, colors, active } = JSON.parse(req.body.data)
             const files = req.files as IMulterFile[] || []  
             const fiber: IFiber = new Fiber({ name, text, proscons, short, params, images,  colors, active })
+            
             const {paths, filesList} = await resizeAndSaveS3({
                 files,
                 clearDir: true,
@@ -45,7 +46,7 @@ router.post('/create',
             return res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})
         }
     }
-)
+)*/
 
 
 /*
@@ -91,7 +92,7 @@ check('short.text.en')
 */
 
 
-router.put('/edit', 
+/*router.put('/edit', 
     [authMW, isAdmin],
     fileSaver,
     async (req, res) => {
@@ -119,7 +120,7 @@ router.put('/edit',
             return res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})
         }
     }
-)
+)*/
 
 
 

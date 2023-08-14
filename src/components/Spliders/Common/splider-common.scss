@@ -46,6 +46,11 @@
         }
     
         & > .splide__arrows {
+
+            @include respond-to(xs) {
+                display: none;
+            }
+    
             & > .splide__arrow {
                 transition: $transition_fast;
                 
@@ -78,6 +83,8 @@
                     }
                 }
             }
+
+
         }
     }
 }

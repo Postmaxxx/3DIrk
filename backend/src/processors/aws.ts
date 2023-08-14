@@ -130,7 +130,7 @@ const filesUploaderS3 = async ({bucketName = '3di', folderName = 'temp/', files 
         
         try {
             await s3.upload(params).promise()
-            console.log(`File ${file.fileName} uploaded to '${folderName}' successfully.`);
+            console.log(`File ${file.fileName} uploaded to ${folderName} successfully.`);
         } catch (error) {
             throw error            
         }

@@ -1,4 +1,4 @@
-import { INewsItem, TLang } from "../../interfaces";
+import { INewsItem, INewsItemShort, TLang } from "../../interfaces";
 import './news-item.scss'
 import { NavLink } from "react-router-dom";
 import { useMemo } from "react";
@@ -6,27 +6,21 @@ import PicWithPreloader from "../../../src/assets/js/PicWithPreloader";
 
 
 interface IProps {
-    newsPiece: INewsItem 
+    newsPiece: INewsItemShort
     lang: TLang
 }
 
 
 
 
-const News:React.FC<IProps> = ({newsPiece, lang}):JSX.Element => {
+const NewsItem:React.FC<IProps> = ({newsPiece, lang}):JSX.Element => {
 
-    const imagesData = useMemo(() => ({
-        pathList: newsPiece.images.paths,
-        image: newsPiece.images.files[0],
-        alt: newsPiece.header[lang],
-        id: newsPiece.header[lang]
-    }), [])
-    
+   
     return (
         <article className="news-item">
             <div className="img-cont">
                 {newsPiece.images.files.length > 0 &&
-                    <PicWithPreloader pathList={newsPiece.images.paths} image={newsPiece.images.files[0]} alt={newsPiece.header[lang]}/>
+                    <PicWithPreloader basePath={newsPiece.images.basePath} sizes={newsPiece.images.sizes} image={newsPiece.images.files[0]} alt={newsPiece.header[lang]}/>
                 }
             </div>
             <div className="news__content">
@@ -49,4 +43,4 @@ const News:React.FC<IProps> = ({newsPiece, lang}):JSX.Element => {
     )
 }
 
-export default (News)  
+export default (NewsItem)  

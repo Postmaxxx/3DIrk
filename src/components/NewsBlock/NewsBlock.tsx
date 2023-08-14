@@ -1,7 +1,7 @@
 import './news_block.scss'
 import { useEffect, Fragment, useMemo } from 'react'
 import { connect } from "react-redux";
-import News from '../NewsItem/NewsItem'
+import NewsItem from '../NewsItem/NewsItem'
 import { IFullState, INewsState, TLang } from '../../interfaces'
 import { AnyAction, Dispatch, bindActionCreators } from 'redux';
 import { allActions } from "../../redux/actions/all";
@@ -43,7 +43,7 @@ const NewsBlock:React.FC<IProps>  = ({lang, news, setState}): JSX.Element => {
 
     const previewsNews = useMemo(() => news.newsList.map((newsPiece) => (
         <Fragment key={newsPiece._id}>
-            <News newsPiece={newsPiece} lang={lang}/>
+            <NewsItem newsPiece={newsPiece} lang={lang}/>
         </Fragment>
     )), [lang, news])
 

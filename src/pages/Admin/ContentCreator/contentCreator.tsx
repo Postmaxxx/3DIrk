@@ -67,7 +67,7 @@ const SpliderChanger: FC<IProps> = ({lang, content, modal, setState}): JSX.Eleme
 
     const fillValues = async () => {
         const files = await filesDownloader(
-            content.splider.files.map(file => (`${content.splider.paths.full}/${file}`))
+            content.carousel.images.files.map(file => (`${content.carousel.images.basePath}/${content.carousel.images.sizes[content.carousel.images.sizes.length - 1].subFolder}/${file}`))
         )
         addFilesRef.current?.replaceFiles(files)
     }
@@ -75,7 +75,7 @@ const SpliderChanger: FC<IProps> = ({lang, content, modal, setState}): JSX.Eleme
     useEffect(() => {
         checkAndLoad({
 			fetchData: content.load,
-			loadFunc: setState.content.loadSplider,
+			loadFunc: setState.content.loadCarousel,
             force: false
 		})
     }, [])
@@ -104,7 +104,7 @@ const SpliderChanger: FC<IProps> = ({lang, content, modal, setState}): JSX.Eleme
             return
         }
         //if no errors
-        setState.content.sendSplider(addFilesRef.current.getFiles())
+        setState.content.sendCarousel(addFilesRef.current.getFiles())
     }
 
 

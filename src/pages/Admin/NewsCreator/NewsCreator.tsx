@@ -118,7 +118,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
             !_textEn.current || !_textRu.current || !_date.current) return
         if (paramNewsId) { //news exists
             const files = await filesDownloader(
-                news.images.files.map(file => (`${news.images.paths.full}/${file}`))
+                news.images.files.map(file => (`${news.images.basePath}/${news.images.sizes[news.images.sizes.length - 1].subFolder}/${file}`))
             )
             addFilesRef.current?.replaceFiles(files)
         } else { //new news
@@ -279,7 +279,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
                             <h3>{lang === 'en' ? 'Add images' : 'Добавьте изображения'}</h3>
                         </div>
                         <div className="form__inputs">
-                            <AddFiles lang={lang} ref={addFilesRef} multiple={true} id='allImages'/>
+                            <AddFiles lang={lang} ref={addFilesRef} multiple={true} id='newsImages'/>
                         </div>
 
 

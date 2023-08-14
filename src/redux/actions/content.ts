@@ -1,4 +1,4 @@
-import { IAction, IContentState, IDispatch, IErrRes, IFetch, IFullState, IMsgRes, } from "../../interfaces"
+import { IAction, ICarouselMax, IContentState, IDispatch, IErrRes, IFetch, IFullState, IMsgRes, } from "../../interfaces"
 import { actionsListContent } from './actionsList'
 import { APIList, DOMExceptions, fetchingFetch, successFetch } from "../../assets/js/consts";
 import { fetchError, resErrorFiller } from "../../../src/assets/js/processors";
@@ -24,7 +24,7 @@ export const setContent = <T extends IContentState>(payload: T):IAction<T> => ({
 
 
 
-export const sendSplider = (files: File[]) => {
+export const sendCarousel = (files: File[]) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
         const controller = new AbortController()
         const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.content.carouselMax.update.timeout) //set time limit for fetch
@@ -68,7 +68,7 @@ export const sendSplider = (files: File[]) => {
 
 
 
-export const loadSplider = () => {
+export const loadCarousel = () => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
         const controller = new AbortController()
         const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.content.carouselMax.get.timeout) //set time limit for fetch
@@ -86,8 +86,16 @@ export const loadSplider = () => {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setLoadContent(resErrorFiller(result)))
             }
-            const result = await response.json() //message, errors
-            dispatch(setContent({...getState().content, splider: result}))
+            const result: {carousel: ICarouselMax} = await response.json() //message, errors
+            dispatch(setContent({
+                ...getState().content, 
+                carousel: {
+                    images: {
+                        ...result.carousel.images,
+                        sizes: result.carousel.images.sizes.sort((prev, next) => prev.w - next.w)
+                    }
+                } 
+            }))
             dispatch(setLoadContent({...successFetch}))
         } catch (e) {  
             fetchError({ 

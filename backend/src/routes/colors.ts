@@ -15,7 +15,7 @@ const fileSaver = require('../routes/files')
 const whoIs = require('../middleware/whoIs')
 
 
-router.post('/create', 
+/*router.post('/create', 
     [authMW, 
     isAdmin],
     fileSaver,
@@ -30,7 +30,7 @@ router.post('/create',
                 files,
                 clearDir: true,
                 saveFormat: 'webp',
-                baseFolder: `${allPaths.pathToImages}/${allPaths.pathToColors}/${colorId}`,
+                basePath: `${allPaths.pathToImages}/${allPaths.pathToColors}/${colorId}`,
                 sizes: ['full', 'thumb']
             })
 
@@ -53,12 +53,12 @@ router.post('/create',
             return res.status(500).json({ message:{en: `Something wrong with server ${e}, try again later`, ru: `Ошибка на сервере ${e}, попробуйте позже`}})
         }
     }
-)
+)*/
 
 
 
 
-router.put('/edit', 
+/*router.put('/edit', 
     [authMW, 
     isAdmin],
     fileSaver,
@@ -95,7 +95,7 @@ router.put('/edit',
             return res.status(500).json({ message:{en: `Something wrong with server ${e}, try again later`, ru: `Ошибка на сервере ${e}, попробуйте позже`}})
         }
     }
-)
+)*/
 
 
 router.get('/load-all', 

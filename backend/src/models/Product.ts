@@ -1,5 +1,5 @@
 import {Schema, Document, model, Model, Types} from 'mongoose'
-import { TLangText } from '../interfaces'
+import { TImageSizes, TLangText } from '../interfaces'
 
 
 interface IProduct extends Document {
@@ -10,11 +10,8 @@ interface IProduct extends Document {
     price: number
     images: {
         paths: {
-            full: string
-            small: string
-            medium: string
-            preview: string
-        },
+            [key in TImageSizes]: string;
+        }
         files: string[]
     }
     fibers: string[]

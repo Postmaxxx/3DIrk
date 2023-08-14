@@ -1,4 +1,4 @@
-import { TLangText } from "../interfaces"
+import { IImageSizes, TImageSizes, TLangText } from "../interfaces"
 
 const minTimeBetweenSendings: number = 500 //in ms
 const sendNotificationsInTG: boolean = false
@@ -11,12 +11,12 @@ const missedItem: TLangText = {
 }
 
 const allPaths = {
-    pathToServer: "http://localhost/data",
+   //pathToServer: "http://localhost/data",
     pathToTemp: "C:/Projects/3D/3dprint/backend/uploads/temp",
-    pathToBase: "C:/Projects/3D/3dprint/backend/data",
+   // pathToBase: "C:/Projects/3D/3dprint/backend/data",
     pathToImages:"images",
     pathToNews:"news",
-    pathToSplider:"splider",
+    pathToCarousel:"carousel",
     pathToUserFiles: "userfiles",
     pathToColors: "colors",
     pathToFibers: "fibers",
@@ -31,61 +31,58 @@ const orderStatus: string[] = [
 ]
 
 
-interface ISizesItem {
-    h: number
-    w: number
-}
-
-interface IImageSizes {
-    thumb: ISizesItem
-    preview: ISizesItem
-    small: ISizesItem
-    medium: ISizesItem
-    big: ISizesItem
-    full: ISizesItem
-   carouselMaxFull: ISizesItem
-   carouselMaxMedium: ISizesItem
-   carouselMaxSmall: ISizesItem
-}
 
 
-const sizes: IImageSizes = {
+
+const imageSizes: IImageSizes = {
     thumb: {
-        h: 40,
-        w: 40
+        w: 50,
+        h: 50
     },
     preview: {
-        h: 120,
-        w: 100
+        w: 100,
+        h: 80
+    },
+    extraSmall: {
+        w: 200,
+        h: 170
     },
     small: {
-        w: 350,
+        w: 300,
         h: 250
     },
     medium: {
-        h: 600,
-        w: 450
+        w: 450,
+        h: 400
     },
-    big: {
-        h: 1000,
-        w: 800
+    large: {
+        w: 600,
+        h: 500
+    },
+    extraLarge: {
+        w: 800,
+        h: 700
+    },
+    huge: {
+        w: 1000,
+        h: 900
     },
     full: {
-        h: 1920,
-        w: 1080
+        w: 1920,
+        h: 1080
     },
-    carouselMaxFull: {
-        w: 730,
-        h: 400
+    carouselMaxSmall: {
+        w: 230,
+        h: 170
     },
     carouselMaxMedium: {
         w: 420,
         h: 250
     },
-    carouselMaxSmall: {
-        w: 230,
-        h: 170
-    }
+    carouselMaxFull: {
+        w: 730,
+        h: 400
+    },
 }
 
 
@@ -98,6 +95,9 @@ const sizes = sizesList.reduce((acc, item) => {
     return acc
 }, {}) */
 
+const newsImageSizes: TImageSizes[] = ['full', 'medium', 'small', "extraSmall", "preview", "thumb"]
+const carouselSizes: TImageSizes[] = ['full', 'carouselMaxSmall', 'carouselMaxMedium', 'carouselMaxFull']
 
-export {minTimeBetweenSendings, sendNotificationsInTG, orderStatus, sizes, delayForFS, allPaths, timeZoneDelta,  
-    ISizesItem, IImageSizes, missedItem}
+
+export {minTimeBetweenSendings, sendNotificationsInTG, orderStatus, imageSizes, delayForFS, allPaths, timeZoneDelta,  
+    missedItem, newsImageSizes, carouselSizes}

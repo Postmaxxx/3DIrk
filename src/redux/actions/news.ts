@@ -59,15 +59,17 @@ export const loadSomeNews = ({from, amount} :{from: number, amount: number}) => 
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setLoadNews(resErrorFiller(result)))
             }
-            const result: {news: INewsItem[], total: number} = await response.json()
+            const result: {news: INewsItemShort[], total: number} = await response.json()
             dispatch(setDataNews([...news.newsList, ...result.news.map(item => {
                 return {                    
                     date: new Date(item.date),
                     _id: item._id,
                     header: item.header,
                     short: item.short,
-                    text: item.text,
-                    images: item.images
+                    images: {
+                        ...item.images,
+                        sizes: item.images.sizes.sort((prev, next) => prev.w - next.w)
+                    }
                 }
             })]))
             dispatch(setTotalNews(result.total))
@@ -109,11 +111,19 @@ export const loadOneNews = (_id: string) => {
             }
             
             clearTimeout(fetchTimeout)
-            const result = await response.json()
+            const result: {news: INewsItem} = await response.json()
             dispatch(setDataOneNews({
                     ...result.news,
-                    date: new Date(result.news.date) //changing format, check !!!
-                }
+                    date: new Date(result.news.date),
+                    _id: result.news._id,
+                    header: result.news.header,
+                    short: result.news.short,
+                    text: result.news.text,
+                    images: {
+                        ...result.news.images,
+                        sizes: result.news.images.sizes.sort((prev, next) => prev.w - next.w)
+                    }
+                    }
             ))
             dispatch(setLoadOneNews({...successFetch}))
         } catch (e) {

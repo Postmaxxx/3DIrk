@@ -136,7 +136,7 @@ router.get('/category',
 //-------------------------------------------------------------------------------------
 
 
-router.post('/product', //create
+/*router.post('/product', //create
     [authMW, isAdmin],
     fileSaver,
     async(req, res) => { 
@@ -149,7 +149,7 @@ router.post('/product', //create
                 files,
                 clearDir: true,
                 saveFormat: 'webp',
-                baseFolder: `${allPaths.pathToImages}/${allPaths.pathToProducts}/${product._id}`,
+                basePath: `${allPaths.pathToImages}/${allPaths.pathToProducts}/${product._id}`,
                 sizes: ['full', 'small', 'medium', 'preview']
             })
             
@@ -171,11 +171,11 @@ router.post('/product', //create
         }
     }
 )
+*/
 
 
 
-
-router.put('/product', //create
+/*router.put('/product', //create
     [authMW, isAdmin],
     fileSaver,
     async(req, res) => { 
@@ -187,7 +187,7 @@ router.put('/product', //create
                 files,
                 clearDir: true,
                 saveFormat: 'webp',
-                baseFolder: `${allPaths.pathToImages}/${allPaths.pathToProducts}/${_id}`,
+                basePath: `${allPaths.pathToImages}/${allPaths.pathToProducts}/${_id}`,
                 sizes: ['full', 'small', 'medium', 'preview']
             })
 
@@ -207,7 +207,7 @@ router.put('/product', //create
         }
     }
 )
-
+*/
 
 
 router.get('/product', async(req, res) => { 

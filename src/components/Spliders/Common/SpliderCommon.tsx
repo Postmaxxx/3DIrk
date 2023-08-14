@@ -1,6 +1,6 @@
 import './splider-common.scss'
 import Splide from "@splidejs/splide";
-import { ISpliderOptions, TImageSizes } from '../../../interfaces';
+import { IImages, ISpliderOptions } from '../../../interfaces';
 import "@splidejs/react-splide/css";
 import { useRef, useEffect, MouseEvent, useMemo, useState } from 'react'
 import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
@@ -10,12 +10,8 @@ import PicWithPreloader from '../../../../src/assets/js/PicWithPreloader';
 
 
 interface IProps {
-	images: {
-		paths: Partial<Record<TImageSizes, string>>
-        files: string[]
-	}
+	images: IImages
     imagesPerSlide?: number
-	biggestSize?: TImageSizes
     modal: IModalFunctions | null
 }
 
@@ -26,7 +22,7 @@ interface IContainerSize {
 
 
 
-const SpliderCommon: React.FC<IProps> = ({images, biggestSize='full', imagesPerSlide=1, modal}): JSX.Element => {
+const SpliderCommon: React.FC<IProps> = ({images, imagesPerSlide=1, modal}): JSX.Element => {
 	
 	const splideCommon = useRef<Splide>();
 	const containerSize = useRef<IContainerSize>();
@@ -64,7 +60,7 @@ const SpliderCommon: React.FC<IProps> = ({images, biggestSize='full', imagesPerS
 			const id = Number(((e.target as HTMLImageElement).id));
 			modal?.openModal({
 				name: 'spliderCommonModal',
-				children: <ImageModalNew url={`${biggestSize ?  images.paths[biggestSize] : images.paths.full}/${images.files[id]}`}/>
+				children: <ImageModalNew url={`${images.basePath}/${images.sizes[images.sizes.length - 1].subFolder}/${images.files[id]}`}/>
 			})
 		}
 	}
@@ -90,7 +86,7 @@ const SpliderCommon: React.FC<IProps> = ({images, biggestSize='full', imagesPerS
 			return (
 				<li className="splide__slide" key={i}>
 					<div className="splide__slide-content">
-						{spliderCreated && <PicWithPreloader pathList={images.paths} image={file} alt={file} id={`${i}`}/>}
+						{spliderCreated && <PicWithPreloader basePath={images.basePath} sizes={images.sizes} image={file} alt={file} id={`${i}`}/>}
 					</div>
 				</li>
 			);

@@ -1,7 +1,7 @@
 import './carouselmax.scss'
 import { useEffect,useRef, useState,useCallback } from 'react';
 import ImgWithPreloader from '../../assets/js/ImgWithPreloader'
-import { ICarouselMax, IContentState } from '../../interfaces';
+import { ICarouselMax, IContentState, IImages } from '../../interfaces';
 import { IModalFunctions } from '../Modal/ModalNew';
 import ImageModalNew from '../ImageModal/ImageModalNew';
 import PicWithPreloader from '../../../src/assets/js/PicWithPreloader';
@@ -55,7 +55,7 @@ const CarouselMaxAdaptive = ({content, modal}: ISliderMax) => {
     const [ribbonPos, setRibbonPos] = useState<number>(0) //initial ribbon position
     const [state, setState] = useState<IOptions>({...options})
     const [ribbonDx, setRibbonDx] = useState<number>(0) //delta for ribbon position
-    const [images, setImages] = useState<ICarouselMax>(content)
+    const [images, setImages] = useState<IImages>(content.images)
     const prevPos = useRef<number>(0) //prev mouse position for every measuring
     const step = useRef<number>(0) //step for carousel delta for every calling (changeRibbonDx) for background moving
     const isMoving = useRef<number>(1)//is carousel moves on background
@@ -76,12 +76,12 @@ const CarouselMaxAdaptive = ({content, modal}: ISliderMax) => {
             return
         }
         const innerContainerWidth = state.imageContainerWidth
-        if (_carouselRef.current.clientWidth < 200) {
-            setImages(content.files.map(filename => ({urlSplider: `${content.paths.spliderMain}/${filename}`, urlFull: `${content.paths.full}/${filename}`, filename})))
-        }
 
         const imagesPerContainer = Math.ceil(_carouselRef.current.offsetWidth / state.imageContainerWidth);
-        setImages(prev => [...prev.slice(-imagesPerContainer).reverse(),...prev, ...prev.slice(0,imagesPerContainer)]);
+        setImages(prev => ({
+            ...prev,
+            files: [...prev.files.slice(-imagesPerContainer).reverse(), ...prev.files, ...prev.files.slice(0,imagesPerContainer)]
+        }));
         
         const initialRibbonPos = -state.imageContainerWidth * imagesPerContainer
         
@@ -146,11 +146,11 @@ const CarouselMaxAdaptive = ({content, modal}: ISliderMax) => {
     }
 
 
-    const onImageExpand = (urlFull: string) => {
+    const onImageExpand = (url: string) => {
         modal?.openModal({
             name: 'carouselMax',
             onClose: closeModalImage,
-            children: <ImageModalNew url={urlFull}/>
+            children: <ImageModalNew url={url}/>
         })
         isMoving.current = 0 //deny background moving after open modal
     }
@@ -200,10 +200,10 @@ const CarouselMaxAdaptive = ({content, modal}: ISliderMax) => {
                         <div className="img-wrapper" key={index} style={{width: `${state.imageContainerWidth}px`, paddingLeft: state.paddings, paddingRight: state.paddings}}>
                             <div className="img__outer-container" style={{width: `${state.imageContainerWidth - state.gap}px`}}>
                                 <div className="img__inner-container" style={{width: `${state.imageWidth}px`, left: `${dx}px`}}>
-                                    <PicWithPreloader pathList={content.paths} image={image} alt={image}/>
+                                    {state.imageWidth && <PicWithPreloader basePath={content.images.basePath} sizes={content.images.sizes} image={image} alt={image}/>}
                                 </div>
                             </div>
-                            <div className="image-extender" onClick={() => onImageExpand(image.urlFull)}>
+                            <div className="image-extender" onClick={() => onImageExpand(`${images.basePath}/${images.sizes[images.sizes.length - 1].subFolder}/${image}`)}>
                                 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" xmlSpace="preserve">
                                     <path d="M512,23.27v116.36c0,12.8-10.47,23.27-23.27,23.27c-12.8,0-23.27-10.47-23.27-23.27V79.71L330.47,214.69
                                         c-4.65,4.65-10.47,6.98-16.29,6.98s-11.64-2.32-16.29-6.98c-9.31-9.31-9.31-23.86,0-33.16l134.4-134.98h-59.93

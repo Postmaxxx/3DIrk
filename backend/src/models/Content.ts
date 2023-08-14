@@ -1,17 +1,18 @@
 import { Document, Schema, Model, model } from 'mongoose';
+import { IImageSubFolder } from '../interfaces';
 
 interface IContent extends Document {
-    splider: {
-        paths: {
-            full: string
-            spliderMain: string
-        },
-        files: string[]
+    carousel: {
+        images: {
+            basePath: string
+            files: string[]
+            sizes: IImageSubFolder[]
+        }
     }
 }
 
 const contentSchema = new Schema({
-    splider: {type: Object, required: true},
+    carousel: {type: Object, required: true},
 })
 
 const Content: Model<IContent> = model<IContent>('Content', contentSchema);
