@@ -65,7 +65,7 @@ export const loadFibers = () => {
                 dispatch,
                 setter: setLoadFibers,
                 controller,
-                comp: {en: 'loading fibers', ru: 'загрузки материалов'}
+                comp: {en: 'Error while fiber loading', ru: 'Ошибка загрузки материалов'}
             })
         }
     }
@@ -108,7 +108,7 @@ export const sendFiber = (fiber: ISendFiber) => {
                 dispatch,
                 setter: setSendFibers,
                 controller,
-                comp: {en: 'creating fiber', ru: 'создания каталога'}
+                comp: {en: 'Error while fiber creating', ru: 'Ошибка создания каталога'}
             })          
         }
     }
@@ -143,7 +143,7 @@ export const deleteFiber = (_id: string) => {
                 dispatch,
                 setter: setSendFibers,
                 controller,
-                comp: {en: 'deleting fiber', ru: 'удаления каталога'}
+                comp: {en: 'Error while fiber deleting', ru: 'Ошибка удаления каталога'}
             })     
         }
     }

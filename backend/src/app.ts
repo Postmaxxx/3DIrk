@@ -1,4 +1,4 @@
-import { allPaths } from "./data/consts"
+import { allPaths, newsImageSizes } from "./data/consts"
 import { foldersCleaner } from "./processors/fsTools"
 const mode = process.env.NODE_ENV || 'undefined';
 
@@ -69,7 +69,6 @@ const start = async () => {
 }
 
 start()
-
 
 app.listen(PORT, () => console.log(`Server has been successfully started on port ${PORT}...`))
 

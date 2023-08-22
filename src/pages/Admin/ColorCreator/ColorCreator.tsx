@@ -32,8 +32,8 @@ interface IProps extends IPropsState, IPropsActions {}
 
 const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState}): JSX.Element => {
     const _formColor = useRef<HTMLFormElement>(null)
-    const addFileBigRef = useRef<IAddFilesFunctions>(null)
-    const addFileSmallRef = useRef<IAddFilesFunctions>(null)
+    const addFileFullRef = useRef<IAddFilesFunctions>(null)
+    const addFileThumbRef = useRef<IAddFilesFunctions>(null)
     const colorPickerRef = useRef<IPickerFunctions>(null)
     const _nameEn = useRef<HTMLInputElement>(null)
     const _nameRu = useRef<HTMLInputElement>(null)
@@ -83,14 +83,14 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
         if (!_nameEn.current || !_nameRu.current || !selectorStatusRef.current) return
         const selectedColor = colorsState.colors.find(item => item._id === _id)
         if (selectedColor) { //color exists
-            const filesBig = await filesDownloader([selectedColor.url.full])
-            const filesSmall = await filesDownloader([selectedColor.url.thumb])
-            addFileBigRef.current?.replaceFiles(filesBig)
-            addFileSmallRef.current?.replaceFiles(filesSmall)
+            const fileFull = await filesDownloader([selectedColor.urls.full])
+            const fileThumb = await filesDownloader([selectedColor.urls.thumb])
+            addFileFullRef.current?.replaceFiles(fileFull)
+            addFileThumbRef.current?.replaceFiles(fileThumb)
             selectorStatusRef.current.setValue(selectedColor.active ? statuses.active.value : statuses.suspended.value)
         } else { //new color
-            addFileBigRef.current?.clearAttachedFiles()
-            addFileSmallRef.current?.clearAttachedFiles()
+            addFileFullRef.current?.clearAttachedFiles()
+            addFileThumbRef.current?.clearAttachedFiles()
             selectorStatusRef.current.setItem({...defaultSelectItem})
             selectorStatusRef.current.setValue('')
         }
@@ -109,10 +109,10 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
         if (errorFields?.length > 0) {
             errChecker.add(lang === 'en' ? 'Some fields are filled incorrectly' : 'Некоторые поля заполнены неправильно')
         }       
-        if (!addFileBigRef.current?.getFiles().length) {
+        if (!addFileFullRef.current?.getFiles().length) {
             errChecker.add(lang === 'en' ? 'File fullsize is missed' : 'Отсутствует файл полноразмера')
         }
-        if (!addFileSmallRef.current?.getFiles().length) {
+        if (!addFileThumbRef.current?.getFiles().length) {
             errChecker.add(lang === 'en' ? 'File preview is missed' : 'Отсутствует файл предпросмотра')
         }
         if (errChecker.amount() > 0) {
@@ -131,8 +131,8 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
                 ru: _nameRu.current.value,
             },
             files: {
-                full: addFileBigRef.current?.getFiles()[0] as File,
-                thumb: addFileSmallRef.current?.getFiles()[0] as File,
+                full: addFileFullRef.current?.getFiles()[0] as File,
+                thumb: addFileThumbRef.current?.getFiles()[0] as File,
             },
             active: selectorStatusRef.current.getValue() === 'active' ? true : false
         }
@@ -150,8 +150,8 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
                 children: <MessageNew {...modalMessageCreator(colorsState.send, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
             })
             if (colorsState.send.status === 'success') { //clear form if success
-                addFileBigRef.current?.clearAttachedFiles()
-                addFileSmallRef.current?.clearAttachedFiles()
+                addFileFullRef.current?.clearAttachedFiles()
+                addFileThumbRef.current?.clearAttachedFiles()
             }
         }
     }, [colorsState.send.status])
@@ -240,14 +240,14 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
                             <h3>{lang === 'en' ? 'Add image full-size' : 'Добавьте полноразмерное изображение'}</h3>
                         </div>
                         <div className="form__inputs">
-                            <AddFiles lang={lang} ref={addFileBigRef} multiple={false} id='files_big'/>
+                            <AddFiles lang={lang} ref={addFileFullRef} multiple={false} id='files_big'/>
                         </div>
 
                         <div className="block_text">
                             <h3>{lang === 'en' ? 'Add image thumb-size' : 'Добавьте миниатюру'}</h3>
                         </div>
                         <div className="form__inputs">
-                            <AddFiles lang={lang} ref={addFileSmallRef} multiple={false} id='files_small'/>
+                            <AddFiles lang={lang} ref={addFileThumbRef} multiple={false} id='files_small'/>
                         </div>
 
 

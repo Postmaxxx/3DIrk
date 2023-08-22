@@ -181,6 +181,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
     const isChangeEvent = (e: any): e is React.ChangeEvent<HTMLInputElement> => {
         return (e as React.ChangeEvent<HTMLInputElement>).target !== undefined;
     }
+
     const onChangeInputs = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> | React.MouseEvent<HTMLSelectElement>) => {
         (e.target as HTMLElement).parentElement?.classList.remove('incorrect-value') 
         if (isChangeEvent(e)) {
@@ -188,10 +189,10 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
             e.target.id === "name_ru" && setFiber(prev => ({...prev, name: {...prev.name, ru: e.target.value}}))
             e.target.id === "text_en" && setFiber(prev => ({...prev, text: {...prev.text, en: e.target.value}}))
             e.target.id === "text_ru" && setFiber(prev => ({...prev, text: {...prev.text, ru: e.target.value}}))
-            e.target.id === "name-short_en" && setFiber(prev => ({...prev, short: {...prev.short, name: {...prev.short.name, en: e.target.value}}}))
-            e.target.id === "name-short_ru" && setFiber(prev => ({...prev, short: {...prev.short, name: {...prev.short.name, ru: e.target.value}}}))
-            e.target.id === "text-short_en" && setFiber(prev => ({...prev, short: {...prev.short, text: {...prev.short.text, en: e.target.value}}}))
-            e.target.id === "text-short_ru" && setFiber(prev => ({...prev, short: {...prev.short, text: {...prev.short.text, ru: e.target.value}}}))
+            e.target.id === "name_short_en" && setFiber(prev => ({...prev, short: {...prev.short, name: {...prev.short.name, en: e.target.value}}}))
+            e.target.id === "name_short_ru" && setFiber(prev => ({...prev, short: {...prev.short, name: {...prev.short.name, ru: e.target.value}}}))
+            e.target.id === "text_short_en" && setFiber(prev => ({...prev, short: {...prev.short, text: {...prev.short.text, en: e.target.value}}}))
+            e.target.id === "text_short_ru" && setFiber(prev => ({...prev, short: {...prev.short, text: {...prev.short.text, ru: e.target.value}}}))
         }
     }, [])
 
@@ -280,7 +281,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
             colorPickerRef.current?.setSelected(selectedFiber.colors)
             //files
             const files = await filesDownloader(
-                selectedFiber.images.files.map(file => (`${selectedFiber.images.paths.full}/${file}`))
+                selectedFiber.images.files.map(file => (`${selectedFiber.images.basePath}/${selectedFiber.images.sizes[selectedFiber.images.sizes.length - 1].subFolder}/${file}`))
             )
             addFilesRef.current?.replaceFiles(files)
             setFiber({...selectedFiber, files}) // +descr part

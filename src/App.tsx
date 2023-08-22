@@ -1,4 +1,4 @@
-import { useEffect, memo, useRef } from "react";
+import { useEffect, memo, useRef, useState } from "react";
 import { Routes, Route, HashRouter } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import "./assets/css/_base.scss";
@@ -14,11 +14,11 @@ import Homer from "./components/Homer/Homer";
 import LangSwitcher from "./components/LangSwitcher/LangSwitcher";
 import Offliner from "./components/Offliner/Offliner";
 import Unauthorized from "./components/Unauthorized/Unauthorized";
-import { checkAndLoad } from "./assets/js/processors";
 import ThemeSwitcher from "./components/ThemeSwitcher/ThemeSwitcher";
 import PreloaderPage from "./components/Preloaders/PreloaderPage";
 import ModalNew, { IModalFunctions } from "./components/Modal/ModalNew";
 import useScreenMeter from "./hooks/screenMeter";
+import { dataLoader } from "./assets/js/processors";
 
 
 const LazyHomePage = lazy(() => import("./pages/Home/Home"));
@@ -45,6 +45,7 @@ interface IPropsState {
 	isAdmin: boolean
 	isAuth: boolean
 	fibersLoad: IFetch
+	contentLoad: IFetch
 }
 
 interface IPropsActions {
@@ -52,6 +53,7 @@ interface IPropsActions {
         fibers: typeof allActions.fibers
         user: typeof allActions.user
 		base: typeof allActions.base
+		content: typeof allActions.content
     }
 }
 
@@ -59,8 +61,9 @@ interface IProps extends IPropsState, IPropsActions {}
 
 const MemoFooter = memo(Footer)
 
-const App:React.FC<IProps> = ({lang, isAdmin, isAuth, fibersLoad, setState}):JSX.Element => {
+const App:React.FC<IProps> = ({lang, isAdmin, isAuth, fibersLoad, contentLoad, setState}):JSX.Element => {
 	const modalRef = useRef<IModalFunctions>(null)
+	const [fiberFetch, setFiberFetch] = useState<ReturnType<typeof setTimeout> | undefined>(undefined)
 
 	useEffect(() => {
 		setState.user.loginWithToken()
@@ -69,12 +72,14 @@ const App:React.FC<IProps> = ({lang, isAdmin, isAuth, fibersLoad, setState}):JSX
 
 
 	useEffect(() => {
-		checkAndLoad({
+		dataLoader({
 			fetchData: fibersLoad,
 			loadFunc: setState.fibers.loadFibers,
-            force: true
+			timer: fiberFetch,
+			setTimer: setFiberFetch
 		})
-	}, [isAdmin])
+	}, [isAdmin, fibersLoad.status, fiberFetch])
+
 
 	const screenWidth = useScreenMeter()
 
@@ -135,7 +140,9 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
 	isAdmin: state.user.isAdmin,
 	isAuth: state.user.auth.status === 'success',
-	fibersLoad: state.fibers.load
+	fibersLoad: state.fibers.load,
+	contentLoad: state.content.load
+	
 })
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>):IPropsActions => ({
@@ -143,6 +150,7 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>):IPropsActions => ({
 		fibers: bindActionCreators(allActions.fibers, dispatch),
 		user: bindActionCreators(allActions.user, dispatch),
 		base: bindActionCreators(allActions.base, dispatch),
+		content: bindActionCreators(allActions.content, dispatch),
 	}
 })
   

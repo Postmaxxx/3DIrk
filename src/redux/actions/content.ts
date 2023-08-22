@@ -90,10 +90,7 @@ export const loadCarousel = () => {
             dispatch(setContent({
                 ...getState().content, 
                 carousel: {
-                    images: {
-                        ...result.carousel.images,
-                        sizes: result.carousel.images.sizes.sort((prev, next) => prev.w - next.w)
-                    }
+                    images: result.carousel.images
                 } 
             }))
             dispatch(setLoadContent({...successFetch}))

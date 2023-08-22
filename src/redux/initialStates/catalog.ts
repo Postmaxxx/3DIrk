@@ -1,4 +1,4 @@
-import { empty, resetFetch } from '../../assets/js/consts';
+import { empty, emptyImages, resetFetch } from '../../assets/js/consts';
 import { ICatalogState } from "../../interfaces"
 
 const initialCatalog = {
@@ -19,15 +19,7 @@ const initialCatalog = {
             name: {...empty},
             text: {...empty},
             text_short: {...empty},
-            images: {
-                paths: {
-                    full: '',
-                    small: '',
-                    medium: '',
-                    preview: '',
-                },
-                files: []
-            },
+            images: {...emptyImages},
             fibers: [],
             mods: [],
             category: ''

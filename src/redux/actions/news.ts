@@ -66,10 +66,7 @@ export const loadSomeNews = ({from, amount} :{from: number, amount: number}) => 
                     _id: item._id,
                     header: item.header,
                     short: item.short,
-                    images: {
-                        ...item.images,
-                        sizes: item.images.sizes.sort((prev, next) => prev.w - next.w)
-                    }
+                    images: item.images
                 }
             })]))
             dispatch(setTotalNews(result.total))
@@ -119,10 +116,7 @@ export const loadOneNews = (_id: string) => {
                     header: result.news.header,
                     short: result.news.short,
                     text: result.news.text,
-                    images: {
-                        ...result.news.images,
-                        sizes: result.news.images.sizes.sort((prev, next) => prev.w - next.w)
-                    }
+                    images: result.news.images,
                     }
             ))
             dispatch(setLoadOneNews({...successFetch}))

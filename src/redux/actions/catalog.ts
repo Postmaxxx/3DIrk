@@ -25,6 +25,8 @@ export const loadCatalog = () => {
         const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.catalog.get.timeout) //set time limit for fetch
         dispatch(setLoadCatalog({...fetchingFetch, controller}))  
         try {
+            console.log(getState().user.token);
+            
             const response: Response = await fetch(APIList.catalog.get.url, {
                 signal: controller.signal,
                 method: APIList.catalog.get.method,
@@ -39,7 +41,8 @@ export const loadCatalog = () => {
                 return dispatch(setLoadCatalog(resErrorFiller(result)))
             }
             const result = await response.json() //message
-            dispatch(setCatalog(result.allCatalog || []))
+            console.log(result.allCatalog);
+            dispatch(setCatalog(result.allCatalog || []))           
             dispatch(setLoadCatalog({...successFetch}))
             return
         } catch (e) {
@@ -48,7 +51,7 @@ export const loadCatalog = () => {
                 dispatch,
                 setter: setLoadCatalog,
                 controller,
-                comp: {en: 'loading catalog', ru: 'загрузки каталога'}
+                comp: {en: 'Error while loading catalog', ru: 'Ошибка загрузки каталога'}
             })
         }
     }
@@ -84,7 +87,7 @@ export const sendCatalog = (newCatalog: (Omit<ICatalogItem, "total" | "active">)
                 dispatch,
                 setter: setSendCatalog,
                 controller,
-                comp: {en: 'sending catalog', ru: 'выгрузки каталога'}
+                comp: {en: 'Error while sending catalog', ru: 'Ошибка выгрузки каталога'}
             })
         }
     }
@@ -139,11 +142,13 @@ export const loadCategory = ({_id, from=0, to=-1}: ILoadCategory) => {
             }
 
             const result: (Pick<ICategory, "_id" | "products" >) & {__v: string} = await response.json()
-            
-            dispatch(setCategory({
-                products: result.products,
-                _id,
+
+            const products = result.products.map(product => ({
+                ...product,
+                images: product.images
             }))
+                        
+            dispatch(setCategory({products, _id}))
             dispatch(setLoadCategory({...successFetch}))
         } catch(e) {
             fetchError({ 
@@ -151,7 +156,7 @@ export const loadCategory = ({_id, from=0, to=-1}: ILoadCategory) => {
                 dispatch,
                 setter: setLoadCategory,
                 controller,
-                comp: {en: 'loading category', ru: 'загрузке категории'}
+                comp: {en: 'Error while category loading', ru: 'Ошибка загрузки категории'}
             })
         }
 
@@ -219,7 +224,7 @@ export const sendProduct = (product: ISendProduct) => {
                 dispatch,
                 setter: setSendProduct,
                 controller,
-                comp: {en: 'sending product', ru: 'сохранении продукта'}
+                comp: {en: 'Error while sending product', ru: 'Ошибка сохранения продукта'}
             })
         }
     }
@@ -265,7 +270,7 @@ export const editProduct = (product: ISendProduct, changeImages: boolean) => {
                 dispatch,
                 setter: setSendProduct,
                 controller,
-                comp: {en: 'updating product', ru: 'обновлении продукта'}
+                comp: {en: 'Error while updating product', ru: 'Ошибка обновления продукта'}
             })
         }
     }
@@ -292,8 +297,14 @@ export const loadProduct = (_id: string) => {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setLoadProduct(resErrorFiller(result)))
             }
-            const result = await response.json() //message, errors
-            dispatch(setProduct(result.product))
+            const result: {product: IProduct} = await response.json() //message, errors
+
+            const product = {
+                ...result.product,
+                images: result.product.images
+            }
+
+            dispatch(setProduct(product))
             dispatch(setLoadProduct({...successFetch}))
         } catch (e) {
             fetchError({ 
@@ -301,7 +312,7 @@ export const loadProduct = (_id: string) => {
                 dispatch,
                 setter: setLoadProduct,
                 controller,
-                comp: {en: 'loading product', ru: 'загрузке продукта'}
+                comp: {en: 'Error while loading product', ru: 'Ошибка загрузки продукта'}
             })
         }
     }
@@ -337,7 +348,7 @@ export const deleteProduct = (_id: TId) => {
                 dispatch,
                 setter: setSendProduct,
                 controller,
-                comp: {en: 'deleting product', ru: 'удалении продукта'}
+                comp: {en: 'Error while deleting product', ru: 'Ошибка удаления продукта'}
             })
         }
     }

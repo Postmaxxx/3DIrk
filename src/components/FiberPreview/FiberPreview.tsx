@@ -12,7 +12,7 @@ const FiberPreview = ({fiber, lang}: IProps) => {
     return (
         <div className="fiber">
             <div className="img-cont">
-                <PicWithPreloader pathList={fiber.images.paths} image={fiber.images.files[0]} alt={fiber.images.files[0]}/>
+                <PicWithPreloader basePath={fiber.images.basePath} sizes={fiber.images.sizes} image={fiber.images.files[0]} alt={fiber.name[lang]}/>
             </div>
             <div className="fiber__info">
                 <h3>{fiber.short.name[lang]}</h3>

@@ -51,14 +51,14 @@ const cartToFront = async (cart: ICartItem[]) => {
         const product: IProduct = cache.products.data.find(item => item._id.toString() === cartItem.productId.toString()) //does this product exist and available for ordering
         !product?.active && (unavailable = true)
 
-        const fiberInProduct = product.fibers.find(fiberId => fiberId.toString() === cartItem.fiberId.toString())  //check is this fiber available for this product
+        const fiberInProduct = product?.fibers.find(fiberId => fiberId.toString() === cartItem.fiberId.toString())  //check is this fiber available for this product
         !fiberInProduct && (unavailable = true)
         
         const fiber = cache.fibers.data.find(item => cartItem.fiberId.toString() === item.id.toString())  //does this fiber exist and available for ordering
         !fiber?.active && (unavailable = true)
 
 
-        const colorInFiber = fiber.colors.find(colorId => colorId.toString() === cartItem.colorId.toString())  //check is this color available for this fiber
+        const colorInFiber = fiber?.colors.find(colorId => colorId.toString() === cartItem.colorId.toString())  //check is this color available for this fiber
         !colorInFiber && (unavailable = true)
         
         const color = cache.colors.data.find(color => color._id.toString() === cartItem.colorId.toString())  //does this color exist and available for ordering
@@ -66,8 +66,8 @@ const cartToFront = async (cart: ICartItem[]) => {
         
         if (unavailable) {
             fixed.push({
-                en: `Product: ${product.name.en}, fiber: ${fiber.name.en}, color: ${color.name.en}, type: ${cartItem.type.en}, amount: ${cartItem.amount}`,
-                ru: `Товар: ${product.name.ru}, материал: ${fiber.name.ru}, цвет: ${color.name.ru}, тип: ${cartItem.type.ru}, количество: ${cartItem.amount}`
+                en: `Product: ${product?.name?.en || missedItem.en}, fiber: ${fiber?.name?.en || missedItem.en}, color: ${color?.name?.en || missedItem.en}, type: ${cartItem?.type?.en || missedItem.en}, amount: ${cartItem.amount}`,
+                ru: `Товар: ${product?.name?.ru || missedItem.ru}, материал: ${fiber?.name?.ru || missedItem.ru}, цвет: ${color?.name?.ru || missedItem.ru}, тип: ${cartItem?.type?.ru || missedItem.ru || missedItem.ru}, количество: ${cartItem.amount}`
             })
             return null
         }
@@ -325,6 +325,7 @@ router.post('/login-token',
             )
            
             const cartToFE = await cartToFront(user.cart)
+
             const userToFront = {
                 name: user.name,
                 email: user.email,
@@ -623,7 +624,7 @@ router.get('/orders',
                     cart: cart
                 })
                 return acc
-            }, {})
+            }, {}) 
             
             return res.status(200).json({users: Object.values(usersToFront)})
 

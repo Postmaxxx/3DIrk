@@ -126,7 +126,7 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
                 <Fragment key={fiber._id}>
                     <div className={`cell col-name ${fiber._id === fibersState.selected ? "selected" : ""}`} onClick={e => onCellClick(fiber._id, '')} >
                         <div className="img-cont">
-                            <PicWithPreloader pathList={fiber.images.paths} image={fiber.images.files[0]} alt={fiber.name[lang]}/>
+                            <PicWithPreloader basePath={fiber.images.basePath} sizes={fiber.images.sizes} image={fiber.images.files[0]} alt={fiber.name[lang]}/>
                         </div>
                         <span className='fiber-name'>{fiber.short.name[lang]}</span>
                         <NavLink to={`../${fiber._id}`} className='button_blue button_sort'>

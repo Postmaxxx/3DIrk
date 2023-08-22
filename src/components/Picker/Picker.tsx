@@ -1,21 +1,19 @@
-import { TImageSizes, TLang, TLangText } from '../../interfaces';
+import { IImages, TLang, TLangText } from '../../interfaces';
 import './picker.scss'
 import { useState, forwardRef, useImperativeHandle, useMemo } from "react";
 import { prevent } from '../../assets/js/processors';
 import { createNewItemId } from '../../../src/assets/js/consts';
 import iconPlus from '../../assets/img/icon_plus.svg'
+import PicWithPreloader from '../../../src/assets/js/PicWithPreloader';
 
 
 interface IProps {
     items: {
         _id: string
-        images?: {
-            paths: Partial<Record<TImageSizes, string>>
-            files: string[]
-        }
-        url?: {
+        images?: IImages
+        urls?: {
             full: string
-            thumb: string
+            thumb: string 
         }
         name: TLangText
         active?: boolean
@@ -97,8 +95,10 @@ const Picker = forwardRef<IPickerFunctions, IProps>(({items, lang, onEditClick, 
                             <div 
                                 className="image" 
                                 onClick={() => itemClicked(item._id)}>
-                                    {item.images && <img src={`${item.images.paths.small}/${item.images.files[0]}`} alt={item.name[lang]} />} {/*for fibers*/}
-                                    {item.url && <img src={item.url.thumb} alt={item.name[lang]} />} {/*for colors*/}
+                                    {item.images && <PicWithPreloader basePath={item.images.basePath} sizes={item.images.sizes} image={item.images.files[0]} alt={item.name[lang]}/>} {/*for fibers*/}
+
+                                    {/*item.images && <img src={`${item.images.basePath}/${item.images.sizes}`} alt={item.name[lang]} />} {/*for fibers*/}
+                                    {item.urls && <img src={item.urls?.thumb} alt={item.name[lang]} />} {/*for colors*/}
                             </div>
                             <span>{item.name[lang]}</span>
                             <div className="buttons_control">

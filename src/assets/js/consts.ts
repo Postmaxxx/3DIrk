@@ -3,7 +3,7 @@ import { IFetch, IFiberParam, IImageSizes, IMessageModal, INewsItem, ISendColor,
 
 const timeModalClosing: number = 500 //transition of closing modal window
 
-const gapBetweenRequests: number = 3000 //time between requests in case of error
+const intervalBetweenRequests: number = 3000 //time between requests in case of error
 
 const strengthMin:number = 1 //fiber strength min
 const strengthMax:number = 180 //fiber strength max
@@ -546,16 +546,19 @@ const productEmpty: ISendProduct = {
     files: [] as File[],
 }
 
+
+const emptyImages = {
+    basePath: '',
+    files: [],
+    sizes: []
+}
+
 const newsItemEmpty: INewsItem = {
     header: {...empty},
     text: {...empty},
     short: {...empty},
     _id: '',
-    images: {
-        sizes: [],
-        basePath: '',
-        files: []
-    },
+    images: {...emptyImages},
     date: new Date(),
 }
 
@@ -719,80 +722,12 @@ const DOMExceptions = {
 }
 
 
-/*
-const sizesList = [
-    {
-        name: 'thumb',
-        width: 40,
-        height: 40
-    },
-    {
-        name: 'preview',
-        width: 120,
-        height: 100
-    },
-    {
-        name: 'small',
-        width: 350,
-        height: 250
-    },
-    {
-        name: 'medium',
-        width: 600,
-        height: 450
-    },
-    {
-        name: 'big',
-        width: 1000,
-        height: 800
-    },
-    {
-        name: 'full',
-        width: 1920,
-        height: 1080
-    },
-]*/
-
-/*const sizes: IImageSizes = {
-    thumb: {
-        h: 40,
-        w: 40
-    },
-    preview: {
-        h: 120,
-        w: 100
-    },
-    small: {
-        w: 350,
-        h: 250
-    },
-    medium: {
-        h: 600,
-        w: 450
-    },
-    big: {
-        h: 1000,
-        w: 800
-    },
-    full: {
-        h: 1920,
-        w: 1080
-    }
-}*/
-
-/*const sizesList = Object.entries(sizes)
-    .map(([key, value]) => ({
-        name: key as keyof IImageSizes,
-        w: value.w,
-        h: value.h
-    }))
-    .sort((prev, curr) => prev.w - curr.w)*/
 
 
 export { clearModalMessage, resetFetch, timeModalClosing, 
     fetchingFetch, errorFetch, successFetch, headerStatus, empty, selector, strengthMin, 
-    strengthMax, fiberEmpty, productEmpty, colorEmpty, gapBetweenRequests,
+    strengthMax, fiberEmpty, productEmpty, colorEmpty, intervalBetweenRequests,
     orderStatuses, usersPerPage, timeOffset, inputsProps, tipsTransition, socials,
     navList, newsItemEmpty, APIList, imageExtentions, maxAmountToOrder, loadNewsPerRequest,
     exceptionTimeout, exceptionFetch, DOMExceptions, statuses, defaultSelectItem, 
-    createNewItemId, gapForOrders}
+    createNewItemId, gapForOrders, emptyImages}

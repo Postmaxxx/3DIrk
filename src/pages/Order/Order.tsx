@@ -121,9 +121,10 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsLoad, fibersLoad, 
 			fetchData: colorsLoad,
 			loadFunc: setState.colors.loadColors,
 		})
-    }, [colorsLoad.status])
+    }, [])
 
 
+    
     useEffect(() => {
         if (!_formOrder.current) return
         focuser.create({container: _formOrder.current})

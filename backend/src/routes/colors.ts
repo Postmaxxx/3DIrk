@@ -1,5 +1,5 @@
 import { IAllCache } from '../data/cache'
-import { allPaths } from '../data/consts'
+import { allPaths, colorSizes } from '../data/consts'
 const cache: IAllCache = require('../data/cache')
 import { IColor } from "../models/Color"
 import { folderCleanerS3 } from '../processors/aws'
@@ -15,35 +15,40 @@ const fileSaver = require('../routes/files')
 const whoIs = require('../middleware/whoIs')
 
 
-/*router.post('/create', 
+router.post('/create', 
     [authMW, 
     isAdmin],
     fileSaver,
     async (req, res) => {
         try {
             const { name, active } = JSON.parse(req.body.data )
-            const files = req.files as IMulterFile[] || []
+            const fileThumb = req.files[0] as IMulterFile
+            const fileFull = req.files[1] as IMulterFile
             const color: IColor = new Colors({ name, active })
             const colorId = color._id
-
-            const { paths, filesList } = await resizeAndSaveS3({
-                files,
+            
+            
+            const { filesList: fileThumbName } = await resizeAndSaveS3({
+                files: [fileThumb],
                 clearDir: true,
                 saveFormat: 'webp',
                 basePath: `${allPaths.pathToImages}/${allPaths.pathToColors}/${colorId}`,
-                sizes: ['full', 'thumb']
+                sizes: [colorSizes[0]]
             })
 
-            color.images = {
-                paths: {
-                    full: paths.full,
-                    thumb: paths.thumb
-                },
-                files: {
-                   full: filesList[0],
-                   thumb: filesList[1] 
-                }
+            const { filesList: fileFullName } = await resizeAndSaveS3({
+                files: [fileFull],
+                clearDir: true,
+                saveFormat: 'webp',
+                basePath: `${allPaths.pathToImages}/${allPaths.pathToColors}/${colorId}`,
+                sizes: [colorSizes[1]]
+            })
+
+            color.urls = {
+                thumb: `${process.env.pathToStorage}/${allPaths.pathToImages}/${allPaths.pathToColors}/${colorId}/${colorSizes[0]}/${fileThumbName[0]}`,
+                full:  `${process.env.pathToStorage}/${allPaths.pathToImages}/${allPaths.pathToColors}/${colorId}/${colorSizes[1]}/${fileFullName[0]}`,
             }
+            
             
             await color.save()
             cache.colors.obsolete = true
@@ -53,40 +58,41 @@ const whoIs = require('../middleware/whoIs')
             return res.status(500).json({ message:{en: `Something wrong with server ${e}, try again later`, ru: `Ошибка на сервере ${e}, попробуйте позже`}})
         }
     }
-)*/
+)
 
 
-
-
-/*router.put('/edit', 
+router.put('/edit', 
     [authMW, 
     isAdmin],
     fileSaver,
     async (req, res) => {
         try {       
             const { name, _id, active } = JSON.parse(req.body.data )
-            const files = req.files as IMulterFile[] || []
+            const fileThumb = req.files[0] as IMulterFile
+            const fileFull = req.files[1] as IMulterFile
 
-            const { paths, filesList } = await resizeAndSaveS3({
-                files,
+            const { filesList: fileThumbName } = await resizeAndSaveS3({
+                files: [fileThumb],
                 clearDir: true,
                 saveFormat: 'webp',
-                baseFolder: `${allPaths.pathToImages}/${allPaths.pathToColors}/${_id}`,
-                sizes: ['full', 'thumb']
+                basePath: `${allPaths.pathToImages}/${allPaths.pathToColors}/${_id}`,
+                sizes: [colorSizes[0]]
             })
 
-            const images = {
-                paths: {
-                    full: paths.full,
-                    thumb: paths.thumb
-                },
-                files: {
-                   full: filesList[0],
-                   thumb: filesList[1] 
-                }
+            const { filesList: fileFullName } = await resizeAndSaveS3({
+                files: [fileFull],
+                clearDir: true,
+                saveFormat: 'webp',
+                basePath: `${allPaths.pathToImages}/${allPaths.pathToColors}/${_id}`,
+                sizes: [colorSizes[1]]
+            })
+
+            const urls = {
+                thumb: `${process.env.pathToStorage}/${allPaths.pathToImages}/${allPaths.pathToColors}/${_id}/${colorSizes[0]}/${fileThumbName[0]}`,
+                full:  `${process.env.pathToStorage}/${allPaths.pathToImages}/${allPaths.pathToColors}/${_id}/${colorSizes[1]}/${fileFullName[0]}`,
             }
 
-            await Colors.findOneAndUpdate({_id}, {name, images, active}) 
+            await Colors.findOneAndUpdate({_id}, {name, urls, active}) 
 
             cache.colors.obsolete = true
             cache.fibers.obsolete = true
@@ -95,7 +101,10 @@ const whoIs = require('../middleware/whoIs')
             return res.status(500).json({ message:{en: `Something wrong with server ${e}, try again later`, ru: `Ошибка на сервере ${e}, попробуйте позже`}})
         }
     }
-)*/
+)
+
+
+
 
 
 router.get('/load-all', 
@@ -109,6 +118,8 @@ router.get('/load-all',
             return res.status(500).json(err)
         }  
         const filteredColors = cache.colors.data.filter(color => color.active) || []
+        console.log(filteredColors);
+        
         return res.status(200).json({colors: isAdmin ? cache.colors.data : filteredColors})
     } catch (e) {
         return res.status(500).json({ message:{en: `Something wrong with server ${e}, try again later`, ru: `Ошибка на сервере ${e}, попробуйте позже`}})

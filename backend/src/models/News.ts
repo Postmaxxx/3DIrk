@@ -1,4 +1,4 @@
-import { IImageSubFolder, TImageSizes } from './../interfaces';
+import { IImageSubFolder, IImages, TImageSizes } from './../interfaces';
 import { Document, Schema, Model, model } from 'mongoose';
 import { TLangText } from '../interfaces';
 
@@ -8,11 +8,7 @@ interface INews extends Document {
     header: TLangText
     short: TLangText
     text: TLangText
-    images: {
-        basePath: string
-        files: string[]
-        sizes: IImageSubFolder[]
-    }
+    images: IImages
 }
 
 

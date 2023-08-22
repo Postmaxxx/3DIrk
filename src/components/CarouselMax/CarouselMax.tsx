@@ -1,4 +1,4 @@
-import './carouselmax.scss'
+/*import './carouselmax.scss'
 import { useEffect,useRef, useState,useCallback } from 'react';
 import ImgWithPreloader from '../../assets/js/ImgWithPreloader'
 import { ICarouselMax } from '../../interfaces';
@@ -230,4 +230,4 @@ const SliderMax = ({content, modal}: ISliderMax) => {
 }
 
 
-export default SliderMax;
+export default SliderMax;*/

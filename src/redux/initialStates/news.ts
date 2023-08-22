@@ -1,4 +1,4 @@
-import { empty, resetFetch } from "../../assets/js/consts"
+import { empty, emptyImages, resetFetch } from "../../assets/js/consts"
 import { INewsState } from "../../interfaces"
 
 const initialNews = {
@@ -11,11 +11,7 @@ const initialNews = {
         date: new Date,
         short: {...empty},
         text: {...empty},
-        images: {
-            basePath: '',
-            files: [],
-            sizes: []
-        }
+        images: {...emptyImages}
     },
     total: 0,
     newsList: []

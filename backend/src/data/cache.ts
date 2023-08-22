@@ -1,4 +1,4 @@
-import { ICatalogItem, IImageSubFolder, TLangText } from "../interfaces"
+import { ICatalogItem, IImageSubFolder, IImages, TLangText } from "../interfaces"
 import { IColor } from "../models/Color"
 import { IContent } from "../models/Content"
 import { IFiber } from "../models/Fiber"
@@ -77,7 +77,7 @@ const loadNews = async () => {
         try {
             const newsList: INews[] = await News.find()
             allNews.data = newsList
-                .sort((a,b) => (a.date > b.date) ? -1 : 1)
+                .sort((a,b) => +(a.date > b.date))
                 .map(news => ({
                     _id: news._id,
                     header: news.header,
@@ -185,11 +185,7 @@ interface INewsToFE {
     header: TLangText
     short: TLangText
     text: TLangText
-    images: {
-        basePath: string
-        files: string[]
-        sizes: IImageSubFolder[]
-    }
+    images: IImages
 }
 
 interface IAllNews {

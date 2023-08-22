@@ -29,7 +29,7 @@ interface IPropsActions {
 
 interface IProps extends IPropsState, IPropsActions {}
 
-const SpliderSingle: React.FC<IProps> = ({lang, catalogState, isAdmin, setState}): JSX.Element => {
+const SpliderSingle: React.FC<IProps> = ({lang, catalogState}): JSX.Element => {
 	
 	const spliderSingle = useRef<Splide>();
 	const _splideMain = useRef<HTMLDivElement>(null);

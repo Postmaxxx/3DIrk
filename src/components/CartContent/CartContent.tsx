@@ -49,9 +49,10 @@ const CartContent: React.FC<IProps> = ({lang, cart, colorsState, modal, fibersSt
     const onImageClick = (e: React.MouseEvent, product: IProduct) => {
         if (!product) return
         e.stopPropagation()
+        const lastIndex = product.images.sizes.length - 1
         modal?.openModal({
             name: 'productClicked',
-            children: <ImageModalNew url={`${product.images.paths.full}/${product.images.files[0]}`} text={product.name[lang]}/>
+            children: <ImageModalNew url={`${product.images.basePath}/${product.images.sizes[lastIndex].subFolder}/${product.images.files[0]}`} text={product.name[lang]}/>
         })
     }
     
@@ -60,7 +61,7 @@ const CartContent: React.FC<IProps> = ({lang, cart, colorsState, modal, fibersSt
         e.stopPropagation()
         modal?.openModal({
             name: 'colorClicked',
-            children: <ImageModalNew url={color.url.full} />
+            children: <ImageModalNew url={color.urls.full} />
         })
     }
 
@@ -75,7 +76,7 @@ const CartContent: React.FC<IProps> = ({lang, cart, colorsState, modal, fibersSt
                     {color && fiberName &&
                         <div className="cart__item">
                             <div className="wrapper_img" onClick={(e) => onImageClick(e, item.product)}>
-                                <PicWithPreloader pathList={item.product.images.paths} image={item.product.images.files[0]} alt={item.product.name[lang]}/>
+                                <PicWithPreloader basePath={item.product.images.basePath} sizes={item.product.images.sizes} image={item.product.images.files[0]} alt={item.product.name[lang]}/>
                             </div>
                 
                             <div className="item__descriptions">
@@ -103,7 +104,7 @@ const CartContent: React.FC<IProps> = ({lang, cart, colorsState, modal, fibersSt
                                     <span className="description__name">{lang === 'en' ? 'Color' : 'Цвет'}:</span>
                                     <div className="color" onClick={(e) => onColorClick(e, color)}> 
                                         <div className="wrapper_img">
-                                            <img src={color.url.thumb} alt={color.name[lang]} />
+                                            <img src={color.urls.thumb} alt={color.name[lang]} />
                                         </div>
                                         <span className="color__name">{color.name[lang]}</span>
                                     </div>

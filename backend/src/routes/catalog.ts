@@ -4,7 +4,7 @@ import { IAllCache } from '../data/cache'
 import { IMulterFile } from './user'
 import { IProduct } from '../models/Product'
 import { resizeAndSaveS3 } from '../processors/sharp'
-import { allPaths } from '../data/consts'
+import { allPaths, imageSizes, productImageSizes } from '../data/consts'
 import { folderCleanerS3 } from '../processors/aws'
 const cache: IAllCache = require('../data/cache')
 const Product = require("../models/Product")
@@ -31,8 +31,7 @@ router.get('/list',
         const catalogToSend = cache.catalog.data
             .filter(item => isAdmin ? true : item.active > 0)//admin - all, user - only have active products
         
-        
-        res.status(200).json({allCatalog: catalogToSend, message: {en: 'Catalog has been loaded', ru: 'Каталог был загружены'}})
+        res.status(200).json({allCatalog: catalogToSend, message: {en: 'Catalog has been loaded', ru: 'Каталог был загружен'}})
     } catch (error) {
         res.status(500).json({message: {en: 'Error reading catalog from db', ru: 'Ошибка при чтении каталога из БД'}})
     }
@@ -118,12 +117,7 @@ router.get('/category',
                 name: item.name,
                 price: item.price,
                 text_short: item.text_short,
-                images: {
-                    files: item.images.files,
-                    paths: {
-                        small: item.images.paths.small
-                    }
-                },
+                images: item.images,
                 active: item.active
             }))
         })
@@ -136,7 +130,7 @@ router.get('/category',
 //-------------------------------------------------------------------------------------
 
 
-/*router.post('/product', //create
+router.post('/product', //create
     [authMW, isAdmin],
     fileSaver,
     async(req, res) => { 
@@ -145,19 +139,26 @@ router.get('/category',
             const files = req.files as IMulterFile[] || []  
             const product: IProduct = new Product({ price: Number(price), name, text, text_short, fibers, mods, category, active })
             
-            const { paths, filesList } = await resizeAndSaveS3({
+
+            const basePath = `${allPaths.pathToImages}/${allPaths.pathToNews}/${product._id}`
+            const {filesList} = await resizeAndSaveS3({
                 files,
-                clearDir: true,
+                clearDir: false,
                 saveFormat: 'webp',
-                basePath: `${allPaths.pathToImages}/${allPaths.pathToProducts}/${product._id}`,
-                sizes: ['full', 'small', 'medium', 'preview']
+                basePath,
+                sizes: productImageSizes
             })
-            
+           
             product.images = {
-                paths,
-                files: filesList
+                files: filesList,
+                basePath: `${process.env.pathToStorage}/${basePath}`,
+                sizes: productImageSizes.map(size => ({
+                    subFolder: size,
+                    w: imageSizes[size].w,
+                    h: imageSizes[size].h,
+                }))
             }
-            
+
             await product.save()
 
             cache.products.obsolete = true
@@ -171,11 +172,11 @@ router.get('/category',
         }
     }
 )
-*/
 
 
 
-/*router.put('/product', //create
+
+router.put('/product', //create
     [authMW, isAdmin],
     fileSaver,
     async(req, res) => { 
@@ -183,17 +184,24 @@ router.get('/category',
             const { price, name, text, text_short, fibers, mods, category, _id, active } = JSON.parse(req.body.data)
             const files = req.files as IMulterFile[] || undefined
             
-            const { paths, filesList } = await resizeAndSaveS3({
+
+            const basePath = `${allPaths.pathToImages}/${allPaths.pathToNews}/${_id}`
+            const {filesList} = await resizeAndSaveS3({
                 files,
                 clearDir: true,
                 saveFormat: 'webp',
-                basePath: `${allPaths.pathToImages}/${allPaths.pathToProducts}/${_id}`,
-                sizes: ['full', 'small', 'medium', 'preview']
+                basePath,
+                sizes: productImageSizes
             })
-
+           
             const images = {
-                paths,
-                files: filesList
+                files: filesList,
+                basePath: `${process.env.pathToStorage}/${basePath}`,
+                sizes: productImageSizes.map(size => ({
+                    subFolder: size,
+                    w: imageSizes[size].w,
+                    h: imageSizes[size].h,
+                }))
             }
 
             await Product.findOneAndUpdate({_id}, { price, name, text, text_short, fibers, mods, category, _id, images, active })
@@ -207,7 +215,7 @@ router.get('/category',
         }
     }
 )
-*/
+
 
 
 router.get('/product', async(req, res) => { 

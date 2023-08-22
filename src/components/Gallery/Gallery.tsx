@@ -23,7 +23,7 @@ const Gallery: React.FC<IProps> = ({lang, products}):JSX.Element => {
                 >
                 <div className='gallery__card' >
                     <div className={`gallery__card__img-cont ${product.active ? '' : 'inactive'}`}>
-                        <PicWithPreloader pathList={product.images.paths} image={product.images.files[0]} alt={product.name[lang]}/>
+                        <PicWithPreloader basePath={product.images.basePath} sizes={product.images.sizes} image={product.images.files[0]} alt={product.name[lang]}/>
                     </div>
                     <div className="gallery__card__text">
                         <span className='name'>{product.name[lang]}</span>

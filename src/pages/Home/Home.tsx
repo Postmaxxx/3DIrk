@@ -1,3 +1,4 @@
+import {useState, useEffect} from 'react'
 import NewsBlock from '../../components/NewsBlock/NewsBlock';
 import './home.scss'
 import { connect } from "react-redux";
@@ -5,11 +6,10 @@ import { IContentState, IFullState, TLang } from "../../interfaces";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { allActions } from '../../redux/actions/all';
-import { useEffect } from "react";
 import Preloader from '../../components/Preloaders/Preloader';
-import { checkAndLoad } from '../../assets/js/processors';
 import { IModalFunctions } from '../../../src/components/Modal/ModalNew';
 import CarouselMaxAdaptive from '../../../src/components/CarouselMax/CarouselMaxAdaptive';
+import { dataLoader } from '../../../src/assets/js/processors';
 
 interface IPropsState {
     lang: TLang
@@ -26,16 +26,16 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 const Home:React.FC<IProps> = ({lang, contentState, setState, modal} : IProps): JSX.Element => {
-
-    useEffect(() => {
-        checkAndLoad({
+	const [contentFetch, setContentFetch] = useState<ReturnType<typeof setTimeout> | undefined>(undefined)
+    
+	useEffect(() => {
+		dataLoader({
 			fetchData: contentState.load,
 			loadFunc: setState.content.loadCarousel,
-			force: false
+			timer: contentFetch,
+			setTimer: setContentFetch
 		})
-    }, [contentState.load.status])
-
-
+	}, [contentState.load.status, contentFetch])
 
     return (
         <div className='page page_home'>
@@ -66,7 +66,7 @@ const Home:React.FC<IProps> = ({lang, contentState, setState, modal} : IProps): 
                         {contentState.load.status === 'success' && contentState?.carousel?.images?.files?.length > 0 && <CarouselMaxAdaptive content={contentState.carousel} modal={modal}/>}
                         {contentState.load.status === 'fetching' && <Preloader />}
                     </div>
-                    {/*<NewsBlock />*/}
+                    <NewsBlock />
                 </div>
             </div>
         </div>

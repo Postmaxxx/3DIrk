@@ -1,15 +1,11 @@
-import { resetFetch } from "../../assets/js/consts"
+import { emptyImages, resetFetch } from "../../assets/js/consts"
 import { IContentState } from "../../interfaces"
 
 const initialContentState = {
     send: resetFetch,
     load: resetFetch,
     carousel: {
-        images: {
-            files: [],
-            sizes: [],
-            basePath: ''
-        }
+        images: {...emptyImages}
     }
 } satisfies IContentState
 

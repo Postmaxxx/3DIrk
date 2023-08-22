@@ -52,3 +52,9 @@ export interface IImageSubFolder {
     h: number
     w: number
 }
+
+export interface IImages {
+    basePath: string
+    files: string[]
+    sizes: IImageSubFolder[]
+}

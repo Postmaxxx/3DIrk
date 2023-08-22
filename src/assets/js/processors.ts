@@ -1,5 +1,5 @@
 import { IAction, IDispatch, IErrRes, IFetch, TFetchStatus, TLang, TLangText } from "../../interfaces";
-import { DOMExceptions, empty, exceptionTimeout, gapBetweenRequests, headerStatus, selector } from "./consts";
+import { DOMExceptions, empty, exceptionTimeout, headerStatus, intervalBetweenRequests, selector } from "./consts";
 
 //---------------------------------------------------------------
 
@@ -76,27 +76,46 @@ export interface ICheckAndLoad {
 }
 
 
-/*const checkAndLoad = async ({fetchData, loadFunc, args=[], force=false}: ICheckAndLoad) => {
-    if (force) {
-        await fetchData.controller && fetchData.controller?.abort(DOMExceptions.byFetch) //cancel current fetch if it continues 
-        loadFunc.apply(undefined, args || []) //create new fetch
-    } else { //fetch data only once or refetch in case of any error with delay
-        if (fetchData.status === 'idle') {
-            loadFunc.apply(undefined, args || [])
-        }
-        if (fetchData.status === 'error') { // create a delay before trying new request       
-            setTimeout(() => {loadFunc.apply(undefined, args || [])}, gapBetweenRequests)
-        }
-    }
-}*/
+
 
 const checkAndLoad = async ({fetchData, loadFunc, args=[], force=false}: ICheckAndLoad) => {
     if (force) {
         await fetchData.controller && fetchData.controller?.abort(DOMExceptions.byFetch) //cancel current fetch if it continues 
         loadFunc.apply(undefined, args || [])
-    } else { //fetch data only once or refetch in case of any error with delay
-        if (fetchData.status === 'idle' || fetchData.status === 'error') {
+    } else { //fetch data only once 
+        if (fetchData.status === 'idle') {
             loadFunc.apply(undefined, args || [])
+        }
+    }
+}
+
+
+export interface IDataLoader {
+    fetchData: IFetch
+    loadFunc: (...arg: any) => void
+    args?: any[]
+    force?: boolean
+    timer: any
+    setTimer: any
+}
+
+
+const dataLoader = async ({fetchData, loadFunc, args=[], force=false, timer, setTimer}: IDataLoader) => {
+    if (force && fetchData.status !== 'success') {
+        await fetchData.controller && fetchData.controller?.abort(DOMExceptions.byFetch) //cancel current fetch if it continues 
+        if (!timer) {
+            if (fetchData.status === 'error') {
+                setTimer(setTimeout(() => setTimer(undefined), intervalBetweenRequests))
+            }
+            loadFunc.apply(undefined, args || [])
+        } 
+    } else { 
+        if (fetchData.status === 'idle') {
+            loadFunc.apply(undefined, args || [])
+        }
+        if (fetchData.status === 'error' && !timer) {
+            loadFunc.apply(undefined, args || [])
+            setTimer(setTimeout(() => setTimer(undefined), intervalBetweenRequests))
         }
     }
 }
@@ -111,10 +130,10 @@ interface IFetchError {
 
 const fetchError = ({dispatch, setter, comp, e, controller}: IFetchError) => {
     if (e.name !== 'AbortError') {
-        return dispatch(setter({status: 'error', message: {en:`Error ${comp.en}: ${e}`, ru: `Ошибка ${comp.ru}: ${e}`}}))
+        return dispatch(setter({status: 'error', message: {en:`${comp.en}: ${e}`, ru: `${comp.ru}: ${e}`}}))
     }
     if (e.name === 'AbortError' && controller.signal.reason.name === exceptionTimeout.name) {
-        return dispatch(setter({status: 'error', message: {en:`Error ${comp.en}: server response timeout`, ru: `Ошибка ${comp.ru}: таймаут ответа от сервера`}}))
+        return dispatch(setter({status: 'error', message: {en:`${comp.en}: server response timeout`, ru: `${comp.ru}: таймаут ответа от сервера`}}))
     }
 }
 
@@ -228,5 +247,5 @@ const checkIfPhone = (value: string) => {
 
 
 export { ratingNumberToText, errorsChecker, prevent, filenameChanger, checkAndLoad, modalMessageFromFetch, modalMessageCreator, 
-    focusMover, deepCopy, resErrorFiller, checkIfNumbers, checkIfEmail, checkIfPhone, fetchError, filesDownloader,
+    focusMover, deepCopy, resErrorFiller, checkIfNumbers, checkIfEmail, checkIfPhone, fetchError, filesDownloader, dataLoader
     }

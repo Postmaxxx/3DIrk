@@ -100,7 +100,7 @@ export interface ISpliderOptions {
 export interface IColor {
     _id: TId
     name: TLangText
-    url: {
+    urls: {
         full: string
         thumb: string
     }
@@ -164,13 +164,7 @@ export interface IFiber {
         name: TLangText
         text: TLangText
     }
-    images: {
-        paths: {
-            full: string
-            small: string
-        }
-        files: string[]
-    }
+    images: IImages
     params: IFiberParam
     proscons: IProsCons
     colors: TId[] //list of colors ids
@@ -201,15 +195,7 @@ export interface IProduct {
     name: TLangText
     text: TLangText
     text_short: TLangText
-    images: {
-        paths: {
-            full: string
-            small: string
-            medium: string
-            preview: string
-        }
-        files: string[]
-    }
+    images: IImages
     fibers: TId[] //array of fiber ids
     mods: TLangText[]
     category: TId
@@ -222,12 +208,7 @@ export interface IProductShort { //for gallery
     price: TLangText
     name: TLangText
     text_short: TLangText
-    images: {
-        paths: {
-            small: string
-        }
-        files: string[]
-    },
+    images: IImages,
     active?: boolean
 }
 
@@ -510,3 +491,5 @@ export interface IImageSizes {
     carouselMaxMedium: ISizesItem
     carouselMaxSmall: ISizesItem
 }
+
+

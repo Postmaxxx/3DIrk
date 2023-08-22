@@ -7,7 +7,7 @@ const { check, validationResult } = require('express-validator')
 const Fiber = require("../models/Fiber")
 import { IAllCache } from '../data/cache'
 import { IMulterFile } from "./user";
-import { allPaths } from "../data/consts";
+import { allPaths, fiberImageSizes, imageSizes } from "../data/consts";
 import { resizeAndSaveS3 } from "../processors/sharp";
 import { folderCleanerS3 } from "../processors/aws";
 const cache: IAllCache = require('../data/cache')
@@ -17,7 +17,7 @@ const whoIs = require('../middleware/whoIs')
 
 
 
-/*router.post('/create', 
+router.post('/create', 
     [authMW, isAdmin],
     fileSaver, 
     async (req, res) => {       
@@ -26,17 +26,23 @@ const whoIs = require('../middleware/whoIs')
             const files = req.files as IMulterFile[] || []  
             const fiber: IFiber = new Fiber({ name, text, proscons, short, params, images,  colors, active })
             
-            const {paths, filesList} = await resizeAndSaveS3({
+            const basePath = `${allPaths.pathToImages}/${allPaths.pathToNews}/${fiber._id}`
+            const {filesList} = await resizeAndSaveS3({
                 files,
-                clearDir: true,
+                clearDir: false,
                 saveFormat: 'webp',
-                baseFolder: `${allPaths.pathToImages}/${allPaths.pathToFibers}/${fiber._id}`,
-                sizes: ['full', "big", 'medium', 'small', "preview", "thumb"]
+                basePath,
+                sizes: fiberImageSizes
             })
-
+           
             fiber.images = {
-                paths,
-                files: filesList
+                files: filesList,
+                basePath: `${process.env.pathToStorage}/${basePath}`,
+                sizes: fiberImageSizes.map(size => ({
+                    subFolder: size,
+                    w: imageSizes[size].w,
+                    h: imageSizes[size].h,
+                }))
             }
 
             await fiber.save()
@@ -46,7 +52,7 @@ const whoIs = require('../middleware/whoIs')
             return res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})
         }
     }
-)*/
+)
 
 
 /*
@@ -92,7 +98,7 @@ check('short.text.en')
 */
 
 
-/*router.put('/edit', 
+router.put('/edit', 
     [authMW, isAdmin],
     fileSaver,
     async (req, res) => {
@@ -100,19 +106,26 @@ check('short.text.en')
             const { name, text, short, params, proscons, colors, _id, active } = JSON.parse(req.body.data)
             const files = req.files as IMulterFile[] || []
 
-            const { paths, filesList } = await resizeAndSaveS3({
+            const basePath = `${allPaths.pathToImages}/${allPaths.pathToNews}/${_id}`
+            const {filesList} = await resizeAndSaveS3({
                 files,
                 clearDir: true,
                 saveFormat: 'webp',
-                baseFolder: `${allPaths.pathToImages}/${allPaths.pathToFibers}/${_id}`,
-                sizes: ['full', "big", 'medium', 'small', "preview", "thumb"]
+                basePath,
+                sizes: fiberImageSizes
             })
-
+           
             const images = {
-                paths,
-                files: filesList
+                files: filesList,
+                basePath: `${process.env.pathToStorage}/${basePath}`,
+                sizes: fiberImageSizes.map(size => ({
+                    subFolder: size,
+                    w: imageSizes[size].w,
+                    h: imageSizes[size].h,
+                }))
             }
-            
+
+
             await Fiber.findOneAndUpdate({_id}, {name, text, short, params, proscons, colors, images, active}) 
             cache.fibers.obsolete = true
             return res.status(201).json({message: {en: 'Fiber updated', ru: 'Материал отредактирован'}})
@@ -120,7 +133,7 @@ check('short.text.en')
             return res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})
         }
     }
-)*/
+)
 
 
 

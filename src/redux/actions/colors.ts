@@ -23,16 +23,10 @@ export const setColors = <T extends IColor[]>(payload: T):IAction<T> => ({
 
 
 interface IColorGet {
-    images: {
-        files: {
-            full: string
-            thumb: string
-        },
-        paths: {
-            full: string
-            thumb: string
-        }
-    },
+    urls: {
+        thumb: string
+        full: string
+    }
     name: TLangText,
     _id: string,
     active: boolean
@@ -62,10 +56,7 @@ export const loadColors = () => {
                 return {
                     _id: item._id,
                     name: item.name,
-                    url: {
-                        full: `${item.images.paths.full}/${item.images.files.full}`,
-                        thumb: `${item.images.paths.thumb}/${item.images.files.thumb}`
-                    },
+                    urls: item.urls,
                     active: item.active
                 }
             })
@@ -77,7 +68,7 @@ export const loadColors = () => {
                 dispatch,
                 setter: setLoadColors,
                 controller,
-                comp: {en: 'Error loading colors', ru: ' Ошибказагрузки цветов'}
+                comp: {en: 'Error loading colors', ru: ' Ошибка загрузки цветов'}
             })
         }
     }
@@ -97,7 +88,7 @@ export const sendColor = (color: ISendColor) => {
         const {files, ...colorToSend} = color
         sendForm.append('data', JSON.stringify(colorToSend))
         
-        const colorFiles = [color.files.full, color.files.thumb]
+        const colorFiles = [color.files.thumb, color.files.full]
         colorFiles.forEach(item => { sendForm.append('files', item, item.name) })
         try {
             const response: Response = await fetch(APIList.colors[typeOfRequest].url, {

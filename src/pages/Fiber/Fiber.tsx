@@ -68,7 +68,7 @@ const Fiber: React.FC<IProps> = ({lang, fibersState, colorsState, setState, moda
         e.stopPropagation()
         modal?.openModal({
             name: 'onFiberImageClick',
-            children: <ImageModalNew url={color.url.full} text={color.name[lang]}/>
+            children: <ImageModalNew url={color.urls.full} text={color.name[lang]}/>
         })
     }
 
@@ -95,7 +95,7 @@ const Fiber: React.FC<IProps> = ({lang, fibersState, colorsState, setState, moda
                 return (
                     <div key={i} className='color' onClick={(e) => onImageClick(e, colorData)}>
                         <div className="color__img-cont">
-                            <ImgWithPreloader src={colorData.url.thumb} alt={colorData.name[lang]}/>
+                            <ImgWithPreloader src={colorData.urls.thumb} alt={colorData.name[lang]}/>
                         </div>
                         <span className='color__descr'>{colorData.name[lang]}</span>
                     </div>

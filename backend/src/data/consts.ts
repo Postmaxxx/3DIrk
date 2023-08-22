@@ -10,6 +10,7 @@ const missedItem: TLangText = {
     ru: 'Объект отсутствует в базе данных'
 }
 
+
 const allPaths = {
    //pathToServer: "http://localhost/data",
     pathToTemp: "C:/Projects/3D/3dprint/backend/uploads/temp",
@@ -86,18 +87,23 @@ const imageSizes: IImageSizes = {
 }
 
 
-/*
-const sizes = sizesList.reduce((acc, item) => {
-    acc[item.name] = {
-        h: item.height,
-        w: item.width
-    }
-    return acc
-}, {}) */
+const sizesSorter = (sizes: TImageSizes[]) => { //to sort items from smallest to biggest
+    return sizes
+        .map(size => ({
+            name: size,
+            w: imageSizes[size].w
+        }))
+        .sort((prev, next) => prev.w - next.w)
+        .map(size => size.name)
+}
 
-const newsImageSizes: TImageSizes[] = ['full', 'medium', 'small', "extraSmall", "preview", "thumb"]
-const carouselSizes: TImageSizes[] = ['full', 'carouselMaxSmall', 'carouselMaxMedium', 'carouselMaxFull']
+
+const newsImageSizes: TImageSizes[] = sizesSorter(['full', 'medium', 'small', "extraSmall", "preview", "thumb"])
+const fiberImageSizes: TImageSizes[] = sizesSorter(['full', 'large', 'medium', 'small', "extraSmall", "preview", "thumb"])
+const productImageSizes: TImageSizes[] = sizesSorter(['full', 'large', 'medium', 'small', "extraSmall", "preview", "thumb"])
+const carouselSizes: TImageSizes[] = sizesSorter(['full', 'carouselMaxSmall', 'carouselMaxMedium', 'carouselMaxFull'])
+const colorSizes: TImageSizes[] = sizesSorter(['thumb', 'full'])
 
 
 export {minTimeBetweenSendings, sendNotificationsInTG, orderStatus, imageSizes, delayForFS, allPaths, timeZoneDelta,  
-    missedItem, newsImageSizes, carouselSizes}
+    missedItem, newsImageSizes, carouselSizes, colorSizes,fiberImageSizes, productImageSizes}

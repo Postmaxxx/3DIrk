@@ -218,7 +218,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
 
     const fillData = async () => {
         const files = await filesDownloader(
-            catalogState.category.product.images.files.map(file => (`${catalogState.category.product.images.paths.full}/${file}`))
+            catalogState.category.product.images.files.map(file => (`${catalogState.category.product.images.basePath}/${catalogState.category.product.images.sizes[catalogState.category.product.images.sizes.length - 1].subFolder}/${file}`))
         )
         addFilesRef.current?.replaceFiles(files)
         fiberPickerRef.current?.setSelected(catalogState.category.product.fibers)

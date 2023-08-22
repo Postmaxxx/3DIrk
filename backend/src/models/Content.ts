@@ -1,13 +1,9 @@
 import { Document, Schema, Model, model } from 'mongoose';
-import { IImageSubFolder } from '../interfaces';
+import { IImageSubFolder, IImages } from '../interfaces';
 
 interface IContent extends Document {
     carousel: {
-        images: {
-            basePath: string
-            files: string[]
-            sizes: IImageSubFolder[]
-        }
+        images: IImages
     }
 }
 

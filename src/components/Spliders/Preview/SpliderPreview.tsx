@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { useEffect, useRef, useMemo, useState} from "react";
 import "@splidejs/react-splide/css";
 import "./splider-preview.scss";
-import { IFullState, ISpliderOptions, TImageSizes, TLang } from "../../../interfaces";
+import { IFullState, IImages, ISpliderOptions, TLang } from "../../../interfaces";
 import Splide from "@splidejs/splide";
 import { allActions } from "../../../redux/actions/all";
 import { IModalFunctions } from "../../../../src/components/Modal/ModalNew";
@@ -27,15 +27,11 @@ interface IPropsActions {
 
 
 interface IProps extends IPropsState, IPropsActions {
-	images: {
-		paths: Partial<Record<TImageSizes, string>>
-		files: string[]
-	}
-	biggestSize?: TImageSizes
+	images: IImages
 }
 
 
-const SpliderPreview: React.FC<IProps> = ({ modal, images, biggestSize='full'}): JSX.Element => {
+const SpliderPreview: React.FC<IProps> = ({ modal, images}): JSX.Element => {
 	const _splideMain = useRef<HTMLDivElement>(null);
 	const _splideThumbs = useRef<HTMLDivElement>(null);
 	const splideMain = useRef<Splide>();
@@ -103,7 +99,7 @@ const SpliderPreview: React.FC<IProps> = ({ modal, images, biggestSize='full'}):
         e.stopPropagation()
 		modal?.openModal({
 			name: 'spliderPreview',
-			children: <ImageModalNew url={`${images.paths.full}/${filename}`}/>
+			children: <ImageModalNew url={`${images.basePath}/${images.sizes[images.sizes.length - 1].subFolder}/${filename}`}/>
 		})
     }
 
@@ -124,11 +120,11 @@ const SpliderPreview: React.FC<IProps> = ({ modal, images, biggestSize='full'}):
 	}, []);
 
 
-	const imagesPreview = useMemo(() => {
-		return images.files.map((filename,i) => {
+	const imagesMain = useMemo(() => {
+		return images.files.map((filename) => {
 			return (
 				<li className="splide__slide" key={filename} onClick={(e) => onImageClick(e, filename)}>
-					{spliderThumbCreated && <PicWithPreloader pathList={images.paths} image={filename} alt={filename} id={filename}/>}
+					{spliderThumbCreated && <PicWithPreloader basePath={images.basePath} sizes={images.sizes} image={filename} alt={filename}/>}
 				</li>
 			);
 		})
@@ -136,10 +132,10 @@ const SpliderPreview: React.FC<IProps> = ({ modal, images, biggestSize='full'}):
 
 
 	const imagesThumb = useMemo(() => {
-		return images.files.map((filename, i) => {
+		return images.files.map((filename) => {
 			return (
 				<li className="splide__slide" key={filename}>
-					{spliderMainCreated && <PicWithPreloader pathList={images.paths} image={filename} alt={filename} id={filename}/>}
+					{spliderMainCreated && <PicWithPreloader basePath={images.basePath} sizes={images.sizes} image={filename} alt={filename}/>}
 				</li>
 			);
 
@@ -152,7 +148,7 @@ const SpliderPreview: React.FC<IProps> = ({ modal, images, biggestSize='full'}):
 			<div id="spliderMain" className="splide" ref={_splideMain}>
 				<div className="splide__track">
 					<ul className="splide__list">
-						{imagesPreview}
+						{imagesMain}
 					</ul>
 				</div>
 			</div>
