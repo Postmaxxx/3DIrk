@@ -27,8 +27,7 @@ export const setSelectedFiber = <T extends IFiber['_id']>(payload: T):IAction<T>
 
 export const loadFibers = () => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        dispatch(setLoadFibers({...fetchingFetch})) 
-        
+        getState().fibers.load.controller?.abort(DOMExceptions.byFetch)
         const controller = new AbortController()
         dispatch(setLoadFibers({...fetchingFetch, controller}))  
         const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.fibers.get.timeout) //set time limit for fetch

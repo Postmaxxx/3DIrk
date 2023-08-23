@@ -360,9 +360,3 @@ export const sendCart = () => {
 }
 
 
-
-interface ICheckItem {
-    productId: string
-    colorId: string
-    fiberId: string
-}

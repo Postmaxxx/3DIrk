@@ -12,7 +12,7 @@ import { fibersProperties } from '../../../assets/data/fibersProperties';
 import Preloader from '../../../components/Preloaders/Preloader';
 import { useNavigate } from 'react-router-dom';
 import { defaultSelectItem, fiberEmpty, inputsProps, resetFetch, selector, statuses } from '../../../assets/js/consts';
-import { checkAndLoad, deepCopy, errorsChecker, filesDownloader, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
+import { deepCopy, errorsChecker, filesDownloader, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import Picker, { IPickerFunctions } from '../../../components/Picker/Picker';
 import Featurer, { IFeaturerFunctions } from '../../../components/Featurer/Featurer';
 import inputChecker from '../../../../src/assets/js/inputChecker';
@@ -168,11 +168,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
 
     
     useEffect(() => { //get last version of colors
-        checkAndLoad({
-			fetchData: colorsState.load,
-			loadFunc: setState.colors.loadColors,
-            force: true
-		})
+        setState.colors.loadColors()
     }, [isAdmin])
 
 

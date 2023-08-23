@@ -19,14 +19,13 @@ export const setCatalog = <T extends ICatalogItem[]>(payload: T):IAction<T> => (
 });
 
 
-export const loadCatalog = () => {   
+export const loadCatalog = () => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
+        getState().catalog.catalog.load.controller?.abort(DOMExceptions.byFetch)
         const controller = new AbortController()
         const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.catalog.get.timeout) //set time limit for fetch
         dispatch(setLoadCatalog({...fetchingFetch, controller}))  
         try {
-            console.log(getState().user.token);
-            
             const response: Response = await fetch(APIList.catalog.get.url, {
                 signal: controller.signal,
                 method: APIList.catalog.get.method,
@@ -122,6 +121,7 @@ interface ILoadCategory {
 
 export const loadCategory = ({_id, from=0, to=-1}: ILoadCategory) => {    
     return async function(dispatch: IDispatch, getState: () => IFullState) {
+        getState().catalog.category.loadCategory.controller?.abort(DOMExceptions.byFetch)
         const controller = new AbortController()
         const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.category.getSome.timeout) //set time limit for fetch
         dispatch(setLoadCategory({...fetchingFetch, controller}))  
@@ -280,6 +280,7 @@ export const editProduct = (product: ISendProduct, changeImages: boolean) => {
 
 export const loadProduct = (_id: string) => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
+        getState().catalog.category.loadProduct.controller?.abort(DOMExceptions.byFetch)
         const controller = new AbortController()
         const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.product.get.timeout) //set time limit for fetch
         dispatch(setLoadProduct({...fetchingFetch, controller}))

@@ -3,12 +3,10 @@ import { ICatalog, ICatalogItem, IFullState, TId, TLang } from "../../interfaces
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { allActions } from "../../redux/actions/all";
 import Preloader from "../Preloaders/Preloader";
-import { checkAndLoad, dataLoader } from "../../assets/js/processors"
 import ErrorFetch from "../ErrorFetch/ErrorFetch";
-import { resetFetch } from "../../../src/assets/js/consts";
 
 
 interface IPropsState {
@@ -29,35 +27,30 @@ interface IProps extends IPropsState, IPropsActions {}
 
 
 const CatalogList: React.FC<IProps> = ({catalog, lang, selectedCategory, isAdmin, setState}): JSX.Element => {
-	const [catalogFetch, setCatalogFetch] = useState<ReturnType<typeof setTimeout> | undefined>(undefined)
-
-	const loadCategory = (_id: TId, total: number) => {
-		setState.catalog.loadCategory({_id, from: 0, to: -1}) //load all products for category
-	};
-
 
 	useEffect(() => {
 		if (catalog.load.status === 'success') {
-			//loadCategory(catalog.list[0]._id, catalog.list[0].total) //load first category
+			const firstNonEmptyCategory = catalog.list.findIndex(item => item.active > 0)		
+			firstNonEmptyCategory > -1 && setState.catalog.loadCategory({_id: catalog.list[firstNonEmptyCategory]._id}) //load all products for first non-empty category
 		}
 	}, [catalog.load.status])
 	
-    
 
 
-	/*useEffect(() => {
-		//setState.catalog.setLoadCatalog({...resetFetch})
-		if (catalog.load.status !== 'success') {
-			dataLoader({
-				fetchData: catalog.load,
-				loadFunc: setState.catalog.loadCatalog,
-				timer: catalogFetch,
-				setTimer: setCatalogFetch,
-			})
+
+    useEffect(() => {
+		if (catalog.load.status !== 'success' && catalog.load.status  !== 'fetching') {
+			setState.catalog.loadCatalog()
 		}
-	}, [])*/
+	},[])
+
+
+    useEffect(() => {
+		setState.catalog.loadCatalog()
+	},[isAdmin])
 
 	
+
 	return(
 		<div className="catalog-list">
 			<div className="list">
@@ -68,7 +61,7 @@ const CatalogList: React.FC<IProps> = ({catalog, lang, selectedCategory, isAdmin
 								<li 
 									key={category._id} 
 									className={category._id === selectedCategory ? "selected" : ""}
-									onClick={():void => loadCategory(category._id, category.total)}
+									onClick={() => setState.catalog.loadCategory({_id: category._id})}
 								>
 									{category.name[lang]} ({category.active || 0})
 								</li>

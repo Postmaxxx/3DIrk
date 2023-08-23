@@ -11,7 +11,7 @@ import SpliderCommon from '../../components/Spliders/Common/SpliderCommon';
 import FiberParams from '../../components/FiberParams/FiberParams';
 import Proscons from '../../components/Proscons/Proscons';
 import ImgWithPreloader from '../../assets/js/ImgWithPreloader';
-import { checkAndLoad, deepCopy, modalMessageCreator } from '../../assets/js/processors';
+import { deepCopy, modalMessageCreator } from '../../assets/js/processors';
 import ErrorFetch from '../../components/ErrorFetch/ErrorFetch';
 import { IModalFunctions } from '../../../src/components/Modal/ModalNew';
 import MessageNew from '../../../src/components/Message/MessageNew';
@@ -74,10 +74,9 @@ const Fiber: React.FC<IProps> = ({lang, fibersState, colorsState, setState, moda
 
 
     useEffect(() => {
-        checkAndLoad({
-			fetchData: colorsState.load,
-			loadFunc:  setState.colors.loadColors,
-		})
+        if (colorsState.load.status !== 'success' && colorsState.load.status  !== 'fetching') {
+			setState.colors.loadColors()
+		}
     }, [])
     
 

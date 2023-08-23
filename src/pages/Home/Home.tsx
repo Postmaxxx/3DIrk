@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react'
+import { useEffect } from 'react'
 import NewsBlock from '../../components/NewsBlock/NewsBlock';
 import './home.scss'
 import { connect } from "react-redux";
@@ -9,7 +9,6 @@ import { allActions } from '../../redux/actions/all';
 import Preloader from '../../components/Preloaders/Preloader';
 import { IModalFunctions } from '../../../src/components/Modal/ModalNew';
 import CarouselMaxAdaptive from '../../../src/components/CarouselMax/CarouselMaxAdaptive';
-import { dataLoader } from '../../../src/assets/js/processors';
 
 interface IPropsState {
     lang: TLang
@@ -26,16 +25,13 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 const Home:React.FC<IProps> = ({lang, contentState, setState, modal} : IProps): JSX.Element => {
-	const [contentFetch, setContentFetch] = useState<ReturnType<typeof setTimeout> | undefined>(undefined)
     
-	useEffect(() => {
-		dataLoader({
-			fetchData: contentState.load,
-			loadFunc: setState.content.loadCarousel,
-			timer: contentFetch,
-			setTimer: setContentFetch
-		})
-	}, [contentState.load.status, contentFetch])
+    useEffect(() => {
+        if (contentState.load.status !== 'success' && contentState.load.status  !== 'fetching') {
+            setState.content.loadCarousel()
+        }
+	},[])
+
 
     return (
         <div className='page page_home'>

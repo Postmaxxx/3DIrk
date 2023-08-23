@@ -28,7 +28,7 @@ const maxAmountToOrder: number = 990 //max amount for amountChanger
 const defaultSelectItem = {
     name: {
         en: 'Select', 
-        ru: 'Выберете'
+        ru: 'Выберите'
     },
     value: ''
 }

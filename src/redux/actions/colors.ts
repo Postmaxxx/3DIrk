@@ -34,6 +34,7 @@ interface IColorGet {
 
 export const loadColors = () => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
+        getState().colors.load.controller?.abort(DOMExceptions.byFetch)
         const controller = new AbortController()
         const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.colors.get.timeout) //set time limit for fetch
         dispatch(setLoadColors({...fetchingFetch, controller}))  

@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import { allActions } from "../../../redux/actions/all";
 import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFiles';
 import { navList, resetFetch } from '../../../assets/js/consts';
-import { checkAndLoad, deepCopy, errorsChecker, filesDownloader, modalMessageCreator, prevent } from '../../../assets/js/processors';
+import { deepCopy, errorsChecker, filesDownloader, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import { useNavigate } from 'react-router-dom';
 import Preloader from '../../../components/Preloaders/Preloader';
 import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
@@ -73,11 +73,9 @@ const SpliderChanger: FC<IProps> = ({lang, content, modal, setState}): JSX.Eleme
     }
 
     useEffect(() => {
-        checkAndLoad({
-			fetchData: content.load,
-			loadFunc: setState.content.loadCarousel,
-            force: false
-		})
+        if (content.load.status !== 'success' && content.load.status  !== 'fetching') {
+			setState.content.loadCarousel()
+		}
     }, [])
 
 

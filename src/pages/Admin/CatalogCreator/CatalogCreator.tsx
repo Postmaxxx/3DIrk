@@ -1,4 +1,4 @@
-import { ICatalog, ICatalogState,  IFullState, TLang } from '../../../interfaces';
+import { ICatalog, IFullState, TLang } from '../../../interfaces';
 import './catalog-creator.scss'
 import { FC, useRef, useMemo, useCallback } from "react";
 import { connect } from "react-redux";
@@ -8,7 +8,7 @@ import { useEffect,  } from "react";
 import { allActions } from "../../../redux/actions/all";
 import Preloader from '../../../components/Preloaders/Preloader';
 import { inputsProps, resetFetch } from '../../../assets/js/consts';
-import { checkAndLoad, errorsChecker, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
+import { errorsChecker, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import Featurer, { IFeaturerFunctions } from '../../../components/Featurer/Featurer';
 import inputChecker from '../../../assets/js/inputChecker';
 import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
@@ -39,11 +39,7 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, modal, catalog}): JSX.El
     const closeModal = useCallback(() => {
         if (modal?.getName() === 'catalogSend') {
             if (catalog.send.status === 'success') {
-                checkAndLoad({
-                    fetchData: catalog.load,
-                    loadFunc: setState.catalog.loadCatalog,
-                    force: true
-                })
+                setState.catalog.loadCatalog()
                 errChecker.clear()        
             }
             setState.catalog.setSendCatalog(resetFetch)
@@ -92,10 +88,9 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, modal, catalog}): JSX.El
 
 
     useEffect(() => {
-        checkAndLoad({
-			fetchData: catalog.load,
-			loadFunc: setState.catalog.loadCatalog,
-		})
+        if (catalog.load.status !== 'success' && catalog.load.status  !== 'fetching') {
+			setState.catalog.loadCatalog()
+		}
         if (catalog.load.status === 'success') {
             fillValues()
         }

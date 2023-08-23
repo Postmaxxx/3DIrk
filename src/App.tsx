@@ -18,7 +18,6 @@ import ThemeSwitcher from "./components/ThemeSwitcher/ThemeSwitcher";
 import PreloaderPage from "./components/Preloaders/PreloaderPage";
 import ModalNew, { IModalFunctions } from "./components/Modal/ModalNew";
 import useScreenMeter from "./hooks/screenMeter";
-import { dataLoader } from "./assets/js/processors";
 
 
 const LazyHomePage = lazy(() => import("./pages/Home/Home"));
@@ -63,22 +62,20 @@ const MemoFooter = memo(Footer)
 
 const App:React.FC<IProps> = ({lang, isAdmin, isAuth, fibersLoad, contentLoad, setState}):JSX.Element => {
 	const modalRef = useRef<IModalFunctions>(null)
-	const [fiberFetch, setFiberFetch] = useState<ReturnType<typeof setTimeout> | undefined>(undefined)
 
 	useEffect(() => {
 		setState.user.loginWithToken()
 		setState.base.setModal(modalRef)
+		if (contentLoad.status !== 'success' && contentLoad.status  !== 'fetching') {
+			setState.fibers.loadFibers()
+		}
 	}, [])
 
 
-	useEffect(() => {
-		dataLoader({
-			fetchData: fibersLoad,
-			loadFunc: setState.fibers.loadFibers,
-			timer: fiberFetch,
-			setTimer: setFiberFetch
-		})
-	}, [isAdmin, fibersLoad.status, fiberFetch])
+
+    useEffect(() => {
+		setState.fibers.loadFibers()
+	},[isAdmin])
 
 
 	const screenWidth = useScreenMeter()

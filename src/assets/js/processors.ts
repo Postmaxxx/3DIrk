@@ -67,7 +67,7 @@ const filenameChanger = (filename: string) => {
         .replaceAll('_','-')
 }
 
-
+/*
 export interface ICheckAndLoad {
     fetchData: IFetch
     loadFunc: (...arg: any) => void
@@ -119,7 +119,7 @@ const dataLoader = async ({fetchData, loadFunc, args=[], force=false, timer, set
         }
     }
 }
-
+*/
 interface IFetchError {
     dispatch: IDispatch
     setter: <T extends IFetch>(payload: T) => IAction<T>
@@ -246,6 +246,6 @@ const checkIfPhone = (value: string) => {
 
 
 
-export { ratingNumberToText, errorsChecker, prevent, filenameChanger, checkAndLoad, modalMessageFromFetch, modalMessageCreator, 
-    focusMover, deepCopy, resErrorFiller, checkIfNumbers, checkIfEmail, checkIfPhone, fetchError, filesDownloader, dataLoader
+export { ratingNumberToText, errorsChecker, prevent, filenameChanger,  modalMessageFromFetch, modalMessageCreator, 
+    focusMover, deepCopy, resErrorFiller, checkIfNumbers, checkIfEmail, checkIfPhone, fetchError, filesDownloader
     }

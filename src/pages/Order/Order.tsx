@@ -8,7 +8,7 @@ import CartContent from "../../components/CartContent/CartContent";
 import AddFiles, { IAddFilesFunctions } from "../../components/AddFiles/AddFiles";
 import { allActions } from "../../redux/actions/all";
 import { inputsProps, resetFetch} from "../../assets/js/consts";
-import { checkAndLoad, deepCopy, errorsChecker, focusMover, modalMessageCreator, prevent } from "../../assets/js/processors";
+import { deepCopy, errorsChecker, focusMover, modalMessageCreator, prevent } from "../../assets/js/processors";
 import inputChecker from "../../../src/assets/js/inputChecker";
 import { IModalFunctions } from "../../../src/components/Modal/ModalNew";
 import MessageNew from "../../../src/components/Message/MessageNew";
@@ -117,14 +117,11 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsLoad, fibersLoad, 
 
 
     useEffect(() => {
-        checkAndLoad({
-			fetchData: colorsLoad,
-			loadFunc: setState.colors.loadColors,
-		})
+        if (colorsLoad.status !== 'success' && colorsLoad.status  !== 'fetching') {
+            setState.colors.loadColors()
+        }
     }, [])
 
-
-    
     useEffect(() => {
         if (!_formOrder.current) return
         focuser.create({container: _formOrder.current})

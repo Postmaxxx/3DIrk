@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import { allActions } from "../../../redux/actions/all";
 import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFiles';
 import { inputsProps, navList, newsItemEmpty, resetFetch } from '../../../assets/js/consts';
-import { checkAndLoad, errorsChecker, filesDownloader, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
+import { errorsChecker, filesDownloader, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import { useNavigate, useParams } from 'react-router-dom';
 import Preloader from '../../../components/Preloaders/Preloader';
 import inputChecker from "../../../../src/assets/js/inputChecker";
@@ -81,12 +81,9 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
 
     useEffect(() => { 
         if (paramNewsId) {//if edit
-            checkAndLoad({
-                fetchData: loadOne,
-                loadFunc: setState.news.loadOneNews,
-                args: [paramNewsId],
-                force: true
-            })
+            if (loadOne.status !== 'success' && loadOne.status  !== 'fetching') {
+                setState.news.loadOneNews(paramNewsId)
+            }
         } else { //if create
             setState.news.setDataOneNews({...newsItemEmpty})
             fillValues({...newsItemEmpty})

@@ -9,7 +9,7 @@ import { allActions } from "../../../redux/actions/all";
 import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFiles';
 import Preloader from '../../../components/Preloaders/Preloader';
 import { defaultSelectItem, inputsProps, productEmpty, resetFetch, statuses } from '../../../assets/js/consts';
-import { checkAndLoad, checkIfNumbers, deepCopy, errorsChecker, filesDownloader, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
+import { checkIfNumbers, deepCopy, errorsChecker, filesDownloader, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import Picker, { IPickerFunctions } from '../../../components/Picker/Picker';
 import Featurer, { IFeaturerFunctions } from '../../../components/Featurer/Featurer';
 import Selector, { ISelectorFunctions } from '../../../components/Selector/Selector';
@@ -55,12 +55,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
     const closeModal = useCallback(() => {
         if (modal?.getName()  === 'sendProduct') {
             if (catalogState.category.sendProduct.status === 'success') {
-                checkAndLoad({ //force update category
-                    fetchData: catalogState.category.loadCategory,
-                    loadFunc: setState.catalog.loadCategory,
-                    args: [{ _id: catalogState.category._id }],
-                    force: true
-                })
+                setState.catalog.loadCategory({ _id: catalogState.category._id })
             }
             setState.catalog.setSendProduct(resetFetch)// clear fetch status
         }
@@ -141,10 +136,9 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
 
 
     useEffect(() => { 
-        checkAndLoad({
-            fetchData: catalogState.catalog.load,
-            loadFunc: setState.catalog.loadCatalog,
-        })
+        if (catalogState.catalog.load.status !== 'success' && catalogState.catalog.load.status  !== 'fetching') {
+			setState.catalog.loadCatalog()
+		}
         productPickerRef.current?.setSelected()
     }, [])
 
@@ -165,12 +159,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
 
     const onChangeCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setProduct({...product, category: e.target.value})
-        checkAndLoad({
-            fetchData: catalogState.category.loadCategory,
-            loadFunc: setState.catalog.loadCategory,
-            args: [{ _id: e.target.value}],
-            force: true
-        })         
+        setState.catalog.loadCategory({ _id: e.target.value})     
         productPickerRef.current?.getSelected()[0] && productPickerRef.current?.setSelected() //change values only if product was selected, not if product "new"
     }
 
@@ -200,12 +189,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
 
     const onProductSelected = (_id: string) => {
         if (_id) {
-            checkAndLoad({
-                fetchData: catalogState.category.loadProduct,
-                loadFunc: setState.catalog.loadProduct,
-                args: [_id],
-                force: true
-            })
+            setState.catalog.loadProduct(_id)
         } else {
             setProduct(deepCopy(productEmpty))
             addFilesRef.current?.replaceFiles([])
@@ -253,7 +237,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
                                     defaultValue=''
                                     onChange={onChangeCategory} 
                                     onBlur={(e) => inputChecker({lang, notExact: '', el: e.target})}>
-                                        <option key={-1} value='' disabled hidden>{lang === 'en' ? 'Select' : 'Выберете'}</option>
+                                        <option key={-1} value='' disabled hidden>{lang === 'en' ? 'Select' : 'Выберите'}</option>
                                         {catalogState.catalog.list.map((el) => <option key={el._id} value={el._id}>{el.name[lang]}</option>)}
                                 </select>
                             </div>

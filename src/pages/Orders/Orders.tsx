@@ -8,7 +8,7 @@ import {Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import { gapForOrders, orderStatuses, timeOffset, usersPerPage } from '../../assets/js/consts';
 import moment from "moment";
 import Preloader from '../../components/Preloaders/Preloader';
-import { checkAndLoad, prevent } from '../../assets/js/processors';
+import { prevent } from '../../assets/js/processors';
 import { NavLink } from 'react-router-dom';
 
 
@@ -52,16 +52,12 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
 
 
     useEffect(() => { //initial load data
-        checkAndLoad({
-			fetchData: colorsLoad,
-			loadFunc: setState.colors.loadColors,
-			force: false
-		})
-        checkAndLoad({
-			fetchData: ordersState.userList.load,
-			loadFunc: setState.orders.loadUsers,
-			force: false
-		})
+        if (colorsLoad.status !== 'success' && colorsLoad.status  !== 'fetching') {
+			setState.colors.loadColors()
+		}
+        if (ordersState.userList.load.status !== 'success' && ordersState.userList.load.status  !== 'fetching') {
+			setState.orders.loadUsers()
+		}
 
         if (colorsLoad.status === 'success' && fibersLoad.status === 'success') {
             setLoaded(true)
@@ -74,7 +70,7 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
 
     const loadOrders = (e: React.MouseEvent<HTMLButtonElement>): void => {
         prevent(e);
-        if (!_dateFrom.current || !_dateTo.current || !_status.current) return
+        if (!_dateFrom.current || !_dateTo.current || !_status.current || !_user.current) return
         if (!_dateFrom.current.value) {
             return alert('Wrong date from')
         }
@@ -87,13 +83,7 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
         
         const dateTimeFrom = moment(dateFrom).add(timeOffset, 'hours').toISOString();
         const dateTimeTo = moment(dateTo).add(timeOffset, 'hours').toISOString();
-
-        checkAndLoad({
-			fetchData: ordersState.load,
-			loadFunc: setState.orders.loadOrders,
-            args: [{userId: _user.current?.value, status: _status.current.value, from: dateTimeFrom, to: dateTimeTo}],
-            force: true
-		})
+        setState.orders.loadOrders({userId: _user.current.value, status: _status.current.value, from: dateTimeFrom, to: dateTimeTo})
     }
 
 

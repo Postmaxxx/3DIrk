@@ -33,6 +33,7 @@ interface ILoadOrders {
 
 export const loadOrders = ({from, to, userId, status}: ILoadOrders) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
+        getState().orders.load.controller?.abort(DOMExceptions.byFetch)
         const controller = new AbortController()
         const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.orders.getSome.timeout) //set time limit for fetch
         dispatch(setLoadOrders({...fetchingFetch, controller}))  
@@ -122,6 +123,7 @@ export const setUserList = <T extends IFilterUser[]>(payload: T):IAction<T> => (
 
 export const loadUsers = () => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
+        getState().orders.userList.load.controller?.abort(DOMExceptions.byFetch)
         const controller = new AbortController()
         const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.orders.getUsers.timeout) //set time limit for fetch
         dispatch(setLoadUsers({...fetchingFetch, controller}))  

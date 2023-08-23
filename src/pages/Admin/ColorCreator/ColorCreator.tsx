@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import { AnyAction, bindActionCreators, Dispatch } from "redux";
 import { allActions } from "../../../redux/actions/all";
 import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFiles';
-import { checkAndLoad, errorsChecker, filesDownloader, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
+import { errorsChecker, filesDownloader, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import { defaultSelectItem, inputsProps, resetFetch, statuses } from '../../../assets/js/consts';
 import Preloader from '../../../components/Preloaders/Preloader';
 import inputChecker from '../../../../src/assets/js/inputChecker';
@@ -45,11 +45,7 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
     const closeModal = useCallback(() => {
         if (modal?.getName() === 'colorSend') {
             if (colorsState.send.status === 'success') {
-                checkAndLoad({//reload colors if update db was succsessfull
-                    fetchData: colorsState.load,
-                    loadFunc: setState.colors.loadColors,
-                    force: true
-                })
+                setState.colors.loadColors()
             }
             setState.colors.setSendColors(resetFetch)// clear fetch status
         }
@@ -64,11 +60,7 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
 
 
     useEffect(() => { //get last version of colors
-        checkAndLoad({
-			fetchData: colorsState.load,
-			loadFunc: setState.colors.loadColors,
-            force: true
-		})
+        setState.colors.loadColors()
     }, [isAdmin])
 
 

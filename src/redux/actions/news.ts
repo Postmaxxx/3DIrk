@@ -41,6 +41,7 @@ export const setTotalNews = <T extends number>(payload: T):IAction<T> => ({
 
 export const loadSomeNews = ({from, amount} :{from: number, amount: number}) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
+        getState().news.load.controller?.abort(DOMExceptions.byFetch)
         const controller = new AbortController()
         const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.news.getSome.timeout) //set time limit for fetch
         dispatch(setLoadNews({...fetchingFetch, controller}))  
@@ -89,6 +90,7 @@ export const loadSomeNews = ({from, amount} :{from: number, amount: number}) => 
 
 export const loadOneNews = (_id: string) => {
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
+        getState().news.loadOne.controller?.abort(DOMExceptions.byFetch)
         const controller = new AbortController()
         const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.news.getOne.timeout) //set time limit for fetch
         dispatch(setLoadOneNews({...fetchingFetch, controller}))  

@@ -9,7 +9,6 @@ import { IFetch, IFullState, IProduct, TLang } from "../../interfaces";
 import SpliderPreview from "../../components/Spliders/Preview/SpliderPreview";
 import ProductDetails from "../../components/ProductDetails/ProductDetails";
 import { allActions } from "../../redux/actions/all";
-import { checkAndLoad } from "../../assets/js/processors";
 import ErrorFetch from "../../../src/components/ErrorFetch/ErrorFetch";
 
 
@@ -43,18 +42,12 @@ const Product: React.FC<IProps> = ({lang, setState, colorLoad, catalogProduct, f
         if (colorLoad.status === 'success' && fibersLoad.status === 'success' && catalogLoadProduct.status === 'success' && paramProductId === catalogProduct._id) {
             setLoaded(true)
         } else {
-            checkAndLoad({
-                fetchData: colorLoad,
-                loadFunc: setState.colors.loadColors,
-            })
+            if ((colorLoad.status !== 'success' && colorLoad.status  !== 'fetching')) {
+                setState.colors.loadColors()
+            }
             if (paramProductId !== catalogProduct._id) {
-                checkAndLoad({
-                    fetchData: catalogLoadProduct,
-                    loadFunc: setState.catalog.loadProduct,
-                    args: [paramProductId],
-                    force: true
-                })
-            } 
+                setState.catalog.loadProduct(paramProductId)
+            }
             setLoaded(false)
         }
     },[fibersLoad.status, colorLoad.status, catalogLoadProduct.status, paramProductId])

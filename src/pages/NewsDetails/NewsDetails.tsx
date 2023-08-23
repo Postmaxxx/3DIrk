@@ -11,7 +11,7 @@ import { allActions } from "../../redux/actions/all";
 import Delete from '../../components/Delete/Delete';
 import IconEdit from '../../components/IconEdit/IconEdit';
 import { navList, resetFetch } from '../../assets/js/consts';
-import { checkAndLoad, modalMessageFromFetch } from '../../../src/assets/js/processors';
+import { modalMessageFromFetch } from '../../../src/assets/js/processors';
 import { IModalFunctions } from '../../../src/components/Modal/ModalNew';
 import MessageNew from '../../../src/components/Message/MessageNew';
 
@@ -39,13 +39,8 @@ const NewsDetails: FC<IProps> = ({lang, setState, newsState, modal, isAdmin }): 
 
 
     useEffect(() => {
-        checkAndLoad({
-            fetchData: newsState.loadOne,
-            loadFunc: setState.news.loadOneNews,
-            args: [paramNewsId],
-            force: true
-        })
-        return () => {setState.news.setLoadOneNews(resetFetch)}
+		setState.news.loadOneNews(paramNewsId)
+        //return () => {setState.news.setLoadOneNews(resetFetch)}
     }, [paramNewsId])
 
 
