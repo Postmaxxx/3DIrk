@@ -13,7 +13,7 @@ const missedItem: TLangText = {
 
 const allPaths = {
    //pathToServer: "http://localhost/data",
-    pathToTemp: "C:/Projects/3D/3dprint/backend/uploads/temp",
+    pathToTemp: `${__dirname}/uploads/temp`,
    // pathToBase: "C:/Projects/3D/3dprint/backend/data",
     pathToImages:"images",
     pathToNews:"news",
