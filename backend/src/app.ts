@@ -1,5 +1,8 @@
 import { allPaths, newsImageSizes } from "./data/consts"
 import { foldersCleaner } from "./processors/fsTools"
+const https = require('https')
+const path = require('path')
+const fse = require('fs-extra')
 const mode = process.env.NODE_ENV || 'undefined';
 
 
@@ -54,7 +57,7 @@ app.use('/api/content', contentRoutes)
 
 const PORT: number = Number(process.env.PORT) || 5000
 
-const start = async () => {
+const connectToDb = async () => {
     try {
         await mongoose.connect(process.env.mongoUri || '', {
             useNewUrlParser: true,
@@ -68,8 +71,24 @@ const start = async () => {
     }
 }
 
-start()
+connectToDb()
 
-app.listen(PORT, () => console.log(`Server has been successfully started on port ${PORT}...`))
+//app.listen(PORT, () => console.log(`Server has been successfully started on port ${PORT}...`))
+
+const backendFolder = (path.resolve(__dirname, '..'))
+
+
+https
+  .createServer(
+    {
+      key: fse.readFileSync(`${backendFolder}/key.pem`),
+      cert: fse.readFileSync(`${backendFolder}/cert.pem`),
+    },
+    app
+  )
+  .listen(PORT, function () {
+    console.log(`Server has been successfully started on port ${PORT}...`)
+  });
+
 
 export {}
