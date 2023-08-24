@@ -145,7 +145,7 @@ const orderToTg = async ({lang, user, message, files, dir, cart}: IOrderToTg) =>
             const options = {method: 'POST', body: form};
             try {   
                 const response = await fetch(urlDocument, options)
-                if (!response.ok) console.log(`error while sending file: ${file.filename}`);
+                if (!response.ok) console.log(`Error while sending file: ${file.filename}`);
                 const transitionSending = Date.now() - timeStart
                 // if (sendingTime < minTimeBetweenSendings) => wait until (sendingTime >= minTimeBetweenSendings)
                 setTimeout(() => {resolve(`File ${file.filename} has been sent successfully`)}, Number(process.env.minTimeBetweenSendings) - transitionSending)
@@ -194,7 +194,7 @@ const messageToTg = async ({message, files, dir}: IMessageToTg) => {
             const options = {method: 'POST', body: form};
             try {   
                 const response = await fetch(urlDocument, options)
-                if (!response.ok) console.log(`error while sending file: ${file.filename}`);
+                if (!response.ok) console.log(`Error while sending file: ${file.filename}`);
                 const transitionSending = Date.now() - timeStart
                 // if (sendingTime < minTimeBetweenSendings) => wait until (sendingTime >= minTimeBetweenSendings)
                 setTimeout(() => {resolve(`File ${file.filename} has been sent successfully`)}, Number(process.env.minTimeBetweenSendings) - transitionSending)

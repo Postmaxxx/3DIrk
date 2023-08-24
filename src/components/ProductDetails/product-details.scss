@@ -126,14 +126,24 @@
             }
 
 
-            & .link_fiber {
-                display: block;
-                margin-left: 10px;
-                text-decoration: none !important;
-                @include fs_smaller;
+            & .fiber__link {
+                height: 100%;
+                display: flex;
+                flex-direction: column;
 
-                @include respond-to(xs) {
-                    margin-left: 0;
+                & > .link-spacer {
+                    color: transparent;
+                }
+
+                & > a {
+                    display: block;
+                    margin-left: 10px;
+                    text-decoration: none !important;
+                    @include fs_smaller;
+    
+                    @include respond-to(xs) {
+                        margin-left: 0;
+                    }
                 }
             }
 

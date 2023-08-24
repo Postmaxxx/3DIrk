@@ -29,6 +29,10 @@ section.news {
         }
     }
 
+    & > .no-news {
+        @include fs_bigger;
+    }
+
     & >  .break-new-line {
         width: 100%;
     }

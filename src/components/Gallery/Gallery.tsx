@@ -27,7 +27,7 @@ const Gallery: React.FC<IProps> = ({lang, products}):JSX.Element => {
                     </div>
                     <div className="gallery__card__text">
                         <span className='name'>{product.name[lang]}</span>
-                        <span className='price'>{lang === 'en' ? 'Price from' : 'Цена от'}: {product.price[lang]}</span>
+                        <span className='text'>{product.text_short[lang]}</span>
                     </div>
                 </div>
             </NavLink>

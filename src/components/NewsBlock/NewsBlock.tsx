@@ -46,6 +46,7 @@ const NewsBlock:React.FC<IProps>  = ({lang, news, setState}): JSX.Element => {
         <section className="news">
             <h2>{lang === 'en' ? 'Recent news' : 'Последние новости'}</h2>
             {previewsNews}
+            {news.newsList.length === 0 && news.load.status === 'success' && <span className='no-news'>{lang === 'en' ? 'No news' : 'Новостей нет'}</span>}
             <div className="break-new-line"></div>
             {news.newsList.length < news.total && (
                 <button className='button_blue show-more-news' onClick={showMoreNews}>

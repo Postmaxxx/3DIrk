@@ -118,8 +118,6 @@ router.get('/load-all',
             return res.status(500).json(err)
         }  
         const filteredColors = cache.colors.data.filter(color => color.active) || []
-        console.log(filteredColors);
-        
         return res.status(200).json({colors: isAdmin ? cache.colors.data : filteredColors})
     } catch (e) {
         return res.status(500).json({ message:{en: `Something wrong with server ${e}, try again later`, ru: `Ошибка на сервере ${e}, попробуйте позже`}})

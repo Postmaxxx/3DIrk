@@ -68,7 +68,7 @@ const deleteObjectsS3 = async (objects) => {
             return s3.deleteObject(params).promise();
         });
         await Promise.all(deletePromises);
-        console.log(`Deleted all objects in the folder.`);
+        //console.log(`Deleted all objects in the folder.`);
     } catch (error) {
         throw error;
     }
@@ -76,13 +76,13 @@ const deleteObjectsS3 = async (objects) => {
 
 
 const folderCleanerS3 = async (bucketName, folderName) => {
-    console.log(`Deleting folder in ${bucketName}: ${folderName}`);
+    //console.log(`Deleting folder in ${bucketName}: ${folderName}`);
     if (!folderName.endsWith('/')) {
         folderName += '/';
     }
     try {
         const objects = await getListObjectsS3(bucketName, folderName)
-        console.log(objects);
+        //console.log(objects);
         
         if (objects.length === 0) return
         await deleteObjectsS3(objects)
@@ -130,7 +130,7 @@ const filesUploaderS3 = async ({bucketName = '3di', folderName = 'temp/', files 
         
         try {
             await s3.upload(params).promise()
-            console.log(`File ${file.fileName} uploaded to ${folderName} successfully.`);
+            //console.log(`File ${file.fileName} uploaded to ${folderName} successfully.`);
         } catch (error) {
             throw error            
         }

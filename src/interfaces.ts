@@ -188,16 +188,20 @@ export interface ISendProduct extends Omit<IProduct, 'images'> { //for sending t
     files: File[]
 }
 
+export interface IMod {
+    name: TLangText
+    price: number
+}
 
 export interface IProduct {
     _id: TId
-    price: number
+    //price: number
     name: TLangText
     text: TLangText
     text_short: TLangText
     images: IImages
     fibers: TId[] //array of fiber ids
-    mods: TLangText[]
+    mods: IMod[]
     category: TId
     active?: boolean
 }
@@ -205,7 +209,7 @@ export interface IProduct {
 
 export interface IProductShort { //for gallery
     _id: TId
-    price: TLangText
+    //price: TLangText
     name: TLangText
     text_short: TLangText
     images: IImages,

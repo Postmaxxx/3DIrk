@@ -115,7 +115,7 @@ router.get('/category',
             products: products.slice(fromIndex, indexEnd).map(item => ({
                 _id: item._id,
                 name: item.name,
-                price: item.price,
+                //price: item.price,
                 text_short: item.text_short,
                 images: item.images,
                 active: item.active
@@ -166,8 +166,6 @@ router.post('/product', //create
 
             return res.status(201).json({message: {en: 'Product created', ru: 'Продукт создан'}})    
         } catch (error) {
-            console.log(error);
-            
             res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})
         }
     }
@@ -235,7 +233,7 @@ router.get('/product', async(req, res) => {
 
         return res.status(200).json({product: {
             _id: product._id,    
-            price: product.price,    
+            //price: product.price,    
             name: product.name,    
             text: product.text,    
             text_short: product.text_short,    

@@ -15,7 +15,7 @@ const initialCatalog = {
         products: [],
         product: {
             _id: '',
-            price: 0,
+            //price: 0,
             name: {...empty},
             text: {...empty},
             text_short: {...empty},

@@ -11,11 +11,11 @@ import Preloader from '../../../components/Preloaders/Preloader';
 import { defaultSelectItem, inputsProps, productEmpty, resetFetch, statuses } from '../../../assets/js/consts';
 import { checkIfNumbers, deepCopy, errorsChecker, filesDownloader, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import Picker, { IPickerFunctions } from '../../../components/Picker/Picker';
-import Featurer, { IFeaturerFunctions } from '../../../components/Featurer/Featurer';
 import Selector, { ISelectorFunctions } from '../../../components/Selector/Selector';
 import inputChecker from '../../../../src/assets/js/inputChecker';
 import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
 import MessageNew from '../../../../src/components/Message/MessageNew';
+import Mods, { IModsFunctions } from '../../../../src/components/Mods/Mods';
 
 interface IPropsState {
     lang: TLang
@@ -39,7 +39,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
     const fiberPickerRef = useRef<IPickerFunctions>(null)
     const productPickerRef = useRef<IPickerFunctions>(null)
     const addFilesRef = useRef<IAddFilesFunctions>(null)
-    const modsRef = useRef<IFeaturerFunctions>(null)
+    const modsRef = useRef<IModsFunctions>(null)
     const selectorCategoryRef = useRef<HTMLSelectElement>(null)
     const selectorStatusRef = useRef<ISelectorFunctions>(null)
     const [product, setProduct] = useState<ISendProduct>({...productEmpty})
@@ -87,6 +87,10 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
         if (errorDescrFields?.length > 0) {
             errChecker.add(lang === 'en' ? 'Some fields are filled incorrectly' : 'Некоторые поля заполнены неправильно')
         } 
+        //check mods
+        if ((modsRef.current as IModsFunctions).getMods().length === 0) {//at least 1 mod must be added
+            errChecker.add(lang === 'en' ? 'Missing type' : 'Тип отсутствует')
+        }
         //check fibers  
         if (fiberPickerRef.current.getSelected().length === 0) { //at least 1 fiber must be selected
             errChecker.add(lang === 'en' ? 'No fiber selected' : 'Материал не выбран')
@@ -108,7 +112,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
         setProduct(prev => {
             return { 
                 ...prev, 
-                mods: (modsRef.current as IFeaturerFunctions).getFeatures().map(item => ({en: item.name.en, ru: item.name.ru})),
+                mods: (modsRef.current as IModsFunctions).getMods().map(item => ({name: item.name, price: item.price})),
                 files: addFilesRef.current?.getFiles() || [], 
                 fibers: (fiberPickerRef.current as IPickerFunctions).getSelected(),
                 active: selectorStatusRef.current?.getValue() === 'active' ? true : false,
@@ -129,7 +133,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
 
 
     useEffect(() => {
-        modsRef.current?.setFeatures(product.mods.map((item, i) => ({_id: String(i), name: item})))
+        modsRef.current?.setMods(product.mods.map((item, i) => ({_id: String(i), name: item.name, price: item.price})))
     }, [product.mods])
 
 
@@ -149,7 +153,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
         
         e.target.id === "name_en" && setProduct({...product, name: {...product.name, en: e.target.value}})
         e.target.id === "name_ru" && setProduct({...product, name: {...product.name, ru: e.target.value}})
-        e.target.id === "price" && checkIfNumbers(e.target.value) && setProduct({...product, price: Number(e.target.value)}) //save as string, but check it while submiting
+        //e.target.id === "price" && checkIfNumbers(e.target.value) && setProduct({...product, price: Number(e.target.value)}) //save as string, but check it while submiting
         e.target.id === "text_en" && setProduct({...product, text: {...product.text, en: e.target.value}})
         e.target.id === "text_ru" && setProduct({...product, text: {...product.text, ru: e.target.value}})
         e.target.id === "text_short_en" && setProduct({...product, text_short: {...product.text_short, en: e.target.value}})
@@ -167,16 +171,22 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
     useEffect(() => {
         if (!_form.current) return       
         focuser.create({container: _form.current, itemsSelector: '[data-selector="select"], [data-selector="input"]'})
-        onChangeFeaturesAmount()
+        onChangeModsAmount()
     }, [lang])
 
 
-    const onChangeFeaturesAmount = useCallback(() => {  //select all inputs if new mod was added/ old one was removed  
+    const onChangeModsAmount = useCallback(() => {  //select all inputs if new mod was added/ old one was removed  
         if (!_mods.current || !_form.current) return
         focuser.create({container: _form.current, itemsSelector: '[data-selector="select"], [data-selector="input"]'})
-        const allInputsPros = _mods.current.querySelectorAll('[data-selector="input"]')
+        const allInputsPros = _mods.current.querySelectorAll('[data-selector="input"]') 
+        
         allInputsPros?.forEach(input => {
-            (input as HTMLInputElement).onblur = (e) => inputChecker({lang, min: inputsProps.product.mods.min, max: inputsProps.product.mods.max, el: e.target as HTMLInputElement});
+            if ((input as HTMLInputElement).name === 'price') {
+                (input as HTMLInputElement).onblur = (e) => inputChecker({lang, type: 'numbers', el: e.target as HTMLInputElement});
+            } else {
+                (input as HTMLInputElement).onblur = (e) => inputChecker({lang, min: inputsProps.product.mods.min, max: inputsProps.product.mods.max, el: e.target as HTMLInputElement});
+            }
+                        
         })
     }, [])
 
@@ -329,7 +339,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
                             </div>
                         </div>
                         <div className="form__inputs form__inputs_sm-wide">
-                            <div className="block_input">
+                            {/*<div className="block_input">
                                 <label htmlFor="price">{lang === 'en' ? 'Price' : 'Цена'}:</label>
                                 <input 
                                     type="text" 
@@ -339,7 +349,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
                                     onChange={onChangeInputs} 
                                     value={product.price} 
                                     onBlur={(e) => inputChecker({lang, type: 'numbers', el: e.target})}/>
-                            </div>
+                            </div>*/}
                             <Selector 
                                 lang={lang} 
                                 id='selector_status' 
@@ -356,10 +366,10 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
                             <h3>{lang === 'en' ? 'Types' : 'Версии'}</h3>           
                         </div>
                         <div className="product_mods" ref={_mods}>
-                            <Featurer 
+                            <Mods 
                                 lang={lang} 
                                 ref={modsRef}
-                                amountChanged={onChangeFeaturesAmount}
+                                amountChanged={onChangeModsAmount}
                                 valueChanged={onChangeFeature}
                                 onEnter={focuser.next}/>
                         </div>

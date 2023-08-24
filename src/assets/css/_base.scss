@@ -224,3 +224,7 @@ button {
     position: relative;
 }
 
+
+[data-selector=select] {
+    box-sizing: border-box;
+}   

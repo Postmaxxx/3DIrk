@@ -322,7 +322,7 @@ const inputsProps = { //restrictions of inputs
         },
         mods : {
             min: 1,
-            max: 100
+            max: 100,
         }
     }
 }
@@ -538,7 +538,7 @@ const productEmpty: ISendProduct = {
     _id: '',
     name: {...empty},
     text: {...empty},
-    price: 0,
+    //price: 0,
     text_short:{...empty},
     fibers: [],
     mods: [],
