@@ -1,4 +1,4 @@
-import { allPaths, newsImageSizes } from "./data/consts"
+import { allPaths } from "./data/consts"
 import { foldersCleaner } from "./processors/fsTools"
 const https = require('https')
 const path = require('path')
@@ -12,7 +12,6 @@ require('dotenv').config({
 })
 
 console.log('ENV mode: ', pathToEnv);
-
 
 const userRoutes = require('./routes/user')
 const fibersRoutes = require('./routes/fibers')
@@ -77,7 +76,7 @@ connectToDb()
 
 const backendFolder = (path.resolve(__dirname, '..'))
 
-
+/*
 https
   .createServer(
     {
@@ -89,6 +88,6 @@ https
   .listen(PORT, function () {
     console.log(`Server has been successfully started on port ${PORT}...`)
   });
+*/
 
-
-export {}
+module.exports = app;
