@@ -26,7 +26,7 @@ router.post('/create',
             const files = req.files as IMulterFile[] || []  
             const fiber: IFiber = new Fiber({ name, text, proscons, short, params, images,  colors, active })
             
-            const basePath = `${allPaths.pathToImages}/${allPaths.pathToNews}/${fiber._id}`
+            const basePath = `${allPaths.pathToImages}/${allPaths.pathToFibers}/${fiber._id}`
             const {filesList} = await resizeAndSaveS3({
                 files,
                 clearDir: false,
@@ -106,7 +106,7 @@ router.put('/edit',
             const { name, text, short, params, proscons, colors, _id, active } = JSON.parse(req.body.data)
             const files = req.files as IMulterFile[] || []
 
-            const basePath = `${allPaths.pathToImages}/${allPaths.pathToNews}/${_id}`
+            const basePath = `${allPaths.pathToImages}/${allPaths.pathToFibers}/${_id}`
             const {filesList} = await resizeAndSaveS3({
                 files,
                 clearDir: true,

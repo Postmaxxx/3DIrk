@@ -112,7 +112,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
         setProduct(prev => {
             return { 
                 ...prev, 
-                mods: (modsRef.current as IModsFunctions).getMods().map(item => ({name: item.name, price: item.price})),
+                mods: (modsRef.current as IModsFunctions).getMods().map(item => ({name: item.name, weight: item.weight})),
                 files: addFilesRef.current?.getFiles() || [], 
                 fibers: (fiberPickerRef.current as IPickerFunctions).getSelected(),
                 active: selectorStatusRef.current?.getValue() === 'active' ? true : false,
@@ -133,7 +133,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
 
 
     useEffect(() => {
-        modsRef.current?.setMods(product.mods.map((item, i) => ({_id: String(i), name: item.name, price: item.price})))
+        modsRef.current?.setMods(product.mods.map((item, i) => ({_id: String(i), name: item.name, weight: item.weight})))
     }, [product.mods])
 
 
@@ -181,7 +181,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
         const allInputsPros = _mods.current.querySelectorAll('[data-selector="input"]') 
         
         allInputsPros?.forEach(input => {
-            if ((input as HTMLInputElement).name === 'price') {
+            if ((input as HTMLInputElement).name === 'weight') {
                 (input as HTMLInputElement).onblur = (e) => inputChecker({lang, type: 'numbers', el: e.target as HTMLInputElement});
             } else {
                 (input as HTMLInputElement).onblur = (e) => inputChecker({lang, min: inputsProps.product.mods.min, max: inputsProps.product.mods.max, el: e.target as HTMLInputElement});

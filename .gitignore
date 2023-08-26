@@ -19,7 +19,8 @@ backend/node_modules
 backend/.env
 backend/.env.development
 backend/.env.production
-
+backend/cert.pem
+backend/privkey.pem
 
 
 # misc
@@ -33,5 +34,8 @@ backend/.env.production
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+
+
 
 

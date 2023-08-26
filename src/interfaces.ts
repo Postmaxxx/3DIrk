@@ -190,7 +190,7 @@ export interface ISendProduct extends Omit<IProduct, 'images'> { //for sending t
 
 export interface IMod {
     name: TLangText
-    price: number
+    weight: number
 }
 
 export interface IProduct {

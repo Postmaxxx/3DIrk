@@ -606,7 +606,7 @@ router.get('/orders',
                 const cart = order.cart.map(cartItem => ({ //fill cart with the text using cache
                     productId: cartItem.productId,
                     productName: cache.products.data.find(el => el._id.toString() === cartItem.productId.toString())?.name || missedItem,
-                    fiberName: cache.fibers.data.find(el => el._id.toString() === cartItem.fiberId.toString())?.name || missedItem,
+                    fiberName: cache.fibers.data.find(el => el._id.toString() === cartItem.fiberId.toString())?.short.name || missedItem,
                     colorName: cache.colors.data.find(el => el._id.toString() === cartItem.colorId.toString())?.name || missedItem,
                     amount: cartItem.amount,
                     type: cartItem.type

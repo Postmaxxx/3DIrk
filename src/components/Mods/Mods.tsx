@@ -46,8 +46,8 @@ const Mods = forwardRef<IModsFunctions, IProps>(({lang, type="input", amountChan
             if (e.target.name === 'en' || e.target.name === 'ru') {
                 newMods[index].name[e.target.name as TLang] = e.target.value
             }
-            if (e.target.name === 'price' && !isNaN(+e.target.value)) {
-                newMods[index].price = +e.target.value
+            if (e.target.name === 'weight' && !isNaN(+e.target.value)) {
+                newMods[index].weight = +e.target.value
             }
             return newMods
         })
@@ -67,7 +67,7 @@ const Mods = forwardRef<IModsFunctions, IProps>(({lang, type="input", amountChan
 
     const onAddMod = (e: React.MouseEvent<HTMLButtonElement>) => {
         prevent(e)
-        setMods(prev => [...prev, {_id: '', name: {...empty}, price: 0}])
+        setMods(prev => [...prev, {_id: '', name: {...empty}, weight: 0}])
     }
     
     
@@ -130,14 +130,14 @@ const Mods = forwardRef<IModsFunctions, IProps>(({lang, type="input", amountChan
                                 }
                             </div>
                             <div className="block_input" data-selector="input-block">
-                                <label>{lang === 'en' ? 'Price' : 'Цена'}</label>
+                                <label>{lang === 'en' ? 'Weight' : 'Вес'}</label>
                                 <input 
                                     data-selector="input"
-                                    name="price" 
+                                    name="weight" 
                                     type="text" 
                                     onKeyDown={onKeyDown}
                                     onChange={(e) => onEditMod(e, i)} 
-                                    value={item.price}/>
+                                    value={item.weight}/>
                             </div>
                             <button className="button_blue color_reverse button_mod_delete" onClick={(e) => {onDeleteMod(e, i)}}>X</button>
                         </div>

@@ -37,7 +37,7 @@ interface IProps extends IPropsState, IPropsActions {}
 
 
 const ProductDetails: React.FC<IProps> = ({lang, product, colors,productLoad, modal, fibers, isAuth }): JSX.Element => {
-    const [selectedType, setSelectedType] = useState<IMod>({name: deepCopy(empty), price: -1})
+    const [selectedType, setSelectedType] = useState<IMod>({name: deepCopy(empty), weight: -1})
     const [selectedFiber, setSelectedFiber] = useState<IFiber>()
     const [selectedColor, setSelectedColor] = useState<IColor["_id"]>('')
     const selectorTypeRef = useRef<ISelectorFunctions>(null)
@@ -51,7 +51,7 @@ const ProductDetails: React.FC<IProps> = ({lang, product, colors,productLoad, mo
 
 
     const onChangeType = (item: IItem) => {
-        setSelectedType({name: item.name, price: +item.value})           
+        setSelectedType({name: item.name, weight: +item.value})           
     }
 
 
@@ -68,7 +68,7 @@ const ProductDetails: React.FC<IProps> = ({lang, product, colors,productLoad, mo
                 return fibers.fibersList.find(fiberItem => fiberItem._id === productFiber)
             }).map(item => ({_id: item?._id, short: {name: item?.short.name}})) as IFiber[]
 
-            selectorTypeRef.current?.setData(product.mods.map(mod => ({value: String(mod.price), name: mod.name})))
+            selectorTypeRef.current?.setData(product.mods.map(mod => ({value: String(mod.weight), name: mod.name})))
             selectorFiberRef.current?.setData(allFibers.map(fiber => ({value: fiber._id, name: fiber.short.name})))
         }
     },[fibers.load.status, colors.load.status, productLoad.status])
@@ -103,9 +103,9 @@ const ProductDetails: React.FC<IProps> = ({lang, product, colors,productLoad, mo
 
                 <div className="feature text_simple">
                     <span>{lang === 'en' ? 'Price' : 'Цена'}: </span>
-                    <span>{selectedType.price === -1 ? 
-                        lang === 'en' ? 'Select type' : 'Выберите версию' : 
-                        `${selectedType.price} ${lang === 'en' ? 'rub' : 'руб'}`}
+                    <span>{(selectedType.weight === -1 || !selectedFiber?.params?.priceGr) ? 
+                        lang === 'en' ? 'Select type and fiber' : 'Выберите версию и материал' : 
+                        `${selectedType.weight * +selectedFiber.params.priceGr} ${lang === 'en' ? 'rub' : 'руб'}`}
                     </span>
                 </div>
 

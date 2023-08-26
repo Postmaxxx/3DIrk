@@ -140,7 +140,7 @@ router.post('/product', //create
             const product: IProduct = new Product({ price: Number(price), name, text, text_short, fibers, mods, category, active })
             
 
-            const basePath = `${allPaths.pathToImages}/${allPaths.pathToNews}/${product._id}`
+            const basePath = `${allPaths.pathToImages}/${allPaths.pathToProducts}/${product._id}`
             const {filesList} = await resizeAndSaveS3({
                 files,
                 clearDir: false,
@@ -183,7 +183,7 @@ router.put('/product', //create
             const files = req.files as IMulterFile[] || undefined
             
 
-            const basePath = `${allPaths.pathToImages}/${allPaths.pathToNews}/${_id}`
+            const basePath = `${allPaths.pathToImages}/${allPaths.pathToProducts}/${_id}`
             const {filesList} = await resizeAndSaveS3({
                 files,
                 clearDir: true,
