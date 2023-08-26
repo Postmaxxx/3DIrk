@@ -94,6 +94,7 @@ export const sendFiber = (fiber: ISendFiber) => {
                 },
                 body: sendForm
             })
+
             clearTimeout(fetchTimeout)
             if (!response.ok) {
                 const result: IErrRes = await response.json() //message, errors
@@ -107,7 +108,7 @@ export const sendFiber = (fiber: ISendFiber) => {
                 dispatch,
                 setter: setSendFibers,
                 controller,
-                comp: {en: 'Error while fiber creating', ru: 'Ошибка создания каталога'}
+                comp: {en: 'Error while fiber creating', ru: 'Ошибка создания материала'}
             })          
         }
     }

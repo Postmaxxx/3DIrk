@@ -114,7 +114,7 @@ export const sendColor = (color: ISendColor) => {
                 dispatch,
                 setter: setSendColors,
                 controller,
-                comp: {en: 'Error loading saving color to db', ru: 'Ошибка сохранения цвета в бд'}
+                comp: {en: 'Error saving color to db', ru: 'Ошибка сохранения цвета в бд'}
             })
         }
     }

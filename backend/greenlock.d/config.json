@@ -16,16 +16,9 @@
   },
   "sites": [
     {
-      "subject": "23.21.76.187",
+      "subject": "devback.net",
       "altnames": [
-        "23.21.76.187"
-      ],
-      "renewAt": 1
-    },
-    {
-      "subject": "127.0.0.1",
-      "altnames": [
-        "127.0.0.1"
+        "devback.net"
       ],
       "renewAt": 1
     }

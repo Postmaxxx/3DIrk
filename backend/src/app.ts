@@ -38,6 +38,7 @@ app.use(express.json({ extended: true, }));
 app.use(cors({ 
     origin: "*", 
     credentials: true,
+    optionSuccessStatus:200,
     methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH']
 }));
 
@@ -76,11 +77,11 @@ connectToDb()
 
 const backendFolder = (path.resolve(__dirname, '..'))
 
-/*
+
 https
   .createServer(
     {
-      key: fse.readFileSync(`${backendFolder}/key.pem`),
+      key: fse.readFileSync(`${backendFolder}/privkey.pem`),
       cert: fse.readFileSync(`${backendFolder}/cert.pem`),
     },
     app
@@ -88,6 +89,7 @@ https
   .listen(PORT, function () {
     console.log(`Server has been successfully started on port ${PORT}...`)
   });
-*/
 
-module.exports = app;
+
+//module.exports = app;
+export {}

@@ -25,17 +25,17 @@ export const fibersProperties = [
             en: 'MPa',
             ru: 'Мпа'
         },
-        type: '10'
+        type: 'string'
     },
     {
         _id: 'stiffnes',
         name: {
             en: 'Stiffnes',
-            ru: 'SПрочность'
+            ru: 'Жесткость'
         },
         tip: {
-            en: 'The maximum stress that a material can withstand without breaking.',
-            ru: 'Максимальная нагрузка, которую материал может выдержать без разрушения.'
+            en: "Stiffness is the measure of a material or structure's resistance to deformation when subjected to external forces.",
+            ru: 'Жёсткость - это мера сопротивления материала или структуры деформации при воздействии внешних сил.'
         },
         unit: {
             en: ' / 10',
@@ -47,11 +47,11 @@ export const fibersProperties = [
         _id: 'durability',
         name: {
             en: 'Durability',
-            ru: 'DПрочность'
+            ru: 'Долговечность'
         },
         tip: {
-            en: 'The maximum stress that a material can withstand without breaking.',
-            ru: 'Максимальная нагрузка, которую материал может выдержать без разрушения.'
+            en: "Durability is the ability of a material or object to withstand wear, pressure, or damage over an extended period of time.",
+            ru: 'Прочность - это способность материала или объекта выдерживать износ, давление или повреждения в течение продолжительного периода времени.'
         },
         unit: {
             en: ' / 10',
@@ -63,11 +63,11 @@ export const fibersProperties = [
         _id: 'resistantImpact',
         name: {
             en: 'Impact resistant',
-            ru: 'Прочность'
+            ru: 'Ударостойкость'
         },
         tip: {
-            en: 'The maximum stress that a material can withstand without breaking.',
-            ru: 'Максимальная нагрузка, которую материал может выдержать без разрушения.'
+            en: 'Impact resistant refers to the quality of a material or object to withstand sudden shocks or collisions without breaking or sustaining significant damage.',
+            ru: 'Устойчивость к удару означает способность материала или объекта выдерживать внезапные удары или столкновения без разрушения или значительных повреждений.'
         },
         unit: {
             en: ' / 10',
@@ -79,11 +79,11 @@ export const fibersProperties = [
         _id: 'minTemp',
         name: {
             en: 'Min usage temp',
-            ru: 'mПрочность'
+            ru: 'Мин. Т использования'
         },
         tip: {
-            en: 'The maximum stress that a material can withstand without breaking.',
-            ru: 'Максимальная нагрузка, которую материал может выдержать без разрушения.'
+            en: 'Minimum temperature at which the material can be used.',
+            ru: 'Минимальная температура, при которой материал может быть использован.'
         },
         unit: {
             en: '°C',
@@ -95,11 +95,11 @@ export const fibersProperties = [
         _id: 'maxTemp',
         name: {
             en: 'Max usage temp',
-            ru: 'Прочность'
+            ru: 'Макс. Т использования'
         },
         tip: {
-            en: 'The maximum stress that a material can withstand without breaking.',
-            ru: 'Максимальная нагрузка, которую материал может выдержать без разрушения.'
+            en: 'Maximum temperature at which the material can be used.',
+            ru: 'Максимальная температура, при которой материал может быть использован.'
         },
         unit: {
             en: '°C',
@@ -111,11 +111,11 @@ export const fibersProperties = [
         _id: 'thermalExpansion',
         name: {
             en: 'Thermal expansion',
-            ru: 'svПрочность'
+            ru: 't расширение'
         },
         tip: {
-            en: 'The maximum stress that a material can withstand without breaking.',
-            ru: 'Максимальная нагрузка, которую материал может выдержать без разрушения.'
+            en: 'Thermal expansion refers to the tendency of a material to increase in size as its temperature rises, and to contract as its temperature decreases.',
+            ru: 'Тепловое расширение - это свойство материала увеличиваться в размерах при повышении температуры и сжиматься при её снижении.'
         },
         unit: {
             en: 'µm/m-°C',
@@ -128,11 +128,11 @@ export const fibersProperties = [
         _id: 'density',
         name: {
             en: 'Density',
-            ru: 'Прочность'
+            ru: 'Плотность'
         },
         tip: {
-            en: 'The maximum stress that a material can withstand without breaking.',
-            ru: 'Максимальная нагрузка, которую материал может выдержать без разрушения.'
+            en: 'Density is a measure of mass per unit volume of a substance.',
+            ru: 'Плотность - это мера массы в единицу объема вещества.'
         },
         unit: {
             en: 'g/cm3',
@@ -145,11 +145,11 @@ export const fibersProperties = [
         _id: 'flexible',
         name: {
             en: 'Flexible',
-            ru: 'Прочность'
+            ru: 'Гибкость'
         },
         tip: {
-            en: 'The maximum stress that a material can withstand without breaking.',
-            ru: 'Максимальная нагрузка, которую материал может выдержать без разрушения.'
+            en: 'Flexible refers to the quality of being able to bend, stretch, or adapt easily without breaking.',
+            ru: 'Гибкость означает способность легко сгибаться, растягиваться или приспосабливаться под необходимую форму без поломки.'
         },
         unit: {
             en: '',
@@ -161,11 +161,11 @@ export const fibersProperties = [
         _id: 'elastic',
         name: {
             en: 'Elastic',
-            ru: 'Прочность'
+            ru: 'Эластичность'
         },
         tip: {
-            en: 'The maximum stress that a material can withstand without breaking.',
-            ru: 'Максимальная нагрузка, которую материал может выдержать без разрушения.'
+            en: 'Elastic describes the ability of a material to return to its original shape and size after being stretched or compressed.',
+            ru: 'Эластичность описывает способность материала возвращаться к своей исходной форме и размерам после растяжения или сжатия.'
         },
         unit: {
             en: '',
@@ -178,11 +178,11 @@ export const fibersProperties = [
         _id: 'soft',
         name: {
             en: 'Soft',
-            ru: 'Прочность'
+            ru: 'Мягкость'
         },
         tip: {
-            en: 'The maximum stress that a material can withstand without breaking.',
-            ru: 'Максимальная нагрузка, которую материал может выдержать без разрушения.'
+            en: 'Soft refers to a texture or quality that is smooth, yielding, and not hard or rigid to the touch.',
+            ru: 'Мягкость описывает текстуру или качество, которое гладкое, уступчивое и не жесткое на ощупь.'
         },
         unit: {
             en: '',
@@ -195,11 +195,11 @@ export const fibersProperties = [
         _id: 'composite',
         name: {
             en: 'Composite',
-            ru: 'Прочность'
+            ru: 'Комбинирование'
         },
         tip: {
-            en: 'The maximum stress that a material can withstand without breaking.',
-            ru: 'Максимальная нагрузка, которую материал может выдержать без разрушения.'
+            en: 'The ability to combine the material with various additives to obtain additional properties.',
+            ru: 'Возможность комбинировать материал с различными добавками для получения дополнительных свойств.'
         },
         unit: {
             en: '',
@@ -212,11 +212,11 @@ export const fibersProperties = [
         _id: 'resistantUV',
         name: {
             en: 'UV resistant',
-            ru: 'Прочность'
+            ru: 'Стойкость к УФ'
         },
         tip: {
-            en: 'The maximum stress that a material can withstand without breaking.',
-            ru: 'Максимальная нагрузка, которую материал может выдержать без разрушения.'
+            en: 'UV resistant indicates the ability of a material to withstand the damaging effects of ultraviolet (UV) radiation from the sun or other sources.',
+            ru: 'Устойчивость к УФ-излучению указывает на способность материала выдерживать разрушительное воздействие ультрафиолетового (УФ) излучения от солнца или других источников.'
         },
         unit: {
             en: '',
@@ -229,11 +229,11 @@ export const fibersProperties = [
         _id: 'resistantWater',
         name: {
             en: 'Water resistant',
-            ru: 'Прочность'
+            ru: 'Водостойкость'
         },
         tip: {
-            en: 'The maximum stress that a material can withstand without breaking.',
-            ru: 'Максимальная нагрузка, которую материал может выдержать без разрушения.'
+            en: 'Water resistant refers to the capability of a material or object to resist the penetration or absorption of water.',
+            ru: 'Водостойкость означает способность материала или объекта сопротивляться проникновению или поглощению воды.'
         },
         unit: {
             en: '',
@@ -246,11 +246,11 @@ export const fibersProperties = [
         _id: 'dissolvable',
         name: {
             en: 'Dissolvable',
-            ru: 'Прочность'
+            ru: 'Растворимость'
         },
         tip: {
-            en: 'The maximum stress that a material can withstand without breaking.',
-            ru: 'Максимальная нагрузка, которую материал может выдержать без разрушения.'
+            en: 'The ability to use household solvents to work with the material',
+            ru: 'Возможность использовать для работы с материалом бытовые растворители'
         },
         unit: {
             en: '',
@@ -266,8 +266,8 @@ export const fibersProperties = [
             ru: 'Прочность'
         },
         tip: {
-            en: 'The maximum stress that a material can withstand without breaking.',
-            ru: 'Максимальная нагрузка, которую материал может выдержать без разрушения.'
+            en: 'Heat resistant describes the ability of a material to withstand high temperatures without melting, deforming, or degrading.',
+            ru: 'Теплостойкость - способность материала выдерживать высокие температуры без плавления, деформации или разрушения.'
         },
         unit: {
             en: '',
@@ -280,11 +280,11 @@ export const fibersProperties = [
         _id: 'resistantChemically',
         name: {
             en: 'Chemically resistant',
-            ru: 'Прочность'
+            ru: 'Хим. устойчивость'
         },
         tip: {
-            en: 'The maximum stress that a material can withstand without breaking.',
-            ru: 'Максимальная нагрузка, которую материал может выдержать без разрушения.'
+            en: 'Chemically resistant indicates the ability of a material to withstand the damaging effects of various chemicals or corrosive substances without undergoing significant degradation or reaction.',
+            ru: 'Устойчивость к химическим воздействиям указывает на способность материала выдерживать разрушительное воздействие различных химических веществ или коррозионных веществ без существенного разрушения или реакции.'
         },
         unit: {
             en: '',
@@ -297,11 +297,11 @@ export const fibersProperties = [
         _id: 'resistantFatigue',
         name: {
             en: 'Fatigue resistant',
-            ru: 'Прочность'
+            ru: 'Усталостостойкость'
         },
         tip: {
-            en: 'The maximum stress that a material can withstand without breaking.',
-            ru: 'Максимальная нагрузка, которую материал может выдержать без разрушения.'
+            en: 'Fatigue resistant refers to the ability of a material to withstand repeated loading and unloading cycles without experiencing failure or damage.',
+            ru: 'Устойчивость к усталости обозначает способность материала выдерживать повторяющиеся циклы нагрузки и разгрузки без отказа или повреждения.'
         },
         unit: {
             en: '',
@@ -314,11 +314,11 @@ export const fibersProperties = [
         _id: 'cutting',
         name: {
             en: 'Cutting',
-            ru: 'Прочность'
+            ru: 'Резка'
         },
         tip: {
-            en: 'The maximum stress that a material can withstand without breaking.',
-            ru: 'Максимальная нагрузка, которую материал может выдержать без разрушения.'
+            en: 'The ability to process the material by cutting.',
+            ru: 'Возможность обрабатывать материал с помощью резки.'
         },
         unit: {
             en: '',
@@ -331,11 +331,11 @@ export const fibersProperties = [
         _id: 'grinding',
         name: {
             en: 'Grinding',
-            ru: 'Прочность'
+            ru: 'Шлифовка'
         },
         tip: {
-            en: 'The maximum stress that a material can withstand without breaking.',
-            ru: 'Максимальная нагрузка, которую материал может выдержать без разрушения.'
+            en: 'The ability to process the material by Grinding.',
+            ru: 'Возможность обрабатывать материал с помощью шлифовки.'
         },
         unit: {
             en: '',
@@ -351,12 +351,12 @@ export const fibersProperties = [
             ru: 'Цена'
         },
         tip: {
-            en: 'The maximum stress that a material can withstand without breaking.',
-            ru: 'Максимальная нагрузка, которую материал может выдержать без разрушения.'
+            en: 'Relative cost of the material.',
+            ru: 'Относительная стоимость материала.'
         },
         unit: {
-            en: 'rub/gr',
-            ru: 'руб/гр'
+            en: '',
+            ru: ''
         },
         type: '5'
     },
@@ -367,8 +367,8 @@ export const fibersProperties = [
             ru: 'Цена за грамм'
         },
         tip: {
-            en: 'Цена за грамм',
-            ru: 'Цена за грам'
+            en: 'Cost of the one gr. of the material.',
+            ru: 'Стоимость одного грамма материала.'
         },
         unit: {
             en: 'rub/gr',

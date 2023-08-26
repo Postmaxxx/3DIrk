@@ -284,11 +284,11 @@ const inputsProps = { //restrictions of inputs
         },
         nameFull: {
             min: 2,
-            max: 30
+            max: 40
         },
         textShort: {
             min: 10,
-            max: 100
+            max: 200
         },
         textFull: {
             min: 100,
@@ -296,7 +296,7 @@ const inputsProps = { //restrictions of inputs
         },
         proscons : {
             min: 3,
-            max: 200
+            max: 250
         }
     },
     date: {
