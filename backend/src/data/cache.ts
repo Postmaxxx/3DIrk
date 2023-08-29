@@ -77,7 +77,9 @@ const loadNews = async () => {
         try {
             const newsList: INews[] = await News.find()
             allNews.data = newsList
-                .sort((a,b) => +(new Date(a.date) > new Date(b.date)))
+                .sort((a,b) => {
+                    return new Date(a.date) > new Date(b.date) ? -1 : 1
+                })
                 .map(news => ({
                     _id: news._id,
                     header: news.header,
