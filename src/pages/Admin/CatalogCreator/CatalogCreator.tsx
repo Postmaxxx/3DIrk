@@ -36,8 +36,8 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, modal, catalog}): JSX.El
     const _catalog = useRef<HTMLDivElement>(null)
     const focuser = useMemo(() => focusMover(), [lang])
     
-    const closeModal = useCallback(() => {
-        if (modal?.getName() === 'catalogSend') {
+    const closeModal = useCallback(async () => {
+        if (await modal?.getName() === 'catalogSend') {
             if (catalog.send.status === 'success') {
                 setState.catalog.loadCatalog()
                 errChecker.clear()        

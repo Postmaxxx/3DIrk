@@ -77,7 +77,6 @@ const reducerUser = (state:IUserState = initialUserState, action: IAction<any>):
                 ...state, 
                 cart: {
                     ...state.cart,
-                    shouldUpdate: true,
                     items:  newItems
                 }
             } 
@@ -95,7 +94,6 @@ const reducerUser = (state:IUserState = initialUserState, action: IAction<any>):
                 ...state, 
                 cart: {
                     ...state.cart,
-                    shouldUpdate: true,
                     items:  changedItems
                 }
                 
@@ -107,7 +105,6 @@ const reducerUser = (state:IUserState = initialUserState, action: IAction<any>):
                 ...state, 
                 cart: {
                     ...state.cart,
-                    shouldUpdate: true,
                     items:  state.cart.items.filter(item => itemId !== item)
                 }
             } 

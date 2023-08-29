@@ -65,25 +65,26 @@ body {
     
     --inputs-bg: #EBEBEB;
 
-    --error: rgb(209, 16, 16);
+    --error: rgb(209, 4, 4);
 
-    --svg_minus: rgb(131, 131, 131);
+    --svg_minus: rgb(235, 71, 71);
     --svg_plus: rgb(66, 173, 73);
+    --svg_plus-minus: rgb(116, 116, 116);
     --svg_pro: rgb(66, 173, 73);
     --svg_con: rgb(255, 10, 0);
     --svg_question: rgb(90, 90, 90);
     --border_compare: rgb(163, 163, 163);
     --rating_bg: rgb(196, 196, 196);
-    --rating_border_inner: rgb(163, 163, 163); //rgb(75, 75, 75);
+    --rating_border_inner: rgb(37, 37, 37); 
     --rating_value_blue: rgb(86, 88, 194);
     --rating_value_green: rgb(64, 170, 54);
     --rating_value_red: rgb(228, 43, 43);
     --rating_value_lilac: rgb(167, 90, 179);
-    --compare_selected: rgb(190, 190, 190); 
+    --compare_selected: rgb(207, 207, 207); 
     --compare_mark: rgb(46, 46, 46);
     --rating_money: rgb(168, 168, 136);
 
-    --cart_informer: #d6e041;
+    --cart_informer: #FFF;
 
     --scroll_bg: rgb(235, 235, 235);
     --scroll_handle: #818181;
@@ -113,10 +114,11 @@ body {
     
     --inputs-bg: #d6e3e6;
 
-    --error: rgb(252, 71, 71);
+    --error: rgb(252, 221, 66);
 
-    --svg_minus: rgb(163, 163, 163);
+    --svg_minus: rgb(235, 71, 71);
     --svg_plus: rgb(66, 173, 73);
+    --svg_plus-minus: rgb(163, 163, 163);
     --svg_pro: rgb(66, 173, 73);
     --svg_con: rgb(255, 10, 0);
     --svg_question: rgb(163, 163, 163);
@@ -131,7 +133,7 @@ body {
     --compare_mark: rgb(218, 218, 218);
     --rating_money: rgb(185, 185, 141);
 
-    --cart_informer: #d6e041;
+    --cart_informer: #222;
 
     --scroll_bg: rgb(235, 235, 235);
     --scroll_handle: #818181;

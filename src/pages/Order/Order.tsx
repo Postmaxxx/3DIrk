@@ -44,18 +44,18 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsLoad, fibersLoad, 
 
 
 
-    const closeModalMessage = useCallback(() => {        
-        if (modal?.getName() === 'sendOrder') {
+    const closeModalMessage = useCallback(async () => {        
+        if (await modal?.getName() === 'sendOrder') {
             if (sendOrder.status === 'success') {
                 addFilesRef.current?.clearAttachedFiles()
                 setState.user.setCart({items: []})
             }
             setState.user.setSendOrder(deepCopy(resetFetch))
         }
-        if (modal?.getName() === 'cartFixer') {
+        if (await modal?.getName() === 'cartFixer') {
             setState.user.setSendOrder(deepCopy(resetFetch))
         }
-        if (modal?.getName() === 'errorsInForm') {
+        if (await modal?.getName() === 'errorsInForm') {
         }
         modal?.closeCurrent()
 	}, [sendOrder.status])

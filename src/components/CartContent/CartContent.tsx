@@ -3,7 +3,7 @@ import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import './cart-content.scss'
 import { ICartItem, ICartState, IColor, IColorsState, IFibersState, IFullState, IProduct, TLang } from "../../interfaces";
-import { useCallback, useMemo, Fragment } from 'react'
+import { useCallback, useMemo, Fragment, useEffect } from 'react'
 import { NavLink } from "react-router-dom";
 import Delete from "../Delete/Delete";
 import AmountChanger from "../AmountChanger/AmountChanger";
@@ -13,6 +13,7 @@ import ErrorMock from "../ErrorFetch/ErrorFetch";
 import ImageModalNew from "../ImageModal/ImageModalNew";
 import { IModalFunctions } from "../Modal/ModalNew";
 import PicWithPreloader from "../../../src/assets/js/PicWithPreloader";
+//import { debounce } from "../../../src/assets/js/processors";
 
 interface IPropsState {
     lang: TLang,
@@ -35,15 +36,25 @@ interface IProps extends IPropsState, IPropsActions {}
 
 const CartContent: React.FC<IProps> = ({lang, cart, colorsState, modal, fibersState, setState}): JSX.Element => {
 
-
     const deleteItem = useCallback((item: ICartItem) => {
         setState.user.removeItem(item)
     }, [])
 
 
+    //const debouncedCartUpdate = debounce((newItem: ICartItem) => setState.user.updateCartItemAmount(newItem), 1000)
+
+
     const onAmountChange = useCallback((item: ICartItem, amount: number) => {
         setState.user.changeItem({...item, amount})
+        //debouncedCartUpdate({...item, amount})
     }, [])
+
+
+    /*useEffect(() => {
+        return () => {
+            setState.user.sendCart()
+        }
+    }, [])*/
 
 
     const onImageClick = (e: React.MouseEvent, product: IProduct) => {

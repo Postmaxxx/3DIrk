@@ -344,7 +344,6 @@ export const sendCart = () => {
                 const result: IErrRes = await response.json() //message, errors
                 return dispatch(setSendCart(resErrorFiller(result)))
             }
-            dispatch(setCart({shouldUpdate: false}))
             const result: IMsgRes = await response.json() //message
             dispatch(setSendCart({...successFetch, message: result.message}))
         } catch (e) {   
@@ -360,3 +359,49 @@ export const sendCart = () => {
 }
 
 
+
+
+
+
+
+export const updateCartItemAmount = (newItem: ICartItem) => {
+    return async function(dispatch: IDispatch, getState: () => IFullState) {
+        const controller = new AbortController()
+        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.user.updateCartItemAmount.timeout) //set time limit for fetch
+        dispatch(setSendCart({...fetchingFetch, controller}))       
+        
+        const itemToSend = {
+            productId: newItem.product._id,
+            colorId: newItem.color,
+            fiberId: newItem.fiber,
+            type: newItem.type,
+            amount: newItem.amount
+        }
+        try {
+            const response: Response = await fetch(APIList.user.updateCart.url, {
+                signal: controller.signal,
+                method: APIList.user.updateCartItemAmount.method,
+                headers: {
+                    "Content-Type": 'application/json',
+                    'Authorization': `Bearer ${getState().user.token}`
+                },
+                body: JSON.stringify({updatedItem: itemToSend})
+            })
+            clearTimeout(fetchTimeout)
+            if (response.status !== 200) {
+                const result: IErrRes = await response.json() //message, errors
+                return dispatch(setSendCart(resErrorFiller(result)))
+            }
+            const result: IMsgRes = await response.json() //message
+            dispatch(setSendCart({...successFetch, message: result.message}))
+        } catch (e) {   
+            fetchError({ 
+                e,
+                dispatch,
+                setter: setSendCart,
+                controller,
+                comp: {en: 'updating cart item', ru: 'обновления товара корзины'}
+            })            
+        }
+    }
+}

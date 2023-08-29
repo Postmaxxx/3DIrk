@@ -4,7 +4,7 @@ import { IContent } from "../models/Content"
 import { IFiber } from "../models/Fiber"
 import { INews } from "../models/News"
 import { IProduct } from "../models/Product"
-import { imageSizes } from "./consts"
+//import { imageSizes } from "./consts"
 const Product = require("../models/Product")
 const Catalog = require("../models/Catalog")
 const News = require("../models/News")
@@ -77,7 +77,7 @@ const loadNews = async () => {
         try {
             const newsList: INews[] = await News.find()
             allNews.data = newsList
-                .sort((a,b) => +(a.date > b.date))
+                .sort((a,b) => +(new Date(a.date) > new Date(b.date)))
                 .map(news => ({
                     _id: news._id,
                     header: news.header,

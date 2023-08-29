@@ -166,6 +166,10 @@
                 bottom: 0;
                 transform: translateY(-100%);
             }
+
+            & .icon_delete {
+                //fill: var(--bg);
+            }
         }
 
 

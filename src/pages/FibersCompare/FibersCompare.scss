@@ -419,9 +419,8 @@
 
 
 
-                .svg-icon {
+                .svg {
                     width: 17px;
-                    height: auto;
 
                     @include respond-to(sm) {
                         width: 14px;

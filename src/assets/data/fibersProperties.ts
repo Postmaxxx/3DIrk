@@ -79,7 +79,7 @@ export const fibersProperties = [
         _id: 'minTemp',
         name: {
             en: 'Min usage temp',
-            ru: 'Мин. Т использования'
+            ru: 'Мин. t использования'
         },
         tip: {
             en: 'Minimum temperature at which the material can be used.',
@@ -95,7 +95,7 @@ export const fibersProperties = [
         _id: 'maxTemp',
         name: {
             en: 'Max usage temp',
-            ru: 'Макс. Т использования'
+            ru: 'Макс. t использования'
         },
         tip: {
             en: 'Maximum temperature at which the material can be used.',
@@ -111,7 +111,7 @@ export const fibersProperties = [
         _id: 'thermalExpansion',
         name: {
             en: 'Thermal expansion',
-            ru: 't расширение'
+            ru: 'Темп. расширение'
         },
         tip: {
             en: 'Thermal expansion refers to the tendency of a material to increase in size as its temperature rises, and to contract as its temperature decreases.',
@@ -347,8 +347,8 @@ export const fibersProperties = [
     {
         _id: 'price',
         name: {
-            en: 'Price',
-            ru: 'Цена'
+            en: 'Relative price',
+            ru: 'Относительная цена'
         },
         tip: {
             en: 'Relative cost of the material.',

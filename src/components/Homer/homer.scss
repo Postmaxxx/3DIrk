@@ -18,11 +18,6 @@
     opacity: 0.4;
     cursor: pointer;
 
-    & > svg {
-        fill: var(--text_reverse);
-        transition: fill $transition_theme;
-    }
-
     &.show {
         transform: translateX(10%) rotate(180deg);
 

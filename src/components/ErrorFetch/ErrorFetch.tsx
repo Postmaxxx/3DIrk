@@ -8,7 +8,7 @@ interface IProps {
 
 const ErrorFetch = ({fetchData, lang}: IProps) => {
     return (
-        <p>{fetchData.message[lang]}</p>
+        <p className="message_error">{fetchData.message[lang]}</p>
     )
 }
 

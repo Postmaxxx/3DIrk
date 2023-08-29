@@ -5,7 +5,6 @@ import { TLang, IFullState, IFibersState, IFiber } from "../../interfaces";
 import { useEffect, useState, Fragment, useMemo, useCallback } from 'react'; 
 import Preloader from '../../components/Preloaders/Preloader';
 import { NavLink } from 'react-router-dom';
-import SvgInserter from '../../components/SvgInserter/SvgInserter';
 import RatingLine from '../../components/RatingLine/RatingLine';
 import RatingMoney from '../../components/RatingMoney/RatingMoney';
 import { fibersProperties } from '../../assets/data/fibersProperties';
@@ -13,6 +12,7 @@ import { allActions } from "../../redux/actions/all";
 import { strengthMax, strengthMin, tipsTransition } from '../../assets/js/consts';
 import ErrorFetch from '../../components/ErrorFetch/ErrorFetch';
 import PicWithPreloader from '../../../src/assets/js/PicWithPreloader';
+import svgs from '../../../src/components/additional/svgs';
 
 
 interface IPropsState {
@@ -157,11 +157,11 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
                                         || property._id === "resistantWater"
                                         || property._id === "dissolvable"
                                         || property._id === "resistantHeat"
-                                        || property._id === "resistantChemically"
+                                        || property._id === "resistantChemically"   
                                         || property._id === "resistantFatigue"
                                         || property._id === "cutting"
                                         || property._id === "grinding"
-                                        ) && <SvgInserter type={fiber.params[property._id] === 3 ? 'plus' : fiber.params[property._id] === 1 ? 'minus' : 'question'}/>}
+                                        ) && (fiber.params[property._id] === 3 ? svgs().iconPlus : fiber.params[property._id] === 1 ? svgs().iconMinus : svgs().iconPlusMinus)}
                                         {property._id === "price" && <RatingMoney value={fiber.params.price} max={5} text={``} measurment={''} fullFormat={false}/>}
                                     </div>
                                 }

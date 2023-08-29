@@ -4,13 +4,7 @@
 
 .svg-icon {
     transition: fill $transition-theme;
-    &.minus {
-        fill: var(--svg_minus); 
-    }
-    
-    &.plus {
-        fill: var(--svg_plus); 
-    }
+
     
     &.pro {
         fill: var(--svg_pro); 
@@ -20,8 +14,5 @@
         fill: var(--svg_con); 
     }
 
-    &.question {
-        fill: var(--svg_question); 
-    }
 }
 

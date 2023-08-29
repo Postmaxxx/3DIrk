@@ -104,7 +104,6 @@ export const loadOneNews = (_id: string) => {
                 },
             })
             if (!response.ok) {
-                console.log('2');
                 const result: IErrRes = await response.json()
                 return dispatch(setLoadOneNews(resErrorFiller(result)))
             }

@@ -10,6 +10,7 @@ import Preloader from '../../components/Preloaders/Preloader';
 import { IModalFunctions } from '../../../src/components/Modal/ModalNew';
 import CarouselMaxAdaptive from '../../../src/components/CarouselMax/CarouselMaxAdaptive';
 
+
 interface IPropsState {
     lang: TLang
     contentState: IContentState

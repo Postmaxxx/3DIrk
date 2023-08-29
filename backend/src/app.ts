@@ -1,9 +1,11 @@
 import { allPaths } from "./data/consts"
 import { foldersCleaner } from "./processors/fsTools"
+const express = require('express')
+const mongoose = require("mongoose")
 const https = require('https')
 const path = require('path')
 const fse = require('fs-extra')
-const mode = process.env.NODE_ENV || 'undefined';
+const mode = process.env.NODE_ENV.trim() || 'undefined';
 
 
 const pathToEnv = `.env.${mode}`.trim()
@@ -19,29 +21,23 @@ const newsRoutes = require('./routes/news')
 const colorsRoutes = require('./routes/colors')
 const catalogRoutes = require('./routes/catalog')
 const contentRoutes = require('./routes/content')
-//const filesRoutes = require('./routes/files')
-//const ordersRoutes = require('./routes/orders')
-const express = require('express')
-const mongoose = require("mongoose")
 const cors = require('cors')
 const app = express()
-//var bodyParser = require('body-parser')
 
 
 
 foldersCleaner([allPaths.pathToTemp])
 
 app.use(express.json({ extended: true, }));
-//app.use(bodyParser.json({strict: false}))
+
 
 // cors
 app.use(cors({ 
     origin: "*", 
     credentials: true,
-    optionSuccessStatus:200,
+    optionSuccessStatus: 200,
     methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH']
 }));
-
 
 
 
@@ -73,23 +69,26 @@ const connectToDb = async () => {
 
 connectToDb()
 
-//app.listen(PORT, () => console.log(`Server has been successfully started on port ${PORT}...`))
-
 const backendFolder = (path.resolve(__dirname, '..'))
 
 
-https
-  .createServer(
-    {
-      key: fse.readFileSync(`${backendFolder}/privkey.pem`),
-      cert: fse.readFileSync(`${backendFolder}/cert.pem`),
-    },
-    app
-  )
-  .listen(PORT, function () {
-    console.log(`Server has been successfully started on port ${PORT}...`)
-  });
+
+if (process.env.NODE_ENV === 'development') {
+	app.listen(PORT, () => console.log(`Server has been successfully started on port ${PORT}...`))
+} else {
+	https
+	  .createServer(
+		  {
+			  key: fse.readFileSync(`${backendFolder}/privkey.pem`),
+			  cert: fse.readFileSync(`${backendFolder}/cert.pem`),
+		  },
+		  app
+	  )
+	  .listen(PORT, function () {
+			console.log(`Server has been successfully started on port ${PORT}...`)
+	  });
+}	
 
 
-//module.exports = app;
+module.exports = app;
 export {}

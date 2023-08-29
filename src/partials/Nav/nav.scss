@@ -274,6 +274,7 @@ $gap_to_text: 5px;
                     font-size: .8rem;
                     bottom: 45%;
                     color: var(--cart_informer);
+                    font-weight: 700;
 
                     @include respond-to(md) {
                         font-size: 0.7rem;

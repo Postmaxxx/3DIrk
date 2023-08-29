@@ -40,7 +40,6 @@ export const loadCatalog = () => {
                 return dispatch(setLoadCatalog(resErrorFiller(result)))
             }
             const result = await response.json() //message
-            console.log(result.allCatalog);
             dispatch(setCatalog(result.allCatalog || []))           
             dispatch(setLoadCatalog({...successFetch}))
             return

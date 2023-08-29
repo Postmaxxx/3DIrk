@@ -335,7 +335,6 @@ export interface ICartState {
     load: IFetch
     send: IFetch
     items: ICartItem[]
-    shouldUpdate: boolean //if true it means client updated cart and it must be sent to BE
     fixed: TLangText[] //errors list of cart errors from server
 }
 

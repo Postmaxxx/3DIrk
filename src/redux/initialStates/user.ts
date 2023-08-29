@@ -14,7 +14,6 @@ const initialUserState = {
         load: resetFetch,
         send: resetFetch,
         items: [],
-        shouldUpdate: false,
         fixed: []
     }
     //orders: []

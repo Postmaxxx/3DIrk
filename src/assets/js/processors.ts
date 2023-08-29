@@ -242,10 +242,18 @@ const checkIfPhone = (value: string) => {
     return /^\+?[0-9]*$/.test(value)
 }
 
-
+const debounce = (cb: Function, delay = 1000) => {
+    let timeout: ReturnType<typeof setTimeout>
+    return (...args: any[]) => {
+        clearTimeout(timeout)
+        timeout = setTimeout(() => {
+            cb(...args)
+        }, delay)
+    }
+}
 
 
 
 export { ratingNumberToText, errorsChecker, prevent, filenameChanger,  modalMessageFromFetch, modalMessageCreator, 
-    focusMover, deepCopy, resErrorFiller, checkIfNumbers, checkIfEmail, checkIfPhone, fetchError, filesDownloader
-    }
+    focusMover, deepCopy, resErrorFiller, checkIfNumbers, checkIfEmail, checkIfPhone, fetchError, filesDownloader,
+    debounce}

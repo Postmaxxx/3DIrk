@@ -64,6 +64,7 @@
             margin-right: 20px;
             width: 45px;
             aspect-ratio: 1;
+            //margin-top: -5px;
 
             @include respond-to(sm) {
                 width: 40px;
@@ -72,6 +73,22 @@
             @include respond-to(xs) {
                 width: 30px;
             }
+
+            & .icon_edit {               
+                & > path:nth-last-of-type(1) {
+                    transform: translate(-5%, -20%);
+                }
+                
+            }
+            
+        }
+
+        & .button_back {
+            align-self: center;
+            & .icon_arrow_left {
+                width: 20px;
+                height: 15px;
+            }
         }
 
 
@@ -79,9 +96,6 @@
             width: 30px;
             height: 30px;
             margin-left: 30px;
-            & > svg > path {
-                fill: var(--text);
-            }
         }
     }
 

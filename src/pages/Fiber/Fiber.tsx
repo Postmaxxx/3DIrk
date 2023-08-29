@@ -51,8 +51,8 @@ const Fiber: React.FC<IProps> = ({lang, fibersState, colorsState, setState, moda
     }, [fibersState.send.status])
 
 
-    const closeModal = useCallback(() => {
-        if (modal?.getName() === 'fiberSend') {
+    const closeModal = useCallback(async () => {
+        if (await modal?.getName() === 'fiberSend') {
             if (fibersState.send.status === 'success') {
                 navigate(navList.fibers.to, { replace: true });
                 window.location.reload()

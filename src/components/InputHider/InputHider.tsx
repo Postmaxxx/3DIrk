@@ -10,9 +10,9 @@ interface IProps {
 const InputHider = ({hidden, onClick}: IProps) => {
     return (
         <div className={`input-hider ${hidden ? 'hide' : ''}`} onClick={onClick}>
-            <svg viewBox='0 0 193.5 116'>
+            <svg className='icon_eye' viewBox='0 0 193.5 116'>
                 <circle className='eye pupil' cx='96.8' cy='58' r='24'/>
-                <path className='eye lid' d='M5,58L5,58C23.4,26.3,57.6,5,96.8,5c39.3,0,73.8,21.3,91.8,53l0,0c0,0-26.7,53-91.8,53S5,58,5,58z'/>
+                <path className='eye eyelid' d='M5,58L5,58C23.4,26.3,57.6,5,96.8,5c39.3,0,73.8,21.3,91.8,53l0,0c0,0-26.7,53-91.8,53S5,58,5,58z'/>
             </svg>
         </div>
     )

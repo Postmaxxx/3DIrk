@@ -16,6 +16,8 @@ const loadNewsPerRequest: number = 4 //how many news will be loaded per click "m
 
 const tipsTransition:number = 3000 //in ms, how long tip will be shown before disappearing
 
+const debounceTime: number = 2000;
+
 const socials: Record<string, string> = { //link to groups
     vk: "https://vk.ru",
     instagram: "https://instagram.com",
@@ -229,6 +231,11 @@ const APIList = { //all routes to BE
             url: `${process.env.REACT_BACK_URL}/api/user/cart`,
             method: 'PUT',
             timeout: 20000
+        },
+        updateCartItemAmount: { // update cart content on BE
+            url: `${process.env.REACT_BACK_URL}/api/user/cart`,
+            method: 'PATCH',
+            timeout: 5000
         },
     }
 
@@ -721,7 +728,7 @@ const DOMExceptions = {
     byUser: new DOMException(exceptionUser.message, exceptionUser.name)
 }
 
-
+const nwsp = '\u00A0'
 
 
 export { clearModalMessage, resetFetch, timeModalClosing, 
@@ -730,4 +737,4 @@ export { clearModalMessage, resetFetch, timeModalClosing,
     orderStatuses, usersPerPage, timeOffset, inputsProps, tipsTransition, socials,
     navList, newsItemEmpty, APIList, imageExtentions, maxAmountToOrder, loadNewsPerRequest,
     exceptionTimeout, exceptionFetch, DOMExceptions, statuses, defaultSelectItem, 
-    createNewItemId, gapForOrders, emptyImages}
+    createNewItemId, gapForOrders, emptyImages, nwsp, debounceTime}

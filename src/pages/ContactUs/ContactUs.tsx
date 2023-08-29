@@ -6,12 +6,18 @@ import {  IFullState,  IUserState, TLang } from "../../interfaces";
 import {  useEffect, useRef, useMemo, useCallback } from 'react'
 import AddFiles, { IAddFilesFunctions } from "../../components/AddFiles/AddFiles";
 import { allActions } from "../../redux/actions/all";
-import { inputsProps, resetFetch } from "../../assets/js/consts";
+import { inputsProps, nwsp, resetFetch } from "../../assets/js/consts";
 import { deepCopy, focusMover, modalMessageCreator, prevent } from "../../assets/js/processors";
 import inputChecker from "../../../src/assets/js/inputChecker";
 import { IModalFunctions } from "../../../src/components/Modal/ModalNew";
 import MessageNew from "../../../src/components/Message/MessageNew";
 import Preloader from "../../../src/components/Preloaders/Preloader";
+import logo_wa from '../../assets/img/logo_whatsapp.svg';
+import logo_tg from '../../assets/img/logo_telegram.svg';
+import locationMap from '../../assets/img/address_scheme.jpg';
+import locationMapSmall from '../../assets/img/address_scheme_small.webp';
+import ImageModalNew from "../../../src/components/ImageModal/ImageModalNew";
+import svgs from "../../components/additional/svgs";
 
 interface IPropsState {
     lang: TLang,
@@ -102,6 +108,14 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
     }
 
 
+    const onLocationClick = () => {
+        modal?.openModal({
+            name: 'location',
+            children: <ImageModalNew url={locationMap} text={lang === 'en' ? 'Irkutsk city, Gertcena street, 14' : 'г. Иркутск, Улица Герцена, 14'}/>
+        })
+    }
+
+
     return (
         <div className="page_contact">
             <div className='container_page'>
@@ -110,6 +124,42 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
                         <h1>{lang === 'en' ? 'Contact us' : 'Свяжитесь с нами'}</h1>
                     </div>
                         <form className="form_full contact__form" ref={formContact}>
+                            <div className="block_text">
+                                <h3>{lang === 'en' ? 'Our contacts' : 'Наши контакты'}</h3>
+                                <div className="contacts">
+                                    <div className="location">
+                                        <img src={locationMapSmall} alt={lang === 'en' ? 'Location map' : 'Схема проезда'} onClick={onLocationClick}/>
+                                        <a href={lang === 'en' ? "https://goo.gl/maps/89SfgdnrPWB8kbDJA" : "https://go.2gis.com/uy5m3"} target="_blank">{lang === 'en' ? `Irkutsk city, Gertcena${nwsp}street,${nwsp}14` : `г. Иркутск, Улица${nwsp}Герцена,${nwsp}14`} {svgs().iconRoute2}</a>
+                                    </div>
+                                    <div className="contacts__list">
+                                        <div className="contact">
+                                            <div className="img-container">
+                                                {svgs().iconPhone}
+                                            </div>
+                                            <a href="tel:+79834088949">+7 983 408 89 49</a>
+                                        </div>
+                                        <div className="contact">
+                                            <div className="img-container">
+                                                <img src={logo_wa} alt="WhatsApp" />
+                                            </div>
+                                            <a href="tel:+79834088949">+7 983 408 89 49</a>
+                                        </div>
+                                        <div className="contact">
+                                            <div className="img-container">
+                                                <img src={logo_tg} alt="Telegram" />
+                                            </div>
+                                            <span>Our group</span>
+                                        </div>
+                                        <div className="contact">
+                                            <div className="img-container">
+                                                {svgs().iconEmail}
+                                            </div>
+                                            <a href="mailto:pypkin@mail.ru">vasya_pypkin@mail.ru</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
                             <div className="block_text">
                                 <h3>{lang === 'en' ? 'Write us a message' : 'Напишите нам сообщение'}</h3>
                             </div>
@@ -187,7 +237,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
                                     {userState.sendOrder.status === 'fetching' ? 
                                         <Preloader />
                                         :
-                                        lang === 'en' ? 'Save changes' : "Сохранить изменения" 
+                                        lang === 'en' ? 'Send message' : "Отправить сообщение" 
                                     }
                             </button>
                         </form>

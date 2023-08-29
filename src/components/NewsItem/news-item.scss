@@ -113,13 +113,15 @@
             margin-top: auto;
         
         
-            & > svg  {
+            & > .icon_arrow_right  {
                 max-height: 80%;
                 right: 0;
                 margin-right: 25px;
                 fill: var(--text);
                 position: absolute;
                 transition: margin .2s;
+                width: 20px;
+                height: 15px;
             }
         
             &:hover {

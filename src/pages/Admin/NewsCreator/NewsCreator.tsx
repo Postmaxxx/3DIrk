@@ -51,19 +51,18 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
     const focuser = useMemo(() => focusMover(), [lang])
     const errChecker = useMemo(() => errorsChecker({lang}), [lang])
 
-
-    
-    const closeModal = useCallback(() => {
-        if (modal?.getName() === 'newsSend') {
+   
+    const closeModal = useCallback(async () => {   
+        if (await modal?.getName() === 'newsSend') {
             if (send.status === 'success') {
-                navigate(navList.account.admin.news.to, { replace: true });
+                navigate(navList.account.admin.news.to, { replace: true })
             }
             setState.news.setSendNews({...resetFetch})
         }
         setState.news.setSendNews(resetFetch)// clear fetch status
         errChecker.clear()
         modal?.closeCurrent()
-	}, [send.status, paramNewsId, errChecker])
+	}, [send.status, paramNewsId, errChecker, modal])
 
 
 
@@ -109,7 +108,6 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
 
     
     const fillValues = async (news: INewsItem) => {//fill values based on selected color
-        console.log(paramNewsId, news.header.en);
         
         if (!_headerEn.current || !_headerRu.current || !_textShortEn.current || !_textShortRu.current || 
             !_textEn.current || !_textRu.current || !_date.current) return
@@ -141,6 +139,9 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
         const errorFields = _form.current.querySelectorAll('.incorrect-value')
         if (errorFields?.length > 0) {
             errChecker.add(lang === 'en' ? 'Some fields are filled incorrectly' : 'Некоторые поля заполнены неправильно')
+        }    
+        if (addFilesRef.current?.getFiles().length === 0) {
+            errChecker.add(lang === 'en' ? 'No images' : 'Нет изображений')
         }    
         if (errChecker.amount() > 0) {
             modal?.openModal({

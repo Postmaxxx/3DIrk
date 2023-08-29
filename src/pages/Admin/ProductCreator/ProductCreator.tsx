@@ -52,8 +52,8 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
     const statusesList = useMemo(() => (Object.values(statuses)), []) 
 
 
-    const closeModal = useCallback(() => {
-        if (modal?.getName()  === 'sendProduct') {
+    const closeModal = useCallback(async () => {
+        if (await modal?.getName()  === 'sendProduct') {
             if (catalogState.category.sendProduct.status === 'success') {
                 setState.catalog.loadCategory({ _id: catalogState.category._id })
             }
@@ -149,8 +149,6 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
 
 
     const onChangeInputs = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        console.log(e.target.value);
-        
         e.target.id === "name_en" && setProduct({...product, name: {...product.name, en: e.target.value}})
         e.target.id === "name_ru" && setProduct({...product, name: {...product.name, ru: e.target.value}})
         //e.target.id === "price" && checkIfNumbers(e.target.value) && setProduct({...product, price: Number(e.target.value)}) //save as string, but check it while submiting
@@ -363,7 +361,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
                         </div>
 
                         <div className="block_text">
-                            <h3>{lang === 'en' ? 'Types' : 'Версии'}</h3>           
+                            <h3>{lang === 'en' ? 'Types' : 'Модификации'}</h3>           
                         </div>
                         <div className="product_mods" ref={_mods}>
                             <Mods 

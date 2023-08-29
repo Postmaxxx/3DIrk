@@ -370,6 +370,39 @@ router.put('/cart',
 )
 
 
+
+
+router.patch('/cart',
+    authMW,
+    async (req, res) => {       
+        try {            
+            const updatedItem: ICartItem = req.body.updatedItem
+            const { id } = req.user
+
+            await User.findOneAndUpdate(
+                {
+                    _id: id,
+                    "cart.productId": updatedItem.productId,
+                    "cart.colorId": updatedItem.colorId,
+                    "cart.type.en": updatedItem.type.en,
+                    "cart.type.ru": updatedItem.type.ru,
+                },
+                {
+                    $set: {
+                        "cart.$.amount": updatedItem.amount
+                    }
+                }
+            )
+            
+            res.status(200).json({message: {en: 'Cart has been updated', ru: 'Корзина была обновлена'}})
+
+        } catch (error) {
+            res.status(500).json({ message:{en: `Something wrong with server (${error}), try again later`, ru: `Ошибка на сервере (${error}), попробуйте позже`}})
+        }
+    }
+)
+
+
 interface IMulterFile {
     fieldname: string
     originalname: string

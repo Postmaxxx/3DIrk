@@ -40,7 +40,6 @@ interface IProps extends IPropsState, IPropsActions {}
 
 
 const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, colorsState}): JSX.Element => {
-    const navigate = useNavigate()
     const colorPickerRef = useRef<IPickerFunctions>(null)
     const fiberPickerRef = useRef<IPickerFunctions>(null)
     const addFilesRef = useRef<IAddFilesFunctions>(null)
@@ -66,8 +65,8 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
 
 
 
-    const closeModal = useCallback(() => {
-        if (modal?.getName() === 'fiberSendStatus') {
+    const closeModal = useCallback(async () => {
+        if (await modal?.getName() === 'fiberSendStatus') {
             if (fibersState.send.status === 'success') {
                 window.location.reload()
             }

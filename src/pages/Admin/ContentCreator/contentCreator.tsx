@@ -39,8 +39,8 @@ const SpliderChanger: FC<IProps> = ({lang, content, modal, setState}): JSX.Eleme
 
 
 
-    const closeModal = useCallback(() => {
-        if (modal?.getName() === 'contentSend') {
+    const closeModal = useCallback(async () => {
+        if (await modal?.getName() === 'contentSend') {
             if (content.send.status === 'success') {
                 addFilesRef.current?.clearAttachedFiles()
                 navigate(navList.home.to, { replace: true });

@@ -37,7 +37,7 @@ const LazyCatalogCahnger = lazy(() => import("./pages/Admin/CatalogCreator/Catal
 const LazyProductCreator = lazy(() => import("./pages/Admin/ProductCreator/ProductCreator"));
 const LazySpliderChanger = lazy(() => import("./pages/Admin/ContentCreator/contentCreator"));
 
-
+const ModalMemo = memo(ModalNew)
 
 interface IPropsState {
     lang: TLang
@@ -60,12 +60,12 @@ interface IProps extends IPropsState, IPropsActions {}
 
 const MemoFooter = memo(Footer)
 
-const App:React.FC<IProps> = ({lang, isAdmin, isAuth, fibersLoad, contentLoad, setState}):JSX.Element => {
+const App:React.FC<IProps> = ({lang, isAdmin, isAuth, contentLoad, setState}):JSX.Element => {
 	const modalRef = useRef<IModalFunctions>(null)
 
 	useEffect(() => {
 		setState.user.loginWithToken()
-		setState.base.setModal(modalRef)
+		setState.base.setModal(modalRef)	
 		if (contentLoad.status !== 'success' && contentLoad.status  !== 'fetching') {
 			setState.fibers.loadFibers()
 		}
@@ -126,7 +126,7 @@ const App:React.FC<IProps> = ({lang, isAdmin, isAuth, fibersLoad, contentLoad, s
 
 			<MemoFooter lang={lang}/>
 			
-			<ModalNew ref={modalRef}></ModalNew>
+			<ModalMemo ref={modalRef}></ModalMemo>
 		</HashRouter>
 
   );

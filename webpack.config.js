@@ -9,7 +9,7 @@ const webpack = require('webpack');
 const Dotenv = require('dotenv-webpack');
 
 module.exports = (env, argv) => {
-	const mode = argv.mode || 'development';
+	const mode = argv.mode.trim() || 'development';
 	const dotenvPath = `./.env.${mode}`.trim();
 	console.log(`Env: `, dotenvPath);
 
@@ -20,7 +20,7 @@ module.exports = (env, argv) => {
 			new TerserPlugin({//minimize js file
 				terserOptions: {
 					compress: {
-						drop_console: true,// remove console statement
+						drop_console: false,// remove console statement
 					},
 				},
 			}),
@@ -49,7 +49,7 @@ module.exports = (env, argv) => {
 				swSrc: './src/sw.ts', //source file
 				swDest: 'sw.js', //destanation file, root: build folder (dist)
 				include: [/\.(html|js|css|woff2|woff)$/], //type of resources to be precached
-				maximumFileSizeToCacheInBytes: 3 * 1024 * 1024, //max size of resource to be precached
+				maximumFileSizeToCacheInBytes: 4 * 1024 * 1024, //max size of resource to be precached
 			}),
 			new CopyWebpackPlugin({ //copy resources from "public" folder to "dist"
 				patterns: [

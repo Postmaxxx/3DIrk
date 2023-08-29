@@ -42,8 +42,8 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
     const selectorStatusRef = useRef<ISelectorFunctions>(null)
 
 
-    const closeModal = useCallback(() => {
-        if (modal?.getName() === 'colorSend') {
+    const closeModal = useCallback(async () => {
+        if (await modal?.getName() === 'colorSend') {
             if (colorsState.send.status === 'success') {
                 setState.colors.loadColors()
             }
