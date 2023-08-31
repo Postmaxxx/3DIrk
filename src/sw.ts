@@ -26,8 +26,8 @@ const versionOffline: string = '1.05';
 
 interface ICaches {
 	styles: string
-	scripts: string
-	htmls: string
+	//scripts: string
+	//htmls: string
 	fonts: string
 	images: string
 	offline: string
@@ -36,8 +36,8 @@ interface ICaches {
 //versioning caches, except precaching resources
 const cachesCurrent: ICaches = {
 	styles: `styles-${versionStyles}`,
-	scripts: `scripts-${versionScripts}`,
-	htmls: `htmls-${versionHtmls}`,
+	//scripts: `scripts-${versionScripts}`,
+	//htmls: `htmls-${versionHtmls}`,
 	fonts: `fonts-${versionFonts}`,
 	images: `images-${versionImages}`,
 	offline: `offline-fallbacks-${versionOffline}`
@@ -62,7 +62,7 @@ const stylesRoute: Route = new Route(( event ) => {
 }));
 
 
-
+/*
 const scriptsRoute: Route = new Route(({ request }) => {
 	return request.destination === "script";
 }, new CacheFirst({
@@ -74,24 +74,24 @@ const scriptsRoute: Route = new Route(({ request }) => {
 		})
 	  ]
 }));
+registerRoute(scriptsRoute);
+*/
 
 
 
 
 
 
-
-
+/*
 const htmlsRoute: Route  = new Route(({ request }) => {
 	return request.destination === "document";
 }, new CacheFirst({ //StaleWhileRevalidate
 	cacheName: cachesCurrent.htmls
 }));
-
+registerRoute(htmlsRoute);
+*/
 
 registerRoute(stylesRoute);
-registerRoute(scriptsRoute);
-registerRoute(htmlsRoute);
 
 
 const fontsRoute: Route = new Route(({ request }) => {
@@ -115,8 +115,8 @@ const imagesRoute: Route = new Route(({ request }) => {
 	cacheName: cachesCurrent.images,
 	plugins: [
 		new ExpirationPlugin({
-		  maxAgeSeconds: 60 * 60 * 24 * 60,
-		  maxEntries: 300,
+		  maxAgeSeconds: 60 * 60 * 24 * 30,
+		  maxEntries: 600,
 		})
 	  ]
 }));

@@ -13,14 +13,16 @@ export function register(config: {scope: string}) {
 	}
 }
 
+
+
 async function registerValidSW(swUrl: string, config: {scope: string}) {
 	try {
 		const regSW: ServiceWorkerRegistration = await navigator.serviceWorker.register(swUrl, {
 			scope: config.scope, //change if url changed
 			//updateViaCache: 'none' 
-		});
+		}); 
 		regSW.update(); //update if changed
-		//console.log("ServiceWorker registered successfully", regSW);
+		console.log("ServiceWorker registered successfully", regSW);
 		navigator.serviceWorker.oncontrollerchange = (ev) => { //New ServiceWorker activated
 			window.location.reload();
 		};
@@ -28,6 +30,7 @@ async function registerValidSW(swUrl: string, config: {scope: string}) {
 		console.log("ServiceWorker register fail:", error);
 	}
 }
+
 
 
 export function unregister() {

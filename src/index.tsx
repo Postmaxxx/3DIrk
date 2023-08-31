@@ -22,5 +22,5 @@ root.render(
 
 
 
-sw.register({scope: '/3DIrk/'}) //registring sw, change scope if url changed
+sw.register({scope: '/'}) //registring sw, change scope if url changed
 

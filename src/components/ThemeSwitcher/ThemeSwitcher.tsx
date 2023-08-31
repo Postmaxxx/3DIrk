@@ -97,7 +97,7 @@ const ThemeSwitcher: React.FC<IProps> = ({mobOpened, lang, theme, setState}): JS
 
 
 	useEffect(() => {
-		themeRef.current = localStorage.getItem(params.saveState) as TTheme
+		themeRef.current = localStorage.getItem(params.saveState) === "light" ? "light" : "dark"
 		applyTheme()
 		if (!_themeSwitcherCont.current) return
 		addToHider(_themeSwitcherCont.current, 50)
@@ -125,20 +125,20 @@ const ThemeSwitcher: React.FC<IProps> = ({mobOpened, lang, theme, setState}): JS
 	
 	
 	const applyTheme = () => { //main switcher
-		if (!state.current || state.current.isChanging) return
+		if (state.current.isChanging) return
 		document.body.classList.toggle("dark", themeRef.current === "dark")
 		params.saveState && localStorage.setItem(params.saveState, themeRef.current as TTheme);
 		state.current.isChanging = true;
 		if (themeRef.current === "light") {
 			classSwitcher("", "theme_light_1", 0)
 			.then(() => classSwitcher("theme_light_1", "theme_light_2", (params.duration || 1)/ 4))
-			.then(() => {classSwitcher("theme_light_2", "theme_light", 30); state.current.isChanging = false;});
+			.then(() => {classSwitcher("theme_light_2", "theme_light", 30); state.current.isChanging = false; });
 		} 
 		if (themeRef.current === 'dark') {
 			classSwitcher("theme_light", "theme_light_back_1", 0)
 			.then(() => classSwitcher("theme_light_back_1", "theme_light_back_2", (params.duration || 1) / 4))
-			.then(() => {classSwitcher("theme_light_back_2", "", 30); state.current.isChanging = false;});
-		}
+			.then(() => {classSwitcher("theme_light_back_2", "", 30); state.current.isChanging = false; });
+		} 
 	};
 
 	
@@ -188,14 +188,14 @@ const ThemeSwitcher: React.FC<IProps> = ({mobOpened, lang, theme, setState}): JS
 
 	const themeSwitcherMemo = useMemo(() => {
 		return (
-			<label htmlFor="">
+			<label htmlFor="theme-switcher">
 				<div className="theme-switcher">
 					<div className={`content-switcher ${theme !== "dark" ? "theme_light" : ""}`} ref={_contentSwitcher}>
 						<div className="dark">{stars}</div>
 						<div className="light">{clouds}</div>
 					</div>
 				</div>
-				<input type="checkbox" name="" id="" aria-label="Change the site theme" onChange={onThemeClick} ref={_switcher}/>
+				<input type="checkbox" name="theme-switcher" id="theme-switcher" aria-label="Change the site theme" onChange={onThemeClick} ref={_switcher}/>
 			</label>
 		)
 	}, [])

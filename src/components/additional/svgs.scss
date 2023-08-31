@@ -97,6 +97,16 @@
 }
 
 
+.icon_expand_carousel > path {
+    fill: var(--main);
+    stroke: $black;
+    stroke-width: 5px;
+    stroke-dasharray: 2,2;
+    stroke-linejoin: round;
+}
+
+
+
 
 
 
