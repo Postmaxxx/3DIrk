@@ -44,7 +44,7 @@ const PictureWithPreloader: React.FC<IProps> = ({basePath, sizes = [], alt = '',
 		<>
 			{loaded || <Preloader />}
 			{containerWidth ? 
-				<img ref={_img} src={`${basePath}/${bestSizePath}/${image}`} alt={alt} onLoad={hasLoaded} style={{display: loaded ? "block" : "none"}} id={id} />
+				<img draggable='false' ref={_img} src={`${basePath}/${bestSizePath}/${image}`} alt={alt} onLoad={hasLoaded} style={{display: loaded ? "block" : "none"}} id={id} />
 				: 
 				<div ref={_spacer} style={{width: '100%', height: '100%', position: 'absolute', top: '0', left: '0'}}></div> //use mock to calculate the size of container
 			}

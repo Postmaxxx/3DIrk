@@ -63,6 +63,13 @@ module.exports = (env, argv) => {
 			new webpack.SourceMapDevToolPlugin({
 				exclude: ['bundle.js'],
 			}),
+			new webpack.LoaderOptionsPlugin({
+				options: {
+					postcss: [
+						require('autoprefixer')(),
+					],
+				},
+			}),
 
 		], 
 		optimization: optimization,
