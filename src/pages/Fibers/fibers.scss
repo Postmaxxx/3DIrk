@@ -20,11 +20,12 @@
 		display: flex;
 		flex-wrap: wrap;
 		align-items: stretch;
+		justify-content: center;
 		gap: 5%;
 
 		& > a {
 			width: 25%;
-			margin-bottom: 1%;
+			margin-bottom: 5%;
 			padding: 20px;
 			overflow: hidden;
 			border: 1px solid var(--main);

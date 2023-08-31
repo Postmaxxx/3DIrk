@@ -22,7 +22,7 @@ const Catalog: React.FC<IPropsState> = ({lang}): JSX.Element => {
             <div className="container_page">
                 <div className="container">
                     <div className="block_text">
-                        <h1>{lang === 'en' ? 'Header' : 'Заголовок'}</h1>
+                        <h1>{lang === 'en' ? 'Catalog' : 'Каталог'}</h1>
                     </div>
                     <CatalogIntroMemo />
                     <section className="catalog">

@@ -18,6 +18,7 @@ import ThemeSwitcher from "./components/ThemeSwitcher/ThemeSwitcher";
 import PreloaderPage from "./components/Preloaders/PreloaderPage";
 import ModalNew, { IModalFunctions } from "./components/Modal/ModalNew";
 import useScreenMeter from "./hooks/screenMeter";
+import Preloader from "./components/Preloaders/Preloader";
 
 
 const LazyHomePage = lazy(() => import("./pages/Home/Home"));
@@ -43,8 +44,9 @@ interface IPropsState {
     lang: TLang
 	isAdmin: boolean
 	isAuth: boolean
-	fibersLoad: IFetch
+	fibersLoad: IFetch 
 	contentLoad: IFetch
+	isLogining: boolean
 }
 
 interface IPropsActions {
@@ -60,7 +62,7 @@ interface IProps extends IPropsState, IPropsActions {}
 
 const MemoFooter = memo(Footer)
 
-const App:React.FC<IProps> = ({lang, isAdmin, isAuth, contentLoad, setState}):JSX.Element => {
+const App:React.FC<IProps> = ({lang, isAdmin, isAuth, contentLoad, isLogining, setState}):JSX.Element => {
 	const modalRef = useRef<IModalFunctions>(null)
 
 	useEffect(() => {
@@ -78,7 +80,7 @@ const App:React.FC<IProps> = ({lang, isAdmin, isAuth, contentLoad, setState}):JS
 	},[isAdmin])
 
 
-	const screenWidth = useScreenMeter()
+	const screenWidth = useScreenMeter() 
 
 	return (
 		<HashRouter>
@@ -109,16 +111,16 @@ const App:React.FC<IProps> = ({lang, isAdmin, isAuth, contentLoad, setState}):JS
 				<Route path="news/:newsId" element={<Suspense fallback={<PreloaderPage />}><LazyNewsDetails /></Suspense>} />
 
 				<Route path="/admin">
-					<Route path="news-create" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazyNewsCreator /> : <Unauthorized lang={lang} />}</Suspense>} />
-					<Route path="news-create/:newsId" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazyNewsCreator /> : <Unauthorized lang={lang} />}</Suspense>} />
-					<Route path="fiber-create" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazyFiberCreator /> : <Unauthorized lang={lang} />}</Suspense>} />
-					<Route path="fiber-create/:fiberId" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazyFiberCreator /> : <Unauthorized lang={lang} />}</Suspense>} />
-					<Route path="color-create" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazyColorCreator /> : <Unauthorized lang={lang} />}</Suspense>} />
-					<Route path="color-create/:colorId" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazyColorCreator /> : <Unauthorized lang={lang} />}</Suspense>} />
-					<Route path="catalog-change" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazyCatalogCahnger /> : <Unauthorized lang={lang} />}</Suspense>} />
-					<Route path="product-create" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazyProductCreator /> : <Unauthorized lang={lang} />}</Suspense>} />
-					<Route path="product-create/:productId" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazyProductCreator /> : <Unauthorized lang={lang} />}</Suspense>} />
-					<Route path="splider-change" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazySpliderChanger /> : <Unauthorized lang={lang} />}</Suspense>} />
+					<Route path="news-create" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazyNewsCreator /> : !isLogining ? <Unauthorized lang={lang} /> : <Preloader/>}</Suspense>} />
+					<Route path="news-create/:newsId" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazyNewsCreator /> : !isLogining ? <Unauthorized lang={lang} /> : <Preloader/>}</Suspense>} />
+					<Route path="fiber-create" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazyFiberCreator /> : !isLogining ? <Unauthorized lang={lang} /> : <Preloader/>}</Suspense>} />
+					<Route path="fiber-create/:fiberId" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazyFiberCreator /> : !isLogining ? <Unauthorized lang={lang} /> : <Preloader/>}</Suspense>} />
+					<Route path="color-create" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazyColorCreator /> : !isLogining ? <Unauthorized lang={lang} /> : <Preloader/>}</Suspense>} />
+					<Route path="color-create/:colorId" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazyColorCreator /> : !isLogining ? <Unauthorized lang={lang} /> : <Preloader/>}</Suspense>} />
+					<Route path="catalog-change" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazyCatalogCahnger /> : !isLogining ? <Unauthorized lang={lang} /> : <Preloader/>}</Suspense>} />
+					<Route path="product-create" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazyProductCreator /> : !isLogining ? <Unauthorized lang={lang} /> : <Preloader/>}</Suspense>} />
+					<Route path="product-create/:productId" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazyProductCreator /> : !isLogining ? <Unauthorized lang={lang} /> : <Preloader/>}</Suspense>} />
+					<Route path="splider-change" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazySpliderChanger /> : !isLogining ? <Unauthorized lang={lang} /> : <Preloader/>}</Suspense>} />
 				</Route>
 
 				<Route path="/*" element={<Suspense fallback={<PreloaderPage />}><P404 lang={lang}/></Suspense>} />
@@ -138,7 +140,8 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
 	isAdmin: state.user.isAdmin,
 	isAuth: state.user.auth.status === 'success',
 	fibersLoad: state.fibers.load,
-	contentLoad: state.content.load
+	contentLoad: state.content.load,
+	isLogining: state.user.auth.status === 'fetching'
 	
 })
 

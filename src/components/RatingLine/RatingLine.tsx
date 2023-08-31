@@ -17,7 +17,8 @@ const RatingLine: React.FC<IRatingLine> = ({colorValue='', value=0, min=0, max=1
 
     useEffect(() => {
         if (!_rating.current || !_value.current) return
-        const percent = 100 * value / (max-min);
+        //const percent = 100 * value / (max-min);
+        const percent = 100 * (value-min) / (max-min);
         _value.current.style.width = `${percent}%`;
     }, [])
 

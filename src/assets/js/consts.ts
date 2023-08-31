@@ -5,8 +5,8 @@ const timeModalClosing: number = 500 //transition of closing modal window
 
 const intervalBetweenRequests: number = 3000 //time between requests in case of error
 
-const strengthMin:number = 1 //fiber strength min
-const strengthMax:number = 180 //fiber strength max
+const strengthMin:number = 25 //fiber strength min
+const strengthMax:number = 80 //fiber strength max
 
 const gapForOrders: number = 1 //months
 
@@ -291,7 +291,7 @@ const inputsProps = { //restrictions of inputs
         },
         nameFull: {
             min: 2,
-            max: 40
+            max: 60
         },
         textShort: {
             min: 10,
@@ -321,7 +321,7 @@ const inputsProps = { //restrictions of inputs
         },
         textShort: {
             min: 20,
-            max: 100
+            max: 150
         },
         textFull: {
             min: 50,
@@ -329,7 +329,7 @@ const inputsProps = { //restrictions of inputs
         },
         mods : {
             min: 1,
-            max: 100,
+            max: 150,
         }
     }
 }

@@ -18,17 +18,16 @@ const CatalogIntro:React.FC<IPropsState> = ({lang}): JSX.Element => {
                 <ImgWithPreloader src={catalogPhoto1} alt={lang === 'en' ? 'Catalog image' : 'Фото каталога'}/>
             </div>
             <div className="catalog-intro__text">
-                <h2>{lang === 'en' ? 'Subheader' : 'Подзаголовок'}</h2>
+                <h2>{lang === 'en' ? 'Explore our 3D printing catalog' : 'Предлагаем Вам каталог готовых изделий'}</h2>
                 {lang === 'en' ? 
                     <>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quo tempore atque et nostrum qui vitae! Dolor necessitatibus ipsum consectetur optio.</p>
-                        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Necessitatibus, eveniet odit veritatis totam exercitationem id perspiciatis dolores, ipsum quos reprehenderit, consectetur facere harum rerum libero tempore incidunt modi! Placeat cumque quidem velit porro amet quam possimus dolorum eaque exercitationem quod!</p>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quo tempore atque et nostrum qui vitae! Dolor necessitatibus ipsum consectetur optio.</p>
+                        <p>Dive into a realm of limitless possibilities as you browse through our meticulously curated collection. From intricately detailed art pieces to precision-engineered prototypes, our catalog showcases the convergence of creativity and technology.</p>
+                        <p>Explore the tangible results of innovation and craftsmanship, all crafted using advanced 3D printing techniques. Discover the perfect embodiment of your ideas among a diverse array of products, ready to bring your imagination to life.</p>
                     </>
                     :
                     <>
-                        <p>ВАП в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра</p>
-                        <p>ВАП в апва ып аволрп ывар лорвыа олывапрловы рпвыадлопрвы аплвоапр лвдаыпр влаорплв ыоарп лвдаырплваыодрплд ывраплва лоаврплвор влапрыдалопвырапл дрываплдывра</p>
+<p>Окунитесь в мир безграничных возможностей, просматривая наш тщательно подобранный ассортимент. От искусно детализированных художественных произведений до точно спроектированных прототипов, наш каталог демонстрирует сплав творчества и технологии.</p>
+<p>Исследуйте осязаемые результаты инноваций и мастерства, созданные с использованием передовых техник 3D-печати. Откройте для себя идеальное воплощение ваших идей среди разнообразных продуктов, готовых привести ваше воображение к жизни.</p>
                     </> }
             </div>
         </section>

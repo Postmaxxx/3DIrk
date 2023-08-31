@@ -11,8 +11,30 @@
         }
     }
 
+
+    & .intro {
+
+        & h2 {
+            margin-top: 30px;
+        }
+        
+        & h4 {
+            margin-top: 30px;
+            text-align: center;
+            @include fs_bigger;
+        }
+
+        & p {
+            margin-top: 0.5rem; 
+
+            &:first-of-type {
+                margin-top: 30px;
+            }
+        }
+    }
+
     & .slider__container {
-        margin-top: 60px;
+        margin-top: 90px;
         height: 400px;
         position: relative;
         -webkit-user-drag: none;
@@ -40,13 +62,5 @@
         @include respond-to(xs) {
             margin-top: 80px;
         }
-    }
-
-
-    .test {
-        position: relative;
-        border: 2px solid red;
-        height: 300px;
-        width: 100%;
     }
 }
