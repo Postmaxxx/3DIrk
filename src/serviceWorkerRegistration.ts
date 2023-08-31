@@ -1,4 +1,4 @@
-export function register(config: {scope: string}) {
+export function register() {
 	if ("serviceWorker" in navigator) {
 		const publicUrl: URL = new URL(process.env.PUBLIC_URL, window.location.href);
 		if (publicUrl.origin !== window.location.origin) return
@@ -8,17 +8,17 @@ export function register(config: {scope: string}) {
 			if (process.env.NODE_ENV === "development") {
 				swUrl = "sw.js";
 			}
-			registerValidSW(swUrl, config);
+			registerValidSW(swUrl);
 		});
 	}
 }
 
 
 
-async function registerValidSW(swUrl: string, config: {scope: string}) {
+async function registerValidSW(swUrl: string) {
 	try {
 		const regSW: ServiceWorkerRegistration = await navigator.serviceWorker.register(swUrl, {
-			scope: config.scope, //change if url changed
+			scope: process.env.NODE_ENV === "development" ? '/' : '/3DIrk/', //change if url changed
 			//updateViaCache: 'none' 
 		}); 
 		regSW.update(); //update if changed
