@@ -86,6 +86,7 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsLoad, fibersLoad, 
     }
 
 
+
     useEffect(() => {
         if (cart.fixed?.length === 0) return //nothing was fixed
         modal?.openModal({

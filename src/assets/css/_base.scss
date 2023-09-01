@@ -115,6 +115,7 @@ p {
     transition: color $transition_theme;
     margin-top: .8rem;
     text-indent: 2.5rem;
+    text-align: justify;
     //font-weight: 500;
     @include fs_base;
     

@@ -6,7 +6,7 @@
     height: 40px;
     background-color: var(--main_em);
     position: fixed;
-    bottom: 30px;
+    top: 100px;
     right: 0;
     transform: translateX(100%) rotate(180deg);
     transition: transform $transition_fast, background-color $transition_theme;
@@ -20,6 +20,6 @@
 
     &.show {
         transform: translateX(10%) rotate(180deg);
-
+        transition: transform $transition_fast $transition_fast, background-color $transition_theme;
     }
 }

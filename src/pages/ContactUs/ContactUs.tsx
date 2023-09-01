@@ -12,7 +12,7 @@ import inputChecker from "../../../src/assets/js/inputChecker";
 import { IModalFunctions } from "../../../src/components/Modal/ModalNew";
 import MessageNew from "../../../src/components/Message/MessageNew";
 import Preloader from "../../../src/components/Preloaders/Preloader";
-import logo_wa from '../../assets/img/logo_whatsapp.svg';
+import logo_vk from '../../assets/img/logo_vk.svg';
 import logo_tg from '../../assets/img/logo_telegram.svg';
 import locationMap from '../../assets/img/address_scheme.jpg';
 import locationMapSmall from '../../assets/img/address_scheme_small.webp';
@@ -140,9 +140,9 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
                                         </div>
                                         <div className="contact">
                                             <div className="img-container">
-                                                <img src={logo_wa} alt="WhatsApp" />
+                                                <img src={logo_vk} alt="VK" />
                                             </div>
-                                            <a href="tel:+79834088949">+7 983 408 89 49</a>
+                                            <a href="vk.com">{lang === 'en' ? "Strezhen" : 'Стрежень'}</a>
                                         </div>
                                         <div className="contact">
                                             <div className="img-container">

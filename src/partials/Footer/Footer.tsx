@@ -1,6 +1,6 @@
 import './footer.scss'
 import iconInstagram from "../../assets/img/logo_instagram.svg"
-import iconWhatsapp from "../../assets/img/logo_whatsapp.svg"
+import iconVk from "../../assets/img/logo_vk.svg"
 import iconTelegram from "../../assets/img/logo_telegram.svg"
 import iconYoutube from "../../assets/img/logo_youtube.svg"
 import { useMemo, FC } from 'react'
@@ -26,7 +26,7 @@ const Footer: FC<IFooter>  = ({lang}):JSX.Element => {
                                     <img src={iconTelegram} alt={lang === 'en' ? "Our Telegram" : 'Наш Telegram'} title={lang === 'en' ? "Join us in Telegram" : 'Присоединяйтесь к нам в Telegram'}/>
                                 </a>
                                 <a href={socials.vk}>
-                                    <img src={iconWhatsapp} alt={lang === 'en' ? "Our VK" : 'Наш VK'} title={lang === 'en' ? "Join us in VK" : 'Присоединяйтесь к нам в VK'}/>
+                                    <img src={iconVk} alt={lang === 'en' ? "Our VK" : 'Наш VK'} title={lang === 'en' ? "Join us in VK" : 'Присоединяйтесь к нам в VK'}/>
                                 </a>
                                 <a href={socials.instagram}>
                                     <img src={iconInstagram} alt={lang === 'en' ? "Our Instagram" : 'Наш Instagram'} title={lang === 'en' ? "Join us in Instagram" : 'Присоединяйтесь к нам в Instagram'}/>

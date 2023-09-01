@@ -6,12 +6,19 @@
 	flex-grow: 1;
 	
 
-		& > .block_text {
+	& .block_text {
+		margin-top: 2rem;
 
-			& > p > b {
-				font-weight: 900;
+		& > p {
+			margin-top: 2rem !important;
+			
+			& > b {
+				font-weight: 800;
+				color: var(--main_em);
 			}
 		}
+		
+	}
 
 
 	& .fibers {

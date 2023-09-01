@@ -56,6 +56,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
         if (await modal?.getName() === 'newsSend') {
             if (send.status === 'success') {
                 navigate(navList.account.admin.news.to, { replace: true })
+                fillValues({...newsItemEmpty})
             }
             setState.news.setSendNews({...resetFetch})
         }
@@ -128,6 +129,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
         _textRu.current.value = news?.text?.ru || ''
         _date.current.value =  moment(news?.date || '').format('YYYY-MM-DD')
     }
+    
 
 
 
