@@ -6,7 +6,7 @@
     display: flex;
     align-items: stretch;
     flex-direction: column;
-
+    
     & > label {
         margin-right: 10px;
     }
@@ -28,6 +28,12 @@
         //@include respond-to(md) {
         //    padding: 5px 8px;
         //}
+
+        & > option {
+            font-family: Nunito, 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        }
+
     }
+    
     
 }

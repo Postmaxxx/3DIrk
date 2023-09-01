@@ -179,6 +179,7 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
                         </div>
                         {colorsState.load.status === 'success' ? 
                             <Picker 
+                                type='colors'
                                 ref={colorPickerRef} 
                                 items={colorsState.colors} 
                                 lang={lang} 

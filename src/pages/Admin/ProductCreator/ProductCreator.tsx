@@ -41,6 +41,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
     const addFilesRef = useRef<IAddFilesFunctions>(null)
     const modsRef = useRef<IModsFunctions>(null)
     const selectorCategoryRef = useRef<HTMLSelectElement>(null)
+    const selectorNewCategoryRef = useRef<HTMLSelectElement>(null)
     const selectorStatusRef = useRef<ISelectorFunctions>(null)
     const [product, setProduct] = useState<ISendProduct>({...productEmpty})
     const [submit, setSubmit] = useState<boolean>(false)
@@ -116,7 +117,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
                 files: addFilesRef.current?.getFiles() || [], 
                 fibers: (fiberPickerRef.current as IPickerFunctions).getSelected(),
                 active: selectorStatusRef.current?.getValue() === 'active' ? true : false,
-                category: selectorCategoryRef.current?.value || 'already checked that not empty'
+                category: selectorNewCategoryRef.current?.value || 'already_checked_that_not_empty'
             }
         })
         setSubmit(true)
@@ -163,6 +164,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
         setProduct({...product, category: e.target.value})
         setState.catalog.loadCategory({ _id: e.target.value})     
         productPickerRef.current?.getSelected()[0] && productPickerRef.current?.setSelected() //change values only if product was selected, not if product "new"
+        selectorNewCategoryRef.current && (selectorNewCategoryRef.current.value = e.target.value)
     }
 
 
@@ -203,7 +205,8 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
             addFilesRef.current?.replaceFiles([])
             fiberPickerRef.current?.setSelected([])
             selectorStatusRef.current?.setItem({...defaultSelectItem})
-            selectorStatusRef.current?.setValue('')
+            selectorStatusRef.current?.setValue('')  
+            selectorNewCategoryRef.current && (selectorNewCategoryRef.current.value = selectorCategoryRef.current?.value || '')
         }
     }
 
@@ -256,6 +259,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
                         </div>
                         <div className="picker_product">
                             <Picker 
+                                type='products'
                                 ref={productPickerRef} 
                                 items={selectorCategoryRef.current?.value ? catalogState.category.products : []} 
                                 lang={lang} 
@@ -337,17 +341,19 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
                             </div>
                         </div>
                         <div className="form__inputs form__inputs_sm-wide">
-                            {/*<div className="block_input">
-                                <label htmlFor="price">{lang === 'en' ? 'Price' : 'Цена'}:</label>
-                                <input 
-                                    type="text" 
-                                    data-selector="input"
-                                    id="price" 
-                                    onKeyDown={focuser.next}
-                                    onChange={onChangeInputs} 
-                                    value={product.price} 
-                                    onBlur={(e) => inputChecker({lang, type: 'numbers', el: e.target})}/>
-                            </div>*/}
+                            <div className="block_input selector" data-selector="input-block">
+                            <label htmlFor="selector_new_category">{lang === 'en' ? 'Change category to' : 'Изменить категорию на'}:</label>
+                            <select 
+                                data-selector="select"
+                                ref={selectorNewCategoryRef} 
+                                id="selector_new_category"
+                                defaultValue=''
+                                //onChange={onChangeCategory} 
+                                onBlur={(e) => inputChecker({lang, notExact: '', el: e.target})}>
+                                    <option key={-1} value='' disabled hidden>{lang === 'en' ? 'Select' : 'Выберите'}</option>
+                                    {catalogState.catalog.list.map((el) => <option key={el._id} value={el._id}>{el.name[lang]}</option>)}
+                            </select>
+                            </div>
                             <Selector 
                                 lang={lang} 
                                 id='selector_status' 
@@ -378,6 +384,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
                         <div className="picker_fibers">
                             {fibersState.load.status === 'success' ? 
                                 <Picker 
+                                    type='fibers'
                                     ref={fiberPickerRef} 
                                     items={fibersState.fibersList} 
                                     lang={lang}

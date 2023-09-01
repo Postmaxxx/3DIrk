@@ -213,7 +213,7 @@ $duration: 2000ms;
                         transform: translateX(0); 
                     }
                     100% { 
-                        transform: translateX(calc(-#{map-get($cloud, width)} - #{map-get($cloud, gap)})) 
+                        transform: translateX(calc(-#{map-get($cloud, width)} - #{map-get($cloud, gap)})) rotate(0.01deg);
                     }
                 }
             }

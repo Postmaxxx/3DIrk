@@ -314,7 +314,7 @@ export const fibersProperties = [
         _id: 'cutting',
         name: {
             en: 'Cutting',
-            ru: 'Резка'
+            ru: 'Возможность резки'
         },
         tip: {
             en: 'The ability to process the material by cutting.',
@@ -331,7 +331,7 @@ export const fibersProperties = [
         _id: 'grinding',
         name: {
             en: 'Grinding',
-            ru: 'Шлифовка'
+            ru: 'Шлифуемость'
         },
         tip: {
             en: 'The ability to process the material by Grinding.',
@@ -348,7 +348,7 @@ export const fibersProperties = [
         _id: 'price',
         name: {
             en: 'Relative price',
-            ru: 'Относительная цена'
+            ru: 'Отн. цена'
         },
         tip: {
             en: 'Relative cost of the material.',
@@ -371,8 +371,8 @@ export const fibersProperties = [
             ru: 'Стоимость одного грамма материала.'
         },
         unit: {
-            en: 'rub/gr',
-            ru: 'руб/гр'
+            en: 'rub',
+            ru: 'руб'
         },
         type: 'string'
     },

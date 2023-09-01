@@ -321,6 +321,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
                         </div>
                         {fibersState.load.status === 'success' ? 
                             <Picker 
+                                type='fibers'
                                 ref={fiberPickerRef} 
                                 items={fibersState.fibersList} 
                                 lang={lang} 
@@ -476,6 +477,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
                             </div>
                             {colorsState.load.status === 'success' ? 
                                 <Picker 
+                                    type='colors'
                                     ref={colorPickerRef} 
                                     items={colorsState.colors} 
                                     lang={lang}

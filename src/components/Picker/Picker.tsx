@@ -17,7 +17,11 @@ interface IProps {
         }
         name: TLangText
         active?: boolean
+        short?: {
+            name: TLangText
+        }
     }[]
+    type: "fibers" | "colors" | "products"
     lang: TLang
     markInactive?: boolean //mark inavtive
     multiple?: boolean //is it possible to choose more than 1 tiem
@@ -36,7 +40,7 @@ export interface IPickerFunctions {
 }
 
 
-const Picker = forwardRef<IPickerFunctions, IProps>(({items, lang, onEditClick, onDeleteClick, onItemClick, multiple=true, withNew=false, minSelected=0, markInactive=false, simulateClickOnSelect=false}, ref) => {
+const Picker = forwardRef<IPickerFunctions, IProps>(({items, lang, onEditClick, onDeleteClick, onItemClick, type, multiple=true, withNew=false, minSelected=0, markInactive=false, simulateClickOnSelect=false}, ref) => {
     useImperativeHandle(ref, () => ({
         setSelected(_ids) {
             if (!_ids) {
@@ -75,36 +79,20 @@ const Picker = forwardRef<IPickerFunctions, IProps>(({items, lang, onEditClick, 
     }
 
 
-    const onDeleteItem = (e: React.MouseEvent<HTMLButtonElement>, _id: string) => {
-        prevent(e)
-        onDeleteClick && onDeleteClick(_id)
-    }
-
-   const onEditItem = (e: React.MouseEvent<HTMLButtonElement>, _id: string) => {
-        prevent(e)
-        onEditClick && onEditClick(_id)
-    }
-
-
     const contentMemo = useMemo(() => {
         return (
             <>
                 {items.map((item) => {
                     return (
                         <div className={`picker__item ${selectedItems[item._id] ? 'selected' : ''} ${markInactive && !item.active ? 'inactive' : ''}`} key={item._id}>
-                            <div 
-                                className="image" 
-                                onClick={() => itemClicked(item._id)}>
-                                    {item.images && <PicWithPreloader basePath={item.images.basePath} sizes={item.images.sizes} image={item.images.files[0]} alt={item.name[lang]}/>} {/*for fibers*/}
-
-                                    {/*item.images && <img src={`${item.images.basePath}/${item.images.sizes}`} alt={item.name[lang]} />} {/*for fibers*/}
-                                    {item.urls && <img src={item.urls?.thumb} alt={item.name[lang]} />} {/*for colors*/}
+                            <div className="image" onClick={() => itemClicked(item._id)}>
+                                {type === 'fibers' && <PicWithPreloader basePath={item.images?.basePath || ''} sizes={item.images?.sizes || []} image={item.images?.files[0] || ""} alt={item.name[lang]}/>} {/*for fibers*/}
+                                {type === 'products' && <PicWithPreloader basePath={item.images?.basePath || ''} sizes={item.images?.sizes || []} image={item.images?.files[0] || ""} alt={item.name[lang]}/>} {/*for fibers*/}
+                                {type === 'colors' && <img src={item.urls?.thumb} alt={item.name[lang]} />} {/*for colors*/}
                             </div>
-                            <span>{item.name[lang]}</span>
-                            <div className="buttons_control">
-                                {onEditClick && <button className="button_blue edit" onClick={(e) => onEditItem(e, item._id)}>E</button>}
-                                {onDeleteClick && <button className="button_blue delete" onClick={(e) => onDeleteItem(e, item._id)}>X</button>}
-                            </div>
+                            {type === 'fibers' && <span className='text_fibers'>{item.short?.name[lang]}</span>}
+                            {type === 'products' && <span className='text_products'>{item.name[lang]}</span>}
+                            {type === 'colors' && <span className='text_colors'>{item.name[lang]}</span>}
                         </div>
                     )
                 })}

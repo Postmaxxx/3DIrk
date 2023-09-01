@@ -45,7 +45,7 @@ const Product: React.FC<IProps> = ({lang, setState, colorLoad, catalogProduct, f
             if ((colorLoad.status !== 'success' && colorLoad.status  !== 'fetching')) {
                 setState.colors.loadColors()
             }
-            if (paramProductId !== catalogProduct._id) {
+            if ((paramProductId !== catalogProduct._id) && (catalogLoadProduct.status !== 'fetching')) {
                 setState.catalog.loadProduct(paramProductId)
             }
             setLoaded(false)
