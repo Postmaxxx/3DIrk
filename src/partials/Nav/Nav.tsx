@@ -150,6 +150,11 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
                             <li className="submenu__item">
                                 <ul className="submenu__content">
                                     <li className="submenu__item__point">
+                                        <NavLink className={({ isActive }) => isActive ? "selected" : ""} to={navList.account.order.to}>
+                                            {navList.account.order[lang]}
+                                        </NavLink>
+                                    </li>
+                                    <li className="submenu__item__point">
                                         <NavLink className={({ isActive }) => isActive ? "selected" : ""} to={navList.account.orders.to}>
                                             {navList.account.orders[lang]}
                                         </NavLink>
@@ -258,8 +263,11 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
             </div>
             <ul className="nav__list">
                 <li className="nav-item">
-                    <NavLink className={({ isActive }) => isActive ? "selected" : ""} to={navList.home.to} onClick={navToggleMobile}>
-                        {navList.home[lang]}
+                    <NavLink 
+                        className={({ isActive }) => isActive ? "selected" : ""} 
+                        to={navList.home.to} 
+                        onClick={navToggleMobile}>
+                            {navList.home[lang]}
                     </NavLink>
                 </li>
 
@@ -300,14 +308,20 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
                 </li>
 
                 <li className="nav-item">
-                    <NavLink className={({ isActive }) => isActive ? "selected" : ""} to={navList.catalog.to} onClick={navToggleMobile}>
-                        {navList.catalog[lang]}
+                    <NavLink 
+                        className={({ isActive }) => isActive ? "selected" : ""} 
+                        to={navList.catalog.to} 
+                        onClick={navToggleMobile}>
+                            {navList.catalog[lang]}
                     </NavLink>
                 </li>
                 {isAuth ?
                     <li className="narrow nav-item">
-                        <NavLink className={({ isActive }) => isActive ? "selected" : ""} to={navList.cart.to} onClick={navToggleMobile}>
-                            {navList.cart[lang]}
+                        <NavLink 
+                            className={({ isActive }) => isActive ? "selected" : ""} 
+                            to={navList.cart.to} 
+                            onClick={navToggleMobile}>
+                                {navList.cart[lang]}
                         </NavLink>
                         <CartInformer />        
                     </li>
@@ -327,14 +341,23 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
                             <ul className="submenu noscroll">
                                 <li className="submenu__item">
                                     <NavLink className={({ isActive }) => isActive ? "selected" : ""}  
+                                        to={navList.account.order.to} 
+                                        onClick={navToggleMobile}>
+                                            {navList.account.order[lang]}
+                                    </NavLink>
+                                </li>
+                                <li className="submenu__item">
+                                    <NavLink className={({ isActive }) => isActive ? "selected" : ""}  
                                         to={navList.account.orders.to} 
                                         onClick={navToggleMobile}>
                                             {navList.account.orders[lang]}
                                     </NavLink>
                                 </li>
                                 <li className="submenu__item">
-                                    <NavLink className={({ isActive }) => isActive ? "selected" : ""} to={navList.contacts.to} onClick={navToggleMobile}>
-                                        {navList.contacts[lang]}
+                                    <NavLink 
+                                        className={({ isActive }) => isActive ? "selected" : ""} 
+                                        to={navList.contacts.to} onClick={navToggleMobile}>
+                                            {navList.contacts[lang]}
                                     </NavLink>
                                 </li>
                                 <li className="submenu__item">

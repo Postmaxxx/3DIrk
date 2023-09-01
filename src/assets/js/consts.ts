@@ -653,9 +653,14 @@ const navList = {
         en: "ACCOUNT",
         ru: "КАБИНЕТ",
         orders: {
-            en: "ORDERS",
-            ru: "ЗАКАЗЫ",
+            en: "ALL ORDERS",
+            ru: "ВСЕ ЗАКАЗЫ",
             to: "/orders"
+        },
+        order: {
+            en: "CUSTOM ORDER",
+            ru: "СВОЙ ЗАКАЗ",
+            to: "/custom_order"
         },
         cart: {
             en: "CART",

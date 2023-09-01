@@ -18,7 +18,7 @@ const Footer: FC<IFooter>  = ({lang}):JSX.Element => {
             <footer>
                 <div className="container">
                     <div className="footer__content">
-                        <span className='footer__copyright'>PrintIrk © 2023</span>
+                        <span className='footer__copyright'>{lang === 'en' ? 'Strezhen' : 'Стрежень'} © 2023</span>
                         <div className="footer__social">
                             <span>{lang === 'en' ? "We are in socials" : "Мы в соцсетях"}: </span>
                             <div className="social__links">

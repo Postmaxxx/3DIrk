@@ -25,6 +25,7 @@ const LazyHomePage = lazy(() => import("./pages/Home/Home"));
 const LazyFibersPage = lazy(() => import("./pages/Fibers/Fibers"));
 const LazyFiberPage = lazy(() => import("./pages/Fiber/Fiber"));
 const LazyOrderPage = lazy(() => import("./pages/Order/Order"));
+const LazyCustomOrderPage = lazy(() => import("./pages/CustomOrder/CustomOrder"));
 const LazyOrdersPage = lazy(() => import("./pages/Orders/Orders"));
 const LazyCatalogPage = lazy(() => import("./pages/Catalog/Catalog"));
 const LazyProduct = lazy(() => import("./pages/Product/Product"));
@@ -100,6 +101,7 @@ const App:React.FC<IProps> = ({lang, isAdmin, isAuth, contentLoad, isLogining, s
 				</Route>
 				
 				<Route path="/order" element={<Suspense fallback={<PreloaderPage />}>{isAuth ? <LazyOrderPage /> : <Unauthorized lang={lang} />}</Suspense>} />
+				<Route path="/custom_order" element={<Suspense fallback={<PreloaderPage />}>{isAuth ? <LazyCustomOrderPage /> : <Unauthorized lang={lang} />}</Suspense>} />
 				<Route path="/orders" element={<Suspense fallback={<PreloaderPage />}>{isAuth ? <LazyOrdersPage /> : <Unauthorized lang={lang} />}</Suspense>} />
 				<Route path="/contact_us" element={<Suspense fallback={<PreloaderPage />}><LazyContactUs /></Suspense>} />
 

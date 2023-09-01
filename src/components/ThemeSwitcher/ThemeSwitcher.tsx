@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { AnyAction, Dispatch, bindActionCreators } from "redux";
 import cloud from "./theme_day__cloud.svg";
 import star from "./theme_nigth__star.svg";
-import "./themeSwitcher.scss";
+import "./theme-switcher.scss";
 import { IFullState, TLang } from "../../interfaces";
 import { useScrollHider } from "../../hooks/scrollHider";
 import { allActions } from "../../redux/actions/all";

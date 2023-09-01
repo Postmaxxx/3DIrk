@@ -125,7 +125,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
                     </div>
                         <form className="form_full contact__form" ref={formContact}>
                             <div className="block_text">
-                                <h3>{lang === 'en' ? 'Our contacts' : 'Наши контакты'}</h3>
+                                <h3>{lang === 'en' ? 'Strezhen' : 'Компания Стрежень'}</h3>
                                 <div className="contacts">
                                     <div className="location">
                                         <img src={locationMapSmall} alt={lang === 'en' ? 'Location map' : 'Схема проезда'} onClick={onLocationClick}/>
