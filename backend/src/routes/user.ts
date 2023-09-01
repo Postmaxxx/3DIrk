@@ -29,7 +29,7 @@ const isAdmin = require('../middleware/isAdmin')
 
 const cartToFront = async (cart: ICartItem[]) => {
     if (cart.length === 0 || !cart) {
-        return {filteredCart: [], edited: false}
+        return {filteredCart: [], fixed: []}
     }
     const errProducts = await cache.products.control.load()
     if (errProducts) {
@@ -457,11 +457,12 @@ router.post('/order', //checking and creating an order if everything is ok
             await cache.colors.control.load()
             await cache.fibers.control.load()
             await cache.products.control.load()
-         
+            
             const user: IUser = await User.findOne({ _id: userId})
-
+            
             //check are there any non-exist properties in cart
             const checkResult = await cartToFront(user.cart)
+            console.log(333, checkResult.fixed);
             if (checkResult.fixed.length > 0) { //if cart was fixed send back fixed cart
                 return res.status(409).json({ 
                     message:{
