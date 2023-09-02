@@ -15,6 +15,7 @@ import inputChecker from "../../../../src/assets/js/inputChecker";
 import moment from 'moment';
 import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
 import MessageNew from '../../../../src/components/Message/MessageNew';
+import Uploader from '../../../../src/components/Preloaders/Uploader';
 
 interface IPropsState {
     lang: TLang
@@ -69,12 +70,22 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
 
 
     useEffect(() => {
-        if (send.status === 'idle' || send.status === 'fetching')  return
-        modal?.openModal({
-            name: 'newsSend',
-            onClose: closeModal,
-            children: <MessageNew {...modalMessageCreator(send, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
-        })
+        if (send.status === 'success' || send.status === 'error') {
+            modal?.closeName('newsSending');
+            modal?.openModal({
+                name: 'newsSend',
+                onClose: closeModal,
+                children: <MessageNew {...modalMessageCreator(send, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
+            })
+        }
+        if (send.status === 'fetching') {
+            modal?.openModal({
+                name: 'newsSending',
+                closable: false,
+                onClose: closeModal,
+                children: <Uploader text={lang === 'en' ? "Sending news, please wait..." : "Отправка новости, пожалуйста ждите..."}/>
+            })
+        }
     }, [send.status])
 
 
@@ -130,6 +141,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
         _date.current.value =  moment(news?.date || '').format('YYYY-MM-DD')
     }
     
+
 
 
 
@@ -284,11 +296,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
 
 
                         <button className='button_blue button_light' disabled={send.status === 'fetching'} onClick={e => onSubmit(e)}>
-                            {send.status === 'fetching' ? 
-                                <Preloader />
-                            :
-                                <>{lang === 'en' ? paramNewsId ? 'Save news' : 'Post news' : paramNewsId ? "Сохранить новость" : "Отправить новость"}</>
-                            }
+                            {lang === 'en' ? paramNewsId ? 'Save news' : 'Post news' : paramNewsId ? "Сохранить новость" : "Отправить новость"}
                         </button>
                     </form>
                 </div>

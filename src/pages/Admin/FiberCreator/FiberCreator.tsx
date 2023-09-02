@@ -10,7 +10,7 @@ import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFi
 import Selector, { ISelectorFunctions } from '../../../components/Selector/Selector';
 import { fibersProperties } from '../../../assets/data/fibersProperties';
 import Preloader from '../../../components/Preloaders/Preloader';
-import { useNavigate } from 'react-router-dom';
+//import { useNavigate } from 'react-router-dom';
 import { defaultSelectItem, fiberEmpty, inputsProps, resetFetch, selector, statuses } from '../../../assets/js/consts';
 import { deepCopy, errorsChecker, filesDownloader, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import Picker, { IPickerFunctions } from '../../../components/Picker/Picker';
@@ -18,6 +18,7 @@ import Featurer, { IFeaturerFunctions } from '../../../components/Featurer/Featu
 import inputChecker from '../../../../src/assets/js/inputChecker';
 import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
 import MessageNew from '../../../../src/components/Message/MessageNew';
+import Uploader from '../../../../src/components/Preloaders/Uploader';
 
 interface IPropsState {
     lang: TLang
@@ -80,12 +81,22 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
 
     
     useEffect(() => {
-        if (fibersState.send.status === 'idle' || fibersState.send.status === 'fetching')  return
-        modal?.openModal({
-            name: 'fiberSendStatus',
-            onClose: closeModal,
-            children: <MessageNew {...modalMessageCreator(fibersState.send, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
-        })
+        if (fibersState.send.status === 'success' || fibersState.send.status === 'error') {
+            modal?.closeName('fiberSending');
+            modal?.openModal({
+                name: 'fiberSendStatus',
+                onClose: closeModal,
+                children: <MessageNew {...modalMessageCreator(fibersState.send, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
+            })
+        }
+        if (fibersState.send.status === 'fetching') {
+            modal?.openModal({
+                name: 'fiberSending',
+                closable: false,
+                onClose: closeModal,
+                children: <Uploader text={lang === 'en' ? "Sending fiber, please wait..." : "Отправка материала, пожалуйста ждите..."}/>
+            })
+        }
     }, [fibersState.send.status])
 
 
@@ -498,11 +509,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
 
 
                         <button className='button_blue button_post' disabled={fibersState.send.status === 'fetching'} onClick={onSubmit}>
-                            {fibersState.send.status === 'fetching' ? 
-                                <Preloader />
-                                :
-                                lang === 'en' ? 'Save changes' : "Сохранить изменения" 
-                            }
+                            {fiber._id ? lang === 'en' ? 'Save changes' : "Сохранить изменения" : lang === 'en' ? 'Create fiber' : 'Создать материал'}
                         </button>
                     </form>
                 </div>

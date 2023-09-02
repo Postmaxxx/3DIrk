@@ -6,13 +6,13 @@ import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { useEffect,  } from "react";
 import { allActions } from "../../../redux/actions/all";
-import Preloader from '../../../components/Preloaders/Preloader';
 import { inputsProps, resetFetch } from '../../../assets/js/consts';
 import { errorsChecker, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import Featurer, { IFeaturerFunctions } from '../../../components/Featurer/Featurer';
 import inputChecker from '../../../assets/js/inputChecker';
 import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
 import MessageNew from '../../../../src/components/Message/MessageNew';
+import Uploader from '../../../../src/components/Preloaders/Uploader';
 
 
 interface IPropsState {
@@ -51,12 +51,22 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, modal, catalog}): JSX.El
 
 
     useEffect(() => { 
-        if (catalog.send.status === 'idle' || catalog.send.status === 'fetching') return
-        modal?.openModal({ //if error/success - show modal about send order
-            name: 'catalogSend',
-            onClose: closeModal,
-            children: <MessageNew {...modalMessageCreator(catalog.send, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
-        })
+        if (catalog.send.status === 'success' || catalog.send.status === 'error') {
+            modal?.closeName('catalogSending');
+            modal?.openModal({ //if error/success - show modal about send order
+                name: 'catalogSend',
+                onClose: closeModal,
+                children: <MessageNew {...modalMessageCreator(catalog.send, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
+            })
+        }
+        if (catalog.send.status === 'fetching') {
+            modal?.openModal({
+                name: 'catalogSending',
+                closable: false,
+                onClose: closeModal,
+                children: <Uploader text={lang === 'en' ? "Sending catalog, please wait..." : "Отправка каталога, пожалуйста ждите..."}/>
+            })
+        }
     }, [catalog.send.status])
 
 
@@ -138,11 +148,7 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, modal, catalog}): JSX.El
                         </div>
 
                         <button className='button_blue button_post' disabled={catalog.send.status === 'fetching'} onClick={onSubmit}>
-                            {catalog.send.status === 'fetching' ? 
-                                <Preloader />
-                            :
-                                <>{lang === 'en' ? 'Save list' : 'Сохранить список'}</>
-                            }
+                            {lang === 'en' ? 'Save list' : 'Сохранить список'}
                         </button>
                     </form>
                 </div>

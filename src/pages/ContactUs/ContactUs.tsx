@@ -18,6 +18,7 @@ import locationMap from '../../assets/img/address_scheme.jpg';
 import locationMapSmall from '../../assets/img/address_scheme_small.webp';
 import ImageModalNew from "../../../src/components/ImageModal/ImageModalNew";
 import svgs from "../../components/additional/svgs";
+import Uploader from "../../../src/components/Preloaders/Uploader";
 
 interface IPropsState {
     lang: TLang,
@@ -44,7 +45,7 @@ const ContactUs:React.FC<IProps> = ({lang, userState, modal, setState}): JSX.Ele
     const focuser = useMemo(() => focusMover(), [lang])
 
     
-    const closeModalMessage = useCallback(() => {
+    const closeModal = useCallback(() => {
         if (!_message.current || !addFilesRef.current ) return
         if (userState.sendOrder.status === 'success') { //clear all inputs
             if (userState.auth.status !== 'success') { //if user unauthorized
@@ -86,12 +87,23 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
 
     useEffect(() => {
         if (userState.sendOrder.status === 'success' || userState.sendOrder.status === 'error') { //show modal after fetch with the fetch result 
+            modal?.closeName('messageSending');
             modal?.openModal({
                 name: 'messageSend',
-                onClose: closeModalMessage,
-                children: <MessageNew {...modalMessageCreator(userState.sendOrder, lang)} buttonClose={{action: closeModalMessage, text: 'Close'}}/>
+                onClose: closeModal,
+                children: <MessageNew {...modalMessageCreator(userState.sendOrder, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
             })
         }
+        if (userState.sendOrder.status === 'fetching') {
+            modal?.openModal({
+                name: 'messageSending',
+                closable: false,
+                onClose: closeModal,
+                children: <Uploader text={lang === 'en' ? "Sending message, please wait..." : "Отправка сообщения, пожалуйста ждите..."}/>
+            })
+        }
+
+
     }, [userState.sendOrder.status])
 
 

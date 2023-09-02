@@ -170,7 +170,7 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
         
                                     {order.cart.length > 0 &&
                                         <div className="order__cart">
-                                            <div className="cell head first">{lang === 'en' ? 'Product' : 'Продукт'}</div>
+                                            <div className="cell head first">{lang === 'en' ? 'Product' : 'Товар'}</div>
                                             <div className="cell head">{lang === 'en' ? 'Fiber' : 'Материал'}</div>
                                             <div className="cell head">{lang === 'en' ? 'Color' : 'Цвет'}</div>
                                             <div className="cell head">{lang === 'en' ? 'Type' : 'Тип'}</div>

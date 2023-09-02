@@ -10,9 +10,9 @@ import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFi
 import { navList, resetFetch } from '../../../assets/js/consts';
 import { deepCopy, errorsChecker, filesDownloader, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import { useNavigate } from 'react-router-dom';
-import Preloader from '../../../components/Preloaders/Preloader';
 import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
 import MessageNew from '../../../../src/components/Message/MessageNew';
+import Uploader from '../../../../src/components/Preloaders/Uploader';
 
 interface IPropsState {
     lang: TLang
@@ -56,12 +56,23 @@ const SpliderChanger: FC<IProps> = ({lang, content, modal, setState}): JSX.Eleme
 
 
     useEffect(() => {
-        if (content.send.status === 'idle' || content.send.status === 'fetching')  return
-        modal?.openModal({
-            name: 'contentSend',
-            onClose: closeModal,
-            children: <MessageNew {...modalMessageCreator(content.send, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
-        })
+        if (content.send.status === 'success' || content.send.status === 'error') {
+            modal?.closeName('contentSending');
+            modal?.openModal({
+                name: 'contentSend',
+                onClose: closeModal,
+                children: <MessageNew {...modalMessageCreator(content.send, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
+            })
+        }
+        if (content.send.status === 'fetching') {
+            modal?.openModal({
+                name: 'contentSending',
+                closable: false,
+                onClose: closeModal,
+                children: <Uploader text={lang === 'en' ? "Sending content, please wait..." : "Отправка контента, пожалуйста ждите..."}/>
+            })
+        }
+
     }, [content.send.status])
 
 
@@ -120,11 +131,7 @@ const SpliderChanger: FC<IProps> = ({lang, content, modal, setState}): JSX.Eleme
                             <AddFiles lang={lang} ref={addFilesRef} multiple={true} id='allImages'/>
                         </div>
                         <button className='button_blue button_light button_post' disabled={content.send.status === 'fetching'} onClick={e => onSubmit(e)}>
-                            {content.send.status === 'fetching' ? 
-                                <Preloader />
-                            :
-                                <>{lang === 'en' ? 'Save splider' : "Сохранить галерею"}</>
-                            }
+                            {lang === 'en' ? 'Save splider' : "Сохранить галерею"}
                         </button>
                     </form>
                 </div>

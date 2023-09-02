@@ -462,7 +462,6 @@ router.post('/order', //checking and creating an order if everything is ok
             
             //check are there any non-exist properties in cart
             const checkResult = await cartToFront(user.cart)
-            console.log(333, checkResult.fixed);
             if (checkResult.fixed.length > 0) { //if cart was fixed send back fixed cart
                 return res.status(409).json({ 
                     message:{

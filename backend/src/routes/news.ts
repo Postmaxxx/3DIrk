@@ -8,6 +8,7 @@ import { IAllCache } from '../data/cache'
 import { allPaths, imageSizes, newsImageSizes } from '../data/consts'
 import { folderCleanerS3 } from '../processors/aws'
 import { foldersCleaner } from '../processors/fsTools'
+import { makeDelay } from '../processors/makeDelay'
 import { resizeAndSaveS3 } from '../processors/sharp'
 import { IMulterFile } from './user'
 const cache: IAllCache = require('../data/cache')
@@ -47,6 +48,7 @@ router.post('/create',
             
             await news.save()
             cache.news.obsolete = true
+            //await makeDelay(15000);
             return res.status(201).json({message: {en: 'News created', ru: 'Новость создана'}})
         } catch (error) {
             return res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})

@@ -13,6 +13,7 @@ import Picker, { IPickerFunctions } from '../../../../src/components/Picker/Pick
 import Selector, { ISelectorFunctions } from '../../../../src/components/Selector/Selector';
 import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
 import MessageNew from '../../../../src/components/Message/MessageNew';
+import Uploader from '../../../../src/components/Preloaders/Uploader';
 
 interface IPropsState {
     lang: TLang
@@ -42,6 +43,7 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
     const selectorStatusRef = useRef<ISelectorFunctions>(null)
 
 
+
     const closeModal = useCallback(async () => {
         if (await modal?.getName() === 'colorSend') {
             if (colorsState.send.status === 'success') {
@@ -52,6 +54,9 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
         errChecker.clear()
         modal?.closeCurrent()
 	}, [colorsState.send.status])
+
+
+
 
     const statusesList = useMemo(() => {
         return Object.values(statuses)
@@ -136,6 +141,7 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
 
     useEffect(() => {
         if (colorsState.send.status === 'success' || colorsState.send.status === 'error') {
+            modal?.closeName('colorSending');
             modal?.openModal({ //if error/success - show modal about send order
                 name: 'colorSend',
                 onClose: closeModal,
@@ -145,6 +151,14 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
                 addFileFullRef.current?.clearAttachedFiles()
                 addFileThumbRef.current?.clearAttachedFiles()
             }
+        }
+        if (colorsState.send.status === 'fetching') {
+            modal?.openModal({
+                name: 'colorSending',
+                closable: false,
+                onClose: closeModal,
+                children: <Uploader text={lang === 'en' ? "Sending color, please wait..." : "Отправка цвета, пожалуйста ждите..."}/>
+            })
         }
     }, [colorsState.send.status])
 
@@ -248,11 +262,7 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
                             className='button_blue button_light' 
                             disabled={colorsState.send.status === 'fetching'} 
                             onClick={onSubmit}>
-                            {colorsState.send.status === 'fetching' ?
-                                <Preloader />
-                            :
-                                lang === 'en' ? 'Save changes' : "Сохранить изменения" 
-                            }
+                            {lang === 'en' ? 'Save changes' : "Сохранить изменения" }
                         </button>
                     </form>
                 </div>

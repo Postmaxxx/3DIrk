@@ -9,11 +9,12 @@ interface IProps {}
 
 export interface IModal {
     name?: string
+    closable?: boolean
     onClose?: () => void
     children: React.ReactNode
 }
 export interface IModalFunctions {
-    openModal: ({name, onClose, children}: IModal) => void;
+    openModal: ({name, onClose, closable, children}: IModal) => void;
     closeCurrent: () => void; //close current modal, current modal = modals[0]
     closeName: (name: string) => void; //close all modals with the specified name
     getName: () => Promise<string | null>//get name of current visible modal
@@ -25,9 +26,10 @@ export interface IModalFunctions {
 
 const ModalNew = forwardRef<IModalFunctions, IProps>(({}, ref) => {
     useImperativeHandle(ref, () => ({
-        openModal({name, onClose, children}) { 
+        openModal({name, closable=true, onClose, children}) { 
             setModals(prev => ([...prev, {
                 name: name || '',
+                closable,
                 onClose: onClose ? onClose : close,
                 children
             }]))
@@ -63,9 +65,11 @@ const ModalNew = forwardRef<IModalFunctions, IProps>(({}, ref) => {
 
     return _modal ? createPortal(
         <div className={modals?.length > 0 ? "modal-window visible" : "modal-window"}>
+            {modals[0]?.closable &&
             <button className="closer" aria-label='close | закрыть' onClick={modals[0]?.onClose ? modals[0]?.onClose : close}>
                 {svgs().iconClose}
-            </button>
+            </button>}
+
 			<div className="content">
                 {modals[0]?.children}
             </div>

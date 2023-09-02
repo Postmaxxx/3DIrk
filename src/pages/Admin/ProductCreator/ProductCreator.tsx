@@ -9,13 +9,14 @@ import { allActions } from "../../../redux/actions/all";
 import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFiles';
 import Preloader from '../../../components/Preloaders/Preloader';
 import { defaultSelectItem, inputsProps, productEmpty, resetFetch, statuses } from '../../../assets/js/consts';
-import { checkIfNumbers, deepCopy, errorsChecker, filesDownloader, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
+import { deepCopy, errorsChecker, filesDownloader, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import Picker, { IPickerFunctions } from '../../../components/Picker/Picker';
 import Selector, { ISelectorFunctions } from '../../../components/Selector/Selector';
 import inputChecker from '../../../../src/assets/js/inputChecker';
 import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
 import MessageNew from '../../../../src/components/Message/MessageNew';
 import Mods, { IModsFunctions } from '../../../../src/components/Mods/Mods';
+import Uploader from '../../../../src/components/Preloaders/Uploader';
 
 interface IPropsState {
     lang: TLang
@@ -54,7 +55,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
 
 
     const closeModal = useCallback(async () => {
-        if (await modal?.getName()  === 'sendProduct') {
+        if (await modal?.getName()  === 'productSend') {
             if (catalogState.category.sendProduct.status === 'success') {
                 setState.catalog.loadCategory({ _id: catalogState.category._id })
             }
@@ -68,12 +69,22 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
 
     
     useEffect(() => {
-        if (catalogState.category.sendProduct.status === 'idle' || catalogState.category.sendProduct.status === 'fetching')  return
-        modal?.openModal({
-            name: 'sendProduct',
-            onClose: closeModal,
-            children: <MessageNew {...modalMessageCreator(catalogState.category.sendProduct, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
-        })
+        if (catalogState.category.sendProduct.status === 'success' || catalogState.category.sendProduct.status === 'error') {
+            modal?.closeName('productSending');
+            modal?.openModal({
+                name: 'productSend',
+                onClose: closeModal,
+                children: <MessageNew {...modalMessageCreator(catalogState.category.sendProduct, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
+            })
+        }
+        if (catalogState.category.sendProduct.status === 'fetching') {
+            modal?.openModal({
+                name: 'productSending',
+                closable: false,
+                onClose: closeModal,
+                children: <Uploader text={lang === 'en' ? "Sending product, please wait..." : "Отправка товара, пожалуйста ждите..."}/>
+            })
+        }
     }, [catalogState.category.sendProduct.status])
 
 
@@ -357,7 +368,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
                             <Selector 
                                 lang={lang} 
                                 id='selector_status' 
-                                label={{en: 'Product status: ', ru: 'Состояние продукта: '}}
+                                label={{en: 'Product status: ', ru: 'Состояние товара: '}}
                                 data={statusesList}
                                 onBlur={(e) => inputChecker({lang, notExact: '', el: e.target})}
                                 defaultData={{...defaultSelectItem}}
@@ -401,11 +412,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
 
                         
                         <button className='button_blue button_post' disabled={catalogState.category.sendProduct.status === 'fetching'} onClick={onSubmit}>
-                            {catalogState.category.sendProduct.status === 'fetching' ? 
-                                <Preloader />
-                            :
-                                <>{lang === 'en' ? 'Save changes' : "Сохранить изменения"}</>
-                            }
+                            {product._id ? lang === 'en' ? 'Save changes' : "Сохранить изменения" : lang === 'en' ? 'Create product' : 'Создать товар'}
                         </button>
                     </form>
                 </div>

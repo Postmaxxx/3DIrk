@@ -12,6 +12,7 @@ import { deepCopy, errorsChecker, focusMover, modalMessageCreator, prevent } fro
 import inputChecker from "../../../src/assets/js/inputChecker";
 import { IModalFunctions } from "../../../src/components/Modal/ModalNew";
 import MessageNew from "../../../src/components/Message/MessageNew";
+import Uploader from "../../../src/components/Preloaders/Uploader";
 
 interface IPropsState {
     lang: TLang,
@@ -44,8 +45,8 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsLoad, fibersLoad, 
 
 
 
-    const closeModalMessage = useCallback(async () => {        
-        if (await modal?.getName() === 'sendOrder') {
+    const closeModal = useCallback(async () => {        
+        if (await modal?.getName() === 'orderSend') {
             if (sendOrder.status === 'success') {
                 addFilesRef.current?.clearAttachedFiles()
                 setState.user.setCart({items: []})
@@ -73,8 +74,8 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsLoad, fibersLoad, 
         if (errChecker.amount() > 0) { //show modal with error
             modal?.openModal({
                 name: 'errorsInForm',
-                onClose: closeModalMessage,
-                children: <MessageNew {...errChecker.result()} buttonClose={{action: closeModalMessage, text: 'Close'}}/>
+                onClose: closeModal,
+                children: <MessageNew {...errChecker.result()} buttonClose={{action: closeModal, text: 'Close'}}/>
             })
             return
         }
@@ -91,7 +92,7 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsLoad, fibersLoad, 
         if (cart.fixed?.length === 0) return //nothing was fixed
         modal?.openModal({
             name: 'cartFixer',
-            onClose: closeModalMessage,
+            onClose: closeModal,
             children: <MessageNew 
                 header={lang === 'en' ? "Warning" :  "Внимание"}
                 status='warning'
@@ -99,21 +100,31 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsLoad, fibersLoad, 
                     'Some items have been removed from your cart as unavalable for order:' 
                     : 'Некоторые товары были удалены из вашей корзины т.к. они больше недоступны для заказа:',
                 ...cart.fixed?.map((item, i) => (`${i+1}) ${item[lang]}`))]}
-                buttonClose={{action: closeModalMessage, text: 'Close'}}
+                buttonClose={{action: closeModal, text: 'Close'}}
             />
         })
     }, [cart.fixed])
 
 
 
-
+        
     useEffect(() => {
-        if (sendOrder.status === 'fetching' || sendOrder.status === 'idle') return
-        modal?.openModal({ //if error/success - show modal about send order
-            name: 'sendOrder',
-            onClose: closeModalMessage,
-            children: <MessageNew {...modalMessageCreator(sendOrder, lang)} buttonClose={{action: closeModalMessage, text: 'Close'}}/>
-        })
+        if (sendOrder.status === 'success' || sendOrder.status === 'error') {
+            modal?.closeName('orderSending');
+            modal?.openModal({ //if error/success - show modal about send order
+                name: 'orderSend',
+                onClose: closeModal,
+                children: <MessageNew {...modalMessageCreator(sendOrder, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
+            })
+        }
+        if (sendOrder.status === 'fetching') {
+            modal?.openModal({
+                name: 'orderSending',
+                closable: false,
+                onClose: closeModal,
+                children: <Uploader text={lang === 'en' ? "Sending order, please wait..." : "Отправка заказа, пожалуйста ждите..."}/>
+            })
+        }
     }, [sendOrder.status])
 
 

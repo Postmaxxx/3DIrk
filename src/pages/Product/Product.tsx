@@ -68,7 +68,7 @@ const Product: React.FC<IProps> = ({lang, setState, colorLoad, catalogProduct, f
                     :
                         <>
                             {colorLoad.status === 'error' || fibersLoad.status === 'error' || catalogLoadProduct.status === 'error' ? 
-                                <ErrorFetch lang={lang} fetchData={{status: 'error', message: {en: 'Error occured while loading product, try again later', ru: 'Произошла ошибка при загрузке продукта, попробуйте позже'}}} />
+                                <ErrorFetch lang={lang} fetchData={{status: 'error', message: {en: 'Error occured while loading product, try again later', ru: 'Произошла ошибка при загрузке товара, попробуйте позже'}}} />
                             :
                                 <Preloader />}
                         </>

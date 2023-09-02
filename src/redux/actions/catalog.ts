@@ -223,7 +223,7 @@ export const sendProduct = (product: ISendProduct) => {
                 dispatch,
                 setter: setSendProduct,
                 controller,
-                comp: {en: 'Error while sending product', ru: 'Ошибка сохранения продукта'}
+                comp: {en: 'Error while sending product', ru: 'Ошибка сохранения товара'}
             })
         }
     }
@@ -269,7 +269,7 @@ export const editProduct = (product: ISendProduct, changeImages: boolean) => {
                 dispatch,
                 setter: setSendProduct,
                 controller,
-                comp: {en: 'Error while updating product', ru: 'Ошибка обновления продукта'}
+                comp: {en: 'Error while updating product', ru: 'Ошибка обновления товара'}
             })
         }
     }
@@ -312,7 +312,7 @@ export const loadProduct = (_id: string) => {
                 dispatch,
                 setter: setLoadProduct,
                 controller,
-                comp: {en: 'Error while loading product', ru: 'Ошибка загрузки продукта'}
+                comp: {en: 'Error while loading product', ru: 'Ошибка загрузки товара'}
             })
         }
     }
@@ -348,7 +348,7 @@ export const deleteProduct = (_id: TId) => {
                 dispatch,
                 setter: setSendProduct,
                 controller,
-                comp: {en: 'Error while deleting product', ru: 'Ошибка удаления продукта'}
+                comp: {en: 'Error while deleting product', ru: 'Ошибка удаления товара'}
             })
         }
     }

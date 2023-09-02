@@ -164,7 +164,7 @@ router.post('/product', //create
             cache.products.obsolete = true
             cache.catalog.obsolete = true
 
-            return res.status(201).json({message: {en: 'Product created', ru: 'Продукт создан'}})    
+            return res.status(201).json({message: {en: 'Product created', ru: 'Товар создан'}})    
         } catch (error) {
             res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})
         }
@@ -207,7 +207,7 @@ router.put('/product', //create
             cache.products.obsolete = true
             cache.catalog.obsolete = true
 
-            return res.status(200).json({message: {en: 'Product changed', ru: 'Продукт отредактирован'}})    
+            return res.status(200).json({message: {en: 'Product changed', ru: 'Товар отредактирован'}})    
         } catch (error) {
             res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})
         }
@@ -228,7 +228,7 @@ router.get('/product', async(req, res) => {
         const product = cache.products.data.find(item => item._id.toString() === _id)
         
         if (!product) {
-            return res.status(404).json({message: {en: `Product with id ${_id} has not been found`, ru: `Продукт с id ${_id} не был найден`}})
+            return res.status(404).json({message: {en: `Product with id ${_id} has not been found`, ru: `Товар с id ${_id} не был найден`}})
         }
 
         return res.status(200).json({product: {
@@ -257,7 +257,7 @@ router.delete('/product', //delete
     [authMW, isAdmin,
         check('_id')
         .exists()
-        .withMessage({en: 'No product ID provided', ru: 'Нет ID продукта'})
+        .withMessage({en: 'No product ID provided', ru: 'Нет ID товара'})
     ], 
     async(req, res) => { 
 
@@ -279,7 +279,7 @@ router.delete('/product', //delete
             cache.products.obsolete = true
             cache.catalog.obsolete = true
             await folderCleanerS3(process.env.s3BucketName, `${allPaths.pathToImages}/${allPaths.pathToProducts}/${_id}/`)
-            return res.status(200).json({message: {en: `Product ${name.en} deleted`, ru: `Продукт ${name.ru} удален`}})    
+            return res.status(200).json({message: {en: `Product ${name.en} deleted`, ru: `Товар ${name.ru} удален`}})    
         } catch (error) {
             res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})
         }

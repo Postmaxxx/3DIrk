@@ -11,6 +11,7 @@ import { deepCopy, errorsChecker, focusMover, modalMessageCreator, prevent } fro
 import inputChecker from "../../assets/js/inputChecker";
 import { IModalFunctions } from "../../components/Modal/ModalNew";
 import MessageNew from "../../components/Message/MessageNew";
+import Uploader from "../../../src/components/Preloaders/Uploader";
 
 interface IPropsState {
     lang: TLang,
@@ -38,7 +39,7 @@ const CustomOrder:React.FC<IProps> = ({lang, sendOrder, modal, setState}): JSX.E
 
 
 
-    const closeModalMessage = useCallback(async () => {        
+    const closeModal = useCallback(async () => {        
         if (await modal?.getName() === 'sendOrder') {
             if (sendOrder.status === 'success') {
                 addFilesRef.current?.clearAttachedFiles()
@@ -62,8 +63,8 @@ const CustomOrder:React.FC<IProps> = ({lang, sendOrder, modal, setState}): JSX.E
         if (errChecker.amount() > 0) { //show modal with error
             modal?.openModal({
                 name: 'errorsInForm',
-                onClose: closeModalMessage,
-                children: <MessageNew {...errChecker.result()} buttonClose={{action: closeModalMessage, text: 'Close'}}/>
+                onClose: closeModal,
+                children: <MessageNew {...errChecker.result()} buttonClose={{action: closeModal, text: 'Close'}}/>
             })
             return
         }
@@ -75,12 +76,22 @@ const CustomOrder:React.FC<IProps> = ({lang, sendOrder, modal, setState}): JSX.E
 
 
     useEffect(() => {
-        if (sendOrder.status === 'fetching' || sendOrder.status === 'idle') return
-        modal?.openModal({ //if error/success - show modal about send order
-            name: 'sendOrder',
-            onClose: closeModalMessage,
-            children: <MessageNew {...modalMessageCreator(sendOrder, lang)} buttonClose={{action: closeModalMessage, text: 'Close'}}/>
-        })
+        if (sendOrder.status === 'success' || sendOrder.status === 'error') {
+            modal?.closeName('orderSending');
+            modal?.openModal({ //if error/success - show modal about send order
+                name: 'orderSend',
+                onClose: closeModal,
+                children: <MessageNew {...modalMessageCreator(sendOrder, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
+            })
+        }
+        if (sendOrder.status === 'fetching') {
+            modal?.openModal({
+                name: 'orderSending',
+                closable: false,
+                onClose: closeModal,
+                children: <Uploader text={lang === 'en' ? "Sending order, please wait..." : "Отправка заказа, пожалуйста ждите..."}/>
+            })
+        }
     }, [sendOrder.status])
 
 
