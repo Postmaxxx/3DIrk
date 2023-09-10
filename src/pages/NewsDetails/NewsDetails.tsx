@@ -10,7 +10,7 @@ import SpliderCommon from '../../components/Spliders/Common/SpliderCommon';
 import { allActions } from "../../redux/actions/all";
 import Delete from '../../components/Delete/Delete';
 import { navList, resetFetch } from '../../assets/js/consts';
-import { modalMessageFromFetch } from '../../../src/assets/js/processors';
+import { modalMessageCreator } from '../../../src/assets/js/processors';
 import { IModalFunctions } from '../../../src/components/Modal/ModalNew';
 import MessageNew from '../../../src/components/Message/MessageNew';
 import svgs from '../../../src/components/additional/svgs';
@@ -69,14 +69,14 @@ const NewsDetails: FC<IProps> = ({lang, setState, newsState, modal, isAdmin }): 
             modal?.openModal({
                 name: 'deleteNews',
                 onClose: closeModal,
-                children: <MessageNew {...modalMessageFromFetch(newsState.send, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
+                children: <MessageNew {...modalMessageCreator(newsState.send, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
             })
         }
         if (newsState.loadOne.status === 'error') { //if fail to load news
             modal?.openModal({
                 name: 'loadNews',
                 onClose: closeModal,
-                children: <MessageNew {...modalMessageFromFetch(newsState.loadOne, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
+                children: <MessageNew {...modalMessageCreator(newsState.loadOne, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
             })
             
         }

@@ -400,40 +400,40 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
                                 <div className="block_input" data-selector="input-block">
                                     <label htmlFor="text_short_en">{lang === 'en' ? 'Description short en' : 'Описание кратко en'}</label>
                                     <textarea 
-                                            data-selector="input"
-                                            id="text_short_en" 
-                                            onChange={onChangeInputs}
-                                            value={fiber.short.text.en}
-                                            onBlur={(e) => inputChecker({lang, min:inputsProps.fiber.textShort.min, max:inputsProps.fiber.textShort.max, el: e.target})}/>
+                                        data-selector="input"
+                                        id="text_short_en" 
+                                        onChange={onChangeInputs}
+                                        value={fiber.short.text.en}
+                                        onBlur={(e) => inputChecker({lang, min:inputsProps.fiber.textShort.min, max:inputsProps.fiber.textShort.max, el: e.target})}/>
                                 </div>
                                 <div className="block_input" data-selector="input-block">
                                     <label htmlFor="text_short_ru">{lang === 'en' ? 'Description short ru' : 'Описание кратко ru'}</label>
                                     <textarea 
-                                            data-selector="input"
-                                            id="text_short_ru" 
-                                            onChange={onChangeInputs} 
-                                            value={fiber.short.text.ru}
-                                            onBlur={(e) => inputChecker({lang, min:inputsProps.fiber.textShort.min, max:inputsProps.fiber.textShort.max, el: e.target})}/>
+                                        data-selector="input"
+                                        id="text_short_ru" 
+                                        onChange={onChangeInputs} 
+                                        value={fiber.short.text.ru}
+                                        onBlur={(e) => inputChecker({lang, min:inputsProps.fiber.textShort.min, max:inputsProps.fiber.textShort.max, el: e.target})}/>
                                 </div>
                             </div>
                             <div className="form__inputs form__inputs_sm-wide">
                                 <div className="block_input" data-selector="input-block">
                                     <label htmlFor="text_en">{lang === 'en' ? 'Description en' : 'Описание en'}</label>
                                     <textarea 
-                                            data-selector="input"
-                                            id="text_en" 
-                                            onChange={onChangeInputs} 
-                                            value={fiber.text.en}
-                                            onBlur={(e) => inputChecker({lang, min:inputsProps.fiber.textFull.min, max:inputsProps.fiber.textFull.max, el: e.target})}/>
+                                        data-selector="input"
+                                        id="text_en" 
+                                        onChange={onChangeInputs} 
+                                        value={fiber.text.en}
+                                        onBlur={(e) => inputChecker({lang, min:inputsProps.fiber.textFull.min, max:inputsProps.fiber.textFull.max, el: e.target})}/>
                                 </div>
                                 <div className="block_input" data-selector="input-block">
                                     <label htmlFor="text_ru">{lang === 'en' ? 'Description ru' : 'Описание ru'}</label>
                                     <textarea 
-                                            data-selector="input"
-                                            id="text_ru"
-                                            onChange={onChangeInputs}
-                                            value={fiber.text.ru}
-                                            onBlur={(e) => inputChecker({lang, min:inputsProps.fiber.textFull.min, max:inputsProps.fiber.textFull.max, el: e.target})}/>
+                                        data-selector="input"
+                                        id="text_ru"
+                                        onChange={onChangeInputs}
+                                        value={fiber.text.ru}
+                                        onBlur={(e) => inputChecker({lang, min:inputsProps.fiber.textFull.min, max:inputsProps.fiber.textFull.max, el: e.target})}/>
                                 </div>
                             </div>
                         </section>

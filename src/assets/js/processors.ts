@@ -1,10 +1,10 @@
 import { IAction, IDispatch, IErrRes, IFetch, TFetchStatus, TLang, TLangText } from "../../interfaces";
-import { DOMExceptions, empty, exceptionTimeout, headerStatus, intervalBetweenRequests, selector } from "./consts";
+import { empty, exceptionTimeout, headerStatus, selector } from "./consts";
 
 //---------------------------------------------------------------
 
 const ratingNumberToText = (value: string, scale: keyof typeof selector) : TLangText => {
-    if (!selector[scale]) {return {en: 'Scale of range', ru: 'Шкала вне диапазона'}}
+    //if (!selector[scale]) {return {en: 'Scale of range', ru: 'Шкала вне диапазона'}}
     return selector[scale].find(item => item.value === value)?.name || {en: 'Value out of range', ru: 'Значение вне диапазона'}
 }
 
@@ -45,17 +45,16 @@ const prevent = (e: React.MouseEvent<HTMLElement | HTMLButtonElement> | DragEven
 
 const filesDownloader = async (urls: string[]): Promise<File[]> => {   
       const results = await Promise.allSettled(urls.map(async (url) => {
-            const filename = url.substring(url.lastIndexOf('/') + 1)
-            const response = await fetch(url)
-            const blob = await response.blob()
-            const file = new File([blob], filename, { type: blob.type })
-            return file;
-      }))
-      const files: File[] = results
+        const filename = url.substring(url.lastIndexOf('/') + 1)
+        const response = await fetch(url)
+        const blob = await response.blob()
+        const file = new File([blob], filename, { type: blob.type })
+        return file;
+    }))
+    const files: File[] = results
         .filter((result) => result.status === 'fulfilled')
         ?.map((result) => (result as PromiseFulfilledResult<File>).value)
-    
-      return files
+    return files
 }
 
 
@@ -63,89 +62,30 @@ const filesDownloader = async (urls: string[]): Promise<File[]> => {
 //-----------------------------------------------------------
 
 const filenameChanger = (filename: string) => {
-    return filename
-        .replaceAll('_','-')
-}
-
-/*
-export interface ICheckAndLoad {
-    fetchData: IFetch
-    loadFunc: (...arg: any) => void
-    args?: any[]
-    force?: boolean
+    return filename.replaceAll('_','-')
 }
 
 
-
-
-const checkAndLoad = async ({fetchData, loadFunc, args=[], force=false}: ICheckAndLoad) => {
-    if (force) {
-        await fetchData.controller && fetchData.controller?.abort(DOMExceptions.byFetch) //cancel current fetch if it continues 
-        loadFunc.apply(undefined, args || [])
-    } else { //fetch data only once 
-        if (fetchData.status === 'idle') {
-            loadFunc.apply(undefined, args || [])
-        }
-    }
-}
-
-
-export interface IDataLoader {
-    fetchData: IFetch
-    loadFunc: (...arg: any) => void
-    args?: any[]
-    force?: boolean
-    timer: any
-    setTimer: any
-}
-
-
-const dataLoader = async ({fetchData, loadFunc, args=[], force=false, timer, setTimer}: IDataLoader) => {
-    if (force && fetchData.status !== 'success') {
-        await fetchData.controller && fetchData.controller?.abort(DOMExceptions.byFetch) //cancel current fetch if it continues 
-        if (!timer) {
-            if (fetchData.status === 'error') {
-                setTimer(setTimeout(() => setTimer(undefined), intervalBetweenRequests))
-            }
-            loadFunc.apply(undefined, args || [])
-        } 
-    } else { 
-        if (fetchData.status === 'idle') {
-            loadFunc.apply(undefined, args || [])
-        }
-        if (fetchData.status === 'error' && !timer) {
-            loadFunc.apply(undefined, args || [])
-            setTimer(setTimeout(() => setTimer(undefined), intervalBetweenRequests))
-        }
-    }
-}
-*/
-interface IFetchError {
+export interface IFetchError {
     dispatch: IDispatch
     setter: <T extends IFetch>(payload: T) => IAction<T>
     comp: TLangText
-    e: any
+    e: unknown
     controller: AbortController
 }
 
 const fetchError = ({dispatch, setter, comp, e, controller}: IFetchError) => {
-    if (e.name !== 'AbortError') {
-        return dispatch(setter({status: 'error', message: {en:`${comp.en}: ${e}`, ru: `${comp.ru}: ${e}`}}))
+    if ((e as Error).name !== 'AbortError') {
+        return dispatch(setter({status: 'error', message: {en:`${comp.en}: ${(e as Error).name}`, ru: `${comp.ru}: ${(e as Error).name}`}}))
     }
-    if (e.name === 'AbortError' && controller.signal.reason.name === exceptionTimeout.name) {
-        return dispatch(setter({status: 'error', message: {en:`${comp.en}: server response timeout`, ru: `${comp.ru}: таймаут ответа от сервера`}}))
+    if ((e as Error).name === 'AbortError') {
+        if (controller.signal.reason.name === exceptionTimeout.name) {
+            return dispatch(setter({status: 'error', message: {en:`${comp.en}: server response timeout`, ru: `${comp.ru}: таймаут ответа от сервера`}}))
+        }
+        return dispatch(setter({status: 'error', message: {en:`${comp.en}: request aborted`, ru: `${comp.ru}: запрос отменен`}}))
     }
 }
 
-
-const modalMessageFromFetch = (source: IFetch, lang: TLang) => { //create all keys for Message
-    const errors: string[] = source.errors?.map(e => e[lang]) || []
-    return {
-        header: headerStatus[source.status as "success" | "error"][lang],
-        status: source.status,
-        text: [source.message[lang], ...errors]
-    }
-}
 
 
 const modalMessageCreator = (source: IFetch, lang: TLang) => { //create all keys for Message
@@ -165,9 +105,13 @@ export interface IFocusNext {
 }
 
 
-const deepCopy = <T>(objToCopy: T): T  => {
+const deepCopy = <T extends {}>(objToCopy: T): T  => {
     return structuredClone(objToCopy)
 }
+
+
+
+
 
 
 const focusMover = () => {
@@ -199,7 +143,7 @@ const focusMover = () => {
     }
 
 
-    const create = ({container='#root', itemsSelector='[data-selector="input"]'}: {container: string | HTMLElement | HTMLFormElement, itemsSelector?: string}) => {
+    const create = ({container='#root', itemsSelector='[data-selector="input"]'}: {container?: string | HTMLElement | HTMLFormElement, itemsSelector?: string}) => {
         if (typeof container === 'string') {
             focusableElements.splice(0, focusableElements.length, ...(document.querySelector(container)?.querySelectorAll(itemsSelector) || []) as HTMLElement[])
         }
@@ -224,8 +168,8 @@ const focusMover = () => {
 const resErrorFiller = (result: IErrRes) => {
     return {
         status: 'error' as TFetchStatus, 
-        message: (result as IErrRes).message || {...empty}, 
-        errors: result.errors || []
+        message: {...(result as IErrRes).message} || {...empty}, 
+        errors: result.errors ? [...result.errors] : []
     }
 }
 
@@ -235,12 +179,14 @@ const checkIfNumbers = (value: string) => {
 }
 
 const checkIfEmail = (value: string) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+[^.]$/.test(value)
 }
 
 const checkIfPhone = (value: string) => {
     return /^\+?[0-9]*$/.test(value)
 }
+
+
 
 const debounce = (cb: Function, delay = 1000) => {
     let timeout: ReturnType<typeof setTimeout>
@@ -254,6 +200,6 @@ const debounce = (cb: Function, delay = 1000) => {
 
 
 
-export { ratingNumberToText, errorsChecker, prevent, filenameChanger,  modalMessageFromFetch, modalMessageCreator, 
+export { ratingNumberToText, errorsChecker, prevent, filenameChanger,  modalMessageCreator, 
     focusMover, deepCopy, resErrorFiller, checkIfNumbers, checkIfEmail, checkIfPhone, fetchError, filesDownloader,
     debounce}

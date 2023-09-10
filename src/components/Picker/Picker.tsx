@@ -101,7 +101,7 @@ const Picker = forwardRef<IPickerFunctions, IProps>(({items, lang, onEditClick, 
                         <div className="image" onClick={() => itemClicked(createNewItemId)}>
                             <img src={iconPlus} alt={lang === 'en' ? "Create new" : 'Создать новый'} />
                         </div>
-                        <span>{lang === 'en' ? 'Add new' : 'Создать'}</span>
+                        <span className='text_fibers'>{lang === 'en' ? 'Add new' : 'Создать'}</span>
                     </div>
                 }
             </>

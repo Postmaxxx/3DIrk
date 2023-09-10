@@ -40,8 +40,13 @@
         & > .splide__pagination   {
             position: absolute;
             bottom: -8%;
+            opacity: .8;
             & li > button {
                 background-color: var(--main_em);
+                &.is-active {
+                    opacity: 1;
+                    scale: 1.2;
+                }
             }
         }
     
