@@ -7,7 +7,8 @@ import { IFullState, ILoggingForm, IUserState, TLang } from '../../interfaces';
 import { inputsProps, resetFetch } from '../../assets/js/consts';
 import { deepCopy, focusMover, prevent } from '../../assets/js/processors';
 import Hider from '../InputHider/InputHider';
-import inputChecker from '../../assets/js/inputChecker';
+import { inputChecker } from '../../assets/js/processors';
+
 import { allActions } from "../../redux/actions/all";
 
 interface IPropsState {

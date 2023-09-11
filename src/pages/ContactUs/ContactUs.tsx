@@ -8,7 +8,7 @@ import AddFiles, { IAddFilesFunctions } from "../../components/AddFiles/AddFiles
 import { allActions } from "../../redux/actions/all";
 import { inputsProps, nwsp, resetFetch } from "../../assets/js/consts";
 import { deepCopy, focusMover, modalMessageCreator, prevent } from "../../assets/js/processors";
-import inputChecker from "../../../src/assets/js/inputChecker";
+import { inputChecker } from '../../../src/assets/js/processors';
 import { IModalFunctions } from "../../../src/components/Modal/ModalNew";
 import MessageNew from "../../../src/components/Message/MessageNew";
 import Preloader from "../../../src/components/Preloaders/Preloader";

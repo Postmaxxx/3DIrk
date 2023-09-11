@@ -7,6 +7,7 @@ import "./theme-switcher.scss";
 import { IFullState, TLang } from "../../interfaces";
 import { useScrollHider } from "../../hooks/scrollHider";
 import { allActions } from "../../redux/actions/all";
+import React from 'react'
 
 
 type TTheme = 'dark' | 'light'

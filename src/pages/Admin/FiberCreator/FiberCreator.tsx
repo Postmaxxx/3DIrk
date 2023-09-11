@@ -15,7 +15,7 @@ import { defaultSelectItem, fiberEmpty, inputsProps, resetFetch, selector, statu
 import { deepCopy, errorsChecker, filesDownloader, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import Picker, { IPickerFunctions } from '../../../components/Picker/Picker';
 import Featurer, { IFeaturerFunctions } from '../../../components/Featurer/Featurer';
-import inputChecker from '../../../../src/assets/js/inputChecker';
+import { inputChecker } from '../../../../src/assets/js/processors';
 import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
 import MessageNew from '../../../../src/components/Message/MessageNew';
 import Uploader from '../../../../src/components/Preloaders/Uploader';

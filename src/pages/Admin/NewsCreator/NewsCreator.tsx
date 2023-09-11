@@ -10,8 +10,7 @@ import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFi
 import { inputsProps, navList, newsItemEmpty, resetFetch } from '../../../assets/js/consts';
 import { errorsChecker, filesDownloader, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import { useNavigate, useParams } from 'react-router-dom';
-import Preloader from '../../../components/Preloaders/Preloader';
-import inputChecker from "../../../../src/assets/js/inputChecker";
+import { inputChecker } from '../../../../src/assets/js/processors';
 import moment from 'moment';
 import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
 import MessageNew from '../../../../src/components/Message/MessageNew';

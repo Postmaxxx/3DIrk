@@ -6,6 +6,7 @@ import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { useScrollHider } from "../../hooks/scrollHider";
 import { allActions } from "../../redux/actions/all";
+import React from 'react'
 
 
 interface IPropsState {

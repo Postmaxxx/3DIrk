@@ -1,5 +1,5 @@
 import { IFetch, TLangText, IDispatch, IAction } from '../interfaces';
-import { errorsChecker, ratingNumberToText, prevent, filesDownloader, filenameChanger, modalMessageCreator, deepCopy,resErrorFiller, checkIfNumbers, checkIfEmail, checkIfPhone, debounce, fetchError, focusMover } from '../assets/js/processors'
+import { errorsChecker, ratingNumberToText, prevent, filesDownloader, filenameChanger, modalMessageCreator, deepCopy,resErrorFiller, checkIfNumbers, checkIfEmail, checkIfPhone, debounce, fetchError, focusMover, makeDelay, inputChecker } from '../assets/js/processors'
 import { exceptionTimeout } from '../assets/js/consts';
 import { AnyAction } from 'redux';
 import { render } from '@testing-library/react';
@@ -280,6 +280,10 @@ describe('Tests for focusMover', () => {
             </div>`
         focuserString.create({container: '#root', itemsSelector: '[data-selector="input"]'})
     })
+
+    afterAll(() => {
+        document.body.innerHTML = ``
+    })
     
     
     test('clear() should clear focusMover, length() should return correct length. for container is string', () => {
@@ -292,10 +296,7 @@ describe('Tests for focusMover', () => {
 
     test('clear() should clear focusMover length() should return correct length for container is DOMElement', () => {
         let focuserDOM: ReturnType<typeof focusMover> = focusMover()
-        const { container } = render(<Root />)
-        //const root = document.querySelector('#root') as HTMLElement
-        const root = container.querySelector('#root') as HTMLElement
-        focuserDOM.create({container: root, itemsSelector: '[data-selector="input"]'})
+        focuserDOM.create({})
         expect(focuserDOM.length()).toBe(4)
         focuserDOM.clear()
         expect(focuserDOM.length()).toBe(0)
@@ -516,3 +517,234 @@ describe('Tests for debounce', () => {
         expect(mockCallback).toHaveBeenCalledTimes(1);
     });
 });
+
+
+
+
+
+
+describe('Tests for makeDelay', () => {
+
+    beforeEach(() => {
+        jest.useFakeTimers()
+    })
+
+    afterEach(() => {
+        jest.useRealTimers()
+    })
+
+
+    test('should make delay 1000', async () => {
+        const delay = 3000
+        const promise = makeDelay(delay);
+        jest.advanceTimersByTime(2999);
+        expect(promise).not.toHaveProperty('value');
+        jest.advanceTimersByTime(1);
+        const result = await promise;
+        expect(result).toBe(`Timeout ${delay}ms has been finished`);
+    })
+    
+    test('should make delay 0', async () => {
+        const promise = makeDelay(0);
+        jest.advanceTimersByTime(0);
+        const result = await promise;
+        expect(result).toBe('Timeout 0ms has been finished')
+    })
+
+    test('should not make delay if delay not provided', async () => {
+        const promise = makeDelay();
+        jest.advanceTimersByTime(0);
+        const result = await promise;
+        expect(result).toBe('Timeout 0ms has been finished')
+    })
+})
+
+
+
+describe('Tests for inputChecker', () => {
+
+    let TestTree: () => JSX.Element
+
+
+    beforeEach(() => {
+        TestTree = () => {
+            return (
+                <div id='parent'>
+                    <input type="text" id='input' />
+                    <textarea name="textarea" id="textarea"></textarea>
+                    <select id='select' defaultValue=''>
+                        <option value="" disabled hidden></option>
+                        <option value="123">123</option>
+                        <option value="12345678910">12345678910</option>
+                    </select>
+                </div>
+            )
+        }
+    })
+
+
+    test('should do nothing if el.parent does not exist', () => {
+        const singleInput = {parentElement: null} as HTMLInputElement
+        expect(inputChecker({el: singleInput, lang: 'en'})).toBe('Parent missing')
+    })
+
+
+
+    test('should do nothing if el.value.length is 0 and orEmpty is true but to remove incorrect-value class for parent ', () => {
+        const {container} = render(<TestTree />)
+        const input = container.querySelector('#input') as HTMLInputElement
+        const select = container.querySelector('#select') as HTMLSelectElement
+        const textarea = container.querySelector('#textarea') as HTMLTextAreaElement
+        const parent = container.querySelector('#parent') as HTMLElement
+        parent.classList.add('incorrect-value')
+        inputChecker({el: input, lang: 'en', orEmpty: true})
+        expect(parent.classList.contains('incorrect-value')).toBe(false)
+
+        parent.classList.add('incorrect-value')
+        inputChecker({el: select, lang: 'en', orEmpty: true})
+        expect(parent.classList.contains('incorrect-value')).toBe(false)
+
+        parent.classList.add('incorrect-value')
+        inputChecker({el: textarea, lang: 'en', orEmpty: true})
+        expect(parent.classList.contains('incorrect-value')).toBe(false)
+    })
+
+
+    test('should add incorrect-value class for parent in value.length <min or >max', () => {
+        const {container} = render(<TestTree />)
+        const input = container.querySelector('#input') as HTMLInputElement
+        const select = container.querySelector('#select') as HTMLSelectElement
+        const textarea = container.querySelector('#textarea') as HTMLTextAreaElement
+        const parent = container.querySelector('#parent') as HTMLElement
+        inputChecker({el: input, lang: 'en', min: 1})
+        expect(parent.classList.contains('incorrect-value')).toBe(true)
+        expect(parent.dataset.errorText).toBe('Min length: 1')
+
+        parent.classList.remove('incorrect-value')
+        input.value = '123456789 10'
+        inputChecker({el: input, lang: 'en', max: 10})
+        expect(parent.classList.contains('incorrect-value')).toBe(true)
+        expect(parent.dataset.errorText).toBe('Max length: 10')
+
+
+        inputChecker({el: textarea, lang: 'en', min: 1})
+        expect(parent.classList.contains('incorrect-value')).toBe(true)
+        expect(parent.dataset.errorText).toBe('Min length: 1')
+        parent.classList.remove('incorrect-value')
+        textarea.value = '123456789 10'
+        inputChecker({el: textarea, lang: 'en', max: 10})
+        expect(parent.classList.contains('incorrect-value')).toBe(true)
+        expect(parent.dataset.errorText).toBe('Max length: 10')
+
+        
+        inputChecker({el: select, lang: 'en', min: 1})
+        expect(parent.classList.contains('incorrect-value')).toBe(true)
+        expect(parent.dataset.errorText).toBe('Min length: 1')
+        parent.classList.remove('incorrect-value')
+        select.selectedIndex = 2
+        inputChecker({el: select, lang: 'en', max: 10})
+        expect(parent.classList.contains('incorrect-value')).toBe(true)
+        expect(parent.dataset.errorText).toBe('Max length: 10')
+    })
+
+
+    test('should add incorrect-value class for exact and notExact', () => {
+        const {container} = render(<TestTree />)
+        const input = container.querySelector('#input') as HTMLInputElement
+        const select = container.querySelector('#select') as HTMLSelectElement
+        const parent = container.querySelector('#parent') as HTMLElement
+
+        input.value = '1234'
+        inputChecker({el: input, lang: 'en', exact:'123'})
+        expect(parent.classList.contains('incorrect-value')).toBe(true)
+        expect(parent.dataset.errorText).toBe("Doesn't match")
+        parent.classList.remove('incorrect-value')
+        input.value = '123'
+        inputChecker({el: input, lang: 'en', exact:'123'})
+        expect(parent.classList.contains('incorrect-value')).toBe(false)
+
+
+        select.selectedIndex = 1
+        inputChecker({el: select, lang: 'en', exact:'12345678910'})
+        expect(parent.classList.contains('incorrect-value')).toBe(true)
+        parent.classList.remove('incorrect-value')
+        select.selectedIndex = 2
+        inputChecker({el: select, lang: 'ru', exact:'12345678910'})
+        expect(parent.classList.contains('incorrect-value')).toBe(false)
+        expect(parent.dataset.errorText).toBe("Doesn't match")
+
+
+        input.value = '1234'
+        inputChecker({el: input, lang: 'en', notExact:'123'})
+        expect(parent.classList.contains('incorrect-value')).toBe(false)
+        parent.classList.remove('incorrect-value')
+        input.value = '123'
+        inputChecker({el: input, lang: 'en', notExact:'123'})
+        expect(parent.classList.contains('incorrect-value')).toBe(true)
+        expect(parent.dataset.errorText).toBe("Wrong value")
+    })
+
+
+
+
+
+    test('should check types', () => {
+        const {container} = render(<TestTree />)
+        const input = container.querySelector('#input') as HTMLInputElement
+        const parent = container.querySelector('#parent') as HTMLElement
+
+        input.value = '1234'
+        inputChecker({el: input, lang: 'en', type: 'numbers'})
+        expect(parent.classList.contains('incorrect-value')).toBe(false)
+        parent.classList.remove('incorrect-value')
+        input.value = '+1234'
+        inputChecker({el: input, lang: 'en', type: 'numbers'})
+        expect(parent.classList.contains('incorrect-value')).toBe(true)
+        expect(parent.dataset.errorText).toBe("Numbers only")
+
+        parent.classList.remove('incorrect-value')
+        input.value = '+1234'
+        inputChecker({el: input, lang: 'en', type: 'phone'})
+        expect(parent.classList.contains('incorrect-value')).toBe(false)
+        parent.classList.remove('incorrect-value')
+        input.value = '+1234a'
+        inputChecker({el: input, lang: 'en', type: 'phone'})
+        expect(parent.classList.contains('incorrect-value')).toBe(true)
+        expect(parent.dataset.errorText).toBe("Numbers only")
+
+        parent.classList.remove('incorrect-value')
+        input.value = '1@1.ca'
+        inputChecker({el: input, lang: 'en', type: 'email'})
+        expect(parent.classList.contains('incorrect-value')).toBe(false)
+        parent.classList.remove('incorrect-value')
+        input.value = '@.test'
+        inputChecker({el: input, lang: 'en', type: 'email'})
+        expect(parent.classList.contains('incorrect-value')).toBe(true)
+        expect(parent.dataset.errorText).toBe("Wrong format")
+
+        parent.classList.remove('incorrect-value')
+        input.value = '2022-01-31'           
+        inputChecker({el: input, lang: 'en', type: 'date'})
+        expect(parent.classList.contains('incorrect-value')).toBe(false)
+        parent.classList.remove('incorrect-value')
+        input.value = '2022-01-32'       
+        inputChecker({el: input, lang: 'en', type: 'date'})
+        expect(parent.classList.contains('incorrect-value')).toBe(true)
+        expect(parent.dataset.errorText).toBe("Wrong date")
+        parent.classList.remove('incorrect-value')
+        input.value = 'abc'       
+        inputChecker({el: input, lang: 'en', type: 'date'})
+        expect(parent.classList.contains('incorrect-value')).toBe(true)
+        expect(parent.dataset.errorText).toBe("Wrong date")
+        parent.classList.remove('incorrect-value')
+        input.value = '2009-01-01'       
+        inputChecker({el: input, lang: 'en', type: 'date'})
+        expect(parent.classList.contains('incorrect-value')).toBe(true)
+        expect(parent.dataset.errorText).toBe("Wrong date")
+        parent.classList.remove('incorrect-value')
+        input.value = '2039-01-01'       
+        inputChecker({el: input, lang: 'en', type: 'date'})
+        expect(parent.classList.contains('incorrect-value')).toBe(true)
+        expect(parent.dataset.errorText).toBe("Wrong date")
+    })
+})

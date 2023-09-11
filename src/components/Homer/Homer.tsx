@@ -3,6 +3,7 @@ import './homer.scss'
 import svgs from '../additional/svgs';
 
 
+
 const Homer = () => {
 
     const _homer = useRef<HTMLDivElement>(null)
@@ -19,19 +20,18 @@ const Homer = () => {
 
     const onHomerClicked = () => {
         document.body.scrollTop = 0; // For Safari
-          	document.documentElement.scrollTop = 0;
-
+        document.documentElement.scrollTop = 0;
     }
 
     
 
 
     return (
-        <div className='homer' onClick={onHomerClicked} ref={_homer}>
+        <div className='homer' data-testid="homer" onClick={onHomerClicked} ref={_homer}>
             {svgs().iconHomer}
         </div>
     )
 }
 
 
-export default  Homer
+export default Homer

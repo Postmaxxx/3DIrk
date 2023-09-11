@@ -12,7 +12,7 @@ import { defaultSelectItem, inputsProps, productEmpty, resetFetch, statuses } fr
 import { deepCopy, errorsChecker, filesDownloader, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import Picker, { IPickerFunctions } from '../../../components/Picker/Picker';
 import Selector, { ISelectorFunctions } from '../../../components/Selector/Selector';
-import inputChecker from '../../../../src/assets/js/inputChecker';
+import { inputChecker } from '../../../../src/assets/js/processors';
 import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
 import MessageNew from '../../../../src/components/Message/MessageNew';
 import Mods, { IModsFunctions } from '../../../../src/components/Mods/Mods';

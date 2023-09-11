@@ -15,6 +15,7 @@ import { IModalFunctions } from "../../../src/components/Modal/ModalNew";
 import useScreenMeter from "../../../src/hooks/screenMeter";
 import LangSwitcher from "../../../src/components/LangSwitcher/LangSwitcher";
 import ThemeSwitcher from "../../../src/components/ThemeSwitcher/ThemeSwitcher";
+import React from 'react'
 
 
 interface IPropsState {

@@ -9,7 +9,7 @@ import { allActions } from "../../../redux/actions/all";
 import { inputsProps, resetFetch } from '../../../assets/js/consts';
 import { errorsChecker, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import Featurer, { IFeaturerFunctions } from '../../../components/Featurer/Featurer';
-import inputChecker from '../../../assets/js/inputChecker';
+import { inputChecker } from '../../../../src/assets/js/processors';
 import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
 import MessageNew from '../../../../src/components/Message/MessageNew';
 import Uploader from '../../../../src/components/Preloaders/Uploader';

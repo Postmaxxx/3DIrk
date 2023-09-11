@@ -1,6 +1,5 @@
 import { IAction, IDispatch, IErrRes, IFetch, TFetchStatus, TLang, TLangText } from "../../interfaces";
-import { empty, exceptionTimeout, headerStatus, selector } from "./consts";
-
+import { empty, exceptionTimeout, headerStatus, selector, inputsProps } from "./consts";
 //---------------------------------------------------------------
 
 const ratingNumberToText = (value: string, scale: keyof typeof selector) : TLangText => {
@@ -198,8 +197,83 @@ const debounce = (cb: Function, delay = 1000) => {
     }
 }
 
+const makeDelay = (delay: number = 0): Promise<string> => {
+    return new Promise((res) => {
+        setTimeout(() => res(`Timeout ${delay}ms has been finished`), delay)
+    })    
+}
+
+
+
+
+
+type TInputs = "email" | "numbers" | "phone" | "date"
+interface IInputChecker {
+    el: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    min?: number //length
+    max?: number //length
+    type?: TInputs 
+    exact?: string //if proveided value must be the same
+    lang: TLang
+    notExact?: string
+    orEmpty?: boolean
+}
+
+
+
+const inputChecker = ({lang="en", el, min=0, max=1000, type, exact="", notExact, orEmpty=false}:  IInputChecker) => {
+    if (!el.parentElement) return 'Parent missing'
+    if (el.value.length === 0 && orEmpty) {
+        el.parentElement.classList.remove('incorrect-value')
+        return 
+    }
+    if (el.value.length < min) {
+        el.parentElement.dataset.errorText = lang === 'en' ? `Min length: ${min}` : `Мин длина: ${min}`
+        el.parentElement.classList.add('incorrect-value')
+        return
+    }
+    if (el.value.length > max) {
+        el.parentElement.dataset.errorText = lang === 'en' ? `Max length: ${max}` : `Макс длина: ${max}`
+        el.parentElement.classList.add('incorrect-value')
+        return
+    }
+    if (exact && el.value !== exact) {
+        el.parentElement.dataset.errorText = lang === 'en' ? `Doesn't match` : `Не совпадает`
+        el.parentElement.classList.add('incorrect-value')
+        return
+    }
+    if (type === 'numbers' && !checkIfNumbers(el.value)) {
+        el.parentElement.dataset.errorText = lang === 'en' ? `Numbers only` : `Только цифры`
+        el.parentElement.classList.add('incorrect-value')
+        return
+    }
+    if (type === 'phone' && !checkIfPhone(el.value)) {
+        el.parentElement.dataset.errorText = lang === 'en' ? `Numbers only` : `Только цифры`
+        el.parentElement.classList.add('incorrect-value')
+        return
+    }
+    if (type === 'email' && !checkIfEmail(el.value)) {
+        el.parentElement.dataset.errorText = lang === 'en' ? `Wrong format` : `Неверный формат`
+        el.parentElement.classList.add('incorrect-value')
+        return
+    }
+    if (type === 'date') {
+        const inputDate = new Date(el.value)
+        if ((String(inputDate) === 'Invalid Date') || inputDate < inputsProps.date.min || inputDate > inputsProps.date.max) {
+            el.parentElement.dataset.errorText = lang === 'en' ? `Wrong date` : `Неверная дата`
+            el.parentElement.classList.add('incorrect-value')
+        }
+        return
+    }
+    if (typeof notExact !== 'undefined' && el.value === String(notExact)) {
+        el.parentElement.dataset.errorText = lang === 'en' ? `Wrong value` : `Направильное значение`
+        el.parentElement.classList.add('incorrect-value')
+        return
+    }
+    el.parentElement.classList.remove('incorrect-value')
+}
 
 
 export { ratingNumberToText, errorsChecker, prevent, filenameChanger,  modalMessageCreator, 
     focusMover, deepCopy, resErrorFiller, checkIfNumbers, checkIfEmail, checkIfPhone, fetchError, filesDownloader,
-    debounce}
+    debounce, makeDelay, inputChecker}

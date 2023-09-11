@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import Nav from "../Nav/Nav";
 import siteLogo from "../../assets/img/logo.png"
 import './header.scss'
+import React from 'react'
 
 const Header = () => {
     return (

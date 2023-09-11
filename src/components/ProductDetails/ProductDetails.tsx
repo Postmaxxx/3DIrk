@@ -8,7 +8,7 @@ import AddToCart from '../AddToCart/AddToCart';
 import { NavLink } from 'react-router-dom';
 import { allActions } from "../../redux/actions/all";
 import Selector, { IItem, ISelectorFunctions } from '../Selector/Selector';
-import inputChecker from '../../../src/assets/js/inputChecker';
+import { inputChecker } from '../../../src/assets/js/processors';
 import ColorSelector from '../ColorSelector/ColorSelector';
 import { defaultSelectItem, empty } from '../../../src/assets/js/consts';
 import { IModalFunctions } from '../Modal/ModalNew';

@@ -8,7 +8,7 @@ import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFi
 import { errorsChecker, filesDownloader, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import { defaultSelectItem, inputsProps, resetFetch, statuses } from '../../../assets/js/consts';
 import Preloader from '../../../components/Preloaders/Preloader';
-import inputChecker from '../../../../src/assets/js/inputChecker';
+import { inputChecker } from '../../../../src/assets/js/processors';
 import Picker, { IPickerFunctions } from '../../../../src/components/Picker/Picker';
 import Selector, { ISelectorFunctions } from '../../../../src/components/Selector/Selector';
 import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';

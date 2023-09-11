@@ -90,6 +90,79 @@ const App:React.FC<IProps> = ({lang, isAdmin, isAuth, contentLoad, isLogining, s
 			<Homer />
 			<Offliner lang={lang}/>
 			<Header />
+
+			<Routes>
+				<Route index path="/" element={<Suspense fallback={<PreloaderPage />}><LazyHomePage /></Suspense>} />
+				
+				<Route path="/fibers">
+					<Route index element={<Suspense fallback={<PreloaderPage />}><LazyFibersPage /></Suspense>} />
+					<Route path="compare" element={<Suspense fallback={<PreloaderPage />}><LazyFibersCompare /></Suspense>} />
+					<Route path=":fiberId" element={<Suspense fallback={<PreloaderPage />}><LazyFiberPage /></Suspense>} />
+				</Route>
+				
+				<Route path="/order" element={<Suspense fallback={<PreloaderPage />}>{isAuth ? <LazyOrderPage /> : <Unauthorized lang={lang} />}</Suspense>} />
+				<Route path="/custom_order" element={<Suspense fallback={<PreloaderPage />}>{isAuth ? <LazyCustomOrderPage /> : <Unauthorized lang={lang} />}</Suspense>} />
+				<Route path="/orders" element={<Suspense fallback={<PreloaderPage />}>{isAuth ? <LazyOrdersPage /> : <Unauthorized lang={lang} />}</Suspense>} />
+				<Route path="/contact_us" element={<Suspense fallback={<PreloaderPage />}><LazyContactUs /></Suspense>} />
+
+				<Route path="/catalog">
+					<Route index element={<Suspense fallback={<PreloaderPage />}><LazyCatalogPage /></Suspense>} />
+					<Route path=":productId" element={<Suspense fallback={<PreloaderPage />}><LazyProduct /></Suspense>} />
+				</Route>
+
+				<Route path="news/:newsId" element={<Suspense fallback={<PreloaderPage />}><LazyNewsDetails /></Suspense>} />
+
+				<Route path="/admin">
+					<Route path="news-create" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazyNewsCreator /> : !isLogining ? <Unauthorized lang={lang} /> : <Preloader/>}</Suspense>} />
+					<Route path="news-create/:newsId" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazyNewsCreator /> : !isLogining ? <Unauthorized lang={lang} /> : <Preloader/>}</Suspense>} />
+					<Route path="fiber-create" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazyFiberCreator /> : !isLogining ? <Unauthorized lang={lang} /> : <Preloader/>}</Suspense>} />
+					<Route path="fiber-create/:fiberId" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazyFiberCreator /> : !isLogining ? <Unauthorized lang={lang} /> : <Preloader/>}</Suspense>} />
+					<Route path="color-create" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazyColorCreator /> : !isLogining ? <Unauthorized lang={lang} /> : <Preloader/>}</Suspense>} />
+					<Route path="color-create/:colorId" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazyColorCreator /> : !isLogining ? <Unauthorized lang={lang} /> : <Preloader/>}</Suspense>} />
+					<Route path="catalog-change" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazyCatalogCahnger /> : !isLogining ? <Unauthorized lang={lang} /> : <Preloader/>}</Suspense>} />
+					<Route path="product-create" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazyProductCreator /> : !isLogining ? <Unauthorized lang={lang} /> : <Preloader/>}</Suspense>} />
+					<Route path="product-create/:productId" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazyProductCreator /> : !isLogining ? <Unauthorized lang={lang} /> : <Preloader/>}</Suspense>} />
+					<Route path="splider-change" element={<Suspense fallback={<PreloaderPage />}>{isAdmin ? <LazySpliderChanger /> : !isLogining ? <Unauthorized lang={lang} /> : <Preloader/>}</Suspense>} />
+				</Route>
+
+				<Route path="/*" element={<Suspense fallback={<PreloaderPage />}><P404 lang={lang}/></Suspense>} />
+			</Routes>
+			<MemoFooter lang={lang}/>
+			<ModalMemo ref={modalRef}></ModalMemo>
+		</HashRouter>
+
+  );
+} 
+
+
+const mapStateToProps = (state: IFullState): IPropsState => ({
+    lang: state.base.lang,
+	isAdmin: state.user.isAdmin,
+	isAuth: state.user.auth.status === 'success',
+	fibersLoad: state.fibers.load,
+	contentLoad: state.content.load,
+	isLogining: state.user.auth.status === 'fetching'
+	
+})
+
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>):IPropsActions => ({
+    setState: {
+		fibers: bindActionCreators(allActions.fibers, dispatch),
+		user: bindActionCreators(allActions.user, dispatch),
+		base: bindActionCreators(allActions.base, dispatch),
+		content: bindActionCreators(allActions.content, dispatch),
+	}
+})
+  
+      
+export default connect(mapStateToProps, mapDispatchToProps)(App)
+
+/*
+			{!screenWidth.sm && <LangSwitcher />}
+			{!screenWidth.sm && <ThemeSwitcher />}
+			<Homer />
+			<Offliner lang={lang}/>
+			<Header />
 		
 			<Routes>
 				<Route index path="/" element={<Suspense fallback={<PreloaderPage />}><LazyHomePage /></Suspense>} />
@@ -131,31 +204,4 @@ const App:React.FC<IProps> = ({lang, isAdmin, isAuth, contentLoad, isLogining, s
 			<MemoFooter lang={lang}/>
 			
 			<ModalMemo ref={modalRef}></ModalMemo>
-		</HashRouter>
-
-  );
-} 
-
-
-const mapStateToProps = (state: IFullState): IPropsState => ({
-    lang: state.base.lang,
-	isAdmin: state.user.isAdmin,
-	isAuth: state.user.auth.status === 'success',
-	fibersLoad: state.fibers.load,
-	contentLoad: state.content.load,
-	isLogining: state.user.auth.status === 'fetching'
-	
-})
-
-const mapDispatchToProps = (dispatch: Dispatch<AnyAction>):IPropsActions => ({
-    setState: {
-		fibers: bindActionCreators(allActions.fibers, dispatch),
-		user: bindActionCreators(allActions.user, dispatch),
-		base: bindActionCreators(allActions.base, dispatch),
-		content: bindActionCreators(allActions.content, dispatch),
-	}
-})
-  
-      
-export default connect(mapStateToProps, mapDispatchToProps)(App)
-
+			*/

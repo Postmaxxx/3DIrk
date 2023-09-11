@@ -7,6 +7,7 @@ import { Dispatch } from "redux";
 import { allActions } from "../../redux/actions/all";
 import { debounce } from "../../../src/assets/js/processors";
 import { debounceTime } from "../../../src/assets/js/consts";
+import React from 'react'
 
 interface IPropsState {
     cart: ICartState

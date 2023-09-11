@@ -1,6 +1,6 @@
 const { JSDOM } = require('jsdom');
 
-const jsdom = new JSDOM('<!doctype html><html><body></body></html>');
+const jsdom = new JSDOM('<!doctype html><html><body></body></html>', { url: "http://localhost/" });
 const { window } = jsdom;
 global.document = jsdom.window.document;
 global.window = jsdom.window;
