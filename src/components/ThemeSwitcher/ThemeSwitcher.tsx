@@ -106,11 +106,6 @@ const ThemeSwitcher: React.FC<IProps> = ({mobOpened, lang, theme, setState}): JS
 	},[])
 
 
-	useEffect(() => {
-		mobOpened ? _themeSwitcherCont.current?.classList.remove('hide') : _themeSwitcherCont.current?.classList.add('hide')
-	}, [mobOpened])
-	
-
 
 
 	const classSwitcher = (classRemove: string, classAdd: string, delay: number): Promise<void> => { //class +/- for _contentSwitcher using delay
@@ -204,7 +199,7 @@ const ThemeSwitcher: React.FC<IProps> = ({mobOpened, lang, theme, setState}): JS
 
 
 	return (
-		<div className={`theme-switcher__container ${mobOpened ? "" : "hide"}`} ref={_themeSwitcherCont}>
+		<div className={`theme-switcher__container`} data-testid='theme-switcher' ref={_themeSwitcherCont}>
 			{themeSwitcherMemo}
 		</div>
 	);

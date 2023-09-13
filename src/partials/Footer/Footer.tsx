@@ -15,7 +15,7 @@ interface IFooter {
 const Footer: FC<IFooter>  = ({lang}):JSX.Element => {  
     const footerMemo = useMemo(() => {
         return (
-            <footer>
+            <footer data-testid="footer">
                 <div className="container">
                     <div className="footer__content">
                         <span className='footer__copyright'>{lang === 'en' ? 'Strezhen' : 'Стрежень'} © 2023</span>

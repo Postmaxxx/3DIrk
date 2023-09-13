@@ -233,23 +233,11 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
     const mobileNav = useMemo(() => {
         return  <nav className={mobOpened ? "nav_mobile opened" : "nav_mobile"}>
         <div className="nav__switcher">
             <label aria-label="open/hide navigation">
-                <input type="checkbox" onClick={navToggleMobile}/>
+                <input id='list777' data-testid='nav_mob__checkbox' type="checkbox" onClick={navToggleMobile}/>
                 <img src={navLogo} alt="Menu"/>
                 <div className="nav__sign">
                     <span></span>

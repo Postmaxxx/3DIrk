@@ -85,12 +85,12 @@ const App:React.FC<IProps> = ({lang, isAdmin, isAuth, contentLoad, isLogining, s
 
 	return (
 		<HashRouter>
-			{!screenWidth.sm && <LangSwitcher />}
-			{!screenWidth.sm && <ThemeSwitcher />}
-			<Homer />
-			<Offliner lang={lang}/>
+			{!screenWidth.sm && <LangSwitcher />} {/*tested*/}
+			{!screenWidth.sm && <ThemeSwitcher />} {/*tested*/}
+			<Homer /> {/*tested*/}
+			<Offliner lang={lang}/> {/*tested*/}
 			<Header />
-
+			{/*
 			<Routes>
 				<Route index path="/" element={<Suspense fallback={<PreloaderPage />}><LazyHomePage /></Suspense>} />
 				
@@ -126,9 +126,9 @@ const App:React.FC<IProps> = ({lang, isAdmin, isAuth, contentLoad, isLogining, s
 				</Route>
 
 				<Route path="/*" element={<Suspense fallback={<PreloaderPage />}><P404 lang={lang}/></Suspense>} />
-			</Routes>
-			<MemoFooter lang={lang}/>
-			<ModalMemo ref={modalRef}></ModalMemo>
+			</Routes>*/}
+			<MemoFooter lang={lang}/> {/*tested*/}
+			<ModalMemo ref={modalRef}></ModalMemo> {/*testing... */}
 		</HashRouter>
 
   );

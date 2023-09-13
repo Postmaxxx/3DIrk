@@ -1,7 +1,7 @@
 import "./langSwitcher.scss"
-import { useEffect, useRef, useMemo } from "react";
+import { useEffect, useRef } from "react";
 import { connect } from "react-redux";
-import { IFullState, TLang, TTheme } from "../../interfaces";
+import { IFullState, TLang } from "../../interfaces";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { useScrollHider } from "../../hooks/scrollHider";
@@ -47,7 +47,7 @@ const LangSwitcher:React.FC<IProps> = ({lang, mobOpened, setState}): JSX.Element
 
 
     return (
-        <div className={`lang-switcher ${mobOpened ? '' : 'hide'} ${lang === 'en' ? 'ru' : 'en'}`} onClick={handleChangeLang} ref={_lang}>
+        <div className={`lang-switcher ${lang === 'en' ? 'ru' : 'en'}`} data-testid='lang-switcher' onClick={handleChangeLang} ref={_lang}>
             <div className="lang-switcher__text lang_ru" data-lang='ru'>EN</div>
             <div className="lang-switcher__text lang_en" data-lang='en'>RU</div>
         </div>

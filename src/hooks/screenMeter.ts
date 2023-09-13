@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-const screenSizes = {
+export const screenSizes = {
     xl: 1600,
     lg: 1241,
     md: 992,
