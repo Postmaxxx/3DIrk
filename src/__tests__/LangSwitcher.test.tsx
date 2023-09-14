@@ -14,24 +14,24 @@ import { setRes } from '../assets/js/testHelpers';
 
 describe('LangSwitcher', () => {
 
-    let container: HTMLDivElement;
+    let _container: HTMLDivElement;
 
     beforeEach(() => {
-        container = document.createElement('div');
-        container.id = 'root'
-        document.body.appendChild(container);
+        _container = document.createElement('div');
+        _container.id = 'root'
+        document.body.appendChild(_container);
         jest.restoreAllMocks();
     });
 
 
     afterEach(() => {
-        document.body.removeChild(container);
+        document.body.removeChild(_container);
     });
 
 
     test('should exist if screen.width > sm and <=sm', async () => {
 		act(() => {
-			createRoot(container).render(
+			createRoot(_container).render(
 				<Provider store={store}>
 					<Suspense fallback={<Preloader />}>
 						<App />
@@ -43,17 +43,17 @@ describe('LangSwitcher', () => {
 			setRes('sm', 1)
 		})
 		
-		let langSwitcher = container.querySelector("[data-testid='lang-switcher']")
-		expect(langSwitcher).toBeInTheDocument()
+		let _langSwitcher = _container.querySelector("[data-testid='lang-switcher']")
+		expect(_langSwitcher).toBeInTheDocument()
 		
 		
 		act(() => {
 			setRes('sm')
 		})
 
-		langSwitcher = container.querySelector("[data-testid='lang-switcher']")
+		_langSwitcher = _container.querySelector("[data-testid='lang-switcher']")
 		waitFor(() => {
-			expect(langSwitcher).toBeInTheDocument()
+			expect(_langSwitcher).toBeInTheDocument()
 		})
 
     })
@@ -63,7 +63,7 @@ describe('LangSwitcher', () => {
 
 	test('should change language on click', async () => {
 		act(() => {
-			createRoot(container).render(
+			createRoot(_container).render(
 				<Provider store={store}>
 					<Suspense fallback={<Preloader />}>
 						<App />
@@ -74,30 +74,28 @@ describe('LangSwitcher', () => {
 		act(() => {
 			setRes('sm', 1)
 		})
-        let langSwitcher = container.querySelector("[data-testid='lang-switcher']")
+        let _langSwitcher = _container.querySelector("[data-testid='lang-switcher']")
 		expect(store.getState().base.lang).toBe('ru')
 
 		act(() => { // to en
-            langSwitcher?.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+            _langSwitcher?.dispatchEvent(new MouseEvent('click', {bubbles: true}));
         });
 		expect(store.getState().base.lang).toBe('en')
 
 		act(() => { //to ru
-            langSwitcher?.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+            _langSwitcher?.dispatchEvent(new MouseEvent('click', {bubbles: true}));
         });
 		expect(store.getState().base.lang).toBe('ru')
 
 		// ------------------ screenSize <= sm -------------------------------
 
-		/*act(() => {
+		act(() => {
 			setRes('sm')
-		})*/
-
-		langSwitcher = container.querySelector("[data-testid='lang-switcher']")
-		expect(langSwitcher).toBeInTheDocument()
+		})
 
 
-		let navOpenerCheckbox = container.querySelector("[data-testid='nav_mob__checkbox']")
+
+		let navOpenerCheckbox = _container.querySelector("[data-testid='nav_mob__checkbox']")
 
 		expect(store.getState().base.lang).toBe('ru')
 		expect(store.getState().base.mobOpened).toBe(false)
@@ -108,19 +106,22 @@ describe('LangSwitcher', () => {
         });
 
 		expect(store.getState().base.mobOpened).toBe(true)
+
+		_langSwitcher = _container.querySelector("[data-testid='lang-switcher']")
+		expect(_langSwitcher).toBeInTheDocument()
 		
 		waitFor(() => {
-			langSwitcher = container.querySelector("[data-testid='lang-switcher']")
-			expect(langSwitcher).toBeInTheDocument()
+			_langSwitcher = _container.querySelector("[data-testid='lang-switcher']")
+			expect(_langSwitcher).toBeInTheDocument()
 		})
 
 		act(() => { // to en
-            langSwitcher?.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+            _langSwitcher?.dispatchEvent(new MouseEvent('click', {bubbles: true}));
         });
 		expect(store.getState().base.lang).toBe('en')
 
 		act(() => { //to ru
-            langSwitcher?.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+            _langSwitcher?.dispatchEvent(new MouseEvent('click', {bubbles: true}));
         });
 		expect(store.getState().base.lang).toBe('ru')
     })

@@ -19,40 +19,37 @@ import Homer from '../components/Homer/Homer';
 
 describe('Tests for Homer', () => {
 
-    let container: HTMLDivElement;
+    let _container: HTMLDivElement;
 
     beforeEach(() => {
-        container = document.createElement('div');
-        container.id = 'root'
-        document.body.appendChild(container);
+        _container = document.createElement('div');
+        _container.id = 'root'
+        document.body.appendChild(_container);
         jest.restoreAllMocks();
     });
 
     afterEach(() => {
-        document.body.removeChild(container);
+        document.body.removeChild(_container);
     });
 
      
 
     test('should exist and scroll page to top', () => {
         act(() => {
-            ReactDOM.createRoot(container).render(<Homer />);
+            ReactDOM.createRoot(_container).render(<Homer />);
         })
-        const homer = container.querySelector('.homer')
-        expect(homer).toBeInTheDocument()
-        homer?.classList.add('show')
+        const _homer = _container.querySelector('.homer')
+        expect(_homer).toBeInTheDocument()
+        _homer?.classList.add('show')
         document.documentElement.scrollTop = 700
         document.body.scrollTop = 700
 
         act(() => {
-            homer?.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+            _homer?.dispatchEvent(new MouseEvent('click', {bubbles: true}));
         });
 
         expect(document.documentElement.scrollTop).toBe(0)
         expect(document.body.scrollTop).toBe(0)
     })
-
-
-
 
 })

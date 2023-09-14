@@ -6,31 +6,31 @@ import store from '../redux/store';
 import Preloader from '../components/Preloaders/Preloader';
 import { Suspense } from "react";
 import App from '../App';
-import { changeLang, setRes } from '../assets/js/testHelpers';
+import { changeLang } from '../assets/js/testHelpers';
 
 
 
 
 describe('Footer', () => {
 
-    let container: HTMLDivElement;
+    let _container: HTMLDivElement;
 
     beforeEach(() => {
-        container = document.createElement('div');
-        container.id = 'root'
-        document.body.appendChild(container);
+        _container = document.createElement('div');
+        _container.id = 'root'
+        document.body.appendChild(_container);
 		jest.restoreAllMocks();
     });
 
 
     afterEach(() => {
-        document.body.removeChild(container);
+        document.body.removeChild(_container);
     });
 
 
     test('should exist, have 4 links and correct language', async () => {
 		act(() => {
-			createRoot(container).render(
+			createRoot(_container).render(
 				<Provider store={store}>
 					<Suspense fallback={<Preloader />}>
 						<App />
@@ -40,21 +40,14 @@ describe('Footer', () => {
 		
 
 
-		let footer = container.querySelector("[data-testid='footer']")
-		expect(footer).toBeInTheDocument()
-		expect(footer?.querySelector('.footer__copyright')).toBeInTheDocument()
-		expect(footer?.querySelector('.footer__copyright')?.innerHTML).toMatch(/Стрежень/)
-		expect(footer?.querySelectorAll('a')).toHaveLength(4)
-
-		changeLang(container, act)
-
-        /*let langSwitcher = container.querySelector("[data-testid='lang-switcher']")
+		let _footer = _container.querySelector("[data-testid='footer']")
+		expect(_footer).toBeInTheDocument()
+		expect(_footer?.querySelector('.footer__copyright')).toBeInTheDocument()
+		expect(_footer?.querySelector('.footer__copyright')?.innerHTML).toMatch(/Стрежень/)
+		expect(_footer?.querySelectorAll('a')).toHaveLength(4)
 		expect(store.getState().base.lang).toBe('ru')
-		act(() => { // to en
-            langSwitcher?.dispatchEvent(new MouseEvent('click', {bubbles: true}));
-        });*/
-
-		expect(footer?.querySelector('.footer__copyright')?.innerHTML).toMatch(/Strezhen/)
+		changeLang(_container, act)
+		expect(_footer?.querySelector('.footer__copyright')?.innerHTML).toMatch(/Strezhen/)
 
     })
 

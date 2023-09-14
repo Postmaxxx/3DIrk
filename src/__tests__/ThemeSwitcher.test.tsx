@@ -12,23 +12,24 @@ import { screenSizes } from '../hooks/screenMeter';
 
 describe('Tests for ThemeSwitcher', () => {
 
-    let container: HTMLDivElement;
+    let _container: HTMLDivElement;
+    let _themeSwitcher: HTMLDivElement | null
 
     beforeEach(() => {
-        container = document.createElement('div');
-        container.id = 'root'
-        document.body.appendChild(container);
+        _container = document.createElement('div');
+        _container.id = 'root'
+        document.body.appendChild(_container);
     });
 
 
     afterEach(() => {
-        document.body.removeChild(container);
+        document.body.removeChild(_container);
     });
 
 
     test('should exist if screen.width > sm and <=sm', async () => {
 		act(() => {
-			createRoot(container).render(
+			createRoot(_container).render(
 				<Provider store={store}>
 					<Suspense fallback={<Preloader />}>
 						<App />
@@ -45,9 +46,9 @@ describe('Tests for ThemeSwitcher', () => {
 			global.innerWidth = screenSizes.sm + 1;
 			global.dispatchEvent(new Event('resize'));
 		})
-		let themeSwitcher = container.querySelector("[data-testid='theme-switcher']")
+		_themeSwitcher = _container.querySelector("[data-testid='theme-switcher']")
 		
-		expect(themeSwitcher).toBeInTheDocument()
+		expect(_themeSwitcher).toBeInTheDocument()
 		
 		
 		act(() => {
@@ -55,10 +56,10 @@ describe('Tests for ThemeSwitcher', () => {
 			global.dispatchEvent(new Event('resize'));
 		})
 
-		themeSwitcher = container.querySelector("[data-testid='theme-switcher']")
+		_themeSwitcher = _container.querySelector("[data-testid='theme-switcher']")
 
 		waitFor(() => {
-			expect(themeSwitcher).toBeInTheDocument()
+			expect(_themeSwitcher).toBeInTheDocument()
 		})
 
 
@@ -70,7 +71,7 @@ describe('Tests for ThemeSwitcher', () => {
 
 	test('should change theme on click', async () => {
 		act(() => {
-			createRoot(container).render(
+			createRoot(_container).render(
 				<Provider store={store}>
 					<Suspense fallback={<Preloader />}>
 						<App />
@@ -84,16 +85,16 @@ describe('Tests for ThemeSwitcher', () => {
 			global.innerWidth = screenSizes.sm + 1;
 			global.dispatchEvent(new Event('resize'));
 		})
-        let themeSwitcher = container.querySelector("#theme-switcher")
+        _themeSwitcher = _container.querySelector("#theme-switcher")
 		expect(store.getState().base.theme).toBe('dark') 
 
 		act(() => { // to light
-            themeSwitcher?.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+            _themeSwitcher?.dispatchEvent(new MouseEvent('click', {bubbles: true}));
         });
 		expect(store.getState().base.theme).toBe('light')
 
 		act(() => { //to dark
-            themeSwitcher?.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+            _themeSwitcher?.dispatchEvent(new MouseEvent('click', {bubbles: true}));
         });
 		expect(store.getState().base.theme).toBe('dark')
 
@@ -107,9 +108,9 @@ describe('Tests for ThemeSwitcher', () => {
 		expect(store.getState().base.mobOpened).toBe(false)
 
 
-		let navOpenerCheckbox = container.querySelector("[data-testid='nav_mob__checkbox']")
-		navOpenerCheckbox?.dispatchEvent(new MouseEvent('click', {bubbles: true}));
-		expect(navOpenerCheckbox).toBeInTheDocument()
+		let _navOpenerCheckbox = _container.querySelector("[data-testid='nav_mob__checkbox']")
+		_navOpenerCheckbox?.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+		expect(_navOpenerCheckbox).toBeInTheDocument()
 
 		act(() => { 
 			expect(store.getState().base.mobOpened).toBe(true)
@@ -117,17 +118,17 @@ describe('Tests for ThemeSwitcher', () => {
 
 		
 		waitFor(() => {
-			themeSwitcher = container.querySelector("#theme-switcher")
-			expect(themeSwitcher).toBeInTheDocument()
+			_themeSwitcher = _container.querySelector("#theme-switcher")
+			expect(_themeSwitcher).toBeInTheDocument()
 		})
 
 		act(() => { // to light
-            themeSwitcher?.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+            _themeSwitcher?.dispatchEvent(new MouseEvent('click', {bubbles: true}));
         });
 		expect(store.getState().base.theme).toBe('light')
 
 		act(() => { //to dark
-            themeSwitcher?.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+            _themeSwitcher?.dispatchEvent(new MouseEvent('click', {bubbles: true}));
         });
 		expect(store.getState().base.theme).toBe('dark')
     })
