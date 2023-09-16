@@ -40,8 +40,8 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
     const onChangeText: React.ChangeEventHandler<HTMLInputElement> = (e) => {
         const key = e.target.name as keyof ILoggingForm
         setForm({...form, [key]: e.target.value});
-        (e.target as HTMLElement).parentElement?.classList.remove('incorrect-value')
-        setState.user.setAuth(deepCopy(resetFetch))
+        (e.target as HTMLElement).parentElement?.classList.remove('incorrect-value');
+        (userState.auth.status === 'error') && setState.user.setAuth(deepCopy(resetFetch))
     }
 
 

@@ -54,23 +54,11 @@ const reducerBase = (state:IBaseState = initialBaseState, action: IAction<any>):
                 ...state,
                 desktopOpened: !state.desktopOpened
             }
-
-
-
-        case actionsListBase.SET_MODAL: 
-        return {
-            ...state,
-            modal: action.payload
-        }
-        /*const newProps: Partial<IModal> = action.payload
-            const newModal: IModal = {...state.modal}
-            Object.keys(newProps).forEach(key => {
-                newModal[key as keyof IModal] = newProps[key as keyof IModal] as never;
-            })
+        case actionsListBase.SET_MODAL:
             return {
                 ...state,
-                modal: newModal
-            }*/
+                modal: action.payload
+            }
         default: return {...state}
     }
 }

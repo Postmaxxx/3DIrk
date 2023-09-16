@@ -33,7 +33,7 @@
         }
     }
 
-    & .content {
+    & .modal__content {
         height: 100%;
         width: 100%;
         display: flex;
@@ -53,7 +53,7 @@
         visibility: visible;
         opacity: 1;
 
-        & > .content {
+        & > .modal__content {
             transform: none;
         }
     }

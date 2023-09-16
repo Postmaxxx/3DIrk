@@ -109,7 +109,9 @@ describe('Tests for ThemeSwitcher', () => {
 
 
 		let _navOpenerCheckbox = _container.querySelector("[data-testid='nav_mob__checkbox']")
-		_navOpenerCheckbox?.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+		act(() => { 
+			_navOpenerCheckbox?.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+        });
 		expect(_navOpenerCheckbox).toBeInTheDocument()
 
 		act(() => { 

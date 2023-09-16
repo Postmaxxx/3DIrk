@@ -1,4 +1,4 @@
-import { useEffect, memo, useRef, useState } from "react";
+import { useEffect, memo, useRef, useState, useMemo  } from "react";
 import { Routes, Route, HashRouter } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import "./assets/css/_base.scss";
@@ -19,6 +19,7 @@ import PreloaderPage from "./components/Preloaders/PreloaderPage";
 import ModalNew, { IModalFunctions } from "./components/Modal/ModalNew";
 import useScreenMeter from "./hooks/screenMeter";
 import Preloader from "./components/Preloaders/Preloader";
+import Test from "./components/Test/Test";
 
 
 const LazyHomePage = lazy(() => import("./pages/Home/Home"));
@@ -40,6 +41,7 @@ const LazyProductCreator = lazy(() => import("./pages/Admin/ProductCreator/Produ
 const LazySpliderChanger = lazy(() => import("./pages/Admin/ContentCreator/contentCreator"));
 
 const ModalMemo = memo(ModalNew)
+const FooterMemo = memo(Footer)
 
 interface IPropsState {
     lang: TLang
@@ -61,19 +63,26 @@ interface IPropsActions {
 
 interface IProps extends IPropsState, IPropsActions {}
 
-const MemoFooter = memo(Footer)
+
+
 
 const App:React.FC<IProps> = ({lang, isAdmin, isAuth, contentLoad, isLogining, setState}):JSX.Element => {
 	const modalRef = useRef<IModalFunctions>(null)
 
 	useEffect(() => {
 		setState.user.loginWithToken()
-		setState.base.setModal(modalRef)	
 		if (contentLoad.status !== 'success' && contentLoad.status  !== 'fetching') {
 			setState.fibers.loadFibers()
 		}
 	}, [])
 
+
+
+	useEffect(() => {
+		if (modalRef.current) {
+			setState.base.setModal(modalRef)	
+		}
+	}, [modalRef.current])
 
 
     useEffect(() => {
@@ -82,6 +91,7 @@ const App:React.FC<IProps> = ({lang, isAdmin, isAuth, contentLoad, isLogining, s
 
 
 	const screenWidth = useScreenMeter() 
+
 
 	return (
 		<HashRouter>
@@ -127,7 +137,7 @@ const App:React.FC<IProps> = ({lang, isAdmin, isAuth, contentLoad, isLogining, s
 
 				<Route path="/*" element={<Suspense fallback={<PreloaderPage />}><P404 lang={lang}/></Suspense>} />
 			</Routes>*/}
-			<MemoFooter lang={lang}/> {/*tested*/}
+			<FooterMemo lang={lang}/> {/*tested*/}
 			<ModalMemo ref={modalRef}></ModalMemo> {/*testing... */}
 		</HashRouter>
 
@@ -141,8 +151,7 @@ const mapStateToProps = (state: IFullState): IPropsState => ({
 	isAuth: state.user.auth.status === 'success',
 	fibersLoad: state.fibers.load,
 	contentLoad: state.content.load,
-	isLogining: state.user.auth.status === 'fetching'
-	
+	isLogining: state.user.auth.status === 'fetching',
 })
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>):IPropsActions => ({

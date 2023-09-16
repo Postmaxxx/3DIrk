@@ -64,13 +64,13 @@ const ModalNew = forwardRef<IModalFunctions, IProps>(({}, ref) => {
     
 
     return _modal ? createPortal(
-        <div className={modals?.length > 0 ? "modal-window visible" : "modal-window"} data-testid='modal'>
+        <div className={`modal-window ${modals.length > 0 ? "visible" : ""}`} data-testid='modal'>
             {modals[0]?.closable &&
             <button className="closer" aria-label='close | закрыть' onClick={modals[0]?.onClose ? modals[0]?.onClose : close} data-testid='modal-closer'>
                 {svgs().iconClose}
             </button>}
 
-			<div className="content">
+			<div className="modal__content">
                 {modals[0]?.children}
             </div>
         </div>,

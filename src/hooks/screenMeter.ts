@@ -30,7 +30,7 @@ const useScreenMeter = () => {
                 newResolutions[key as keyof IScreenMeter] = window.innerWidth <= screenSizes[key as keyof IScreenMeter] ? true : false
             })
             return newResolutions
-        })
+        })       
     }
     
     

@@ -7,7 +7,6 @@ import { useMemo, FC } from 'react'
 import { TLang } from '../../interfaces'
 import { socials } from '../../../src/assets/js/consts'
 
-
 interface IFooter {
     lang: TLang
 }
@@ -44,7 +43,6 @@ const Footer: FC<IFooter>  = ({lang}):JSX.Element => {
 
     return footerMemo
 }
-
 
 
 export default Footer
