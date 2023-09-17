@@ -1,17 +1,19 @@
-import { act, waitFor } from '@testing-library/react';
+import { act, waitFor, screen } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect'
 import { createRoot } from 'react-dom/client';
-import { Provider } from 'react-redux';
+import { Provider, useDispatch } from 'react-redux';
 import store from '../redux/store';
 import Preloader from '../components/Preloaders/Preloader';
 import { Suspense } from "react";
 import App from '../App';
 import { setRes } from '../assets/js/testHelpers';
+import { allActions } from '../redux/actions/all';
 
 
 describe('Nav', () => {
 
     let _container: HTMLDivElement;
+
 
     beforeEach(() => {
         _container = document.createElement('div');
@@ -139,6 +141,7 @@ describe('Nav', () => {
     })
 
 
+
     test('desktop should have only one active item and item should be active on click on it', () => {
 		act(() => {
 			createRoot(_container).render(
@@ -237,6 +240,246 @@ describe('Nav', () => {
             } else {
                 expect(item.querySelector('.nav-text_level_1')?.classList.contains('selected')).toBe(false)
             }
+        })
+    })
+
+
+
+
+
+    test('should create auth modal on login click for desktop and mobile', async () => {
+        let _modalContainer: HTMLDivElement;
+
+        act(() => {
+            createRoot(_container).render(
+                <Provider store={store}>
+                    <Suspense fallback={<Preloader />}>
+                        <App />
+                    </Suspense>
+                </Provider>
+            )
+        })
+        _modalContainer = document.createElement('div');
+        _modalContainer.id = 'modal'
+        document.body.appendChild(_modalContainer);
+
+        //desktop
+        act(() => setRes('sm', 1))       
+        let _loginDt: HTMLLIElement | null = _container.querySelector("[data-testid='btn_login_desktop']")
+        expect(_loginDt).toBeInTheDocument()
+
+        act(() => {
+            _loginDt?.dispatchEvent(new MouseEvent('click', {bubbles: true}))
+        })
+
+
+        await waitFor(async () => {
+            let name = await store.getState().base.modal.current?.getName()
+            expect(name).toBe('auth')
+        })
+        let _modal = _modalContainer.querySelector("[data-testid='modal']")
+		expect(_modal).toBeInTheDocument()
+        expect(_modal?.classList.contains('visible')).toBe(true)
+
+
+
+
+        //mobile
+        act(() => {
+            store.getState().base.modal.current?.closeAll()
+        })
+        await waitFor(async () => {
+            let name = await store.getState().base.modal.current?.getName()
+            expect(name).toBeNull()
+        })
+        act(() => setRes('sm'))       
+        let _loginMob: HTMLLIElement | null = _container.querySelector("[data-testid='btn_login_mobile']")
+        expect(_loginMob).toBeInTheDocument()
+
+        act(() => {
+            _loginMob?.dispatchEvent(new MouseEvent('click', {bubbles: true}))
+        })
+
+
+        await waitFor(async () => {
+            let name = await store.getState().base.modal.current?.getName()
+            expect(name).toBe('auth')
+        })
+        _modal = _modalContainer.querySelector("[data-testid='modal']")
+		expect(_modal).toBeInTheDocument()
+        expect(_modal?.classList.contains('visible')).toBe(true)
+
+        document.body.removeChild(_modalContainer);
+    })
+
+
+
+
+
+
+
+
+
+    test('should logout on logout click for desktop', async () => {
+        const originalReload = () => {
+            window.location.reload()
+        }
+
+        act(() => {
+            createRoot(_container).render(
+                <Provider store={store}>
+                    <Suspense fallback={<Preloader />}>
+                        <App />
+                    </Suspense>
+                </Provider>
+            )
+        })
+
+       
+        act(() => {
+            setRes('sm', 1)
+            store.dispatch(allActions.user.setUser({name: 'testname'}))
+            store.dispatch(allActions.user.setAuth({status: 'success', message: {ru: '', en: ''}}))
+        })
+
+        await waitFor(async () => {
+            let name = await store.getState().user.name
+            expect(name).toBe('testname')
+        })
+
+                
+       
+        let _logout: HTMLLIElement | null = _container.querySelector("[data-testid='btn_logout_desktop']")
+        expect(_logout).toBeInTheDocument()
+
+
+        Object.defineProperty(window, 'location', {
+            configurable: true,
+            value: {
+                ...window.location,
+                reload: jest.fn()
+            }
+        })
+
+        act(() => {
+            _logout?.dispatchEvent(new MouseEvent('click', {bubbles: true}))
+        })
+
+
+        await waitFor(async () => {
+            let name = await store.getState().user.name
+            expect(name).toBe('')
+            expect(window.location.reload).toBeCalledTimes(1)
+        })
+
+        
+        Object.defineProperty(window, 'location', {
+            configurable: true,
+            value: {
+                ...window.location,
+                reload: originalReload()
+            }
+        })
+    })
+
+
+
+
+    test('should logout on logout click for mobile', async () => {
+        const originalReload = () => {
+            window.location.reload()
+        }
+
+
+        act(() => {
+            createRoot(_container).render(
+                <Provider store={store}>
+                    <Suspense fallback={<Preloader />}>
+                        <App />
+                    </Suspense>
+                </Provider>
+            )
+        })
+
+       
+        act(() => {
+            setRes('sm')
+            store.dispatch(allActions.user.setUser({name: 'testname'}))
+            store.dispatch(allActions.user.setAuth({status: 'success', message: {ru: '', en: ''}}))
+        })
+
+        await waitFor(async () => {
+            let name = await store.getState().user.name
+            expect(name).toBe('testname')
+        })
+
+       
+        let _logout: HTMLLIElement | null = _container.querySelector("[data-testid='btn_logout_mobile']")
+        expect(_logout).toBeInTheDocument()
+
+
+        Object.defineProperty(window, 'location', {
+            configurable: true,
+            value: {
+                ...window.location,
+                reload: jest.fn()
+            }
+        })
+
+        act(() => {
+            _logout?.dispatchEvent(new MouseEvent('click', {bubbles: true}))
+        })
+
+        await waitFor(async () => {
+            let name = await store.getState().user.name
+            expect(name).toBe('')
+            expect(window.location.reload).toBeCalled()
+        })
+
+        
+        Object.defineProperty(window, 'location', {
+            configurable: true,
+            value: {
+                ...window.location,
+                reload: originalReload()
+            }
+        })
+    })
+
+
+
+    test('should open subnav for mobile', async () => {
+        act(() => {
+            createRoot(_container).render(
+                <Provider store={store}>
+                    <Suspense fallback={<Preloader />}>
+                        <App />
+                    </Suspense>
+                </Provider>
+            )
+        })
+
+        act(() => {
+            setRes('sm')
+        })
+        let _navItem = _container.querySelector("[data-testid='navItemExpandable']")
+        let _expander = _navItem?.querySelector(".nav-text_level_1")
+        expect(_navItem).toBeInTheDocument()
+        expect(_navItem?.classList.contains('expanded')).toBe(false)
+        expect(_expander).toBeInTheDocument()
+
+        act(() => {
+            _expander?.dispatchEvent(new MouseEvent('click', {bubbles: true}))
+        })
+        await waitFor(async () => {
+            expect(_navItem?.classList.contains('expanded')).toBe(true)
+        })
+
+        act(() => {
+            _expander?.dispatchEvent(new MouseEvent('click', {bubbles: true}))
+        })
+        await waitFor(async () => {
+            expect(_navItem?.classList.contains('expanded')).toBe(false)
         })
     })
 

@@ -2,70 +2,123 @@ import { act, waitFor, screen } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect'
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
-import store from '../redux/store';
-import App from '../App';
+import initialStore from '../redux/store';
 import { setRes } from '../assets/js/testHelpers';
-import Preloader from '../components/Preloaders/Preloader';
-import { Suspense } from "react";
-
-
+import Auth from '../components/Auth/Auth';
+import { Dispatch } from 'redux';
+import { allActions } from '../redux/actions/all';
+import configureStore from 'redux-mock-store'
+import thunk from 'redux-thunk';
 
 describe('Auth', () => {
-
     let _container: HTMLDivElement;
-    let _modalContainer: HTMLDivElement;
+
+    const onCancelClick = jest.fn()
 
     beforeEach(() => {
         _container = document.createElement('div');
-        _modalContainer = document.createElement('div');
         _container.id = 'root'
-        _modalContainer.id = 'modal'
         document.body.appendChild(_container);
-        document.body.appendChild(_modalContainer);
     });
 
     afterEach(() => {
         document.body.removeChild(_container);
-        document.body.removeChild(_modalContainer);
     });
 
 
 
-
-    test('should create modal on login click', async () => {
-
+    test('should close on cancel click', async () => {
         act(() => {
             createRoot(_container).render(
-                <Provider store={store}>
-                    <Suspense fallback={<Preloader />}>
-                        <App />
-                    </Suspense>
+                <Provider store={initialStore}>
+                    <Auth onCancel={onCancelClick}/>
                 </Provider>
             )
         })
 
+        act(() => setRes('sm', 1))    
+        let _btnCancel: HTMLButtonElement | null = _container.querySelector("[data-testid='authBtnCancel']")
+        expect(_btnCancel).toBeInTheDocument()
+        act(() => {
+            _btnCancel?.click()
+        })
+        expect(onCancelClick).toBeCalledTimes(1)
+    })
 
-        act(() => setRes('sm', 1))       
-        let _login: HTMLLIElement | null = _container.querySelector("[data-testid='btn_login_desktop']")
-        expect(_login).toBeInTheDocument()
+
+
+
+    test('should switch between register and login', async () => {
+        act(() => {
+            createRoot(_container).render(
+                <Provider store={initialStore}>
+                    <Auth onCancel={onCancelClick}/>
+                </Provider>
+            )
+        })
+
+        act(() => setRes('sm', 1))    
+        let _toLogin: HTMLButtonElement | null = _container.querySelector("[data-testid='authBtnToLogin']")
+        let _toRegister: HTMLButtonElement | null = _container.querySelector("[data-testid='authBtnToRegister']")
+        expect(_toLogin).toBeInTheDocument()
+        expect(_toRegister).toBeInTheDocument()
+        expect(_toRegister?.classList.contains('selected')).toBe(false)
+        expect(_toLogin?.classList.contains('selected')).toBe(true)
+        expect(_container?.querySelector("[name='name']")).not.toBeInTheDocument()
+        act(() => {
+            _toRegister?.click()
+        })
+        expect(_toRegister?.classList.contains('selected')).toBe(true)
+        expect(_toLogin?.classList.contains('selected')).toBe(false)
+        expect(_container?.querySelector("[name='name']")).toBeInTheDocument()
+    })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    test('should login using inputs data', async () => {
+        
+        const middlewares = [thunk];
+        const mockStore = configureStore(middlewares);
+        const store = mockStore(initialStore.getState());
 
         act(() => {
-            _login?.dispatchEvent(new MouseEvent('click', {bubbles: true}))
+            createRoot(_container).render(
+                <Provider store={store}>
+                    <Auth onCancel={onCancelClick}/>
+                </Provider>
+            )
+        })
+
+        act(() => setRes('sm', 1))    
+        let _login: HTMLButtonElement | null = _container.querySelector("[data-testid='authBtnLogin']")
+
+        let _email: HTMLInputElement = _container.querySelector("[name='email']") as HTMLInputElement
+        let _pass: HTMLInputElement = _container.querySelector("[name='password']") as HTMLInputElement
+        _email.innerText = 'testmail@gmail.com'
+        _pass.innerText = '12345678'
+        
+        act(() => {
+           // _login?.click()
+            store.dispatch(allActions.user.setUser({name: 'test'}))
         })
 
 
-        await waitFor(async () => {
-            let name = await store.getState().base.modal.current?.getName()
-            expect(name).toBe('auth')
-        })
-        let _modal = _modalContainer.querySelector("[data-testid='modal']")
-		expect(_modal).toBeInTheDocument()
-        expect(_modal?.classList.contains('visible')).toBe(true)
-
-
-
+        const dispatchedActions = store.getActions();
+        console.log('5555555555555', dispatchedActions);
         
 
+        expect(dispatchedActions).toContainEqual(allActions.user.setUser({ name: 'test' }));
     })
 
 

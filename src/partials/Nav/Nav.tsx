@@ -259,7 +259,7 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
                     </NavLink>
                 </li>
 
-                <li className={`nav-item ${expandedNavItems === 'fibers' ? 'expanded' : ''}`}>
+                <li className={`nav-item ${expandedNavItems === 'fibers' ? 'expanded' : ''}`} data-testid='navItemExpandable'>
                     <span className="nav-item__text nav-text_level_1" onClick={() => onNavWithSubClicked('fibers')}>{navList.fibers[lang]}</span>
                     <div className="submenu__container">
                         <ul className="submenu">

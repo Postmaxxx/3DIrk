@@ -83,8 +83,8 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
         <div className="login">
             <div className="form__container">
                 <div className="sign-selector__container">
-                    <button className={`button_select ${register ? '' : 'selected'}`} onClick={() => setRegister(false)}>Login</button>
-                    <button className={`button_select ${register ? 'selected' : ''}`} onClick={() => setRegister(true)}>Register</button>
+                    <button className={`button_select ${register ? '' : 'selected'}`} onClick={() => setRegister(false)} data-testid='authBtnToLogin'>Login</button>
+                    <button className={`button_select ${register ? 'selected' : ''}`} onClick={() => setRegister(true)} data-testid='authBtnToRegister'>Register</button>
                 </div>
                 <form className='login__form' data-selector="auth-form">
                     {register &&
@@ -93,7 +93,6 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
                         <input 
                             data-selector="input"
                             name="name"
-                            id="user_user_name" 
                             type="text" 
                             onChange={onChangeText}
                             value={form.name}
@@ -106,7 +105,6 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
                             data-selector="input"
                             className="input-element" 
                             name="email"
-                            id="user_email" 
                             type="email" 
                             value={form.email}
                             onChange={onChangeText} 
@@ -120,7 +118,6 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
                                 data-selector="input"
                                 className="input-element" 
                                 name="phone"
-                                id="user_phone" 
                                 type="tel" 
                                 value={form.phone}
                                 onChange={onChangeText} 
@@ -134,7 +131,6 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
                             data-selector="input"
                             className="input-element" 
                             name="password"
-                            id="user_password" 
                             type={hideInput ? `password` : 'text'}
                             value={form.password}
                             onChange={onChangeText} 
@@ -149,7 +145,6 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
                                 data-selector="input"
                                 className="input-element" 
                                 name="repassword"
-                                id="user_repassword" 
                                 type={hideInput ? `password` : 'text'}
                                 value={form.repassword}
                                 onChange={onChangeText}
@@ -166,14 +161,14 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
                         </div>
                     }
                     <div className="control__container">
-                        <button className='button_blue color_reverse' type="submit" onClick={onSubmit} disabled={userState.auth.status === 'fetching'}>
+                        <button className='button_blue color_reverse' type="submit" onClick={onSubmit} disabled={userState.auth.status === 'fetching'} data-testid='authBtnLogin'>
                             {register ? 
                                 lang === 'en' ? 'Register' : 'Регистрация' 
                                 :  
                                 lang === 'en' ? 'Login' : 'Вход'
                             }
                         </button>
-                        <button className='button_blue color_reverse' onClick={onCancelClick}>{lang === 'en' ? 'Cancel' : 'Отмена'}</button>
+                        <button className='button_blue color_reverse' onClick={onCancelClick} data-testid='authBtnCancel'>{lang === 'en' ? 'Cancel' : 'Отмена'}</button>
                     </div>
                 </form>
             </div>
