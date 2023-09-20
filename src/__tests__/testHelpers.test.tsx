@@ -13,19 +13,25 @@ import { screenSizes } from '../hooks/screenMeter';
 
 describe('setRes', () => {
 
-    test('should return sm', () => {
-        setRes('sm')
-        expect(global.innerWidth).toBe(screenSizes.sm)
+    test('should return sm', async () => {
+        await setRes('sm')
+        await waitFor(() => {
+            expect(global.innerWidth).toBe(screenSizes.sm)
+        })
     })
 
-    test('should return xs + 10', () => {
-        setRes('xs', 10)
-        expect(global.innerWidth).toBe(screenSizes.xs + 10)
+    test('should return xs + 10', async () => {
+        await setRes('xs', 10)
+        await waitFor(() => {
+            expect(global.innerWidth).toBe(screenSizes.xs + 10)
+        })
     })
 
-    test('should return xl - 5', () => {
-        setRes('xl', -5)
-        expect(global.innerWidth).toBe(screenSizes.xl - 5)
+    test('should return xl - 5', async () => {
+        await setRes('xl', -5)
+        await waitFor(() => {
+            expect(global.innerWidth).toBe(screenSizes.xl - 5)
+        })
     })
 
 })
@@ -48,7 +54,7 @@ describe('changeLang', () => {
     });
 
     test('should change lang for < sm', async () => {
-		act(() => {
+		await act(() => {
 			createRoot(container).render(
 				<Provider store={store}>
 					<Suspense fallback={<Preloader />}>
@@ -57,11 +63,12 @@ describe('changeLang', () => {
 				</Provider>)
 		})
         //setRes('xs')
-        changeLang(container, act)
-
+        await act(async () => {
+            changeLang(container, act)
+        })
 
         const langSwitcher = container.querySelector("[data-testid='lang-switcher']")
-        waitFor(() => {
+        await waitFor(() => {
 			expect(langSwitcher).toBeInTheDocument()
 		})
 

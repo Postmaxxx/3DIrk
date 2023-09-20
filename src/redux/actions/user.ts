@@ -5,8 +5,10 @@ import moment from "moment";
 import { fetchError, resErrorFiller } from "../../../src/assets/js/processors";
 
 
-export const setUser = <T extends Partial<IUserState>>(payload: T):IAction<T> => ({
-    type: actionsListUser.SET_USER,
+type TActionListKeys = keyof typeof actionsListUser;
+
+export const setUser = <T extends Partial<IUserState>>(payload: T): IAction<T>=> ({
+    type: actionsListUser.SET_USER as 'SET_USER',
     payload: payload
 });
 
@@ -40,8 +42,8 @@ export const register = ({name, email, phone, password}: ILoggingForm) => {
                 body: JSON.stringify({name, email, phone, password, localDate})
             })    
             clearTimeout(fetchTimeout)
-            const result: IErrRes = await response.json() //message, errors
-            if (response.status !== 201) {
+            if (!response.ok) {
+                const result: IErrRes = await response.json() //message, errors
                 return dispatch(setAuth(resErrorFiller(result)))
             }
             dispatch(setAuth({...successFetch}))
@@ -52,7 +54,7 @@ export const register = ({name, email, phone, password}: ILoggingForm) => {
                 dispatch,
                 setter: setAuth,
                 controller,
-                comp: {en: 'user register', ru: 'регстрации пользователя'}
+                comp: {en: 'user register', ru: 'регистрации пользователя'}
             }) 
         } 
     }
@@ -67,15 +69,15 @@ export const login = ({email, password}: Pick<ILoggingForm, "email" | "password"
         const controller = new AbortController()
         const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.user.login.timeout) //set time limit for fetch
         dispatch(setAuth({...fetchingFetch, controller}))          
-        try {
+        try { 
             const response: Response = await fetch(APIList.user.login.url, {
-                    signal: controller.signal,
-                    method: APIList.user.login.method,
-                    headers: {
-                        "Content-Type": 'application/json',
-                    },
-                    body: JSON.stringify({email, password})
-                })
+                signal: controller.signal,
+                method: APIList.user.login.method,
+                headers: {
+                    "Content-Type": 'application/json',
+                },
+                body: JSON.stringify({email, password})
+            })
             clearTimeout(fetchTimeout)
             if (!response.ok) {
                 const result: IErrRes = await response.json() //message, errors
@@ -97,7 +99,7 @@ export const login = ({email, password}: Pick<ILoggingForm, "email" | "password"
             }))
             dispatch(setAuth({...successFetch}))
             localStorage.setItem('user', JSON.stringify({token: result.user.token}))
-        } catch (e) {      
+        } catch (e) {   
             fetchError({ 
                 e,
                 dispatch,

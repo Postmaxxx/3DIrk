@@ -44,6 +44,11 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
         (userState.auth.status === 'error') && setState.user.setAuth(deepCopy(resetFetch))
     }
 
+    const switchType = (register: boolean) => {
+        setRegister(register),
+        (userState.auth.status === 'error') && setState.user.setAuth(deepCopy(resetFetch))
+    }
+
 
     const onCancelClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         prevent(e)
@@ -57,7 +62,6 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
         focuser.focusAll(); //run over all elements to get all errors
         const errorFields = document.querySelector(processedContainer)?.querySelectorAll('.incorrect-value') || []
         if (errorFields?.length > 0) return
-
         register ? setState.user.register(form) : setState.user.login(form)
     }
 
@@ -83,8 +87,8 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
         <div className="login">
             <div className="form__container">
                 <div className="sign-selector__container">
-                    <button className={`button_select ${register ? '' : 'selected'}`} onClick={() => setRegister(false)} data-testid='authBtnToLogin'>Login</button>
-                    <button className={`button_select ${register ? 'selected' : ''}`} onClick={() => setRegister(true)} data-testid='authBtnToRegister'>Register</button>
+                    <button className={`button_select ${register ? '' : 'selected'}`} onClick={() => switchType(false)} data-testid='authBtnToLogin'>Login</button>
+                    <button className={`button_select ${register ? 'selected' : ''}`} onClick={() => switchType(true)} data-testid='authBtnToRegister'>Register</button>
                 </div>
                 <form className='login__form' data-selector="auth-form">
                     {register &&
@@ -153,7 +157,7 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
                         </div>
                     }
                     {userState.auth.status === 'error' &&
-                        <div className="errors__container">
+                        <div className="errors__container" data-testid='authErrorsContainer'>
                             <span className='errors__header'>{lang === 'en' ? 'Errors' : 'Ошибки'}: </span>
                             <ul className='errors__list'>
                                 {userState.auth.errors && userState.auth.errors.length > 0 && errorsList}

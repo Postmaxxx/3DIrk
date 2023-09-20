@@ -35,7 +35,7 @@ describe('Modal', () => {
 
 
     test('should exist', async () => {
-		 act(() => {
+		await act(async () => {
 			createRoot(_container).render(
 				<Provider store={store}>
 					<Suspense fallback={<Preloader />}>
@@ -45,12 +45,14 @@ describe('Modal', () => {
 		})
 		
 		let _modal = _modalContainer.querySelector("[data-testid='modal']")
-		expect(_modal).toBeInTheDocument()
+		await waitFor(() => {
+			expect(_modal).toBeInTheDocument()
+        })
     })
 
 
 	test('should be opened and render component on request', async () => {
-		act(() => {
+		await act(async () => {
 		   createRoot(_container).render(
 			   <Provider store={store}>
 				   <Suspense fallback={<Preloader />}>
@@ -64,9 +66,11 @@ describe('Modal', () => {
 			itemName = await modalController?.getName()
 		})
 
-		expect(itemName).toBeNull //modal has no items at start
+		await waitFor(() => {
+			expect(itemName).toBeNull //modal has no items at start
+        })
 		
-		act(() => {
+		await act(() => {
 			modalController?.openModal({
 				name: 'test1', 
 				children: <div data-testid='modalChild-1'>Child for test Modal 1</div>
@@ -75,13 +79,15 @@ describe('Modal', () => {
 
 		await waitFor(async () => {
 			itemName = await modalController?.getName()
+			expect(itemName).toBe('test1') //modal active item is test1
 		})
 
-		expect(itemName).toBe('test1') //modal active item is test1
 		
 		let _modal = _modalContainer.querySelector("[data-testid='modal']")
-		expect(_modal?.classList.contains('visible')).toBe(true)
-		expect(_modalContainer.querySelector("[data-testid='modalChild-1']")).toBeInTheDocument()	
+		await waitFor(() => {
+			expect(_modal?.classList.contains('visible')).toBe(true)
+			expect(_modalContainer.querySelector("[data-testid='modalChild-1']")).toBeInTheDocument()	
+        })
    	})
 
 
@@ -89,7 +95,7 @@ describe('Modal', () => {
 
 
    	test('should add and remove items to/from queue', async () => {
-		act(() => {
+		await act(async () => {
 			createRoot(_container).render(
 				<Provider store={store}>
 					<Suspense fallback={<Preloader />}>
@@ -101,7 +107,7 @@ describe('Modal', () => {
 		const modalController = store.getState().base.modal.current
 
 		// ------------ add 4 modal windows
-		act(() => {
+		await act(() => {
 			modalController?.openModal({
 				name: 'test1', 
 				children: <div data-testid='modalChild-1'>Child for test Modal 1</div>
@@ -123,60 +129,60 @@ describe('Modal', () => {
 			})
 		}) 
 	
-		expect(_modal?.classList.contains('visible')).toBe(true)
 		await waitFor(async () => {
+			expect(_modal?.classList.contains('visible')).toBe(true)
 			itemName = await modalController?.getName()
+			expect(itemName).toBe('test1') 
+			expect(_modalContainer.querySelector("[data-testid='modalChild-1']")).toBeInTheDocument()	
 		})
-		expect(itemName).toBe('test1') 
-		expect(_modalContainer.querySelector("[data-testid='modalChild-1']")).toBeInTheDocument()	
 
 		//close current item, the second should be active
-		act(() => { 
+		await act(() => { 
 			modalController?.closeCurrent()
 		}) 
-		expect(_modal?.classList.contains('visible')).toBe(true)
 		await waitFor(async () => {
+			expect(_modal?.classList.contains('visible')).toBe(true)
 			itemName = await modalController?.getName()
-		})
-		expect(itemName).toBe('test2') 
-		expect(_modalContainer.querySelector("[data-testid='modalChild-2']")).toBeInTheDocument()	
+			expect(itemName).toBe('test2') 
+			expect(_modalContainer.querySelector("[data-testid='modalChild-2']")).toBeInTheDocument()	
+        })
 
 
 		//close item test2, the third should be active
-		act(() => { 
+		await act(() => { 
 			modalController?.closeName('test2')
 		}) 
-		expect(_modal?.classList.contains('visible')).toBe(true)
 		await waitFor(async () => {
+			expect(_modal?.classList.contains('visible')).toBe(true)
 			itemName = await modalController?.getName()
+			expect(itemName).toBe('test3') 
+			expect(_modalContainer.querySelector("[data-testid='modalChild-3']")).toBeInTheDocument()	
 		})
-		expect(itemName).toBe('test3') 
-		expect(_modalContainer.querySelector("[data-testid='modalChild-3']")).toBeInTheDocument()	
 	
 
 		//close item test3, the fourth should be active (without provided any name, name should be "")
-		act(() => { 
+		await act(() => { 
 			modalController?.closeName('test3')
 		}) 
-		expect(_modal?.classList.contains('visible')).toBe(true)
 		await waitFor(async () => {
+			expect(_modal?.classList.contains('visible')).toBe(true)
 			itemName = await modalController?.getName()
+			expect(itemName).toBe("") 
+			expect(_modalContainer.querySelector("[data-testid='modalChild-3']")).toBeInTheDocument()
 		})
-		expect(itemName).toBe("") 
-		expect(_modalContainer.querySelector("[data-testid='modalChild-3']")).toBeInTheDocument()
 
 
 		//close all items, no items should be active
-		act(() => { 
+		await act(() => { 
 			modalController?.closeAll()
 		}) 
-		expect(_modal?.classList.contains('visible')).toBe(false)
 		await waitFor(async () => {
+			expect(_modal?.classList.contains('visible')).toBe(false)
 			itemName = await modalController?.getName()
+			expect(itemName).toBeNull
+			expect(_modalContainer.querySelector("[data-testid='modalChild-3']")).not.toBeInTheDocument()	
+			expect(_modalContainer.querySelector("[data-testid='modalChild-4']")).not.toBeInTheDocument()	
 		})
-		expect(itemName).toBeNull
-		expect(_modalContainer.querySelector("[data-testid='modalChild-3']")).not.toBeInTheDocument()	
-		expect(_modalContainer.querySelector("[data-testid='modalChild-4']")).not.toBeInTheDocument()	
    	})
 
 
@@ -186,7 +192,7 @@ describe('Modal', () => {
 
 	test('should close on button close click, should call onClose func if passed, ', async () => {
 		let onCloseFn = jest.fn()
-		act(() => {
+		await act(async () => {
 		   createRoot(_container).render(
 			   <Provider store={store}>
 				   <Suspense fallback={<Preloader />}>
@@ -198,27 +204,29 @@ describe('Modal', () => {
 		let _modal = _modalContainer.querySelector("[data-testid='modal']")
 		
 		//should close itself if onClose was not passed
-		act(() => {
+		await act(() => {
 			modalController?.openModal({
 				name: 'test2', 
 				children: <div data-testid='modalChild-1'>Child for test Modal 1</div>
 			})
 		}) 
 		let _closerBtn = _modal?.querySelector("[data-testid='modal-closer']")
-		expect(_closerBtn).toBeInTheDocument()
-		expect(_modal?.classList.contains('visible')).toBe(true)
-		act(() => {
+		await waitFor(() => {
+			expect(_closerBtn).toBeInTheDocument()
+			expect(_modal?.classList.contains('visible')).toBe(true)
+        })
+		await act(() => {
             _closerBtn?.dispatchEvent(new MouseEvent('click', {bubbles: true}));
         });
-		expect(_modal?.classList.contains('visible')).toBe(false)
 		await waitFor(async () => {
+			expect(_modal?.classList.contains('visible')).toBe(false)
 			itemName = await modalController?.getName()
+			expect(itemName).toBeNull
 		})
-		expect(itemName).toBeNull
 
 
 		//if onClose passed should not close itself, only using methods in passed onClose func
-		act(() => {
+		await act(() => {
 			modalController?.openModal({
 				name: 'test1', 
 				onClose: onCloseFn,
@@ -226,23 +234,25 @@ describe('Modal', () => {
 			})
 		}) 
 		_closerBtn = _modal?.querySelector("[data-testid='modal-closer']")
-		expect(_closerBtn).toBeInTheDocument()
+		await waitFor(() => {
+			expect(_closerBtn).toBeInTheDocument()
+        })
 		
-		act(() => {
+		await act(() => {
             _closerBtn?.dispatchEvent(new MouseEvent('click', {bubbles: true}));
         });
-		expect(onCloseFn).toBeCalledTimes(1)
-		expect(_modal?.classList.contains('visible')).toBe(true)
 		await waitFor(async () => {
+			expect(onCloseFn).toBeCalledTimes(1)
+			expect(_modal?.classList.contains('visible')).toBe(true)
 			itemName = await modalController?.getName()
+			expect(itemName).toBe('test1')
 		})
-		expect(itemName).toBe('test1')
 		
 		
 		
 		
 		//if closable is false should not have close button
-		act(() => { 
+		await act(() => { 
 			modalController?.closeAll()
 			modalController?.openModal({
 				name: 'test1', 
@@ -251,7 +261,9 @@ describe('Modal', () => {
 			})
 		}) 
 		_closerBtn = _modal?.querySelector("[data-testid='modal-closer']")
-		expect(_closerBtn).not.toBeInTheDocument()
+		await waitFor(() => {
+			expect(_closerBtn).not.toBeInTheDocument()
+        })
    	})
 
 })

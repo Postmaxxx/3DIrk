@@ -3,11 +3,12 @@ import initialCatalogState from '../initialStates/catalog'
 import { actionsListCatalog } from '../actions/actionsList'
 
 
+type TActionListKeys = keyof typeof actionsListCatalog;
 
 
-const reducerCatalog = (state: ICatalogState = initialCatalogState, action: IAction<unknown>): ICatalogState => {
+const reducerCatalog = (state: ICatalogState = initialCatalogState, action: {type: TActionListKeys, payload: unknown}): ICatalogState => {
     switch (action.type) {
-        case actionsListCatalog.SET_LOAD_STATUS_CATEGORIES_LIST:
+        case actionsListCatalog.SET_LOAD_STATUS_CATEGORIES_LIST as 'SET_LOAD_STATUS_CATEGORIES_LIST':
             return {
                 ...state, 
                 catalog: {
@@ -15,7 +16,7 @@ const reducerCatalog = (state: ICatalogState = initialCatalogState, action: IAct
                     load: action.payload as IFetch
                 }
             }
-        case actionsListCatalog.SET_SEND_STATUS_CATEGORIES_LIST:
+        case actionsListCatalog.SET_SEND_STATUS_CATEGORIES_LIST as 'SET_SEND_STATUS_CATEGORIES_LIST':
             return {
                 ...state, 
                 catalog: {
@@ -23,7 +24,7 @@ const reducerCatalog = (state: ICatalogState = initialCatalogState, action: IAct
                     send: action.payload as IFetch
                 }
             }
-        case actionsListCatalog.SET_DATA_CATEGORIES_LIST: 
+        case actionsListCatalog.SET_DATA_CATEGORIES_LIST as 'SET_DATA_CATEGORIES_LIST': 
             const categoriesList = action.payload as ICatalogItem[]
             return {
                 ...state, 
@@ -33,7 +34,7 @@ const reducerCatalog = (state: ICatalogState = initialCatalogState, action: IAct
                 }
             }
 
-        case actionsListCatalog.SET_LOAD_STATUS_CATEGORY: 
+        case actionsListCatalog.SET_LOAD_STATUS_CATEGORY as 'SET_LOAD_STATUS_CATEGORY': 
             const dataLoadingCategory = action.payload as IFetch
             return {
                 ...state, 
@@ -42,7 +43,7 @@ const reducerCatalog = (state: ICatalogState = initialCatalogState, action: IAct
                     loadCategory: dataLoadingCategory
                 }
             }
-        case actionsListCatalog.SET_DATA_CATEGORY: 
+        case actionsListCatalog.SET_DATA_CATEGORY as 'SET_DATA_CATEGORY': 
             const dataCategory = action.payload as Omit<ICategory, "loadCategory" | 'page' | 'product' | "loadProduct">
             return {
                 ...state, 
@@ -52,7 +53,7 @@ const reducerCatalog = (state: ICatalogState = initialCatalogState, action: IAct
                 }
             }
 
-        case actionsListCatalog.SET_LOAD_STATUS_PRODUCT: 
+        case actionsListCatalog.SET_LOAD_STATUS_PRODUCT as 'SET_LOAD_STATUS_PRODUCT': 
             return {
                 ...state, 
                 category: {
@@ -60,7 +61,7 @@ const reducerCatalog = (state: ICatalogState = initialCatalogState, action: IAct
                     loadProduct: action.payload as IFetch
                 }
             }
-        case actionsListCatalog.SET_SEND_STATUS_PRODUCT: 
+        case actionsListCatalog.SET_SEND_STATUS_PRODUCT as 'SET_SEND_STATUS_PRODUCT': 
             return {
                 ...state, 
                 category: {
@@ -68,7 +69,7 @@ const reducerCatalog = (state: ICatalogState = initialCatalogState, action: IAct
                     sendProduct: action.payload as IFetch
                 }
             }
-        case actionsListCatalog.SET_DATA_PRODUCT: 
+        case actionsListCatalog.SET_DATA_PRODUCT as 'SET_DATA_PRODUCT': 
             const product = action.payload as IProduct
             return {
                 ...state, 
@@ -78,7 +79,12 @@ const reducerCatalog = (state: ICatalogState = initialCatalogState, action: IAct
                 }
             }
 
-        default: return state
+        default: {
+            const missedSomeActions:never = action.type;
+            return {
+                ...state   
+            };
+        }
     }
 }
 

@@ -28,7 +28,7 @@ describe('Tests for ThemeSwitcher', () => {
 
 
     test('should exist if screen.width > sm and <=sm', async () => {
-		act(() => {
+		await act(async () => {
 			createRoot(_container).render(
 				<Provider store={store}>
 					<Suspense fallback={<Preloader />}>
@@ -37,40 +37,34 @@ describe('Tests for ThemeSwitcher', () => {
 				</Provider>)
 		})
 		
-		
-
-
-
-
-		act(() => {
+		await act(() => {
 			global.innerWidth = screenSizes.sm + 1;
 			global.dispatchEvent(new Event('resize'));
 		})
 		_themeSwitcher = _container.querySelector("[data-testid='theme-switcher']")
 		
-		expect(_themeSwitcher).toBeInTheDocument()
+		await waitFor(() => {
+			expect(_themeSwitcher).toBeInTheDocument()
+        })
 		
 		
-		act(() => {
+		await act(() => {
 			global.innerWidth = screenSizes.sm ;
 			global.dispatchEvent(new Event('resize'));
 		})
 
 		_themeSwitcher = _container.querySelector("[data-testid='theme-switcher']")
 
-		waitFor(() => {
+		await waitFor(() => {
 			expect(_themeSwitcher).toBeInTheDocument()
 		})
-
-
-
     })
 
 
 
 
 	test('should change theme on click', async () => {
-		act(() => {
+		await act(async () => {
 			createRoot(_container).render(
 				<Provider store={store}>
 					<Suspense fallback={<Preloader />}>
@@ -81,107 +75,77 @@ describe('Tests for ThemeSwitcher', () => {
 
 
 		// ------------------ screenSize > sm -------------------------------
-		act(() => {
+		await act(async () => {
 			global.innerWidth = screenSizes.sm + 1;
 			global.dispatchEvent(new Event('resize'));
 		})
         _themeSwitcher = _container.querySelector("#theme-switcher")
-		expect(store.getState().base.theme).toBe('dark') 
+		await waitFor(async () => {
+			let theme = await store.getState().base.theme
+			expect(theme).toBe('dark') 
+		})
 
-		act(() => { // to light
+		await act(() => { // to light
             _themeSwitcher?.dispatchEvent(new MouseEvent('click', {bubbles: true}));
         });
-		expect(store.getState().base.theme).toBe('light')
+		await waitFor(async () => {
+			let theme = await store.getState().base.theme
+			expect(theme).toBe('light') 
+		})
 
-		act(() => { //to dark
+		await act(() => { //to dark
             _themeSwitcher?.dispatchEvent(new MouseEvent('click', {bubbles: true}));
         });
-		expect(store.getState().base.theme).toBe('dark')
+		await waitFor(async () => {
+			let theme = await store.getState().base.theme
+			expect(theme).toBe('dark') 
+		})
 
 
 		// ------------------ screenSize <= sm -------------------------------
 
-		act(() => {
+		await act(async () => {
 			global.innerWidth = screenSizes.sm;
 			global.dispatchEvent(new Event('resize'));
 		})
-		expect(store.getState().base.mobOpened).toBe(false)
-
+		await waitFor(async () => {
+			let opened = await store.getState().base.mobOpened
+			expect(opened).toBe(false) 
+		})
 
 		let _navOpenerCheckbox = _container.querySelector("[data-testid='nav_mob__checkbox']")
-		act(() => { 
+		await act(() => { 
 			_navOpenerCheckbox?.dispatchEvent(new MouseEvent('click', {bubbles: true}));
         });
-		expect(_navOpenerCheckbox).toBeInTheDocument()
+		await waitFor(async () => {
+			expect(_navOpenerCheckbox).toBeInTheDocument()
+		})
 
-		act(() => { 
+		await act(() => { 
 			expect(store.getState().base.mobOpened).toBe(true)
         });
 
 		
-		waitFor(() => {
+		await waitFor(() => {
 			_themeSwitcher = _container.querySelector("#theme-switcher")
 			expect(_themeSwitcher).toBeInTheDocument()
 		})
 
-		act(() => { // to light
+		await act(() => { // to light
             _themeSwitcher?.dispatchEvent(new MouseEvent('click', {bubbles: true}));
         });
 		expect(store.getState().base.theme).toBe('light')
 
-		act(() => { //to dark
+		await act(() => { //to dark
             _themeSwitcher?.dispatchEvent(new MouseEvent('click', {bubbles: true}));
         });
-		expect(store.getState().base.theme).toBe('dark')
+
+		await waitFor(async () => {
+			let theme = await store.getState().base.theme
+			expect(theme).toBe('dark') 
+		})
     })
 
 
 })
 
-
-
-
-
-
-
-
-
-
-
-/*
-export function main() {
-  if (navigator.onLine) {
-    console.log('online');
-  } else {
-    console.log('offline');
-  }
-}
-
-
-
-describe('main', () => {
-  beforeEach(() => {
-    jest.restoreAllMocks();
-  });
-  test('should log "online"', () => {
-    const logSpy = jest.spyOn(console, 'log');
-    jest.spyOn(navigator, 'onLine', 'get').mockReturnValueOnce(true);
-    main();
-    expect(logSpy).toBeCalledWith('online');
-  });
-
-  test('should log "offline"', () => {
-    const logSpy = jest.spyOn(console, 'log');
-    jest.spyOn(navigator, 'onLine', 'get').mockReturnValueOnce(false);
-    main();
-    expect(logSpy).toBeCalledWith('offline');
-  });
-});
-
-
-
-
-
-
-await waitFor(() => expect(something).toBe(something)
-*/

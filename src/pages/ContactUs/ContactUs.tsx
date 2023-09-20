@@ -140,8 +140,8 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
                                 <h3>{lang === 'en' ? 'Strezhen' : 'Компания Стрежень'}</h3>
                                 <div className="contacts">
                                     <div className="location">
-                                        <img src={locationMapSmall} alt={lang === 'en' ? 'Location map' : 'Схема проезда'} onClick={onLocationClick}/>
-                                        <a href={lang === 'en' ? "https://goo.gl/maps/89SfgdnrPWB8kbDJA" : "https://go.2gis.com/uy5m3"} target="_blank">{lang === 'en' ? `Irkutsk city, Gertcena${nwsp}street,${nwsp}14` : `г. Иркутск, Улица${nwsp}Герцена,${nwsp}14`} {svgs().iconRoute2}</a>
+                                        <img data-testid='mapImg' src={locationMapSmall} alt={lang === 'en' ? 'Location map' : 'Схема проезда'} onClick={onLocationClick}/>
+                                        <a data-testid='mapLink' href={lang === 'en' ? "https://goo.gl/maps/89SfgdnrPWB8kbDJA" : "https://go.2gis.com/uy5m3"} target="_blank">{lang === 'en' ? `Irkutsk city, Gertcena${nwsp}street,${nwsp}14` : `г. Иркутск, Улица${nwsp}Герцена,${nwsp}14`} {svgs().iconRoute2}</a>
                                     </div>
                                     <div className="contacts__list">
                                         <div className="contact">
@@ -179,11 +179,11 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
                                 <div className="form__inputs__texts">
                                     {userState.auth.status !== 'success' && 
                                         <div className="block_input" data-selector="input-block">
-                                            <label htmlFor="name">{lang === 'en' ? 'Your name*' : 'Ваше имя*'}</label>
+                                            <label htmlFor="contacter_name">{lang === 'en' ? 'Your name*' : 'Ваше имя*'}</label>
                                             <input 
                                                 data-selector="input"
                                                 className="input-element" 
-                                                id="name" 
+                                                id="contacter_name" 
                                                 type="text" 
                                                 ref={_name} 
                                                 onKeyDown={focuser.next}
@@ -193,11 +193,11 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
                                         
                                     {userState.auth.status !== 'success' && 
                                         <div className="block_input" data-selector="input-block">
-                                            <label htmlFor="phone">{lang === 'en' ? 'Your phone' : 'Ваш телефон'}</label>
+                                            <label htmlFor="contacter_phone">{lang === 'en' ? 'Your phone' : 'Ваш телефон'}</label>
                                             <input 
                                                 data-selector="input"
                                                 className="input-element" 
-                                                id="phone"
+                                                id="contacter_phone"
                                                 type="tel" 
                                                 ref={_phone} 
                                                 onKeyDown={focuser.next}
@@ -208,11 +208,11 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
 
                                     {userState.auth.status !== 'success' && 
                                         <div className="block_input" data-selector="input-block">
-                                            <label htmlFor="email">{lang === 'en' ? 'Your email*' : 'Ваша почта*'}</label>
+                                            <label htmlFor="contacter_email">{lang === 'en' ? 'Your email*' : 'Ваша почта*'}</label>
                                             <input 
                                                 data-selector="input"
                                                 className="input-element" 
-                                                id="email" 
+                                                id="contacter_email" 
                                                 type="email" 
                                                 ref={_email} 
                                                 onKeyDown={focuser.next}
@@ -221,13 +221,11 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
                                         </div>
                                     }
                                     <div className="block_input expandable" data-selector="input-block">
-                                        <label htmlFor="message">
-                                            {lang === 'en' ? 'Your message*' : 'Ваше сообщение*'}
-                                        </label>
+                                        <label htmlFor="contacter_message">{lang === 'en' ? 'Your message*' : 'Ваше сообщение*'}</label>
                                         <textarea 
                                             data-selector="input"
                                             className="input-element" 
-                                            id="message" 
+                                            id="contacter_message" 
                                             ref={_message} 
                                             onChange={onChangeText}
                                             onBlur={(e) => inputChecker({lang, min:inputsProps.message.min, max:inputsProps.message.max, el: e.target})}/>
@@ -243,6 +241,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
 
                             <button 
                                 type="submit" 
+                                data-testid='sendMessage'
                                 disabled={userState.sendOrder.status === 'fetching'} 
                                 className="button_blue button_contact" 
                                 onClick={onSubmit}>

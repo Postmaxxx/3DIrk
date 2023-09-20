@@ -4,6 +4,8 @@ import { exceptionTimeout } from '../assets/js/consts';
 import { AnyAction } from 'redux';
 import { render } from '@testing-library/react';
 import React from 'react'
+import '@testing-library/jest-dom/extend-expect'
+
 global.HTMLElement = window.HTMLElement;
 
 

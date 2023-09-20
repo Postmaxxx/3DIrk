@@ -17,9 +17,7 @@ export const setThemeLight = <T>(): IAction<T> => ({
 export const setThemeDark = <T>(): IAction<T> => ({
     type: actionsListBase.SET_THEME_DARK,
 })
-export const setThemeToggle = <T>(): IAction<T> => ({
-    type: actionsListBase.SET_THEME_TOGGLE,
-})
+
 export const setTheme = <T extends TTheme>(payload: T): IAction<T> => ({
     type: actionsListBase.SET_THEME,
     payload
@@ -33,7 +31,7 @@ export const setNavCloseMob = <T>():IAction<T> => ({
     type: actionsListBase.SET_NAV_MOB_CLOSE,
 });
 export const setNavToggleMob = <T>():IAction<T> => ({
-    type: actionsListBase.SET_NAV_MOB_TOGGLE,
+    type: actionsListBase.SET_NAV_MOB_TOGGLE, 
 });
 
 

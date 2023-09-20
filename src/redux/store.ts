@@ -10,7 +10,7 @@ import reducerContent from './reducers/content';
 import reducerOrders from './reducers/orders';
 import { composeWithDevTools } from '@redux-devtools/extension';
 
-const rootReducer = combineReducers({
+export const rootReducer = combineReducers({
     base: reducerBase,
     news: reducerNews,
     fibers: reducerFibers,

@@ -15,10 +15,12 @@ module.exports = {
 	],
 	moduleNameMapper: {
 		"\\.(scss|sass|css)$": "identity-obj-proxy",
-		"\\.(svg|jpg|jpeg|png|gif)$": "<rootDir>/svgMock.js" // Provide the correct path to the mock file
+		"\\.(svg|jpg|jpeg|png|gif|webp)$": "<rootDir>/svgMock.js" // Provide the correct path to the mock file
 	},
 	verbose: true,
-    testURL: "http://localhost/"
+    testURL: "http://localhost/",
+	setupFiles: ["<rootDir>/setEnvVars.js"],
+	
 };
 
 

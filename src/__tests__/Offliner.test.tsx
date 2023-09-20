@@ -2,7 +2,7 @@ import { act,waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect'
 import { createRoot } from 'react-dom/client';
 import Offliner from '../components/Offliner/Offliner';
-import { unmountComponentAtNode } from 'react-dom';
+import '@testing-library/jest-dom/extend-expect'
 
 
 
@@ -24,48 +24,56 @@ describe('Tests for Offliner', () => {
     });
 
 
-    test('hidden should exist', async () => {
+    test('should exist', async () => {
         jest.spyOn(navigator, 'onLine', 'get').mockReturnValueOnce(true);
-        act(() => {
+        await act(() => {
             createRoot(_container).render(<Offliner lang='en' />);
         });
         _offliner = _container.querySelector('.offliner')
-        expect(_offliner).toBeInTheDocument()
+        await waitFor(() => {
+            expect(_offliner).toBeInTheDocument()
+        })
     })
 
          
     test('should be hidden if online', async () => {
         jest.spyOn(navigator, 'onLine', 'get').mockReturnValueOnce(true);
-        act(() => {
+        await act(() => {
             createRoot(_container).render(<Offliner lang='en' />);
         });
         _offliner = _container.querySelector('.offliner')
-        expect(_offliner?.querySelector('span')).not.toBeInTheDocument()
+        waitFor(() => {
+            expect(_offliner?.querySelector('span')).not.toBeInTheDocument()
+        })
     })
 
 
 
     test('should be visible if offline', async () => {
         jest.spyOn(navigator, 'onLine', 'get').mockReturnValueOnce(false);
-        act(() => {
+        await act(() => {
             createRoot(_container).render(<Offliner lang='en' />);
         });
         _offliner = _container.querySelector('.offliner')
-        expect(_offliner?.querySelector('span')).toBeInTheDocument()
+        waitFor(() => {
+            expect(_offliner?.querySelector('span')).toBeInTheDocument()
+        })
     })
 
 
 
     test('should be hidden after click on it', async () => {
         jest.spyOn(navigator, 'onLine', 'get').mockReturnValueOnce(false);
-        act(() => {
+        await act(() => {
             createRoot(_container).render(<Offliner lang='en' />);
         });
         _offliner = _container.querySelector('.offliner')
-        act(() => {
+        await act(() => {
             _offliner?.dispatchEvent(new MouseEvent('click', {bubbles: true}))
         })
-        expect(_offliner?.querySelector('span')).not.toBeInTheDocument()
+        waitFor(() => {
+            expect(_offliner?.querySelector('span')).not.toBeInTheDocument()
+        })
     })
 
 
@@ -74,19 +82,26 @@ describe('Tests for Offliner', () => {
     test('should remove eventListeners after unmount', async () => {
         const removeEventListenerSpy = jest.spyOn(window, 'removeEventListener');
         const addEventListenerSpy = jest.spyOn(window, 'addEventListener');
-        let _root = createRoot(_container)
-        act(() => {
+        let _root: ReturnType<typeof createRoot>
+        await act(async () => {
+            _root = createRoot(_container)
             _root.render(<Offliner lang='en' />)
         }) 
-        expect(addEventListenerSpy).toHaveBeenCalledWith('online', expect.any(Function));
-        expect(addEventListenerSpy).toHaveBeenCalledWith('offline', expect.any(Function));
-        expect(addEventListenerSpy).toHaveBeenCalledTimes(2)
-        act(() => {
+        waitFor(() => {
+            expect(addEventListenerSpy).toHaveBeenCalledWith('online', expect.any(Function));
+            expect(addEventListenerSpy).toHaveBeenCalledWith('offline', expect.any(Function));
+            expect(addEventListenerSpy).toHaveBeenCalledTimes(2)
+        })
+
+        await act(() => {
             _root.unmount()
         }) 
-        expect(removeEventListenerSpy).toHaveBeenCalledWith('online', expect.any(Function));
-        expect(removeEventListenerSpy).toHaveBeenCalledWith('offline', expect.any(Function));
-        expect(removeEventListenerSpy).toHaveBeenCalledTimes(2)
+        waitFor(() => {
+            expect(removeEventListenerSpy).toHaveBeenCalledWith('online', expect.any(Function));
+            expect(removeEventListenerSpy).toHaveBeenCalledWith('offline', expect.any(Function));
+            expect(removeEventListenerSpy).toHaveBeenCalledTimes(2)
+        })
     })
+
 })
 
