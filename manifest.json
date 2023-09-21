@@ -4,8 +4,8 @@
     "display": "standalone",
     "scope": "./",
     "start_url": ".",
-    "name": "3DPrint",
-    "short_name": "3DPrint",
+    "name": "Strezhen",
+    "short_name": "Strezhen",
     "description": "Site for order 3D printing",
     "orientation": "any",
     "icons": [
