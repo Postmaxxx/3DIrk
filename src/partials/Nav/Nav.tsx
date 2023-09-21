@@ -198,7 +198,7 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
                                             </li>
                                         </>}
                                     <li className="submenu__item__point">
-                                        <a onClick={() => onClickNotLink('logout')} data-testid='btn_logout_desktop'>{navList.account.logout[lang]}</a>
+                                        <a role="button" onClick={() => onClickNotLink('logout')} data-testid='btn_logout_desktop'>{navList.account.logout[lang]}</a>
                                     </li>
                                 </ul>
                             </li>
@@ -206,7 +206,7 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
                     </li>
                     :
                     <li className="nav-item">
-                        <a className="nav-item__text nav-text_level_1" data-testid='btn_login_desktop' onClick={() => onClickNotLink('login')}>{navList.account.login[lang]}</a>
+                        <a role="button" className="nav-item__text nav-text_level_1" data-testid='btn_login_desktop' onClick={() => onClickNotLink('login')}>{navList.account.login[lang]}</a>
                     </li>
                 }
             </ul>
@@ -391,14 +391,14 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
                                     </NavLink>
                                 </li>
                                 <li className="submenu__item">
-                                    <a className="button_link nav-text_level_1" onClick={() => {onClickNotLink('logout'); navToggleMobile()}} data-testid='btn_logout_mobile'>{navList.account.logout[lang]}</a>
+                                    <a role="button" className="button_link nav-text_level_1" onClick={() => {onClickNotLink('logout'); navToggleMobile()}} data-testid='btn_logout_mobile'>{navList.account.logout[lang]}</a>
                                 </li>
                             </ul>
                         </div>
                     </li>
                 :
                     <li className="nav-item">
-                        <a className="button_link nav-text_level_1" onClick={() => {onClickNotLink('login'); navToggleMobile()}} data-testid='btn_login_mobile'>{navList.account.login[lang]}</a>
+                        <a role="button" className="button_link nav-text_level_1" onClick={() => {onClickNotLink('login'); navToggleMobile()}} data-testid='btn_login_mobile'>{navList.account.login[lang]}</a>
                     </li>
                 }
             </ul>

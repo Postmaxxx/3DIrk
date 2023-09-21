@@ -18,7 +18,7 @@ export function register() {
 async function registerValidSW(swUrl: string) {
 	try {
 		const regSW: ServiceWorkerRegistration = await navigator.serviceWorker.register(swUrl, {
-			scope: process.env.NODE_ENV === "development" ? '/' : '/3DIrk/', //change if url changed
+			scope: process.env.NODE_ENV === "development" ? '/' : '/', //change if url changed
 			//updateViaCache: 'none' 
 		}); 
 		regSW.update(); //update if changed
