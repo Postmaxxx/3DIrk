@@ -5,14 +5,13 @@ import { Provider } from 'react-redux';
 import store from '../redux/store';
 import fetchMock from 'jest-fetch-mock';
 import App from '../App';
+import { changeLang, setRes } from '../assets/js/testHelpers';
 
 
 
 
 describe('ContactUs', () => {
     let _container: HTMLDivElement;
-    let signal = new AbortController().signal
-    const onCancelClick = jest.fn()
     let _modalContainer: HTMLDivElement;
 
     beforeEach(() => {
@@ -30,6 +29,10 @@ describe('ContactUs', () => {
     });
 
 
+
+
+
+
     test('should show content', async () => {
         await act(async () => {
             createRoot(_container).render(
@@ -42,7 +45,20 @@ describe('ContactUs', () => {
         _modalContainer.id = 'modal'
         document.body.appendChild(_modalContainer);
 
-        let _modal = _modalContainer.querySelector("[data-testid='modal']")
+        fetchMock.mockResponseOnce(JSON.stringify({ 
+            message: {message: {en: 'Message has been sent', ru: 'Сообщение было отправлено'}},  
+        }), {
+            status: 200,
+            headers: { 'content-type': 'application/json' },
+        });
+
+
+        await act(async () => {
+            await setRes('sm', 1)
+            screen.getByText('КОНТАКТЫ').click()
+        })
+
+
         let _email: HTMLInputElement = _container.querySelector("#contacter_email") as HTMLInputElement
         let _name: HTMLInputElement = _container.querySelector("#contacter_name") as HTMLInputElement
         let _phone: HTMLInputElement = _container.querySelector("#contacter_phone") as HTMLInputElement
@@ -65,12 +81,14 @@ describe('ContactUs', () => {
             screen.getByTestId('mapImg')?.dispatchEvent(new MouseEvent('click', {bubbles: true}))
         })
 
-        await act(() => {})
         await waitFor(async () => {
             let modal = await store.getState().base.modal.current?.getName()
             expect(modal).toBe('location')
         })
-
+        
+        await act(() => {
+            screen.getByTestId('modal-closer').click()
+        })
 
 
         await act(() => {
@@ -81,7 +99,7 @@ describe('ContactUs', () => {
             fireEvent.change(_name, { target: { value: 'TestName' } });
             fireEvent.blur(_name)
             fireEvent.focus(_phone)
-            fireEvent.change(_phone, { target: { value: '+32223332' } });
+            fireEvent.change(_phone, { target: { value: '+322223332' } });
             fireEvent.blur(_phone)
             fireEvent.focus(_message)
             fireEvent.change(_message, { target: { value: 'test_message_with_length_more_than_20' }});
@@ -89,6 +107,21 @@ describe('ContactUs', () => {
             fireEvent.click(_btnSend)
         })
 
+
+        const sendForm = new FormData()
+        sendForm.append('lang', 'ru')
+        sendForm.append('message', 'text')
+
+
+        let lastCall = fetchMock.mock.calls[fetchMock.mock.calls.length - 1]
+        expect(lastCall[0]?.toString()).toBe('host/api/user/message')
+        expect(lastCall[1]?.method).toBe('POST')
+        expect(lastCall[1]?.headers).toEqual({enctype: 'multipart/form-data'})
+        
+        await waitFor(async () => {
+            let modal = await store.getState().base.modal.current?.getName()
+            expect(modal).toBe('messageSend')
+        })
 
     })
 

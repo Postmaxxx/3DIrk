@@ -25,7 +25,6 @@ export const setSendOrder = <T extends IFetch>(payload: T):IAction<T> => ({
 });
 
 
-
 export const register = ({name, email, phone, password}: ILoggingForm) => {
     return async function(dispatch: IDispatch, getState: () => IFullState) {
         const controller = new AbortController()

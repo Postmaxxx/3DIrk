@@ -80,7 +80,6 @@ ${lang === 'en' ? 'Email' : 'Почта'}: ${isAuth ? userState.email : _email.c
 ${lang === 'en' ? 'Phone' : 'Телефон'}: ${isAuth ? userState.phone : _phone.current?.value}
 ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
         const text = `${lang === 'en' ? 'New message' : 'Новое сообщение'}:${textOrder}\n ${files.length > 0 ? (lang==='en' ? `\nAttached files ${files.length}:` : `\nПрикрепленные файлы ${files.length}:`) : ''}`
-
         setState.user.sendMessage({text, files})
     }
 
