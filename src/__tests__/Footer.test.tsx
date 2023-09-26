@@ -12,7 +12,6 @@ import { changeLang } from '../assets/js/testHelpers';
 
 
 describe('Footer', () => {
-
     let _container: HTMLDivElement;
 
     beforeEach(() => {
@@ -54,6 +53,4 @@ describe('Footer', () => {
 		})
 
     })
-
-
 })

@@ -1,7 +1,7 @@
-import { act, waitFor, screen, fireEvent } from '@testing-library/react';
+import { act, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect'
 import { createRoot } from 'react-dom/client';
-import { Provider, useDispatch } from 'react-redux';
+import { Provider } from 'react-redux';
 import store from '../redux/store';
 import Preloader from '../components/Preloaders/Preloader';
 import { Suspense } from "react";
@@ -57,7 +57,7 @@ describe('Nav', () => {
     })
 
 
-    test('desktop should be closes ond opened on click', async () => {
+    test('desktop should be closed ond opened on click', async () => {
 		await act(async () => {
 			createRoot(_container).render(
 				<Provider store={store}>
@@ -90,7 +90,7 @@ describe('Nav', () => {
     })
 
 
-    test('mobile should be closes ond opened on click', async () => {
+    test('mobile should be closed ond opened on click', async () => {
 		await act(async () => {
 			createRoot(_container).render(
 				<Provider store={store}>
@@ -344,11 +344,6 @@ describe('Nav', () => {
 
         document.body.removeChild(_modalContainer);
     })
-
-
-
-
-
 
 
 

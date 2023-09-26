@@ -1,4 +1,4 @@
-import { act, waitFor, screen, fireEvent } from '@testing-library/react';
+import { act, waitFor, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect'
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
@@ -283,7 +283,6 @@ describe('Auth', () => {
         })
 
     })
-
 
 
 })

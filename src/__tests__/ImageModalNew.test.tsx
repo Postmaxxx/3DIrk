@@ -1,4 +1,4 @@
-import { act, waitFor, screen } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 import { HashRouter } from "react-router-dom";
 import ImageModalNew from '../components/ImageModal/ImageModalNew';
 import '@testing-library/jest-dom/extend-expect'

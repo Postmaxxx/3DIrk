@@ -62,7 +62,6 @@ describe('changeLang', () => {
 					</Suspense>
 				</Provider>)
 		})
-        //setRes('xs')
         await act(async () => {
             changeLang(container, act)
         })
@@ -71,7 +70,6 @@ describe('changeLang', () => {
         await waitFor(() => {
 			expect(langSwitcher).toBeInTheDocument()
 		})
-
     })
 
 

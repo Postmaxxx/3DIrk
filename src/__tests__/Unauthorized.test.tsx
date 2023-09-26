@@ -18,7 +18,6 @@ describe('Unauthorized', () => {
     })
 
 
-
     test('should show content', async () => {
         let _root: ReturnType<typeof createRoot>
         await act(async () => {
@@ -42,10 +41,6 @@ describe('Unauthorized', () => {
             expect(_newsItem).toBeInTheDocument()
             expect(screen.getByText('You are not authorized. Please login to get premissions to see this page')).toBeInTheDocument()
         })
-        
-
-
     })
-
 
 })

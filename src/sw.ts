@@ -1,7 +1,7 @@
 import { clientsClaim } from "workbox-core";
 import { ExpirationPlugin } from "workbox-expiration";
 import { registerRoute, Route } from "workbox-routing";
-import { CacheFirst, StaleWhileRevalidate } from "workbox-strategies";
+import { CacheFirst, NetworkFirst, StaleWhileRevalidate } from "workbox-strategies";
 
 //import {warmStrategyCache} from 'workbox-recipes';
 import { setCatchHandler} from 'workbox-routing';
@@ -30,6 +30,7 @@ interface ICaches {
 	//htmls: string
 	fonts: string
 	images: string
+	fetchs: string
 	offline: string
 }
 
@@ -40,6 +41,7 @@ const cachesCurrent: ICaches = {
 	//htmls: `htmls-${versionHtmls}`,
 	fonts: `fonts-${versionFonts}`,
 	images: `images-${versionImages}`,
+	fetchs: `fetchs-${versionImages}`,
 	offline: `offline-fallbacks-${versionOffline}`
 };
 
@@ -123,6 +125,20 @@ const imagesRoute: Route = new Route(({ request }) => {
 registerRoute(imagesRoute);
 
 
+const fetchRoute = new Route((event) => {
+	// Always return true to match all fetch requests
+	return true;
+  }, new NetworkFirst({
+	cacheName: cachesCurrent.fetchs,
+	plugins: [
+	  new ExpirationPlugin({
+		maxAgeSeconds: 60 * 60 * 24 * 7,
+		maxEntries: 500, 
+	  }),
+	],
+}));
+registerRoute(fetchRoute);
+
 //catch errors during fetching resources
 setCatchHandler(async (options) => {
 	const destination = options.request.destination;
@@ -133,6 +149,7 @@ setCatchHandler(async (options) => {
 	}
 	return Response.error();
   });
+
 
 
 

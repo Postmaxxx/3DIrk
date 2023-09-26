@@ -1,7 +1,7 @@
 {
-  "name": "3dprint",
+  "name": "Strezhen",
   "version": "0.2.0",
-  "homepage": "https://postmaxxx.github.io/3DIrk/",
+  "homepage": "https://plastprinting.net",
   "private": true,
   "author": "Postnikov Maksim",
   "license": "ISC",
@@ -34,7 +34,7 @@
     "startprod": "set NODE_ENV=production&& react-scripts start",
     "build": "react-scripts build 2",
     "test": "react-scripts test",
-    "jest": "jest --coverage",
+    "jest": "jest --coverage --watch",
     "eject": "react-scripts eject",
     "predeploy_old": "npm run build && npx workbox injectManifest workbox-config.js",
     "deploy_old": "gh-pages -d build",

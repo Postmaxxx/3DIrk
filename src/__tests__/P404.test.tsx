@@ -44,9 +44,6 @@ describe('P404', () => {
             expect(_p404).toBeInTheDocument()
             expect(screen.getByText('Requested page was not found:')).toBeInTheDocument()
         })
-        
-
-
     })
 
 

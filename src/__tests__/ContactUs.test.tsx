@@ -5,8 +5,9 @@ import { Provider } from 'react-redux';
 import store from '../redux/store';
 import fetchMock from 'jest-fetch-mock';
 import App from '../App';
-import { changeLang, setRes } from '../assets/js/testHelpers';
-
+import { setRes } from '../assets/js/testHelpers';
+import ContactUs from '../pages/ContactUs/ContactUs';
+import renderer from 'react-test-renderer'
 
 
 
@@ -63,11 +64,13 @@ describe('ContactUs', () => {
         let _name: HTMLInputElement = _container.querySelector("#contacter_name") as HTMLInputElement
         let _phone: HTMLInputElement = _container.querySelector("#contacter_phone") as HTMLInputElement
         let _message: HTMLTextAreaElement = _container.querySelector("#contacter_message") as HTMLTextAreaElement
-        let _btnSend: HTMLTextAreaElement = _container.querySelector("[data-testid='sendMessage']") as HTMLTextAreaElement
-        let _map: HTMLImageElement = _container.querySelector("[data-testid='mapImg']") as HTMLImageElement
+        let _btnSend: HTMLTextAreaElement = screen.getByTestId('contactSendMessage') as HTMLTextAreaElement
+        let _map: HTMLImageElement = screen.getByTestId('contactMapImg') as HTMLImageElement
         await waitFor(() => {
-            expect(screen.getByText('Свяжитесь с нами')).toBeInTheDocument()
-            expect(screen.getByText('Компания Стрежень')).toBeInTheDocument()
+            expect(screen.getByTestId('contactHeader')).toBeInTheDocument()
+            expect(screen.getByTestId('contactHeader')).toHaveTextContent('Свяжитесь с нами')
+            expect(screen.getByTestId('contactSubheader')).toBeInTheDocument()
+            expect(screen.getByTestId('contactSubheader')).toHaveTextContent('Компания Стрежень')
             expect(_map).toBeInTheDocument()
             expect(screen.getByTestId('mapLink')).toBeInTheDocument()
             expect((screen.getByTestId('mapLink') as HTMLLinkElement).href.includes('https://go.2gis.com')).toBe(true)
@@ -78,7 +81,7 @@ describe('ContactUs', () => {
         })
         
         await act(() => {
-            screen.getByTestId('mapImg')?.dispatchEvent(new MouseEvent('click', {bubbles: true}))
+            _map.dispatchEvent(new MouseEvent('click', {bubbles: true}))
         })
 
         await waitFor(async () => {
@@ -123,6 +126,16 @@ describe('ContactUs', () => {
             expect(modal).toBe('messageSend')
         })
 
+    })
+
+
+    test('matches snapshots', async () => {
+        let tree = renderer.create(
+            <Provider store={store}>
+                <ContactUs />
+            </Provider>
+        ).toJSON()
+        expect(tree).toMatchSnapshot()
     })
 
 

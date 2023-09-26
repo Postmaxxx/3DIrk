@@ -7,8 +7,7 @@ import '@testing-library/jest-dom/extend-expect'
 
 
 
-describe('Tests for Offliner', () => {
-
+describe('Offliner', () => {
     let _container: HTMLDivElement;
     let _offliner: HTMLDivElement | null
 

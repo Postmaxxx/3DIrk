@@ -11,7 +11,6 @@ import { screenSizes } from '../hooks/screenMeter';
 
 
 describe('Tests for ThemeSwitcher', () => {
-
     let _container: HTMLDivElement;
     let _themeSwitcher: HTMLDivElement | null
 
@@ -27,6 +26,7 @@ describe('Tests for ThemeSwitcher', () => {
     });
 
 
+	
     test('should exist if screen.width > sm and <=sm', async () => {
 		await act(async () => {
 			createRoot(_container).render(

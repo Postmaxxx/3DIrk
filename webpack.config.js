@@ -20,7 +20,7 @@ module.exports = (env, argv) => {
 			new TerserPlugin({//minimize js file
 				terserOptions: {
 					compress: {
-						drop_console: false,// remove console statement
+						drop_console: true,// remove console statement
 					},
 				},
 			}),
@@ -48,8 +48,8 @@ module.exports = (env, argv) => {
 			new InjectManifest({ //injecting precache to sw
 				swSrc: './src/sw.ts', //source file
 				swDest: 'sw.js', //destanation file, root: build folder (dist)
-				include: [/\.(html|js)$/], //type of resources to be precached
-				maximumFileSizeToCacheInBytes: 6 * 1024 * 1024, //max size of resource to be precached
+				include: [/\.(html|js|ts)$/], //type of resources to be precached
+				maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, //max size of resource to be precached
 			}),
 			new CopyWebpackPlugin({ //copy resources from "public" folder to "dist"
 				patterns: [

@@ -132,14 +132,14 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
             <div className='container_page'>
                 <div className="container">
                     <div className="block_text">
-                        <h1>{lang === 'en' ? 'Contact us' : 'Свяжитесь с нами'}</h1>
+                        <h1 data-testid='contactHeader'>{lang === 'en' ? 'Contact us' : 'Свяжитесь с нами'}</h1>
                     </div>
                         <form className="form_full contact__form" ref={formContact}>
                             <div className="block_text">
-                                <h3>{lang === 'en' ? 'Strezhen' : 'Компания Стрежень'}</h3>
+                                <h3 data-testid='contactSubheader'>{lang === 'en' ? 'Strezhen' : 'Компания Стрежень'}</h3>
                                 <div className="contacts">
                                     <div className="location">
-                                        <img data-testid='mapImg' src={locationMapSmall} alt={lang === 'en' ? 'Location map' : 'Схема проезда'} onClick={onLocationClick}/>
+                                        <img data-testid='contactMapImg' src={locationMapSmall} alt={lang === 'en' ? 'Location map' : 'Схема проезда'} onClick={onLocationClick}/>
                                         <a data-testid='mapLink' href={lang === 'en' ? "https://goo.gl/maps/89SfgdnrPWB8kbDJA" : "https://go.2gis.com/uy5m3"} target="_blank">{lang === 'en' ? `Irkutsk city, Gertcena${nwsp}street,${nwsp}14` : `г. Иркутск, Улица${nwsp}Герцена,${nwsp}14`} {svgs().iconRoute2}</a>
                                     </div>
                                     <div className="contacts__list">
@@ -240,7 +240,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
 
                             <button 
                                 type="submit" 
-                                data-testid='sendMessage'
+                                data-testid='contactSendMessage'
                                 disabled={userState.sendOrder.status === 'fetching'} 
                                 className="button_blue button_contact" 
                                 onClick={onSubmit}>

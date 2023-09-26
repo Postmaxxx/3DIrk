@@ -22,8 +22,6 @@ describe('MessageNew', () => {
 
 
 
-
-
     test('should has content', async () => {
         await act(async () => {
             _root = createRoot(_container)
@@ -46,7 +44,7 @@ describe('MessageNew', () => {
 
 
 
-    test('should act on butons click content', async () => {
+    test('should act on butons click', async () => {
         const btnAdd = jest.fn()
         const btnClose = jest.fn()
 

@@ -56,9 +56,6 @@ describe('NewsItem', () => {
             expect(_link.href.includes('/news/id')).toBe(true)
             expect(_newsItem?.querySelector('.img-cont')?.childNodes.length).toBe(2)
         })
-        
-
-
     })
 
 

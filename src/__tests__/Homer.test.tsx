@@ -1,15 +1,11 @@
-import { render, screen, fireEvent, waitFor, act  } from '@testing-library/react';
+import { waitFor, act  } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect'
 import ReactDOM from 'react-dom/client';
 import Homer from '../components/Homer/Homer';
 
 
 
-
-
-
 describe('Tests for Homer', () => {
-
     let _container: HTMLDivElement;
 
     beforeEach(() => {

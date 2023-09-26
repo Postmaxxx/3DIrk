@@ -1,4 +1,4 @@
-import { act, waitFor } from '@testing-library/react';
+import { act, waitFor, screen } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect'
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
@@ -9,10 +9,7 @@ import App from '../App';
 
 
 
-
-
 describe('Modal', () => {
-
     let _container: HTMLDivElement;
     let _modalContainer: HTMLDivElement;
 	let itemName: string | null | undefined
@@ -44,14 +41,14 @@ describe('Modal', () => {
 				</Provider>)
 		})
 		
-		let _modal = _modalContainer.querySelector("[data-testid='modal']")
+		let _modal = screen.getByTestId('modal')
 		await waitFor(() => {
 			expect(_modal).toBeInTheDocument()
         })
     })
 
 
-	test('should be opened and render component on request', async () => {
+	test('should be opened and render passed component on request', async () => {
 		await act(async () => {
 		   createRoot(_container).render(
 			   <Provider store={store}>
@@ -73,7 +70,7 @@ describe('Modal', () => {
 		await act(() => {
 			modalController?.openModal({
 				name: 'test1', 
-				children: <div data-testid='modalChild-1'>Child for test Modal 1</div>
+				children: <div data-testid='modalChild-1'>Child for test Modal 1<p>test</p></div>
 			})
 		}) 
 
@@ -83,10 +80,11 @@ describe('Modal', () => {
 		})
 
 		
-		let _modal = _modalContainer.querySelector("[data-testid='modal']")
+		let _modal = screen.getByTestId('modal')
 		await waitFor(() => {
 			expect(_modal?.classList.contains('visible')).toBe(true)
-			expect(_modalContainer.querySelector("[data-testid='modalChild-1']")).toBeInTheDocument()	
+			expect(screen.getByTestId('modalChild-1')).toBeInTheDocument()	
+			expect(_modal).toContainHTML('p')
         })
    	})
 
@@ -103,7 +101,7 @@ describe('Modal', () => {
 					</Suspense>
 				</Provider>)
 		})  
-		let _modal = _modalContainer.querySelector("[data-testid='modal']")
+		let _modal = screen.getByTestId('modal')
 		const modalController = store.getState().base.modal.current
 
 		// ------------ add 4 modal windows
@@ -201,7 +199,7 @@ describe('Modal', () => {
 			   </Provider>)
 		})  
 		const modalController = store.getState().base.modal.current
-		let _modal = _modalContainer.querySelector("[data-testid='modal']")
+		let _modal = screen.getByTestId('modal')
 		
 		//should close itself if onClose was not passed
 		await act(() => {
@@ -268,50 +266,3 @@ describe('Modal', () => {
 
 })
 
-
-
-
-
-
-
-
-
-
-
-/*
-export function main() {
-  if (navigator.onLine) {
-    console.log('online');
-  } else {
-    console.log('offline');
-  }
-}
-
-
-
-describe('main', () => {
-  beforeEach(() => {
-    jest.restoreAllMocks();
-  });
-  test('should log "online"', () => {
-    const logSpy = jest.spyOn(console, 'log');
-    jest.spyOn(navigator, 'onLine', 'get').mockReturnValueOnce(true);
-    main();
-    expect(logSpy).toBeCalledWith('online');
-  });
-
-  test('should log "offline"', () => {
-    const logSpy = jest.spyOn(console, 'log');
-    jest.spyOn(navigator, 'onLine', 'get').mockReturnValueOnce(false);
-    main();
-    expect(logSpy).toBeCalledWith('offline');
-  });
-});
-
-
-
-
-
-
-await waitFor(() => expect(something).toBe(something)
-*/
