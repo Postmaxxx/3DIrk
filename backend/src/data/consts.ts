@@ -1,7 +1,7 @@
 import { IImageSizes, TImageSizes, TLangText } from "../interfaces"
 
 const minTimeBetweenSendings: number = 500 //in ms
-const sendNotificationsInTG: boolean = false
+const sendNotificationsInTG: boolean = true
 const delayForFS = 1000
 const timeZoneDelta = 8
 

@@ -198,7 +198,8 @@ $gap_to_text: 5px;
                 }
 
 
-                &.extandable:hover {
+                &.extandable {
+                    &:hover, &:focus-within, &:focus {
                     &::before,&::after {
                         height: 100%;
                         top: 0;
@@ -254,6 +255,8 @@ $gap_to_text: 5px;
             
                         }
                     }
+
+                }
 
 
                 }
@@ -337,6 +340,17 @@ $gap_to_text: 5px;
             & .nav__sign {
                 height: 50px;
                 position: absolute;
+
+
+                span,
+                span:before,
+                span:after {
+                    width: 30px;
+                    height: 3px;
+                    background-color: #000;
+                    display: block;
+                    border-radius: 2px;
+                }
            
                 span {
                     margin: 0 auto;
@@ -346,7 +360,9 @@ $gap_to_text: 5px;
                 
                     transition-duration: 0s;
                     transition-delay: $transition_nav_style;
-                
+                    transition: background-color 0s;
+                    transition-delay: $transition_nav;
+
                     &:before,
                     &:after {
                         position: absolute;
@@ -359,15 +375,7 @@ $gap_to_text: 5px;
 
                 }
             
-                span,
-                span:before,
-                span:after {
-                    width: 30px;
-                    height: 3px;
-                    background-color: #000;
-                    display: block;
-                    border-radius: 2px;
-                }
+
             }
 
 
@@ -389,7 +397,6 @@ $gap_to_text: 5px;
             
             & .nav__sign {
                 & span {
-                    transition-delay: $transition_nav;
                     background-color: rgba(0,0,0,0);
 
                     &:before {

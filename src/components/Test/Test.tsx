@@ -2,7 +2,7 @@ import { useState, useRef, useMemo, useCallback } from "react";
 import { NavLink } from "react-router-dom";
 import { IFiber, IFullState, TId, TLang } from "../../interfaces";
 import "./nav.scss"
-import navLogo from "../../assets/img/nav_logo.png"
+import navLogo from "../../assets/img/nav_logo.webp"
 import { connect } from "react-redux";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";

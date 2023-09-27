@@ -47,7 +47,14 @@ const LangSwitcher:React.FC<IProps> = ({lang, mobOpened, setState}): JSX.Element
 
 
     return (
-        <div className={`lang-switcher ${lang === 'en' ? 'ru' : 'en'}`} data-testid='lang-switcher' onClick={handleChangeLang} ref={_lang}>
+        <div 
+            className={`lang-switcher ${lang === 'en' ? 'ru' : 'en'}`} 
+            data-testid='lang-switcher' 
+            onClick={handleChangeLang} 
+            ref={_lang}  
+            tabIndex={0}
+            onKeyDown={e => {e.code === 'Enter' && handleChangeLang()}}
+        >
             <div className="lang-switcher__text lang_ru" data-lang='ru'>EN</div>
             <div className="lang-switcher__text lang_en" data-lang='en'>RU</div>
         </div>

@@ -10,10 +10,12 @@ import Hider from '../InputHider/InputHider';
 import { inputChecker } from '../../assets/js/processors';
 
 import { allActions } from "../../redux/actions/all";
+import { IModalFunctions } from '../Modal/ModalNew';
 
 interface IPropsState {
-    lang: TLang,
+    lang: TLang
     userState: IUserState
+    modal: IModalFunctions | null
 }
 
 interface IPropsActions {
@@ -27,7 +29,7 @@ interface IProps extends IPropsState, IPropsActions {
 }
 
 
-const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Element => {
+const Auth: React.FC<IProps> = ({lang, userState, setState, modal, onCancel}): JSX.Element => {
 
     const [register, setRegister] = useState<boolean>(false) //true - register, false - login
     const [hideInput, setHideInput] = useState<boolean>(true) //true - hide passwords, false - show
@@ -75,6 +77,7 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
 
     useEffect(() => {
         focuser.create({container: processedContainer})
+        modal?.contentChanged()
     }, [register, lang])
 
 
@@ -100,7 +103,6 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
                             type="text" 
                             onChange={onChangeText}
                             value={form.name}
-                            onKeyDown={focuser.next}
                             onBlur={(e) => inputChecker({lang, min: inputsProps.name.min, max:inputsProps.name.max, el: e.target})}/>
                     </div>}
                     <div className="block_input" data-selector="input-block">
@@ -112,7 +114,7 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
                             type="email" 
                             value={form.email}
                             onChange={onChangeText} 
-                            onKeyDown={focuser.next}
+                            autoFocus
                             onBlur={(e) => inputChecker({lang, min:inputsProps.email.min, max:inputsProps.email.max, type: 'email', el: e.target})}/>
                     </div>
                     {register &&
@@ -125,7 +127,6 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
                                 type="tel" 
                                 value={form.phone}
                                 onChange={onChangeText} 
-                                onKeyDown={focuser.next}
                                 onBlur={(e) => inputChecker({lang, min:inputsProps.phone.min, max:inputsProps.phone.max, type: 'phone', el: e.target})}/>
                         </div>
                     }
@@ -138,13 +139,12 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
                             type={hideInput ? `password` : 'text'}
                             value={form.password}
                             onChange={onChangeText} 
-                            onKeyDown={focuser.next}
                             onBlur={(e) => inputChecker({lang, min:inputsProps.password.min, max:inputsProps.password.max, el: e.target})}/>
-                        <Hider hidden={hideInput} onClick={() => setHideInput(prev => !prev)} />
+                        <Hider hidden={hideInput} onClick={() => setHideInput(prev => !prev)}/>
                     </div>
                     {register &&
                         <div className="block_input" data-selector="input-block">
-                            <label htmlFor="user_repassword">{lang === 'en' ? 'Your password' : 'Ваш пароль'}</label>
+                            <label htmlFor="user_repassword">{lang === 'en' ? 'Repeat your password' : 'Повторите ваш пароль'}</label>
                             <input 
                                 data-selector="input"
                                 className="input-element" 
@@ -152,7 +152,6 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
                                 type={hideInput ? `password` : 'text'}
                                 value={form.repassword}
                                 onChange={onChangeText}
-                                onKeyDown={focuser.next}
                                 onBlur={(e) => inputChecker({lang, min:inputsProps.password.min, max:inputsProps.password.max, el: e.target, exact: form.password})}/>
                         </div>
                     }
@@ -183,7 +182,8 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, onCancel}): JSX.Elem
 
 const mapStateToProps = (state: IFullState): IPropsState => ({
     lang: state.base.lang,
-    userState: state.user
+    userState: state.user,
+    modal: state.base.modal.current
 })
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): IPropsActions => ({

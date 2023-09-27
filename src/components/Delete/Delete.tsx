@@ -28,12 +28,12 @@ const Delete = <T,>({remove, idInstance, lang, disabled}: IProps<T>):JSX.Element
     }
 
 
-    const onDeleteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const onDeleteClick = (e: React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent<HTMLButtonElement>) => {
         prevent(e)
         onConfirm()
     }
 
-    const onCancelClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const onCancelClick = (e: React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent<HTMLButtonElement>) => {
         prevent(e)
         onCancel()
     }
@@ -43,11 +43,11 @@ const Delete = <T,>({remove, idInstance, lang, disabled}: IProps<T>):JSX.Element
             disabled ? 
                 null
             :
-                <div className="button_delete" onClick={onClick} aria-label={lang === 'en' ? "Delete" : 'Удалить'}>
+                <div className="button_delete" onClick={onClick} aria-label={lang === 'en' ? "Delete" : 'Удалить'} tabIndex={0} onKeyDown={e => {e.code === 'Enter' && onClick()}}>
                     {svgs().iconDelete}
                     <div className={`confirmation ${confirmation ? 'active' : ''}`}>
-                        <button className="button_delete__confirm" onClick={onDeleteClick}>{lang === 'en' ? 'Delete' : 'Удалить'}</button>
-                        <button className="button_delete__cancel" onClick={onCancelClick}>{lang === 'en' ? 'Cancel' : 'Отмена'}</button>
+                        <button className="button_delete__confirm" onClick={onDeleteClick} tabIndex={confirmation ? 0 : -1} onKeyDown={e => {e.code === 'Enter' && onDeleteClick(e)}}>{lang === 'en' ? 'Delete' : 'Удалить'}</button>
+                        <button className="button_delete__cancel" onClick={onCancelClick} tabIndex={confirmation ? 0 : -1} onKeyDown={e => {e.code === 'Enter' && onCancelClick(e)}}>{lang === 'en' ? 'Cancel' : 'Отмена'}</button>
                     </div>
                 </div>
             

@@ -67,7 +67,7 @@ const CartContent: React.FC<IProps> = ({lang, cart, colorsState, modal, fibersSt
         })
     }
     
-    const onColorClick = (e: React.MouseEvent, color: IColor | undefined) => {
+    const onColorClick = (e: React.MouseEvent | React.KeyboardEvent, color: IColor | undefined) => {
         if (!color) return
         e.stopPropagation()
         modal?.openModal({
@@ -113,7 +113,7 @@ const CartContent: React.FC<IProps> = ({lang, cart, colorsState, modal, fibersSt
                                 </div>
                                 <div className="description">
                                     <span className="description__name">{lang === 'en' ? 'Color' : 'Цвет'}:</span>
-                                    <div className="color" onClick={(e) => onColorClick(e, color)}> 
+                                    <div className="color" onClick={(e) => onColorClick(e, color)} tabIndex={0} onKeyDown={e => {e.code === 'Enter' && onColorClick(e, color)}}> 
                                         <div className="wrapper_img">
                                             <img src={color.urls.thumb} alt={color.name[lang]} />
                                         </div>

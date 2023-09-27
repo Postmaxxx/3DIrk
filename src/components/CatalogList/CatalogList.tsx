@@ -59,9 +59,11 @@ const CatalogList: React.FC<IProps> = ({catalog, lang, selectedCategory, isAdmin
 						{catalog.list.filter(category => category.active)?.map((category: ICatalogItem): JSX.Element => {
 							return (
 								<li 
+									tabIndex={0}
 									key={category._id} 
 									className={category._id === selectedCategory ? "selected" : ""}
 									onClick={() => setState.catalog.loadCategory({_id: category._id})}
+									onKeyDown={(e) => {e.code === 'Enter' && setState.catalog.loadCategory({_id: category._id})}}
 								>
 									{category.name[lang]} ({category.active || 0})
 								</li>

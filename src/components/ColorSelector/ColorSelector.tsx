@@ -35,7 +35,7 @@ const ColorSelector: React.FC<IPropsState> = ({lang, modal, colors, onSelect}): 
     }
 
 
-    const onImageClick = (e: React.MouseEvent , color: IColor) => {
+    const onImageClick = (e: React.MouseEvent | React.KeyboardEvent , color: IColor) => {
         e.stopPropagation()
         modal?.openModal({
             name: 'colorSelector',
@@ -50,7 +50,7 @@ const ColorSelector: React.FC<IPropsState> = ({lang, modal, colors, onSelect}): 
         <div className="selector block_input">
             <label>{lang === 'en' ? 'Color' : 'Цвет'}: </label>
             <div className={`selector_color ${expanded ? 'expanded' : ''}`}>
-                <div className="color current" onClick={onCurrentClick}>
+                <div className="color current" onClick={onCurrentClick} tabIndex={0} onKeyDown={e => {e.code === 'Enter' && onCurrentClick()}}>
                     {currentColor ? 
                         <>
                             <div className="img-cont">
@@ -65,8 +65,19 @@ const ColorSelector: React.FC<IPropsState> = ({lang, modal, colors, onSelect}): 
                 <div className='list'>
                     {colors.map(color => {
                         return (
-                            <div className="color" key={color._id} onClick={() => onOptionClick(color._id)} >
-                                <div className="img-cont" onClick={(e) => onImageClick(e, color)}>
+                            <div 
+                                className="color" 
+                                key={color._id} 
+                                onClick={() => onOptionClick(color._id)} 
+                                tabIndex={expanded ? 0 : -1} 
+                                onKeyDown={e => {e.code === 'Enter' && onOptionClick(color._id)}}
+                            >
+                                <div 
+                                    className="img-cont" 
+                                    onClick={(e) => onImageClick(e, color)} 
+                                    tabIndex={expanded ? 0 : -1} 
+                                    onKeyDown={e => {e.code === 'Enter' && onImageClick(e, color)}}
+                                >
                                     <img src={color.urls.thumb} alt={color.name[lang]} />
                                     {svgs().iconExpand}
                                 </div>

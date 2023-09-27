@@ -2,7 +2,7 @@ import { useState, useRef, useMemo, useCallback } from "react";
 import { NavLink } from "react-router-dom";
 import { IFiber, IFullState, TId, TLang } from "../../interfaces";
 import "./nav.scss"
-import navLogo from "../../assets/img/nav_logo.png"
+import navLogo from "../../assets/img/nav_logo.webp"
 import { connect } from "react-redux";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
@@ -72,6 +72,7 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
             modal?.openModal({
 				name: 'auth',
                 onClose: closeModal,
+                closeOnEsc:true,
 				children: <Auth onCancel={closeModal}/>
 			})
         }
@@ -94,7 +95,7 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
                 </li>
 
                 <li className="nav-item extandable">
-                    <NavLink className={({ isActive }) => `nav-text_level_1 ${isActive ? "selected" : ""}`} to={navList.fibers.to}>
+                    <NavLink className={({ isActive }) => `nav-text_level_1 ${isActive ? "selected" : ""}`} to={navList.fibers.to} tabIndex={-1}>
                         {navList.fibers[lang]}
                     </NavLink>
                     <ul className="submenu">
@@ -205,8 +206,16 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
                         </ul>
                     </li>
                     :
-                    <li className="nav-item">
-                        <a role="button" className="nav-item__text nav-text_level_1" data-testid='btn_login_desktop' onClick={() => onClickNotLink('login')}>{navList.account.login[lang]}</a>
+                    <li className="nav-item" tabIndex={-1}>
+                        <a 
+                            tabIndex={0} 
+                            role="button" 
+                            className="nav-item__text nav-text_level_1" 
+                            data-testid='btn_login_desktop' 
+                            onClick={() => onClickNotLink('login')} 
+                            onKeyDown={(e) => e.code === 'Enter' && onClickNotLink('login')}>
+                                {navList.account.login[lang]}
+                        </a>
                     </li>
                 }
             </ul>

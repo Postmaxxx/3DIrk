@@ -35,7 +35,7 @@ const errorsChecker = ({lang = 'en'}: IErrorsChecker) => {
 
 //---------------------------------------------------------------
 
-const prevent = (e: React.MouseEvent<HTMLElement | HTMLButtonElement> | DragEvent | React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement> | React.ChangeEvent<HTMLInputElement>) => {
+const prevent = (e: React.MouseEvent<HTMLElement | HTMLButtonElement> | DragEvent | React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement> | React.ChangeEvent<HTMLInputElement> | React.KeyboardEvent<HTMLButtonElement>) => {
     e.preventDefault()
     e.stopPropagation()
 }

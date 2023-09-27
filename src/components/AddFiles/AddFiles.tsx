@@ -160,10 +160,10 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, multiple, id}, r
                 </svg>
             }
             <div className="files-adder__label">
-                <label htmlFor={id}>{lang === 'en' ? 'Add files' : 'Выберите файлы'}</label> 
+                <label htmlFor={id} tabIndex={0} onKeyDown={e => {e.code === 'Enter' && _files.current?.click()}}>{lang === 'en' ? 'Add files' : 'Выберите файлы'}</label> 
                 {files.length === 0 && <span>{lang === 'en' ? ' or drag it here' : 'для добавления или перетащите их сюда'}</span>}
             </div>
-            <input className='button_add-files' id={id} type="file" multiple={multiple} onChange={onSelectFiles} ref={_files}/>
+            <input className='button_add-files' id={id} type="file" multiple={multiple} onChange={onSelectFiles} ref={_files} tabIndex={-1}/>
             <div className="files-adder__previewer" ref={_filesGallery}>
                 {filesList}
             </div>

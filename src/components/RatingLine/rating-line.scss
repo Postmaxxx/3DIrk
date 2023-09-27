@@ -78,12 +78,12 @@
             @include fs_smaller;
             
             & > span {
-                font-weight: 300;
+                font-weight: 400;
                 font-size: .75em;
                 color: var(--text_mild);
 
                 @include respond-to(xs) {
-                    font-weight: 200;
+                    font-weight: 400;
                 }
                 
             }

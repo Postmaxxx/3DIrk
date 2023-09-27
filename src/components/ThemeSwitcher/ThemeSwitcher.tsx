@@ -199,7 +199,7 @@ const ThemeSwitcher: React.FC<IProps> = ({mobOpened, lang, theme, setState}): JS
 
 
 	return (
-		<div className={`theme-switcher__container`} data-testid='theme-switcher' ref={_themeSwitcherCont}>
+		<div className={`theme-switcher__container`} data-testid='theme-switcher' ref={_themeSwitcherCont} tabIndex={0} onKeyDown={e => {e.code === 'Enter' && onThemeClick()}}>
 			{themeSwitcherMemo}
 		</div>
 	);
