@@ -8,9 +8,9 @@
   "proxy": "http://localhost:5000",
   "dependencies": {
     "@splidejs/react-splide": "^0.7.12",
+    "dayjs": "^1.11.10",
     "firebase": "^9.18.0",
     "form-data": "^4.0.0",
-    "moment": "^2.29.4",
     "node-fetch": "^2.6.12",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

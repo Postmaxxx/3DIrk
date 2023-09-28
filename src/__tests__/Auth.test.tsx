@@ -8,7 +8,7 @@ import Auth from '../components/Auth/Auth';
 import configureStore from 'redux-mock-store'
 import thunk from 'redux-thunk';
 import fetchMock from 'jest-fetch-mock';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 
 describe('Auth', () => {
@@ -272,7 +272,7 @@ describe('Auth', () => {
                     email: 'testmail@gmail.com', 
                     phone: '+32223332',
                     password: `1234567890`,
-                    localDate: moment().format('YYYY-MM-DD')
+                    localDate: dayjs().format('YYYY-MM-DD')
                 }),
                 signal
             });

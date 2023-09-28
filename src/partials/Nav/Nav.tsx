@@ -224,7 +224,7 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
             <div className="text-hider"></div>
             <label aria-label="open/hide navigation">
                 <input type="checkbox" onClick={navToggle} data-testid='nav_dt__checkbox'/>
-                <img src={navLogo} alt="Menu"/>
+                <img src={navLogo} alt="Menu" width={52} height={52}/>
                 <div className="nav__sign">
                     <span></span>
                 </div>

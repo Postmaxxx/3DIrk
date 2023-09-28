@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { IFetch, IFullState, IOrdersItem, IOrdersState, OrderType, TLang } from '../../interfaces';
 import {Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import { gapForOrders, orderStatuses, timeOffset, usersPerPage } from '../../assets/js/consts';
-import moment from "moment";
+import dayjs from "dayjs";
 import Preloader from '../../components/Preloaders/Preloader';
 import { prevent } from '../../assets/js/processors';
 import { NavLink } from 'react-router-dom';
@@ -62,8 +62,8 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
         if (colorsLoad.status === 'success' && fibersLoad.status === 'success') {
             setLoaded(true)
             if (!_dateFrom.current || !_dateTo.current) return           
-            _dateFrom.current.value = moment().subtract(gapForOrders, 'months').format('YYYY-MM-DD')
-            _dateTo.current.value = moment().format('YYYY-MM-DD')
+            _dateFrom.current.value = dayjs().subtract(gapForOrders, 'months').format('YYYY-MM-DD')
+            _dateTo.current.value = dayjs().format('YYYY-MM-DD')
         }
     }, [colorsLoad.status, fibersLoad.status, ordersState.userList.load.status, loaded])
 
@@ -79,10 +79,10 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
         }    
 
         const dateFrom: string = new Date(_dateFrom.current.value).toISOString()
-        const dateTo: string = moment(_dateTo.current.value).add(1, 'day').format("YYYY-MM-DDT00:00:00.000") + "Z";
+        const dateTo: string = dayjs(_dateTo.current.value).add(1, 'day').format("YYYY-MM-DDT00:00:00.000") + "Z";
         
-        const dateTimeFrom = moment(dateFrom).add(timeOffset, 'hours').toISOString();
-        const dateTimeTo = moment(dateTo).add(timeOffset, 'hours').toISOString();
+        const dateTimeFrom = dayjs(dateFrom).add(timeOffset, 'hours').toISOString();
+        const dateTimeTo = dayjs(dateTo).add(timeOffset, 'hours').toISOString();
         setState.orders.loadOrders({userId: _user.current.value, status: _status.current.value, from: dateTimeFrom, to: dateTimeTo})
     }
 
@@ -148,7 +148,7 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
                             return (
                                 <div className='order' key={order._id}>
                                     <div className='block_inputs_mixed order__date-status'>
-                                        <span className='order__date'>{lang === 'en' ? 'Date' : 'Дата'}: {moment(order.date).add(-timeOffset, 'hours').format('YYYY-MM-DD')}</span>
+                                        <span className='order__date'>{lang === 'en' ? 'Date' : 'Дата'}: {dayjs(order.date).add(-timeOffset, 'hours').format('YYYY-MM-DD')}</span>
                                         {isAdmin ? 
                                             <div className="block_input">
                                                 <label htmlFor={`order-${order._id}`}>{lang === 'en' ? 'Status' : 'Статус'}: </label>

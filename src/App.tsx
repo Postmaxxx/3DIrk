@@ -19,9 +19,10 @@ import PreloaderPage from "./components/Preloaders/PreloaderPage";
 import ModalNew, { IModalFunctions } from "./components/Modal/ModalNew";
 import useScreenMeter from "./hooks/screenMeter";
 import Preloader from "./components/Preloaders/Preloader";
-import Test from "./components/Test/Test";
 
 
+const LazyLangSwitcher = lazy(() => import("./components/LangSwitcher/LangSwitcher"));
+const LazyThemeSwitcher = lazy(() => import("./components/ThemeSwitcher/ThemeSwitcher"));
 const LazyHomePage = lazy(() => import("./pages/Home/Home"));
 const LazyFibersPage = lazy(() => import("./pages/Fibers/Fibers"));
 const LazyFiberPage = lazy(() => import("./pages/Fiber/Fiber"));
@@ -95,10 +96,10 @@ const App:React.FC<IProps> = ({lang, isAdmin, isAuth, contentLoad, isLogining, s
 
 	return (
 		<HashRouter>
-			{!screenWidth.sm && <LangSwitcher />} {/*tested*/}
-			{!screenWidth.sm && <ThemeSwitcher />} {/*tested*/}
-			<Homer /> {/*tested*/}
-			<Offliner lang={lang}/> {/*tested*/}
+			{!screenWidth.sm && <Suspense fallback={<PreloaderPage />}><LazyLangSwitcher /></Suspense>} 
+			{!screenWidth.sm && <Suspense fallback={<PreloaderPage />}><LazyThemeSwitcher /></Suspense>} 
+			<Homer /> 
+			<Offliner lang={lang}/> 
 			<Header />
 			<Routes>
 				<Route index path="/" element={<Suspense fallback={<PreloaderPage />}><LazyHomePage /></Suspense>} />
@@ -136,8 +137,8 @@ const App:React.FC<IProps> = ({lang, isAdmin, isAuth, contentLoad, isLogining, s
 
 				<Route path="/*" element={<Suspense fallback={<PreloaderPage />}><P404 lang={lang}/></Suspense>} />
 			</Routes>
-			<FooterMemo lang={lang}/> {/*tested*/}
-			<ModalMemo ref={modalRef}></ModalMemo> {/*tested */}
+			<FooterMemo lang={lang}/> 
+			<ModalMemo ref={modalRef}></ModalMemo>
 		</HashRouter>
 
   );

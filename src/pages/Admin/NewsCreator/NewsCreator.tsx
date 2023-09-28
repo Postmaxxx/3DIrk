@@ -11,7 +11,7 @@ import { inputsProps, navList, newsItemEmpty, resetFetch } from '../../../assets
 import { errorsChecker, filesDownloader, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import { useNavigate, useParams } from 'react-router-dom';
 import { inputChecker } from '../../../../src/assets/js/processors';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
 import MessageNew from '../../../../src/components/Message/MessageNew';
 import Uploader from '../../../../src/components/Preloaders/Uploader';
@@ -137,7 +137,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
         _textShortRu.current.value = news?.short?.ru || ''
         _textEn.current.value = news?.text?.en || ''
         _textRu.current.value = news?.text?.ru || ''
-        _date.current.value =  moment(news?.date || '').format('YYYY-MM-DD')
+        _date.current.value =  dayjs(news?.date || '').format('YYYY-MM-DD')
     }
     
 

@@ -26,6 +26,7 @@ module.exports = (env, argv) => {
 			}),
 		];
 		optimization.minimize = true;
+		optimization.usedExports = true;
 	}
 	return {
 		entry: path.join(__dirname, "src", "index.tsx"), 
@@ -72,6 +73,7 @@ module.exports = (env, argv) => {
 			}),
 		], 
 		optimization: optimization,
+		mode: mode,
 		devServer: {
 			port: argv.mode === 'development' ? 80 : 80, // change the port if neccessary
 		},

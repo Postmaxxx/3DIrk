@@ -1,7 +1,7 @@
 import { IAction, ICartItem, ICartState, IDispatch, IErrRes, IFetch, IFullState, ILoggingForm, IMsgRes, IUserLoginResOk, IUserState } from "../../interfaces";
 import { actionsListUser } from './actionsList'
 import { APIList, DOMExceptions, fetchingFetch, successFetch } from "../../assets/js/consts";
-import moment from "moment";
+import dayjs from "dayjs";
 import { fetchError, resErrorFiller } from "../../../src/assets/js/processors";
 
 
@@ -30,7 +30,7 @@ export const register = ({name, email, phone, password}: ILoggingForm) => {
         const controller = new AbortController()
         const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.user.register.timeout) //set time limit for fetch
         dispatch(setAuth({...fetchingFetch, controller}))  
-        const localDate = moment().format('YYYY-MM-DD')
+        const localDate = dayjs().format('YYYY-MM-DD')
         try {
             const response = await fetch(APIList.user.register.url, {
                 signal: controller.signal,
