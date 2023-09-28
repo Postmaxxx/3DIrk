@@ -1,12 +1,12 @@
 import { allPaths } from "./data/consts"
 import { foldersCleaner } from "./processors/fsTools"
+const compression = require('compression')
 const express = require('express')
 const mongoose = require("mongoose")
 const https = require('https')
 const path = require('path')
 const fse = require('fs-extra')
 const mode = process.env.NODE_ENV.trim() || 'undefined';
-//const compression = require('compression')
 
 const pathToEnv = `.env.${mode}`.trim()
 require('dotenv').config({
@@ -28,8 +28,8 @@ const app = express()
 
 foldersCleaner([allPaths.pathToTemp])
 
-//app.use(compression())
 app.use(express.json({ extended: true, }));
+app.use(compression())
 
 
 // cors
