@@ -134,8 +134,8 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
                         </NavLink>
                     </div>
                     <div className={`cell cell_checkbox ${fiber._id === fibersState.selected ? "selected" : ""}`}>
-                        <label>
-                            <input type="checkbox" data-fiberselect={fiber._id} onChange={onCheckbox}/>
+                        <label htmlFor={fiber._id} aria-label={`Select fiber ${fiber.name[lang]}`}>
+                            <input type="checkbox" data-fiberselect={fiber._id} onChange={onCheckbox} id={fiber._id}/>
                             <span></span>
                         </label>
                     </div>

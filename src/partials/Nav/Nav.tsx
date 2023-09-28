@@ -246,7 +246,7 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
         <div className="nav__switcher">
             <label aria-label="open/hide navigation">
                 <input data-testid='nav_mob__checkbox' type="checkbox" onClick={navToggleMobile}/>
-                <img src={navLogo} alt="Menu"/>
+                <img src={navLogo} alt="Menu" width={52} height={52}/>
                 <div className="nav__sign">
                     <span></span>
                 </div>
