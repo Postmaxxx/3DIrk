@@ -11,7 +11,6 @@ import React from 'react'
 
 interface IPropsState {
     lang: TLang
-	mobOpened: boolean
 }
 
 
@@ -23,7 +22,7 @@ interface IPropsActions {
 
 interface IProps extends IPropsState, IPropsActions {}
 
-const LangSwitcher:React.FC<IProps> = ({lang, mobOpened, setState}): JSX.Element => {
+const LangSwitcher:React.FC<IProps> = ({lang, setState}): JSX.Element => {
 
     const _lang = useRef<HTMLDivElement>(null)
     const {add: addToHider, clear: clearHider} = useScrollHider()
@@ -39,7 +38,9 @@ const LangSwitcher:React.FC<IProps> = ({lang, mobOpened, setState}): JSX.Element
     }
 
     useEffect(() => {
-        (window.localStorage.getItem('language') as TLang) === 'en' ? setState.base.setLangEn() : setState.base.setLangRu()
+        let savedLang: TLang = (window.localStorage.getItem('language') as TLang);
+        savedLang ||= lang;
+        savedLang === 'en' ? setState.base.setLangEn() : setState.base.setLangRu()
         if (!_lang.current) return
         addToHider(_lang.current, 50)
 		return () => clearHider()
@@ -65,7 +66,6 @@ const LangSwitcher:React.FC<IProps> = ({lang, mobOpened, setState}): JSX.Element
 
 const mapStateToProps = (state: IFullState): IPropsState => ({
 	lang: state.base.lang,
-    mobOpened: state.base.mobOpened
 })
   
   

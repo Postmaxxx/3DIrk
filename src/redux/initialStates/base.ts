@@ -4,7 +4,7 @@ import {RefObject} from 'react'
 
 const initialBase = {
     theme: 'dark',
-    lang: 'ru',
+    lang: 'en',
     mobOpened: false,
     desktopOpened: true,
     modal: {} as RefObject<IModalFunctions>
