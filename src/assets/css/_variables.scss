@@ -218,6 +218,27 @@ body {
 }
 
 
+
+@mixin scroll_hidden-wo-hover {
+    &:not(:hover)::-webkit-scrollbar {
+        width: 0px;
+        height: 0px;
+    }
+    
+    &:not(:hover)::-webkit-scrollbar-track {
+        background: transparent;
+    }
+      
+    &:not(:hover)::-webkit-scrollbar-thumb {
+        background: transparent;
+    }
+      
+    &:not(:hover)::-webkit-scrollbar-thumb:hover {
+        background: transparent;
+    }
+}
+
+
 @mixin margin_first_p {
     margin-top: 2.2rem;
                 
