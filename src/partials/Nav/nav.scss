@@ -124,6 +124,7 @@ $gap_to_text: 5px;
                         border-bottom-left-radius: $brad_md;
                         border-bottom-right-radius: $brad_md;
                         max-height: calc(100vh - 60px);
+                        max-height: calc(100svh - 60px);
                         overflow: auto;
                         @include scroll_thin;
 

@@ -16,7 +16,7 @@ precacheAndRoute(self.__WB_MANIFEST);
 //setCacheNameDetails({prefix: 'we'});
 
 //do not need due to precache all js+svg+css+fonts
-const versionStyles: string = "1.06";
+const versionStyles: string = "1.09";
 //const versionScripts: string  = "1.03";
 //const versionHtmls: string  = "1.03";
 
