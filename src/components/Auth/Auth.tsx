@@ -96,8 +96,9 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, modal, onCancel}): J
                 <form className='login__form' data-selector="auth-form">
                     {register &&
                     <div className="block_input" data-selector="input-block">
-                        <label htmlFor="name">{lang === 'en' ? 'Your name' : 'Ваше имя'}</label>
+                        <label htmlFor="authUserName">{lang === 'en' ? 'Your name' : 'Ваше имя'}</label>
                         <input 
+                            id='authUserName'
                             data-selector="input"
                             name="name"
                             type="text" 
@@ -106,8 +107,9 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, modal, onCancel}): J
                             onBlur={(e) => inputChecker({lang, min: inputsProps.name.min, max:inputsProps.name.max, el: e.target})}/>
                     </div>}
                     <div className="block_input" data-selector="input-block">
-                        <label htmlFor="user_email">{lang === 'en' ? 'Your email' : 'Ваша почта'}</label>
+                        <label htmlFor="authUserEmail">{lang === 'en' ? 'Your email' : 'Ваша почта'}</label>
                         <input 
+                            id='authUserEmail'
                             data-selector="input"
                             className="input-element" 
                             name="email"
@@ -119,8 +121,9 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, modal, onCancel}): J
                     </div>
                     {register &&
                         <div className="block_input" data-selector="input-block">
-                            <label htmlFor="user_phone">{lang === 'en' ? 'Your phone' : 'Ваш телефон'}</label>
+                            <label htmlFor="authUserPhone">{lang === 'en' ? 'Your phone' : 'Ваш телефон'}</label>
                             <input 
+                                id='authUserPhone'
                                 data-selector="input"
                                 className="input-element" 
                                 name="phone"
@@ -131,8 +134,9 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, modal, onCancel}): J
                         </div>
                     }
                     <div className="block_input" data-selector="input-block">
-                        <label htmlFor="user_password">{lang === 'en' ? 'Your password' : 'Ваш пароль'}</label>
+                        <label htmlFor="authUserPassword">{lang === 'en' ? 'Your password' : 'Ваш пароль'}</label>
                         <input 
+                            id='authUserPassword'
                             data-selector="input"
                             className="input-element" 
                             name="password"
@@ -144,8 +148,9 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, modal, onCancel}): J
                     </div>
                     {register &&
                         <div className="block_input" data-selector="input-block">
-                            <label htmlFor="user_repassword">{lang === 'en' ? 'Repeat your password' : 'Повторите ваш пароль'}</label>
+                            <label htmlFor="authUserRepassword">{lang === 'en' ? 'Repeat your password' : 'Повторите ваш пароль'}</label>
                             <input 
+                                id='authUserRepassword'
                                 data-selector="input"
                                 className="input-element" 
                                 name="repassword"

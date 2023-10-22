@@ -17,7 +17,7 @@ const colorsSchema = new Schema({
     active: {type: Boolean, required: false, default: true}
 })
 
-const Colors: Model<IColor> = model<IColor>('Colors', colorsSchema);
+const Colors: Model<IColor> = model<IColor>('Color', colorsSchema);
 
 module.exports = Colors
 export {IColor}

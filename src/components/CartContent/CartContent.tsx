@@ -41,20 +41,12 @@ const CartContent: React.FC<IProps> = ({lang, cart, colorsState, modal, fibersSt
     }, [])
 
 
-    //const debouncedCartUpdate = debounce((newItem: ICartItem) => setState.user.updateCartItemAmount(newItem), 1000)
-
 
     const onAmountChange = useCallback((item: ICartItem, amount: number) => {
         setState.user.changeItem({...item, amount})
         //debouncedCartUpdate({...item, amount})
     }, [])
 
-
-    /*useEffect(() => {
-        return () => {
-            setState.user.sendCart()
-        }
-    }, [])*/
 
 
     const onImageClick = (e: React.MouseEvent, product: IProduct) => {

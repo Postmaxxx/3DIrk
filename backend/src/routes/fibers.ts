@@ -10,7 +10,6 @@ import { IMulterFile } from "./user";
 import { allPaths, fiberImageSizes, imageSizes } from "../data/consts";
 import { resizeAndSaveS3 } from "../processors/sharp";
 import { folderCleanerS3 } from "../processors/aws";
-import { makeDelay } from "../processors/makeDelay";
 const cache: IAllCache = require('../data/cache')
 const fileSaver = require('../routes/files')
 const whoIs = require('../middleware/whoIs')

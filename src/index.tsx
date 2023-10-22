@@ -22,5 +22,5 @@ root.render(
 
 
 
-sw.register() //registring sw, change scope if url changed
+sw.register() //registring sw
 

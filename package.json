@@ -46,7 +46,8 @@
     "serverbeprod": "npm run serverprod --prefix backend",
     "dev": "concurrently \"npm run serverfedev\" \"npm run serverbedev\"",
     "predeploy": "webpack --mode production",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d dist",
+    "s": ""
   },
   "eslintConfig": {
     "extends": [
@@ -77,6 +78,7 @@
     "@babel/preset-react": "^7.22.3",
     "@babel/preset-typescript": "^7.22.15",
     "@redux-devtools/extension": "^3.2.5",
+    "@testing-library/cypress": "^10.0.1",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",

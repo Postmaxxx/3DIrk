@@ -131,8 +131,8 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
                 </li>
                 {isAuth ? 
                     <li className="nav-item">
-                        <NavLink className={({ isActive }) => `nav-text_level_1 ${isActive ? "selected" : ""}`} to={navList.account.cart.to}>
-                            {navList.account.cart[lang]}
+                        <NavLink className={({ isActive }) => `nav-text_level_1 ${isActive ? "selected" : ""}`} to={navList.account.cart.to} data-testid='navCart'>
+                            drtf{navList.account.cart[lang]}
                         </NavLink>
                         <CartInformer />        
                     </li>

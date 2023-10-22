@@ -1,5 +1,5 @@
 import { Document, Schema, Model, model, Types } from 'mongoose';
-import { IImageSubFolder, IImages, TImageSizes, TLangText } from '../interfaces';
+import { IImages, TLangText } from '../interfaces';
 
 interface IFiber extends Document {
     _id: string
@@ -46,14 +46,14 @@ const fiberSchema = new Schema({
     name: {type: Object, required: true},
     text: {type: Object, required: true},
     proscons: {type: Object, required: false},
-    colors: [{type: Types.ObjectId, ref: 'Colors', required: true}],
+    colors: [{type: Types.ObjectId, ref: 'Color', required: true}],
     images: {type: Object, required: true},
     short: {type: Object, required: true},
     params: {type: Object, required: true},
     active: {type: Boolean, required: false, default: true}
 })
 
-const Fiber: Model<IFiber> = model<IFiber>('Fibers', fiberSchema);
+const Fiber: Model<IFiber> = model<IFiber>('Fiber', fiberSchema);
 
 module.exports = Fiber
 export {IFiber}

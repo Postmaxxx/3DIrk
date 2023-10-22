@@ -134,7 +134,7 @@ const Fiber: React.FC<IProps> = ({lang, fibersState, colorsState, setState, moda
                 <NavLink
                     className="button_blue link_compare"
                     to={navList.fibers.compare.to}>
-                        {lang === 'en' ? 'Watch in comparasing' : 'Посмотреть в сравнении'}
+                        {lang === 'en' ? 'Watch in comparison' : 'Посмотреть в сравнении'}
                 </NavLink>
             </article>)
         :

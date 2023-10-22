@@ -10,13 +10,15 @@ import {precacheAndRoute} from 'workbox-precaching';
 //for ts
 declare const self: any;
 //declare precache, will be changed during building
-precacheAndRoute(self.__WB_MANIFEST);
+//precacheAndRoute(self.__WB_MANIFEST);
+precacheAndRoute(self.__precacheManifest || []);
+
 
 //trying to change cachename for precaching, does not work ???
 //setCacheNameDetails({prefix: 'we'});
 
 //do not need due to precache all js+svg+css+fonts
-const versionStyles: string = "1.09";
+const versionStyles: string = "1.45"; //0.9
 //const versionScripts: string  = "1.03";
 //const versionHtmls: string  = "1.03";
 
@@ -62,7 +64,7 @@ const stylesRoute: Route = new Route(( event ) => {
 		})
 	  ]
 }));
-
+registerRoute(stylesRoute);
 
 /*
 const scriptsRoute: Route = new Route(({ request }) => {
@@ -93,7 +95,6 @@ const htmlsRoute: Route  = new Route(({ request }) => {
 registerRoute(htmlsRoute);
 */
 
-registerRoute(stylesRoute);
 
 
 const fontsRoute: Route = new Route(({ request }) => {
@@ -139,20 +140,23 @@ const fetchRoute = new Route((event) => {
 }));
 registerRoute(fetchRoute);
 
+
+
+
 //catch errors during fetching resources
 setCatchHandler(async (options) => {
 	const destination = options.request.destination;
 	//in case of fetching images are unabled to reach response with cached mock image
 	if (destination === 'image') {
-		const cache = await self.caches.open(cachesCurrent.offline);
-		return (await cache.match('offline.webp')) || Response.error();
+		const cacheOffline = await self.caches.open(cachesCurrent.offline);
+		return (await cacheOffline.match('offline.webp')) || Response.error();
 	}
 	return Response.error();
   });
 
 
 
-
+/*
 // This allows the web app to trigger skipWaiting via
 // registration.waiting.postMessage({type: 'SKIP_WAITING'})
 self.addEventListener("message", (event: MessageEvent) => {
@@ -160,20 +164,20 @@ self.addEventListener("message", (event: MessageEvent) => {
 		self.skipWaiting();
 	}
 });
-
+*/
 
 
 //auto set new sw
 self.addEventListener("install", (event: any) => {
 	console.log("ServiceWorker will be updated in a moment...");
+	self.skipWaiting();
 	//caching img as a mock in case of unable download actual images
 	const files = ['offline.webp']; 
 	event.waitUntil(
-	  self.caches.open(cachesCurrent.offline) 
-		  .then((cache: Cache) => cache.addAll(files))
+	  	self.caches.open(cachesCurrent.offline) 
+		  	.then((cache: Cache) => cache.addAll(files))
 	);
 	//for updating sw immediately without waiting for reload app
-	self.skipWaiting();
 }); 
 
 
@@ -181,11 +185,11 @@ self.addEventListener("install", (event: any) => {
 
 self.addEventListener("activate", async (event: MessageEvent) => {
 	//clean all non-actual caches
-	/*const siteCacheKeys = await caches.keys();
+	const siteCacheKeys = await caches.keys();
 	const cacheKeys = Object.values(cachesCurrent);
 	await siteCacheKeys
 		.filter(cache => {
-			return !cacheKeys.includes(cache);
+			return !(cacheKeys.includes(cache) || cache.includes('workbox-precache'));
 		})
-		.forEach(async cache => await caches.delete(cache)); */
+		.forEach(async cache => await caches.delete(cache)); 
 }); 

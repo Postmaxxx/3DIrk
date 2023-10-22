@@ -13,6 +13,7 @@ build/
 build
 dist/
 /dist/
+coverage/
 
 #backend
 backend/node_modules

@@ -32,5 +32,6 @@
 		"jsx": "react-jsx",
 		"rootDir": "./src",
 	},
-	"include": ["src"]
+	"include": ["src"],
+	"exclude": ["cypress.config.ts", "cypress", "node_modules"]
 }

@@ -11,7 +11,7 @@ const Dotenv = require('dotenv-webpack');
 module.exports = (env, argv) => {
 	const mode = argv.mode.trim() || 'development';
 	const dotenvPath = `./.env.${mode}`.trim();
-	console.log(`Env: `, dotenvPath);
+	console.log(`Env is: `, dotenvPath);
 
 	const optimization = {};
 	if (mode === 'production') {
@@ -29,11 +29,13 @@ module.exports = (env, argv) => {
 		optimization.usedExports = true;
 	}
 	return {
+		//target: "web",
 		entry: path.join(__dirname, "src", "index.tsx"), 
 		output: {
 			path: path.join(__dirname, "/dist"), // the bundle output path
 			filename: "bundle.js", // the name of the bundle
-			clean: true //clean the folder every build
+			clean: true, //clean the folder every build
+			//publicPath: '/',
 		},
 		devtool: argv.mode === 'development' ? 'source-map' : false, //how build source maps for sources
 		plugins: [
@@ -52,6 +54,12 @@ module.exports = (env, argv) => {
 				include: [/\.(html|js|ts)$/], //type of resources to be precached
 				maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, //max size of resource to be precached
 			}),
+			/*new WorkboxPlugin.GenerateSW({
+				// these options encourage the ServiceWorkers to get in there fast
+				// and not allow any straggling "old" SWs to hang around
+				clientsClaim: true,
+				skipWaiting: true,
+			  }),*/
 			new CopyWebpackPlugin({ //copy resources from "public" folder to "dist"
 				patterns: [
 					{
@@ -76,6 +84,15 @@ module.exports = (env, argv) => {
 		mode: mode,
 		devServer: {
 			port: argv.mode === 'development' ? 80 : 80, // change the port if neccessary
+			client: {
+				overlay: {
+					errors: true,
+					warnings: false,
+					runtimeErrors: true,
+				},
+			},
+			hot: false, // Disable HMR
+			liveReload: true
 		},
 		resolve: {
 			extensions: [ ".tsx", ".ts", ".jsx", ".js", ""], //to add extensions for import, to use './components/Preloaders/Preloader' <- Preloader.tsx

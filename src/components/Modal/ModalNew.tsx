@@ -89,8 +89,6 @@ const ModalNew = forwardRef<IModalFunctions, IProps>(({}, ref) => {
 
     const contentChanged = () => {
         focusableEls.current = getSelectable(_content.current)
-        console.log('OPA');
-        console.log(focusableEls.current);
     }
 
 
@@ -121,7 +119,6 @@ const ModalNew = forwardRef<IModalFunctions, IProps>(({}, ref) => {
         if (!modals[0]?.children) return
         selected.current = 0
         focusableEls.current = getSelectable(_content.current)
-        console.log(focusableEls.current);
         
         document.addEventListener("keydown", keyPressed);
         return () => {

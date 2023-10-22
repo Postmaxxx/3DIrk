@@ -629,7 +629,7 @@ const navList = {
             to: "/fibers"
         },
         compare: {
-            en: "COMPARASING",
+            en: "COMPARISON",
             ru: "СРАВНЕНИЕ",
             to: "/fibers/compare"
         }
