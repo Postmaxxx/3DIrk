@@ -138,7 +138,6 @@ router.delete('/delete',
         const errors = validationResult(req)
         
         if (!errors.isEmpty()) {
-            //console.log(errors.array().map(error => error.msg));
             return res.status(400).json({
                 errors: errors.array().map(error => error.msg),
                 message: {en: 'Errors in color data', ru: 'Ошибки в данных цвета'}

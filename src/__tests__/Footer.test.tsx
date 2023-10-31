@@ -40,7 +40,7 @@ describe('Footer', () => {
 		await waitFor(async () => {
 			expect(_footer).toBeInTheDocument()
 			expect(_footer?.querySelector('.footer__copyright')).toBeInTheDocument()
-			expect(_footer?.querySelector('.footer__copyright')?.innerHTML).toMatch(/Стрежень/)
+			expect(_footer?.querySelector('.footer__copyright')?.innerHTML).toMatch(/Strezhen/)
 			expect(_footer?.querySelectorAll('a')).toHaveLength(4)
       let lang = await store.getState().base.lang
       expect(lang).toBe('ru')
@@ -49,7 +49,7 @@ describe('Footer', () => {
 			changeLang(_container, act)
 		})
 		await waitFor(async () => {
-			expect(_footer?.querySelector('.footer__copyright')?.innerHTML).toMatch(/Strezhen/)
+			expect(_footer?.querySelector('.footer__copyright')?.innerHTML).toMatch(/Стрежень/)
 		})
 
     })

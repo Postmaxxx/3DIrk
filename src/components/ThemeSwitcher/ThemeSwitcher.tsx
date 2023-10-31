@@ -186,7 +186,7 @@ const ThemeSwitcher: React.FC<IProps> = ({mobOpened, lang, theme, setState}): JS
 		return (
 			<label htmlFor="theme-switcher">
 				<div className="theme-switcher">
-					<div className={`content-switcher ${theme !== "dark" ? "theme_light" : ""}`} ref={_contentSwitcher}>
+					<div className={`content-switcher ${theme !== "dark" ? "theme_light" : ""}`} ref={_contentSwitcher} data-testid="theme-switcher-content">
 						<div className="dark">{stars}</div>
 						<div className="light">{clouds}</div>
 					</div>

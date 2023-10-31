@@ -132,7 +132,7 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
                 {isAuth ? 
                     <li className="nav-item">
                         <NavLink className={({ isActive }) => `nav-text_level_1 ${isActive ? "selected" : ""}`} to={navList.account.cart.to} data-testid='navCart'>
-                            drtf{navList.account.cart[lang]}
+                            {navList.account.cart[lang]}
                         </NavLink>
                         <CartInformer />        
                     </li>
@@ -222,8 +222,8 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
         </div>
         <div className="nav__switcher">
             <div className="text-hider"></div>
-            <label aria-label="open/hide navigation">
-                <input type="checkbox" onClick={navToggle} data-testid='nav_dt__checkbox'/>
+            <label aria-label="open or hide navigation">
+                <input type="checkbox" onChange={navToggle} data-testid='nav_dt__checkbox'/>
                 <img src={navLogo} alt="Menu" width={52} height={52}/>
                 <div className="nav__sign">
                     <span></span>
@@ -244,8 +244,8 @@ const Nav:React.FC<IProps> = ({lang, setState, mobOpened, desktopOpened, fibersL
     const mobileNav = useMemo(() => {
         return  <nav className={mobOpened ? "nav_mobile opened" : "nav_mobile"} data-testid='nav_mobile'>
         <div className="nav__switcher">
-            <label aria-label="open/hide navigation">
-                <input data-testid='nav_mob__checkbox' type="checkbox" onClick={navToggleMobile}/>
+            <label aria-label="open or hide navigation" data-testid="navMobOpener">
+                <input data-testid='nav_mob__checkbox' type="checkbox" onChange={navToggleMobile}/>
                 <img src={navLogo} alt="Menu" width={52} height={52}/>
                 <div className="nav__sign">
                     <span></span>

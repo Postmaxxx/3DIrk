@@ -180,7 +180,7 @@ describe('Nav', () => {
         let _nav = _container.querySelector("[data-testid='nav_desktop']")
         let _navItems = _nav?.querySelectorAll("[data-testid='navListDesktop'] > .nav-item") || []
         await waitFor(async () => {
-            expect(_navItems?.length).toBeGreaterThan(0)
+            expect(_navItems?.length).toBe(5)
             _navItems.forEach((item, i) => {
                 if (i===0) {
                     expect(item.querySelector('.nav-text_level_1')?.classList.contains('selected')).toBe(true)

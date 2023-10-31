@@ -2,7 +2,7 @@ import { TLang } from '../../interfaces'
 import './add-files.scss'
 import { useState, useEffect, useRef, forwardRef, useImperativeHandle, useCallback, useMemo} from 'react'
 import iconFileQuestion from '../../assets/img/icon_file_question.svg'
-import Delete from "../../components/Delete/Delete";
+import Delete from "../Remover/Remover";
 import { prevent } from '../../../src/assets/js/processors';
 import { imageExtentions } from '../../../src/assets/js/consts';
 

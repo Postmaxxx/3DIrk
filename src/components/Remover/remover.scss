@@ -1,6 +1,6 @@
 @use "/src/assets/css/variables" as *;
 
-.button_delete {
+.remover {
     background-color: transparent;
     border: none;
     padding: 0;
@@ -24,7 +24,7 @@
         }
     }
 
-    & .confirmation {
+    & .remover__confirmation {
         background-color: var(--text_reverse);
         padding: 5px;
         display: flex;
@@ -37,7 +37,7 @@
         //visibility: hidden;
         transition: transform $transition-fast;
 
-        & .button_delete__confirm, .button_delete__cancel {
+        & .remover__confirm, .remover__cancel {
             padding: 0px 10px;
             cursor: pointer;
             font-size: 16px;
@@ -51,7 +51,7 @@
             }
         }
 
-        & .button_delete__cancel {
+        & .remover__cancel {
             margin-top: 5px;
             background-color: rgba($color_success, 0.4);
     
@@ -62,7 +62,7 @@
 
 
 
-        &.active {
+        &.visible {
             transform: translate(-50%, -50%) scale(1);
         }
     }

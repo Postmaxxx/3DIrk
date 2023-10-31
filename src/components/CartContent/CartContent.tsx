@@ -5,7 +5,7 @@ import './cart-content.scss'
 import { ICartItem, ICartState, IColor, IColorsState, IFibersState, IFullState, IProduct, TLang } from "../../interfaces";
 import { useCallback, useMemo, Fragment, useEffect } from 'react'
 import { NavLink } from "react-router-dom";
-import Delete from "../Delete/Delete";
+import Remover from "../Remover/Remover";
 import AmountChanger from "../AmountChanger/AmountChanger";
 import PreloaderW from "../Preloaders/PreloaderW";
 import { allActions } from "../../redux/actions/all";
@@ -78,18 +78,17 @@ const CartContent: React.FC<IProps> = ({lang, cart, colorsState, modal, fibersSt
                 <Fragment  key={i}>
                     {color && fiberName &&
                         <div className="cart__item">
-                            <div className="wrapper_img" onClick={(e) => onImageClick(e, item.product)}>
+                            <div className="wrapper_img" onClick={(e) => onImageClick(e, item.product)} data-testid='productImageWrapper'>
                                 <PicWithPreloader basePath={item.product.images.basePath} sizes={item.product.images.sizes} image={item.product.images.files[0]} alt={item.product.name[lang]}/>
                             </div>
                 
                             <div className="item__descriptions">
                                 <div className="description">
                                     <span className="description__name">{lang === 'en' ? 'Product: ' : 'Товар: '} 
-                                        <NavLink className="item__product-link" to={`../catalog/${item.product._id}`} target="_blank" rel="noopener noreferrer" aria-label={lang === 'en' ? 'Go to product' : 'Перейти к товару'}>
+                                        <NavLink className="item__product-link" to={`../catalog/${item.product._id}`} target="_blank" aria-label={`${lang === 'en' ? 'Go to product' : 'Перейти к товару'}: ${item.product.name[lang]}`}>
                                             {item.product.name[lang]}
                                         </NavLink>
                                     </span>
-                                    {/*<span className="product">{item.product.name[lang]}</span>*/}
                                 </div>
                                 {item.type &&
                                     <div className="description">
@@ -100,21 +99,23 @@ const CartContent: React.FC<IProps> = ({lang, cart, colorsState, modal, fibersSt
                                 }
                                 <div className="description">
                                     <span className="description__name">{lang === 'en' ? 'Fiber: ' : 'Материал: '}
-                                        <span className="fiber">{fiberName}</span>
+                                        <NavLink className="item__fiber-link" to={`../fibers/${item.fiber}`} target="_blank" aria-label={`${lang === 'en' ? 'Go to fiber' : 'Перейти к материалу'}: ${item.product.name[lang]}`}>
+                                            {fiberName}
+                                        </NavLink>
                                     </span>
                                 </div>
                                 <div className="description">
                                     <span className="description__name">{lang === 'en' ? 'Color' : 'Цвет'}:</span>
-                                    <div className="color" onClick={(e) => onColorClick(e, color)} tabIndex={0} onKeyDown={e => {e.code === 'Enter' && onColorClick(e, color)}}> 
+                                    <button className="description__color button_link" onClick={(e) => onColorClick(e, color)} tabIndex={0} onKeyDown={e => {e.code === 'Enter' && onColorClick(e, color)}}> 
                                         <div className="wrapper_img">
                                             <img src={color.urls.thumb} alt={color.name[lang]} />
                                         </div>
                                         <span className="color__name">{color.name[lang]}</span>
-                                    </div>
+                                    </button>
                                 </div>
                             </div>
-                            <div className="item__remover">
-                                <Delete<ICartItem> remove={deleteItem} idInstance={item} lang={lang} disabled={false}/>
+                            <div className="remover-wrapper">
+                                <Remover<ICartItem> remove={deleteItem} idInstance={item} lang={lang} disabled={false}/>
                             </div>
                             <div className="amount-wrapper">
                                 <AmountChanger<ICartItem> idInstance={item} initialAmount={item.amount} lang={lang} onChange={onAmountChange} />

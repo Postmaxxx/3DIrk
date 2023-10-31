@@ -59,6 +59,8 @@
         justify-content: center;
         align-items: center;
         margin: 50px auto 0;
+        margin-left: auto;
+        margin-right: auto;
 
         & .button_edit {
             margin-right: 20px;
@@ -92,7 +94,7 @@
         }
 
 
-        & > .button_delete {
+        & > .remover {
             width: 30px;
             height: 30px;
             margin-left: 30px;

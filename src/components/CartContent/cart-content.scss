@@ -105,11 +105,11 @@
                     }
                 }
     
-                & .color {
-                    margin-left: auto;
+                & .description__color {
+                    //margin-left: auto;
                     margin-right: auto;
                     display: flex;
-                    flex-grow: 1;
+                    //flex-grow: 1;
                     align-items: center;
                     cursor: pointer;
     
@@ -118,6 +118,7 @@
                         aspect-ratio: 1;
                         border-radius: 3px;
                         overflow: hidden;
+                        flex-shrink: 0;
                         
 
                         @include respond-to(sm) {
@@ -141,7 +142,7 @@
                         text-decoration: underline;
                         margin-left: 10px;
                         //text-transform: lowercase;
-                        font-size: .8em;
+                        //font-size: .8em;
                     }
                 }
                 
@@ -151,7 +152,7 @@
 
 
 
-        & .item__remover {
+        & .remover-wrapper {
             position: absolute;
             top: 0px;
             right: 0px;
@@ -167,9 +168,6 @@
                 transform: translateY(-100%);
             }
 
-            & .icon_delete {
-                //fill: var(--bg);
-            }
         }
 
 

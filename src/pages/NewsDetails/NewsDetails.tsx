@@ -8,7 +8,7 @@ import { connect } from "react-redux";
 import { useEffect, FC, useMemo, useCallback } from "react";
 import SpliderCommon from '../../components/Spliders/Common/SpliderCommon';
 import { allActions } from "../../redux/actions/all";
-import Delete from '../../components/Delete/Delete';
+import Delete from '../../components/Remover/Remover';
 import { navList, resetFetch } from '../../assets/js/consts';
 import { modalMessageCreator } from '../../../src/assets/js/processors';
 import { IModalFunctions } from '../../../src/components/Modal/ModalNew';
@@ -78,7 +78,6 @@ const NewsDetails: FC<IProps> = ({lang, setState, newsState, modal, isAdmin }): 
                 onClose: closeModal,
                 children: <MessageNew {...modalMessageCreator(newsState.loadOne, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
             })
-            
         }
     }, [newsState.send, newsState.loadOne])
 

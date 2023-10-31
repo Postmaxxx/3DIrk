@@ -38,14 +38,5 @@ export function unregister() {
 		} catch(error: any) {
 			console.error('Unable to unregister service-worker: ', error?.message);
 		}
-
-
-		/*navigator.serviceWorker.ready
-			.then((registration) => {
-				registration.unregister();
-			})
-			.catch((error) => {
-				console.error('Unable to unregister service-worker: ', error.message);
-			});*/
 	}
 }

@@ -159,7 +159,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
                                             <div className="img-container">
                                                 <img src={logo_tg} alt="Telegram" />
                                             </div>
-                                            <span>Our group</span>
+                                            <a href="telegram.org">{lang === 'en' ? "Out group" : 'Наша группа'}</a>
                                         </div>
                                         <div className="contact">
                                             <div className="img-container">

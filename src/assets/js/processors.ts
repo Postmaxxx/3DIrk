@@ -81,7 +81,7 @@ const fetchError = ({dispatch, setter, comp, e, controller}: IFetchError) => {
         if (controller?.signal?.reason?.name === exceptionTimeout.name) {
             return dispatch(setter({status: 'error', message: {en:`${comp.en}: server response timeout`, ru: `${comp.ru}: таймаут ответа от сервера`}}))
         }
-        return dispatch(setter({status: 'error', message: {en:`${comp.en}: request aborted`, ru: `${comp.ru}: запрос отменен`}}))
+        return dispatch(setter({status: 'idle', message: {en:`${comp.en}: request aborted`, ru: `${comp.ru}: запрос отменен`}}))
     }
 }
 

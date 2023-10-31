@@ -59,7 +59,7 @@ const connectToDb = async () => {
         await mongoose.connect(process.env.mongoUri || '', {
             useNewUrlParser: true,
             useUnifiedTopology: true,
-            dbName: "allData"
+            dbName: process.env.dbName
         })
         
     } catch (error: unknown) {

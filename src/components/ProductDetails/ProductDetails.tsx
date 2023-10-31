@@ -135,7 +135,7 @@ const ProductDetails: React.FC<IProps> = ({lang, product, colors,productLoad, mo
                             <span className="link-spacer">.</span>
                             <NavLink 
                                 to={`../../fibers/${selectedFiber._id}`} 
-                                aria-label={lang === 'en' ? '(About selected fiber)' : ' (О выбранном материале)'}>
+                                aria-label={lang === 'en' ? 'About selected fiber' : ' О выбранном материале'}>
                                     {lang === 'en' ? '(About)' : '(Подробнее)'}
                             </NavLink>
                         </div>

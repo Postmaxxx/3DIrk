@@ -1,24 +1,27 @@
-import { clientsClaim } from "workbox-core";
+import { clientsClaim, setCacheNameDetails, cacheNames } from "workbox-core";
 import { ExpirationPlugin } from "workbox-expiration";
 import { registerRoute, Route } from "workbox-routing";
 import { CacheFirst, NetworkFirst, StaleWhileRevalidate } from "workbox-strategies";
-
 //import {warmStrategyCache} from 'workbox-recipes';
 import { setCatchHandler} from 'workbox-routing';
 import {precacheAndRoute} from 'workbox-precaching';
 
+
+
+
 //for ts
 declare const self: any;
 //declare precache, will be changed during building
-//precacheAndRoute(self.__WB_MANIFEST);
+//precacheAndRoute(self.__WB_MANIFEST || []);
 precacheAndRoute(self.__precacheManifest || []);
 
 
 //trying to change cachename for precaching, does not work ???
-//setCacheNameDetails({prefix: 'we'});
+setCacheNameDetails({precache: 'we'});
+
 
 //do not need due to precache all js+svg+css+fonts
-const versionStyles: string = "1.45"; //0.9
+const versionStyles: string = "1.09"; 
 //const versionScripts: string  = "1.03";
 //const versionHtmls: string  = "1.03";
 

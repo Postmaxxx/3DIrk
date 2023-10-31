@@ -29,13 +29,11 @@ module.exports = (env, argv) => {
 		optimization.usedExports = true;
 	}
 	return {
-		//target: "web",
 		entry: path.join(__dirname, "src", "index.tsx"), 
 		output: {
 			path: path.join(__dirname, "/dist"), // the bundle output path
 			filename: "bundle.js", // the name of the bundle
 			clean: true, //clean the folder every build
-			//publicPath: '/',
 		},
 		devtool: argv.mode === 'development' ? 'source-map' : false, //how build source maps for sources
 		plugins: [
@@ -54,12 +52,6 @@ module.exports = (env, argv) => {
 				include: [/\.(html|js|ts)$/], //type of resources to be precached
 				maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, //max size of resource to be precached
 			}),
-			/*new WorkboxPlugin.GenerateSW({
-				// these options encourage the ServiceWorkers to get in there fast
-				// and not allow any straggling "old" SWs to hang around
-				clientsClaim: true,
-				skipWaiting: true,
-			  }),*/
 			new CopyWebpackPlugin({ //copy resources from "public" folder to "dist"
 				patterns: [
 					{

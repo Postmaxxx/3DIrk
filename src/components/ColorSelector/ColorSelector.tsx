@@ -8,6 +8,7 @@ import svgs from '../additional/svgs';
 
 
 interface IPropsState {
+    selectorId?: string
     colors: IColor[]
     lang: TLang
     onSelect: (id: IColor['_id']) => void
@@ -15,12 +16,12 @@ interface IPropsState {
 }
 
 
-const ColorSelector: React.FC<IPropsState> = ({lang, modal, colors, onSelect}): JSX.Element => {
-    const [currentColor, setCurrentColor] = useState<IColor>()
+const ColorSelector: React.FC<IPropsState> = ({selectorId, lang, modal, colors, onSelect}): JSX.Element => {
+    const [selectedColor, setSelectedColor] = useState<IColor>()
     const [expanded, setExpanded] = useState<boolean>(false)
 
     useEffect(() => {
-        setCurrentColor(undefined)
+        setSelectedColor(undefined)
     }, [colors])
 
     
@@ -29,7 +30,7 @@ const ColorSelector: React.FC<IPropsState> = ({lang, modal, colors, onSelect}): 
     }
 
     const onOptionClick = (id: IColor['_id']) => {
-        setCurrentColor(colors.find(color => color._id === id))
+        setSelectedColor(colors.find(color => color._id === id))
         setExpanded(false)
         onSelect(id)
     }
@@ -47,26 +48,26 @@ const ColorSelector: React.FC<IPropsState> = ({lang, modal, colors, onSelect}): 
 
 
     return (
-        <div className="selector block_input">
-            <label>{lang === 'en' ? 'Color' : 'Цвет'}: </label>
-            <div className={`selector_color ${expanded ? 'expanded' : ''}`}>
-                <div className="color current" onClick={onCurrentClick} tabIndex={0} onKeyDown={e => {e.code === 'Enter' && onCurrentClick()}}>
-                    {currentColor ? 
+        <div className="selector selector_color block_input"> 
+            <span className='selector_color__label'>{lang === 'en' ? 'Color' : 'Цвет'}: </span> 
+            <div className={`selector_color__selector ${expanded ? 'expanded' : ''}`} id={selectorId ?? 'selector_color'}>
+                <div className="selector_color__color color_selected" onClick={onCurrentClick} tabIndex={0} onKeyDown={e => {e.code === 'Enter' && onCurrentClick()}}>
+                    {selectedColor ? 
                         <>
                             <div className="img-cont">
-                                <img src={currentColor.urls.thumb} alt={currentColor.name[lang]} />
+                                <img src={selectedColor.urls.thumb} alt={selectedColor.name[lang]} />
                             </div>
-                            <span>{currentColor.name[lang]}</span>
+                            <span>{selectedColor.name[lang]}</span>
                         </>
                         :
-                        <span>{lang === 'en' ? 'Choose the color' : 'Выберите цвет'} </span>
+                        <span className='color__placeholder'>{lang === 'en' ? 'Choose the color' : 'Выберите цвет'} </span>
                     }
                 </div>
-                <div className='list'>
+                <div className='selector_color__list'>
                     {colors.map(color => {
                         return (
                             <div 
-                                className="color" 
+                                className="selector_color__color" 
                                 key={color._id} 
                                 onClick={() => onOptionClick(color._id)} 
                                 tabIndex={expanded ? 0 : -1} 

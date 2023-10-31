@@ -27,7 +27,7 @@ describe('Tests for ThemeSwitcher', () => {
 
 
 	
-    test('should exist if screen.width > sm and <=sm', async () => {
+    test('should exist if screen.width > sm and screen.width <= sm', async () => {
 		await act(async () => {
 			createRoot(_container).render(
 				<Provider store={store}>
@@ -63,7 +63,7 @@ describe('Tests for ThemeSwitcher', () => {
 
 
 
-	test('should change theme on click', async () => {
+	test('should change theme on click', async () => { //!!! Add check was body class changed?
 		await act(async () => {
 			createRoot(_container).render(
 				<Provider store={store}>
