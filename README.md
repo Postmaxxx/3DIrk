@@ -13,5 +13,6 @@ npm run deploy_old - deploy the project to gh pages using react builder, auto st
 
 
 
-to start be on aws:
+to start BE on aws:
 /backend/ npm run serverprodjs
+
