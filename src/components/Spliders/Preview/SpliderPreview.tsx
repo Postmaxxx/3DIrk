@@ -31,7 +31,7 @@ interface IProps extends IPropsState, IPropsActions {
 }
 
 
-const SpliderPreview: React.FC<IProps> = ({ modal, images}): JSX.Element => {
+const SpliderPreview: React.FC<IProps> = ({ lang, modal, images}): JSX.Element => {
 	const _splideMain = useRef<HTMLDivElement>(null);
 	const _splideThumbs = useRef<HTMLDivElement>(null);
 	const splideMain = useRef<Splide>();
@@ -82,6 +82,7 @@ const SpliderPreview: React.FC<IProps> = ({ modal, images}): JSX.Element => {
 		rewind    : false,
 		pagination: false,
 		speed: 500,
+		slideFocus: true,
 		wheel: false,
 		wheelSleep: 300,
 		breakpoints	: {
@@ -94,7 +95,7 @@ const SpliderPreview: React.FC<IProps> = ({ modal, images}): JSX.Element => {
 
 
 
-	const onImageClick = (e: React.MouseEvent , filename: string) => {
+	const onImageClick = (e: React.MouseEvent | React.KeyboardEvent , filename: string) => {
         if (!filename) return
         e.stopPropagation()
 		modal?.openModal({
@@ -123,7 +124,7 @@ const SpliderPreview: React.FC<IProps> = ({ modal, images}): JSX.Element => {
 	const imagesMain = useMemo(() => {
 		return images.files.map((filename) => {
 			return (
-				<li className="splide__slide" key={filename} onClick={(e) => onImageClick(e, filename)}>
+				<li className="splide__slide" key={filename} onClick={(e) => onImageClick(e, filename)} onKeyDown={e => {e.code === 'Enter' && onImageClick(e, filename)}}>
 					{spliderThumbCreated && <PicWithPreloader basePath={images.basePath} sizes={images.sizes} image={filename} alt={filename}/>}
 				</li>
 			);
@@ -134,7 +135,7 @@ const SpliderPreview: React.FC<IProps> = ({ modal, images}): JSX.Element => {
 	const imagesThumb = useMemo(() => {
 		return images.files.map((filename) => {
 			return (
-				<li className="splide__slide" key={filename}>
+				<li className="splide__slide" key={filename} aria-label={lang === 'en' ? `Switch main product image to this one` : `Переключить главное изображение товара на это`}>
 					{spliderMainCreated && <PicWithPreloader basePath={images.basePath} sizes={images.sizes} image={filename} alt={filename}/>}
 				</li>
 			);

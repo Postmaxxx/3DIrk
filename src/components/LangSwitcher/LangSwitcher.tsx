@@ -49,15 +49,16 @@ const LangSwitcher:React.FC<IProps> = ({lang, setState}): JSX.Element => {
 
     return (
         <div 
-            className={`lang-switcher ${lang === 'en' ? 'ru' : 'en'}`} 
+            className={`lang-switcher ${lang === 'en' ? 'en' : 'ru'}`} 
             data-testid='lang-switcher' 
             onClick={handleChangeLang} 
             ref={_lang}  
             tabIndex={0}
             onKeyDown={e => {e.code === 'Enter' && handleChangeLang()}}
+            aria-label={lang === 'en' ? `Switch language to Russian` : `Изменить язык на Английский`}
         >
-            <div className="lang-switcher__text lang_ru" data-lang='ru'>EN</div>
-            <div className="lang-switcher__text lang_en" data-lang='en'>RU</div>
+            <div className="lang-switcher__text lang_ru" data-lang='en'>EN</div>
+            <div className="lang-switcher__text lang_en" data-lang='ru'>RU</div>
         </div>
     )
       

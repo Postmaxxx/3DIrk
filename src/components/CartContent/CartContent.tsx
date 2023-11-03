@@ -49,7 +49,7 @@ const CartContent: React.FC<IProps> = ({lang, cart, colorsState, modal, fibersSt
 
 
 
-    const onImageClick = (e: React.MouseEvent, product: IProduct) => {
+    const onImageClick = (e: React.MouseEvent | React.KeyboardEvent, product: IProduct) => {
         if (!product) return
         e.stopPropagation()
         const lastIndex = product.images.sizes.length - 1
@@ -78,7 +78,14 @@ const CartContent: React.FC<IProps> = ({lang, cart, colorsState, modal, fibersSt
                 <Fragment  key={i}>
                     {color && fiberName &&
                         <div className="cart__item">
-                            <div className="wrapper_img" onClick={(e) => onImageClick(e, item.product)} data-testid='productImageWrapper'>
+                            <div 
+                                className="wrapper_img" 
+                                onClick={(e) => onImageClick(e, item.product)} 
+                                data-testid='productImageWrapper'
+                                aria-label={lang === 'en' ? 'Expand image' : 'Посмотреть изображение'}
+                                tabIndex={0}
+                                onKeyDown={e => {e.code === 'Enter' && onImageClick(e, item.product)}}
+                            >
                                 <PicWithPreloader basePath={item.product.images.basePath} sizes={item.product.images.sizes} image={item.product.images.files[0]} alt={item.product.name[lang]}/>
                             </div>
                 
@@ -99,14 +106,19 @@ const CartContent: React.FC<IProps> = ({lang, cart, colorsState, modal, fibersSt
                                 }
                                 <div className="description">
                                     <span className="description__name">{lang === 'en' ? 'Fiber: ' : 'Материал: '}
-                                        <NavLink className="item__fiber-link" to={`../fibers/${item.fiber}`} target="_blank" aria-label={`${lang === 'en' ? 'Go to fiber' : 'Перейти к материалу'}: ${item.product.name[lang]}`}>
+                                        <NavLink className="item__fiber-link" to={`../fibers/${item.fiber}`} target="_blank" aria-label={`${lang === 'en' ? 'Go to fiber' : 'Перейти к материалу'}: ${fiberName}`}>
                                             {fiberName}
                                         </NavLink>
                                     </span>
                                 </div>
                                 <div className="description">
                                     <span className="description__name">{lang === 'en' ? 'Color' : 'Цвет'}:</span>
-                                    <button className="description__color button_link" onClick={(e) => onColorClick(e, color)} tabIndex={0} onKeyDown={e => {e.code === 'Enter' && onColorClick(e, color)}}> 
+                                    <button 
+                                        className="description__color button_link" 
+                                        onClick={(e) => onColorClick(e, color)} 
+                                        tabIndex={0} onKeyDown={e => {e.code === 'Enter' && onColorClick(e, color)}}
+                                        aria-label={`${lang === 'en' ? 'Open modal window with the color' : 'Открыть модальное окно с цветом'}: ${color.name[lang]}`}
+                                        > 
                                         <div className="wrapper_img">
                                             <img src={color.urls.thumb} alt={color.name[lang]} />
                                         </div>

@@ -92,12 +92,13 @@ const Mods = forwardRef<IModsFunctions, IProps>(({lang, type="input", amountChan
                     return (
                         <div className="block_mod full-width" key={i}>
                             <div className="block_input" data-selector="input-block">
-                                <label>{lang === 'en' ? 'Value EN' : 'Значение EN'}</label>
+                                <label htmlFor={`mod-en-${i}`}>{lang === 'en' ? 'Value EN' : 'Значение EN'}</label>
                                 {type === "input" ? 
                                     <input 
                                         data-selector="input"
                                         name="en" 
                                         type="text" 
+                                        id={`mod-en-${i}`}
                                         onChange={(e) => onEditMod(e, i)} 
                                         onKeyDown={onKeyDown}
                                         value={item.name.en}/>
@@ -105,17 +106,19 @@ const Mods = forwardRef<IModsFunctions, IProps>(({lang, type="input", amountChan
                                     <textarea 
                                         data-selector="input"
                                         name="en" 
+                                        id={`mod-en-${i}`}
                                         onChange={(e) => onEditMod(e, i)} 
                                         onKeyDown={onKeyDown}
                                         value={item.name.en}/>
                                 }
                             </div>
                             <div className="block_input" data-selector="input-block">
-                                <label>{lang === 'en' ? 'Value RU' : 'Значение RU'}</label>
+                                <label htmlFor={`mod-ru-${i}`}>{lang === 'en' ? 'Value RU' : 'Значение RU'}</label>
                                 {type === "input" ? 
                                     <input 
                                         data-selector="input"
                                         name="ru" 
+                                        id={`mod-ru-${i}`}
                                         type="text" 
                                         onKeyDown={onKeyDown}
                                         onChange={(e) => onEditMod(e, i)} 
@@ -123,18 +126,20 @@ const Mods = forwardRef<IModsFunctions, IProps>(({lang, type="input", amountChan
                                 :
                                     <textarea 
                                         data-selector="input"
-                                        name="ru" 
+                                        name="ru"
+                                        id={`mod-ru-${i}`}
                                         onKeyDown={onKeyDown}
                                         onChange={(e) => onEditMod(e, i)} 
                                         value={item.name.ru}/>
                                 }
                             </div>
                             <div className="block_input" data-selector="input-block">
-                                <label>{lang === 'en' ? 'Weight' : 'Вес'}</label>
+                                <label htmlFor={`multiplier-${i}`}>{lang === 'en' ? 'multiplier' : 'Множитель'}</label>
                                 <input 
                                     data-selector="input"
                                     name="weight" 
                                     type="text" 
+                                    id={`multiplier-${i}`}
                                     onKeyDown={onKeyDown}
                                     onChange={(e) => onEditMod(e, i)} 
                                     value={item.weight}/>

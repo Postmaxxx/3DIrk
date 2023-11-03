@@ -75,7 +75,7 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsLoad, fibersLoad, 
             modal?.openModal({
                 name: 'errorsInForm',
                 onClose: closeModal,
-                children: <MessageNew {...errChecker.result()} buttonClose={{action: closeModal, text: 'Close'}}/>
+                children: <MessageNew {...errChecker.result()} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
             })
             return
         }
@@ -100,7 +100,7 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsLoad, fibersLoad, 
                     'Some items have been removed from your cart as unavalable for order:' 
                     : 'Некоторые товары были удалены из вашей корзины т.к. они больше недоступны для заказа:',
                 ...cart.fixed?.map((item, i) => (`${i+1}) ${item[lang]}`))]}
-                buttonClose={{action: closeModal, text: 'Close'}}
+                buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}
             />
         })
     }, [cart.fixed])
@@ -114,7 +114,7 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsLoad, fibersLoad, 
             modal?.openModal({ //if error/success - show modal about send order
                 name: 'orderSend',
                 onClose: closeModal,
-                children: <MessageNew {...modalMessageCreator(sendOrder, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
+                children: <MessageNew {...modalMessageCreator(sendOrder, lang)} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
             })
         }
         if (sendOrder.status === 'fetching') {

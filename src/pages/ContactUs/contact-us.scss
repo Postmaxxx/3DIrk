@@ -61,6 +61,7 @@
             }
         }
 
+
         .location {
             display: flex;
             flex-direction: column;
@@ -111,6 +112,13 @@
             }
         }
 
+    }
+
+
+    & .form__inputs__texts {
+        input:focus {
+            outline: 2px solid $black;
+        }
     }
 
 

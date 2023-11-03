@@ -22,7 +22,6 @@ type ICloud = {
 
 interface IPropsState {
     lang: TLang
-	mobOpened: boolean
 	theme: TTheme
 }
 
@@ -47,7 +46,7 @@ interface IParams {
 	typesOfBlink: number
 }
 
-const ThemeSwitcher: React.FC<IProps> = ({mobOpened, lang, theme, setState}): JSX.Element => {
+const ThemeSwitcher: React.FC<IProps> = ({lang, theme, setState}): JSX.Element => {
 
 	const _themeSwitcherCont = useRef<HTMLDivElement>(null);
 	const _contentSwitcher = useRef<HTMLDivElement>(null);
@@ -184,17 +183,25 @@ const ThemeSwitcher: React.FC<IProps> = ({mobOpened, lang, theme, setState}): JS
 
 	const themeSwitcherMemo = useMemo(() => {
 		return (
-			<label htmlFor="theme-switcher">
+			<label>
 				<div className="theme-switcher">
 					<div className={`content-switcher ${theme !== "dark" ? "theme_light" : ""}`} ref={_contentSwitcher} data-testid="theme-switcher-content">
 						<div className="dark">{stars}</div>
 						<div className="light">{clouds}</div>
 					</div>
 				</div>
-				<input type="checkbox" name="theme-switcher" id="theme-switcher" aria-label="Change the site theme" onChange={onThemeClick} ref={_switcher}/>
+				<input 
+					tabIndex={-1}
+					type="checkbox" 
+					name="theme-switcher" 
+					id="theme-switcher" 
+					onChange={onThemeClick} 
+					ref={_switcher}
+					aria-label={lang === 'en' ? `Switch the site theme` : `Изменить тему сайта`}
+					/>
 			</label>
 		)
-	}, [])
+	}, [lang])
 
 
 
@@ -207,7 +214,6 @@ const ThemeSwitcher: React.FC<IProps> = ({mobOpened, lang, theme, setState}): JS
 
 
 const mapStateToProps = (state: IFullState): IPropsState => ({
-	mobOpened: state.base.mobOpened,
 	lang: state.base.lang,
 	theme: state.base.theme
 })

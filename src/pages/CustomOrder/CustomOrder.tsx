@@ -64,7 +64,7 @@ const CustomOrder:React.FC<IProps> = ({lang, sendOrder, modal, setState}): JSX.E
             modal?.openModal({
                 name: 'errorsInForm',
                 onClose: closeModal,
-                children: <MessageNew {...errChecker.result()} buttonClose={{action: closeModal, text: 'Close'}}/>
+                children: <MessageNew {...errChecker.result()} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
             })
             return
         }
@@ -81,7 +81,7 @@ const CustomOrder:React.FC<IProps> = ({lang, sendOrder, modal, setState}): JSX.E
             modal?.openModal({ //if error/success - show modal about send order
                 name: 'orderSend',
                 onClose: closeModal,
-                children: <MessageNew {...modalMessageCreator(sendOrder, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
+                children: <MessageNew {...modalMessageCreator(sendOrder, lang)} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
             })
         }
         if (sendOrder.status === 'fetching') {

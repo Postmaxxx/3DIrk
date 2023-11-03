@@ -51,7 +51,12 @@ const ColorSelector: React.FC<IPropsState> = ({selectorId, lang, modal, colors, 
         <div className="selector selector_color block_input"> 
             <span className='selector_color__label'>{lang === 'en' ? 'Color' : 'Цвет'}: </span> 
             <div className={`selector_color__selector ${expanded ? 'expanded' : ''}`} id={selectorId ?? 'selector_color'}>
-                <div className="selector_color__color color_selected" onClick={onCurrentClick} tabIndex={0} onKeyDown={e => {e.code === 'Enter' && onCurrentClick()}}>
+                <div 
+                    className="selector_color__color color_selected" 
+                    onClick={onCurrentClick} 
+                    tabIndex={0} 
+                    onKeyDown={e => {e.code === 'Enter' && onCurrentClick()}} 
+                    aria-label={lang === 'en' ? 'Select color' : 'Выберите цвет'}>
                     {selectedColor ? 
                         <>
                             <div className="img-cont">
@@ -72,12 +77,14 @@ const ColorSelector: React.FC<IPropsState> = ({selectorId, lang, modal, colors, 
                                 onClick={() => onOptionClick(color._id)} 
                                 tabIndex={expanded ? 0 : -1} 
                                 onKeyDown={e => {e.code === 'Enter' && onOptionClick(color._id)}}
+                                aria-label={lang === 'en' ? `Select color: ${color.name.en}` : `Выбрать цвет: ${color.name.en}`}
                             >
                                 <div 
                                     className="img-cont" 
                                     onClick={(e) => onImageClick(e, color)} 
                                     tabIndex={expanded ? 0 : -1} 
                                     onKeyDown={e => {e.code === 'Enter' && onImageClick(e, color)}}
+                                    aria-label={lang === 'en' ? `Watch this color ${color.name.en} more detailed` : `Посмотреть этот цвет ${color.name.en} подробнее`}
                                 >
                                     <img src={color.urls.thumb} alt={color.name[lang]} />
                                     {svgs().iconExpand}

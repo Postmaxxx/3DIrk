@@ -116,7 +116,7 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
             modal?.openModal({ //if error/success - show modal about send order
                 name: 'errorChecker',
                 onClose: closeModal,
-                children: <MessageNew {...errChecker.result()} buttonClose={{action: closeModal, text: 'Close'}}/>
+                children: <MessageNew {...errChecker.result()} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
             })
             return
         }
@@ -145,7 +145,7 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
             modal?.openModal({ //if error/success - show modal about send order
                 name: 'colorSend',
                 onClose: closeModal,
-                children: <MessageNew {...modalMessageCreator(colorsState.send, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
+                children: <MessageNew {...modalMessageCreator(colorsState.send, lang)} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
             })
             if (colorsState.send.status === 'success') { //clear form if success
                 addFileFullRef.current?.clearAttachedFiles()

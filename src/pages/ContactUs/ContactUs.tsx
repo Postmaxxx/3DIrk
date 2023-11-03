@@ -90,7 +90,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
             modal?.openModal({
                 name: 'messageSend',
                 onClose: closeModal,
-                children: <MessageNew {...modalMessageCreator(userState.sendOrder, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
+                children: <MessageNew {...modalMessageCreator(userState.sendOrder, lang)} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
             })
         }
         if (userState.sendOrder.status === 'fetching') {

@@ -74,7 +74,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
             modal?.openModal({
                 name: 'productSend',
                 onClose: closeModal,
-                children: <MessageNew {...modalMessageCreator(catalogState.category.sendProduct, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
+                children: <MessageNew {...modalMessageCreator(catalogState.category.sendProduct, lang)} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
             })
         }
         if (catalogState.category.sendProduct.status === 'fetching') {
@@ -116,7 +116,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
             modal?.openModal({
                 name: 'errorChecker',
                 onClose: closeModal,
-                children: <MessageNew {...errChecker.result()} buttonClose={{action: closeModal, text: 'Close'}}/>
+                children: <MessageNew {...errChecker.result()} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
             })
             return
         }      
@@ -378,7 +378,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
                         </div>
 
                         <div className="block_text">
-                            <h3>{lang === 'en' ? 'Types' : 'Модификации'}</h3>           
+                            <h3>{lang === 'en' ? 'Modifications' : 'Модификации'}</h3>           
                         </div>
                         <div className="product_mods" ref={_mods}>
                             <Mods 

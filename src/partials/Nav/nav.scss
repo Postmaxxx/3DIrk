@@ -206,63 +206,63 @@ $gap_to_text: 5px;
 
                 &.extandable {
                     &:hover, &:focus-within, &:focus {
-                    &::before,&::after {
-                        height: 100%;
-                        top: 0;
-                        transition: all $transition_subMenu;
-                    }
-
-                    & > a, & > .nav-item__text {
-                        &::before, &::after {
-                            width: 0;
+                        &::before,&::after {
+                            height: 100%;
+                            top: 0;
                             transition: all $transition_subMenu;
                         }
-                        
-                    }
 
-                    & ul.submenu {
-
-                        & .submenu__item {
-                            grid-template-rows: 1fr;
-                            transform: translate(-50%, 0px);
-                            width: 200px;
-                            transition: transform $transition_subMenu $transition_subMenu, grid-template-rows $transition_subMenu $transition_subMenu, width $transition_subMenu 2*$transition_subMenu;
+                        & > a, & > .nav-item__text {
+                            &::before, &::after {
+                                width: 0;
+                                transition: all $transition_subMenu;
+                            }
                             
-                            @include respond-to(md) {
-                                width: 150px;
-                            }
-
-                            & > .submenu__content {
-                                padding-top: 15px;
-                                margin-top: 16px;
-                                border-right: 3px solid var(--main_em);
-                                border-left: 3px solid var(--main_em);
-                                border-bottom: 3px solid var(--main_em);
-                                border-bottom-left-radius: $brad_md;
-                                border-bottom-right-radius: $brad_md;
-                                padding-bottom: 20px;
-                                transition: padding $transition_subMenu 1*$transition_subMenu, margin $transition_subMenu $transition_subMenu, border 0s $transition_subMenu;
-    
-    
-                                @include respond-to(md) {
-                                    margin-top: 17px;
-                                    padding-top: 10px;
-                                    padding-bottom: 15px;
-                                }
-
-                                & > li {
-                                    transform: translate(-50%, 0px);
-                                    width: 100%;
-                                    transition: width $transition_subMenu 2*$transition_subMenu;
-
-                                }
-                            }
-    
-            
                         }
-                    }
 
-                }
+                        & ul.submenu {
+
+                            & .submenu__item {
+                                grid-template-rows: 1fr;
+                                transform: translate(-50%, 0px);
+                                width: 200px;
+                                transition: transform $transition_subMenu $transition_subMenu, grid-template-rows $transition_subMenu $transition_subMenu, width $transition_subMenu 2*$transition_subMenu;
+                                
+                                @include respond-to(md) {
+                                    width: 150px;
+                                }
+
+                                & > .submenu__content {
+                                    padding-top: 15px;
+                                    margin-top: 16px;
+                                    border-right: 3px solid var(--main_em);
+                                    border-left: 3px solid var(--main_em);
+                                    border-bottom: 3px solid var(--main_em);
+                                    border-bottom-left-radius: $brad_md;
+                                    border-bottom-right-radius: $brad_md;
+                                    padding-bottom: 20px;
+                                    transition: padding $transition_subMenu 1*$transition_subMenu, margin $transition_subMenu $transition_subMenu, border 0s $transition_subMenu;
+        
+        
+                                    @include respond-to(md) {
+                                        margin-top: 17px;
+                                        padding-top: 10px;
+                                        padding-bottom: 15px;
+                                    }
+
+                                    & > li {
+                                        transform: translate(-50%, 0px);
+                                        width: 100%;
+                                        transition: width $transition_subMenu 2*$transition_subMenu;
+
+                                    }
+                                }
+        
+                
+                            }
+                        }
+
+                    }
 
 
                 }
@@ -319,7 +319,7 @@ $gap_to_text: 5px;
 
         }
         
-        & > label {
+        & > .nav_desktop__hider {
             z-index: 200;
             height: 100%;
             margin-left: 5px;
@@ -329,13 +329,9 @@ $gap_to_text: 5px;
             display: flex;
             align-items: center;
             justify-content: center;
-
-            
-            & > input {
-                visibility: hidden;
-                position: absolute;
-            }
-            
+            background-color: transparent;
+            border: none;
+                        
             & > img {
                 height: 100%;
                 transform: rotate(13deg);
@@ -399,7 +395,7 @@ $gap_to_text: 5px;
             transform: translateX(0);
         } 
 
-        & .nav__switcher > label {
+        & .nav__switcher > .nav_desktop__hider {
             
             & .nav__sign {
                 & span {
@@ -758,7 +754,7 @@ $gap_to_text: 5px;
 
         }
         
-        & > label {
+        & > .nav_mobile__hider {
             z-index: 200;
             height: 100%;
             cursor: pointer;
@@ -766,18 +762,15 @@ $gap_to_text: 5px;
             display: flex;
             align-items: center;
             justify-content: center;
+            background-color: transparent;
+            border: none;
 
             @include respond-to(sm) {
                 position: relative;
                 left: 5px;
             }
 
-            
-            & > input {
-                visibility: hidden;
-                position: absolute;
-            }
-            
+                       
             & > img {
                 height: 100%;
                 transform: rotate(13deg);
@@ -849,7 +842,7 @@ $gap_to_text: 5px;
             transform: translateY(-$header_height);
         } 
 
-        & .nav__switcher > label {
+        & .nav__switcher > .nav_mobile__hider {
             
             & .nav__sign {
                 & span {

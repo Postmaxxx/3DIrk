@@ -61,7 +61,7 @@ const SpliderChanger: FC<IProps> = ({lang, content, modal, setState}): JSX.Eleme
             modal?.openModal({
                 name: 'contentSend',
                 onClose: closeModal,
-                children: <MessageNew {...modalMessageCreator(content.send, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
+                children: <MessageNew {...modalMessageCreator(content.send, lang)} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
             })
         }
         if (content.send.status === 'fetching') {
@@ -108,7 +108,7 @@ const SpliderChanger: FC<IProps> = ({lang, content, modal, setState}): JSX.Eleme
             modal?.openModal({
                 name: 'errorChecker',
                 onClose: closeModal,
-                children: <MessageNew {...errChecker.result()} buttonClose={{action: closeModal, text: 'Close'}}/>
+                children: <MessageNew {...errChecker.result()} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
             })
             return
         }

@@ -39,7 +39,7 @@ const Remover = <T,>({remove, idInstance, lang, disabled}: IProps<T>):JSX.Elemen
             disabled ? 
                 null
             :
-                <div className="remover" onClick={onClick} aria-label={lang === 'en' ? "Delete item" : 'Удалить объект'} tabIndex={0} onKeyDown={e => {e.code === 'Enter' && onClick()}}>
+                <div className="remover" onClick={onClick} aria-label={lang === 'en' ? "Delete this item" : 'Удалить этот объект'} tabIndex={0} onKeyDown={e => {e.code === 'Enter' && onClick()}}>
                     {svgs().iconDelete}
                     <div className={`remover__confirmation ${confirmation ? 'visible' : ''}`}>
                         <button className="remover__confirm" onClick={onConfirmClick} tabIndex={confirmation ? 0 : -1} onKeyDown={e => {e.code === 'Enter' && onConfirmClick(e)}}>{lang === 'en' ? 'Delete' : 'Удалить'}</button>

@@ -27,6 +27,7 @@
         border-radius: 5px;
         transition: border $transition_theme !important;
 
+
         @include respond-to(md) {
             width: 45%;
             height: 45%;
@@ -108,9 +109,11 @@
    
 
             }
-    
-        }
 
+            
+        }
+        
+    
 
         &:hover {
             border-color: 1px solid var(--main_em);

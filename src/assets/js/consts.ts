@@ -25,6 +25,9 @@ const socials: Record<string, string> = { //link to groups
     telegram: "https://telegram.org",
 }
 
+
+const listHiddenProps: (keyof IFiberParam)[] = ['priceGr']
+
 const maxAmountToOrder: number = 990 //max amount for amountChanger
 
 const defaultSelectItem = {
@@ -742,4 +745,4 @@ export { clearModalMessage, resetFetch, timeModalClosing,
     orderStatuses, usersPerPage, timeOffset, inputsProps, tipsTransition, socials,
     navList, newsItemEmpty, APIList, imageExtentions, maxAmountToOrder, loadNewsPerRequest,
     exceptionTimeout, exceptionFetch, DOMExceptions, statuses, defaultSelectItem, 
-    createNewItemId, gapForOrders, emptyImages, nwsp, debounceTime}
+    createNewItemId, gapForOrders, emptyImages, nwsp, debounceTime, listHiddenProps}

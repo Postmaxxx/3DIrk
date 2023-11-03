@@ -56,7 +56,7 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, modal, catalog}): JSX.El
             modal?.openModal({ //if error/success - show modal about send order
                 name: 'catalogSend',
                 onClose: closeModal,
-                children: <MessageNew {...modalMessageCreator(catalog.send, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
+                children: <MessageNew {...modalMessageCreator(catalog.send, lang)} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
             })
         }
         if (catalog.send.status === 'fetching') {
@@ -83,7 +83,7 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, modal, catalog}): JSX.El
             modal?.openModal({ //if error/success - show modal about send order
                 name: 'errorChecker',
                 onClose: closeModal,
-                children: <MessageNew {...errChecker.result()} text={[lang === 'en' ? 'Some fields are empty' : 'Присутствуют пустые поля']} buttonClose={{action: closeModal, text: 'Close'}}/>
+                children: <MessageNew {...errChecker.result()} text={[lang === 'en' ? 'Some fields are empty' : 'Присутствуют пустые поля']} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
             })  
             return
         }

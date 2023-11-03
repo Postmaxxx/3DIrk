@@ -67,6 +67,7 @@ export type TLangText = {
 //-------------------------------------------splider
 export interface ISpliderOptions {
 	type?   : string
+    slideFocus: boolean,
 	perPage?: number
 	gap?: string | number
 	lazyLoad?: boolean
@@ -287,8 +288,6 @@ export interface INewsState {
 export interface IBaseState {
     theme: TTheme
     lang: TLang
-    mobOpened: boolean //mobile nav panel opened
-    desktopOpened: boolean //desktop nav panel opened
     modal: React.RefObject<IModalFunctions>
 }
 

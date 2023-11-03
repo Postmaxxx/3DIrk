@@ -32,6 +32,7 @@ const MessageNew: React.FC<IProps> = ({buttonAdd, buttonClose, header, status, t
                     </button>}
                 {buttonClose && 
                     <button 
+                        data-testid='messageCloser'
                         className="button_blue button_light"
                         onClick={buttonClose?.action}>
                         {buttonClose?.text}

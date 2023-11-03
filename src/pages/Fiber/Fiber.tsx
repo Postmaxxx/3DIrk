@@ -45,7 +45,7 @@ const Fiber: React.FC<IProps> = ({lang, fibersState, colorsState, setState, moda
             modal?.openModal({ //if error/success - show modal about send order
                 name: 'fiberSend',
                 onClose: closeModal,
-                children: <MessageNew {...modalMessageCreator(fibersState.send, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
+                children: <MessageNew {...modalMessageCreator(fibersState.send, lang)} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
             })
         }
     }, [fibersState.send.status])
@@ -64,7 +64,7 @@ const Fiber: React.FC<IProps> = ({lang, fibersState, colorsState, setState, moda
 
 
     
-    const onImageClick = (e: React.MouseEvent , color: IColor) => {
+    const onImageClick = (e: React.MouseEvent | React.KeyboardEvent, color: IColor) => {
         e.stopPropagation()
         modal?.openModal({
             name: 'onFiberImageClick',
@@ -92,7 +92,14 @@ const Fiber: React.FC<IProps> = ({lang, fibersState, colorsState, setState, moda
             const colorData: IColor | undefined = colorsState.colors.find(colorItem => colorItem._id === color)
             if (colorData && colorData.active) {
                 return (
-                    <div key={i} className='color' onClick={(e) => onImageClick(e, colorData)}>
+                    <div 
+                        key={colorData._id} 
+                        className='color' 
+                        onClick={(e) => onImageClick(e, colorData)} 
+                        onKeyDown={e => {e.code === 'Enter' && onImageClick(e, colorData)}}
+                        tabIndex={0} 
+                        aria-label={lang === 'en' ? `Watch color ${colorData.name.en} more detailed` : `Посмотреть цвет ${colorData.name.ru} более подробно`}
+                    >
                         <div className="color__img-cont">
                             <ImgWithPreloader src={colorData.urls.thumb} alt={colorData.name[lang]}/>
                         </div>
@@ -101,7 +108,7 @@ const Fiber: React.FC<IProps> = ({lang, fibersState, colorsState, setState, moda
                 )
             }
         })
-    }, [colorsState.colors])
+    }, [colorsState.colors, lang])
 
 
     const renderFiberItem = useMemo(() => {
@@ -110,7 +117,11 @@ const Fiber: React.FC<IProps> = ({lang, fibersState, colorsState, setState, moda
             <article className="fiber">
                 <h1>{fiber.short.name[lang]} ({fiber.name[lang]})</h1>
                 <section className='fiber__images-text'>
-                    <SpliderCommon images={fiber.images} imagesPerSlide={fiber.images.files?.length > 3 ? 3 : fiber.images.files?.length} modal={modal}/>
+                    <SpliderCommon 
+                        images={fiber.images} 
+                        imagesPerSlide={fiber.images.files?.length > 3 ? 3 : fiber.images.files?.length} 
+                        modal={modal}
+                        lang={lang}/>
                     <div className="block_text">
                         {fiber.text[lang].split('\n').map((textItem, i) => <p key={textItem}>{textItem}</p>)}
                     </div>

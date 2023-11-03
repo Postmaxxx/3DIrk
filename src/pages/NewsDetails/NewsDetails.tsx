@@ -69,14 +69,14 @@ const NewsDetails: FC<IProps> = ({lang, setState, newsState, modal, isAdmin }): 
             modal?.openModal({
                 name: 'deleteNews',
                 onClose: closeModal,
-                children: <MessageNew {...modalMessageCreator(newsState.send, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
+                children: <MessageNew {...modalMessageCreator(newsState.send, lang)} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
             })
         }
         if (newsState.loadOne.status === 'error') { //if fail to load news
             modal?.openModal({
                 name: 'loadNews',
                 onClose: closeModal,
-                children: <MessageNew {...modalMessageCreator(newsState.loadOne, lang)} buttonClose={{action: closeModal, text: 'Close'}}/>
+                children: <MessageNew {...modalMessageCreator(newsState.loadOne, lang)} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
             })
         }
     }, [newsState.send, newsState.loadOne])
@@ -99,7 +99,8 @@ const NewsDetails: FC<IProps> = ({lang, setState, newsState, modal, isAdmin }): 
                                     <SpliderCommon 
                                         images={newsState.newsOne.images} 
                                         imagesPerSlide={Math.min(newsState.newsOne.images.files.length, 3)}
-                                        modal={modal}/>
+                                        modal={modal}
+                                        lang={lang}/>
                                 </div>
                             </>
                         </div>

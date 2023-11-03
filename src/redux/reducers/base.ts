@@ -27,36 +27,6 @@ const reducerBase = (state:IBaseState = initialBaseState, action: {type: TAction
             return {
                 ...state, theme: 'dark'
             }
-        case actionsListBase.SET_NAV_MOB_OPEN as 'SET_NAV_MOB_OPEN': 
-            return {
-                ...state, 
-                mobOpened: true
-            }
-        case actionsListBase.SET_NAV_MOB_CLOSE as 'SET_NAV_MOB_CLOSE': 
-            return {
-                ...state, 
-                mobOpened: false
-            }
-        case actionsListBase.SET_NAV_MOB_TOGGLE as 'SET_NAV_MOB_TOGGLE': 
-            return {
-                ...state, 
-                mobOpened: !state.mobOpened
-            }
-        case actionsListBase.SET_NAV_DT_OPEN as 'SET_NAV_DT_OPEN': 
-            return {
-                ...state,
-                desktopOpened: true
-            }
-        case actionsListBase.SET_NAV_DT_CLOSE as 'SET_NAV_DT_CLOSE': 
-            return {
-                ...state,
-                desktopOpened: false
-            }
-        case actionsListBase.SET_NAV_DT_TOGGLE as 'SET_NAV_DT_TOGGLE': 
-            return {
-                ...state,
-                desktopOpened: !state.desktopOpened
-            }
         case actionsListBase.SET_MODAL as 'SET_MODAL':
             return {
                 ...state,

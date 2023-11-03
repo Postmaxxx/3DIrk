@@ -88,11 +88,12 @@ const Featurer = forwardRef<IFeaturerFunctions, IProps>(({lang, type="input", am
                     return (
                         <div className="block_feature full-width" key={i}>
                             <div className="block_input" data-selector="input-block">
-                                <label>{lang === 'en' ? 'Value EN' : 'Значение EN'}</label>
+                                <label htmlFor={`feature-en-${i}`}>{lang === 'en' ? 'Value EN' : 'Значение EN'}</label>
                                 {type === "input" ? 
                                     <input 
                                         data-selector="input"
                                         name="en" 
+                                        id={`feature-en-${i}`}
                                         type="text" 
                                         onChange={(e) => onEditFeature(e, i)} 
                                         onKeyDown={onKeyDown}
@@ -101,17 +102,19 @@ const Featurer = forwardRef<IFeaturerFunctions, IProps>(({lang, type="input", am
                                     <textarea 
                                         data-selector="input"
                                         name="en" 
+                                        id={`feature-en-${i}`}
                                         onChange={(e) => onEditFeature(e, i)} 
                                         onKeyDown={onKeyDown}
                                         value={item.name.en}/>
                                 }
                             </div>
                             <div className="block_input" data-selector="input-block">
-                                <label>{lang === 'en' ? 'Value RU' : 'Значение RU'}</label>
+                                <label htmlFor={`feature-ru-${i}`}>{lang === 'en' ? 'Value RU' : 'Значение RU'}</label>
                                 {type === "input" ? 
                                     <input 
                                         data-selector="input"
                                         name="ru" 
+                                        id={`feature-ru-${i}`}
                                         type="text" 
                                         onKeyDown={onKeyDown}
                                         onChange={(e) => onEditFeature(e, i)} 
@@ -120,6 +123,7 @@ const Featurer = forwardRef<IFeaturerFunctions, IProps>(({lang, type="input", am
                                     <textarea 
                                         data-selector="input"
                                         name="ru" 
+                                        id={`feature-ru-${i}`}
                                         onKeyDown={onKeyDown}
                                         onChange={(e) => onEditFeature(e, i)} 
                                         value={item.name.ru}/>

@@ -1,6 +1,6 @@
 import './splider-common.scss'
 import Splide from "@splidejs/splide";
-import { IImages, ISpliderOptions } from '../../../interfaces';
+import { IImages, ISpliderOptions, TLang } from '../../../interfaces';
 import "@splidejs/react-splide/css";
 import { useRef, useEffect, MouseEvent, useMemo, useState } from 'react'
 import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
@@ -13,6 +13,7 @@ interface IProps {
 	images: IImages
     imagesPerSlide?: number
     modal: IModalFunctions | null
+	lang: TLang
 }
 
 interface IContainerSize {
@@ -22,7 +23,7 @@ interface IContainerSize {
 
 
 
-const SpliderCommon: React.FC<IProps> = ({images, imagesPerSlide=1, modal}): JSX.Element => {
+const SpliderCommon: React.FC<IProps> = ({images, imagesPerSlide=1, modal, lang}): JSX.Element => {
 	
 	const splideCommon = useRef<Splide>();
 	const containerSize = useRef<IContainerSize>();
@@ -43,6 +44,7 @@ const SpliderCommon: React.FC<IProps> = ({images, imagesPerSlide=1, modal}): JSX
 		autoplay: true,
 		interval: 5000,
 		pauseOnHover: true,
+		slideFocus: true,
 		breakpoints: {
 			768: {
 				wheel: false,
@@ -55,14 +57,12 @@ const SpliderCommon: React.FC<IProps> = ({images, imagesPerSlide=1, modal}): JSX
 		},
 	};
  
-	const handleImgClick = (e: MouseEvent<HTMLDivElement>) => {
-		if ((e.target as HTMLImageElement).tagName === 'IMG') {
-			const id = Number(((e.target as HTMLImageElement).id));
-			modal?.openModal({
-				name: 'spliderCommonModal',
-				children: <ImageModalNew url={`${images.basePath}/${images.sizes[images.sizes.length - 1].subFolder}/${images.files[id]}`}/>
-			})
-		}
+
+	const onItemClick = (index: number) => {
+		modal?.openModal({
+			name: 'spliderCommonModal',
+			children: <ImageModalNew url={`${images.basePath}/${images.sizes[images.sizes.length - 1].subFolder}/${images.files[index]}`}/>
+		})
 	}
 
 
@@ -84,9 +84,16 @@ const SpliderCommon: React.FC<IProps> = ({images, imagesPerSlide=1, modal}): JSX
 	const imagesCommon = useMemo(() => {
 		return images.files?.map((file, i) => {
 			return (
-				<li className="splide__slide" key={i}>
+				<li 
+					className="splide__slide" 
+					key={i} 
+					onClick={() => onItemClick(i)} 
+					tabIndex={0} 
+					onKeyDown={e => {e.code === 'Enter' && onItemClick(i)}} 
+					aria-label={lang === 'en' ? `Watch this slide more detailed` : `Посмотреть этот слайд более подробно`}
+				>
 					<div className="splide__slide-content">
-						{spliderCreated && <PicWithPreloader basePath={images.basePath} sizes={images.sizes} image={file} alt={file} id={`${i}`}/>}
+						{spliderCreated && <PicWithPreloader basePath={images.basePath} sizes={images.sizes} image={file} alt={`Image: ${file}`} />}
 					</div>
 				</li>
 			);
@@ -95,7 +102,7 @@ const SpliderCommon: React.FC<IProps> = ({images, imagesPerSlide=1, modal}): JSX
 
 
 	return (
-        <div className='splider_common__wrapper' onClick={(e) => handleImgClick(e)}>
+        <div className='splider_common__wrapper'>
             <div className="splide" ref={_splideFabric} aria-label="The slider of images">
                 <div className="splide__track">
                     <ul className="splide__list">

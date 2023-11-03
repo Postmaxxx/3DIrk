@@ -63,7 +63,7 @@ const AddToCart: React.FC<IProps> = ({data, lang, cart, modal, setState}): JSX.E
             modal?.openModal({ //if error/success - show modal about send order
                 name: 'cartAddError',
                 onClose: closeModal,
-                children: <MessageNew {...errChecker.result()} buttonClose={{action: closeModal, text: 'Close'}}/>
+                children: <MessageNew {...errChecker.result()} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
             })
             return
         }
@@ -105,7 +105,12 @@ const AddToCart: React.FC<IProps> = ({data, lang, cart, modal, setState}): JSX.E
                 <div className="amount-changer-wrapper">
                     <AmountChanger<IProduct['_id']> idInstance={data.product._id} initialAmount={amount} reset={amountChangerReset} lang={lang} onChange={onAmountChange} />
                 </div>
-                <button className='button_blue button_add-cart' title='Add to cart' onClick={addToCart}>{lang === 'en' ? 'Add to cart' : 'В корзину'}</button>
+                <button 
+                    className='button_blue button_add-cart' 
+                    aria-label={lang === 'en' ? `Add this product to cart (${amount} items)` : `Добавить этот продукт в корзину в количестве ${amount} штук`} 
+                    onClick={addToCart}>
+                        {lang === 'en' ? 'Add to cart' : 'В корзину'}
+                    </button>
             </div>
         </>
     )

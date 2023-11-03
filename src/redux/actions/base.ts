@@ -24,29 +24,6 @@ export const setTheme = <T extends TTheme>(payload: T): IAction<T> => ({
 })
 
 
-export const setNavOpenMob = <T>():IAction<T> => ({
-    type: actionsListBase.SET_NAV_MOB_OPEN,
-});
-export const setNavCloseMob = <T>():IAction<T> => ({
-    type: actionsListBase.SET_NAV_MOB_CLOSE,
-});
-export const setNavToggleMob = <T>():IAction<T> => ({
-    type: actionsListBase.SET_NAV_MOB_TOGGLE, 
-});
-
-
-
-export const setNavOpenDt = <T>():IAction<T> => ({
-    type: actionsListBase.SET_NAV_DT_OPEN,
-});
-export const setNavCloseDt = <T>():IAction<T> => ({
-    type: actionsListBase.SET_NAV_DT_CLOSE,
-});
-export const setNavToggleDt = <T>():IAction<T> => ({
-    type: actionsListBase.SET_NAV_DT_TOGGLE,
-});
-
-
 
 export const setModal = <T extends React.RefObject<IModalFunctions>>(payload: T):IAction<T> => ({
     type: actionsListBase.SET_MODAL,
