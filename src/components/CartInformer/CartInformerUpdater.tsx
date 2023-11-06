@@ -24,7 +24,7 @@ interface IPropsActions {
 interface IProps extends IPropsState, IPropsActions {}
 
 
-const CartInformerUpdater: React.FC<IProps> = ({cart, setState}): JSX.Element => {
+const CartInformerUpdater: React.FC<IProps> = ({cart, setState, lang}): JSX.Element => {
     const [itemsInCart, setItemsInCart] = useState<number>(0)
 
     const debouncedCartUpdate = useMemo(() => debounce(setState.user.sendCart, debounceTime), [])
@@ -42,7 +42,7 @@ const CartInformerUpdater: React.FC<IProps> = ({cart, setState}): JSX.Element =>
     return (
         <>
             {cart.load.status === 'success' && itemsInCart > 0 && 
-                <span className="cart-informer">+{itemsInCart}</span>
+                <span className="cart-informer" aria-label={lang === 'en' ? 'Total irems in cart' : 'Всего товаров в корзине'}>+{itemsInCart}</span>
             }
         </>
     )

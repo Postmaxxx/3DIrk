@@ -10,11 +10,14 @@ interface IProps {
     lang: TLang
 }
 
-const FibersParams: React.FC<IProps> = ({params, lang, fiber}): JSX.Element => {
+const FiberParams: React.FC<IProps> = ({params, lang, fiber}): JSX.Element => {
 
     const switchType = (param: IFiberProperties) => {
         if (param._id === "minTemp") {
-            return <div className="param"><span>{lang === "en" ? "Temperetures" : 't использования'}: </span><span></span><span>{params.minTemp} ... {params.maxTemp} {param.unit[lang]}</span></div>
+            return <div className="param">
+                    <span aria-label={lang === 'en' ? `Using temperatures: from ${params.minTemp} to ${params.maxTemp} ${param.unit[lang]}` : `Температуры использования: от ${params.minTemp} до ${params.maxTemp} ${param.unit[lang]}`}>{lang === "en" ? "Temperetures" : 't использования'}: </span>
+                    <span></span><span>{params.minTemp} ... {params.maxTemp} {param.unit[lang]}</span>
+                </div>
         }
         if (param.type === 'string') {
             return <div className="param"><span>{param.name[lang]}: </span><span></span><span>{params[param._id]} {param.unit[lang]}</span></div>
@@ -44,4 +47,4 @@ const FibersParams: React.FC<IProps> = ({params, lang, fiber}): JSX.Element => {
     )
 }
 
-export default FibersParams
+export default FiberParams

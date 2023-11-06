@@ -107,7 +107,7 @@ const AddToCart: React.FC<IProps> = ({data, lang, cart, modal, setState}): JSX.E
                 </div>
                 <button 
                     className='button_blue button_add-cart' 
-                    aria-label={lang === 'en' ? `Add this product to cart (${amount} items)` : `Добавить этот продукт в корзину в количестве ${amount} штук`} 
+                    aria-label={lang === 'en' ? `Add this product (${amount} items) to cart` : `Добавить этот продукт в корзину в количестве ${amount} штук`} 
                     onClick={addToCart}>
                         {lang === 'en' ? 'Add to cart' : 'В корзину'}
                     </button>

@@ -1,3 +1,4 @@
+import { TLang } from "src/interfaces"
 import "./uploader.scss"
 
 
@@ -5,7 +6,7 @@ interface IProps {
     text: string
 }
 
-const Uploader = (props: IProps) => {
+const Uploader = ({text}: IProps) => {
     return (
         <div className="uploader">
             <svg className="uploader__image" viewBox="0 0 100 100">
@@ -66,7 +67,7 @@ const Uploader = (props: IProps) => {
                         repeatCount="indefinite" />
                 </g>
             </svg>
-            <span className="uploader__text">{props.text}</span>
+            <span className="uploader__text">{text}</span>
         </div>
     )
 }

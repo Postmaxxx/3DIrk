@@ -205,7 +205,7 @@ $gap_to_text: 5px;
 
 
                 &.extandable {
-                    &:hover, &:focus-within, &:focus {
+                    &:hover, &:focus-within {
                         &::before,&::after {
                             height: 100%;
                             top: 0;

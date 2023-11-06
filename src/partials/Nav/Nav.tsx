@@ -1,4 +1,4 @@
-import { useState, useRef, useMemo, useCallback } from "react";
+import { useState, useRef, useMemo, useCallback, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { IFiber, IFullState, TId, TLang } from "../../interfaces";
 import "./nav.scss"
@@ -16,6 +16,7 @@ import useScreenMeter from "../../../src/hooks/screenMeter";
 import LangSwitcher from "../../../src/components/LangSwitcher/LangSwitcher";
 import ThemeSwitcher from "../../../src/components/ThemeSwitcher/ThemeSwitcher";
 import React from 'react'
+import { lockFocusInside, prevent } from "../../assets/js/processors";
 
 
 interface IPropsState {
@@ -43,14 +44,36 @@ const Nav:React.FC<IProps> = ({lang, setState, fibersList, isAdmin, modal, isAut
     const [expandedNavItems, setExpandedNavItems] = useState<TId | null>(null)
     const [desktopOpened, setDesktopOpened] = useState<boolean>(true)
     const [mobOpened, setMobOpened] = useState<boolean>(false)
+    const _navMobile = useRef<HTMLDivElement | null>(null)
+    const focuser = useRef<ReturnType<typeof lockFocusInside>>()
+
 
     const navToggle = () => {
         setDesktopOpened(prev => !prev)
     }
 
-    const navToggleMobile = () => {
+    const navToggleMobile = (e: React.KeyboardEvent | React.MouseEvent) => {       
         setMobOpened(prev => !prev)
     }
+
+
+    useEffect(() => {
+        if (_navMobile.current && mobOpened) {           
+            focuser.current?.destroy()
+            focuser.current = lockFocusInside({_element: _navMobile.current, returnFocus: false})
+        } 
+        return () => {
+            focuser.current?.destroy()
+        }
+    }, [mobOpened, lang])
+
+
+    useEffect(() => {
+        if (_navMobile.current && mobOpened) {           
+            focuser.current?.rebuild()
+        } 
+    }, [expandedNavItems])
+
 
     const screenWidth = useScreenMeter()
 
@@ -83,64 +106,43 @@ const Nav:React.FC<IProps> = ({lang, setState, fibersList, isAdmin, modal, isAut
     }
 
 
+    const NavItem = ({level, to, end=false, tab=true, children, k}: {level: string, to: string, end?: boolean, tab?: boolean, children:React.ReactNode, k?: string}) => {
+        return (
+            <li className={level === '1' ? "nav-item" : 'submenu__item__point'} key={k}>
+                <NavLink className={({ isActive }) => `nav-text_level_${level} ${isActive ? "selected" : ""}`} to={to} onClick={e => (e.target as HTMLElement).blur()} end={end} tabIndex={tab ? 0 : -1}>
+                    {children}
+                </NavLink>
+            </li>
+        )
+    }
+
+
+
+
+
     const desktopNav = useMemo(() => {
         return <nav className={desktopOpened ? "nav_desktop opened" : "nav_desktop"} data-testid='nav_desktop'>
         <div className="nav__container">
             <ul className="nav__list" data-testid='navListDesktop'>
-                <li className="nav-item">
-                    <NavLink className={({ isActive }) => `nav-text_level_1 ${isActive ? "selected" : ""}`} to={navList.home.to}>
-                        {navList.home[lang]}
-                    </NavLink>
-                </li>
+                <NavItem level='1' to={navList.home.to}>{navList.home[lang]}</NavItem>
 
                 <li className="nav-item extandable">
-                    <NavLink className={({ isActive }) => `nav-text_level_1 ${isActive ? "selected" : ""}`} to={navList.fibers.to} tabIndex={-1}>
-                        {navList.fibers[lang]}
-                    </NavLink>
+                    <span className="nav-item__text nav-item__level_1">{navList.fibers[lang]}</span>
                     <ul className="submenu">
                         <li className="submenu__item">
                             <ul className="submenu__content">
-                                <li className="submenu__item__point">
-                                    <NavLink className={({ isActive }) => `nav-text_level_2 ${isActive ? "selected" : ""}`} to={navList.fibers.about.to} end>
-                                        {navList.fibers.about[lang]}
-                                    </NavLink>
-                                </li>
-                                <li className="submenu__item__point">
-                                    <NavLink className={({ isActive }) => `nav-text_level_2 ${isActive ? "selected" : ""}`} to={navList.fibers.compare.to} end>
-                                        {navList.fibers.compare[lang]}
-                                    </NavLink>
-                                </li>
-                                {fibersList.filter(fiber => fiber.active)?.map(fiber => {
-                                    return (
-                                        <li key={fiber._id} className="submenu__item__point">
-                                           <NavLink className={({ isActive }) => `nav-text_level_2 ${isActive ? "selected" : ""}`} to={`fibers/${fiber._id}`}>
-                                               {fiber.short.name[lang]}
-                                           </NavLink>
-                                        </li>
-                                    )
-                                })}
+                                <NavItem level='2' to={navList.fibers.about.to} end={true}>{navList.fibers.about[lang]}</NavItem>
+                                <NavItem level='2' to={navList.fibers.compare.to} end={true}>{navList.fibers.compare[lang]}</NavItem>
+                                {fibersList.filter(fiber => fiber.active)?.map(fiber => <NavItem level='2' to={`fibers/${fiber._id}`} key={fiber._id}>{fiber.short.name[lang]}</NavItem>)}
                             </ul>
                         </li>
                     </ul>
                 </li>
-                <li className="nav-item">
-                    <NavLink className={({ isActive }) => `nav-text_level_1 ${isActive ? "selected" : ""}`} to={navList.catalog.to}>
-                        {navList.catalog[lang]}
-                    </NavLink>
-                </li>
+                    <NavItem level='1' to={navList.catalog.to}>{navList.catalog[lang]}</NavItem>
                 {isAuth ? 
-                    <li className="nav-item">
-                        <NavLink className={({ isActive }) => `nav-text_level_1 ${isActive ? "selected" : ""}`} to={navList.account.cart.to} data-testid='navCart'>
-                            {navList.account.cart[lang]}
-                        </NavLink>
-                        <CartInformer />        
-                    </li>
+                    <NavItem level='1' to={navList.account.cart.to}>{navList.account.cart[lang]}<CartInformer /></NavItem>
                 :
-                    <li className="nav-item">
-                        <NavLink className={({ isActive }) => `nav-text_level_1 ${isActive ? "selected" : ""}`} to={navList.contacts.to}>
-                            {navList.contacts[lang]}
-                        </NavLink>
-                    </li>
+                    <NavItem level='1' to={navList.contacts.to}>{navList.contacts[lang]}</NavItem>
                 }
                 
                 {isAuth ? 
@@ -149,53 +151,17 @@ const Nav:React.FC<IProps> = ({lang, setState, fibersList, isAdmin, modal, isAut
                         <ul className="submenu">
                             <li className="submenu__item">
                                 <ul className="submenu__content">
-                                    <li className="submenu__item__point">
-                                        <NavLink className={({ isActive }) => `nav-text_level_2 ${isActive ? "selected" : ""}`} to={navList.account.order.to}>
-                                            {navList.account.order[lang]}
-                                        </NavLink>
-                                    </li>
-                                    <li className="submenu__item__point">
-                                        <NavLink className={({ isActive }) => `nav-text_level_2 ${isActive ? "selected" : ""}`} to={navList.account.orders.to}>
-                                            {navList.account.orders[lang]}
-                                        </NavLink>
-                                    </li>
-                                    <li className="submenu__item__point">
-                                        <NavLink className={({ isActive }) => `nav-text_level_2 ${isActive ? "selected" : ""}`} to={navList.contacts.to}>
-                                            {navList.contacts[lang]}
-                                        </NavLink>
-                                    </li>
+                                    <NavItem level='2' to={navList.account.order.to}>{navList.account.order[lang]}</NavItem>
+                                    <NavItem level='2' to={navList.account.orders.to}>{navList.account.orders[lang]}</NavItem>
+                                    <NavItem level='2' to={navList.contacts.to}>{navList.contacts[lang]}</NavItem>
                                     {isAdmin && 
                                         <>
-                                            <li className="submenu__item__point">
-                                                <NavLink className={({ isActive }) => `nav-text_level_2 ${isActive ? "selected" : ""}`} to={navList.account.admin.news.to} >
-                                                    {navList.account.admin.news[lang]}
-                                                </NavLink>
-                                            </li>
-                                            <li className="submenu__item__point">
-                                                <NavLink className={({ isActive }) => `nav-text_level_2 ${isActive ? "selected" : ""}`} to={navList.account.admin.color.to} >
-                                                    {navList.account.admin.color[lang]}
-                                                </NavLink>
-                                            </li>
-                                            <li className="submenu__item__point">
-                                                <NavLink className={({ isActive }) => `nav-text_level_2 ${isActive ? "selected" : ""}`} to={navList.account.admin.fiber.to} >
-                                                    {navList.account.admin.fiber[lang]}
-                                                </NavLink>
-                                            </li>
-                                            <li className="submenu__item__point">
-                                                <NavLink className={({ isActive }) => `nav-text_level_2 ${isActive ? "selected" : ""}`} to={navList.account.admin.catalog.to} >
-                                                    {navList.account.admin.catalog[lang]}
-                                                </NavLink>
-                                            </li>
-                                            <li className="submenu__item__point">
-                                                <NavLink className={({ isActive }) => `nav-text_level_2 ${isActive ? "selected" : ""}`} to={navList.account.admin.product.to} >
-                                                    {navList.account.admin.product[lang]}
-                                                </NavLink>
-                                            </li>
-                                            <li className="submenu__item__point">
-                                                <NavLink className={({ isActive }) => `nav-text_level_2 ${isActive ? "selected" : ""}`} to={navList.account.admin.content.to} >
-                                                    {navList.account.admin.content[lang]}
-                                                </NavLink>
-                                            </li>
+                                            <NavItem level='2' to={navList.account.admin.news.to}>{navList.account.admin.news[lang]}</NavItem>
+                                            <NavItem level='2' to={navList.account.admin.color.to}>{navList.account.admin.color[lang]}</NavItem>
+                                            <NavItem level='2' to={navList.account.admin.fiber.to}>{navList.account.admin.fiber[lang]}</NavItem>
+                                            <NavItem level='2' to={navList.account.admin.catalog.to}>{navList.account.admin.catalog[lang]}</NavItem>
+                                            <NavItem level='2' to={navList.account.admin.product.to}>{navList.account.admin.product[lang]}</NavItem>
+                                            <NavItem level='2' to={navList.account.admin.content.to}>{navList.account.admin.content[lang]}</NavItem>
                                         </>}
                                     <li className="submenu__item__point">
                                         <a role="button" tabIndex={0} onClick={() => onClickNotLink('logout')} onKeyDown={e => {e.code === 'Enter' && onClickNotLink('logout')}} data-testid='btn_logout_desktop'>{navList.account.logout[lang]}</a>
@@ -239,13 +205,29 @@ const Nav:React.FC<IProps> = ({lang, setState, fibersList, isAdmin, modal, isAut
 
                 //------------------------------------------------------------------ MOBILE
 
+    const NavItemMob = ({level, to, end=false, tab, children, k, addClass}: {level: string, to: string, end?: boolean, tab?: string, children:React.ReactNode, k?: string, addClass?: string}) => {
+        return (
+            <li className={`${level === '1' ? 'nav-item' : ''} ${level === '2' ? 'submenu__item' : ''} ${addClass}`} key={k}>
+                <NavLink 
+                    className={({ isActive }) => `nav-text_level_${level} ${isActive ? "selected" : ""}`} 
+                    to={to} 
+                    onClick={(e) => navToggleMobile(e)}
+                    end={end} 
+                    tabIndex={(expandedNavItems === tab || tab === 'always') ? 0 : -1}
+                >
+                    {children}
+                </NavLink>
+            </li>
+        )
+    }
+
 
     const mobileNav = useMemo(() => {
-        return  <nav className={mobOpened ? "nav_mobile opened" : "nav_mobile"} data-testid='nav_mobile'>
+        return  <nav className={mobOpened ? "nav_mobile opened" : "nav_mobile"} data-testid='nav_mobile' ref={_navMobile}>
         <div className="nav__switcher">
             <button 
                 className="nav_mobile__hider"
-                onClick={navToggleMobile}
+                onClick={(e) => navToggleMobile(e)}
                 data-testid='nav_mobile__hider'
                 aria-label={lang === 'en' ? `${desktopOpened ? 'Hide' : 'Show'} navigation` : `${desktopOpened ? 'Скрыть' : 'Показать'} меню`}
             >
@@ -262,15 +244,9 @@ const Nav:React.FC<IProps> = ({lang, setState, fibersList, isAdmin, modal, isAut
                 {screenWidth.sm && <ThemeSwitcher />}
             </div>
             <ul className="nav__list" data-testid='navListMobile'>
-                <li className="nav-item">
-                    <NavLink 
-                        className={({ isActive }) => `nav-text_level_1 ${isActive ? "selected" : ""}`} 
-                        to={navList.home.to} 
-                        onClick={navToggleMobile}>
-                            {navList.home[lang]}
-                    </NavLink>
-                </li>
-
+                <NavItemMob level='1' to={navList.home.to} tab='always'>
+                    {navList.home[lang]}
+                </NavItemMob>
                 <li className={`nav-item ${expandedNavItems === 'fibers' ? 'expanded' : ''}`} data-testid='navItemExpandable'>
                     <span 
                         className="nav-item__text nav-text_level_1" 
@@ -282,70 +258,30 @@ const Nav:React.FC<IProps> = ({lang, setState, fibersList, isAdmin, modal, isAut
                     </span>
                     <div className="submenu__container">
                         <ul className="submenu">
-                            <li className="submenu__item">
-                                <NavLink 
-                                    className={({ isActive }) => `nav-text_level_2 ${isActive ? "selected" : ""}`} 
-                                    onClick={navToggleMobile}
-                                    to={navList.fibers.about.to}
-                                    tabIndex={expandedNavItems === 'fibers' ? 0 : -1}
-                                    end
-                                >
-                                        {navList.fibers.about[lang]}
-                                </NavLink>
-                            </li>
-                            <li className="submenu__item">
-                                <NavLink 
-                                    className={({ isActive }) => `nav-text_level_2 ${isActive ? "selected" : ""}`} 
-                                    onClick={navToggleMobile}
-                                    to={navList.fibers.compare.to}
-                                    tabIndex={expandedNavItems === 'fibers' ? 0 : -1}
-                                    end
-                                >
-                                        {navList.fibers.compare[lang]}
-                                </NavLink>
-                            </li>
-                            {fibersList.filter(fiber => fiber.active)?.map((fiber) => {
-                                return (
-                                    <li key={fiber._id} className="submenu__item">
-                                        <NavLink 
-                                            className={({ isActive }) => `nav-text_level_2 ${isActive ? "selected" : ""}`} 
-                                            onClick={navToggleMobile}
-                                            to={`fibers/${fiber._id}`}
-                                            tabIndex={expandedNavItems === 'fibers' ? 0 : -1}
-                                        end>
-                                                {fiber.short.name[lang]}
-                                        </NavLink>
-                                    </li>
-                                )
-                            })}
+                            <NavItemMob level='2' to={navList.home.to} end={true} tab='fibers'>{navList.fibers.about[lang]}</NavItemMob>
+                            <NavItemMob level='2' to={navList.fibers.compare.to} end={true} tab='fibers'>{navList.fibers.compare[lang]}</NavItemMob>
+
+                            {fibersList.filter(fiber => fiber.active)?.map((fiber) => (
+                                <NavItemMob level='2' to={`fibers/${fiber._id}`} end={true} tab='fibers' key={fiber._id}>
+                                    {fiber.short.name[lang]}
+                                </NavItemMob>)
+                            )}
                         </ul>
                     </div>              
                 </li>
 
-                <li className="nav-item">
-                    <NavLink 
-                        className={({ isActive }) => `nav-text_level_1 ${isActive ? "selected" : ""}`} 
-                        to={navList.catalog.to} 
-                        onClick={navToggleMobile}>
-                            {navList.catalog[lang]}
-                    </NavLink>
-                </li>
+                <NavItemMob level='1' to={navList.catalog.to} tab='always'>
+                    {navList.catalog[lang]}
+                </NavItemMob>
                 {isAuth ?
-                    <li className="narrow nav-item">
-                        <NavLink 
-                            className={({ isActive }) => `nav-text_level_1 ${isActive ? "selected" : ""}`} 
-                            to={navList.cart.to} 
-                            onClick={navToggleMobile}>
-                                {navList.cart[lang]}
-                        </NavLink>
+                    <NavItemMob level='1' to={navList.cart.to} tab='always' addClass="narrow">
+                        {navList.cart[lang]}
                         <CartInformer />        
-                    </li>
+                    </NavItemMob>
                 :
-                    <li className="nav-item">
-                        <NavLink className={({ isActive }) =>`nav-text_level_1 ${isActive ? "selected" : ""}`} to={navList.contacts.to} onClick={navToggleMobile}>
-                            {navList.contacts[lang]}
-                        </NavLink>
-                    </li>
+                    <NavItemMob level='1' to={navList.contacts.to} tab='always'>
+                        {navList.contacts[lang]}
+                    </NavItemMob>
                 }
 
                 
@@ -361,105 +297,59 @@ const Nav:React.FC<IProps> = ({lang, setState, fibersList, isAdmin, modal, isAut
                         </span>
                         <div className="submenu__container">
                             <ul className="submenu noscroll">
-                                <li className="submenu__item">
-                                    <NavLink 
-                                        className={({ isActive }) => `nav-text_level_2 ${isActive ? "selected" : ""}`}  
-                                        to={navList.account.order.to} 
-                                        onClick={navToggleMobile}
-                                        tabIndex={expandedNavItems === 'cabinet' ? 0 : -1}
-                                    >
-                                            {navList.account.order[lang]}
-                                    </NavLink>
-                                </li>
-                                <li className="submenu__item">
-                                    <NavLink 
-                                        className={({ isActive }) => `nav-text_level_2 ${isActive ? "selected" : ""}`}  
-                                        to={navList.account.orders.to} 
-                                        onClick={navToggleMobile}
-                                        tabIndex={expandedNavItems === 'cabinet' ? 0 : -1}
-                                    >
-                                            {navList.account.orders[lang]}
-                                    </NavLink>
-                                </li>
-                                <li className="submenu__item">
-                                    <NavLink 
-                                        className={({ isActive }) => `nav-text_level_2 ${isActive ? "selected" : ""}`} 
-                                        to={navList.contacts.to} 
-                                        onClick={navToggleMobile}
-                                        tabIndex={expandedNavItems === 'cabinet' ? 0 : -1}
-                                    >
-                                            {navList.contacts[lang]}
-                                    </NavLink>
-                                </li>
-                                <li className="submenu__item">
-                                    <NavLink 
-                                        className={({ isActive }) => `nav-text_level_2 ${isActive ? "selected" : ""}`}  
-                                        to={navList.account.admin.news.to} 
-                                        onClick={navToggleMobile}
-                                        tabIndex={expandedNavItems === 'cabinet' ? 0 : -1}
-                                    >
-                                            {navList.account.admin.news[lang]}
-                                    </NavLink>
-                                </li>
-                                <li className="submenu__item">
-                                    <NavLink 
-                                        className={({ isActive }) => `nav-text_level_2 ${isActive ? "selected" : ""}`}  
-                                        to={navList.account.admin.color.to} 
-                                        onClick={navToggleMobile}
-                                        tabIndex={expandedNavItems === 'cabinet' ? 0 : -1}
-                                    >
-                                            {navList.account.admin.color[lang]}
-                                    </NavLink>
-                                </li>
-                                <li className="submenu__item">
-                                    <NavLink 
-                                        className={({ isActive }) => `nav-text_level_2 ${isActive ? "selected" : ""}`}  
-                                        to={navList.account.admin.fiber.to} 
-                                        onClick={navToggleMobile}
-                                        tabIndex={expandedNavItems === 'cabinet' ? 0 : -1}
-                                    >
-                                            {navList.account.admin.fiber[lang]}
-                                    </NavLink>
-                                </li>
-                                <li className="submenu__item">
-                                    <NavLink 
-                                        className={({ isActive }) => `nav-text_level_2 ${isActive ? "selected" : ""}`} 
-                                        to={navList.account.admin.catalog.to} 
-                                        onClick={navToggleMobile}
-                                        tabIndex={expandedNavItems === 'cabinet' ? 0 : -1}
-                                    >
-                                            {navList.account.admin.catalog[lang]}
-                                    </NavLink>
-                                </li>
-                                <li className="submenu__item">
-                                    <NavLink 
-                                        className={({ isActive }) => `nav-text_level_2 ${isActive ? "selected" : ""}`} 
-                                        to={navList.account.admin.product.to} 
-                                        onClick={navToggleMobile}
-                                        tabIndex={expandedNavItems === 'cabinet' ? 0 : -1}
-                                    >
-                                            {navList.account.admin.product[lang]}
-                                    </NavLink>
-                                </li>
-                                <li className="submenu__item">
-                                    <NavLink 
-                                        className={({ isActive }) => `nav-text_level_2 ${isActive ? "selected" : ""}`}  
-                                        to={navList.account.admin.content.to} 
-                                        onClick={navToggleMobile}
-                                        tabIndex={expandedNavItems === 'cabinet' ? 0 : -1}
-                                    >
-                                            {navList.account.admin.content[lang]}
-                                    </NavLink>
-                                </li>
-                                <li className="submenu__item">
-                                    <a role="button" className="button_link nav-text_level_1" onClick={() => {onClickNotLink('logout'); navToggleMobile()}} data-testid='btn_logout_mobile'>{navList.account.logout[lang]}</a>
-                                </li>
+                            <NavItemMob level='2' to={navList.account.order.to} tab='cabinet'>
+                                {navList.account.order[lang]}
+                            </NavItemMob>
+                            <NavItemMob level='2' to={navList.account.orders.to} tab='cabinet'>
+                                {navList.account.orders[lang]}
+                            </NavItemMob>
+                            <NavItemMob level='2' to={navList.contacts.to} tab='cabinet'>
+                                {navList.contacts[lang]}
+                            </NavItemMob>
+                            {isAdmin &&
+                            <>
+                                <NavItemMob level='2' to={navList.account.admin.news.to}  tab='cabinet'>
+                                    {navList.account.admin.news[lang]}
+                                </NavItemMob>
+                                <NavItemMob level='2' to={navList.account.admin.color.to}  tab='cabinet'>
+                                    {navList.account.admin.color[lang]}
+                                </NavItemMob>
+                                <NavItemMob level='2' to={navList.account.admin.fiber.to}  tab='cabinet'>
+                                    {navList.account.admin.fiber[lang]}
+                                </NavItemMob>
+                                <NavItemMob level='2' to={navList.account.admin.catalog.to}  tab='cabinet'>
+                                    {navList.account.admin.catalog[lang]}
+                                </NavItemMob>
+                                <NavItemMob level='2' to={navList.account.admin.product.to}  tab='cabinet'>
+                                    {navList.account.admin.product[lang]}
+                                </NavItemMob>
+                                <NavItemMob level='2' to={navList.account.admin.content.to}  tab='cabinet'>
+                                    {navList.account.admin.content[lang]}
+                                </NavItemMob>
+                            </>}
+                            <li className="submenu__item">
+                                <button  
+                                    role="button" 
+                                    tabIndex={0} 
+                                    className="button_nostyle nav-text_level_1" 
+                                    onClick={(e) => {onClickNotLink('logout'); navToggleMobile(e)}} 
+                                    onKeyDown={e => {e.code === 'Enter' && onClickNotLink('logout'); navToggleMobile(e)}}
+                                    data-testid='btn_logout_mobile'>
+                                        {navList.account.logout[lang]}
+                                </button>
+                            </li>
                             </ul>
                         </div>
                     </li>
                 :
                     <li className="nav-item">
-                        <a role="button" className="button_link nav-text_level_1" onClick={() => {onClickNotLink('login'); navToggleMobile()}} data-testid='btn_login_mobile'>{navList.account.login[lang]}</a>
+                        <button 
+                            role="button" 
+                            className="button_nostyle nav-text_level_1" 
+                            onClick={(e) => {onClickNotLink('login'); navToggleMobile(e)}} 
+                            data-testid='btn_login_mobile'>
+                                {navList.account.login[lang]}
+                        </button>
                     </li>
                 }
             </ul>

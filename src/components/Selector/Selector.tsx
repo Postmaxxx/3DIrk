@@ -13,7 +13,7 @@ export interface IItem {
 interface IProps {
     id: string
     lang: TLang
-    label?: TLangText
+    label: TLangText
     defaultData?: IItem
     data?: IItem[]
     onBlur?: (e: React.FocusEvent<HTMLSelectElement>) => void
@@ -91,7 +91,7 @@ const Selector = forwardRef<ISelectorFunctions, IProps>(({lang, id, label, defau
 
     return (
         <div className="selector block_input" data-selector="input-block">
-            {label && <label htmlFor={id}>{label[lang]}</label>}
+            <label htmlFor={id}>{label[lang]}</label>
             <select 
                 data-selector="select"
                 ref={selectRef} 

@@ -8,7 +8,7 @@ import { Dispatch } from "redux";
 import { allActions } from '../../redux/actions/all';
 import Preloader from '../../components/Preloaders/Preloader';
 import { IModalFunctions } from '../../../src/components/Modal/ModalNew';
-import CarouselMaxAdaptive from '../../../src/components/CarouselMax/CarouselMaxAdaptive';
+import CarouselMaxAdaptive from '../../components/CarouselMax/CarouselMax';
 
 
 interface IPropsState {

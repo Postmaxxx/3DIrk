@@ -68,7 +68,7 @@ const imagesResizerUploaderS3 = async ({files = [], format = 'webp', sizesConver
                 }
 
                 await filesUploaderS3({
-                    bucketName: '3di',
+                    bucketName: process.env.s3BucketName,
                     folderName: `${size.path}/`,
                     files: [fileToUpload],
                     checkFolder: false,
@@ -156,7 +156,7 @@ const resizeAndSaveS3 = async ({files=[], clearDir = false, basePath = allPaths.
                     }
     
                     await filesUploaderS3({
-                        bucketName: '3di',
+                        bucketName: process.env.s3BucketName,
                         folderName: `${basePath}/${size}/`,
                         files: [fileToUpload],
                         checkFolder: false,

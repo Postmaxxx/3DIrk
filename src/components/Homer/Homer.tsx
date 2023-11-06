@@ -1,12 +1,13 @@
 import { useRef } from 'react'
 import './homer.scss'
 import svgs from '../additional/svgs';
+import { TLang } from 'src/interfaces';
 
 
 
-const Homer = () => {
+const Homer = ({lang}: {lang: TLang}) => {
 
-    const _homer = useRef<HTMLDivElement>(null)
+    const _homer = useRef<HTMLButtonElement>(null)
 
 
     window.onscroll = () => {
@@ -27,9 +28,9 @@ const Homer = () => {
 
 
     return (
-        <div className='homer' data-testid="homer" onClick={onHomerClicked} ref={_homer}>
+        <button className='homer button_nostyle' data-testid="homer" onClick={onHomerClicked} ref={_homer} aria-label={lang === 'en' ? 'Go to the top of the page' : 'Перейти к началу страницы'} tabIndex={-1}>
             {svgs().iconHomer}
-        </div>
+        </button>
     )
 }
 

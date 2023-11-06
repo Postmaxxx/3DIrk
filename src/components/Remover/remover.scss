@@ -34,8 +34,7 @@
         left: 50%;
         transform: translate(-50%, -50%) scale(0);
         border-radius: 5px;
-        //visibility: hidden;
-        transition: transform $transition-fast;
+        transition: $transition-fast;
 
         & .remover__confirm, .remover__cancel {
             padding: 0px 10px;

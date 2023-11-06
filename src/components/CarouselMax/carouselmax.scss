@@ -63,6 +63,7 @@
 
 
             & .image-extender {
+                visibility: hidden;
                 position: absolute;
                 left: 5%;
                 bottom: 5%;
@@ -78,6 +79,12 @@
 
                 &:hover {
                     transform: scale(1.3);
+                }
+            }
+
+            &:hover {
+                & .image-extender {
+                    visibility: visible;
                 }
             }
             

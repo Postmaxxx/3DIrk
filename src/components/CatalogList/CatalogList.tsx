@@ -55,7 +55,7 @@ const CatalogList: React.FC<IProps> = ({catalog, lang, selectedCategory, isAdmin
 		<div className="catalog-list">
 			<div className="list">
 				{catalog.load.status === 'success' &&
-					<ul className="list__content">
+					<ul className="list__content" aria-label={lang === 'en' ? 'Categories of our catalog' : 'Наши категории'}>
 						{catalog.list.filter(category => category.active)?.map((category: ICatalogItem): JSX.Element => {
 							return (
 								<li 
@@ -64,6 +64,7 @@ const CatalogList: React.FC<IProps> = ({catalog, lang, selectedCategory, isAdmin
 									className={category._id === selectedCategory ? "selected" : ""}
 									onClick={() => setState.catalog.loadCategory({_id: category._id})}
 									onKeyDown={(e) => {e.code === 'Enter' && setState.catalog.loadCategory({_id: category._id})}}
+									aria-label={`${category.name[lang]}, ${lang === 'en' ? `Total products in category: ${category.active}` : `Всего продуктов в категории: ${category.active}`}`}
 								>
 									{category.name[lang]} ({category.active || 0})
 								</li>

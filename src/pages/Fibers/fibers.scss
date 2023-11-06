@@ -5,6 +5,9 @@
     transition: background-color $transition-theme;
 	flex-grow: 1;
 	
+	& .fibers__previews {
+		padding-top: 80px;
+	}
 
 	& .block_text {
 		margin-top: 2rem;

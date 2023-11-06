@@ -26,8 +26,16 @@ const Offliner: FC<IOffliner> =({lang}): JSX.Element => {
     }, [])
 
     return (
-        <div className="offliner" data-testid="offliner" onClick={() => setOffline(false)}>
-            {offline && <span>{lang === 'en' ? 'You are offline (click to close)' : 'Вы не в сети (щелкните чтобы закрыть)'}</span>}
+        <div className="offliner" data-testid="offliner">
+            {offline && 
+                <span 
+                    onClick={() => setOffline(false)}
+                    tabIndex={0}
+                    onKeyDown={e => {e.code === 'Enter' && setOffline(false)}}
+                >
+                    {lang === 'en' ? 'You are offline (click to close)' : 'Вы не в сети (щелкните чтобы закрыть)'}
+                </span>
+            }
         </div>
     )
 }

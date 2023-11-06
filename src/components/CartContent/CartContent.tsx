@@ -3,7 +3,7 @@ import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import './cart-content.scss'
 import { ICartItem, ICartState, IColor, IColorsState, IFibersState, IFullState, IProduct, TLang } from "../../interfaces";
-import { useCallback, useMemo, Fragment, useEffect } from 'react'
+import { useCallback, useMemo, Fragment } from 'react'
 import { NavLink } from "react-router-dom";
 import Remover from "../Remover/Remover";
 import AmountChanger from "../AmountChanger/AmountChanger";
@@ -13,7 +13,6 @@ import ErrorMock from "../ErrorFetch/ErrorFetch";
 import ImageModalNew from "../ImageModal/ImageModalNew";
 import { IModalFunctions } from "../Modal/ModalNew";
 import PicWithPreloader from "../../../src/assets/js/PicWithPreloader";
-//import { debounce } from "../../../src/assets/js/processors";
 
 interface IPropsState {
     lang: TLang,
@@ -44,7 +43,6 @@ const CartContent: React.FC<IProps> = ({lang, cart, colorsState, modal, fibersSt
 
     const onAmountChange = useCallback((item: ICartItem, amount: number) => {
         setState.user.changeItem({...item, amount})
-        //debouncedCartUpdate({...item, amount})
     }, [])
 
 
@@ -106,7 +104,7 @@ const CartContent: React.FC<IProps> = ({lang, cart, colorsState, modal, fibersSt
                                 }
                                 <div className="description">
                                     <span className="description__name">{lang === 'en' ? 'Fiber: ' : 'Материал: '}
-                                        <NavLink className="item__fiber-link" to={`../fibers/${item.fiber}`} target="_blank" aria-label={`${lang === 'en' ? 'Go to fiber' : 'Перейти к материалу'}: ${fiberName}`}>
+                                        <NavLink className="item__fiber-link" to={`../fibers/${item.fiber}`} target="_blank" aria-label={`${lang === 'en' ? `Go to fiber ${fiberName}` : `Перейти к материалу ${fiberName}`}: ${fiberName}`}>
                                             {fiberName}
                                         </NavLink>
                                     </span>
@@ -114,10 +112,10 @@ const CartContent: React.FC<IProps> = ({lang, cart, colorsState, modal, fibersSt
                                 <div className="description">
                                     <span className="description__name">{lang === 'en' ? 'Color' : 'Цвет'}:</span>
                                     <button 
-                                        className="description__color button_link" 
+                                        className="description__color button_nostyle" 
                                         onClick={(e) => onColorClick(e, color)} 
                                         tabIndex={0} onKeyDown={e => {e.code === 'Enter' && onColorClick(e, color)}}
-                                        aria-label={`${lang === 'en' ? 'Open modal window with the color' : 'Открыть модальное окно с цветом'}: ${color.name[lang]}`}
+                                        aria-label={`${lang === 'en' ? 'Open detailed image of this color' : 'Открыть детальное изображение с цветом'}: ${color.name[lang]}`}
                                         > 
                                         <div className="wrapper_img">
                                             <img src={color.urls.thumb} alt={color.name[lang]} />

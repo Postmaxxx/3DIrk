@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { IFullState, ILoggingForm, IUserState, TLang } from '../../interfaces';
 import { inputsProps, resetFetch } from '../../assets/js/consts';
 import { deepCopy, focusMover, prevent } from '../../assets/js/processors';
-import Hider from '../InputHider/InputHider';
+import InputHider from '../InputHider/InputHider';
 import { inputChecker } from '../../assets/js/processors';
 
 import { allActions } from "../../redux/actions/all";
@@ -32,8 +32,8 @@ interface IProps extends IPropsState, IPropsActions {
 const Auth: React.FC<IProps> = ({lang, userState, setState, modal, onCancel}): JSX.Element => {
 
     const [register, setRegister] = useState<boolean>(false) //true - register, false - login
-    const [hideInput, setHideInput] = useState<boolean>(true) //true - hide passwords, false - show
-    const [form, setForm] = useState<ILoggingForm>({name: userState.name, email: userState.email, phone: userState.phone, password: '', repassword: ''})
+    const [hidePass, setHidePass] = useState<boolean>(true) //true - hide passwords, false - show
+    const [formData, setFormData] = useState<ILoggingForm>({name: userState.name, email: userState.email, phone: userState.phone, password: '', repassword: ''})
     const processedContainer = '[data-selector="auth-form"]'
     
     const focuser = useMemo(() => focusMover(), [lang])
@@ -41,17 +41,12 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, modal, onCancel}): J
 
     const onChangeText: React.ChangeEventHandler<HTMLInputElement> = (e) => {
         const key = e.target.name as keyof ILoggingForm
-        setForm({...form, [key]: e.target.value});
+        setFormData({...formData, [key]: e.target.value});
         (e.target as HTMLElement).parentElement?.classList.remove('incorrect-value');
         (userState.auth.status === 'error') && setState.user.setAuth(deepCopy(resetFetch))
     }
 
-    const switchType = (register: boolean) => {
-        setRegister(register),
-        (userState.auth.status === 'error') && setState.user.setAuth(deepCopy(resetFetch))
-    }
-
-
+    
     const onCancelClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         prevent(e)
         onCancel()
@@ -64,7 +59,7 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, modal, onCancel}): J
         focuser.focusAll(); //run over all elements to get all errors
         const errorFields = document.querySelector(processedContainer)?.querySelectorAll('.incorrect-value') || []
         if (errorFields?.length > 0) return
-        register ? setState.user.register(form) : setState.user.login(form)
+        register ? setState.user.register(formData) : setState.user.login(formData)
     }
 
 
@@ -77,11 +72,14 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, modal, onCancel}): J
 
     useEffect(() => {
         focuser.create({container: processedContainer})
-        modal?.contentChanged()
+        modal?.contentChanged();
+        (userState.auth.status === 'error') && setState.user.setAuth(deepCopy(resetFetch))
     }, [register, lang])
 
 
-    const errorsList = useMemo(() => userState.auth.errors?.map((error, i) => <li key={i} className='errors__item'>{error[lang]}</li>)
+    const errorsList = useMemo(() => {
+        return userState.auth.errors?.map((error, i) => <li key={i} className='errors__item'>{error[lang]}</li>)
+    }
     , [userState.auth.errors])
 
 
@@ -90,10 +88,10 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, modal, onCancel}): J
         <div className="login">
             <div className="form__container">
                 <div className="sign-selector__container">
-                    <button className={`button_select ${register ? '' : 'selected'}`} onClick={() => switchType(false)} data-testid='authBtnToLogin'>Login</button>
-                    <button className={`button_select ${register ? 'selected' : ''}`} onClick={() => switchType(true)} data-testid='authBtnToRegister'>Register</button>
+                    <button className={`button_select ${register ? '' : 'selected'}`} onClick={() => setRegister(false)} data-testid='authBtnToLogin'>Login</button>
+                    <button className={`button_select ${register ? 'selected' : ''}`} onClick={() => setRegister(true)} data-testid='authBtnToRegister'>Register</button>
                 </div>
-                <form className='login__form' data-selector="auth-form">
+                <div className='login__form' data-selector="auth-form">
                     {register &&
                     <div className="block_input" data-selector="input-block">
                         <label htmlFor="authUserName">{lang === 'en' ? 'Your name' : 'Ваше имя'}</label>
@@ -103,7 +101,7 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, modal, onCancel}): J
                             name="name"
                             type="text" 
                             onChange={onChangeText}
-                            value={form.name}
+                            value={formData.name}
                             onBlur={(e) => inputChecker({lang, min: inputsProps.name.min, max:inputsProps.name.max, el: e.target})}/>
                     </div>}
                     <div className="block_input" data-selector="input-block">
@@ -114,9 +112,8 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, modal, onCancel}): J
                             className="input-element" 
                             name="email"
                             type="email" 
-                            value={form.email}
+                            value={formData.email}
                             onChange={onChangeText} 
-                            autoFocus
                             onBlur={(e) => inputChecker({lang, min:inputsProps.email.min, max:inputsProps.email.max, type: 'email', el: e.target})}/>
                     </div>
                     {register &&
@@ -128,7 +125,7 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, modal, onCancel}): J
                                 className="input-element" 
                                 name="phone"
                                 type="tel" 
-                                value={form.phone}
+                                value={formData.phone}
                                 onChange={onChangeText} 
                                 onBlur={(e) => inputChecker({lang, min:inputsProps.phone.min, max:inputsProps.phone.max, type: 'phone', el: e.target})}/>
                         </div>
@@ -140,11 +137,12 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, modal, onCancel}): J
                             data-selector="input"
                             className="input-element" 
                             name="password"
-                            type={hideInput ? `password` : 'text'}
-                            value={form.password}
+                            type={hidePass ? `password` : 'text'}
+                            value={formData.password}
                             onChange={onChangeText} 
-                            onBlur={(e) => inputChecker({lang, min:inputsProps.password.min, max:inputsProps.password.max, el: e.target})}/>
-                        <Hider hidden={hideInput} onClick={() => setHideInput(prev => !prev)}/>
+                            onBlur={(e) => inputChecker({lang, min:inputsProps.password.min, max:inputsProps.password.max, el: e.target})}
+                        />
+                        <InputHider hidden={hidePass} onClick={() => setHidePass(prev => !prev)} lang={lang}/>
                     </div>
                     {register &&
                         <div className="block_input" data-selector="input-block">
@@ -154,10 +152,10 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, modal, onCancel}): J
                                 data-selector="input"
                                 className="input-element" 
                                 name="repassword"
-                                type={hideInput ? `password` : 'text'}
-                                value={form.repassword}
+                                type={hidePass ? `password` : 'text'}
+                                value={formData.repassword}
                                 onChange={onChangeText}
-                                onBlur={(e) => inputChecker({lang, min:inputsProps.password.min, max:inputsProps.password.max, el: e.target, exact: form.password})}/>
+                                onBlur={(e) => inputChecker({lang, min:inputsProps.password.min, max:inputsProps.password.max, el: e.target, exact: formData.password})}/>
                         </div>
                     }
                     {userState.auth.status === 'error' &&
@@ -178,7 +176,7 @@ const Auth: React.FC<IProps> = ({lang, userState, setState, modal, onCancel}): J
                         </button>
                         <button className='button_blue color_reverse' onClick={onCancelClick} data-testid='authBtnCancel'>{lang === 'en' ? 'Cancel' : 'Отмена'}</button>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
     )

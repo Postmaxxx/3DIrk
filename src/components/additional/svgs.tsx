@@ -1,5 +1,4 @@
 import './svgs.scss'
-import React from 'react'
 
 const svgs = (addClass? : string) => {
     return {

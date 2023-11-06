@@ -11,10 +11,8 @@ import { allActions } from "./redux/actions/all";
 import Footer from "./partials/Footer/Footer";
 import Header from "./partials/Header/Header";
 import Homer from "./components/Homer/Homer";
-import LangSwitcher from "./components/LangSwitcher/LangSwitcher";
 import Offliner from "./components/Offliner/Offliner";
 import Unauthorized from "./components/Unauthorized/Unauthorized";
-import ThemeSwitcher from "./components/ThemeSwitcher/ThemeSwitcher";
 import PreloaderPage from "./components/Preloaders/PreloaderPage";
 import ModalNew, { IModalFunctions } from "./components/Modal/ModalNew";
 import useScreenMeter from "./hooks/screenMeter";
@@ -98,9 +96,9 @@ const App:React.FC<IProps> = ({lang, isAdmin, isAuth, contentLoad, isLogining, s
 		<HashRouter>
 			{!screenWidth.sm && <Suspense fallback={<PreloaderPage />}><LazyLangSwitcher /></Suspense>} 
 			{!screenWidth.sm && <Suspense fallback={<PreloaderPage />}><LazyThemeSwitcher /></Suspense>} 
-			<Homer /> 
+			<Homer lang={lang}/> 
 			<Offliner lang={lang}/> 
-			<Header />
+			<Header lang={lang}/>
 			<Routes>
 				<Route index path="/" element={<Suspense fallback={<PreloaderPage />}><LazyHomePage /></Suspense>} />
 				

@@ -47,7 +47,7 @@ const Fibers:React.FC<IProps> = ({lang, fibersState}):JSX.Element => {
                     <section className="fibers__common-info">
                         {lang === 'en' ? 
                             <div className="block_text">
-                                <h1>Materials used in printing</h1>
+                                <h1>Fibers used in printing</h1>
                                 <p>In modern 3D printing, a variety of different materials are used, allowing for products with different properties to be produced for various operating conditions. Both the physical characteristics of the printed model and its cost will differ, which is why it's essential to choose the right printing material.</p>
                                 <p>Our company offers you a wide selection of printing materials for a variety of products. Below are the materials we currently offer for producing the desired products. We also invite you to familiarize yourself with the list of terms used in the material descriptions for a more comfortable and comprehensive understanding of their features.</p>
                                 <p><b>Stiffness:</b> the degree to which a material resists deformation; important for maintaining shape and stability in various applications.</p>
@@ -103,6 +103,7 @@ const Fibers:React.FC<IProps> = ({lang, fibersState}):JSX.Element => {
                         }
                     </section>
                     <section className="fibers__previews">
+                        <h2>Fibers used in printing</h2>
                         {fibersState.load.status === 'fetching' && <Preloader />}
                         {fibersState.load.status === 'success' && listOfFibers}
                         {fibersState.load.status === 'error' && <FetchError fetchData={fibersState.load} lang={lang} />}

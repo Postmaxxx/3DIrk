@@ -347,8 +347,8 @@ export const fibersProperties = [
     {
         _id: 'price',
         name: {
-            en: 'Relative price',
-            ru: 'Отн. цена'
+            en: 'Price',
+            ru: 'Стоимость'
         },
         tip: {
             en: 'Relative cost of the material.',

@@ -55,14 +55,15 @@ const ColorSelector: React.FC<IPropsState> = ({selectorId, lang, modal, colors, 
                     className="selector_color__color color_selected" 
                     onClick={onCurrentClick} 
                     tabIndex={0} 
+                    role='button'
                     onKeyDown={e => {e.code === 'Enter' && onCurrentClick()}} 
-                    aria-label={lang === 'en' ? 'Select color' : 'Выберите цвет'}>
+                    aria-label={lang === 'en' ? 'Select the color' : 'Выберите цвет'}>
                     {selectedColor ? 
                         <>
                             <div className="img-cont">
                                 <img src={selectedColor.urls.thumb} alt={selectedColor.name[lang]} />
                             </div>
-                            <span>{selectedColor.name[lang]}</span>
+                            <span aria-label={lang === 'en' ? 'Selected color' : 'Выбранный цвет'}>{selectedColor.name[lang]}</span>
                         </>
                         :
                         <span className='color__placeholder'>{lang === 'en' ? 'Choose the color' : 'Выберите цвет'} </span>
@@ -76,6 +77,7 @@ const ColorSelector: React.FC<IPropsState> = ({selectorId, lang, modal, colors, 
                                 key={color._id} 
                                 onClick={() => onOptionClick(color._id)} 
                                 tabIndex={expanded ? 0 : -1} 
+                                role='button'
                                 onKeyDown={e => {e.code === 'Enter' && onOptionClick(color._id)}}
                                 aria-label={lang === 'en' ? `Select color: ${color.name.en}` : `Выбрать цвет: ${color.name.en}`}
                             >
@@ -83,6 +85,7 @@ const ColorSelector: React.FC<IPropsState> = ({selectorId, lang, modal, colors, 
                                     className="img-cont" 
                                     onClick={(e) => onImageClick(e, color)} 
                                     tabIndex={expanded ? 0 : -1} 
+                                    role='button'
                                     onKeyDown={e => {e.code === 'Enter' && onImageClick(e, color)}}
                                     aria-label={lang === 'en' ? `Watch this color ${color.name.en} more detailed` : `Посмотреть этот цвет ${color.name.en} подробнее`}
                                 >

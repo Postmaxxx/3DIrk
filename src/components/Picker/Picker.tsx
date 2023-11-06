@@ -84,7 +84,15 @@ const Picker = forwardRef<IPickerFunctions, IProps>(({items, lang, onEditClick, 
             <>
                 {items.map((item) => {
                     return (
-                        <div className={`picker__item ${selectedItems[item._id] ? 'selected' : ''} ${markInactive && !item.active ? 'inactive' : ''}`} key={item._id}>
+                        <div 
+                            className={`picker__item ${selectedItems[item._id] ? 'selected' : ''} ${markInactive && !item.active ? 'inactive' : ''}`} 
+                            key={item._id}
+                            tabIndex={0}
+                            onKeyDown={e => {e.code === 'Enter' && itemClicked(item._id)}}
+                            aria-label={lang === 'en' ? 
+                                selectedItems[item._id] ? `Unselect item: ${item.name.en}` : `Select item: ${item.name.en}`
+                                :  selectedItems[item._id] ? `Отменить выбор: ${item.name.ru}` : `Выбрать: ${item.name.ru}`}
+                        >
                             <div className="image" onClick={() => itemClicked(item._id)}>
                                 {type === 'fibers' && <PicWithPreloader basePath={item.images?.basePath || ''} sizes={item.images?.sizes || []} image={item.images?.files[0] || ""} alt={item.name[lang]}/>} {/*for fibers*/}
                                 {type === 'products' && <PicWithPreloader basePath={item.images?.basePath || ''} sizes={item.images?.sizes || []} image={item.images?.files[0] || ""} alt={item.name[lang]}/>} {/*for fibers*/}
@@ -97,7 +105,12 @@ const Picker = forwardRef<IPickerFunctions, IProps>(({items, lang, onEditClick, 
                     )
                 })}
                 {withNew && 
-                    <div className={`picker__item ${selectedItems.createNew ? 'selected' : ''}`}>
+                    <div 
+                        className={`picker__item ${selectedItems.createNew ? 'selected' : ''}`}
+                        tabIndex={0}
+                        onKeyDown={e => {e.code === 'Enter' && itemClicked(createNewItemId)}}
+                        aria-label={lang === 'en' ? `Create new item` : `Создать новый объект`}
+                    >
                         <div className="image" onClick={() => itemClicked(createNewItemId)}>
                             <img src={iconPlus} alt={lang === 'en' ? "Create new" : 'Создать новый'} />
                         </div>

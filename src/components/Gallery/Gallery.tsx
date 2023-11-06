@@ -20,7 +20,7 @@ const Gallery: React.FC<IProps> = ({lang, products}):JSX.Element => {
             <NavLink
                 to={product._id}
                 key={product._id}
-                aria-label={lang === 'en' ? `Go to ${product.name.en} page` : `Перейти на страницу товара: ${product.name.en}`}
+                aria-label={lang === 'en' ? `Go to page of the product:${product.name.en}` : `Перейти на страницу товара: ${product.name.en}`}
                 >
                 <div className='gallery__card' >
                     <div className={`gallery__card__img-cont ${product.active ? '' : 'inactive'}`}>

@@ -88,7 +88,7 @@ const Featurer = forwardRef<IFeaturerFunctions, IProps>(({lang, type="input", am
                     return (
                         <div className="block_feature full-width" key={i}>
                             <div className="block_input" data-selector="input-block">
-                                <label htmlFor={`feature-en-${i}`}>{lang === 'en' ? 'Value EN' : 'Значение EN'}</label>
+                                <label htmlFor={`feature-en-${i}`} aria-label={lang === 'en' ? 'Enter the value for english version' : 'Веедите значение для английской версии'}>{lang === 'en' ? 'Value EN' : 'Значение EN'}</label>
                                 {type === "input" ? 
                                     <input 
                                         data-selector="input"
@@ -109,7 +109,7 @@ const Featurer = forwardRef<IFeaturerFunctions, IProps>(({lang, type="input", am
                                 }
                             </div>
                             <div className="block_input" data-selector="input-block">
-                                <label htmlFor={`feature-ru-${i}`}>{lang === 'en' ? 'Value RU' : 'Значение RU'}</label>
+                                <label htmlFor={`feature-ru-${i}`} aria-label={lang === 'en' ? 'Enter the value for russian version' : 'Веедите значение для русской версии'}>{lang === 'en' ? 'Value RU' : 'Значение RU'}</label>
                                 {type === "input" ? 
                                     <input 
                                         data-selector="input"

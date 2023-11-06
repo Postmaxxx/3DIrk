@@ -48,9 +48,8 @@ interface IParams {
 
 const ThemeSwitcher: React.FC<IProps> = ({lang, theme, setState}): JSX.Element => {
 
-	const _themeSwitcherCont = useRef<HTMLDivElement>(null);
+	const _themeSwitcher = useRef<HTMLButtonElement>(null);
 	const _contentSwitcher = useRef<HTMLDivElement>(null);
-	const _switcher = useRef<HTMLInputElement>(null);
 	const themeRef = useRef<TTheme>('dark');
 	const {add: addToHider, clear: clearHider} = useScrollHider()
 
@@ -99,8 +98,8 @@ const ThemeSwitcher: React.FC<IProps> = ({lang, theme, setState}): JSX.Element =
 	useEffect(() => {
 		themeRef.current = localStorage.getItem(params.saveState) === "light" ? "light" : "dark"
 		applyTheme()
-		if (!_themeSwitcherCont.current) return
-		addToHider(_themeSwitcherCont.current, 50)
+		if (!_themeSwitcher.current) return
+		addToHider(_themeSwitcher.current, 50)
 		return () => clearHider()
 	},[])
 
@@ -183,32 +182,28 @@ const ThemeSwitcher: React.FC<IProps> = ({lang, theme, setState}): JSX.Element =
 
 	const themeSwitcherMemo = useMemo(() => {
 		return (
-			<label>
-				<div className="theme-switcher">
+			<>
+				<button 
+					ref={_themeSwitcher}
+					className="theme-switcher button_nostyle"
+					onClick={onThemeClick}
+					aria-label={lang === 'en' ? `Switch the site theme` : `Изменить тему сайта`}
+				>
 					<div className={`content-switcher ${theme !== "dark" ? "theme_light" : ""}`} ref={_contentSwitcher} data-testid="theme-switcher-content">
 						<div className="dark">{stars}</div>
 						<div className="light">{clouds}</div>
 					</div>
-				</div>
-				<input 
-					tabIndex={-1}
-					type="checkbox" 
-					name="theme-switcher" 
-					id="theme-switcher" 
-					onChange={onThemeClick} 
-					ref={_switcher}
-					aria-label={lang === 'en' ? `Switch the site theme` : `Изменить тему сайта`}
-					/>
-			</label>
+				</button>
+			</>
 		)
 	}, [lang])
 
 
 
 	return (
-		<div className={`theme-switcher__container`} data-testid='theme-switcher' ref={_themeSwitcherCont} tabIndex={0} onKeyDown={e => {e.code === 'Enter' && onThemeClick()}}>
+		<>
 			{themeSwitcherMemo}
-		</div>
+		</>
 	);
 };
 

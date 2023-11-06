@@ -35,7 +35,7 @@ const errorsChecker = ({lang = 'en'}: IErrorsChecker) => {
 
 //---------------------------------------------------------------
 
-const prevent = (e: React.MouseEvent<HTMLElement | HTMLButtonElement> | DragEvent | React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement> | React.ChangeEvent<HTMLInputElement> | React.KeyboardEvent<HTMLButtonElement>) => {
+const prevent = (e: React.MouseEvent<HTMLElement | HTMLButtonElement> | DragEvent | React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement> | React.ChangeEvent<HTMLInputElement> | React.KeyboardEvent<HTMLButtonElement> | React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     e.stopPropagation()
 }
@@ -274,6 +274,109 @@ const inputChecker = ({lang="en", el, min=0, max=1000, type, exact="", notExact,
 }
 
 
+const getSelectableElements = (_parent: HTMLElement | null) => {
+    if (!_parent) return []
+    const selectableElements = 'a[href]:not([tabindex="-1"]), button, input, textarea, select, details, [tabindex]:not([tabindex="-1"])'
+    return Array
+        .from(_parent.querySelectorAll(selectableElements) || [])
+        .filter(
+            el => !el.hasAttribute('disabled') && !el.getAttribute('aria-hidden')
+        ) as HTMLElement[]
+}
+
+
+
+interface ILockFocusInside {
+    _element: HTMLElement
+    _delayer?: HTMLElement
+    initialFocused?: number
+    returnFocus?: boolean
+}
+
+
+const lockFocusInside = ({_element, _delayer, initialFocused = 0, returnFocus = true}: ILockFocusInside) => {
+    let selected = initialFocused
+    let focusableEls = getSelectableElements(_element)
+    const _prevFocusedElement = document.activeElement as HTMLElement
+    
+    const focusOn = () => {
+        focusableEls[selected]?.focus()
+        _delayer?.removeEventListener('transitionend', focusOn)
+    }
+    
+    _delayer?.addEventListener('transitionend', focusOn)
+    
+    
+    
+    const keyPressed = (e: KeyboardEvent) => {              
+        if (e.code !== 'Tab') return
+       
+        e.preventDefault();
+        if (!e.shiftKey) {
+            selected++;
+            (selected > focusableEls.length - 1) && (selected = 0);
+        } else {        
+            selected--;
+            (selected < 0) && (selected = focusableEls.length - 1);
+        }       
+        focusableEls[selected].focus()
+        e.stopPropagation()
+    };
+
+    _element.addEventListener("keydown", keyPressed);
+    return {
+        focusNext: () => {
+            selected++;
+            (selected > focusableEls.length - 1) && (selected = 0);
+            focusableEls[selected].focus()
+        },
+        focusPrev: () => {
+            selected--;
+            (selected < 0) && (selected = focusableEls.length - 1);
+            focusableEls[selected].focus()
+        },
+        destroy: () => {
+            _element.removeEventListener("keydown", keyPressed);
+            if (returnFocus && _prevFocusedElement) {
+                _prevFocusedElement.focus()
+            }
+        },
+        focusOn: (index: number) => {
+            focusableEls[index]?.focus()
+        },
+        rebuild: () => {
+            const element = focusableEls[selected]
+            focusableEls = getSelectableElements(_element)
+            focusableEls.forEach((el, i) => {
+                if (el === element) {
+                    el.focus();
+                    selected = i;
+                }
+            })
+            
+        }
+    }
+}
+
+
+
+const moneyRatingToText = (value: number) => {
+    switch (value) {
+        case 1:
+            return {en: 'Very cheap', ru: 'Очень дешевый'}
+        case 2:
+            return {en: 'Cheap', ru: 'Дешевый'}
+        case 3:
+            return {en: 'Average', ru: 'Средний'}
+        case 4:
+            return {en: 'Expensive', ru: 'Дорогой'}
+        case 5:
+            return {en: 'Very expensive', ru: 'Очень дорогой'}
+        default:
+            return {en: 'Out of range', ru: 'Вне диапазона'}
+    }
+}
+
 export { ratingNumberToText, errorsChecker, prevent, filenameChanger,  modalMessageCreator, 
     focusMover, deepCopy, resErrorFiller, checkIfNumbers, checkIfEmail, checkIfPhone, fetchError, filesDownloader,
-    debounce, makeDelay, inputChecker}
+    debounce, makeDelay, inputChecker, getSelectableElements, lockFocusInside, moneyRatingToText}

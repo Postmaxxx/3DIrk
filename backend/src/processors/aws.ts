@@ -110,7 +110,7 @@ interface IFileUploaderS3 {
 
 
 
-const filesUploaderS3 = async ({bucketName = '3di', folderName = 'temp/', files = [], checkFolder = true}: IFileUploaderS3) => {
+const filesUploaderS3 = async ({bucketName = process.env.s3BucketName, folderName = 'temp/', files = [], checkFolder = true}: IFileUploaderS3) => {
     if (!folderName.endsWith('/')) {
         folderName += '/';
     }

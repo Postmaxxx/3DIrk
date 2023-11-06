@@ -41,7 +41,7 @@ const ContactUs:React.FC<IProps> = ({lang, userState, modal, setState}): JSX.Ele
     const _phone = useRef<HTMLInputElement>(null)
     const _message = useRef<HTMLTextAreaElement>(null)
     const addFilesRef = useRef<IAddFilesFunctions>(null)
-    const formContact = useRef<HTMLFormElement>(null)
+    const formContact = useRef<HTMLDivElement>(null)
     const focuser = useMemo(() => focusMover(), [lang])
 
     
@@ -134,7 +134,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
                     <div className="block_text">
                         <h1 data-testid='contactHeader'>{lang === 'en' ? 'Contact us' : 'Свяжитесь с нами'}</h1>
                     </div>
-                        <form className="form_full contact__form" ref={formContact}>
+                        <div className="form_full contact__form" ref={formContact}>
                             <div className="block_text">
                                 <h3 data-testid='contactSubheader'>{lang === 'en' ? 'Strezhen' : 'Компания Стрежень'}</h3>
                                 <div className="contacts">
@@ -147,25 +147,25 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
                                             <div className="img-container">
                                                 {svgs().iconPhone}
                                             </div>
-                                            <a href="tel:+79834088949">+7 983 408 89 49</a>
+                                            <a href="tel:+79834088949" aria-label={lang === 'en' ? 'Call us' : 'Позвонить нам'}>+7 983 408 89 49</a>
                                         </div>
                                         <div className="contact">
                                             <div className="img-container">
                                                 <img src={logo_vk} alt="VK" />
                                             </div>
-                                            <a href="vk.com">{lang === 'en' ? "Strezhen" : 'Стрежень'}</a>
+                                            <a href="vk.com" aria-label={lang === 'en' ? 'Contact us via VK' : 'Связаться с нами через ВК'}>{lang === 'en' ? "Strezhen" : 'Стрежень'}</a>
                                         </div>
                                         <div className="contact">
                                             <div className="img-container">
                                                 <img src={logo_tg} alt="Telegram" />
                                             </div>
-                                            <a href="telegram.org">{lang === 'en' ? "Out group" : 'Наша группа'}</a>
+                                            <a href="telegram.org" aria-label={lang === 'en' ? 'Contact us via Telegram' : 'Связаться с нами через Telegram'}>{lang === 'en' ? "Out group" : 'Наша группа'}</a>
                                         </div>
                                         <div className="contact">
                                             <div className="img-container">
                                                 {svgs().iconEmail}
                                             </div>
-                                            <a href="mailto:pypkin@mail.ru">vasya_pypkin@mail.ru</a>
+                                            <a href="mailto:pypkin@mail.ru"  aria-label={lang === 'en' ? 'Contact us via email' : 'Связаться с нами через электронную почту'}>vasya_pypkin@mail.ru</a>
                                         </div>
                                     </div>
                                 </div>
@@ -250,7 +250,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
                                         lang === 'en' ? 'Send message' : "Отправить сообщение" 
                                     }
                             </button>
-                        </form>
+                        </div>
                 </div>
             </div>
         </div>

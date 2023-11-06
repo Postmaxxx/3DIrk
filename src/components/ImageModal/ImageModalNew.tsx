@@ -2,6 +2,7 @@ import { useState, useRef} from 'react'
 import "./image-modal.scss"
 import Preloader from '../Preloaders/Preloader'
 import { NavLink } from 'react-router-dom'
+import { TLang } from '../../interfaces'
 
 
 
@@ -37,7 +38,6 @@ const ImageModalNew: React.FC<IProps> = ({url, text='', link}): JSX.Element => {
                         className="image_modal__link" 
                         to={link.url} 
                         rel="noopener noreferrer" 
-                        aria-label={link.name}
                         >
                             {link.name}
                     </NavLink>

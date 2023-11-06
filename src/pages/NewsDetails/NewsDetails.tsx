@@ -8,7 +8,7 @@ import { connect } from "react-redux";
 import { useEffect, FC, useMemo, useCallback } from "react";
 import SpliderCommon from '../../components/Spliders/Common/SpliderCommon';
 import { allActions } from "../../redux/actions/all";
-import Delete from '../../components/Remover/Remover';
+import Remover from '../../components/Remover/Remover';
 import { navList, resetFetch } from '../../assets/js/consts';
 import { modalMessageCreator } from '../../../src/assets/js/processors';
 import { IModalFunctions } from '../../../src/components/Modal/ModalNew';
@@ -124,7 +124,7 @@ const NewsDetails: FC<IProps> = ({lang, setState, newsState, modal, isAdmin }): 
                     {lang === 'en' ? 'Back' : 'Вернуться'}
                 </button>
                 {isAdmin && newsState.newsOne && newsState.loadOne.status === 'success' && 
-                    <Delete<INewsItem> remove={onDelete} idInstance={newsState.newsOne} lang={lang} disabled={newsState.send.status === 'fetching'}/>}
+                    <Remover<INewsItem> remove={onDelete} idInstance={newsState.newsOne} lang={lang} disabled={newsState.send.status === 'fetching'}/>}
             </div>
         )
     }, [newsState.newsOne, isAdmin, lang, newsState.send.status, newsState.loadOne.status])

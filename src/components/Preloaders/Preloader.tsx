@@ -3,7 +3,7 @@ import './preloader.scss'
 
 const Preloader:React.FC= ():JSX.Element => {
     return (
-        <div className='preloader'></div>
+        <div className='preloader' title={"Please wait. Пожалуйста, подождите"}></div>
     )
 }
 

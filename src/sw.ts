@@ -12,7 +12,7 @@ import {precacheAndRoute} from 'workbox-precaching';
 //for ts
 declare const self: any;
 //declare precache, will be changed during building
-precacheAndRoute(self.__WB_MANIFEST || []);
+self.__WB_MANIFEST && void
 precacheAndRoute(self.__precacheManifest || []);
 
 

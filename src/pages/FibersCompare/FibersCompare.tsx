@@ -11,8 +11,9 @@ import { fibersProperties } from '../../assets/data/fibersProperties';
 import { allActions } from "../../redux/actions/all";
 import { listHiddenProps, strengthMax, strengthMin, tipsTransition } from '../../assets/js/consts';
 import ErrorFetch from '../../components/ErrorFetch/ErrorFetch';
-import PicWithPreloader from '../../../src/assets/js/PicWithPreloader';
-import svgs from '../../../src/components/additional/svgs';
+import PicWithPreloader from '../../assets/js/PicWithPreloader';
+import svgs from '../../components/additional/svgs';
+import { moneyRatingToText } from '../../assets/js/processors';
 
 
 interface IPropsState {
@@ -32,7 +33,7 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
     const [filtered, setFiltered] = useState<boolean>(false)
     const [selectError, setSelectError] = useState<boolean>(false)
     const [selectedMore, setSelectedMore] = useState<boolean>(false)
-    const [selectedProperty, setSelectedProperty] = useState<any>()
+    const [selectedProperty, setSelectedProperty] = useState<string>('')
     const [showList, setShowList] = useState<IFiber['_id'][]>([])
     const [fibersList, setFibersList] = useState<IFiber[]>([]) //for sort fibers
 
@@ -106,13 +107,13 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
     const renderProperties = useMemo(() => {
         return fibersProperties.map((property) => {
             return !listHiddenProps.includes(property._id) && 
-                <div className="cell row-name fixed-left padding_no" key={property._id}>
+                <div className={`cell row-name fixed-left padding_no ${property._id === selectedProperty ? 'selected' : ''}`} key={property._id}>
                     <button onClick={() => sortByProperty(property._id)}>
                         <span title={lang === 'en' ? `Sort by ${property.name.en}` : `Сортировать по ${property.name.ru}`}>{property.name[lang]}</span>
                     </button>
                 </div>
         }
-    )}, [lang, fibersList, lang])
+    )}, [lang, fibersList, selectedProperty])
 
 
     const onCheckboxLabel = (e: React.KeyboardEvent) => {
@@ -140,15 +141,15 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
                         <label 
                             htmlFor={fiber._id} 
                             tabIndex={0}
-                            onKeyDown={e => {e.code === 'Enter' && onCheckboxLabel(e)}}
+                            onKeyDown={e => {(e.code === 'Enter') && onCheckboxLabel(e)}}
                             aria-label={lang === 'en' ? `Select fiber ${fiber.name[lang]} for comparison` : `Выбрать материал ${fiber.name[lang]} для сравнения`}
                         >
                             <input 
+                                id={fiber._id} 
                                 tabIndex={-1}
                                 type="checkbox" 
                                 data-fiberselect={fiber._id} 
                                 onChange={onCheckbox} 
-                                id={fiber._id} 
                             />
                             <span></span>
                         </label>
@@ -176,7 +177,7 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
                                         || property._id === "cutting"
                                         || property._id === "grinding"
                                         ) && (fiber.params[property._id] === 3 ? svgs().iconPlus : fiber.params[property._id] === 1 ? svgs().iconMinus : svgs().iconPlusMinus)}
-                                        {property._id === "price" && <RatingMoney value={fiber.params.price} max={5} text={``} measurment={''} fullFormat={false}/>}
+                                        {property._id === "price" && <RatingMoney value={fiber.params.price} max={5} text={moneyRatingToText(fiber.params.price)[lang]} measurment={''} fullFormat={false}/>}
                                     </div>
                                 }
                             </Fragment>

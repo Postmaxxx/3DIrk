@@ -55,7 +55,7 @@ const AmountChanger = <T,>({idInstance, onChange, initialAmount, lang, reset}: I
     return (
         <div className="amount-changer">
             <button className={`button_decrease ${amount <= 1 ? "disabled" : ''}`} aria-label={lang === 'en' ? 'Decrease amount' : 'Уменьшить количество'} onClick={onIncreaseAmount}>–</button>
-            <input onBlur={(e) => onFocusOut(Number(e.target.value))} type="text" value={amount} onChange={onCahngeAmount} aria-label={lang === 'en' ? "Enter amount" : 'Введите количество'}/>
+            <input onBlur={(e) => onFocusOut(Number(e.target.value))} type="text" value={amount} onChange={onCahngeAmount} aria-label={lang === 'en' ? "Enter the desired amount" : 'Введите желаемое количество'}/>
             <button className={`button_increase`} aria-label={lang === 'en' ? 'Increase amount' : 'Увеличить количество'} onClick={onDecreaseAmount}>+</button>
         </div>
     )

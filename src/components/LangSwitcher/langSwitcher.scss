@@ -165,6 +165,10 @@ $transition_lang: cubic-bezier(0.51, 0.06, 0.56, 1.37) .2s;
 
     &:focus {
         left: 20px !important;
+
+        @include respond-to(sm) {
+            left: initial !important;
+        }
     }
 
 }

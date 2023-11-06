@@ -2,6 +2,7 @@ import './modal.scss'
 import { createPortal } from 'react-dom';
 import { useState, forwardRef, useImperativeHandle, useEffect, useRef } from 'react';
 import svgs from '../additional/svgs';
+import { lockFocusInside } from '../../assets/js/processors';
 
 
 
@@ -20,7 +21,7 @@ export interface IModalFunctions {
     closeName: (name: string) => void; //close all modals with the specified name
     getName: () => Promise<string | null>//get name of current visible modal
     closeAll: () => void//close all modals
-    contentChanged: () => void//close all modals
+    contentChanged: () => void //if content changed
 }
 
 
@@ -33,7 +34,7 @@ const ModalNew = forwardRef<IModalFunctions, IProps>(({}, ref) => {
                 name: name || '',
                 closable,
                 closeOnEsc,
-                onClose: onClose ? onClose : close,
+                onClose: onClose ? onClose : closeCurrent,
                 children
             }]))
         },
@@ -56,74 +57,46 @@ const ModalNew = forwardRef<IModalFunctions, IProps>(({}, ref) => {
         },
         contentChanged() {
             contentChanged()
-        },
+        }
     }));
 
 
     const [modals, setModals] = useState<IModal[]>([])
     const _modal = document.getElementById('modal') as HTMLElement;
-    const focusableEls = useRef<HTMLElement[]>([])
-    const _prevFocusedEl = useRef<any>(null)
-    const selected = useRef<number>(0)
-    const _content = useRef<HTMLDivElement>(null)
+    const focuser = useRef<ReturnType<typeof lockFocusInside>>()
+    const _modalContent = useRef<HTMLDivElement>(null)
 
-    const close = () => {
+
+    const closeCurrent = () => {
         setModals(prev => prev.slice(1))
     }
 
-
-
-
-    const getSelectable = (_parent: HTMLElement | null) => {
-        if (!_parent) return []
-        const selectableElements = 'a[href], button, input, textarea, select, details, [tabindex]:not([tabindex="-1"])'
-        return Array
-            .from(_content.current?.querySelectorAll(selectableElements) || [])
-            .filter(
-                el => !el.hasAttribute('disabled') && !el.getAttribute('aria-hidden')
-            ) as HTMLElement[]
-        
-    }
-
-
-
     const contentChanged = () => {
-        focusableEls.current = getSelectable(_content.current)
+        if (_modalContent.current) {
+            focuser.current?.destroy()
+            focuser.current = lockFocusInside({_element: _modalContent.current, _delayer: _modalContent.current})
+            focuser.current.focusOn(0)
+        }
     }
-
-
-
 
     const keyPressed = (e: KeyboardEvent) => {
         if (e.code === 'Escape' && modals[0].closeOnEsc) {
             return setModals(prev => prev.slice(1))
         }
-        if (e.code !== 'Tab') return
-        e.preventDefault();
-        if (!e.shiftKey) {
-            selected.current++
-            (selected.current > focusableEls.current.length - 1) && (selected.current = 0)
-        }
-        if (e.shiftKey) {
-            selected.current--
-            (selected.current < 0) && (selected.current = focusableEls.current.length - 1)
-        }
-        focusableEls.current[selected.current].focus()
-        e.stopPropagation()
     };
 
 
-
     useEffect(() => {
-        _prevFocusedEl.current = document.activeElement
-        if (!modals[0]?.children) return
-        selected.current = 0
-        focusableEls.current = getSelectable(_content.current)
+        if (!modals[0]?.children) return       
         
-        document.addEventListener("keydown", keyPressed);
+        if (_modalContent.current) {           
+            _modalContent.current.addEventListener("keydown", keyPressed);
+            focuser.current?.destroy()
+            focuser.current = lockFocusInside({_element: _modalContent.current, _delayer: _modalContent.current})
+        } 
         return () => {
-            document.removeEventListener("keydown", keyPressed);
-           _prevFocusedEl.current.focus()
+            _modalContent.current?.removeEventListener("keydown", keyPressed);
+            focuser.current?.destroy()
         }
         
     }, [modals[0]?.children])
@@ -132,11 +105,12 @@ const ModalNew = forwardRef<IModalFunctions, IProps>(({}, ref) => {
 
 
     return _modal ? createPortal(
-        <div className={`modal-window ${modals.length > 0 ? "visible" : ""}`} data-testid='modal' ref={_content}>
+        <div className={`modal-window ${modals.length > 0 ? "visible" : ""}`} data-testid='modal' ref={_modalContent}>
             {modals[0]?.closable &&
-            <button className="closer" aria-label='close | закрыть' onClick={modals[0]?.onClose ? modals[0]?.onClose : close} data-testid='modal-closer'>
-                {svgs().iconClose}
-            </button>}
+                <button className="closer" aria-label='close | закрыть' onClick={modals[0]?.onClose ? modals[0]?.onClose : close} data-testid='modal-closer'>
+                    {svgs().iconClose}
+                </button>
+            }
 
 			<div className="modal__content">
                 {modals[0]?.children}
@@ -146,7 +120,7 @@ const ModalNew = forwardRef<IModalFunctions, IProps>(({}, ref) => {
     ) 
     :
     <div className="modal-window_absence">
-        Node for modal windows was not found
+        App error, node for modal windows was not found
     </div>
 
 })

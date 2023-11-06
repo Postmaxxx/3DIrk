@@ -23,7 +23,7 @@ describe('Tests for Homer', () => {
 
     test('should exist and scroll page to top', async () => {
         await act(async () => {
-            ReactDOM.createRoot(_container).render(<Homer />);
+            ReactDOM.createRoot(_container).render(<Homer lang='en'/>);
         })
         const _homer = _container.querySelector('.homer')
         await waitFor(() => {

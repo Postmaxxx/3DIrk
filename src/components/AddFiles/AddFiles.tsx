@@ -2,7 +2,7 @@ import { TLang } from '../../interfaces'
 import './add-files.scss'
 import { useState, useEffect, useRef, forwardRef, useImperativeHandle, useCallback, useMemo} from 'react'
 import iconFileQuestion from '../../assets/img/icon_file_question.svg'
-import Delete from "../Remover/Remover";
+import Remover from "../Remover/Remover";
 import { prevent } from '../../../src/assets/js/processors';
 import { imageExtentions } from '../../../src/assets/js/consts';
 
@@ -140,7 +140,7 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, multiple, id}, r
                         <img src={file.content} alt={file.name} />
                     </div>
                     <span className="previewer__card__title">{file.name.length < 30 ? file.name : `${file.name.slice(0, 30)}...`}</span>
-                    <button className="previewer__card__remover" onClick={(e) => onRemoveClick(e, i)}>
+                    <button className="previewer__card__remover" onClick={(e) => onRemoveClick(e, i)} tabIndex={0}>
                         <svg xmlns="http://www.w3.org/2000/svg" version="1.0"  viewBox='0 0 100 100' strokeWidth='20'>
                             <path d="M 6.3895625,6.4195626 C 93.580437,93.610437 93.580437,93.610437 93.580437,93.610437"/>
                             <path d="M 6.3894001,93.6106 C 93.830213,6.4194003 93.830213,6.4194003 93.830213,6.4194003"/>
@@ -170,7 +170,13 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, multiple, id}, r
 
             {files.length > 0 &&
                 <div className="files-adder__cleaner">
-                    <Delete<string> remove={clearFiles} idInstance="cartCleaner" lang={lang} disabled={false}/>
+                    <Remover<string> 
+                        remove={clearFiles} 
+                        idInstance="cartCleaner" 
+                        lang={lang} 
+                        disabled={false} 
+                        labelText={{en: "Delete all files", ru: 'Удалить все файлы'}}
+                    />
                 </div>
             }
         </div>

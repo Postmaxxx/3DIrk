@@ -8,9 +8,13 @@
     background-color: var(--bg);
     flex-grow: 1;
     
-    & > span {
+    & p {
+        margin-top: 0;
         font-size: 22px;
         font-weight: 600;
         color: var(--main_em);
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
     }
 }
