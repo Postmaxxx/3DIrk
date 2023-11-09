@@ -5,15 +5,16 @@ import { connect } from "react-redux";
 import { AnyAction, bindActionCreators, Dispatch } from "redux";
 import { allActions } from "../../../redux/actions/all";
 import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFiles';
-import { errorsChecker, filesDownloader, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
+import { filesDownloader, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import { defaultSelectItem, inputsProps, resetFetch, statuses } from '../../../assets/js/consts';
 import Preloader from '../../../components/Preloaders/Preloader';
 import { inputChecker } from '../../../../src/assets/js/processors';
 import Picker, { IPickerFunctions } from '../../../../src/components/Picker/Picker';
-import Selector, { ISelectorFunctions } from '../../../../src/components/Selector/Selector';
+import Selector, { ISelectorFunctions } from '../../../components/BlockSelector/BlockSelector';
 import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
 import MessageNew from '../../../../src/components/Message/MessageNew';
 import Uploader from '../../../../src/components/Preloaders/Uploader';
+import BlockInput, { IBlockInputFunctions } from '../../../components/BlockInput/BlockInput';
 
 interface IPropsState {
     lang: TLang
@@ -36,11 +37,9 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
     const addFileFullRef = useRef<IAddFilesFunctions>(null)
     const addFileThumbRef = useRef<IAddFilesFunctions>(null)
     const colorPickerRef = useRef<IPickerFunctions>(null)
-    const _nameEn = useRef<HTMLInputElement>(null)
-    const _nameRu = useRef<HTMLInputElement>(null)
-    const errChecker = useMemo(() => errorsChecker({lang}), [lang])
-    const focuser = useMemo(() => focusMover(), [lang])
-    const selectorStatusRef = useRef<ISelectorFunctions>(null)
+    const _nameEn = useRef<IBlockInputFunctions>(null)
+    const _nameRu = useRef<IBlockInputFunctions>(null)
+    const _selectorStatusRef = useRef<ISelectorFunctions>(null)
 
 
 
@@ -51,7 +50,6 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
             }
             setState.colors.setSendColors(resetFetch)// clear fetch status
         }
-        errChecker.clear()
         modal?.closeCurrent()
 	}, [colorsState.send.status])
 
@@ -77,61 +75,67 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
 
 
     const fillValues = async (_id: string) => {//fill values based on selected color
-        if (!_nameEn.current || !_nameRu.current || !selectorStatusRef.current) return
+        if (!_nameEn.current || !_nameRu.current || !_selectorStatusRef.current) return
         const selectedColor = colorsState.colors.find(item => item._id === _id)
         if (selectedColor) { //color exists
             const fileFull = await filesDownloader([selectedColor.urls.full])
             const fileThumb = await filesDownloader([selectedColor.urls.thumb])
             addFileFullRef.current?.replaceFiles(fileFull)
             addFileThumbRef.current?.replaceFiles(fileThumb)
-            selectorStatusRef.current.setValue(selectedColor.active ? statuses.active.value : statuses.suspended.value)
+            _selectorStatusRef.current.setValue(selectedColor.active ? statuses.active.value : statuses.suspended.value)
         } else { //new color
             addFileFullRef.current?.clearAttachedFiles()
             addFileThumbRef.current?.clearAttachedFiles()
-            selectorStatusRef.current.setItem({...defaultSelectItem})
-            selectorStatusRef.current.setValue('')
+            _selectorStatusRef.current.setItem({...defaultSelectItem})
+            _selectorStatusRef.current.setValue('')
         }
-        _nameEn.current.value = selectedColor?.name?.en || ''
-        _nameRu.current.value = selectedColor?.name?.ru || ''
+        _nameEn.current.setValue(selectedColor?.name?.en || '')
+        _nameRu.current.setValue(selectedColor?.name?.ru || '')
     }
 
 
 
     const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
-        errChecker.clear()
         prevent(e)
-        if (!_formColor.current || !_nameEn.current || !_nameRu.current || !selectorStatusRef.current || !colorPickerRef.current) return       
-        focuser.focusAll(); //run over all elements to get all errors
-        const errorFields = _formColor.current.querySelectorAll('.incorrect-value')
-        if (errorFields?.length > 0) {
-            errChecker.add(lang === 'en' ? 'Some fields are filled incorrectly' : 'Некоторые поля заполнены неправильно')
-        }       
+        if (!_formColor.current || !_nameEn.current || !_nameRu.current || !_selectorStatusRef.current || !colorPickerRef.current) return     
+        
+        //check errors
+        const errors: string[] = [_nameEn, _nameRu, _selectorStatusRef]
+            .map(el => el.current?.getErrorText(lang))
+            .filter(el => el) as string[]
+
         if (!addFileFullRef.current?.getFiles().length) {
-            errChecker.add(lang === 'en' ? 'File fullsize is missed' : 'Отсутствует файл полноразмера')
+            errors.push(lang === 'en' ? 'File fullsize is missed' : 'Отсутствует файл полноразмера')
         }
         if (!addFileThumbRef.current?.getFiles().length) {
-            errChecker.add(lang === 'en' ? 'File preview is missed' : 'Отсутствует файл предпросмотра')
+            errors.push(lang === 'en' ? 'File preview is missed' : 'Отсутствует файл предпросмотра')
         }
-        if (errChecker.amount() > 0) {
-            modal?.openModal({ //if error/success - show modal about send order
-                name: 'errorChecker',
+        
+        if (errors.length > 0) { //show modal with error
+            return modal?.openModal({
+                name: 'errorsInForm',
                 onClose: closeModal,
-                children: <MessageNew {...errChecker.result()} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
+                children: <MessageNew 
+                    header={lang === 'en' ? 'Errors was found' : 'Найдены ошибки'}
+                    status={'error'}
+                    text={errors}
+                    buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}
+                />
             })
-            return
         }
-
+            
+        
         const color = {
             _id: colorPickerRef.current.getSelected()[0] || '',
             name: {
-                en: _nameEn.current.value,
-                ru: _nameRu.current.value,
+                en: _nameEn.current.getValue() || 'Error',
+                ru: _nameRu.current.getValue() || 'Error',
             },
             files: {
                 full: addFileFullRef.current?.getFiles()[0] as File,
                 thumb: addFileThumbRef.current?.getFiles()[0] as File,
             },
-            active: selectorStatusRef.current.getValue() === 'active' ? true : false
+            active: _selectorStatusRef.current.getValue() === 'active' ? true : false
         }
         setState.colors.sendColor(color)
     }
@@ -161,20 +165,6 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
             })
         }
     }, [colorsState.send.status])
-
-
-
-    const onChangeInputs = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        (e.target as HTMLElement).parentElement?.classList.remove('incorrect-value') 
-    }
-
-
-
-    useEffect(() => {       
-        if (!_formColor.current) return
-        focuser.create({container: _formColor.current, itemsSelector: '[data-selector="select"], [data-selector="input"]'})
-    }, [lang])
-
 
 
     const onColorSelected = async (_id: string) => {
@@ -209,37 +199,30 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
                             <h3>{lang === 'en' ? 'Add information' : 'Добавьте информацию'}</h3>
                         </div>
                         <div className="form__inputs form__inputs_sm-wide">
-                            <div className="block_input" data-selector="input-block">
-                                <label htmlFor="name_en">{lang === 'en' ? 'Name en' : 'Название en'}</label>
-                                <input 
-                                    ref={_nameEn}
-                                    data-selector="input"
-                                    id="name_en" 
-                                    onChange={onChangeInputs} 
-                                    onKeyDown={focuser.next}
-                                    onBlur={(e) => inputChecker({lang, min:inputsProps.color.min, max:inputsProps.color.max, el: e.target})}/>
-                            </div>
-                            <div className="block_input" data-selector="input-block">
-                                <label htmlFor="name_ru">{lang === 'en' ? 'Name ru' : 'Название ru'}</label>
-                                <input 
-                                   ref={_nameRu}
-                                   data-selector="input"
-                                   id="name_ru" 
-                                   onChange={onChangeInputs}
-                                   onKeyDown={focuser.next}
-                                   onBlur={(e) => inputChecker({lang, min:inputsProps.color.min, max:inputsProps.color.max, el: e.target})}/>
-                            </div>
+                            <BlockInput
+                                lang={lang}
+                                labelText={{en: 'Name en', ru: 'Название en'}}
+                                required
+                                id="name_en"
+                                rules={{min:inputsProps.color.min, max:inputsProps.color.max}}
+                                ref={_nameEn}
+                            />
+                            <BlockInput
+                                lang={lang}
+                                labelText={{en: 'Name ru', ru: 'Название ru'}}
+                                required
+                                id="name_ru"
+                                rules={{min:inputsProps.color.min, max:inputsProps.color.max}}
+                                ref={_nameRu}
+                            />
                         </div>
                         <div className="form__inputs form__inputs_sm-wide">
                             <Selector 
                                 lang={lang} 
                                 id='selector_status' 
-                                label={{en: 'Color status: ', ru: 'Состояние цвета: '}}
+                                labelText={{en: 'Color status: ', ru: 'Состояние цвета: '}}
                                 data={statusesList}
-                                onBlur={(e) => inputChecker({lang, notExact: '', el: e.target})}
-                                defaultData={{...defaultSelectItem}}
-                                saveValue={onChangeInputs}
-                                ref={selectorStatusRef}
+                                ref={_selectorStatusRef}
                             />
                         </div>
 

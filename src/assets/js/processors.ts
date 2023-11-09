@@ -228,12 +228,15 @@ const inputChecker = ({lang="en", el, min=0, max=1000, type, exact="", notExact,
         return 
     }
     if (el.value.length < min) {
-        el.parentElement.dataset.errorText = lang === 'en' ? `Min length: ${min}` : `Мин длина: ${min}`
+        //el.parentElement.dataset.errorText = lang === 'en' ? `Min. length: ${min}` : `Мин. длина: ${min}`
         el.parentElement.classList.add('incorrect-value')
+        const errorTextEl = el.parentElement.querySelector('[data-content="errorText"]')
+        if (!errorTextEl) return
+        errorTextEl.innerHTML = lang === 'en' ? `Min. length: ${min}` : `Мин. длина: ${min}`
         return
     }
     if (el.value.length > max) {
-        el.parentElement.dataset.errorText = lang === 'en' ? `Max length: ${max}` : `Макс длина: ${max}`
+        el.parentElement.dataset.errorText = lang === 'en' ? `Max. length: ${max}` : `Макс. длина: ${max}`
         el.parentElement.classList.add('incorrect-value')
         return
     }
@@ -272,6 +275,53 @@ const inputChecker = ({lang="en", el, min=0, max=1000, type, exact="", notExact,
     }
     el.parentElement.classList.remove('incorrect-value')
 }
+
+
+
+export interface IInputChecker2 {
+    value: string
+    rules: {
+        min? :number
+		max?: number
+        exact?: string
+        notExact?: string
+        type?: "email" | "numbers" | "phone" | "date"
+    }
+}
+
+
+const inputChecker2 = ({value, rules}:  IInputChecker2): TLangText | null => {
+    if (rules.min && (value.length < rules.min)) {
+        return {en: `length < ${rules.min}`, ru: `длина < ${rules.min}`}
+    }
+    if (rules.max  && (value.length > rules.max)) {
+        return {en: `length > ${rules.max}`, ru: `длина > ${rules.max}`}
+    }
+    if (rules.exact  && (value !== rules.exact)) {
+        return {en: `doesn't match`, ru: `не совпадает`}
+    }
+    if (rules.notExact  && (value === rules.notExact)) {
+        return {en: `shouldn't be ${rules.notExact}`, ru: `не должно быть ${rules.notExact}`}
+    }
+    if (rules.type  && (rules.type === 'numbers' && !checkIfNumbers(value))) {
+        return {en: `numbers only`, ru: `только цифры`}
+    }
+    if (rules.type  && (rules.type === 'email' && !checkIfEmail(value))) {
+        return {en: `wrong format`, ru: `неверный формат`}
+    }
+    if (rules.type  && (rules.type === 'phone' && !checkIfPhone(value))) {
+        return {en: `wrong format`, ru: `неверный формат`}
+    }
+    if (rules.type  && rules.type === 'date') {
+        const inputDate = new Date(value)
+        if ((String(inputDate) === 'Invalid Date') || inputDate < inputsProps.date.min || inputDate > inputsProps.date.max) {
+            return {en: `wrong value`, ru: `неправильное значение`}
+        }
+    }
+    return null
+}
+
+
 
 
 const getSelectableElements = (_parent: HTMLElement | null) => {
@@ -379,4 +429,4 @@ const moneyRatingToText = (value: number) => {
 
 export { ratingNumberToText, errorsChecker, prevent, filenameChanger,  modalMessageCreator, 
     focusMover, deepCopy, resErrorFiller, checkIfNumbers, checkIfEmail, checkIfPhone, fetchError, filesDownloader,
-    debounce, makeDelay, inputChecker, getSelectableElements, lockFocusInside, moneyRatingToText}
+    debounce, makeDelay, inputChecker, getSelectableElements, lockFocusInside, moneyRatingToText, inputChecker2}

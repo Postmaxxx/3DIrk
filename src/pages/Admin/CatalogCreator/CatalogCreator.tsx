@@ -7,9 +7,8 @@ import { Dispatch } from "redux";
 import { useEffect,  } from "react";
 import { allActions } from "../../../redux/actions/all";
 import { inputsProps, resetFetch } from '../../../assets/js/consts';
-import { errorsChecker, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
+import { errorsChecker, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import Featurer, { IFeaturerFunctions } from '../../../components/Featurer/Featurer';
-import { inputChecker } from '../../../../src/assets/js/processors';
 import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
 import MessageNew from '../../../../src/components/Message/MessageNew';
 import Uploader from '../../../../src/components/Preloaders/Uploader';
@@ -34,7 +33,6 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, modal, catalog}): JSX.El
     const errChecker = useMemo(() => errorsChecker({lang}), [lang])
     const featurerRef = useRef<IFeaturerFunctions>(null)
     const _catalog = useRef<HTMLDivElement>(null)
-    const focuser = useMemo(() => focusMover(), [lang])
     
     const closeModal = useCallback(async () => {
         if (await modal?.getName() === 'catalogSend') {
@@ -74,20 +72,21 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, modal, catalog}): JSX.El
     const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {        
         prevent(e)
         if (!featurerRef.current || !_catalog.current) return
-        focuser.focusAll();//run over all elements to get all errors
-        const errorFields = _catalog.current.querySelectorAll('.incorrect-value')
-        if (errorFields?.length > 0) {
-            errChecker.add(lang === 'en' ? 'Empty inputs exists' : 'Есть незаполненная поля')
-        }
-        if (errChecker.amount() > 0) {
-            modal?.openModal({ //if error/success - show modal about send order
-                name: 'errorChecker',
+        //check errors
+        const errors = featurerRef.current.getErrors().map(err => (`${lang === 'en' ? 'Field: ' : 'Поле: '}${err[lang]}`))
+        if (errors.length > 0) { //show modal with error
+            return modal?.openModal({
+                name: 'errorsInForm',
                 onClose: closeModal,
-                children: <MessageNew {...errChecker.result()} text={[lang === 'en' ? 'Some fields are empty' : 'Присутствуют пустые поля']} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
-            })  
-            return
+                children: <MessageNew 
+                    header={lang === 'en' ? 'Errors was found' : 'Найдены ошибки'}
+                    status={'error'}
+                    text={errors}
+                    buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}
+                />
+            })
         }
-        setState.catalog.sendCatalog(featurerRef.current.getFeatures())        
+        setState.catalog.sendCatalog(featurerRef.current.getFeatures()) 
     }
 
 
@@ -108,26 +107,6 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, modal, catalog}): JSX.El
 
     
 
-    useEffect(() => {
-        onChangeFeaturesAmount()
-    }, [lang])
-
-
-    const onChangeFeaturesAmount = () => {  //select all inputs if new feature was added/ old one was removed  
-        if (!_catalog.current) return
-        focuser.create({container: _catalog.current})
-        const allInputs = _catalog.current.querySelectorAll('[data-selector="input"]')
-        allInputs?.forEach(input => {
-            (input as HTMLInputElement | HTMLTextAreaElement).onblur = (e) => inputChecker({lang, min:inputsProps.category.min, max:inputsProps.category.max, el: e.target as HTMLInputElement});
-        })
-    }
-
-
-    const onChangeFeature = (target: HTMLInputElement | HTMLTextAreaElement) => {       
-        target.parentElement?.classList.remove('incorrect-value') 
-    }
-
-
     return (
         <div className="page page_creator_catalog">
             <div className="container_page">
@@ -141,10 +120,9 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, modal, catalog}): JSX.El
                             <Featurer 
                                 lang={lang} 
                                 ref={featurerRef} 
-                                amountChanged={onChangeFeaturesAmount}
-                                valueChanged={onChangeFeature}
-                                onEnter={focuser.next}
-                                type='textarea'/>
+                                type='input'
+                                rules={{min: inputsProps.category.min, max: inputsProps.category.max}}
+                            />
                         </div>
 
                         <button className='button_blue button_post' disabled={catalog.send.status === 'fetching'} onClick={onSubmit}>

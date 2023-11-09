@@ -102,7 +102,7 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
         return order.cart.map((cartItem, i) => (
             <Fragment key={i}>
                 <div className="cell first">
-                    <NavLink to={`../catalog/${cartItem.productId}`} >
+                    <NavLink to={`../catalog/${cartItem.productId}`} aria-label={lang === 'en' ? 'Go to product' : 'Перейти к продукту'}>
                         {cartItem.productName[lang]}
                     </NavLink>
                 </div>
@@ -119,7 +119,7 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
         return (
             order.attachedFiles.map(file => (
                 <div className="cell" key={file}>
-                    <a download href={`${order.pathToFiles}/${file}`}>{file}</a>
+                    <a download href={`${order.pathToFiles}/${file}`} aria-label={lang === "en" ? "Download file" : "Скачать файл"}>{file}</a>
                 </div>)
             )
         )
@@ -139,8 +139,8 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
                         <div className="block_text user__info">
                             <h2 className='user__header'>{user.userInfo.name}</h2>
                             <span className='user__subheader'>
-                                <a href={`mailto: ${user.userInfo.email}`} type="email">{user.userInfo.email}</a> / 
-                                <a href={`tel: ${user.userInfo.phone}`} type="email"> {user.userInfo.phone}</a>
+                                <a href={`mailto: ${user.userInfo.email}`} type="email" aria-label={lang === "en" ? "Write this user email" : "Написать письмо пользователю"}>{user.userInfo.email}</a> / 
+                                <a href={`tel: ${user.userInfo.phone}`} type="tel" aria-label={lang === "en" ? "Call this user" : "Позвонить пользователю"}> {user.userInfo.phone}</a>
                             </span>
                         </div>
                     <div className="orders__list">
@@ -230,15 +230,15 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
 
 
     const dateFromFilter = <>
-            <label htmlFor="date-from">{lang === 'en' ? 'Date from' : 'С даты'}</label>
-            <input type="date" id='date-from' ref={_dateFrom}/>
-        </>
+        <label htmlFor="date-from">{lang === 'en' ? 'Date from' : 'С даты'}</label>
+        <input type="date" id='date-from' ref={_dateFrom}/>
+    </>
 
 
     const dateToFilter = <>
-                <label htmlFor="date-to">{lang === 'en' ? 'Date to' : 'По дату'}</label>
-                <input type="date" id='date-to' ref={_dateTo}/>
-            </>
+        <label htmlFor="date-to">{lang === 'en' ? 'Date to' : 'По дату'}</label>
+        <input type="date" id='date-to' ref={_dateTo}/>
+    </>
 
 
 
@@ -251,7 +251,8 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
                             <li key={item}>
                                 <button
                                     className={`pagination__page-number ${i === page ? 'selected' : ''}`} 
-                                    onClick={(e) => setPage(i)}>
+                                    onClick={(e) => setPage(i)}
+                                    aria-label={lang === "en" ? `Go to page ${item}` : `Перейти на страницу ${item}`}>
                                         {item}
                                 </button>
                             </li>
@@ -260,7 +261,7 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
                 </ul>
             
         )
-    }, [page, totalPages])
+    }, [page, totalPages, lang])
     
 
 
@@ -279,7 +280,7 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
                                 <h3>{lang === 'en' ? 'Select the search parameters' : 'Введите критерии поиска'}</h3>           
                             </div>
                             <div className={`block_inputs_${isAdmin ? '4' : '3'}`}>
-                                <div className={`block_input ${isAdmin ? "" : "no-display"}`}>
+                                <div className={`block_input ${isAdmin ? "" : "hidden"}`}>
                                     {userFilter}
                                 </div>
                                 <div className="block_input">

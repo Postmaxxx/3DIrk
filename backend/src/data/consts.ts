@@ -4,6 +4,7 @@ const minTimeBetweenSendings: number = 500 //in ms
 const sendNotificationsInTG: boolean = true
 const delayForFS = 1000
 const timeZoneDelta = 8
+const tokenValidTime = 4 //in hours
 
 const missedItem: TLangText = {
     en: 'Item is missed in database',
@@ -106,4 +107,4 @@ const colorSizes: TImageSizes[] = sizesSorter(['thumb', 'full'])
 
 
 export {minTimeBetweenSendings, sendNotificationsInTG, orderStatus, imageSizes, delayForFS, allPaths, timeZoneDelta,  
-    missedItem, newsImageSizes, carouselSizes, colorSizes,fiberImageSizes, productImageSizes}
+    missedItem, newsImageSizes, carouselSizes, colorSizes,fiberImageSizes, productImageSizes, tokenValidTime}

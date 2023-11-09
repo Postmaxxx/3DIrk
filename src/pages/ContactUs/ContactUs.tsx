@@ -3,12 +3,11 @@ import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import './contact-us.scss'
 import {  IFullState,  IUserState, TLang } from "../../interfaces";
-import {  useEffect, useRef, useMemo, useCallback } from 'react'
+import {  useEffect, useRef, useCallback } from 'react'
 import AddFiles, { IAddFilesFunctions } from "../../components/AddFiles/AddFiles";
 import { allActions } from "../../redux/actions/all";
 import { inputsProps, nwsp, resetFetch } from "../../assets/js/consts";
-import { deepCopy, focusMover, modalMessageCreator, prevent } from "../../assets/js/processors";
-import { inputChecker } from '../../../src/assets/js/processors';
+import { deepCopy, modalMessageCreator, prevent } from "../../assets/js/processors";
 import { IModalFunctions } from "../../../src/components/Modal/ModalNew";
 import MessageNew from "../../../src/components/Message/MessageNew";
 import Preloader from "../../../src/components/Preloaders/Preloader";
@@ -19,6 +18,7 @@ import locationMapSmall from '../../assets/img/address_scheme_small.webp';
 import ImageModalNew from "../../../src/components/ImageModal/ImageModalNew";
 import svgs from "../../components/additional/svgs";
 import Uploader from "../../../src/components/Preloaders/Uploader";
+import BlockInput, { IBlockInputFunctions } from "../../components/BlockInput/BlockInput";
 
 interface IPropsState {
     lang: TLang,
@@ -36,25 +36,17 @@ interface IProps extends IPropsState, IPropsActions {}
 
 
 const ContactUs:React.FC<IProps> = ({lang, userState, modal, setState}): JSX.Element => {
-    const _name = useRef<HTMLInputElement>(null)
-    const _email = useRef<HTMLInputElement>(null)
-    const _phone = useRef<HTMLInputElement>(null)
-    const _message = useRef<HTMLTextAreaElement>(null)
+    const _name = useRef<IBlockInputFunctions>(null)
+    const _email = useRef<IBlockInputFunctions>(null)
+    const _phone = useRef<IBlockInputFunctions>(null)
+    const _message = useRef<IBlockInputFunctions>(null)
     const addFilesRef = useRef<IAddFilesFunctions>(null)
-    const formContact = useRef<HTMLDivElement>(null)
-    const focuser = useMemo(() => focusMover(), [lang])
-
+    const _formContact = useRef<HTMLDivElement>(null)
     
-    const closeModal = useCallback(() => {
+    const closeModal = useCallback(async () => {
         if (!_message.current || !addFilesRef.current ) return
         if (userState.sendOrder.status === 'success') { //clear all inputs
-            if (userState.auth.status !== 'success') { //if user unauthorized
-                if (!_name.current || !_email.current || !_phone.current) return
-                _name.current.value = ''
-                _email.current.value = ''
-                _phone.current.value = ''
-            }
-            _message.current.value = ''
+            [_name, _email, _phone, _message].map(el => el.current?.setValue(''))
             addFilesRef.current.clearAttachedFiles()
         }
         modal?.closeCurrent()
@@ -62,26 +54,41 @@ const ContactUs:React.FC<IProps> = ({lang, userState, modal, setState}): JSX.Ele
 	}, [userState.sendOrder.status])
 
 
+
     const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {  
         prevent(e)
         const isAuth = userState.auth.status === 'success' ? true : false
-        if (!_message.current || !addFilesRef.current || !formContact.current) return
+        if (!addFilesRef.current || !_formContact.current) return
 
         //check errors
-        focuser.focusAll(); //run over all elements to get all errors
-        const errorFields = formContact.current.querySelectorAll('.incorrect-value')
-        if (errorFields?.length > 0) return
+        const errors: string[] = [_name, _email, _phone, _message]
+            .map(el => el.current?.getErrorText(lang))
+            .filter(el => el) as string[]
+        
+        if (errors.length > 0) { //show modal with error
+            return modal?.openModal({
+                name: 'errorsInForm',
+                onClose: closeModal,
+                children: <MessageNew 
+                    header={lang === 'en' ? 'Errors was found' : 'Найдены ошибки'}
+                    status={'error'}
+                    text={errors}
+                    buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}
+                />
+            })
+        }
+        
         const files = addFilesRef.current.getFiles() // attached files
-
         const textOrder: string = 
 `${lang === 'en' ? 'New message' : 'Новое сообщение'}:
-${lang === 'en' ? 'Name' : 'Имя'}: ${isAuth ? userState.name : _name.current?.value}
-${lang === 'en' ? 'Email' : 'Почта'}: ${isAuth ? userState.email : _email.current?.value}
-${lang === 'en' ? 'Phone' : 'Телефон'}: ${isAuth ? userState.phone : _phone.current?.value}
-${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
+${lang === 'en' ? 'Name' : 'Имя'}: ${isAuth ? userState.name : _name.current?.getValue()}
+${lang === 'en' ? 'Email' : 'Почта'}: ${isAuth ? userState.email : _email.current?.getValue()}
+${lang === 'en' ? 'Phone' : 'Телефон'}: ${isAuth ? userState.phone : _phone.current?.getValue()}
+${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current?.getValue()}`;
         const text = `${lang === 'en' ? 'New message' : 'Новое сообщение'}:${textOrder}\n ${files.length > 0 ? (lang==='en' ? `\nAttached files ${files.length}:` : `\nПрикрепленные файлы ${files.length}:`) : ''}`
         setState.user.sendMessage({text, files})
     }
+
 
 
     useEffect(() => {
@@ -101,22 +108,8 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
                 children: <Uploader text={lang === 'en' ? "Sending message, please wait..." : "Отправка сообщения, пожалуйста ждите..."}/>
             })
         }
-
-
     }, [userState.sendOrder.status])
 
-
-
-    useEffect(() => {       
-        if (!formContact.current) return
-        focuser.create({container: formContact.current})
-    }, [userState.auth.status, lang])
-
-
-
-    const onChangeText: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (e) => {
-        (e.target as HTMLElement).parentElement?.classList.remove('incorrect-value') 
-    }
 
 
     const onLocationClick = () => {
@@ -134,7 +127,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
                     <div className="block_text">
                         <h1 data-testid='contactHeader'>{lang === 'en' ? 'Contact us' : 'Свяжитесь с нами'}</h1>
                     </div>
-                        <div className="form_full contact__form" ref={formContact}>
+                        <div className="form_full contact__form" ref={_formContact}>
                             <div className="block_text">
                                 <h3 data-testid='contactSubheader'>{lang === 'en' ? 'Strezhen' : 'Компания Стрежень'}</h3>
                                 <div className="contacts">
@@ -176,59 +169,43 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current.value}`;
                             </div>
                             <div className="form__inputs">
                                 <div className="form__inputs__texts">
-                                    {userState.auth.status !== 'success' && 
-                                        <div className="block_input" data-selector="input-block">
-                                            <label htmlFor="contacter_name">{lang === 'en' ? 'Your name*' : 'Ваше имя*'}</label>
-                                            <input 
-                                                data-selector="input"
-                                                className="input-element" 
-                                                id="contacter_name" 
-                                                type="text" 
-                                                ref={_name} 
-                                                onKeyDown={focuser.next}
-                                                onChange={onChangeText}
-                                                onBlur={(e) => inputChecker({lang, min:inputsProps.name.min, max:inputsProps.name.max, el: e.target})}/>
-                                        </div>}
-                                        
-                                    {userState.auth.status !== 'success' && 
-                                        <div className="block_input" data-selector="input-block">
-                                            <label htmlFor="contacter_phone">{lang === 'en' ? 'Your phone' : 'Ваш телефон'}</label>
-                                            <input 
-                                                data-selector="input"
-                                                className="input-element" 
-                                                id="contacter_phone"
-                                                type="tel" 
-                                                ref={_phone} 
-                                                onKeyDown={focuser.next}
-                                                onChange={onChangeText}
-                                                onBlur={(e) => inputChecker({lang, min:inputsProps.phone.min, max:inputsProps.phone.max, type: 'phone', orEmpty: true, el: e.target})}/>
-                                        </div>
-                                    }
-
-                                    {userState.auth.status !== 'success' && 
-                                        <div className="block_input" data-selector="input-block">
-                                            <label htmlFor="contacter_email">{lang === 'en' ? 'Your email*' : 'Ваша почта*'}</label>
-                                            <input 
-                                                data-selector="input"
-                                                className="input-element" 
-                                                id="contacter_email" 
-                                                type="email" 
-                                                ref={_email} 
-                                                onKeyDown={focuser.next}
-                                                onChange={onChangeText}
-                                                onBlur={(e) => inputChecker({lang, min:inputsProps.email.min, max:inputsProps.email.max,  type: 'email', el: e.target})}/>
-                                        </div>
-                                    }
-                                    <div className="block_input expandable" data-selector="input-block">
-                                        <label htmlFor="contacter_message">{lang === 'en' ? 'Your message*' : 'Ваше сообщение*'}</label>
-                                        <textarea 
-                                            data-selector="input"
-                                            className="input-element" 
-                                            id="contacter_message" 
-                                            ref={_message} 
-                                            onChange={onChangeText}
-                                            onBlur={(e) => inputChecker({lang, min:inputsProps.message.min, max:inputsProps.message.max, el: e.target})}/>
-                                    </div>
+                                    {userState.auth.status !== 'success' && <>
+                                        <BlockInput 
+                                            lang={lang}
+                                            labelText={{en: 'Your name', ru: 'Ваше имя'}}
+                                            required
+                                            id="contacter_name"
+                                            rules={{min:inputsProps.name.min, max:inputsProps.name.max}}
+                                            ref={_name}
+                                        />
+                                        <BlockInput 
+                                            lang={lang}
+                                            labelText={{en: 'Your phone', ru: 'Ваш телефон'}}
+                                            id="contacter_phone"
+                                            inputType="tel"
+                                            rules={{min:inputsProps.phone.min, max:inputsProps.phone.max, type:'phone'}}
+                                            ref={_phone}
+                                        />
+                                        <BlockInput 
+                                            lang={lang}
+                                            labelText={{en: 'Your email', ru: 'Ваша почта'}}
+                                            required
+                                            inputType="email"
+                                            id="contacter_email"
+                                            rules={{min:inputsProps.email.min, max:inputsProps.email.max, type: 'email'}}
+                                            ref={_email}
+                                        />
+                                    </>}
+                                    <BlockInput
+                                        lang={lang}
+                                        labelText={{en: 'Your message', ru: 'Ваше сообщение'}}
+                                        required
+                                        expandable
+                                        typeElement="textarea"
+                                        id="contacter_message"
+                                        rules={{min:inputsProps.message.min, max:inputsProps.message.max}}
+                                        ref={_message}
+                                    />
                                 </div>
                                 <div className="form__inputs__files">
                                     <div className="block_input files">

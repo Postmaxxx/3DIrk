@@ -197,11 +197,6 @@ textarea {
     }
 }
 
-.no-display {
-    display: none !important;
-}
-
-
 .page {
     background-color: var(--bg);
     transition: background-color 1s;
@@ -213,10 +208,10 @@ button {
     cursor: pointer;
 }
 
-
 .hidden {
     display: none;
 }
+
 
 .invisible {
     visibility: hidden;

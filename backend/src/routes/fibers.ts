@@ -17,7 +17,7 @@ const whoIs = require('../middleware/whoIs')
 
 
 
-router.post('/create', 
+router.post('', 
     [authMW, isAdmin],
     fileSaver, 
     async (req, res) => {       
@@ -98,7 +98,7 @@ check('short.text.en')
 */
 
 
-router.put('/edit', 
+router.put('', 
     [authMW, isAdmin],
     fileSaver,
     async (req, res) => {
@@ -137,7 +137,7 @@ router.put('/edit',
 
 
 
-router.get('/all', 
+router.get('', 
     [whoIs],
     async (req, res) => {
     try {
@@ -157,7 +157,7 @@ router.get('/all',
 
 
 
-router.delete('/delete', 
+router.delete('', 
     [authMW, isAdmin,
     check('_id')
         .exists()

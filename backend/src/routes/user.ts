@@ -3,7 +3,7 @@ import { IAllCache } from '../data/cache'
 import { ICartItem } from "../models/Cart"
 import { TLang, TLangText } from "../interfaces"
 import { IOrder, OrderType } from "../models/Orders"
-import { allPaths, missedItem, sendNotificationsInTG, timeZoneDelta, orderStatus } from "../data/consts"
+import { allPaths, missedItem, sendNotificationsInTG, timeZoneDelta, orderStatus, tokenValidTime } from "../data/consts"
 import { foldersCleaner } from "../processors/fsTools"
 import { filesUploaderS3 } from "../processors/aws"
 import { IProduct } from "../models/Product"
@@ -250,105 +250,84 @@ router.post('/register',
 
 
 router.post('/login',
-    [
+    /*[
         check('email', {en: 'Wrong email', ru: 'Неправильная почта'}).isEmail(),
         check('password', {en: 'Password must be at least 8 symbols', ru: 'Пароль должен быть не менее 8 символов'}).isLength({min: 8}),
-    ],
+    ],*/
     async (req, res) => {
-        const errors = validationResult(req)
+        /*const errors = validationResult(req)
         if (!errors.isEmpty()) {
             return res.status(400).json({
                 errors: errors.array().map(item => (item.msg)),
                 message: {en: "Wrong data to login", ru: "Неправильные данные для входа"}
             })
-        }
+        }*/
 
-        try {
-            const {email, password } = req.body
-            
-            const user: IUser = await User.findOne({ email })
-            
-            if (!user) {
-                return res.status(400).json({ message: { en: 'User not found', ru: "Пользователь не найден"},  errors: [{ en: 'User not found', ru: "Пользователь не найден"}]})
-            }
-            
-            const passwordsSame = await bcrypt.compare(password, user.password)
-            
-            if (!passwordsSame) {
-                return res.status(400).json({ message: {en: 'Password is incorrect', ru: "Пароль неверный"}, errors: [{en: 'Password is incorrect', ru: "Пароль неверный"}]})
-            }
-            
-            const token = jwt.sign(
-                {userId: user.id},
-                process.env.jwtSecret,
-                { expiresIn: "1h"}
-            )
-                
-            const cartToFE = await cartToFront(user.cart)
-            const userToFront = {
-                name: user.name,
-                email: user.email,
-                phone: user.phone,
-                cart: cartToFE.filteredCart,
-                fixed: cartToFE.fixed,
-                token,
-                isAdmin: false
-            }
+        const {email, password } = req.body
+            try {
+                let user: IUser
+                if (email && password) {
+                    user = await User.findOne({ email })
+                    
+                    if (!user) {
+                        return res.status(400).json({ message: { en: 'User not found', ru: "Пользователь не найден"},  errors: [{ en: 'User not found', ru: "Пользователь не найден"}]})
+                    }
+                    
+                    const passwordsSame = await bcrypt.compare(password, user.password)
+                    
+                    if (!passwordsSame) {
+                        return res.status(400).json({ message: {en: 'Password is incorrect', ru: "Пароль неверный"}, errors: [{en: 'Password is incorrect', ru: "Пароль неверный"}]})
+                    }
+                } else {
 
-            if (user.email === process.env.admEmail) {
-                userToFront.isAdmin = true
+                    const receivedToken = req.headers.authorization?.split(' ')?.[1]
+                    
+                    if (!receivedToken) {
+                        return res.status(401).json({message: {en: 'No token (you are not authorized)', ru: 'Нет токена (вы не авторизованы)'}, errors: []})
+                    }
+                    const decoded = jwt.verify(receivedToken, process.env.jwtSecret)
+                    if (!decoded) {
+                        return res.status(401).json({ message: { en: 'Token is invalid', ru: "Токен недействителен"}, errors: []})
+                    }
+                    if (decoded.iat > decoded.exp) {
+                        return res.status(401).json({ message: { en: 'Token is expired', ru: "Токен истек"}, errors: []})
+                    }
+                    user = await User.findOne({_id: decoded.userId})       
+                    if (!user) {
+                        return res.status(404).json({ message: { en: 'User was not found', ru: "Пользователь не найден"}, errors: []})
+                    }
+                }
+
+            
+                const newToken = jwt.sign(
+                    {userId: user.id},
+                    process.env.jwtSecret,
+                    { expiresIn: `${tokenValidTime}h`}
+                )
+                    
+                const cartToFE = await cartToFront(user.cart)
+                const userToFront = {
+                    name: user.name,
+                    email: user.email,
+                    phone: user.phone,
+                    cart: cartToFE.filteredCart,
+                    fixed: cartToFE.fixed,
+                    token: newToken,
+                    isAdmin: false
+                }
+    
+                if (user.email === process.env.admEmail) {
+                    userToFront.isAdmin = true
+                }
+                res.status(200).json({user: userToFront})      
+            } catch (error) {
+                res.status(500).json({ message:{en: `Something wrong with server (${error}), try again later`, ru: `Ошибка на сервере (${error}), попробуйте позже`}})
             }
-            res.status(200).json({user: userToFront})      
-        } catch (error) {
-            res.status(500).json({ message:{en: `Something wrong with server (${error}), try again later`, ru: `Ошибка на сервере (${error}), попробуйте позже`}})
-        }
+        
+
+
     }
 ) 
-
-
-
-router.post('/login-token',
-    authMW,
-    async (req, res) => {              
-        try {
-            const { id } = req.user
-            
-            const user = await User.findOne( {_id: id} )
-            
-            if (!user) {
-                return res.status(400).json({ message: { en: 'User was not found', ru: "Пользователь не найден"}})
-            }
-            const newToken = jwt.sign(
-                {userId: user.id},
-                process.env.jwtSecret,
-                { expiresIn: "1h"}
-            )
-           
-            const cartToFE = await cartToFront(user.cart)
-
-            const userToFront = {
-                name: user.name,
-                email: user.email,
-                phone: user.phone,
-                cart: cartToFE.filteredCart,
-                fixed: cartToFE.fixed,
-                token: newToken, //auto token prolong
-                isAdmin: false
-            }
-            
-            
-            if (user.email === process.env.admEmail) {
-                userToFront.isAdmin = true
-            }
-            
-            res.status(200).json({user: userToFront})      
-        } catch (error) {
-            res.status(500).json({ message:{en: `Something wrong with server (${error}), try again later`, ru: `Ошибка на сервере (${error}), попробуйте позже`}})
-        }
-    }
-)
-
-
 
 
 
@@ -542,7 +521,7 @@ router.post('/order', //checking and creating an order if everything is ok
 
 
 
-router.patch('/orders', //change status for order
+router.patch('/order', //change status for order
     [authMW, isAdmin],
     async (req, res) => {
         const {orderId, newStatus} = req.body
@@ -600,7 +579,7 @@ interface IOrdersUser {
 
 
 
-router.get('/orders', 
+router.get('/order', 
     [authMW],
     async (req, res) => {
         try {
@@ -671,7 +650,7 @@ router.get('/orders',
   
 
 
-router.get('/users', 
+router.get('/user', 
     [authMW],
     async (req, res) => {
         try {           

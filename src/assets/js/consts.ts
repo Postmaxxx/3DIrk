@@ -82,71 +82,71 @@ const APIList = { //all routes to BE
     },
     product: {
         create: { //create product
-            url: `${process.env.REACT_BACK_URL}/api/catalog/product`,
+            url: `${process.env.REACT_BACK_URL}/api/product`,
             method: "POST",
             timeout: 60000
         },
         update: { //update existed product
-            url: `${process.env.REACT_BACK_URL}/api/catalog/product`,
+            url: `${process.env.REACT_BACK_URL}/api/product`,
             method: "PUT",
             timeout: 60000
         },
         get: { //get one product
-            url: `${process.env.REACT_BACK_URL}/api/catalog/product`,
+            url: `${process.env.REACT_BACK_URL}/api/product`,
             method: "GET",
             timeout: 15000
         },
         delete: { //delete one product
-            url: `${process.env.REACT_BACK_URL}/api/catalog/product`,
+            url: `${process.env.REACT_BACK_URL}/api/product`,
             method: "DELETE",
             timeout: 10000
         },
     },
     news: {
-        getSome: { //get some news, +?from=${FromIdex}&amount=${AmountOfNews}
-            url: `${process.env.REACT_BACK_URL}/api/news/get-some`,
+        getSome: { //get some news, + ?from=${FromIdex}&amount=${AmountOfNews}
+            url: `${process.env.REACT_BACK_URL}/api/news`,
             method: "GET",
             timeout: 15000
         },
-        getOne: { //get some news, +?from=${FromIdex}&amount=${AmountOfNews}
-            url: `${process.env.REACT_BACK_URL}/api/news/get-one`,
+        getOne: { //get one news, + ?id=${newsID}
+            url: `${process.env.REACT_BACK_URL}/api/news`,
             method: "GET",
             timeout: 15000
         },
         create: { //create newsItem
-            url: `${process.env.REACT_BACK_URL}/api/news/create`,
+            url: `${process.env.REACT_BACK_URL}/api/news`,
             method: "POST",
             timeout: 60000
         },
         update: { //update newsItem
-            url: `${process.env.REACT_BACK_URL}/api/news/edit`,
+            url: `${process.env.REACT_BACK_URL}/api/news`,
             method: "PUT",
             timeout: 60000
         },
         delete: { //update newsItem
-            url: `${process.env.REACT_BACK_URL}/api/news/delete`,
+            url: `${process.env.REACT_BACK_URL}/api/news`,
             method: "DELETE",
             timeout: 10000
         },
     },
     colors: {
         get: { //load all colors
-            url: `${process.env.REACT_BACK_URL}/api/colors/load-all`,
+            url: `${process.env.REACT_BACK_URL}/api/colors`,
             method: "GET",
             timeout: 20000
         },
         create: { //create newsItem
-            url: `${process.env.REACT_BACK_URL}/api/colors/create`,
+            url: `${process.env.REACT_BACK_URL}/api/colors`,
             method: "POST",
             timeout: 30000
         },
         update: { //update newsItem
-            url: `${process.env.REACT_BACK_URL}/api/colors/edit`,
+            url: `${process.env.REACT_BACK_URL}/api/colors`,
             method: "PUT",
             timeout: 30000
         },
         delete: { //delete newsItem
-            url: `${process.env.REACT_BACK_URL}/api/colors/delete`,
+            url: `${process.env.REACT_BACK_URL}/api/colors`,
             method: "DELETE",
             timeout: 10000
         }
@@ -167,34 +167,34 @@ const APIList = { //all routes to BE
     },
     fibers: {
         get: { //load all fibers
-            url: `${process.env.REACT_BACK_URL}/api/fibers/all`,
+            url: `${process.env.REACT_BACK_URL}/api/fibers`,
             method: 'GET',
             timeout: 20000
         },
         create: { //create fiber
-            url: `${process.env.REACT_BACK_URL}/api/fibers/create`,
+            url: `${process.env.REACT_BACK_URL}/api/fibers`,
             method: 'POST',
             timeout: 60000
         },
         update: { //update fiber
-            url: `${process.env.REACT_BACK_URL}/api/fibers/edit`,
+            url: `${process.env.REACT_BACK_URL}/api/fibers`,
             method: 'PUT',
             timeout: 60000
         },
         delete: { //delete fiber
-            url: `${process.env.REACT_BACK_URL}/api/fibers/delete`,
+            url: `${process.env.REACT_BACK_URL}/api/fibers`,
             method: 'DELETE',
             timeout: 10000
         },
     },
     orders: {
         getSome: { //load orders, ?from=${FromDate}&to=${ToDate}&userId=${UserId}&status=${orderStatuses}`
-            url: `${process.env.REACT_BACK_URL}/api/user/orders`,
+            url: `${process.env.REACT_BACK_URL}/api/user/order`,
             method: 'GET',
             timeout: 60000
         },
         editStatus: { // edit order status
-            url: `${process.env.REACT_BACK_URL}/api/user/orders`,
+            url: `${process.env.REACT_BACK_URL}/api/user/order`,
             method: 'PATCH',
             timeout: 10000
         },
@@ -216,7 +216,7 @@ const APIList = { //all routes to BE
             timeout: 10000
         },
         loginToken: {//login user using token
-            url: `${process.env.REACT_BACK_URL}/api/user/login-token`,
+            url: `${process.env.REACT_BACK_URL}/api/user/login`,
             method: 'POST',
             timeout: 10000
         },
@@ -254,12 +254,16 @@ const inputsProps = { //restrictions of inputs
         max: 40
     },
     phone: {
-        min: 6,
+        min: 0,
         max: 25
     },
     message: {
         min: 20,
-        max: 4000
+        max: 5000
+    },
+    messageOrder: {
+        min: 0,
+        max: 5000
     },
     password: {
         min: 8,
@@ -272,6 +276,16 @@ const inputsProps = { //restrictions of inputs
     color: {
         min: 2,
         max: 30
+    },
+    customOrder: {
+        message: {
+            min: 20,
+            max: 10000
+        },
+        files: {
+            min: 0,
+            max: 50
+        }
     },
     news: {
         header: {
@@ -307,6 +321,10 @@ const inputsProps = { //restrictions of inputs
         proscons : {
             min: 3,
             max: 250
+        },
+        spec: {
+            min: 1,
+            max: 30
         }
     },
     date: {

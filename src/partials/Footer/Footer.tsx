@@ -21,16 +21,16 @@ const Footer: FC<IFooter>  = ({lang}):JSX.Element => {
                         <div className="footer__social">
                             <span>{lang === 'en' ? "We are in socials" : "Мы в соцсетях"}: </span>
                             <div className="social__links">
-                                <a href={socials.telegram}>
+                                <a href={socials.telegram} aria-label={lang === 'en' ? "Join us in Telegram" : 'Присоединяйтесь к нам в Telegram'}>
                                     <img src={iconTelegram} alt={lang === 'en' ? "Our Telegram" : 'Наш Telegram'} title={lang === 'en' ? "Join us in Telegram" : 'Присоединяйтесь к нам в Telegram'}/>
                                 </a>
-                                <a href={socials.vk}>
+                                <a href={socials.vk} aria-label={lang === 'en' ? "Join us in VK" : 'Присоединяйтесь к нам в VK'}>
                                     <img src={iconVk} alt={lang === 'en' ? "Our VK" : 'Наш VK'} title={lang === 'en' ? "Join us in VK" : 'Присоединяйтесь к нам в VK'}/>
                                 </a>
-                                <a href={socials.instagram}>
+                                <a href={socials.instagram} aria-label={lang === 'en' ? "Join us in Instagram" : 'Присоединяйтесь к нам в Instagram'}>
                                     <img src={iconInstagram} alt={lang === 'en' ? "Our Instagram" : 'Наш Instagram'} title={lang === 'en' ? "Join us in Instagram" : 'Присоединяйтесь к нам в Instagram'}/>
                                 </a>
-                                <a href={socials.youtube}>
+                                <a href={socials.youtube} aria-label={lang === 'en' ? "Join us in Youtube" : 'Присоединяйтесь к нам в Youtube'}>
                                     <img src={iconYoutube} alt={lang === 'en' ? "Our Youtube" : 'Наш Youtube'} title={lang === 'en' ? "Join us in Youtube" : 'Присоединяйтесь к нам в Youtube'}/>
                                 </a>
                             </div>

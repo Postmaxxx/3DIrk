@@ -11,7 +11,7 @@ import Preloader from '../../../components/Preloaders/Preloader';
 import { defaultSelectItem, inputsProps, productEmpty, resetFetch, statuses } from '../../../assets/js/consts';
 import { deepCopy, errorsChecker, filesDownloader, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import Picker, { IPickerFunctions } from '../../../components/Picker/Picker';
-import Selector, { ISelectorFunctions } from '../../../components/Selector/Selector';
+import Selector, { ISelectorFunctions } from '../../../components/BlockSelector/BlockSelector';
 import { inputChecker } from '../../../../src/assets/js/processors';
 import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
 import MessageNew from '../../../../src/components/Message/MessageNew';
@@ -368,7 +368,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
                             <Selector 
                                 lang={lang} 
                                 id='selector_status' 
-                                label={{en: 'Product status: ', ru: 'Состояние товара: '}}
+                                labelText={{en: 'Product status: ', ru: 'Состояние товара: '}}
                                 data={statusesList}
                                 onBlur={(e) => inputChecker({lang, notExact: '', el: e.target})}
                                 defaultData={{...defaultSelectItem}}

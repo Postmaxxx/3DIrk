@@ -61,10 +61,18 @@ export const register = ({name, email, phone, password}: ILoggingForm) => {
 
 
 
+interface ILogin {
+    email?: string
+    password?: string
+}
 
-export const login = ({email, password}: Pick<ILoggingForm, "email" | "password">) => {         
+
+export const login = ({email, password}: ILogin) => {         
     return async function(dispatch: IDispatch, getState: () => IFullState)  {
         const { user } = getState() //get current user state
+        const savedUser = localStorage.getItem('user')
+        const currentToken: string = savedUser ? JSON.parse(savedUser).token : null
+        if (!currentToken && !email && !password) return
         const controller = new AbortController()
         const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.user.login.timeout) //set time limit for fetch
         dispatch(setAuth({...fetchingFetch, controller}))          
@@ -74,6 +82,7 @@ export const login = ({email, password}: Pick<ILoggingForm, "email" | "password"
                 method: APIList.user.login.method,
                 headers: {
                     "Content-Type": 'application/json',
+                    'Authorization': `Bearer ${currentToken}`
                 },
                 body: JSON.stringify({email, password})
             })
@@ -96,8 +105,10 @@ export const login = ({email, password}: Pick<ILoggingForm, "email" | "password"
                     fixed: result.user.fixed || []
                 }
             }))
-            dispatch(setAuth({...successFetch}))
+            console.log(result.user.token);
+            
             localStorage.setItem('user', JSON.stringify({token: result.user.token}))
+            dispatch(setAuth({...successFetch}))
         } catch (e) {   
             fetchError({ 
                 e,
@@ -110,64 +121,6 @@ export const login = ({email, password}: Pick<ILoggingForm, "email" | "password"
     }
 }
 
-
-
-
-
-export const loginWithToken = () => {   
-    return async function(dispatch: IDispatch, getState: () => IFullState)  {
-        const { user } = getState() //get current user state        
-        const savedUser = localStorage.getItem('user')
-        const currentToken: string = savedUser ? JSON.parse(savedUser).token : null
-        if (!currentToken) {
-            return 
-        }
-        const controller = new AbortController()
-        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.user.loginToken.timeout) //set time limit for fetch
-        dispatch(setAuth({...fetchingFetch, controller}))    
-        dispatch(setUser({...user, auth: fetchingFetch}))
-        try {
-            const response: Response = await fetch(APIList.user.loginToken.url, {
-                    signal: controller.signal,
-                    method: APIList.user.loginToken.method,
-                    headers: {
-                        "Content-Type": 'application/json',
-                        'Authorization': `Bearer ${currentToken}`
-                    },
-                })
-            clearTimeout(fetchTimeout)
-            if (!response.ok) {
-                const result: IErrRes = await response.json() //message, errors
-                return dispatch(setAuth(resErrorFiller(result)))
-            }
-            const result: IUserLoginResOk = await response.json() //message, errors
-            
-            dispatch(setUser({
-                name: result.user.name,
-                email: result.user.email,
-                phone: result.user.phone,
-                token: result.user.token,
-                isAdmin: result.user.isAdmin,
-                cart: {
-                    ...user.cart,
-                    items: result.user.cart,
-                    load: successFetch,
-                    fixed: result.user.fixed || []
-                }
-            }))
-            dispatch(setAuth({...successFetch}))
-            localStorage.setItem('user', JSON.stringify({token: result.user.token}))
-        } catch (e) {  
-            fetchError({ 
-                e,
-                dispatch,
-                setter: setAuth,
-                controller,
-                comp: {en: 'user login', ru: 'входа пользователя'}
-            })           
-        } 
-    }
-}
 
 
 //////////////////////////////////////////////////////////////////////////////

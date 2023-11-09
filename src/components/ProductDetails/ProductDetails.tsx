@@ -7,7 +7,7 @@ import { connect } from "react-redux";
 import AddToCart from '../AddToCart/AddToCart';
 import { NavLink } from 'react-router-dom';
 import { allActions } from "../../redux/actions/all";
-import Selector, { IItem, ISelectorFunctions } from '../Selector/Selector';
+import Selector, { IItem, ISelectorFunctions } from '../BlockSelector/BlockSelector';
 import { inputChecker } from '../../../src/assets/js/processors';
 import ColorSelector from '../ColorSelector/ColorSelector';
 import { defaultSelectItem, empty } from '../../../src/assets/js/consts';
@@ -114,7 +114,7 @@ const ProductDetails: React.FC<IProps> = ({lang, product, colors,productLoad, mo
                     <Selector 
                         lang={lang} 
                         id='selector_type' 
-                        label={{en: 'Type: ', ru: 'Версия: '}}
+                        labelText={{en: 'Type: ', ru: 'Версия: '}}
                         onBlur={(e) => inputChecker({lang, notExact: '', el: e.target})}
                         defaultData={{...defaultSelectItem}}
                         ref={selectorTypeRef}
@@ -124,7 +124,7 @@ const ProductDetails: React.FC<IProps> = ({lang, product, colors,productLoad, mo
                     <Selector 
                         lang={lang} 
                         id='selector_fiber' 
-                        label={{en: 'Fiber: ', ru: 'Материал: '}}
+                        labelText={{en: 'Fiber: ', ru: 'Материал: '}}
                         onBlur={(e) => inputChecker({lang, notExact: '', el: e.target})}
                         defaultData={{...defaultSelectItem}}
                         ref={selectorFiberRef}

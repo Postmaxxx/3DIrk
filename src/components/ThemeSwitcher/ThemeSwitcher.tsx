@@ -155,6 +155,7 @@ const ThemeSwitcher: React.FC<IProps> = ({lang, theme, setState}): JSX.Element =
 					className={`theme_dark__star-${typeOfBlink}`} 
 					key={index}
 					alt="" 
+					aria-hidden
 					src={star}
 					style={{
 						left: `${x}px`, 
@@ -172,7 +173,7 @@ const ThemeSwitcher: React.FC<IProps> = ({lang, theme, setState}): JSX.Element =
 		const listOfClouds: string[] = new Array(Math.ceil((params.width) / (params.clouds[params.clouds.length - 1].width + params.clouds[params.clouds.length - 1].gap) + 2)).fill(""); //list of clouds in a cloud-raw, depends on the cloud size and gap between clouds + some reserve
 		return params.clouds?.map((line, index: number) => (
 			<div className={`clouds-${index}`} key={index}>
-				{listOfClouds.map((item,index) => <img className="cloud" src={cloud} alt="" key={index}/>)}
+				{listOfClouds.map((item,index) => <img className="cloud" aria-hidden src={cloud} alt="" key={index}/>)}
 			</div>
 		))
 	}, [])
@@ -190,8 +191,8 @@ const ThemeSwitcher: React.FC<IProps> = ({lang, theme, setState}): JSX.Element =
 					aria-label={lang === 'en' ? `Switch the site theme` : `Изменить тему сайта`}
 				>
 					<div className={`content-switcher ${theme !== "dark" ? "theme_light" : ""}`} ref={_contentSwitcher} data-testid="theme-switcher-content">
-						<div className="dark">{stars}</div>
-						<div className="light">{clouds}</div>
+						<div className="dark" aria-hidden>{stars}</div>
+						<div className="light" aria-hidden>{clouds}</div>
 					</div>
 				</button>
 			</>

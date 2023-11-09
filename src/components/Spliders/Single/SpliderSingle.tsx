@@ -95,10 +95,10 @@ const SpliderSingle: React.FC<IProps> = ({lang, catalogState}): JSX.Element => {
 			data.list.classList.add( 'splide__pagination--custom' );
 			data.items.forEach((item, i) => {
 				const display = i === 0 || i === data.items.length-1 || (i <= upd.page + 1 && i >= upd.page - 1)
-				item.button.classList.toggle('no-display', !display)
+				item.button.classList.toggle('hidden', !display)
 				if ((i === upd.page+2 && upd.page+2 < data.items.length-1) || (i === upd.page-2 && upd.page-2 > 0)) {
 					item.button.textContent = ' ... ';	
-					item.button.classList.remove('no-display')
+					item.button.classList.remove('hidden')
 				} else {
 					item.button.textContent = String(item.page + 1);					
 				}

@@ -8,7 +8,6 @@ import { IAllCache } from '../data/cache'
 import { allPaths, imageSizes, newsImageSizes } from '../data/consts'
 import { folderCleanerS3 } from '../processors/aws'
 import { foldersCleaner } from '../processors/fsTools'
-import { makeDelay } from '../processors/makeDelay'
 import { resizeAndSaveS3 } from '../processors/sharp'
 import { IMulterFile } from './user'
 const cache: IAllCache = require('../data/cache')
@@ -16,7 +15,7 @@ const fileSaver = require('../routes/files')
 
 
 
-router.post('/create', 
+router.post('', 
     [authMW, isAdmin],
     fileSaver,
     async (req, res) => {       
@@ -48,7 +47,6 @@ router.post('/create',
             
             await news.save()
             cache.news.obsolete = true
-            //await makeDelay(15000);
             return res.status(201).json({message: {en: 'News created', ru: 'Новость создана'}})
         } catch (error) {
             return res.status(500).json({ message:{en: 'Something wrong with server, try again later', ru: 'Ошибка на сервере, попробуйте позже'}})
@@ -60,7 +58,7 @@ router.post('/create',
 
 
 
-router.put('/edit', 
+router.put('', 
     [authMW, isAdmin],
     fileSaver, 
     async (req, res) => {
@@ -104,117 +102,76 @@ router.put('/edit',
 
 
 
-
-router.get('/get-amount', async (req, res) => {
-    try {
-        const err = await cache.news.control.load()
-        if (err) return res.status(500).json(err)
-        return res.status(200).json({total: cache.news.data.length})
-    } catch (e) {
-        return res.status(500).json({ message:{en: `Something wrong with server ${e}, try again later`, ru: `Ошибка на сервере ${e}, попробуйте позже`}})
-    }
-})
-
-
-
-router.get('/get-some', 
-    [
-        check('from')
-            .exists()
-            .withMessage({en: 'Param "from" is missed', ru: 'Отсутствует параметр from'}),
-        check('amount')
-            .exists()
-            .withMessage({en: 'Param "amount" is missed', ru: 'Отсутствует параметр amount'})
-    ],
+router.get('', 
     async (req, res) => {
-        
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-        return res.status(400).json({message: {en: `Wrong params`, ru: `Неправильные параметры`}, errors: validationResult})
-    }
-
+    const {_id} = req.query;
+    if (_id) {
+        try {
+            const err = await cache.news.control.load()
+            if (err) {
+                return res.status(500).json(err)
+            }
     
-    try {
-        const err = await cache.news.control.load()
-        if (err) {
-            return res.status(500).json(err)
+            const newsToRes =  cache.news.data.find(item => {
+                return item._id.valueOf() === _id
+            })
+            
+            if (!newsToRes) {
+                return res.status(401).json({message: {en: `No news with the id: ${_id} has been found`, ru: `Новость с _id: ${_id} не найдена`}})
+            }
+            return res.status(200).json({news: newsToRes, message: {en: `news loaded: ${_id}`, ru: `Новостей загружена: ${_id}`}})
+    
+        } catch (e) {
+            return res.status(400).json({message: {en: `Error with server while getting news id: ${_id} : ${e}`, ru: `Ошибка при получении новости id: ${_id} с сервера: ${e}`}})
         }
-        if (cache.news.data.length === 0) {
-            return res.status(200).json({news: [], message: {en: `No news in db`, ru: `Новостей в базе нет`}})
+    }
+        
+    const {from, amount} = req.query;
+    if (from && amount) {
+        try {
+            const err = await cache.news.control.load()
+            if (err) {
+                return res.status(500).json(err)
+            }
+            if (cache.news.data.length === 0) {
+                return res.status(200).json({news: [], message: {en: `No news in db`, ru: `Новостей в базе нет`}})
+            }
+    
+    
+            const since = Number(from)
+            const to = Number(from) + Number(amount)
+            
+            if (since >=  cache.news.data.length) {
+                return res.status(400).json({message: {en: `"From" is more than total amount of news`, ru: `"From" больше чем общее количество новостей`}})
+            }
+            
+            const newsToRes = cache.news.data.slice(since, to)
+            //change images.files length to 1, we need only one image for preview
+            return res.status(200).json({
+                news: newsToRes.map(news => ({
+                    _id: news._id,
+                    header: news.header,
+                    date: news.date,
+                    short: news.short,
+                    images: {
+                        ...news.images,
+                        files: [news.images.files[0]],
+                    }
+                })), 
+                total: cache.news.data.length, 
+                message: {en: `${newsToRes.length} news loaded`, ru: `Новостей загружено: ${newsToRes.length}`}})
+    
+        } catch (error) {
+            return res.status(400).json({message: {en: `Error with server while getting news`, ru: `Ошибка при получении новостей с сервера`}})
         }
-        
-        const {from, amount } = req.query;
-        const since = Number(from)
-        const to = Number(from) + Number(amount)
-        
-        if (since >=  cache.news.data.length) {
-            return res.status(400).json({message: {en: `"From" is more than total amount of news`, ru: `"From" больше чем общее количество новостей`}})
-        }
-        
-        const newsToRes = cache.news.data.slice(since, to)
-        //change images.files length to 1, we need only one image for preview
-        return res.status(200).json({
-            news: newsToRes.map(news => ({
-                _id: news._id,
-                header: news.header,
-                date: news.date,
-                short: news.short,
-                images: {
-                    ...news.images,
-                    files: [news.images.files[0]],
-                }
-            })), 
-            total: cache.news.data.length, 
-            message: {en: `${newsToRes.length} news loaded`, ru: `Новостей загружено: ${newsToRes.length}`}})
-
-    } catch (error) {
-        return res.status(400).json({message: {en: `Error with server while getting news`, ru: `Ошибка при получении новостей с сервера`}})
     }
 
 })
 
-
-
-router.get('/get-one', 
-    [
-        check('_id')
-            .exists()
-            .withMessage({en: 'Param "_id" is missed', ru: 'Отсутствует параметр "_id"'}),
-    ],
-    async (req, res) => {
-        
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-        return res.status(400).json({message: {en: `Wrong params`, ru: `Неправильные параметры`}, errors: validationResult})
-    }
-    const {_id } = req.query;
-
-    
-    try {
-        const err = await cache.news.control.load()
-        if (err) {
-            return res.status(500).json(err)
-        }
-
-        const newsToRes =  cache.news.data.find(item => {
-            return item._id.valueOf() === _id
-        })
-        
-        if (!newsToRes) {
-            return res.status(401).json({message: {en: `No news with the id: ${_id} has been found`, ru: `Новость с _id: ${_id} не найдена`}})
-        }
-        return res.status(200).json({news: newsToRes, message: {en: `news loaded: ${_id}`, ru: `Новостей загружена: ${_id}`}})
-
-    } catch (e) {
-        return res.status(400).json({message: {en: `Error with server while getting news id: ${_id} : ${e}`, ru: `Ошибка при получении новости id: ${_id} с сервера: ${e}`}})
-    }
-
-})
- 
 
  
 
-router.delete('/delete', 
+router.delete('', 
     [authMW, isAdmin,
     check('_id')
         .exists()

@@ -15,7 +15,7 @@ const fileSaver = require('../routes/files')
 const whoIs = require('../middleware/whoIs')
 
 
-router.post('/create', 
+router.post('', 
     [authMW, 
     isAdmin],
     fileSaver,
@@ -61,7 +61,7 @@ router.post('/create',
 )
 
 
-router.put('/edit', 
+router.put('', 
     [authMW, 
     isAdmin],
     fileSaver,
@@ -107,7 +107,7 @@ router.put('/edit',
 
 
 
-router.get('/load-all', 
+router.get('', 
     [whoIs],
     async (req, res) => {
     try {
@@ -126,7 +126,7 @@ router.get('/load-all',
 
 
 
-router.delete('/delete', 
+router.delete('', 
     [authMW, 
     isAdmin,
     check('_id')

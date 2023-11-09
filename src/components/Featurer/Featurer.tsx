@@ -1,8 +1,9 @@
 import { TLang, TLangText } from '../../interfaces';
 import './featurer.scss'
 import { useState, forwardRef, useImperativeHandle, useEffect  } from "react";
-import { prevent } from '../../assets/js/processors';
+import { IInputChecker2, prevent } from '../../assets/js/processors';
 import { empty } from '../../assets/js/consts';
+import BlockInput, { IBlockInputFunctions } from '../BlockInput/BlockInput';
 
 
 interface IItem {
@@ -15,41 +16,42 @@ interface IProps {
     lang: TLang
     type?: "input" | "textarea"
     amountChanged?: (newAmount: number) => void
-    valueChanged?: (target: HTMLInputElement | HTMLTextAreaElement) => void
-    onEnter?: (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => void
+    rules?: IInputChecker2["rules"]
+    id?: string
 }
 
 
 export interface IFeaturerFunctions {
-    setFeatures: (items: IItem[]) => void;
+    setFeatures: (newFeatures: IItem[]) => void;
     getFeatures: () => IItem[];
+    getErrors: () => TLangText[]
 }
 
 
 
-const Featurer = forwardRef<IFeaturerFunctions, IProps>(({lang, type="input", amountChanged, valueChanged, onEnter}, ref) => {
+const Featurer = forwardRef<IFeaturerFunctions, IProps>(({lang, type="input", rules, id, amountChanged}, ref) => {
     useImperativeHandle(ref, () => ({
-        setFeatures(items) {
-            setFeatures(items || [])
+        setFeatures(newFeatures) {
+            setFeatures(newFeatures.map(newFeature => ({item: newFeature, ref: {en: null, ru: null}})) || [])
         },
         getFeatures() {
-            return features
+            return features.map(feature => ({name: feature.item.name, _id: feature.item._id}))
+        },
+        getErrors() {
+            return getErrors()
         }
     }));
 
 
-    const [features, setFeatures] = useState<IItem[]>([])
+    const [features, setFeatures] = useState<{item: IItem, ref: {en: IBlockInputFunctions | null, ru: IBlockInputFunctions | null}}[]>([])
 
-    const onEditFeature = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index: number) => {
-        e.target.parentElement?.classList.remove('error')
+    const onEditFeature = (value: string, lng: string, index: number) => {
         setFeatures(prev => {
             const newFeatures = [...prev];
-            newFeatures[index].name[e.target.name as TLang] = e.target.value
+            newFeatures[index].item.name[lng as TLang] = value
             return newFeatures
         })
-        valueChanged && valueChanged(e.target)
     }
-
 
     const onDeleteFeature = (e: React.MouseEvent<HTMLButtonElement>, index: number) => {
         prevent(e)
@@ -60,10 +62,14 @@ const Featurer = forwardRef<IFeaturerFunctions, IProps>(({lang, type="input", am
         })
     }
 
+    useEffect(() => {
+        getErrors() //check for errors
+    }, [features.length])
+
 
     const onAddFeature = (e: React.MouseEvent<HTMLButtonElement>) => {
         prevent(e)
-        setFeatures(prev => [...prev, {_id: '', name: {...empty}}])
+        setFeatures(prev => [...prev, {item: {_id: '', name: {...empty}}, ref: {en: null, ru: null}}])
     }
     
     
@@ -72,64 +78,57 @@ const Featurer = forwardRef<IFeaturerFunctions, IProps>(({lang, type="input", am
     }, [features.length])
 
 
-    const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        e.stopPropagation()
-        if (e.key === 'Enter') {
-            e.preventDefault()
-            onEnter && onEnter(e)
-        }
+    const getErrors = (): TLangText[] => {
+        const errors: TLangText[] = []
+        features.forEach(feature => {
+            const errEn = feature.ref.en?.getError()
+            const errRu = feature.ref.ru?.getError()
+            if (errEn?.error?.en || errEn?.error?.ru ) {
+                errors.push({en: errEn.error.en, ru: errEn.error.ru})
+            }
+            if (errRu?.error?.en || errRu?.error?.ru ) {
+                errors.push({en: errRu.error.en, ru: errRu.error.ru})
+            }
+        })
+        return errors
     }
 
 
     return (
         <div className="features">
             <div className="features__list">
-                {features.map((item, i) => {
+                {features.map((feature, i) => {
                     return (
                         <div className="block_feature full-width" key={i}>
-                            <div className="block_input" data-selector="input-block">
-                                <label htmlFor={`feature-en-${i}`} aria-label={lang === 'en' ? 'Enter the value for english version' : 'Веедите значение для английской версии'}>{lang === 'en' ? 'Value EN' : 'Значение EN'}</label>
-                                {type === "input" ? 
-                                    <input 
-                                        data-selector="input"
-                                        name="en" 
-                                        id={`feature-en-${i}`}
-                                        type="text" 
-                                        onChange={(e) => onEditFeature(e, i)} 
-                                        onKeyDown={onKeyDown}
-                                        value={item.name.en}/>
-                                :
-                                    <textarea 
-                                        data-selector="input"
-                                        name="en" 
-                                        id={`feature-en-${i}`}
-                                        onChange={(e) => onEditFeature(e, i)} 
-                                        onKeyDown={onKeyDown}
-                                        value={item.name.en}/>
-                                }
-                            </div>
-                            <div className="block_input" data-selector="input-block">
-                                <label htmlFor={`feature-ru-${i}`} aria-label={lang === 'en' ? 'Enter the value for russian version' : 'Веедите значение для русской версии'}>{lang === 'en' ? 'Value RU' : 'Значение RU'}</label>
-                                {type === "input" ? 
-                                    <input 
-                                        data-selector="input"
-                                        name="ru" 
-                                        id={`feature-ru-${i}`}
-                                        type="text" 
-                                        onKeyDown={onKeyDown}
-                                        onChange={(e) => onEditFeature(e, i)} 
-                                        value={item.name.ru}/>
-                                :
-                                    <textarea 
-                                        data-selector="input"
-                                        name="ru" 
-                                        id={`feature-ru-${i}`}
-                                        onKeyDown={onKeyDown}
-                                        onChange={(e) => onEditFeature(e, i)} 
-                                        value={item.name.ru}/>
-                                }
-                            </div>
-                            <button className="button_blue color_reverse button_feature_delete" onClick={(e) => {onDeleteFeature(e, i)}}>X</button>
+                            <BlockInput
+                                lang={lang}
+                                labelText={{en: 'Value en', ru: 'Значение en'}}
+                                required
+                                typeElement={type}
+                                id={`feature-${id ? `${id}-` : ''}en-${i}`}
+                                rules={rules || {}}
+                                initialValue={feature.item.name.en}
+                                onChange={(newValue: string) => {onEditFeature(newValue, 'en', i)}}
+                                ref={(el) => feature.ref.en = el}
+                            />
+                            <BlockInput
+                                lang={lang}
+                                labelText={{en: 'Value ru', ru: 'Значение ru'}}
+                                required
+                                typeElement={type}
+                                id={`feature-${id ? `${id}-` : ''}ru-${i}`}
+                                rules={rules || {}}
+                                initialValue={feature.item.name.ru}
+                                onChange={(newValue: string) => {onEditFeature(newValue, 'ru', i)}}
+                                ref={(el) => feature.ref.ru = el}
+                            />
+                            <button 
+                                className="button_blue color_reverse button_feature_delete" 
+                                aria-label={lang === 'en' ? 'Delete this item' : 'Удалить этот элемент'} 
+                                onClick={(e) => {onDeleteFeature(e, i)}}
+                            >
+                                X
+                            </button>
                         </div>
     
                     )

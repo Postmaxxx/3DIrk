@@ -1,6 +1,6 @@
 import { IFetch, IFullState, INewsItem, ISendNewsItem, TLang } from '../../../interfaces';
 import './news-creator.scss'
-import { FC, useRef, useMemo, useCallback } from "react";
+import { FC, useRef, useCallback } from "react";
 import { connect } from "react-redux";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
@@ -8,13 +8,13 @@ import { useEffect } from "react";
 import { allActions } from "../../../redux/actions/all";
 import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFiles';
 import { inputsProps, navList, newsItemEmpty, resetFetch } from '../../../assets/js/consts';
-import { errorsChecker, filesDownloader, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
+import { filesDownloader, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import { useNavigate, useParams } from 'react-router-dom';
-import { inputChecker } from '../../../../src/assets/js/processors';
 import dayjs from 'dayjs';
 import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
 import MessageNew from '../../../../src/components/Message/MessageNew';
 import Uploader from '../../../../src/components/Preloaders/Uploader';
+import BlockInput, { IBlockInputFunctions } from '../../../components/BlockInput/BlockInput';
 
 interface IPropsState {
     lang: TLang
@@ -40,18 +40,15 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
     const navigate = useNavigate()
     const addFilesRef = useRef<IAddFilesFunctions>(null)
     const _form = useRef<HTMLFormElement>(null)
-    const _headerEn = useRef<HTMLInputElement>(null)
-    const _headerRu = useRef<HTMLInputElement>(null)
-    const _textShortEn = useRef<HTMLTextAreaElement>(null)
-    const _textShortRu = useRef<HTMLTextAreaElement>(null)
-    const _textEn = useRef<HTMLTextAreaElement>(null)
-    const _textRu = useRef<HTMLTextAreaElement>(null)
-    const _date = useRef<HTMLInputElement>(null)
+    const _headerEn = useRef<IBlockInputFunctions>(null)
+    const _headerRu = useRef<IBlockInputFunctions>(null)
+    const _textShortEn = useRef<IBlockInputFunctions>(null)
+    const _textShortRu = useRef<IBlockInputFunctions>(null)
+    const _textEn = useRef<IBlockInputFunctions>(null)
+    const _textRu = useRef<IBlockInputFunctions>(null)
+    const _date = useRef<IBlockInputFunctions>(null)
     
-    const focuser = useMemo(() => focusMover(), [lang])
-    const errChecker = useMemo(() => errorsChecker({lang}), [lang])
-
-   
+  
     const closeModal = useCallback(async () => {   
         if (await modal?.getName() === 'newsSend') {
             if (send.status === 'success') {
@@ -61,9 +58,8 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
             setState.news.setSendNews({...resetFetch})
         }
         setState.news.setSendNews(resetFetch)// clear fetch status
-        errChecker.clear()
         modal?.closeCurrent()
-	}, [send.status, paramNewsId, errChecker, modal])
+	}, [send.status, paramNewsId, modal])
 
 
 
@@ -110,16 +106,8 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
 
     
 
-    const onChangeInputs = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        (e.target as HTMLElement).parentElement?.classList.remove('incorrect-value') 
-    }
-
-
-
-
-    
+   
     const fillValues = async (news: INewsItem) => {//fill values based on selected color
-        
         if (!_headerEn.current || !_headerRu.current || !_textShortEn.current || !_textShortRu.current || 
             !_textEn.current || !_textRu.current || !_date.current) return
         if (paramNewsId) { //news exists
@@ -131,13 +119,13 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
             addFilesRef.current?.clearAttachedFiles()
         }
         
-        _headerEn.current.value = news?.header?.en || ''
-        _headerRu.current.value = news?.header?.ru || ''
-        _textShortEn.current.value = news?.short?.en || ''
-        _textShortRu.current.value = news?.short?.ru || ''
-        _textEn.current.value = news?.text?.en || ''
-        _textRu.current.value = news?.text?.ru || ''
-        _date.current.value =  dayjs(news?.date || '').format('YYYY-MM-DD')
+        _headerEn.current.setValue(news?.header?.en || '')
+        _headerRu.current.setValue(news?.header?.ru || '')
+        _textShortEn.current.setValue(news?.short?.en || '')
+        _textShortRu.current.setValue(news?.short?.ru || '')
+        _textEn.current.setValue(news?.text?.en || '')
+        _textRu.current.setValue(news?.text?.ru || '')
+        _date.current.setValue(dayjs(news?.date || '').format('YYYY-MM-DD'))
     }
     
 
@@ -148,50 +136,50 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
         prevent(e)   
         if (!_form.current || !_headerEn.current || !_headerRu.current || !_textShortEn.current || !_textShortRu.current || !_textEn.current ||
             !_textRu.current || !_date.current ) return
-        focuser.focusAll(); //run over all elements to get all errors
-        const errorFields = _form.current.querySelectorAll('.incorrect-value')
-        if (errorFields?.length > 0) {
-            errChecker.add(lang === 'en' ? 'Some fields are filled incorrectly' : 'Некоторые поля заполнены неправильно')
-        }    
+
+        //check errors
+        const errors: string[] = [_headerEn, _headerRu, _textShortEn, _textShortRu, _textEn, _textRu, _date]
+            .map(el => el.current?.getErrorText(lang))
+            .filter(el => el) as string[]
         if (addFilesRef.current?.getFiles().length === 0) {
-            errChecker.add(lang === 'en' ? 'No images' : 'Нет изображений')
+            errors.push(lang === 'en' ? 'No images' : 'Нет изображений')
         }    
-        if (errChecker.amount() > 0) {
-            modal?.openModal({
-                name: 'errorChecker',
+    
+        if (errors.length > 0) { //show modal with error
+            return modal?.openModal({
+                name: 'errorsInForm',
                 onClose: closeModal,
-                children: <MessageNew {...errChecker.result()} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
+                children: <MessageNew 
+                    header={lang === 'en' ? 'Errors was found' : 'Найдены ошибки'}
+                    status={'error'}
+                    text={errors}
+                    buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}
+                />
             })
-            return
-        }   
+        }
+
         //if no errors
         const newsItem: ISendNewsItem = {
             _id: paramNewsId || '',
             header: {
-                en: _headerEn.current.value,
-                ru: _headerRu.current.value,
+                en: _headerEn.current.getValue() || 'Error',
+                ru: _headerRu.current.getValue() || 'Error',
             },
             text: {
-                en: _textEn.current.value,
-                ru: _textRu.current.value,
+                en: _textEn.current.getValue() || 'Error',
+                ru: _textRu.current.getValue() || 'Error',
             },
             short: {
-                en: _textShortEn.current.value,
-                ru: _textShortRu.current.value,
+                en: _textShortEn.current.getValue() || 'Error',
+                ru: _textShortRu.current.getValue() || 'Error',
             },
-            date: new Date(_date.current.value),
+            date: new Date(_date.current.getValue() || 'Error'),
             files: addFilesRef.current?.getFiles() || []
         }
         setState.news.sendNews(newsItem)
     }
 
 
-
-
-    useEffect(() => {       
-        if (!_form.current) return
-        focuser.create({container: _form.current})
-    }, [lang])
 
 
     return (
@@ -208,83 +196,74 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
                             <h3>{lang === 'en' ? 'Add information' : 'Добавьте информацию'}</h3>
                         </div>
                         <div className="form__inputs form__inputs_sm-wide">
-                            <div className="block_input" data-selector="input-block">
-                                <label htmlFor="header_en">{lang === 'en' ? "Header en" : "Заголовок en"}</label>
-                                <input 
-                                    ref={_headerEn}
-                                    data-selector="input"
-                                    type="text" 
-                                    id='header_en' 
-                                    onChange={onChangeInputs}
-                                    onKeyDown={focuser.next} 
-                                    onBlur={(e) => inputChecker({lang, min:inputsProps.news.header.min, max:inputsProps.news.header.max, el: e.target})}/>
-                            </div>
-                            <div className="block_input" data-selector="input-block">
-                                <label htmlFor="header_ru">{lang === 'en' ? "Header ru" : "Заголовок ru"}</label>
-                                <input 
-                                    ref={_headerRu}
-                                    data-selector="input"
-                                    type="text" 
-                                    id='header_ru' 
-                                    onChange={onChangeInputs} 
-                                    onKeyDown={focuser.next}
-                                    onBlur={(e) => inputChecker({lang, min:inputsProps.news.header.min, max:inputsProps.news.header.max, el: e.target})}/>
-                            </div>
-                        </div>
-
-                        
-                        <div className="form__inputs form__inputs_sm-wide">
-                            <div className="block_input" data-selector="input-block">
-                                <label htmlFor="text_short_en">{lang === 'en' ? 'Short text en' : 'Краткий текст en'}</label>
-                                <textarea 
-                                        ref={_textShortEn}
-                                        data-selector="input"
-                                        id='text_short_en' 
-                                        onChange={onChangeInputs} 
-                                        onBlur={(e) => inputChecker({lang, min:inputsProps.news.textShort.min, max:inputsProps.news.textShort.max, el: e.target})}/>
-                            </div>
-                            <div className="block_input" data-selector="input-block">
-                                <label htmlFor="text_short_ru">{lang === 'en' ? 'Short text ru' : 'Краткий текст ru'}</label>
-                                <textarea 
-                                        ref={_textShortRu}
-                                        data-selector="input"
-                                        id='text_short_ru' 
-                                        onChange={onChangeInputs} 
-                                        onBlur={(e) => inputChecker({lang, min:inputsProps.news.textShort.min, max:inputsProps.news.textShort.max, el: e.target})}/>
-                            </div>
+                            <BlockInput
+                                lang={lang}
+                                labelText={{en: 'Header en', ru: 'Заголовок en'}}
+                                required
+                                id="header_en"
+                                rules={{min:inputsProps.news.header.min, max:inputsProps.news.header.max}}
+                                ref={_headerEn}
+                            />
+                            <BlockInput
+                                lang={lang}
+                                labelText={{en: 'Header ru', ru: 'Заголовок ru'}}
+                                required
+                                id="header_ru"
+                                rules={{min:inputsProps.news.header.min, max:inputsProps.news.header.max}}
+                                ref={_headerRu}
+                            />
                         </div>
                         <div className="form__inputs form__inputs_sm-wide">
-                            <div className="block_input" data-selector="input-block">
-                                <label htmlFor="text_en">{lang === 'en' ? 'Full text en' : 'Полный текст en'}</label>
-                                <textarea 
-                                    ref={_textEn}
-                                    data-selector="input"
-                                    id='text_en' 
-                                    onChange={onChangeInputs} 
-                                    onBlur={(e) => inputChecker({lang, min:inputsProps.news.textFull.min, max:inputsProps.news.textFull.max, el: e.target})}/>
-                            </div>
-                            <div className="block_input" data-selector="input-block">
-                                <label htmlFor="text_ru">{lang === 'en' ? 'Full text ru' : 'Полный текст ru'}</label>
-                                <textarea 
-                                    ref={_textRu}
-                                    data-selector="input"
-                                    id='text_ru' 
-                                    onChange={onChangeInputs} 
-                                    onBlur={(e) => inputChecker({lang, min:inputsProps.news.textFull.min, max:inputsProps.news.textFull.max, el: e.target})}/>
-                            </div>
+                            <BlockInput
+                                lang={lang}
+                                labelText={{en: 'Short text en', ru: 'Краткий текст en'}}
+                                required
+                                typeElement="textarea"
+                                id="text_short_en"
+                                rules={{min:inputsProps.news.textShort.min, max:inputsProps.news.textShort.max}}
+                                ref={_textShortEn}
+                            />
+                            <BlockInput
+                                lang={lang}
+                                labelText={{en: 'Short text ru', ru: 'Краткий текст ru'}}
+                                required
+                                typeElement="textarea"
+                                id="text_short_ru"
+                                rules={{min:inputsProps.news.textShort.min, max:inputsProps.news.textShort.max}}
+                                ref={_textShortRu}
+                            />
                         </div>
                         <div className="form__inputs form__inputs_sm-wide">
-                            <div className="block_input">
-                                <label htmlFor='date'>{lang === 'en' ? 'Date' : 'Дата'}:</label>
-                                    <input 
-                                        ref={_date}
-                                        data-selector="input"
-                                        type="date" 
-                                        id="date" 
-                                        onChange={onChangeInputs} 
-                                        onKeyDown={focuser.next}
-                                        onBlur={(e) => inputChecker({lang, type: "date", el: e.target})}/>
-                            </div>
+                            <BlockInput
+                                lang={lang}
+                                labelText={{en: 'Full text en', ru: 'Полный текст en'}}
+                                required
+                                typeElement="textarea"
+                                id="text_en"
+                                rules={{min:inputsProps.news.textFull.min, max:inputsProps.news.textFull.max}}
+                                ref={_textEn}
+                            />
+                            <BlockInput
+                                lang={lang}
+                                labelText={{en: 'Full text ru', ru: 'Полный текст ru'}}
+                                required
+                                typeElement="textarea"
+                                id="text_ru"
+                                rules={{min:inputsProps.news.textFull.min, max:inputsProps.news.textFull.max}}
+                                ref={_textRu}
+                            />
+                        </div>
+                        <div className="form__inputs form__inputs_sm-wide">
+                            <BlockInput
+                                lang={lang}
+                                labelText={{en: 'Date', ru: 'Дата'}}
+                                required
+                                inputType='date'
+                                typeElement="input"
+                                id="news_date"
+                                rules={{type: "date"}}
+                                ref={_date}
+                            />
                         </div>
                         <div className="block_text">
                             <h3>{lang === 'en' ? 'Add images' : 'Добавьте изображения'}</h3>

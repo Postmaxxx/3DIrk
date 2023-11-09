@@ -1,6 +1,6 @@
 import { TLang, TLangText } from "../../interfaces"
 import { useRef, useState, forwardRef, useImperativeHandle, useMemo } from "react";
-import './selector.scss'
+import './block-selector.scss'
 import { defaultSelectItem, empty } from "../../assets/js/consts";
 
 
@@ -13,9 +13,10 @@ export interface IItem {
 interface IProps {
     id: string
     lang: TLang
-    label: TLangText
+    labelText: TLangText
     defaultData?: IItem
     data?: IItem[]
+    required?: boolean
     onBlur?: (e: React.FocusEvent<HTMLSelectElement>) => void
     saveValue?: (e: React.ChangeEvent<HTMLSelectElement>) => void
     saveItem?: (itemNew: IItem) => void
@@ -29,11 +30,20 @@ export interface ISelectorFunctions {
     getItem: () => IItem;
     setItem: (element: IItem) => void;
     setValue: (value: string) => void;
+    getError: () => {
+		error: TLangText | null,
+		name: TLangText 
+	}
+	getErrorText: (lng: TLang) => string | null
 }
 
+    interface IStore {
+        items: IItem[]
+        item: IItem,
+        value: string
+    }
 
-
-const Selector = forwardRef<ISelectorFunctions, IProps>(({lang, id, label, defaultData={...defaultSelectItem}, data=[], onBlur, saveValue, saveItem,  onClick}, ref) => {
+const BlockSelector = forwardRef<ISelectorFunctions, IProps>(({lang, id, labelText, defaultData={...defaultSelectItem}, data=[], required, onBlur, saveValue, saveItem,  onClick}, ref) => {
     useImperativeHandle(ref, () => ({
         setData(elements) {
             setStore(prev => ({...prev, items: elements}))
@@ -49,26 +59,38 @@ const Selector = forwardRef<ISelectorFunctions, IProps>(({lang, id, label, defau
         },
         setValue(value) { //select item if item.value === value
             setStore(prev => ({...prev, value: value}))
-            if (!selectRef.current) return
+            if (!_select.current) return
             if (value) {
-                selectRef.current.selectedIndex = store.items.findIndex(el => el.value === value) + 1  
+                _select.current.selectedIndex = store.items.findIndex(el => el.value === value) + 1  
             } else {
-                selectRef.current.selectedIndex = 0
+                _select.current.selectedIndex = 0
             }
         },
+        getError() {
+            let err: TLangText | null = null;
+			if (_select.current) {
+				err = checkOnErrors()
+			} 
+			return {error: err, name: labelText}
+        },
+        getErrorText(lng) {
+			if (_select.current) {
+				const err = checkOnErrors()
+				return err ? `${labelText[lng]}: ${err[lng]}` : null
+			} 
+			return null
+		}
     }));
 
 
-    interface IStore {
-        items: IItem[]
-        item: IItem,
-        value: string
-    }
-
     const [store, setStore] = useState<IStore>({items: data || [], item: defaultData || {value: '', name: {...empty}}, value: ''})
-    const selectRef = useRef<HTMLSelectElement>(null)
+    const _select = useRef<HTMLSelectElement>(null)
+	const [error, setError] = useState<TLangText | null>(null)
+	const [changed, setchanged] = useState<boolean>(false)
+
 
     const onChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setchanged(true)       
         var itemNew: IItem = {value: e.target.value, name: (store.items.find(el => el.value === e.target.value) as IItem)?.name || {en: '', ru: ''}}
         setStore(prev => {
             return {
@@ -87,25 +109,45 @@ const Selector = forwardRef<ISelectorFunctions, IProps>(({lang, id, label, defau
         return store.items.map((el, i) => <option key={i} value={el.value}>{el.name[lang]}</option>)
     }, [store.items, lang])
     
-  
 
+    const checkOnErrors = (): TLangText | null => {
+        let err: TLangText | null = null
+        if (!changed) {
+            err = {en: "not selected", ru: 'не выбрано'}
+        } 
+        setError(err)
+        return err
+    }
+
+
+    const onBlurSelect: React.FocusEventHandler<HTMLSelectElement> = (e) => {
+		checkOnErrors()
+        onBlur && onBlur(e)
+    }
+
+    const onClickSelect: React.MouseEventHandler<HTMLSelectElement> = (e) => {
+		setError(null)
+        onClick && onClick(e)
+    }
+  
     return (
-        <div className="selector block_input" data-selector="input-block">
-            <label htmlFor={id}>{label[lang]}</label>
+        <div className={`block_selector block_input ${error ? "incorrect-value" : ""}`} data-selector="input-block">
+            <label htmlFor={id}>{labelText[lang]}{required && '*'}</label>
             <select 
                 data-selector="select"
-                ref={selectRef} 
+                ref={_select} 
                 id={id} 
                 defaultValue={store.value} 
                 onChange={onChange} 
-                onBlur={onBlur}
-                onClick={(e) => {(e.target as HTMLElement).parentElement?.classList.remove('incorrect-value'); onClick && onClick(e)}}>
+                onBlur={onBlurSelect}
+                onClick={onClickSelect}>
                     <option key={-1} value={store.item.value} disabled hidden>{store.item.name[lang]}</option>
                     {options}
             </select>
+			{error && <span id={`${id}_error`} aria-description={lang === 'en' ? 'Error text' : 'Текст ошибки'} data-content="errorText">{lang === 'en' ? 'Error: ' : 'Ошибка: '}{error[lang]}</span>}	
         </div>
     )
 })
 
 
-export default Selector
+export default BlockSelector

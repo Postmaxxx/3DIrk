@@ -93,9 +93,10 @@ const ModalNew = forwardRef<IModalFunctions, IProps>(({}, ref) => {
             _modalContent.current.addEventListener("keydown", keyPressed);
             focuser.current?.destroy()
             focuser.current = lockFocusInside({_element: _modalContent.current, _delayer: _modalContent.current})
+            focuser.current?.rebuild()
         } 
         return () => {
-            _modalContent.current?.removeEventListener("keydown", keyPressed);
+            _modalContent.current?.removeEventListener("keydown", keyPressed);           
             focuser.current?.destroy()
         }
         

@@ -69,7 +69,7 @@ const App:React.FC<IProps> = ({lang, isAdmin, isAuth, contentLoad, isLogining, s
 	const modalRef = useRef<IModalFunctions>(null)
 
 	useEffect(() => {
-		setState.user.loginWithToken()
+		setState.user.login({})
 		if (contentLoad.status !== 'success' && contentLoad.status  !== 'fetching') {
 			setState.fibers.loadFibers()
 		}

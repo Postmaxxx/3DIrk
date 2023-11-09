@@ -8,10 +8,10 @@ import AddFiles, { IAddFilesFunctions } from "../../components/AddFiles/AddFiles
 import { allActions } from "../../redux/actions/all";
 import { inputsProps, resetFetch} from "../../assets/js/consts";
 import { deepCopy, errorsChecker, focusMover, modalMessageCreator, prevent } from "../../assets/js/processors";
-import { inputChecker } from '../../assets/js/processors';
 import { IModalFunctions } from "../../components/Modal/ModalNew";
 import MessageNew from "../../components/Message/MessageNew";
 import Uploader from "../../../src/components/Preloaders/Uploader";
+import BlockInput, { IBlockInputFunctions } from "../../components/BlockInput/BlockInput";
 
 interface IPropsState {
     lang: TLang,
@@ -30,23 +30,18 @@ interface IProps extends IPropsState, IPropsActions {}
 
 
 const CustomOrder:React.FC<IProps> = ({lang, sendOrder, modal, setState}): JSX.Element => {
-    const _message = useRef<HTMLTextAreaElement>(null)
+    const _message = useRef<IBlockInputFunctions>(null)
     const addFilesRef = useRef<IAddFilesFunctions>(null)
     const _formOrder = useRef<HTMLFormElement>(null)
-
-    const focuser = useMemo(() => focusMover(), [lang])
-    const errChecker = useMemo(() => errorsChecker({lang}), [lang])
-
 
 
     const closeModal = useCallback(async () => {        
         if (await modal?.getName() === 'sendOrder') {
             if (sendOrder.status === 'success') {
                 addFilesRef.current?.clearAttachedFiles()
+                _message.current?.setValue('')
             }
             setState.user.setSendOrder(deepCopy(resetFetch))
-        }
-        if (await modal?.getName() === 'errorsInForm') {
         }
         modal?.closeCurrent()
 	}, [sendOrder.status])
@@ -57,19 +52,24 @@ const CustomOrder:React.FC<IProps> = ({lang, sendOrder, modal, setState}): JSX.E
         if (!_message.current ||  !modal || !addFilesRef.current || !_formOrder.current) return
         prevent(e)
         //check errors
-        focuser.focusAll();//run over all elements to get all errors
-        const errorFields = _formOrder.current.querySelectorAll('.incorrect-value')
-        errorFields?.length > 0 &&  errChecker.add(lang === 'en' ? 'Order description is filled incorrectly' : 'Поле информация о заказе заполнено неправильно')
-        if (errChecker.amount() > 0) { //show modal with error
-            modal?.openModal({
+        const errors: string[] = [_message]
+            .map(el => el.current?.getErrorText(lang))
+            .filter(el => el) as string[]
+        
+        if (errors.length > 0) { //show modal with error
+            return modal?.openModal({
                 name: 'errorsInForm',
                 onClose: closeModal,
-                children: <MessageNew {...errChecker.result()} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
+                children: <MessageNew 
+                    header={lang === 'en' ? 'Errors was found' : 'Найдены ошибки'}
+                    status={'error'}
+                    text={errors}
+                    buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}
+                />
             })
-            return
         }
         setState.user.sendOrder({
-            message: _message.current.value,
+            message: _message.current.getValue() || "Error with message ",
             files: addFilesRef.current.getFiles(),
         })
     }
@@ -94,19 +94,6 @@ const CustomOrder:React.FC<IProps> = ({lang, sendOrder, modal, setState}): JSX.E
         }
     }, [sendOrder.status])
 
-
-    useEffect(() => {
-        if (!_formOrder.current) return
-        focuser.create({container: _formOrder.current})
-    }, [lang])
-
-
-
-
-    const onChangeText: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (e) => {
-        (e.target as HTMLElement).parentElement?.classList.remove('incorrect-value') 
-    }
-
     
     return (
         <div className="page_order">
@@ -121,18 +108,16 @@ const CustomOrder:React.FC<IProps> = ({lang, sendOrder, modal, setState}): JSX.E
                         </div>
                         <div className="form__inputs">
                             <div className="form__inputs__texts">
-                                <div className="block_input expandable" data-selector="input-block">
-                                    <label htmlFor="message">
-                                        {lang === 'en' ? 'Order description' : 'Описание заказа'}
-                                    </label>
-                                    <textarea 
-                                        data-selector="input"
-                                        className="input-element" 
-                                        id="message" 
-                                        ref={_message}
-                                        onChange={onChangeText}
-                                        onBlur={(e) => inputChecker({lang, min:0, max:inputsProps.message.max, el: e.target})}/>
-                                </div>
+                                <BlockInput
+                                    lang={lang}
+                                    labelText={{en: 'Order description', ru: 'Описание заказа'}}
+                                    required
+                                    expandable
+                                    typeElement="textarea"
+                                    id="order_message"
+                                    rules={{min:inputsProps.customOrder.message.min, max:inputsProps.customOrder.message.max}}
+                                    ref={_message}
+                                />
                             </div>
                             <div className="form__inputs__files">
                                 <div className="block_input files">

@@ -8,11 +8,11 @@ import CartContent from "../../components/CartContent/CartContent";
 import AddFiles, { IAddFilesFunctions } from "../../components/AddFiles/AddFiles";
 import { allActions } from "../../redux/actions/all";
 import { inputsProps, resetFetch} from "../../assets/js/consts";
-import { deepCopy, errorsChecker, focusMover, modalMessageCreator, prevent } from "../../assets/js/processors";
-import { inputChecker } from '../../../src/assets/js/processors';
+import { deepCopy, modalMessageCreator, prevent } from "../../assets/js/processors";
 import { IModalFunctions } from "../../../src/components/Modal/ModalNew";
 import MessageNew from "../../../src/components/Message/MessageNew";
 import Uploader from "../../../src/components/Preloaders/Uploader";
+import BlockInput, { IBlockInputFunctions } from "../../components/BlockInput/BlockInput";
 
 interface IPropsState {
     lang: TLang,
@@ -36,12 +36,9 @@ interface IProps extends IPropsState, IPropsActions {}
 
 
 const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsLoad, fibersLoad, modal, setState}): JSX.Element => {
-    const _message = useRef<HTMLTextAreaElement>(null)
+    const _message = useRef<IBlockInputFunctions>(null)
     const addFilesRef = useRef<IAddFilesFunctions>(null)
     const _formOrder = useRef<HTMLFormElement>(null)
-
-    const focuser = useMemo(() => focusMover(), [lang])
-    const errChecker = useMemo(() => errorsChecker({lang}), [lang])
 
 
 
@@ -50,13 +47,12 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsLoad, fibersLoad, 
             if (sendOrder.status === 'success') {
                 addFilesRef.current?.clearAttachedFiles()
                 setState.user.setCart({items: []})
+                _message.current?.setValue('')
             }
             setState.user.setSendOrder(deepCopy(resetFetch))
         }
         if (await modal?.getName() === 'cartFixer') {
             setState.user.setSendOrder(deepCopy(resetFetch))
-        }
-        if (await modal?.getName() === 'errorsInForm') {
         }
         modal?.closeCurrent()
 	}, [sendOrder.status])
@@ -67,21 +63,26 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsLoad, fibersLoad, 
         if (!_message.current ||  !modal || !addFilesRef.current || !_formOrder.current) return
         prevent(e)
         //check errors
-        focuser.focusAll();//run over all elements to get all errors
-        const errorFields = _formOrder.current.querySelectorAll('.incorrect-value')
-        errorFields?.length > 0 &&  errChecker.add(lang === 'en' ? 'Some fields in additional information are filled incorrectly' : 'Некоторые поля в дополнительной информации заполнены неправильно')
-        cart.items.length === 0 && errChecker.add(lang === 'en' ? 'Your cart is empty' : 'Ваша корзина пуста')
-        if (errChecker.amount() > 0) { //show modal with error
-            modal?.openModal({
+        const errors: string[] = [_message]
+            .map(el => el.current?.getErrorText(lang))
+            .filter(el => el) as string[]
+            
+        cart.items.length === 0 && errors.push(lang === 'en' ? 'Your cart is empty' : 'Ваша корзина пуста')
+        if (errors.length > 0) { //show modal with error
+            return modal?.openModal({
                 name: 'errorsInForm',
                 onClose: closeModal,
-                children: <MessageNew {...errChecker.result()} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
+                children: <MessageNew 
+                    header={lang === 'en' ? 'Errors was found' : 'Найдены ошибки'}
+                    status={'error'}
+                    text={errors}
+                    buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}
+                />
             })
-            return
         }
         setState.user.sendCart() //update cart before order
         setState.user.sendOrder({
-            message: _message.current.value,
+            message: _message.current.getValue() || "Errors with message",
             files: addFilesRef.current.getFiles(),
         })
     }
@@ -134,18 +135,6 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsLoad, fibersLoad, 
         }
     }, [])
 
-    useEffect(() => {
-        if (!_formOrder.current) return
-        focuser.create({container: _formOrder.current})
-    }, [lang])
-
-
-
-
-    const onChangeText: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (e) => {
-        (e.target as HTMLElement).parentElement?.classList.remove('incorrect-value') 
-    }
-
     
     return (
         <div className="page_order">
@@ -160,18 +149,15 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsLoad, fibersLoad, 
                         </div>
                         <div className="form__inputs">
                             <div className="form__inputs__texts">
-                                <div className="block_input expandable" data-selector="input-block">
-                                    <label htmlFor="message">
-                                        {lang === 'en' ? 'Information about the order' : 'Информация о заказе'}
-                                    </label>
-                                    <textarea 
-                                        data-selector="input"
-                                        className="input-element" 
-                                        id="message" 
-                                        ref={_message}
-                                        onChange={onChangeText}
-                                        onBlur={(e) => inputChecker({lang, min:0, max:inputsProps.message.max, el: e.target})}/>
-                                </div>
+                                <BlockInput
+                                    lang={lang}
+                                    labelText={{en: 'Information about the order', ru: 'Информация о заказе'}}
+                                    expandable
+                                    typeElement="textarea"
+                                    id="order_message"
+                                    rules={{min:inputsProps.messageOrder.min, max:inputsProps.messageOrder.max}}
+                                    ref={_message}
+                                />
                             </div>
                             <div className="form__inputs__files">
                                 <div className="block_input files">
