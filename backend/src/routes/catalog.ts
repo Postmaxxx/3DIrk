@@ -109,7 +109,7 @@ router.get('/category',
                 _id: item._id,
                 name: item.name,
                 //price: item.price,
-                text_short: item.text_short,
+                textShort: item.textShort,
                 images: item.images,
                 active: item.active
             }))

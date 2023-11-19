@@ -8,14 +8,14 @@ import AddFiles, { IAddFilesFunctions } from "../../components/AddFiles/AddFiles
 import { allActions } from "../../redux/actions/all";
 import { inputsProps, nwsp, resetFetch } from "../../assets/js/consts";
 import { deepCopy, modalMessageCreator, prevent } from "../../assets/js/processors";
-import { IModalFunctions } from "../../../src/components/Modal/ModalNew";
-import MessageNew from "../../../src/components/Message/MessageNew";
+import { IModalFunctions } from "../../components/Modal/Modal";
+import Message from "../../components/Message/Message";
 import Preloader from "../../../src/components/Preloaders/Preloader";
 import logo_vk from '../../assets/img/logo_vk.svg';
 import logo_tg from '../../assets/img/logo_telegram.svg';
 import locationMap from '../../assets/img/address_scheme.jpg';
 import locationMapSmall from '../../assets/img/address_scheme_small.webp';
-import ImageModalNew from "../../../src/components/ImageModal/ImageModalNew";
+import ImageModal from "../../components/ImageModal/ImageModal";
 import svgs from "../../components/additional/svgs";
 import Uploader from "../../../src/components/Preloaders/Uploader";
 import BlockInput, { IBlockInputFunctions } from "../../components/BlockInput/BlockInput";
@@ -55,9 +55,9 @@ const ContactUs:React.FC<IProps> = ({lang, userState, modal, setState}): JSX.Ele
 
 
 
-    const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {  
+    const onSubmit = (e: React.MouseEvent<HTMLButtonElement>): void => {  
         prevent(e)
-        const isAuth = userState.auth.status === 'success' ? true : false
+        const isAuth: boolean = userState.auth.status === 'success' ? true : false
         if (!addFilesRef.current || !_formContact.current) return
 
         //check errors
@@ -69,7 +69,7 @@ const ContactUs:React.FC<IProps> = ({lang, userState, modal, setState}): JSX.Ele
             return modal?.openModal({
                 name: 'errorsInForm',
                 onClose: closeModal,
-                children: <MessageNew 
+                children: <Message 
                     header={lang === 'en' ? 'Errors was found' : 'Найдены ошибки'}
                     status={'error'}
                     text={errors}
@@ -78,14 +78,14 @@ const ContactUs:React.FC<IProps> = ({lang, userState, modal, setState}): JSX.Ele
             })
         }
         
-        const files = addFilesRef.current.getFiles() // attached files
+        const files: File[] = addFilesRef.current.getFiles() // attached files
         const textOrder: string = 
 `${lang === 'en' ? 'New message' : 'Новое сообщение'}:
 ${lang === 'en' ? 'Name' : 'Имя'}: ${isAuth ? userState.name : _name.current?.getValue()}
 ${lang === 'en' ? 'Email' : 'Почта'}: ${isAuth ? userState.email : _email.current?.getValue()}
 ${lang === 'en' ? 'Phone' : 'Телефон'}: ${isAuth ? userState.phone : _phone.current?.getValue()}
 ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current?.getValue()}`;
-        const text = `${lang === 'en' ? 'New message' : 'Новое сообщение'}:${textOrder}\n ${files.length > 0 ? (lang==='en' ? `\nAttached files ${files.length}:` : `\nПрикрепленные файлы ${files.length}:`) : ''}`
+        const text: string = `${lang === 'en' ? 'New message' : 'Новое сообщение'}:${textOrder}\n ${files.length > 0 ? (lang==='en' ? `\nAttached files ${files.length}:` : `\nПрикрепленные файлы ${files.length}:`) : ''}`
         setState.user.sendMessage({text, files})
     }
 
@@ -97,7 +97,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current?.getValu
             modal?.openModal({
                 name: 'messageSend',
                 onClose: closeModal,
-                children: <MessageNew {...modalMessageCreator(userState.sendOrder, lang)} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
+                children: <Message {...modalMessageCreator(userState.sendOrder, lang)} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
             })
         }
         if (userState.sendOrder.status === 'fetching') {
@@ -112,10 +112,10 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current?.getValu
 
 
 
-    const onLocationClick = () => {
+    const onLocationClick = (): void => {
         modal?.openModal({
             name: 'location',
-            children: <ImageModalNew url={locationMap} text={lang === 'en' ? 'Irkutsk city, Gertcena street, 14' : 'г. Иркутск, Улица Герцена, 14'}/>
+            children: <ImageModal url={locationMap} text={lang === 'en' ? 'Irkutsk city, Gertcena street, 14' : 'г. Иркутск, Улица Герцена, 14'}/>
         })
     }
 
@@ -137,25 +137,25 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current?.getValu
                                     </div>
                                     <div className="contacts__list">
                                         <div className="contact">
-                                            <div className="img-container">
+                                            <div className="img-wrapper">
                                                 {svgs().iconPhone}
                                             </div>
                                             <a href="tel:+79834088949" aria-label={lang === 'en' ? 'Call us' : 'Позвонить нам'}>+7 983 408 89 49</a>
                                         </div>
                                         <div className="contact">
-                                            <div className="img-container">
+                                            <div className="img-wrapper">
                                                 <img src={logo_vk} alt="VK" />
                                             </div>
                                             <a href="vk.com" aria-label={lang === 'en' ? 'Contact us via VK' : 'Связаться с нами через ВК'}>{lang === 'en' ? "Strezhen" : 'Стрежень'}</a>
                                         </div>
                                         <div className="contact">
-                                            <div className="img-container">
+                                            <div className="img-wrapper">
                                                 <img src={logo_tg} alt="Telegram" />
                                             </div>
                                             <a href="telegram.org" aria-label={lang === 'en' ? 'Contact us via Telegram' : 'Связаться с нами через Telegram'}>{lang === 'en' ? "Out group" : 'Наша группа'}</a>
                                         </div>
                                         <div className="contact">
-                                            <div className="img-container">
+                                            <div className="img-wrapper">
                                                 {svgs().iconEmail}
                                             </div>
                                             <a href="mailto:pypkin@mail.ru"  aria-label={lang === 'en' ? 'Contact us via email' : 'Связаться с нами через электронную почту'}>vasya_pypkin@mail.ru</a>
@@ -182,7 +182,7 @@ ${lang === 'en' ? 'Message' : 'Сообщение'}: ${_message.current?.getValu
                                             lang={lang}
                                             labelText={{en: 'Your phone', ru: 'Ваш телефон'}}
                                             id="contacter_phone"
-                                            inputType="tel"
+                                            inputType="text"
                                             rules={{min:inputsProps.phone.min, max:inputsProps.phone.max, type:'phone'}}
                                             ref={_phone}
                                         />

@@ -10,8 +10,8 @@ import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFi
 import { navList, resetFetch } from '../../../assets/js/consts';
 import { deepCopy, errorsChecker, filesDownloader, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import { useNavigate } from 'react-router-dom';
-import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
-import MessageNew from '../../../../src/components/Message/MessageNew';
+import { IModalFunctions } from '../../../components/Modal/Modal';
+import Message from '../../../components/Message/Message';
 import Uploader from '../../../../src/components/Preloaders/Uploader';
 
 interface IPropsState {
@@ -33,13 +33,13 @@ interface IProps extends IPropsState, IPropsActions {}
 const SpliderChanger: FC<IProps> = ({lang, content, modal, setState}): JSX.Element => {
     const navigate = useNavigate()
     const addFilesRef = useRef<IAddFilesFunctions>(null)
-    const _form = useRef<HTMLFormElement>(null)
+    const _form = useRef<HTMLDivElement>(null)
 
     const errChecker = useMemo(() => errorsChecker({lang}), [lang])
 
 
 
-    const closeModal = useCallback(async () => {
+    const closeModal = useCallback(async (): Promise<void> => {
         if (await modal?.getName() === 'contentSend') {
             if (content.send.status === 'success') {
                 addFilesRef.current?.clearAttachedFiles()
@@ -61,7 +61,7 @@ const SpliderChanger: FC<IProps> = ({lang, content, modal, setState}): JSX.Eleme
             modal?.openModal({
                 name: 'contentSend',
                 onClose: closeModal,
-                children: <MessageNew {...modalMessageCreator(content.send, lang)} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
+                children: <Message {...modalMessageCreator(content.send, lang)} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
             })
         }
         if (content.send.status === 'fetching') {
@@ -76,7 +76,7 @@ const SpliderChanger: FC<IProps> = ({lang, content, modal, setState}): JSX.Eleme
     }, [content.send.status])
 
 
-    const fillValues = async () => {
+    const fillValues = async (): Promise<void> => {
         const files = await filesDownloader(
             content.carousel.images.files.map(file => (`${content.carousel.images.basePath}/${content.carousel.images.sizes[content.carousel.images.sizes.length - 1].subFolder}/${file}`))
         )
@@ -96,7 +96,7 @@ const SpliderChanger: FC<IProps> = ({lang, content, modal, setState}): JSX.Eleme
 
 
 
-    const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    const onSubmit =  (e: React.MouseEvent<HTMLButtonElement>): void => {
         prevent(e)   
         if (!_form.current || !addFilesRef.current) return
 
@@ -105,12 +105,11 @@ const SpliderChanger: FC<IProps> = ({lang, content, modal, setState}): JSX.Eleme
         }
 
         if (errChecker.amount() > 0) {
-            modal?.openModal({
+            return modal?.openModal({
                 name: 'errorChecker',
                 onClose: closeModal,
-                children: <MessageNew {...errChecker.result()} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
+                children: <Message {...errChecker.result()} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
             })
-            return
         }
         //if no errors
         setState.content.sendCarousel(addFilesRef.current.getFiles())
@@ -123,7 +122,7 @@ const SpliderChanger: FC<IProps> = ({lang, content, modal, setState}): JSX.Eleme
             <div className="container_page">
                 <div className="container">
                     <h1>{lang === 'en' ? 'Change content' : 'Изменение контента'}</h1> 
-                    <form className='form_full form_content' ref={_form}>
+                    <div className='form_full form_content' ref={_form}>
                         <div className="block_text">
                             <h3 className='section-header full-width'>{lang === 'en' ? 'Carousel' : 'Карусель'}</h3>           
                         </div>
@@ -133,7 +132,7 @@ const SpliderChanger: FC<IProps> = ({lang, content, modal, setState}): JSX.Eleme
                         <button className='button_blue button_light button_post' disabled={content.send.status === 'fetching'} onClick={e => onSubmit(e)}>
                             {lang === 'en' ? 'Save splider' : "Сохранить галерею"}
                         </button>
-                    </form>
+                    </div>
                 </div>
             </div>
 

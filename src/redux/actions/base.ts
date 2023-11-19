@@ -1,5 +1,5 @@
-import { IModalFunctions } from "src/components/Modal/ModalNew"
-import { IAction, IBaseState, TTheme } from "../../interfaces"
+import { IModalFunctions } from "src/components/Modal/Modal"
+import { IAction, TTheme } from "../../interfaces"
 import { actionsListBase } from './actionsList'
 
 export const setLangEn = <T>(): IAction<T> => ({

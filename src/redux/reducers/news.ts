@@ -1,4 +1,4 @@
-import { IAction, IFetch, INewsItem, INewsItemShort, INewsState } from "../../interfaces"
+import { IFetch, INewsItem, INewsState } from "../../interfaces"
 import initialNewsState from '../initialStates/news'
 import { actionsListNews } from '../actions/actionsList'
 
@@ -40,9 +40,7 @@ const reducerNews = (state:INewsState = initialNewsState, action: {type: TAction
             }
         default: {
 			const missedSomeActions:never = action.type;
-			return {
-				...state   
-			};
+			return {...state};
         }
     }
 }

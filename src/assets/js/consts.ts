@@ -337,8 +337,8 @@ const inputsProps = { //restrictions of inputs
             max: 40
         },
         price: {
-            min: 1,
-            max: 10
+            min: 0,
+            max: 100000
         },
         textShort: {
             min: 20,
@@ -567,7 +567,7 @@ const productEmpty: ISendProduct = {
     name: {...empty},
     text: {...empty},
     //price: 0,
-    text_short:{...empty},
+    textShort:{...empty},
     fibers: [],
     mods: [],
     category: '',

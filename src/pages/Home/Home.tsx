@@ -7,7 +7,7 @@ import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
 import { allActions } from '../../redux/actions/all';
 import Preloader from '../../components/Preloaders/Preloader';
-import { IModalFunctions } from '../../../src/components/Modal/ModalNew';
+import { IModalFunctions } from '../../components/Modal/Modal';
 import CarouselMaxAdaptive from '../../components/CarouselMax/CarouselMax';
 
 
@@ -77,7 +77,7 @@ const Home:React.FC<IProps> = ({lang, contentState, setState, modal} : IProps): 
                             }
                         </div>
                     </section>
-                    <div className="slider__container">
+                    <div className="slider-container">
                         {contentState.load.status === 'success' && contentState?.carousel?.images?.files?.length > 0 && <CarouselMaxAdaptive content={contentState.carousel} modal={modal}/>}
                         {contentState.load.status === 'fetching' && <Preloader />}
                     </div>

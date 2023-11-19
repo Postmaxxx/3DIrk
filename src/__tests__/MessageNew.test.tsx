@@ -2,10 +2,10 @@ import { act, waitFor, screen } from '@testing-library/react';
 import { HashRouter } from "react-router-dom";
 import '@testing-library/jest-dom/extend-expect'
 import { createRoot } from 'react-dom/client';
-import MessageNew from '../components/Message/MessageNew';
+import Message from '../components/Message/Message';
 
 
-describe('MessageNew', () => {
+describe('Message', () => {
     let _container: HTMLDivElement
     let _root: ReturnType<typeof createRoot>
 
@@ -27,7 +27,7 @@ describe('MessageNew', () => {
             _root = createRoot(_container)
             _root.render(		    
                 <HashRouter>
-                    <MessageNew header='header_text' text={['text_1', "text_2"]} status='test_status'/>
+                    <Message header='header_text' text={['text_1', "text_2"]} status='test_status'/>
                 </HashRouter>
             )
         });
@@ -52,7 +52,7 @@ describe('MessageNew', () => {
             _root = createRoot(_container)
             _root.render(		    
                 <HashRouter>
-                    <MessageNew 
+                    <Message 
                         buttonAdd={{text: 'button_add', action:  btnAdd}}
                         buttonClose={{text: 'button_close', action:  btnClose}}/>
                 </HashRouter>

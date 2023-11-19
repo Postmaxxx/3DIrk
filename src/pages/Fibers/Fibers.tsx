@@ -28,7 +28,7 @@ interface IProps extends IPropsState, IPropsActions {}
 const Fibers:React.FC<IProps> = ({lang, fibersState}):JSX.Element => { 
 
 
-    const listOfFibers = useMemo(() => (
+    const listOfFibers: JSX.Element = useMemo(() => (
         <div className="fibers">
             {fibersState.fibersList.filter(fiber => fiber.active)?.map((fiber, i) => {
                 return (

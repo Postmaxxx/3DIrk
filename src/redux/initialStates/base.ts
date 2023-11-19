@@ -1,4 +1,4 @@
-import { IModalFunctions } from "src/components/Modal/ModalNew"
+import { IModalFunctions } from "src/components/Modal/Modal"
 import { IBaseState } from "../../interfaces"
 import {RefObject} from 'react'
 

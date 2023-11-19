@@ -7,15 +7,15 @@ import { Dispatch } from "redux";
 import { useEffect, useState } from "react";
 import { allActions } from "../../../redux/actions/all";
 import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFiles';
-import Selector, { ISelectorFunctions } from '../../../components/BlockSelector/BlockSelector';
+import BlockSelector, { ISelectorFunctions } from '../../../components/BlockSelector/BlockSelector';
 import { IFiberProperties, fibersProperties } from '../../../assets/data/fibersProperties';
 import Preloader from '../../../components/Preloaders/Preloader';
 import { defaultSelectItem, inputsProps, resetFetch, selector, statuses } from '../../../assets/js/consts';
 import { filesDownloader, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import Picker, { IPickerFunctions } from '../../../components/Picker/Picker';
 import Featurer, { IFeaturerFunctions } from '../../../components/Featurer/Featurer';
-import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
-import MessageNew from '../../../../src/components/Message/MessageNew';
+import { IModalFunctions } from '../../../components/Modal/Modal';
+import Message from '../../../components/Message/Message';
 import Uploader from '../../../../src/components/Preloaders/Uploader';
 import BlockInput, { IBlockInputFunctions } from '../../../components/BlockInput/BlockInput';
 
@@ -49,7 +49,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
     const _descr = useRef<HTMLDivElement>(null)
     const prosRef = useRef<IFeaturerFunctions>(null)
     const consRef = useRef<IFeaturerFunctions>(null)
-    const _selectorStatusRef = useRef<ISelectorFunctions>(null)
+    const _status = useRef<ISelectorFunctions>(null)
     const _nameShortEn = useRef<IBlockInputFunctions>(null)
     const _nameShortRu = useRef<IBlockInputFunctions>(null)
     const _nameEn = useRef<IBlockInputFunctions>(null)
@@ -71,6 +71,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
         if (await modal?.getName() === 'fiberSendStatus') {
             if (fibersState.send.status === 'success') {
                 window.location.reload()
+                fillValues('')
             }
             setState.fibers.setSendFibers(resetFetch)// clear fetch status
         }
@@ -86,7 +87,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
             modal?.openModal({
                 name: 'fiberSendStatus',
                 onClose: closeModal,
-                children: <MessageNew {...modalMessageCreator(fibersState.send, lang)} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
+                children: <Message {...modalMessageCreator(fibersState.send, lang)} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
             })
         }
         if (fibersState.send.status === 'fetching') {
@@ -104,10 +105,10 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
     
 
 
-    const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {        
+    const onSubmit = (e: React.MouseEvent<HTMLButtonElement>): void => {        
         prevent(e)
         if (!prosRef.current|| !consRef.current || !_spec.current || !_descr.current || !_pros.current || !_cons.current 
-            || !colorPickerRef.current || !_selectorStatusRef.current) return
+            || !colorPickerRef.current || !_status.current) return
         //check DESCRIPTION
         const errors: string[] = [_nameShortEn, _nameShortRu, _nameEn, _nameRu, _textShortEn, _textShortRu, _textEn, _textRu]
             .map(el => el.current?.getErrorText(lang))
@@ -118,7 +119,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
             const errText = prop.ref?.getErrorText(lang)
             errText && errors.push(errText)
         })
-        let statusErr = _selectorStatusRef.current.getErrorText(lang)
+        let statusErr = _status.current.getErrorText(lang)
         statusErr && errors.push(statusErr)
 
         //check PROS
@@ -144,7 +145,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
             return modal?.openModal({
                 name: 'errorsInForm',
                 onClose: closeModal,
-                children: <MessageNew 
+                children: <Message 
                     header={lang === 'en' ? 'Errors was found' : 'Найдены ошибки'}
                     status={'error'}
                     text={errors}
@@ -167,7 +168,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
             _id: fiberPickerRef.current?.getSelected()[0] || '',
             colors: (colorPickerRef.current as IPickerFunctions).getSelected(),
             files: addFilesRef.current?.getFiles() || [],
-            active: _selectorStatusRef.current?.getValue() === 'active' ? true : false,
+            active: _status.current?.getValue() === 'active' ? true : false,
             name: { en: _nameEn.current?.getValue() || 'Error', ru: _nameRu.current?.getValue() || 'Error' },
             text: { en: _textEn.current?.getValue() || 'Error', ru: _textRu.current?.getValue() || 'Error' },
             short: {
@@ -187,14 +188,14 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
 
 
 
-    const renderSpec = useMemo(() => {
+    const renderSpec: JSX.Element = useMemo(() => {
         return ( <>
             {properties.map((prop, i) => {
                 return (
                     <Fragment key={prop.item._id}>
                         {prop.item.type !== 'string' ? 
                             <Fragment key={prop.item._id}>
-                                <Selector 
+                                <BlockSelector 
                                     lang={lang} 
                                     id={prop.item._id} 
                                     labelText={prop.item.name}
@@ -217,13 +218,13 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
                     </Fragment>
                 )
             })}
-            <Selector 
+            <BlockSelector 
                 lang={lang} 
                 id='selector_status' 
                 labelText={{en: 'Fiber status: ', ru: 'Состояние материала: '}}
                 data={statusesList}
                 defaultData={{...defaultSelectItem}}
-                ref={_selectorStatusRef}
+                ref={_status}
             />
         </>
         )
@@ -231,8 +232,8 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
 
    
 
-    const fillValues = async (_id: string) => {//fill values based on selected color
-        if (!_spec.current || !prosRef.current || !consRef.current || !_selectorStatusRef.current) return
+    const fillValues = async (_id: string): Promise<void> => {//fill values based on selected color
+        if (!_spec.current || !prosRef.current || !consRef.current || !_status.current) return
         const selectedFiber = fibersState.fibersList.find(item => item._id === _id)
         if (selectedFiber) { //fiber exists
             //descr
@@ -248,8 +249,9 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
             //specifications
              properties.forEach(prop => {
                 prop.ref?.setValue(`${selectedFiber.params[prop.item._id]}`)
+                prop.ref?.hasOwnProperty('setChanged') && (prop.ref as ISelectorFunctions)?.setChanged(true)
             })
-            _selectorStatusRef.current.setValue(selectedFiber.active ? 'active' : 'suspended')
+            _status.current.setValue(selectedFiber.active ? 'active' : 'suspended')
 
             //PROS + CONS
             prosRef.current.setFeatures(selectedFiber.proscons.pros.map(item => ({name: item, _id: ''}))) //Ids doesn't matter for fiber, pros/cons are just arrays
@@ -263,8 +265,8 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
             )
             addFilesRef.current?.replaceFiles(files)
             //setFiber({...selectedFiber, files}) // +descr part
-            _selectorStatusRef.current.setValue(selectedFiber.active ? statuses.active.value : statuses.suspended.value)
-
+            _status.current.setValue(selectedFiber.active ? statuses.active.value : statuses.suspended.value)
+            _status.current.setChanged(true)
         } else { //new fiber
             //descr
             _nameShortEn.current?.setValue('')
@@ -279,6 +281,7 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
             //specifications
              properties.forEach(prop => {
                 prop.ref?.setValue('')
+                prop.ref?.hasOwnProperty('setChanged') && (prop.ref as ISelectorFunctions)?.setChanged(false)
             })
         
             //PROS + CONS
@@ -289,12 +292,13 @@ const FiberCreator: FC<IProps> = ({lang, fibersState, setState, isAdmin, modal, 
             colorPickerRef.current?.setSelected([])
 
             addFilesRef.current?.clearAttachedFiles()
-            _selectorStatusRef.current.setItem({...defaultSelectItem})
-            _selectorStatusRef.current.setValue('')
+            _status.current.setItem({...defaultSelectItem})
+            _status.current.setValue('')
+            _status.current.setChanged(false)
         }
     }
 
-    const onFiberSelected = (_id: string) => {
+    const onFiberSelected = (_id: string): void => {
         fillValues(_id)
     }
 

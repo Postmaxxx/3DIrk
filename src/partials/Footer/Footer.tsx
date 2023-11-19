@@ -11,7 +11,7 @@ interface IFooter {
     lang: TLang
 }
 
-const Footer: FC<IFooter>  = ({lang}):JSX.Element => {  
+const Footer: FC<IFooter> = ({lang}):JSX.Element => {  
     const footerMemo = useMemo(() => {
         return (
             <footer data-testid="footer">

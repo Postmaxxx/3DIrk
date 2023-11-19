@@ -1,12 +1,13 @@
 @use '/src/assets/css/variables' as *;
 
 
-.unauthorized__container {
+.unauthorized {
     display: flex;
     justify-content: center;
     align-items: center;
     background-color: var(--bg);
     flex-grow: 1;
+    transition: background-color $transition_theme;
     
     & p {
         margin-top: 0;

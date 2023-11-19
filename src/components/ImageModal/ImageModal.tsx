@@ -2,8 +2,6 @@ import { useState, useRef} from 'react'
 import "./image-modal.scss"
 import Preloader from '../Preloaders/Preloader'
 import { NavLink } from 'react-router-dom'
-import { TLang } from '../../interfaces'
-
 
 
 interface IProps {
@@ -15,12 +13,12 @@ interface IProps {
     }
 }
 
-const ImageModalNew: React.FC<IProps> = ({url, text='', link}): JSX.Element => {
+const ImageModal: React.FC<IProps> = ({url, text='', link}): JSX.Element => {
 
 	const [loaded, setLoaded] = useState(false);
 	const img = useRef<HTMLImageElement>(null);
 
-	const hasLoaded = () => {
+	const hasLoaded = (): void => {
 		setLoaded(true)
 	}
 
@@ -47,4 +45,4 @@ const ImageModalNew: React.FC<IProps> = ({url, text='', link}): JSX.Element => {
     )
 }
 
-export default ImageModalNew
+export default ImageModal

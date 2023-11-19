@@ -1,56 +1,45 @@
-import { useState, forwardRef, useImperativeHandle } from 'react';
 import "./message.scss"
-import { IMessageModal } from '../../interfaces'
-import { clearModalMessage } from '../../assets/js/consts'
 
 
 interface IProps {
-    buttonText: string
-    buttonAction: () => void
+    buttonAdd?: {
+        text: string,
+        action: () => void
+    }
+    buttonClose?: {
+        text: string,
+        action: () => void
+    }
+    header?: string
+    text?: string[]
+    status?: string
 }
 
-export interface IMessageFunctions {
-    clear: () => void;
-    update: (newMessage: IMessageModal) => void;
-}
 
-
-const Message = forwardRef<IMessageFunctions, IProps>(({buttonText, buttonAction}, ref) => {
-    useImperativeHandle(ref, () => ({
-        clear() {
-            clear()
-        },
-        update(newMessage: IMessageModal) {      
-            update(newMessage)
-        },
-    }));
-
-
-    const [message, setMessage] = useState<IMessageModal>(clearModalMessage)
-    
-    const clear = () => {
-        setMessage(clearModalMessage)
-    }
-
-    const update = (newData: IMessageModal) => {
-        setMessage(newData)        
-    }
-
-    const text = message.text.map((currentText,index) => {
-        return <p key={index}>{currentText}</p>
-    })
-
-
+const Message: React.FC<IProps> = ({buttonAdd, buttonClose, header, status, text}): JSX.Element => {
     return (
-        <div className={`message__container ${message.status}`}>
-            <h3>{message.header}</h3>
-            <div className="text-block">
-                {text}
+        <div className={`message_modal ${status || ''}`}>
+            <h3>{header || ''}</h3>
+            <div className="message_modal__text">
+                {text && text.map((currentText, index) => <p key={index}>{currentText}</p>)}
             </div>
-            <button onClick={buttonAction}>{buttonText}</button>
+            <div className="message_modal__buttons">
+                {buttonAdd && 
+                    <button 
+                        className="button_blue button_light"
+                        onClick={buttonAdd?.action}>
+                            {buttonAdd?.text}
+                    </button>}
+                {buttonClose && 
+                    <button 
+                        data-testid='messageCloser'
+                        className="button_blue button_light"
+                        onClick={buttonClose?.action}>
+                            {buttonClose?.text}
+                    </button>}
+            </div>
         </div>
     )
-})
-
+}
 
 export default Message

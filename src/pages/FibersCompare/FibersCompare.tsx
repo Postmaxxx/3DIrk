@@ -45,12 +45,12 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
     }, [fibersState.load.status])
    
 
-    const clearCheckboxes = useCallback(() => {
+    const clearCheckboxes = useCallback(():void => {
         Array.from(document.querySelectorAll('[data-fiberselect]'))?.forEach(item => (item as HTMLInputElement).checked = false)
     }, [])
 
 
-    const compareSelected = useCallback(() => {       
+    const compareSelected = useCallback((): void => {       
         const selectedFibers:IFiber['_id'][] = Array.from(document.querySelectorAll('[data-fiberselect]'))
             ?.filter(item => (item as HTMLInputElement).checked)
             ?.map(input => (input as HTMLInputElement).dataset.fiberselect as IFiber['_id']) 
@@ -70,7 +70,7 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
     }, [selectError])
 
 
-    const clearSelected = () => {
+    const clearSelected = (): void => {
         setFiltered(false)  
         setShowList(fibersState.fibersList.filter(fiber => fiber.active)?.map(fiber => fiber._id))
         clearCheckboxes()
@@ -78,19 +78,19 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
 
 
 
-    const onCheckbox = () => {       
+    const onCheckbox = (): void => {       
         setSelectError(false)
         filtered && setSelectedMore(true)
     }
 
 
-    const onCellClick = (id: IFiber['_id'], propertyName: string) => { 
+    const onCellClick = (id: IFiber['_id'], propertyName: string): void => { 
         setState.fibers.setSelectedFiber(id)
         propertyName && setSelectedProperty(propertyName)
     }
 
 
-    const sortByProperty = (_id: string) => {
+    const sortByProperty = (_id: string): void => {
         setFibersList(prev => {
             let reversed: boolean = true //if newFibers already sorted in reverse order 
             const newFibers = [...prev]
@@ -104,7 +104,7 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
     }
 
 
-    const renderProperties = useMemo(() => {
+    const renderProperties = useMemo((): (JSX.Element | boolean)[] => {
         return fibersProperties.map((property) => {
             return !listHiddenProps.includes(property._id) && 
                 <div className={`cell row-name fixed-left padding_no ${property._id === selectedProperty ? 'selected' : ''}`} key={property._id}>
@@ -116,20 +116,20 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
     )}, [lang, fibersList, selectedProperty])
 
 
-    const onCheckboxLabel = (e: React.KeyboardEvent) => {
+    const onCheckboxLabel = (e: React.KeyboardEvent): void => {
         const currentStatus = ((e.target as HTMLElement).firstChild as HTMLInputElement).checked;
         ((e.target as HTMLElement).firstChild as HTMLInputElement).checked = !currentStatus
     }
 
 
 
-    const renderFiberList = useMemo(() => fibersList
+    const renderFiberList: JSX.Element[] = useMemo(() => fibersList
         .filter(fiber => showList.includes(fiber._id))
         ?.map((fiber) => {
             return (
                 <Fragment key={fiber._id}>
                     <div className={`cell col-name ${fiber._id === fibersState.selected ? "selected" : ""}`} onClick={e => onCellClick(fiber._id, '')} >
-                        <div className="img-cont">
+                        <div className="img-wrapper">
                             <PicWithPreloader basePath={fiber.images.basePath} sizes={fiber.images.sizes} image={fiber.images.files[0]} alt={fiber.name[lang]}/>
                         </div>
                         <span className='fiber-name'>{fiber.short.name[lang]}</span>
@@ -202,7 +202,7 @@ const FibersCompare:React.FC<IProps> = ({lang, fibersState, setState}):JSX.Eleme
                         <p>{lang === 'en' ? "The summary table presents the main materials we work with. Each material has its strengths and weaknesses, so it's crucial to select the right material to ensure that the resulting product aligns with its purpose and serves for a long time. The data in the table is approximate; for more specific characteristics and assistance in choosing materials, you can always use the feedback option in the Contacts section. We'll be happy to address all your questions and preferences." : 'В сводной таблице представлены основные материалы, с которыми мы работаем. У каждого материала есть свои сильные и слабые стороны, поэтому крайне важно правильно подобрать материал, чтобы получившееся изделие максимально соответствовало своему назначению и служило долго. Данные таблицы являются ориентировочными, для уточнения характеристик и помощи в выборе материала вы всегда можете воспользоваться обратной связью в разделе Контакты. Мы будем рады ответить на все Ваши вопросы и пожелания.'}</p>
                         <p>{lang === 'en' ? 'Click on the row header to sort materials by clicked property or on the data cell for easier comparison.' : 'Щелкните по названию строки чтобы отсортировать материалы по данному свойству или по ячейке с данными для более удобного сравнения.'}</p>
                     </div>
-                    <div className="table__container">
+                    <div className="table-container">
                         {fibersState.load.status === 'success' && 
                             <div className="table">
                                 <div className="cell row-name fixed-left"></div>

@@ -1,5 +1,5 @@
 import { TLang, TLangText } from "src/interfaces"
-import { IInputChecker2, inputChecker2 } from "../../assets/js/processors"
+import { IInputChecker, inputChecker } from "../../assets/js/processors"
 import { useRef, useState, forwardRef, useImperativeHandle, useEffect } from "react";
 import './block-input.scss'
 
@@ -7,13 +7,14 @@ interface IBlockInput {
 	lang: TLang
 	labelText: TLangText
 	id: string
-	inputType?: "text" | "tel" | "email" | "date"
+	inputType?: "text" | "tel" | "email" | "date" | "password"
 	typeElement?: "input" | "textarea" | "select"
-	rules: IInputChecker2["rules"]
+	rules: IInputChecker["rules"]
 	required?: boolean
 	expandable?: boolean
 	initialValue?: string
 	onChange?: (newValue: string) => void
+	children?: JSX.Element | JSX.Element[]
 }
 
 export interface IBlockInputFunctions {
@@ -26,7 +27,7 @@ export interface IBlockInputFunctions {
 	getErrorText: (lng: TLang) => string | null
 }
 
-const BlockInput = forwardRef<IBlockInputFunctions, IBlockInput>(({lang, labelText, onChange, id, inputType="text", typeElement='input', required, expandable=false, initialValue, rules}, ref) => {
+const BlockInput = forwardRef<IBlockInputFunctions, IBlockInput>(({lang, labelText, onChange, id, inputType="text", typeElement='input', required, expandable=false, initialValue, rules, children}, ref) => {
     useImperativeHandle(ref, () => ({
         getValue() {
 			let result;
@@ -73,18 +74,18 @@ const BlockInput = forwardRef<IBlockInputFunctions, IBlockInput>(({lang, labelTe
 	const _input = useRef<HTMLInputElement | null>(null)
 	const _textarea = useRef<HTMLTextAreaElement | null>(null)
 
-    const onChangeText: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (e) => {
+    const onChangeText: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (e): void => {
 		setError(null)
 		onChange && onChange(e.target.value)
     }
 
 	const checkOnErrors = (value: string): TLangText | null => {
-		const errText = inputChecker2({value, rules})
+		const errText = inputChecker({value, rules})
 		setError(errText)
 		return errText
 	}
 
-    const onBlurInput: React.FocusEventHandler<HTMLInputElement | HTMLTextAreaElement> = (e) => {
+    const onBlurInput: React.FocusEventHandler<HTMLInputElement | HTMLTextAreaElement> = (e): void => {
 		checkOnErrors(e.target.value)
     }
 
@@ -117,6 +118,7 @@ const BlockInput = forwardRef<IBlockInputFunctions, IBlockInput>(({lang, labelTe
 					data-selector="input"
 					aria-describedby={`${id}_error`}
 					className="input-element" 
+					//wrap='hard'
 					id={id}
 					onChange={onChangeText}
 					onBlur={onBlurInput}

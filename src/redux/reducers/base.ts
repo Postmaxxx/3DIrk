@@ -1,7 +1,7 @@
-import { IAction, IBaseState, TTheme } from "../../interfaces"
+import { IBaseState, TTheme } from "../../interfaces"
 import initialBaseState from '../initialStates/base'
 import { actionsListBase } from '../actions/actionsList'
-import { IModalFunctions } from "src/components/Modal/ModalNew";
+import { IModalFunctions } from "src/components/Modal/Modal";
 
 type TActionListKeys = keyof typeof actionsListBase;
 
@@ -34,9 +34,7 @@ const reducerBase = (state:IBaseState = initialBaseState, action: {type: TAction
             }
         default: {
 			const missedSomeActions:never = action.type;
-			return {
-				...state   
-			};
+			return {...state};
         }
     }
 }

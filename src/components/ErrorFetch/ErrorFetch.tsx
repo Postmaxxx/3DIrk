@@ -6,7 +6,7 @@ interface IProps {
     lang: TLang
 }
 
-const ErrorFetch = ({fetchData, lang}: IProps) => {
+const ErrorFetch: React.FC<IProps> = ({fetchData, lang}): JSX.Element => {
     return (
         <p className="message_error">{fetchData.message[lang]}</p>
     )

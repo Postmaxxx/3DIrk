@@ -1,8 +1,8 @@
 import './carouselmax.scss'
 import { useEffect,useRef, useState,useCallback } from 'react';
 import { ICarouselMax, IImages } from '../../interfaces';
-import { IModalFunctions } from '../Modal/ModalNew';
-import ImageModalNew from '../ImageModal/ImageModalNew';
+import { IModalFunctions } from '../Modal/Modal';
+import ImageModal from '../ImageModal/ImageModal';
 import PicWithPreloader from '../../assets/js/PicWithPreloader';
 import svgs from '../additional/svgs';
 
@@ -50,7 +50,7 @@ interface ISliderMax {
 }
 
 
-const CarouselMax = ({content, modal}: ISliderMax) => {
+const CarouselMax: React.FC<ISliderMax> = ({content, modal}): JSX.Element => {
     const _carouselRef = useRef<HTMLDivElement>(null)
     const [ribbonPos, setRibbonPos] = useState<number>(0) //initial ribbon position
     const [state, setState] = useState<IOptions>({...options})
@@ -70,33 +70,33 @@ const CarouselMax = ({content, modal}: ISliderMax) => {
         if (!_carouselRef.current) return;
         
         if (firstRender) {
-            const carouselContainerWidth = _carouselRef.current.clientWidth //initial settings, get container carousel width
+            const carouselContainerWidth: number = _carouselRef.current.clientWidth //initial settings, get container carousel width
             setState(prev => ({...prev, imageContainerWidth: carouselContainerWidth/2, gap: carouselContainerWidth / 15}))
             setFirstRender(false)
             return
         }
-        const innerContainerWidth = state.imageContainerWidth
+        const innerContainerWidth: number = state.imageContainerWidth
 
-        const imagesPerContainer = Math.ceil(_carouselRef.current.offsetWidth / state.imageContainerWidth);
+        const imagesPerContainer: number = Math.ceil(_carouselRef.current.offsetWidth / state.imageContainerWidth);
         setImages(prev => ({
             ...prev,
             files: [...prev.files.slice(-imagesPerContainer).reverse(), ...prev.files, ...prev.files.slice(0,imagesPerContainer)]
         }));
         
-        const initialRibbonPos = -state.imageContainerWidth * imagesPerContainer
+        const initialRibbonPos: number = -state.imageContainerWidth * imagesPerContainer
         
-        const carouselCenterDx = imagesPerContainer * state.imageContainerWidth
-        const deltaSize = (state.imageContainerWidth * state.imageRatio)*0.5
-        const parallaxRatio = state.imageContainerWidth*(state.imageRatio - 1)/(_carouselRef.current.offsetWidth - state.imageContainerWidth) 
-        const imageWidth = state.imageContainerWidth * state.imageRatio
+        const carouselCenterDx: number = imagesPerContainer * state.imageContainerWidth
+        const deltaSize: number = (state.imageContainerWidth * state.imageRatio)*0.5
+        const parallaxRatio: number = state.imageContainerWidth*(state.imageRatio - 1)/(_carouselRef.current.offsetWidth - state.imageContainerWidth) 
+        const imageWidth: number = state.imageContainerWidth * state.imageRatio
         setState((prev) => ({...prev, innerContainerWidth, initialRibbonPos, carouselCenterDx, deltaSize, carouselWidth: (_carouselRef.current as HTMLDivElement).offsetWidth, parallaxRatio, imageWidth}))
         setRibbonPos(initialRibbonPos)
-    },[firstRender])
+    }, [firstRender])
 
 
 
 
-    const changeRibbonDx = () => {
+    const changeRibbonDx = (): void => {
         newDx.current += (step.current * isMoving.current) + delta.current //move ribbon to delta = (sum all mouse dx between calling (changeRibbonDx))
         if (newDx.current < -images.files.length * state.imageContainerWidth) { //if too left/right -> reset delta
             newDx.current += images.files.length * state.imageContainerWidth 
@@ -111,27 +111,23 @@ const CarouselMax = ({content, modal}: ISliderMax) => {
             mouseSpeed.current *= options.carousecInertia
             step.current = mouseSpeed.current * state.imageContainerWidth
         }
-        //let dx = state.parallaxRatio*(state.carouselCenterDx - state.imageContainerWidth*(2) - ribbonDx);
-        //_carouselRef.current?.style.setProperty('--dx', `${newDx.current + ribbonPos}px`);
-        //console.log(getComputedStyle(_carouselRef.current as Element).getPropertyValue('--dx'));
-        //console.log(newDx.current + ribbonPos);
     }
 
 
-    const mouseDown =(e: MouseEvent) => {
+    const mouseDown =(e: MouseEvent): void => {
         prevPos.current = e.clientX
         isMoving.current = 0//prohibit automoving
         mouseSpeed.current = 0 //stop background moving
     }
 
     
-    const mouseUp =(e: MouseEvent) => {
+    const mouseUp =(e: MouseEvent): void => {
         step.current = mouseSpeed.current * state.imageContainerWidth * options.mouseSensivity //calculate step for carousel when mouse button released or leave and * carousel width
         isMoving.current = 1 //let automoving
     }
 
 
-    const mouseMove = (e: MouseEvent) => {
+    const mouseMove = (e: MouseEvent): void  => {
         if (e.buttons === 1) {
             delta.current += e.clientX - prevPos.current; //saves all amount of mouse deltaX between calling (changeRibbonDx)
             mouseSpeed.current = delta.current * options.mouseSensivity //get mousespeed - how much mouse moves between measurements
@@ -140,32 +136,32 @@ const CarouselMax = ({content, modal}: ISliderMax) => {
         }
     }
 
-    const mouseEnter = (e: MouseEvent) => {
+    const mouseEnter = (e: MouseEvent): void  => {
         prevPos.current = e.clientX //avoid abrupt jump if mose enter with pressed button
     }
 
-    const mouseLeave = (e: MouseEvent) => {
+    const mouseLeave = (e: MouseEvent): void  => {
         if (e.buttons !== 1) return 
         mouseUp(e)
     }
 
 
-    const onImageExpand = (url: string) => {
+    const onImageExpand = (url: string): void  => {
         modal?.openModal({
             name: 'carouselMax',
             onClose: closeModalImage,
-            children: <ImageModalNew url={url}/>
+            children: <ImageModal url={url}/>
         })
         isMoving.current = 0 //deny background moving after open modal
     }
 
 
-    const closeModalImage = useCallback(() => {
+    const closeModalImage = useCallback((): void => {
         isMoving.current = 1 //allow moving after close modal
         modal?.closeCurrent()
 	}, [])
 
-    const onResize = () => {
+    const onResize = (): void => {
         setFirstRender(true)
     }
     

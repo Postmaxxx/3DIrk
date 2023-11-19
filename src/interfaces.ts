@@ -1,5 +1,5 @@
 import { AnyAction } from "redux";
-import { IModalFunctions } from "./components/Modal/ModalNew";
+import { IModalFunctions } from "./components/Modal/Modal";
 
 //================================================================================
 export type TTheme = 'dark' | 'light'
@@ -191,7 +191,8 @@ export interface ISendProduct extends Omit<IProduct, 'images'> { //for sending t
 
 export interface IMod {
     name: TLangText
-    weight: number
+    price: number
+    _id: string
 }
 
 export interface IProduct {
@@ -199,7 +200,7 @@ export interface IProduct {
     //price: number
     name: TLangText
     text: TLangText
-    text_short: TLangText
+    textShort: TLangText
     images: IImages
     fibers: TId[] //array of fiber ids
     mods: IMod[]
@@ -212,7 +213,7 @@ export interface IProductShort { //for gallery
     _id: TId
     //price: TLangText
     name: TLangText
-    text_short: TLangText
+    textShort: TLangText
     images: IImages,
     active?: boolean
 }
@@ -444,7 +445,6 @@ export interface ILoggingForm { //for form login/register form
     password: string
     name: string,
     phone: string
-    repassword: string
 }
 
 export interface ICarouselMax { //for CarouselMax

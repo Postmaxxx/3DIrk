@@ -27,7 +27,7 @@ export interface IModalFunctions {
 
 
 
-const ModalNew = forwardRef<IModalFunctions, IProps>(({}, ref) => {
+const Modal = forwardRef<IModalFunctions, IProps>(({}, ref) => {
     useImperativeHandle(ref, () => ({
         openModal({name, closable=true, onClose, closeOnEsc=true, children}) { 
             setModals(prev => ([...prev, {
@@ -67,11 +67,11 @@ const ModalNew = forwardRef<IModalFunctions, IProps>(({}, ref) => {
     const _modalContent = useRef<HTMLDivElement>(null)
 
 
-    const closeCurrent = () => {
+    const closeCurrent = (): void => {
         setModals(prev => prev.slice(1))
     }
 
-    const contentChanged = () => {
+    const contentChanged = (): void => {
         if (_modalContent.current) {
             focuser.current?.destroy()
             focuser.current = lockFocusInside({_element: _modalContent.current, _delayer: _modalContent.current})
@@ -79,7 +79,7 @@ const ModalNew = forwardRef<IModalFunctions, IProps>(({}, ref) => {
         }
     }
 
-    const keyPressed = (e: KeyboardEvent) => {
+    const keyPressed = (e: KeyboardEvent): void => {
         if (e.code === 'Escape' && modals[0].closeOnEsc) {
             return setModals(prev => prev.slice(1))
         }
@@ -127,5 +127,5 @@ const ModalNew = forwardRef<IModalFunctions, IProps>(({}, ref) => {
 })
 
 
-export default ModalNew;
+export default Modal;
 

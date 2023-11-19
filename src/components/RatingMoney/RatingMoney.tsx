@@ -16,7 +16,7 @@ const RatingMoney: React.FC<IRatingMoney> = ({fullFormat=false, value, max=5, te
     const content = useMemo(() => {
         return Array(amount).fill('').map((item, i) => {
             return (
-                <div className="img-cont" key={i}>
+                <div className="img-wrapper" key={i}>
                     {svgs(i >= value ? "faded" : ``).iconMoney}
                 </div>
             )

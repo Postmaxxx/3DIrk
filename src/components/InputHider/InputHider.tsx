@@ -9,7 +9,7 @@ interface IProps {
     onClick: () => void
 }
 
-const InputHider = ({hidden, onClick, lang}: IProps) => {
+const InputHider: React.FC<IProps> = ({hidden, onClick, lang}): JSX.Element => {
     return (
         <button 
             className={`input-hider button_nostyle ${hidden ? 'hide' : ''}`} 

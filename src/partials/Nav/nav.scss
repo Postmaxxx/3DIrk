@@ -3,7 +3,6 @@
 $gap_to_text: 5px;
 
 .nav_desktop {
-    //border: 1px solid red;
     height: 100%;
     display: flex;
     align-items: center;
@@ -15,8 +14,7 @@ $gap_to_text: 5px;
         display: none;
     }
 
-
-    & .nav__container {
+    & .nav__content {
         height: 100%;
         display: flex;
         align-items: center;
@@ -39,11 +37,11 @@ $gap_to_text: 5px;
             @include respond-to(md) {
                 gap: 30px;
             }
-    
-    
+
+           
             & .nav-item {
                 position: relative;
-
+            
                 &::before, &::after {
                     content: '';
                     top: 100%;
@@ -56,15 +54,14 @@ $gap_to_text: 5px;
                     transform-origin: 0 0;
                     left: -$gap_to_text;
                 }
-
-
+            
                 &::after {
                     left: initial;
                     right: -$gap_to_text;
                     transform-origin: 100% 0;
                 }
-
-
+            
+            
                 & > a, & > .nav-item__text {
                     font-size: 1.2rem;
                     position: relative;
@@ -74,11 +71,11 @@ $gap_to_text: 5px;
                     display: block;
                     font-weight: 700;
                     cursor: pointer;
-
+            
                     @include respond-to(md) {
                         font-size: 1.1rem;
                     }
-
+            
                     &::before, &::after {
                         content: '';
                         bottom: 0;
@@ -91,25 +88,22 @@ $gap_to_text: 5px;
                         transform-origin: 0 0;
                         left: -$gap_to_text;
                     }
-
-
+            
+            
                     &::after {
                         left: initial;
                         right: -$gap_to_text;
                         transform-origin: 100% 0;
                     }
-
+            
                     
-
+            
                     &.selected {
                         color: var(--text_nav_selected);
                     }
-
-
                 }
-
+            
                 ul.submenu {
-                    
                     & .submenu__item {
                         position: absolute;
                         background-color: var(--main);
@@ -127,7 +121,7 @@ $gap_to_text: 5px;
                         max-height: calc(100svh - 60px);
                         overflow: auto;
                         @include scroll_thin;
-
+            
                         
                         
                         & > .submenu__content {
@@ -166,7 +160,7 @@ $gap_to_text: 5px;
                                     cursor: pointer;
                                     position: relative;
                                     font-weight: 600;
-
+            
                                     @include respond-to(md) {
                                         font-size: .9rem;
                                     }
@@ -175,43 +169,35 @@ $gap_to_text: 5px;
                                         color: var(--text_reverse);
                                         transition: color $transition_fast;
                                     }
-
-
+            
+            
                                     &.selected {
                                         color: var(--text_reverse);  
                                     }
-
-
                                 }
-
-
                             }
                         }
-                    
-                    
                     }
-                                    
-                    
                 }
-
-
-                &.extandable {
+            
+            
+                &.extendable {
                     & > a, & > .nav-item__text {
                         &::before, &::after {
                             width: calc(49% + $gap_to_text);
                         }
                     }
                 }
-
-
-                &.extandable {
+            
+            
+                &.extendable {
                     &:hover, &:focus-within {
                         &::before,&::after {
                             height: 100%;
                             top: 0;
                             transition: all $transition_subMenu;
                         }
-
+            
                         & > a, & > .nav-item__text {
                             &::before, &::after {
                                 width: 0;
@@ -219,9 +205,9 @@ $gap_to_text: 5px;
                             }
                             
                         }
-
+            
                         & ul.submenu {
-
+            
                             & .submenu__item {
                                 grid-template-rows: 1fr;
                                 transform: translate(-50%, 0px);
@@ -231,7 +217,7 @@ $gap_to_text: 5px;
                                 @include respond-to(md) {
                                     width: 150px;
                                 }
-
+            
                                 & > .submenu__content {
                                     padding-top: 15px;
                                     margin-top: 16px;
@@ -242,41 +228,34 @@ $gap_to_text: 5px;
                                     border-bottom-right-radius: $brad_md;
                                     padding-bottom: 20px;
                                     transition: padding $transition_subMenu 1*$transition_subMenu, margin $transition_subMenu $transition_subMenu, border 0s $transition_subMenu;
-        
-        
+            
+            
                                     @include respond-to(md) {
                                         margin-top: 17px;
                                         padding-top: 10px;
                                         padding-bottom: 15px;
                                     }
-
+            
                                     & > li {
                                         transform: translate(-50%, 0px);
                                         width: 100%;
                                         transition: width $transition_subMenu 2*$transition_subMenu;
-
+            
                                     }
                                 }
-        
-                
                             }
                         }
-
                     }
-
-
                 }
-
-
+            
+            
                 &.user {
                     max-width: 40px;
                     height: 40px;
                     border-radius: 20px;
                     border: 2px solid var(--main_em);
-
                 }
-
-
+            
                 & .cart-informer {
                     position: absolute;
                     left: calc(100% + 2px);
@@ -284,18 +263,16 @@ $gap_to_text: 5px;
                     bottom: 45%;
                     color: var(--cart_informer);
                     font-weight: 700;
-
+            
                     @include respond-to(md) {
                         font-size: 0.7rem;
                     }
                 }
-
+            
             }
 
+
         }
-
-
-        
     }
     
     & .nav__switcher {
@@ -343,7 +320,6 @@ $gap_to_text: 5px;
                 height: 50px;
                 position: absolute;
 
-
                 span,
                 span:before,
                 span:after {
@@ -376,11 +352,7 @@ $gap_to_text: 5px;
                     &:after { margin-top: 10px; }
 
                 }
-            
-
             }
-
-
         }
     }
 
@@ -390,13 +362,12 @@ $gap_to_text: 5px;
             left: 0;
         }
         
-        & .nav__container {
+        & .nav__content {
             width: auto; 
             transform: translateX(0);
         } 
 
         & .nav__switcher > .nav_desktop__hider {
-            
             & .nav__sign {
                 & span {
                     background-color: rgba(0,0,0,0);
@@ -413,8 +384,6 @@ $gap_to_text: 5px;
                         transition-delay: 0s, $transition_nav;
                     }
                 }
-
-            
             }
             
             & > img {
@@ -422,11 +391,7 @@ $gap_to_text: 5px;
             }
             
         }
-        
-        
     }
-
-
 }
 
 
@@ -435,25 +400,7 @@ $gap_to_text: 5px;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //======================================================== MOBILE ============================================
-
-
 
 .nav_mobile {
     height: 100%;
@@ -476,7 +423,7 @@ $gap_to_text: 5px;
     }
 
 
-    & > .nav__container {
+    & > .nav__content {
         position: absolute;
         top: 100%;
         right: 20px;
@@ -497,7 +444,7 @@ $gap_to_text: 5px;
             width: calc(100% - 40px);
         }
 
-        & > .switchers__container {
+        & > .switchers {
             position: relative;
             display: flex;
             align-items: center;
@@ -548,16 +495,13 @@ $gap_to_text: 5px;
                 width: 100%;
                 margin-top: 10px;
                 margin-bottom: 10px;
-                position: relative;
                 
                 & > a, .nav-item__text, button {
                     text-align: center;
                     font-size: 1.3rem;
                     position: relative;
                     font-weight: 600;
-                    //transition:calc($transition_nav * 2);
                     color: var(--text);
-                    //transition: color $transition-theme;
                     text-transform: uppercase;
                     transition: $transition_nav;
                     display: block;
@@ -573,7 +517,6 @@ $gap_to_text: 5px;
                     &:hover {
                         color: var(--text_reverse);
                         transition: color $transition-fast;
-                        //transform: translateY(12px);
                     }
 
                     &.selected { 
@@ -604,12 +547,9 @@ $gap_to_text: 5px;
                             width: 10px;
                         }
                     }
-
-
-
                 }
 
-                & .submenu__container {
+                & .submenu-container {
                     overflow: hidden;
                     display: grid;
                     grid-template-rows: 0fr;
@@ -833,12 +773,12 @@ $gap_to_text: 5px;
             transition: background-color $transition_nav_style, height 0s 0s;
         }
         
-        & .nav__container {
+        & .nav__content {
             transform: translateY(0);
             transition: transform $transition_nav_style, background-color $transition_theme;
         } 
 
-        & .nav__container_right {
+        & .nav__content_right {
             transform: translateY(-$header_height);
         } 
 

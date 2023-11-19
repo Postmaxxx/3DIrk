@@ -8,10 +8,10 @@ interface IProps {
 	lang: TLang
 }
 
-const FiberPreview = ({fiber, lang}: IProps) => {
+const FiberPreview: React.FC<IProps> = ({fiber, lang}): JSX.Element => {
     return (
         <div className="fiber">
-            <div className="img-cont">
+            <div className="img-wrapper">
                 <PicWithPreloader basePath={fiber.images.basePath} sizes={fiber.images.sizes} image={fiber.images.files[0]} alt={fiber.name[lang]}/>
             </div>
             <div className="fiber__info">

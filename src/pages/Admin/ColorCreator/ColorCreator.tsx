@@ -1,4 +1,4 @@
-import { IColorsState, IFullState, TLang } from '../../../interfaces';
+import { IColorsState, IFullState, ISendColor, TLang } from '../../../interfaces';
 import './color-creator.scss'
 import {  useRef, useMemo, FC, useEffect, useCallback} from "react";
 import { connect } from "react-redux";
@@ -8,11 +8,10 @@ import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFi
 import { filesDownloader, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import { defaultSelectItem, inputsProps, resetFetch, statuses } from '../../../assets/js/consts';
 import Preloader from '../../../components/Preloaders/Preloader';
-import { inputChecker } from '../../../../src/assets/js/processors';
 import Picker, { IPickerFunctions } from '../../../../src/components/Picker/Picker';
-import Selector, { ISelectorFunctions } from '../../../components/BlockSelector/BlockSelector';
-import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
-import MessageNew from '../../../../src/components/Message/MessageNew';
+import BlockSelector, { ISelectorFunctions } from '../../../components/BlockSelector/BlockSelector';
+import { IModalFunctions } from '../../../components/Modal/Modal';
+import Message from '../../../components/Message/Message';
 import Uploader from '../../../../src/components/Preloaders/Uploader';
 import BlockInput, { IBlockInputFunctions } from '../../../components/BlockInput/BlockInput';
 
@@ -33,17 +32,17 @@ interface IProps extends IPropsState, IPropsActions {}
 
 
 const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState}): JSX.Element => {
-    const _formColor = useRef<HTMLFormElement>(null)
-    const addFileFullRef = useRef<IAddFilesFunctions>(null)
-    const addFileThumbRef = useRef<IAddFilesFunctions>(null)
-    const colorPickerRef = useRef<IPickerFunctions>(null)
+    const _formColor = useRef<HTMLDivElement>(null)
+    const _fileAdderFull = useRef<IAddFilesFunctions>(null)
+    const _fileAdderThumb = useRef<IAddFilesFunctions>(null)
+    const _colorPicker = useRef<IPickerFunctions>(null)
     const _nameEn = useRef<IBlockInputFunctions>(null)
     const _nameRu = useRef<IBlockInputFunctions>(null)
-    const _selectorStatusRef = useRef<ISelectorFunctions>(null)
+    const _status = useRef<ISelectorFunctions>(null)
 
 
 
-    const closeModal = useCallback(async () => {
+    const closeModal = useCallback(async (): Promise<void> => {
         if (await modal?.getName() === 'colorSend') {
             if (colorsState.send.status === 'success') {
                 setState.colors.loadColors()
@@ -69,25 +68,27 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
 
 
     useEffect(() => {
-        colorsState.load.status === 'success' && colorPickerRef.current?.setSelected()
-    }, [colorsState.load.status, colorPickerRef.current])
+        colorsState.load.status === 'success' && _colorPicker.current?.setSelected()
+    }, [colorsState.load.status])
 
 
 
-    const fillValues = async (_id: string) => {//fill values based on selected color
-        if (!_nameEn.current || !_nameRu.current || !_selectorStatusRef.current) return
+    const fillValues = async (_id: string): Promise<void> => {//fill values based on selected color
+        if (!_nameEn.current || !_nameRu.current || !_status.current) return
         const selectedColor = colorsState.colors.find(item => item._id === _id)
         if (selectedColor) { //color exists
             const fileFull = await filesDownloader([selectedColor.urls.full])
             const fileThumb = await filesDownloader([selectedColor.urls.thumb])
-            addFileFullRef.current?.replaceFiles(fileFull)
-            addFileThumbRef.current?.replaceFiles(fileThumb)
-            _selectorStatusRef.current.setValue(selectedColor.active ? statuses.active.value : statuses.suspended.value)
+            _fileAdderFull.current?.replaceFiles(fileFull)
+            _fileAdderThumb.current?.replaceFiles(fileThumb)
+            _status.current.setValue(selectedColor.active ? statuses.active.value : statuses.suspended.value)
+            _status.current.setChanged(true)
         } else { //new color
-            addFileFullRef.current?.clearAttachedFiles()
-            addFileThumbRef.current?.clearAttachedFiles()
-            _selectorStatusRef.current.setItem({...defaultSelectItem})
-            _selectorStatusRef.current.setValue('')
+            _fileAdderFull.current?.clearAttachedFiles()
+            _fileAdderThumb.current?.clearAttachedFiles()
+            _status.current.setItem({...defaultSelectItem})
+            _status.current.setValue('')
+            _status.current.setChanged(false)
         }
         _nameEn.current.setValue(selectedColor?.name?.en || '')
         _nameRu.current.setValue(selectedColor?.name?.ru || '')
@@ -95,19 +96,19 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
 
 
 
-    const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const onSubmit = (e: React.MouseEvent<HTMLButtonElement>): void => {
         prevent(e)
-        if (!_formColor.current || !_nameEn.current || !_nameRu.current || !_selectorStatusRef.current || !colorPickerRef.current) return     
+        if (!_formColor.current || !_nameEn.current || !_nameRu.current || !_status.current || !_colorPicker.current) return     
         
         //check errors
-        const errors: string[] = [_nameEn, _nameRu, _selectorStatusRef]
+        const errors: string[] = [_nameEn, _nameRu, _status]
             .map(el => el.current?.getErrorText(lang))
             .filter(el => el) as string[]
 
-        if (!addFileFullRef.current?.getFiles().length) {
+        if (!_fileAdderFull.current?.getFiles().length) {
             errors.push(lang === 'en' ? 'File fullsize is missed' : 'Отсутствует файл полноразмера')
         }
-        if (!addFileThumbRef.current?.getFiles().length) {
+        if (!_fileAdderThumb.current?.getFiles().length) {
             errors.push(lang === 'en' ? 'File preview is missed' : 'Отсутствует файл предпросмотра')
         }
         
@@ -115,7 +116,7 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
             return modal?.openModal({
                 name: 'errorsInForm',
                 onClose: closeModal,
-                children: <MessageNew 
+                children: <Message 
                     header={lang === 'en' ? 'Errors was found' : 'Найдены ошибки'}
                     status={'error'}
                     text={errors}
@@ -125,17 +126,17 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
         }
             
         
-        const color = {
-            _id: colorPickerRef.current.getSelected()[0] || '',
+        const color: ISendColor = {
+            _id: _colorPicker.current.getSelected()[0] || '',
             name: {
                 en: _nameEn.current.getValue() || 'Error',
                 ru: _nameRu.current.getValue() || 'Error',
             },
             files: {
-                full: addFileFullRef.current?.getFiles()[0] as File,
-                thumb: addFileThumbRef.current?.getFiles()[0] as File,
+                full: _fileAdderFull.current?.getFiles()[0] as File,
+                thumb: _fileAdderThumb.current?.getFiles()[0] as File,
             },
-            active: _selectorStatusRef.current.getValue() === 'active' ? true : false
+            active: _status.current.getValue() === 'active' ? true : false
         }
         setState.colors.sendColor(color)
     }
@@ -149,11 +150,11 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
             modal?.openModal({ //if error/success - show modal about send order
                 name: 'colorSend',
                 onClose: closeModal,
-                children: <MessageNew {...modalMessageCreator(colorsState.send, lang)} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
+                children: <Message {...modalMessageCreator(colorsState.send, lang)} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
             })
             if (colorsState.send.status === 'success') { //clear form if success
-                addFileFullRef.current?.clearAttachedFiles()
-                addFileThumbRef.current?.clearAttachedFiles()
+                _fileAdderFull.current?.clearAttachedFiles()
+                _fileAdderThumb.current?.clearAttachedFiles()
             }
         }
         if (colorsState.send.status === 'fetching') {
@@ -167,7 +168,7 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
     }, [colorsState.send.status])
 
 
-    const onColorSelected = async (_id: string) => {
+    const onColorSelected = (_id: string): void => {
         fillValues(_id)
     }
 
@@ -177,14 +178,14 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
             <div className="container_page">
                 <div className="container">
                 <h1>{lang === 'en' ? 'Edit colors' : 'Изменение цветов'}</h1>
-                    <form className='form_full form_add-color' ref={_formColor}>
+                    <div className='form_full form_add-color' ref={_formColor}>
                         <div className="block_text">
                             <h3 className='section-header full-width'>{lang === 'en' ? 'Select color to edit' : 'Выберите цвет для редактирования'}</h3>           
                         </div>
                         {colorsState.load.status === 'success' ? 
                             <Picker 
                                 type='colors'
-                                ref={colorPickerRef} 
+                                ref={_colorPicker} 
                                 items={colorsState.colors} 
                                 lang={lang} 
                                 multiple={false}
@@ -217,12 +218,12 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
                             />
                         </div>
                         <div className="form__inputs form__inputs_sm-wide">
-                            <Selector 
+                            <BlockSelector 
                                 lang={lang} 
                                 id='selector_status' 
                                 labelText={{en: 'Color status: ', ru: 'Состояние цвета: '}}
                                 data={statusesList}
-                                ref={_selectorStatusRef}
+                                ref={_status}
                             />
                         </div>
 
@@ -230,14 +231,14 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
                             <h3>{lang === 'en' ? 'Add image full-size' : 'Добавьте полноразмерное изображение'}</h3>
                         </div>
                         <div className="form__inputs">
-                            <AddFiles lang={lang} ref={addFileFullRef} multiple={false} id='files_big'/>
+                            <AddFiles lang={lang} ref={_fileAdderFull} multiple={false} id='files_big'/>
                         </div>
 
                         <div className="block_text">
                             <h3>{lang === 'en' ? 'Add image thumb-size' : 'Добавьте миниатюру'}</h3>
                         </div>
                         <div className="form__inputs">
-                            <AddFiles lang={lang} ref={addFileThumbRef} multiple={false} id='files_small'/>
+                            <AddFiles lang={lang} ref={_fileAdderThumb} multiple={false} id='files_small'/>
                         </div>
 
 
@@ -247,7 +248,7 @@ const ColorCreator: FC<IProps> = ({lang, colorsState, isAdmin, modal, setState})
                             onClick={onSubmit}>
                             {lang === 'en' ? 'Save changes' : "Сохранить изменения" }
                         </button>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>

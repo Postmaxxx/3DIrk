@@ -12,7 +12,7 @@ const Offliner: FC<IOffliner> =({lang}): JSX.Element => {
 
     const [offline, setOffline] = useState<boolean>(!navigator.onLine)
 
-    const setStatus = () => {
+    const setStatus = (): void => {
         setOffline(!navigator.onLine)
     }
 

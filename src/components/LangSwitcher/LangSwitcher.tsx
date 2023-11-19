@@ -27,7 +27,7 @@ const LangSwitcher:React.FC<IProps> = ({lang, setState}): JSX.Element => {
     const _lang = useRef<HTMLButtonElement>(null)
     const {add: addToHider, clear: clearHider} = useScrollHider()
 
-    const handleChangeLang = () => {
+    const handleChangeLang = (): void => {
         if (lang === 'en') {
             window.localStorage.setItem('language', 'ru')
             setState.base.setLangRu()

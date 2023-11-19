@@ -1,4 +1,4 @@
-import { IAction, ICartItem, ICartState, IFetch, IUserState } from "../../interfaces"
+import { ICartItem, ICartState, IFetch, IUserState } from "../../interfaces"
 import initialUserState from '../initialStates/user'
 import { actionsListUser } from '../actions/actionsList'
 
@@ -114,9 +114,7 @@ const reducerUser = (state:IUserState = initialUserState, action: {type: TAction
 
         default: {
 			const missedSomeActions:never = action.type;
-			return {
-				...state   
-			};
+			return {...state};
         }
     }
 }

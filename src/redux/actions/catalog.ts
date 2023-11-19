@@ -93,7 +93,6 @@ export const sendCatalog = (newCatalog: (Omit<ICatalogItem, "total" | "active">)
 
 
 
-////////////////////////////////////////////////////////////////////////////////////////////
 
 
 export const setLoadCategory = <T extends IFetch>(payload: T):IAction<T> => ({
@@ -112,7 +111,7 @@ export const setCategory = <T extends Omit<ICategory, "loadCategory" | "sendProd
 interface ILoadCategory {
     _id: string,
     from?: number,
-    to?: number //-1 till the end
+    to?: number //-1 = to the end
 }
 
 
@@ -163,10 +162,6 @@ export const loadCategory = ({_id, from=0, to=-1}: ILoadCategory) => {
 }
 
 
-
-
-
-////////////////////////////////////////////////////////////////////////////////////////////
 
 
 export const setLoadProduct = <T extends IFetch>(payload: T):IAction<T> => ({
@@ -223,57 +218,13 @@ export const sendProduct = (product: ISendProduct) => {
                 dispatch,
                 setter: setSendProduct,
                 controller,
-                comp: {en: 'Error while sending product', ru: 'Ошибка сохранения товара'}
+                comp: {en: 'Error while saving product', ru: 'Ошибка сохранения товара'}
             })
         }
     }
 }
 
 
-
-export const editProduct = (product: ISendProduct, changeImages: boolean) => {
-    return async function(dispatch: IDispatch, getState: () => IFullState) {
-        const controller = new AbortController()
-        const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.product.update.timeout) //set time limit for fetch
-        dispatch(setSendProduct({...fetchingFetch, controller})) 
-
-        const sendForm = new FormData()   
-        const {files, ...productToSend} = product //exclude files from data
-        sendForm.append('data', JSON.stringify({...productToSend, changeImages}))
-        if (changeImages) {
-            product.files.forEach(item => {
-                sendForm.append('files', item, item.name)
-            })
-        }
-        try {
-            const response: Response = await fetch(APIList.product.update.url, {
-                signal: controller.signal,
-                method: APIList.product.update.method,
-                headers: {
-                    "enctype": 'multipart/form-data',
-                    'Authorization': `Bearer ${getState().user.token}`
-                },
-                body: sendForm
-            })
-            clearTimeout(fetchTimeout)
-            if (response.status !== 200) {
-                const result: IErrRes = await response.json() //message, errors
-                return dispatch(setSendProduct(resErrorFiller(result)))
-            }
-
-            const result: IMsgRes = await response.json() //message, errors
-            dispatch(setSendProduct({...successFetch, ...result}))
-        } catch (e) {
-            fetchError({ 
-                e,
-                dispatch,
-                setter: setSendProduct,
-                controller,
-                comp: {en: 'Error while updating product', ru: 'Ошибка обновления товара'}
-            })
-        }
-    }
-}
 
 
 

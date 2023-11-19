@@ -9,10 +9,10 @@ import { allActions } from "../../../redux/actions/all";
 import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFiles';
 import { inputsProps, navList, newsItemEmpty, resetFetch } from '../../../assets/js/consts';
 import { filesDownloader, modalMessageCreator, prevent } from '../../../assets/js/processors';
-import { useNavigate, useParams } from 'react-router-dom';
+import { NavigateFunction, useNavigate, useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
-import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
-import MessageNew from '../../../../src/components/Message/MessageNew';
+import { IModalFunctions } from '../../../components/Modal/Modal';
+import Message from '../../../components/Message/Message';
 import Uploader from '../../../../src/components/Preloaders/Uploader';
 import BlockInput, { IBlockInputFunctions } from '../../../components/BlockInput/BlockInput';
 
@@ -36,10 +36,10 @@ interface IProps extends IPropsState, IPropsActions {}
 
 
 const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}): JSX.Element => {
-    const paramNewsId = useParams().newsId || ''
-    const navigate = useNavigate()
+    const paramNewsId: string = useParams().newsId || ''
+    const navigate: NavigateFunction = useNavigate()
     const addFilesRef = useRef<IAddFilesFunctions>(null)
-    const _form = useRef<HTMLFormElement>(null)
+    const _form = useRef<HTMLDivElement>(null)
     const _headerEn = useRef<IBlockInputFunctions>(null)
     const _headerRu = useRef<IBlockInputFunctions>(null)
     const _textShortEn = useRef<IBlockInputFunctions>(null)
@@ -49,7 +49,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
     const _date = useRef<IBlockInputFunctions>(null)
     
   
-    const closeModal = useCallback(async () => {   
+    const closeModal = useCallback(async (): Promise<void> => {   
         if (await modal?.getName() === 'newsSend') {
             if (send.status === 'success') {
                 navigate(navList.account.admin.news.to, { replace: true })
@@ -70,7 +70,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
             modal?.openModal({
                 name: 'newsSend',
                 onClose: closeModal,
-                children: <MessageNew {...modalMessageCreator(send, lang)} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
+                children: <Message {...modalMessageCreator(send, lang)} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
             })
         }
         if (send.status === 'fetching') {
@@ -107,7 +107,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
     
 
    
-    const fillValues = async (news: INewsItem) => {//fill values based on selected color
+    const fillValues = async (news: INewsItem): Promise<void> => {//fill values based on selected color
         if (!_headerEn.current || !_headerRu.current || !_textShortEn.current || !_textShortRu.current || 
             !_textEn.current || !_textRu.current || !_date.current) return
         if (paramNewsId) { //news exists
@@ -132,7 +132,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
 
 
 
-    const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    const onSubmit = (e: React.MouseEvent<HTMLButtonElement>): void => {
         prevent(e)   
         if (!_form.current || !_headerEn.current || !_headerRu.current || !_textShortEn.current || !_textShortRu.current || !_textEn.current ||
             !_textRu.current || !_date.current ) return
@@ -149,7 +149,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
             return modal?.openModal({
                 name: 'errorsInForm',
                 onClose: closeModal,
-                children: <MessageNew 
+                children: <Message 
                     header={lang === 'en' ? 'Errors was found' : 'Найдены ошибки'}
                     status={'error'}
                     text={errors}
@@ -191,7 +191,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
                     :
                         <h1>{lang === 'en' ? 'Post news' : 'Добавление новости'}</h1>
                     }
-                    <form className='form_full form_add-news' ref={_form}>
+                    <div className='form_full form_add-news' ref={_form}>
                         <div className="block_text">
                             <h3>{lang === 'en' ? 'Add information' : 'Добавьте информацию'}</h3>
                         </div>
@@ -276,7 +276,7 @@ const NewsCreator: FC<IProps> = ({lang, send, newsOne, loadOne, modal, setState}
                         <button className='button_blue button_light' disabled={send.status === 'fetching'} onClick={e => onSubmit(e)}>
                             {lang === 'en' ? paramNewsId ? 'Save news' : 'Post news' : paramNewsId ? "Сохранить новость" : "Отправить новость"}
                         </button>
-                    </form>
+                    </div>
                 </div>
             </div>
 

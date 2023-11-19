@@ -24,7 +24,7 @@ interface IFileToShow {
     content: string //content of file OR iconFileQuestion if file not in imageExtentions
 }
 
-const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, multiple, id}, ref) => {
+const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, multiple, id}, ref): JSX.Element => {
     useImperativeHandle(ref, () => ({
         clearAttachedFiles() {
             clearFiles()
@@ -46,42 +46,42 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, multiple, id}, r
     const [files, setFiles] = useState<File[]>([]) //pure files
     const [filesToShow, setFilesToShow] = useState<IFileToShow[]>([]) //files for preview:
 
-    const preventDefaults = (e: DragEvent | React.MouseEvent<HTMLButtonElement>) => {
+    const preventDefaults = (e: DragEvent | React.MouseEvent<HTMLButtonElement>): void => {
         prevent(e)
     }
 
-    const dragEnter = (e: DragEvent) => {
+    const dragEnter = (e: DragEvent): void => {
         preventDefaults(e)
         dragCounter++
         _dropArea.current?.classList.add('active')
     }
 
-    const dragOver = (e: DragEvent) => {
+    const dragOver = (e: DragEvent): void => {
         preventDefaults(e)
         _dropArea.current?.classList.add('active')
     }
 
-    const dragLeave = (e: DragEvent) => {
+    const dragLeave = (e: DragEvent): void => {
         preventDefaults(e)
         dragCounter--
         dragCounter === 0 && _dropArea.current?.classList.remove('active')
     }
 
     
-    const dragDrop = (e: DragEvent) => {
+    const dragDrop = (e: DragEvent): void => {
         preventDefaults(e)
         if (!e.dataTransfer?.files) return 
         _dropArea.current?.classList.remove('active')
         multiple ? setFiles(prev => [...prev, ...(e.dataTransfer?.files as FileList)]) : setFiles([e.dataTransfer?.files[0]])
     }
     
-    const onSelectFiles = () => {  
+    const onSelectFiles = (): void => {  
         if (!_files.current?.files) return 
         _dropArea.current?.classList.remove('active')
         multiple ? setFiles(prev => [...prev, ...(_files.current?.files as FileList)]) : setFiles([(_files.current.files)[0]])
     }
 
-    const clearFiles = useCallback(() => {
+    const clearFiles = useCallback((): void => {
         setFiles([])
     }, [])
 
@@ -102,7 +102,7 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, multiple, id}, r
     })
 
 
-    const fillFilesToShow = useCallback(async (filesList: File[]) => {
+    const fillFilesToShow = useCallback(async (filesList: File[]): Promise<void> => {
         const reader = new FileReader();
         const filesWithContent: typeof filesToShow = await filesList.reduce(async (acc: Promise<IFileToShow[]>, currentFile: File) => {
             const result = await acc
@@ -126,7 +126,7 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, multiple, id}, r
     }, [files])
 
 
-    const onRemoveClick = (e: React.MouseEvent<HTMLButtonElement>,index: number) => {
+    const onRemoveClick = (e: React.MouseEvent<HTMLButtonElement>,index: number): void => {
         prevent(e)
         setFiles(prev => (prev.filter((item, i) => i !== index)))
     }
@@ -136,7 +136,7 @@ const AddFiles = forwardRef<IAddFilesFunctions, IProps>(({lang, multiple, id}, r
         return filesToShow.map((file, i) => {
             return (
                 <div className="previewer__card" key={file.name + i}>
-                    <div className="previewer__card__img-cont">
+                    <div className="previewer__card__img-wrapper">
                         <img src={file.content} alt={file.name} />
                     </div>
                     <span className="previewer__card__title">{file.name.length < 30 ? file.name : `${file.name.slice(0, 30)}...`}</span>

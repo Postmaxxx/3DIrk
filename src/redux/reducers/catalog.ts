@@ -81,27 +81,9 @@ const reducerCatalog = (state: ICatalogState = initialCatalogState, action: {typ
 
         default: {
             const missedSomeActions:never = action.type;
-            return {
-                ...state   
-            };
+			return {...state};
         }
     }
 }
 
 export default reducerCatalog
-
-/*
-
-        case actionsListCatalog.SET_DATA_PRODUCT:            
-            const newProps: Partial<IProduct> = action.payload as IProduct
-            const newProduct: IProduct = {...state.category.product}
-            Object.keys(newProps).forEach(key => {
-                newProduct[key as keyof IProduct] = newProps[key as keyof IProduct] as never;
-            })
-            return {
-                ...state, 
-                category: {
-                    ...state.category,
-                    product: newProduct
-                }
-            }*/

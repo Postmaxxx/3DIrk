@@ -11,8 +11,8 @@ import { allActions } from "../../redux/actions/all";
 import Remover from '../../components/Remover/Remover';
 import { navList, resetFetch } from '../../assets/js/consts';
 import { modalMessageCreator } from '../../../src/assets/js/processors';
-import { IModalFunctions } from '../../../src/components/Modal/ModalNew';
-import MessageNew from '../../../src/components/Message/MessageNew';
+import { IModalFunctions } from '../../components/Modal/Modal';
+import Message from '../../components/Message/Message';
 import svgs from '../../../src/components/additional/svgs';
 
 
@@ -40,13 +40,12 @@ const NewsDetails: FC<IProps> = ({lang, setState, newsState, modal, isAdmin }): 
 
     useEffect(() => {
 		setState.news.loadOneNews(paramNewsId)
-        //return () => {setState.news.setLoadOneNews(resetFetch)}
     }, [paramNewsId])
 
 
 
 
-    const onDelete = useCallback((item: INewsItem) => {
+    const onDelete = useCallback((item: INewsItem): void => {
         setState.news.deleteNews(item._id)
     }, [newsState.newsList])
 
@@ -69,21 +68,21 @@ const NewsDetails: FC<IProps> = ({lang, setState, newsState, modal, isAdmin }): 
             modal?.openModal({
                 name: 'deleteNews',
                 onClose: closeModal,
-                children: <MessageNew {...modalMessageCreator(newsState.send, lang)} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
+                children: <Message {...modalMessageCreator(newsState.send, lang)} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
             })
         }
         if (newsState.loadOne.status === 'error') { //if fail to load news
             modal?.openModal({
                 name: 'loadNews',
                 onClose: closeModal,
-                children: <MessageNew {...modalMessageCreator(newsState.loadOne, lang)} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
+                children: <Message {...modalMessageCreator(newsState.loadOne, lang)} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
             })
         }
     }, [newsState.send, newsState.loadOne])
 
 
     
-    const newsContent = useMemo(() => {
+    const newsContent = useMemo((): JSX.Element => {
         return (
             <>
                 {newsState.loadOne.status === 'success' &&
@@ -112,9 +111,9 @@ const NewsDetails: FC<IProps> = ({lang, setState, newsState, modal, isAdmin }): 
     }, [lang, newsState.newsOne, newsState.loadOne.status])
 
 
-    const controls = useMemo(() => {
+    const controls = useMemo((): JSX.Element => {
         return (
-            <div className="buttons_control">
+            <div className="buttons">
                 {isAdmin && newsState.newsOne && newsState.loadOne.status === 'success' &&
                     <NavLink className="button_edit" to={`../..${navList.account.admin.news.to}/${newsState.newsOne._id}`}>
                         {svgs().iconEdit}

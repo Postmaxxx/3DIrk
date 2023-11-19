@@ -98,7 +98,7 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
 
 
 
-    const orderCart = (order: IOrdersItem) => {
+    const orderCart = (order: IOrdersItem): JSX.Element[] => {
         return order.cart.map((cartItem, i) => (
             <Fragment key={i}>
                 <div className="cell first">
@@ -115,7 +115,7 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
     }
 
 
-    const filesList = (order: IOrdersItem) => {
+    const filesList = (order: IOrdersItem): JSX.Element[] => {
         return (
             order.attachedFiles.map(file => (
                 <div className="cell" key={file}>
@@ -126,12 +126,12 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
     }
 
 
-    const statuses = useMemo(() => {
+    const statuses = useMemo((): JSX.Element[] => {
         return orderStatuses.map(status => <option key={status.name[lang]} value={status.value}>{status.name[lang]}</option>)
     }, [lang])
 
 
-    const usersTable = ordersState.users
+    const usersTable: JSX.Element[] = ordersState.users
         .filter((user, i) => (i >= page*usersPerPage && i < (page+1)*usersPerPage))
         ?.map((user, i: number) => {
             return (
@@ -201,7 +201,7 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
 
 
 
-    const userFilter = useMemo(() => {
+    const userFilter = useMemo((): JSX.Element => {
         return (
             <>
                 <label htmlFor="user">{lang === 'en' ? 'Select user' : 'Выберите пользователя'}</label>
@@ -216,7 +216,7 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
     }, [ordersState.userList.list, lang])
 
 
-    const statusesFilter = useMemo(() => {
+    const statusesFilter = useMemo((): JSX.Element => {
         return (
             <>
                 <label htmlFor="status">{lang === 'en' ? 'Select status' : 'Выберите статус'}</label>
@@ -229,20 +229,20 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
     }, [lang])
 
 
-    const dateFromFilter = <>
+    const dateFromFilter: JSX.Element = <>
         <label htmlFor="date-from">{lang === 'en' ? 'Date from' : 'С даты'}</label>
         <input type="date" id='date-from' ref={_dateFrom}/>
     </>
 
 
-    const dateToFilter = <>
+    const dateToFilter: JSX.Element = <>
         <label htmlFor="date-to">{lang === 'en' ? 'Date to' : 'По дату'}</label>
         <input type="date" id='date-to' ref={_dateTo}/>
     </>
 
 
 
-    const pagination = useMemo(() => {
+    const pagination = useMemo((): JSX.Element | boolean => {
         return (
             totalPages.length > 1 &&
                 <ul className="pagination">
@@ -272,10 +272,10 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
             <div className='container_page'>
                 <div className="container">
                     <div className="block_text">
-                        <h1>{lang === 'en' ? `All orders` : `Все заказы`}</h1>
+                        <h1>{lang === 'en' ? `History of all orders` : `История всех заказов`}</h1>
                     </div>
                     {loaded && <>
-                        <form className='form_full form_filters'>
+                        <div className='form_full form_filters'>
                             <div className="block_text">
                                 <h3>{lang === 'en' ? 'Select the search parameters' : 'Введите критерии поиска'}</h3>           
                             </div>
@@ -295,7 +295,7 @@ const Orders: React.FC<IProps> = ({lang, colorsLoad, fibersLoad, ordersState, is
 
                             </div>
                             <button className='button_blue' onClick={loadOrders}>{lang === 'en' ? 'Load orders' : 'Загрузить заказы'}</button>
-                        </form>
+                        </div>
                         
                         {ordersState.users.length > 0 && ordersState.load.status ==='success' ? 
                             <div className="orders form_full">

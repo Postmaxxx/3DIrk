@@ -130,7 +130,6 @@ export const deleteColor = (_id: string) => {
         const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.colors.delete.timeout) //set time limit for fetch
         dispatch(setSendColors({...fetchingFetch, controller}))  
         const token = getState().user.token 
-        // to db
         try {
             const response: Response = await fetch(APIList.colors.delete.url, {
                 signal: controller.signal,

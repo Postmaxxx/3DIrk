@@ -19,9 +19,9 @@ router.post('', //create
     fileSaver,
     async(req, res) => { 
         try {
-            const { price, name, text, text_short, fibers, mods, category, active } = JSON.parse(req.body.data)
+            const { price, name, text, textShort, fibers, mods, category, active } = JSON.parse(req.body.data)
             const files = req.files as IMulterFile[] || []  
-            const product: IProduct = new Product({ price: Number(price), name, text, text_short, fibers, mods, category, active })
+            const product: IProduct = new Product({ price: Number(price), name, text, textShort, fibers, mods, category, active })
             
 
             const basePath = `${allPaths.pathToImages}/${allPaths.pathToProducts}/${product._id}`
@@ -63,7 +63,7 @@ router.put('', //create
     fileSaver,
     async(req, res) => { 
         try {
-            const { price, name, text, text_short, fibers, mods, category, _id, active } = JSON.parse(req.body.data)
+            const { price, name, text, textShort, fibers, mods, category, _id, active } = JSON.parse(req.body.data)
             const files = req.files as IMulterFile[] || undefined
             
 
@@ -86,7 +86,7 @@ router.put('', //create
                 }))
             }
 
-            await Product.findOneAndUpdate({_id}, { price, name, text, text_short, fibers, mods, category, _id, images, active })
+            await Product.findOneAndUpdate({_id}, { price, name, text, textShort, fibers, mods, category, _id, images, active })
 
             cache.products.obsolete = true
             cache.catalog.obsolete = true
@@ -120,7 +120,7 @@ router.get('', async(req, res) => {
             //price: product.price,    
             name: product.name,    
             text: product.text,    
-            text_short: product.text_short,    
+            textShort: product.textShort,    
             images: product.images,    
             fibers: product.fibers,    
             mods: product.mods,

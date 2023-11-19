@@ -1,4 +1,4 @@
-import { IAction, ICartItem, IFetch, IFilterUser, IOrdersState, IUserOrders } from "../../interfaces"
+import { IFetch, IFilterUser, IOrdersState, IUserOrders } from "../../interfaces"
 import initialOrderState from '../initialStates/orders'
 import { actionsListOrders } from '../actions/actionsList'
 
@@ -44,9 +44,7 @@ const reducerOrders = (state:IOrdersState = initialOrderState, action: {type: TA
 
         default: {
 			const missedSomeActions:never = action.type;
-			return {
-				...state   
-			};
+			return {...state};
         }
     }
 }

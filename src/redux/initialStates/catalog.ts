@@ -18,7 +18,7 @@ const initialCatalog = {
             //price: 0,
             name: {...empty},
             text: {...empty},
-            text_short: {...empty},
+            textShort: {...empty},
             images: {...emptyImages},
             fibers: [],
             mods: [],

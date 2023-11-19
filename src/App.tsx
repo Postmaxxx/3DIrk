@@ -1,4 +1,4 @@
-import { useEffect, memo, useRef, useState, useMemo  } from "react";
+import { useEffect, memo, useRef  } from "react";
 import { Routes, Route, HashRouter } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import "./assets/css/_base.scss";
@@ -14,7 +14,7 @@ import Homer from "./components/Homer/Homer";
 import Offliner from "./components/Offliner/Offliner";
 import Unauthorized from "./components/Unauthorized/Unauthorized";
 import PreloaderPage from "./components/Preloaders/PreloaderPage";
-import ModalNew, { IModalFunctions } from "./components/Modal/ModalNew";
+import Modal, { IModalFunctions } from "./components/Modal/Modal";
 import useScreenMeter from "./hooks/screenMeter";
 import Preloader from "./components/Preloaders/Preloader";
 
@@ -39,7 +39,7 @@ const LazyCatalogCahnger = lazy(() => import("./pages/Admin/CatalogCreator/Catal
 const LazyProductCreator = lazy(() => import("./pages/Admin/ProductCreator/ProductCreator"));
 const LazySpliderChanger = lazy(() => import("./pages/Admin/ContentCreator/contentCreator"));
 
-const ModalMemo = memo(ModalNew)
+const ModalMemo = memo(Modal)
 const FooterMemo = memo(Footer)
 
 interface IPropsState {

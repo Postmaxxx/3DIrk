@@ -54,7 +54,7 @@ describe('NewsItem', () => {
             let _link: HTMLLinkElement = screen.getByText('Read more...')
             expect(_link).toBeInTheDocument()
             expect(_link.href.includes('/news/id')).toBe(true)
-            expect(_newsItem?.querySelector('.img-cont')?.childNodes.length).toBe(2)
+            expect(_newsItem?.querySelector('.img-wrapper')?.childNodes.length).toBe(2)
         })
     })
 

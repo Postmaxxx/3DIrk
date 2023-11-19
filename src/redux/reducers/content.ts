@@ -1,4 +1,4 @@
-import { IAction, IContentState, IFeature, IFetch } from "../../interfaces"
+import { IContentState, IFetch } from "../../interfaces"
 import initialContentState from '../initialStates/content'
 import { actionsListContent } from '../actions/actionsList'
 
@@ -25,9 +25,7 @@ const reducerContent = (state:IContentState = initialContentState, action: {type
             }
         default: {
 			const missedSomeActions:never = action.type;
-			return {
-				...state   
-			};
+			return {...state};
         }
     }
 }

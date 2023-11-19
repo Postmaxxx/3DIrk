@@ -8,8 +8,8 @@ import AmountChanger from '../AmountChanger/AmountChanger';
 import { allActions } from "../../redux/actions/all";
 import { errorsChecker } from '../../../src/assets/js/processors';
 import { useMemo } from 'react'
-import { IModalFunctions } from '../Modal/ModalNew';
-import MessageNew from '../Message/MessageNew';
+import { IModalFunctions } from '../Modal/Modal';
+import Message from '../Message/Message';
 import { useNavigate } from 'react-router-dom';
 
 interface IPropsState {
@@ -47,13 +47,13 @@ const AddToCart: React.FC<IProps> = ({data, lang, cart, modal, setState}): JSX.E
     const [amountChangerReset, setAmountChangerReset] = useState<{amount: number}>({amount: 1})
     const errChecker = useMemo(() => errorsChecker({lang}), [lang])
 
-    const closeModal = useCallback(() => {
+    const closeModal = useCallback((): void => {
         modal?.closeCurrent()
         errChecker.clear() 
 	}, [])
      
         
-    const addToCart = () => { 
+    const addToCart = (): void => { 
         !data.color && errChecker.add(lang === 'en' ? 'Please choose the color' : 'Пожалуйста, выберите цвет');
         !data.fiber && errChecker.add(lang === 'en' ? 'Please choose the fiber' : 'Пожалуйста, выберите материал');
         (data.type?.en === '') && errChecker.add(lang === 'en' ? 'Please choose the type' : 'Пожалуйста, выберите тип');
@@ -63,7 +63,7 @@ const AddToCart: React.FC<IProps> = ({data, lang, cart, modal, setState}): JSX.E
             modal?.openModal({ //if error/success - show modal about send order
                 name: 'cartAddError',
                 onClose: closeModal,
-                children: <MessageNew {...errChecker.result()} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
+                children: <Message {...errChecker.result()} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
             })
             return
         }
@@ -81,7 +81,7 @@ const AddToCart: React.FC<IProps> = ({data, lang, cart, modal, setState}): JSX.E
         modal?.openModal({ //if error/success - show modal about send order
             name: 'cartAdder',
             onClose: closeModal,
-            children: <MessageNew 
+            children: <Message 
                 status={'success'}
                 header={lang === 'en' ? 'Added' : 'Добавлено'}
                 text={lang === 'en' ? [`This item has been added to your сart.`, `You now have ${amountItemsInCart} item${amountItemsInCart > 1 ? 's' : ''} in your сart`, ] : [`Этот товар был успешно добавлен в Вашу корзину.`, `Сейчас у Вас товаров в корзине: ${amountItemsInCart}`, ]}
@@ -89,30 +89,27 @@ const AddToCart: React.FC<IProps> = ({data, lang, cart, modal, setState}): JSX.E
                 buttonAdd={{action: () => {closeModal(); navigate('/order')}, text: lang === 'en' ? 'Go to cart' : 'Перейти в корзину'}}
                 />
         })
-
     }
 
 
-    const onAmountChange = useCallback((_id: IProduct['_id'], amount: number) => {
+    const onAmountChange = useCallback((_id: IProduct['_id'], amount: number): void => {
         setAmount(amount)
     }, [])
 
 
     return (
-        <>
-            <div className="cart-adder">
-                <span>{lang === 'en' ? 'Amount' : 'Количество'}: </span>
-                <div className="amount-changer-wrapper">
-                    <AmountChanger<IProduct['_id']> idInstance={data.product._id} initialAmount={amount} reset={amountChangerReset} lang={lang} onChange={onAmountChange} />
-                </div>
-                <button 
-                    className='button_blue button_add-cart' 
-                    aria-label={lang === 'en' ? `Add this product (${amount} items) to cart` : `Добавить этот продукт в корзину в количестве ${amount} штук`} 
-                    onClick={addToCart}>
-                        {lang === 'en' ? 'Add to cart' : 'В корзину'}
-                    </button>
+        <div className="cart-adder">
+            <span>{lang === 'en' ? 'Amount' : 'Количество'}: </span>
+            <div className="amount-changer-wrapper">
+                <AmountChanger<IProduct['_id']> idInstance={data.product._id} initialAmount={amount} reset={amountChangerReset} lang={lang} onChange={onAmountChange} />
             </div>
-        </>
+            <button 
+                className='button_blue button_add-cart' 
+                aria-label={lang === 'en' ? `Add this product (${amount} items) to cart` : `Добавить этот продукт в корзину в количестве ${amount} штук`} 
+                onClick={addToCart}>
+                    {lang === 'en' ? 'Add to cart' : 'В корзину'}
+                </button>
+        </div>
     )
 }
 

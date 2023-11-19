@@ -1,4 +1,4 @@
-import { IAction, IColor, IColorsState, IFetch } from "../../interfaces"
+import { IColor, IColorsState, IFetch } from "../../interfaces"
 import initialColorsState from '../initialStates/colors'
 import { actionsListColors } from '../actions/actionsList'
 
@@ -24,9 +24,7 @@ const reducerColors = (state:IColorsState = initialColorsState, action: {type: T
 
         default: {
 			const missedSomeActions:never = action.type;
-			return {
-				...state   
-			};
+			return {...state};
         }
     }
 }

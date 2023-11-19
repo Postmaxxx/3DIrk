@@ -79,7 +79,7 @@ exports[`ContactUs matches snapshots 1`] = `
                 className="contact"
               >
                 <div
-                  className="img-container"
+                  className="img-wrapper"
                 >
                   <svg
                     className="svg icon_phone"
@@ -112,7 +112,7 @@ exports[`ContactUs matches snapshots 1`] = `
                 className="contact"
               >
                 <div
-                  className="img-container"
+                  className="img-wrapper"
                 >
                   <img
                     alt="VK"
@@ -129,7 +129,7 @@ exports[`ContactUs matches snapshots 1`] = `
                 className="contact"
               >
                 <div
-                  className="img-container"
+                  className="img-wrapper"
                 >
                   <img
                     alt="Telegram"
@@ -144,7 +144,7 @@ exports[`ContactUs matches snapshots 1`] = `
                 className="contact"
               >
                 <div
-                  className="img-container"
+                  className="img-wrapper"
                 >
                   <svg
                     className="svg icon_email"

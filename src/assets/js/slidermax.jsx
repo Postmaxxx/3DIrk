@@ -46,7 +46,7 @@ export function makeCarousel(params) {
             ${picsArray.map(() => {
 		return (`
                 <div className="${destinationClass}-img-wrapper">
-                    <div className="${destinationClass}-img-container">
+                    <div className="${destinationClass}-img-wrapper">
                         <lottie-player data-role="expand" className="${destinationClass}-expand-icon" autoplay loop mode="normal" src="${expandPath}" ></lottie-player>
                     </div>
                 </div>
@@ -55,9 +55,9 @@ export function makeCarousel(params) {
         </div>
         `;
 
-	const ribbonImages = carousel.querySelector(`.${destinationClass}-images-container`); //The container for all 5 images
+	const ribbonImages = carousel.querySelector(`.${destinationClass}-images-wrapper`); //The container for all 5 images
 	const imgWrapperList = carousel.querySelectorAll(`.${destinationClass}-img-wrapper`); //The list of all 5 containers
-	const imgContainerList = carousel.querySelectorAll(`.${destinationClass}-img-container`); //The list of all 5 containers
+	const imgContainerList = carousel.querySelectorAll(`.${destinationClass}-img-wrapper`); //The list of all 5 containers
 	const imgExpandIconList = carousel.querySelectorAll(`.${destinationClass}-expand-icon`); //The list of all 5 containers
 
 

@@ -1,8 +1,8 @@
 import './color-selector.scss'
 import { IColor, TLang } from "../../interfaces";
 import { useState } from 'react'
-import { IModalFunctions } from '../Modal/ModalNew';
-import ImageModalNew from '../ImageModal/ImageModalNew';
+import { IModalFunctions } from '../Modal/Modal';
+import ImageModal from '../ImageModal/ImageModal';
 import { useEffect } from 'react'
 import svgs from '../additional/svgs';
 
@@ -25,22 +25,22 @@ const ColorSelector: React.FC<IPropsState> = ({selectorId, lang, modal, colors, 
     }, [colors])
 
     
-    const onCurrentClick = () => {
+    const onCurrentClick = (): void => {
         setExpanded(prev => !prev)
     }
 
-    const onOptionClick = (id: IColor['_id']) => {
+    const onOptionClick = (id: IColor['_id']): void => {
         setSelectedColor(colors.find(color => color._id === id))
         setExpanded(false)
         onSelect(id)
     }
 
 
-    const onImageClick = (e: React.MouseEvent | React.KeyboardEvent , color: IColor) => {
+    const onImageClick = (e: React.MouseEvent | React.KeyboardEvent , color: IColor): void => {
         e.stopPropagation()
         modal?.openModal({
             name: 'colorSelector',
-            children: <ImageModalNew url={color.urls.full}/>
+            children: <ImageModal url={color.urls.full}/>
         })
     }
 
@@ -60,7 +60,7 @@ const ColorSelector: React.FC<IPropsState> = ({selectorId, lang, modal, colors, 
                     aria-label={lang === 'en' ? 'Select the color' : 'Выберите цвет'}>
                     {selectedColor ? 
                         <>
-                            <div className="img-cont">
+                            <div className="img-wrapper">
                                 <img src={selectedColor.urls.thumb} alt={selectedColor.name[lang]} />
                             </div>
                             <span aria-label={lang === 'en' ? 'Selected color' : 'Выбранный цвет'}>{selectedColor.name[lang]}</span>
@@ -82,7 +82,7 @@ const ColorSelector: React.FC<IPropsState> = ({selectorId, lang, modal, colors, 
                                 aria-label={lang === 'en' ? `Select color: ${color.name.en}` : `Выбрать цвет: ${color.name.en}`}
                             >
                                 <div 
-                                    className="img-cont" 
+                                    className="img-wrapper" 
                                     onClick={(e) => onImageClick(e, color)} 
                                     tabIndex={expanded ? 0 : -1} 
                                     role='button'

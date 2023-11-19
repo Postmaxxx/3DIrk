@@ -9,8 +9,8 @@ import { allActions } from "../../../redux/actions/all";
 import { inputsProps, resetFetch } from '../../../assets/js/consts';
 import { errorsChecker, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import Featurer, { IFeaturerFunctions } from '../../../components/Featurer/Featurer';
-import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
-import MessageNew from '../../../../src/components/Message/MessageNew';
+import { IModalFunctions } from '../../../components/Modal/Modal';
+import Message from '../../../components/Message/Message';
 import Uploader from '../../../../src/components/Preloaders/Uploader';
 
 
@@ -34,7 +34,7 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, modal, catalog}): JSX.El
     const featurerRef = useRef<IFeaturerFunctions>(null)
     const _catalog = useRef<HTMLDivElement>(null)
     
-    const closeModal = useCallback(async () => {
+    const closeModal = useCallback(async (): Promise<void> => {
         if (await modal?.getName() === 'catalogSend') {
             if (catalog.send.status === 'success') {
                 setState.catalog.loadCatalog()
@@ -54,7 +54,7 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, modal, catalog}): JSX.El
             modal?.openModal({ //if error/success - show modal about send order
                 name: 'catalogSend',
                 onClose: closeModal,
-                children: <MessageNew {...modalMessageCreator(catalog.send, lang)} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
+                children: <Message {...modalMessageCreator(catalog.send, lang)} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
             })
         }
         if (catalog.send.status === 'fetching') {
@@ -69,7 +69,7 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, modal, catalog}): JSX.El
 
 
 
-    const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {        
+    const onSubmit = (e: React.MouseEvent<HTMLButtonElement>): void => {        
         prevent(e)
         if (!featurerRef.current || !_catalog.current) return
         //check errors
@@ -78,7 +78,7 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, modal, catalog}): JSX.El
             return modal?.openModal({
                 name: 'errorsInForm',
                 onClose: closeModal,
-                children: <MessageNew 
+                children: <Message 
                     header={lang === 'en' ? 'Errors was found' : 'Найдены ошибки'}
                     status={'error'}
                     text={errors}
@@ -90,7 +90,7 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, modal, catalog}): JSX.El
     }
 
 
-    const fillValues = () => {      
+    const fillValues = (): void => {      
         if (!featurerRef.current) return
         featurerRef.current.setFeatures(catalog.list)
     }

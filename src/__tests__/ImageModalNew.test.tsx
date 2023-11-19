@@ -1,11 +1,11 @@
 import { act, screen } from '@testing-library/react';
 import { HashRouter } from "react-router-dom";
-import ImageModalNew from '../components/ImageModal/ImageModalNew';
+import ImageModal from '../components/ImageModal/ImageModal';
 import '@testing-library/jest-dom/extend-expect'
 import { createRoot } from 'react-dom/client';
 
 
-describe('ImageModalNew', () => {
+describe('ImageModal', () => {
     let _container: HTMLDivElement
     
     beforeEach(() => {
@@ -26,7 +26,7 @@ describe('ImageModalNew', () => {
             _root = createRoot(_container)
             _root.render(		    
                 <HashRouter>
-                    <ImageModalNew url='url_for_image' text='text_for_modal' link={{name:'link_name', url: 'link_url'}}/>
+                    <ImageModal url='url_for_image' text='text_for_modal' link={{name:'link_name', url: 'link_url'}}/>
                 </HashRouter>
             )
         });

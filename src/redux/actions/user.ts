@@ -5,8 +5,6 @@ import dayjs from "dayjs";
 import { fetchError, resErrorFiller } from "../../../src/assets/js/processors";
 
 
-type TActionListKeys = keyof typeof actionsListUser;
-
 export const setUser = <T extends Partial<IUserState>>(payload: T): IAction<T>=> ({
     type: actionsListUser.SET_USER as 'SET_USER',
     payload: payload
@@ -105,8 +103,6 @@ export const login = ({email, password}: ILogin) => {
                     fixed: result.user.fixed || []
                 }
             }))
-            console.log(result.user.token);
-            
             localStorage.setItem('user', JSON.stringify({token: result.user.token}))
             dispatch(setAuth({...successFetch}))
         } catch (e) {   
@@ -122,8 +118,6 @@ export const login = ({email, password}: ILogin) => {
 }
 
 
-
-//////////////////////////////////////////////////////////////////////////////
 
 
 interface ISendOrder {
@@ -311,8 +305,6 @@ export const sendCart = () => {
         }
     }
 }
-
-
 
 
 

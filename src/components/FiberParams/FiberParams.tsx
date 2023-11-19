@@ -12,7 +12,7 @@ interface IProps {
 
 const FiberParams: React.FC<IProps> = ({params, lang, fiber}): JSX.Element => {
 
-    const switchType = (param: IFiberProperties) => {
+    const getFiberType = (param: IFiberProperties): JSX.Element => {
         if (param._id === "minTemp") {
             return <div className="param">
                     <span aria-label={lang === 'en' ? `Using temperatures: from ${params.minTemp} to ${params.maxTemp} ${param.unit[lang]}` : `Температуры использования: от ${params.minTemp} до ${params.maxTemp} ${param.unit[lang]}`}>{lang === "en" ? "Temperetures" : 't использования'}: </span>
@@ -32,8 +32,8 @@ const FiberParams: React.FC<IProps> = ({params, lang, fiber}): JSX.Element => {
             .filter(param => param._id !== 'maxTemp')
             ?.map((param) => {
                 return (
-                    <div className="param__container" key={param._id}>
-                        {switchType(param)}
+                    <div className="param-container" key={param._id}>
+                        {getFiberType(param)}
                     </div>
                 )
 

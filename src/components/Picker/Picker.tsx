@@ -1,7 +1,6 @@
 import { IImages, TLang, TLangText } from '../../interfaces';
 import './picker.scss'
 import { useState, forwardRef, useImperativeHandle, useMemo } from "react";
-import { prevent } from '../../assets/js/processors';
 import { createNewItemId } from '../../../src/assets/js/consts';
 import iconPlus from '../../assets/img/icon_plus.svg'
 import PicWithPreloader from '../../../src/assets/js/PicWithPreloader';
@@ -28,8 +27,6 @@ interface IProps {
     withNew?: boolean //show img for new item
     minSelected?: number //min amount of items can't be unselected
     simulateClickOnSelect?: boolean //simulate manula select behavior when use setSelected
-    onEditClick?: (_id: string) => void
-    onDeleteClick?: (_id: string) => void
     onItemClick?: (_id: string) => void
 }
 
@@ -40,7 +37,7 @@ export interface IPickerFunctions {
 }
 
 
-const Picker = forwardRef<IPickerFunctions, IProps>(({items, lang, onEditClick, onDeleteClick, onItemClick, type, multiple=true, withNew=false, minSelected=0, markInactive=false, simulateClickOnSelect=false}, ref) => {
+const Picker = forwardRef<IPickerFunctions, IProps>(({items, lang, onItemClick, type, multiple=true, withNew=false, minSelected=0, markInactive=false, simulateClickOnSelect=false}, ref) => {
     useImperativeHandle(ref, () => ({
         setSelected(_ids) {
             if (!_ids) {
@@ -63,9 +60,8 @@ const Picker = forwardRef<IPickerFunctions, IProps>(({items, lang, onEditClick, 
 
     const [selectedItems, setSelectedItems] = useState<{[key: string]: boolean}>({}) //obj is faster than [].find...
 
-    
 
-    const itemClicked = (_id: string) => {
+    const itemClicked = (_id: string): void => {
         if (multiple) {
             setSelectedItems(prev => {
                 return (prev[_id] && Object.values(prev)?.filter(value => value)?.length > minSelected) ? {...prev, [_id]: !prev[_id]} : {...prev, [_id]: true}
@@ -79,7 +75,7 @@ const Picker = forwardRef<IPickerFunctions, IProps>(({items, lang, onEditClick, 
     }
 
 
-    const contentMemo = useMemo(() => {
+    const contentMemo: JSX.Element = useMemo(() => {
         return (
             <>
                 {items.map((item) => {

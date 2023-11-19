@@ -35,6 +35,7 @@ export interface ISelectorFunctions {
 		name: TLangText 
 	}
 	getErrorText: (lng: TLang) => string | null
+    setChanged: (changed: boolean) => void
 }
 
     interface IStore {
@@ -79,18 +80,21 @@ const BlockSelector = forwardRef<ISelectorFunctions, IProps>(({lang, id, labelTe
 				return err ? `${labelText[lng]}: ${err[lng]}` : null
 			} 
 			return null
-		}
+		},
+        setChanged(changed) {
+            setChanged(changed)
+        }
     }));
 
 
     const [store, setStore] = useState<IStore>({items: data || [], item: defaultData || {value: '', name: {...empty}}, value: ''})
     const _select = useRef<HTMLSelectElement>(null)
 	const [error, setError] = useState<TLangText | null>(null)
-	const [changed, setchanged] = useState<boolean>(false)
+	const [changed, setChanged] = useState<boolean>(false)
 
 
-    const onChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setchanged(true)       
+    const onChange = (e: React.ChangeEvent<HTMLSelectElement>): void => {
+        setChanged(true)       
         var itemNew: IItem = {value: e.target.value, name: (store.items.find(el => el.value === e.target.value) as IItem)?.name || {en: '', ru: ''}}
         setStore(prev => {
             return {
@@ -105,7 +109,7 @@ const BlockSelector = forwardRef<ISelectorFunctions, IProps>(({lang, id, labelTe
     }
 
      
-    const options = useMemo(() => {
+    const options: JSX.Element[] = useMemo(() => {
         return store.items.map((el, i) => <option key={i} value={el.value}>{el.name[lang]}</option>)
     }, [store.items, lang])
     
@@ -120,12 +124,12 @@ const BlockSelector = forwardRef<ISelectorFunctions, IProps>(({lang, id, labelTe
     }
 
 
-    const onBlurSelect: React.FocusEventHandler<HTMLSelectElement> = (e) => {
+    const onBlurSelect: React.FocusEventHandler<HTMLSelectElement> = (e): void => {
 		checkOnErrors()
         onBlur && onBlur(e)
     }
 
-    const onClickSelect: React.MouseEventHandler<HTMLSelectElement> = (e) => {
+    const onClickSelect: React.MouseEventHandler<HTMLSelectElement> = (e): void => {
 		setError(null)
         onClick && onClick(e)
     }

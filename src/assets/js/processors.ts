@@ -15,7 +15,18 @@ interface IErrorsChecker {
     max?: number
 }
 
-const errorsChecker = ({lang = 'en'}: IErrorsChecker) => {
+interface IErrorsCheckerOutput {
+    result: () => {
+        header: string;
+        status: string;
+        text: string[];
+    };
+    add: (err: string) => void;
+    clear: () => void;
+    amount: () => number;
+}
+
+const errorsChecker = ({lang = 'en'}: IErrorsChecker): IErrorsCheckerOutput => {
     const errors: string[] = []
     
     const add = (err: string): void => {errors.push(err)}
@@ -35,7 +46,7 @@ const errorsChecker = ({lang = 'en'}: IErrorsChecker) => {
 
 //---------------------------------------------------------------
 
-const prevent = (e: React.MouseEvent<HTMLElement | HTMLButtonElement> | DragEvent | React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement> | React.ChangeEvent<HTMLInputElement> | React.KeyboardEvent<HTMLButtonElement> | React.FormEvent<HTMLFormElement>) => {
+const prevent = (e: React.MouseEvent<HTMLElement | HTMLButtonElement> | DragEvent | React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement> | React.ChangeEvent<HTMLInputElement> | React.KeyboardEvent<HTMLButtonElement>): void => {
     e.preventDefault()
     e.stopPropagation()
 }
@@ -60,7 +71,7 @@ const filesDownloader = async (urls: string[]): Promise<File[]> => {
 
 //-----------------------------------------------------------
 
-const filenameChanger = (filename: string) => {
+const filenameChanger = (filename: string): string => {
     return filename.replaceAll('_','-')
 }
 
@@ -73,21 +84,29 @@ export interface IFetchError {
     controller: AbortController
 }
 
-const fetchError = ({dispatch, setter, comp, e, controller}: IFetchError) => {
+const fetchError = ({dispatch, setter, comp, e, controller}: IFetchError): void => {
     if ((e as Error).name !== 'AbortError') {
-        return dispatch(setter({status: 'error', message: {en:`${comp.en}: ${(e as Error).name}`, ru: `${comp.ru}: ${(e as Error).name}`}}))
+        dispatch(setter({status: 'error', message: {en:`${comp.en}: ${(e as Error).name}`, ru: `${comp.ru}: ${(e as Error).name}`}}))
+        return
     }
     if ((e as Error).name === 'AbortError') {
         if (controller?.signal?.reason?.name === exceptionTimeout.name) {
-            return dispatch(setter({status: 'error', message: {en:`${comp.en}: server response timeout`, ru: `${comp.ru}: таймаут ответа от сервера`}}))
+            dispatch(setter({status: 'error', message: {en:`${comp.en}: server response timeout`, ru: `${comp.ru}: таймаут ответа от сервера`}}))
+            return 
         }
-        return dispatch(setter({status: 'idle', message: {en:`${comp.en}: request aborted`, ru: `${comp.ru}: запрос отменен`}}))
+        dispatch(setter({status: 'idle', message: {en:`${comp.en}: request aborted`, ru: `${comp.ru}: запрос отменен`}}))
+        return 
     }
 }
 
 
+interface IModalMessageCreatorOutput {
+    header: string
+    status: TFetchStatus
+    text: string[]
+}
 
-const modalMessageCreator = (source: IFetch, lang: TLang) => { //create all keys for Message
+const modalMessageCreator = (source: IFetch, lang: TLang): IModalMessageCreatorOutput  => { //create all keys for Message
     const errors: string[] = source.errors?.map(e => e[lang]) || []
     return {
         header: headerStatus[source.status as "success" | "error"][lang],
@@ -112,7 +131,7 @@ const deepCopy = <T extends {}>(objToCopy: T): T  => {
 
 
 
-
+/*
 const focusMover = () => {
     const focusableElements: HTMLElement[] = []
     
@@ -142,7 +161,7 @@ const focusMover = () => {
     }
 
 
-    const create = ({container='#root', itemsSelector='[data-selector="input"]'}: {container?: string | HTMLElement | HTMLFormElement, itemsSelector?: string}) => {
+    const create = ({container='#root', itemsSelector='[data-selector="input"]'}: {container?: string | HTMLElement, itemsSelector?: string}) => {
         if (typeof container === 'string') {
             focusableElements.splice(0, focusableElements.length, ...(document.querySelector(container)?.querySelectorAll(itemsSelector) || []) as HTMLElement[])
         }
@@ -162,9 +181,14 @@ const focusMover = () => {
 
     return {create, clear, next, length, focusAll}
 }
+*/
+interface IResErrorFillerOutput {
+    status: TFetchStatus 
+    message: TLangText
+    errors: TLangText[]
+}
 
-
-const resErrorFiller = (result: IErrRes) => {
+const resErrorFiller = (result: IErrRes): IResErrorFillerOutput => {
     return {
         status: 'error' as TFetchStatus, 
         message: {...(result as IErrRes).message} || {...empty}, 
@@ -173,21 +197,21 @@ const resErrorFiller = (result: IErrRes) => {
 }
 
 
-const checkIfNumbers = (value: string) => {
+const checkIfNumbers = (value: string): boolean => {
     return /^[0-9]*$/.test(value)
 }
 
-const checkIfEmail = (value: string) => {
+const checkIfEmail = (value: string): boolean => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+[^.]$/.test(value)
 }
 
-const checkIfPhone = (value: string) => {
-    return /^\+?[0-9]*$/.test(value)
+const checkIfPhone = (value: string): boolean => {
+    return /^\+?[0-9]+$/.test(value)
 }
 
 
 
-const debounce = (cb: Function, delay = 1000) => {
+const debounce = (cb: Function, delay = 1000): (...args: any[]) => void => {
     let timeout: ReturnType<typeof setTimeout>
     return (...args: any[]) => {
         clearTimeout(timeout)
@@ -205,97 +229,36 @@ const makeDelay = (delay: number = 0): Promise<string> => {
 
 
 
-
-
-type TInputs = "email" | "numbers" | "phone" | "date"
-interface IInputChecker {
-    el: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    min?: number //length
-    max?: number //length
-    type?: TInputs 
-    exact?: string //if proveided value must be the same
-    lang: TLang
-    notExact?: string
-    orEmpty?: boolean
-}
-
-
-
-const inputChecker = ({lang="en", el, min=0, max=1000, type, exact="", notExact, orEmpty=false}:  IInputChecker) => {
-    if (!el.parentElement) return 'Parent missing'
-    if (el.value.length === 0 && orEmpty) {
-        el.parentElement.classList.remove('incorrect-value')
-        return 
-    }
-    if (el.value.length < min) {
-        //el.parentElement.dataset.errorText = lang === 'en' ? `Min. length: ${min}` : `Мин. длина: ${min}`
-        el.parentElement.classList.add('incorrect-value')
-        const errorTextEl = el.parentElement.querySelector('[data-content="errorText"]')
-        if (!errorTextEl) return
-        errorTextEl.innerHTML = lang === 'en' ? `Min. length: ${min}` : `Мин. длина: ${min}`
-        return
-    }
-    if (el.value.length > max) {
-        el.parentElement.dataset.errorText = lang === 'en' ? `Max. length: ${max}` : `Макс. длина: ${max}`
-        el.parentElement.classList.add('incorrect-value')
-        return
-    }
-    if (exact && el.value !== exact) {
-        el.parentElement.dataset.errorText = lang === 'en' ? `Doesn't match` : `Не совпадает`
-        el.parentElement.classList.add('incorrect-value')
-        return
-    }
-    if (type === 'numbers' && !checkIfNumbers(el.value)) {
-        el.parentElement.dataset.errorText = lang === 'en' ? `Numbers only` : `Только цифры`
-        el.parentElement.classList.add('incorrect-value')
-        return
-    }
-    if (type === 'phone' && !checkIfPhone(el.value)) {
-        el.parentElement.dataset.errorText = lang === 'en' ? `Numbers only` : `Только цифры`
-        el.parentElement.classList.add('incorrect-value')
-        return
-    }
-    if (type === 'email' && !checkIfEmail(el.value)) {
-        el.parentElement.dataset.errorText = lang === 'en' ? `Wrong format` : `Неверный формат`
-        el.parentElement.classList.add('incorrect-value')
-        return
-    }
-    if (type === 'date') {
-        const inputDate = new Date(el.value)
-        if ((String(inputDate) === 'Invalid Date') || inputDate < inputsProps.date.min || inputDate > inputsProps.date.max) {
-            el.parentElement.dataset.errorText = lang === 'en' ? `Wrong date` : `Неверная дата`
-            el.parentElement.classList.add('incorrect-value')
-        }
-        return
-    }
-    if (typeof notExact !== 'undefined' && el.value === String(notExact)) {
-        el.parentElement.dataset.errorText = lang === 'en' ? `Wrong value` : `Направильное значение`
-        el.parentElement.classList.add('incorrect-value')
-        return
-    }
-    el.parentElement.classList.remove('incorrect-value')
-}
-
-
-
-export interface IInputChecker2 {
+export interface IInputChecker {
     value: string
     rules: {
         min? :number
 		max?: number
         exact?: string
         notExact?: string
-        type?: "email" | "numbers" | "phone" | "date"
+        valueMin?: number
+        valueMax?: number
+        type?: "email" | "numbers" | "phone" | "date",
+        notEmpty?: boolean
     }
 }
 
 
-const inputChecker2 = ({value, rules}:  IInputChecker2): TLangText | null => {
-    if (rules.min && (value.length < rules.min)) {
+const inputChecker = ({value, rules}:  IInputChecker): TLangText | null => {
+    if (rules.notEmpty && (value.length === 0)) {
+        return {en: `no value`, ru: `нет значения`}
+    }
+    if ((typeof(rules.min) !== 'undefined') && (value.length < rules.min)) {
         return {en: `length < ${rules.min}`, ru: `длина < ${rules.min}`}
     }
-    if (rules.max  && (value.length > rules.max)) {
+    if ((typeof(rules.max) !== 'undefined') && (value.length > rules.max)) {
         return {en: `length > ${rules.max}`, ru: `длина > ${rules.max}`}
+    }
+    if ((typeof(rules.valueMin) !=='undefined') && (+value < rules.valueMin)) {
+        return {en: `value < ${rules.valueMin}`, ru: `значение < ${rules.valueMin}`}
+    }
+    if ((typeof(rules.valueMax) !=='undefined') && (+value > rules.valueMax)) {
+        return {en: `value > ${rules.valueMax}`, ru: `значение > ${rules.valueMax}`}
     }
     if (rules.exact  && (value !== rules.exact)) {
         return {en: `doesn't match`, ru: `не совпадает`}
@@ -324,7 +287,7 @@ const inputChecker2 = ({value, rules}:  IInputChecker2): TLangText | null => {
 
 
 
-const getSelectableElements = (_parent: HTMLElement | null) => {
+const getSelectableElements = (_parent: HTMLElement | null): HTMLElement[] => {
     if (!_parent) return []
     const selectableElements = 'a[href]:not([tabindex="-1"]), button, input, textarea, select, details, [tabindex]:not([tabindex="-1"])'
     return Array
@@ -343,8 +306,15 @@ interface ILockFocusInside {
     returnFocus?: boolean
 }
 
+interface ILockFocusInsideOutput {
+    focusNext: () => void;
+    focusPrev: () => void;
+    destroy: () => void;
+    focusOn: (index: number) => void;
+    rebuild: () => void;
+}
 
-const lockFocusInside = ({_element, _delayer, initialFocused = 0, returnFocus = true}: ILockFocusInside) => {
+const lockFocusInside = ({_element, _delayer, initialFocused = 0, returnFocus = true}: ILockFocusInside): ILockFocusInsideOutput => {
     let selected = initialFocused
     let focusableEls = getSelectableElements(_element)
     const _prevFocusedElement = document.activeElement as HTMLElement
@@ -410,7 +380,7 @@ const lockFocusInside = ({_element, _delayer, initialFocused = 0, returnFocus = 
 
 
 
-const moneyRatingToText = (value: number) => {
+const moneyRatingToText = (value: number): TLangText => {
     switch (value) {
         case 1:
             return {en: 'Very cheap', ru: 'Очень дешевый'}
@@ -428,5 +398,5 @@ const moneyRatingToText = (value: number) => {
 }
 
 export { ratingNumberToText, errorsChecker, prevent, filenameChanger,  modalMessageCreator, 
-    focusMover, deepCopy, resErrorFiller, checkIfNumbers, checkIfEmail, checkIfPhone, fetchError, filesDownloader,
-    debounce, makeDelay, inputChecker, getSelectableElements, lockFocusInside, moneyRatingToText, inputChecker2}
+    deepCopy, resErrorFiller, checkIfNumbers, checkIfEmail, checkIfPhone, fetchError, filesDownloader,
+    debounce, makeDelay, inputChecker, getSelectableElements, lockFocusInside, moneyRatingToText}

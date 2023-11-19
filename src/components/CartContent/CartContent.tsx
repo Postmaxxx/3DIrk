@@ -7,12 +7,12 @@ import { useCallback, useMemo, Fragment } from 'react'
 import { NavLink } from "react-router-dom";
 import Remover from "../Remover/Remover";
 import AmountChanger from "../AmountChanger/AmountChanger";
-import PreloaderW from "../Preloaders/PreloaderW";
 import { allActions } from "../../redux/actions/all";
 import ErrorMock from "../ErrorFetch/ErrorFetch";
-import ImageModalNew from "../ImageModal/ImageModalNew";
-import { IModalFunctions } from "../Modal/ModalNew";
+import ImageModal from "../ImageModal/ImageModal";
+import { IModalFunctions } from "../Modal/Modal";
 import PicWithPreloader from "../../../src/assets/js/PicWithPreloader";
+import Preloader from "../Preloaders/Preloader";
 
 interface IPropsState {
     lang: TLang,
@@ -35,42 +35,42 @@ interface IProps extends IPropsState, IPropsActions {}
 
 const CartContent: React.FC<IProps> = ({lang, cart, colorsState, modal, fibersState, setState}): JSX.Element => {
 
-    const deleteItem = useCallback((item: ICartItem) => {
+    const deleteItem = useCallback((item: ICartItem): void => {
         setState.user.removeItem(item)
     }, [])
 
 
 
-    const onAmountChange = useCallback((item: ICartItem, amount: number) => {
+    const onAmountChange = useCallback((item: ICartItem, amount: number): void => {
         setState.user.changeItem({...item, amount})
     }, [])
 
 
 
-    const onImageClick = (e: React.MouseEvent | React.KeyboardEvent, product: IProduct) => {
+    const onImageClick = (e: React.MouseEvent | React.KeyboardEvent, product: IProduct): void => {
         if (!product) return
         e.stopPropagation()
-        const lastIndex = product.images.sizes.length - 1
+        const lastIndex: number = product.images.sizes.length - 1
         modal?.openModal({
             name: 'productClicked',
-            children: <ImageModalNew url={`${product.images.basePath}/${product.images.sizes[lastIndex].subFolder}/${product.images.files[0]}`} text={product.name[lang]}/>
+            children: <ImageModal url={`${product.images.basePath}/${product.images.sizes[lastIndex].subFolder}/${product.images.files[0]}`} text={product.name[lang]}/>
         })
     }
     
-    const onColorClick = (e: React.MouseEvent | React.KeyboardEvent, color: IColor | undefined) => {
+    const onColorClick = (e: React.MouseEvent | React.KeyboardEvent, color: IColor | undefined): void => {
         if (!color) return
         e.stopPropagation()
         modal?.openModal({
             name: 'colorClicked',
-            children: <ImageModalNew url={color.urls.full} />
+            children: <ImageModal url={color.urls.full} />
         })
     }
 
 
 
-    const cartContent = useMemo(() => {
+    const cartContent: JSX.Element[] = useMemo(() => {
         return cart.items.map((item, i) => {
-            const fiberName = fibersState.fibersList.find(fiberItem => fiberItem._id === item.fiber)?.short.name[lang]
+            const fiberName: string | undefined = fibersState.fibersList.find(fiberItem => fiberItem._id === item.fiber)?.short.name[lang]
             const color: IColor | undefined = colorsState.colors.find(color => color._id === item.color)
             return (
                 <Fragment  key={i}>
@@ -147,7 +147,7 @@ const CartContent: React.FC<IProps> = ({lang, cart, colorsState, modal, fibersSt
                     <h3 className="cart_empty__text">{lang === 'en' ? 'Your cart is empty' : 'Ваша корзина пуста'}</h3>
             }
             
-            {cart.load.status === 'fetching' && <PreloaderW />}
+            {cart.load.status === 'fetching' && <Preloader wide={true} />}
             {cart.load.status === 'error' && <ErrorMock lang={lang} fetchData={cart.load}/>}
         </div>
     )

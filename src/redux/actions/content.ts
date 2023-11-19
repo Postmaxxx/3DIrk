@@ -1,4 +1,4 @@
-import { IAction, ICarouselMax, IContentState, IDispatch, IErrRes, IFetch, IFullState, IMsgRes, } from "../../interfaces"
+import { IAction, ICarouselMax, IContentState, IDispatch, IErrRes, IFetch, IFullState, IMsgRes } from "../../interfaces"
 import { actionsListContent } from './actionsList'
 import { APIList, DOMExceptions, fetchingFetch, successFetch } from "../../assets/js/consts";
 import { fetchError, resErrorFiller } from "../../../src/assets/js/processors";

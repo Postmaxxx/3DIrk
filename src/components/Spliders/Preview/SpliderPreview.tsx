@@ -6,8 +6,8 @@ import "./splider-preview.scss";
 import { IFullState, IImages, ISpliderOptions, TLang } from "../../../interfaces";
 import Splide from "@splidejs/splide";
 import { allActions } from "../../../redux/actions/all";
-import { IModalFunctions } from "../../../../src/components/Modal/ModalNew";
-import ImageModalNew from "../../../../src/components/ImageModal/ImageModalNew";
+import { IModalFunctions } from "../../Modal/Modal";
+import ImageModal from "../../ImageModal/ImageModal";
 import PicWithPreloader from "../../../../src/assets/js/PicWithPreloader";
 
 
@@ -100,7 +100,7 @@ const SpliderPreview: React.FC<IProps> = ({ lang, modal, images}): JSX.Element =
         e.stopPropagation()
 		modal?.openModal({
 			name: 'spliderPreview',
-			children: <ImageModalNew url={`${images.basePath}/${images.sizes[images.sizes.length - 1].subFolder}/${filename}`}/>
+			children: <ImageModal url={`${images.basePath}/${images.sizes[images.sizes.length - 1].subFolder}/${filename}`}/>
 		})
     }
 

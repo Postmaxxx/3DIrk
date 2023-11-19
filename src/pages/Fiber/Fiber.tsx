@@ -13,9 +13,9 @@ import Proscons from '../../components/Proscons/Proscons';
 import ImgWithPreloader from '../../assets/js/ImgWithPreloader';
 import { deepCopy, modalMessageCreator } from '../../assets/js/processors';
 import ErrorFetch from '../../components/ErrorFetch/ErrorFetch';
-import { IModalFunctions } from '../../../src/components/Modal/ModalNew';
-import MessageNew from '../../../src/components/Message/MessageNew';
-import ImageModalNew from '../../../src/components/ImageModal/ImageModalNew';
+import { IModalFunctions } from '../../components/Modal/Modal';
+import Message from '../../components/Message/Message';
+import ImageModal from '../../components/ImageModal/ImageModal';
 
 interface IPropsState {
     lang: TLang,
@@ -45,7 +45,7 @@ const Fiber: React.FC<IProps> = ({lang, fibersState, colorsState, setState, moda
             modal?.openModal({ //if error/success - show modal about send order
                 name: 'fiberSend',
                 onClose: closeModal,
-                children: <MessageNew {...modalMessageCreator(fibersState.send, lang)} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
+                children: <Message {...modalMessageCreator(fibersState.send, lang)} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
             })
         }
     }, [fibersState.send.status])
@@ -64,11 +64,11 @@ const Fiber: React.FC<IProps> = ({lang, fibersState, colorsState, setState, moda
 
 
     
-    const onImageClick = (e: React.MouseEvent | React.KeyboardEvent, color: IColor) => {
+    const onImageClick = (e: React.MouseEvent | React.KeyboardEvent, color: IColor): void => {
         e.stopPropagation()
         modal?.openModal({
             name: 'onFiberImageClick',
-            children: <ImageModalNew url={color.urls.full} text={color.name[lang]}/>
+            children: <ImageModal url={color.urls.full} text={color.name[lang]}/>
         })
     }
 
@@ -87,7 +87,7 @@ const Fiber: React.FC<IProps> = ({lang, fibersState, colorsState, setState, moda
     }, [paramFiberId, fibersState.load.status]) 
 
 
-    const firberColors = useCallback((fiber: IFiber) => {
+    const firberColors = useCallback((fiber: IFiber): (JSX.Element | undefined)[] => {
         return fiber.colors.map((color, i) => {
             const colorData: IColor | undefined = colorsState.colors.find(colorItem => colorItem._id === color)
             if (colorData && colorData.active) {
@@ -100,7 +100,7 @@ const Fiber: React.FC<IProps> = ({lang, fibersState, colorsState, setState, moda
                         tabIndex={0} 
                         aria-label={lang === 'en' ? `Watch color ${colorData.name.en} more detailed` : `Посмотреть цвет ${colorData.name.ru} более подробно`}
                     >
-                        <div className="color__img-cont">
+                        <div className="color__img-wrapper">
                             <ImgWithPreloader src={colorData.urls.thumb} alt={colorData.name[lang]}/>
                         </div>
                         <span className='color__descr'>{colorData.name[lang]}</span>
@@ -111,7 +111,7 @@ const Fiber: React.FC<IProps> = ({lang, fibersState, colorsState, setState, moda
     }, [colorsState.colors, lang])
 
 
-    const renderFiberItem = useMemo(() => {
+    const renderFiberItem = useMemo((): (JSX.Element | boolean) => {
         const fiber = fibersState.fibersList.find(item => item._id === fibersState.selected)         
         return fiber ? (
             <article className="fiber">

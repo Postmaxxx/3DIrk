@@ -7,9 +7,9 @@ import { useEffect, useRef, useCallback, useMemo } from 'react'
 import AddFiles, { IAddFilesFunctions } from "../../components/AddFiles/AddFiles";
 import { allActions } from "../../redux/actions/all";
 import { inputsProps, resetFetch} from "../../assets/js/consts";
-import { deepCopy, errorsChecker, focusMover, modalMessageCreator, prevent } from "../../assets/js/processors";
-import { IModalFunctions } from "../../components/Modal/ModalNew";
-import MessageNew from "../../components/Message/MessageNew";
+import { deepCopy, modalMessageCreator, prevent } from "../../assets/js/processors";
+import { IModalFunctions } from "../../components/Modal/Modal";
+import Message from "../../components/Message/Message";
 import Uploader from "../../../src/components/Preloaders/Uploader";
 import BlockInput, { IBlockInputFunctions } from "../../components/BlockInput/BlockInput";
 
@@ -32,7 +32,7 @@ interface IProps extends IPropsState, IPropsActions {}
 const CustomOrder:React.FC<IProps> = ({lang, sendOrder, modal, setState}): JSX.Element => {
     const _message = useRef<IBlockInputFunctions>(null)
     const addFilesRef = useRef<IAddFilesFunctions>(null)
-    const _formOrder = useRef<HTMLFormElement>(null)
+    const _formOrder = useRef<HTMLDivElement>(null)
 
 
     const closeModal = useCallback(async () => {        
@@ -46,9 +46,8 @@ const CustomOrder:React.FC<IProps> = ({lang, sendOrder, modal, setState}): JSX.E
         modal?.closeCurrent()
 	}, [sendOrder.status])
 
- 
 
-    const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    const onSubmit = (e: React.MouseEvent<HTMLButtonElement>): void => {
         if (!_message.current ||  !modal || !addFilesRef.current || !_formOrder.current) return
         prevent(e)
         //check errors
@@ -60,7 +59,7 @@ const CustomOrder:React.FC<IProps> = ({lang, sendOrder, modal, setState}): JSX.E
             return modal?.openModal({
                 name: 'errorsInForm',
                 onClose: closeModal,
-                children: <MessageNew 
+                children: <Message 
                     header={lang === 'en' ? 'Errors was found' : 'Найдены ошибки'}
                     status={'error'}
                     text={errors}
@@ -81,7 +80,7 @@ const CustomOrder:React.FC<IProps> = ({lang, sendOrder, modal, setState}): JSX.E
             modal?.openModal({ //if error/success - show modal about send order
                 name: 'orderSend',
                 onClose: closeModal,
-                children: <MessageNew {...modalMessageCreator(sendOrder, lang)} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
+                children: <Message {...modalMessageCreator(sendOrder, lang)} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
             })
         }
         if (sendOrder.status === 'fetching') {
@@ -102,7 +101,7 @@ const CustomOrder:React.FC<IProps> = ({lang, sendOrder, modal, setState}): JSX.E
                     <div className="block_text">
                         <h1>{lang === 'en' ? 'Order custom 3D printing' : 'Заказать индивидуальную 3D печать'}</h1>
                     </div>
-                    <form className="form_full form_order" ref={_formOrder} >
+                    <div className="form_full form_order" ref={_formOrder} >
                         <div className="block_text">
                             <h3>{lang === 'en' ? 'Information about the order' : 'Информация о заказе'}</h3>
                         </div>
@@ -133,7 +132,7 @@ const CustomOrder:React.FC<IProps> = ({lang, sendOrder, modal, setState}): JSX.E
                             onClick={onSubmit}>
                                 {lang === 'en' ? 'Order' : "Заказать"}
                         </button>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>

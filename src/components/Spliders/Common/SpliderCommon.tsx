@@ -3,8 +3,8 @@ import Splide from "@splidejs/splide";
 import { IImages, ISpliderOptions, TLang } from '../../../interfaces';
 import "@splidejs/react-splide/css";
 import { useRef, useEffect, MouseEvent, useMemo, useState } from 'react'
-import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
-import ImageModalNew from '../../../../src/components/ImageModal/ImageModalNew';
+import { IModalFunctions } from '../../Modal/Modal';
+import ImageModal from '../../ImageModal/ImageModal';
 import PicWithPreloader from '../../../../src/assets/js/PicWithPreloader';
 
 
@@ -61,7 +61,7 @@ const SpliderCommon: React.FC<IProps> = ({images, imagesPerSlide=1, modal, lang}
 	const onItemClick = (index: number) => {
 		modal?.openModal({
 			name: 'spliderCommonModal',
-			children: <ImageModalNew url={`${images.basePath}/${images.sizes[images.sizes.length - 1].subFolder}/${images.files[index]}`}/>
+			children: <ImageModal url={`${images.basePath}/${images.sizes[images.sizes.length - 1].subFolder}/${images.files[index]}`}/>
 		})
 	}
 

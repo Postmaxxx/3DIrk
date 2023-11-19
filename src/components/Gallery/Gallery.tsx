@@ -15,7 +15,7 @@ interface IProps extends IPropsState {
 
 
 const Gallery: React.FC<IProps> = ({lang, products}):JSX.Element => {
-    const cards = useMemo(() => products.map(product => {
+    const cards: JSX.Element[] = useMemo(() => products.map(product => {
         return (
             <NavLink
                 to={product._id}
@@ -23,12 +23,12 @@ const Gallery: React.FC<IProps> = ({lang, products}):JSX.Element => {
                 aria-label={lang === 'en' ? `Go to page of the product:${product.name.en}` : `Перейти на страницу товара: ${product.name.en}`}
                 >
                 <div className='gallery__card' >
-                    <div className={`gallery__card__img-cont ${product.active ? '' : 'inactive'}`}>
+                    <div className={`gallery__card__img-wrapper ${product.active ? '' : 'inactive'}`}>
                         <PicWithPreloader basePath={product.images.basePath} sizes={product.images.sizes} image={product.images.files[0]} alt={product.name[lang]}/>
                     </div>
                     <div className="gallery__card__text">
                         <span className='name'>{product.name[lang]}</span>
-                        <span className='text'>{product.text_short[lang]}</span>
+                        <span className='text'>{product.textShort[lang]}</span>
                     </div>
                 </div>
             </NavLink>

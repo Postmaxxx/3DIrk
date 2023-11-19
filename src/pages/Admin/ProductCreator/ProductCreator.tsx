@@ -4,19 +4,20 @@ import { FC, useRef, useMemo, useCallback } from "react";
 import { connect } from "react-redux";
 import { AnyAction, bindActionCreators } from "redux";
 import { Dispatch } from "redux";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { allActions } from "../../../redux/actions/all";
 import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFiles';
 import Preloader from '../../../components/Preloaders/Preloader';
-import { defaultSelectItem, inputsProps, productEmpty, resetFetch, statuses } from '../../../assets/js/consts';
-import { deepCopy, errorsChecker, filesDownloader, focusMover, modalMessageCreator, prevent } from '../../../assets/js/processors';
+import { defaultSelectItem, inputsProps, resetFetch, statuses } from '../../../assets/js/consts';
+import { filesDownloader, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import Picker, { IPickerFunctions } from '../../../components/Picker/Picker';
-import Selector, { ISelectorFunctions } from '../../../components/BlockSelector/BlockSelector';
-import { inputChecker } from '../../../../src/assets/js/processors';
-import { IModalFunctions } from '../../../../src/components/Modal/ModalNew';
-import MessageNew from '../../../../src/components/Message/MessageNew';
-import Mods, { IModsFunctions } from '../../../../src/components/Mods/Mods';
+import BlockSelector, { ISelectorFunctions } from '../../../components/BlockSelector/BlockSelector';
+import { IModalFunctions } from '../../../components/Modal/Modal';
+import Message from '../../../components/Message/Message';
 import Uploader from '../../../../src/components/Preloaders/Uploader';
+import BlockInput, { IBlockInputFunctions } from '../../../components/BlockInput/BlockInput';
+import Featurer, { IFeaturerFunctions } from '../../../components/Featurer/Featurer';
+import uniqid from 'uniqid';
 
 interface IPropsState {
     lang: TLang
@@ -40,17 +41,18 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
     const fiberPickerRef = useRef<IPickerFunctions>(null)
     const productPickerRef = useRef<IPickerFunctions>(null)
     const addFilesRef = useRef<IAddFilesFunctions>(null)
-    const modsRef = useRef<IModsFunctions>(null)
-    const selectorCategoryRef = useRef<HTMLSelectElement>(null)
-    const selectorNewCategoryRef = useRef<HTMLSelectElement>(null)
-    const selectorStatusRef = useRef<ISelectorFunctions>(null)
-    const [product, setProduct] = useState<ISendProduct>({...productEmpty})
-    const [submit, setSubmit] = useState<boolean>(false)
-    const focuser = useMemo(() => focusMover(), [lang])
-    const _form = useRef<HTMLFormElement>(null)
-    const _mods = useRef<HTMLDivElement>(null)
+    const _features = useRef<IFeaturerFunctions>(null)
+    const _category = useRef<ISelectorFunctions>(null)
+
+    const _nameEn = useRef<IBlockInputFunctions>(null)
+    const _nameRu = useRef<IBlockInputFunctions>(null)
+    const _descrEn = useRef<IBlockInputFunctions>(null)
+    const _descrRu = useRef<IBlockInputFunctions>(null)
+    const _descrShortEn = useRef<IBlockInputFunctions>(null)
+    const _descrShortRu = useRef<IBlockInputFunctions>(null)
+    const _newCategory = useRef<ISelectorFunctions>(null)
+    const _status = useRef<ISelectorFunctions>(null)
     
-    const errChecker = useMemo(() => errorsChecker({lang}), [lang])
     const statusesList = useMemo(() => (Object.values(statuses)), []) 
 
 
@@ -58,12 +60,12 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
         if (await modal?.getName()  === 'productSend') {
             if (catalogState.category.sendProduct.status === 'success') {
                 setState.catalog.loadCategory({ _id: catalogState.category._id })
+                fillValues(false)
             }
             setState.catalog.setSendProduct(resetFetch)// clear fetch status
         }
-        errChecker.clear() 
         modal?.closeCurrent()
-	}, [catalogState.category.sendProduct.status, errChecker])
+	}, [catalogState.category.sendProduct.status])
 
     
 
@@ -74,7 +76,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
             modal?.openModal({
                 name: 'productSend',
                 onClose: closeModal,
-                children: <MessageNew {...modalMessageCreator(catalogState.category.sendProduct, lang)} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
+                children: <Message {...modalMessageCreator(catalogState.category.sendProduct, lang)} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
             })
         }
         if (catalogState.category.sendProduct.status === 'fetching') {
@@ -90,63 +92,77 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
 
 
 
-    const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => { 
+    const onSubmit = (e: React.MouseEvent<HTMLButtonElement>): void => { 
         prevent(e)
-        if (!_mods.current || !fiberPickerRef.current || !_form.current) return
-        //check form
-        focuser.focusAll(); //run over all elements to get all errors
-        const errorDescrFields = _form.current.querySelectorAll('.incorrect-value')
-        if (errorDescrFields?.length > 0) {
-            errChecker.add(lang === 'en' ? 'Some fields are filled incorrectly' : 'Некоторые поля заполнены неправильно')
+        if (!fiberPickerRef.current) return
+
+        //check errors
+        const errors: string[] = [_nameEn, _nameRu, _descrEn, _descrRu, _descrShortEn, _descrShortRu]
+            .map(el => el.current?.getErrorText(lang))
+            .filter(el => el) as string[]
+
+        //check newCategory
+        const newCategory = _newCategory.current?.getErrorText(lang)
+        newCategory && errors.push(newCategory)
+
+        //check status
+        const errStatus = _status.current?.getErrorText(lang)
+        errStatus && errors.push(errStatus)
+
+        //check features
+        if (_features.current?.getLength() === 0) {
+            errors.push(lang === 'en' ? 'Modifications not specified' : 'Модификации не указаны')
         } 
-        //check mods
-        if ((modsRef.current as IModsFunctions).getMods().length === 0) {//at least 1 mod must be added
-            errChecker.add(lang === 'en' ? 'Missing type' : 'Тип отсутствует')
+        if (_features.current?.getErrors().length) {
+            errors.push(lang === 'en' ? 'Errors in modifications:' : 'Ошибки в модификациях:')
+            _features.current?.getErrors().forEach(err => {
+                errors.push(err[lang])
+            })
         }
+
         //check fibers  
         if (fiberPickerRef.current.getSelected().length === 0) { //at least 1 fiber must be selected
-            errChecker.add(lang === 'en' ? 'No fiber selected' : 'Материал не выбран')
+            errors.push(lang === 'en' ? 'No fiber selected' : 'Материал не выбран')
         } 
         //check images
         if (addFilesRef.current && addFilesRef.current.getFiles().length === 0) {//at least 1 image must be added
-            errChecker.add(lang === 'en' ? 'Images missing' : 'Картинки отсутствуют')
+            errors.push(lang === 'en' ? 'Images missing' : 'Картинки отсутствуют')
+        }
+        
+
+        if (errors.length > 0) { //show modal with error
+            return modal?.openModal({
+                name: 'errorsInForm',
+                onClose: closeModal,
+                children: <Message 
+                    header={lang === 'en' ? 'Errors was found' : 'Найдены ошибки'}
+                    status={'error'}
+                    text={errors}
+                    buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}
+                />
+            })
         }
 
-        if (errChecker.amount() > 0) {
-            modal?.openModal({
-                name: 'errorChecker',
-                onClose: closeModal,
-                children: <MessageNew {...errChecker.result()} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
-            })
-            return
-        }      
-
-        setProduct(prev => {
-            return { 
-                ...prev, 
-                mods: (modsRef.current as IModsFunctions).getMods().map(item => ({name: item.name, weight: item.weight})),
-                files: addFilesRef.current?.getFiles() || [], 
-                fibers: (fiberPickerRef.current as IPickerFunctions).getSelected(),
-                active: selectorStatusRef.current?.getValue() === 'active' ? true : false,
-                category: selectorNewCategoryRef.current?.value || 'already_checked_that_not_empty'
-            }
-        })
-        setSubmit(true)
+        const productId: string = productPickerRef.current?.getSelected()[0] || ''
+        const product: ISendProduct = {
+            _id: productId,
+            name: { en: _nameEn.current?.getValue() || 'Error', ru: _nameRu.current?.getValue() || 'Error' },
+            text: { en: _descrEn.current?.getValue() || 'Error', ru: _descrRu.current?.getValue() || 'Error' },
+            textShort: {en: _descrShortEn.current?.getValue() || 'Error', ru: _descrShortRu.current?.getValue() || 'Error' },
+            files: addFilesRef.current?.getFiles() || [],
+            category: _newCategory.current?.getValue() || '',
+            active: _status.current?.getValue() === 'active' ? true : false,
+            mods: _features.current?.getFeatures().map(feature => ({
+                _id: feature._id || uniqid(),
+                name: feature.name,
+                price: +(feature.value || '0')
+            })) || [],
+            fibers: fiberPickerRef.current.getSelected()
+        }
+        setState.catalog.sendProduct(product)
     }
 
 
-    useEffect(() => {
-        if (!submit) return
-        setState.catalog.sendProduct(product)
-        setSubmit(false)
-    }, [submit])
-
-
-
-
-    useEffect(() => {
-        modsRef.current?.setMods(product.mods.map((item, i) => ({_id: String(i), name: item.name, weight: item.weight})))
-    }, [product.mods])
 
 
 
@@ -160,84 +176,76 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
 
 
 
-    const onChangeInputs = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        e.target.id === "name_en" && setProduct({...product, name: {...product.name, en: e.target.value}})
-        e.target.id === "name_ru" && setProduct({...product, name: {...product.name, ru: e.target.value}})
-        //e.target.id === "price" && checkIfNumbers(e.target.value) && setProduct({...product, price: Number(e.target.value)}) //save as string, but check it while submiting
-        e.target.id === "text_en" && setProduct({...product, text: {...product.text, en: e.target.value}})
-        e.target.id === "text_ru" && setProduct({...product, text: {...product.text, ru: e.target.value}})
-        e.target.id === "text_short_en" && setProduct({...product, text_short: {...product.text_short, en: e.target.value}})
-        e.target.id === "text_short_ru" && setProduct({...product, text_short: {...product.text_short, ru: e.target.value}})
-    }
 
-
-    const onChangeCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setProduct({...product, category: e.target.value})
+    const onChangeCategory = (e: React.ChangeEvent<HTMLSelectElement>): void => {
         setState.catalog.loadCategory({ _id: e.target.value})     
         productPickerRef.current?.getSelected()[0] && productPickerRef.current?.setSelected() //change values only if product was selected, not if product "new"
-        selectorNewCategoryRef.current && (selectorNewCategoryRef.current.value = e.target.value)
+        _newCategory.current?.setValue(e.target.value)
+        _newCategory.current?.setChanged(true)
     }
 
 
-    useEffect(() => {
-        if (!_form.current) return       
-        focuser.create({container: _form.current, itemsSelector: '[data-selector="select"], [data-selector="input"]'})
-        onChangeModsAmount()
-    }, [lang])
 
 
-    const onChangeModsAmount = useCallback(() => {  //select all inputs if new mod was added/ old one was removed  
-        if (!_mods.current || !_form.current) return
-        focuser.create({container: _form.current, itemsSelector: '[data-selector="select"], [data-selector="input"]'})
-        const allInputsPros = _mods.current.querySelectorAll('[data-selector="input"]') 
-        
-        allInputsPros?.forEach(input => {
-            if ((input as HTMLInputElement).name === 'weight') {
-                (input as HTMLInputElement).onblur = (e) => inputChecker({lang, type: 'numbers', el: e.target as HTMLInputElement});
-            } else {
-                (input as HTMLInputElement).onblur = (e) => inputChecker({lang, min: inputsProps.product.mods.min, max: inputsProps.product.mods.max, el: e.target as HTMLInputElement});
-            }
-                        
-        })
-    }, [])
-
-
-    const onChangeFeature = useCallback((target: HTMLInputElement | HTMLTextAreaElement) => {       
-        target.parentElement?.classList.remove('incorrect-value') 
-    }, [])
-
-
-
-    const onProductSelected = (_id: string) => {
+    const onProductSelected = (_id: string): void => {
         if (_id) {
             setState.catalog.loadProduct(_id)
         } else {
-            setProduct(deepCopy(productEmpty))
-            addFilesRef.current?.replaceFiles([])
-            fiberPickerRef.current?.setSelected([])
-            selectorStatusRef.current?.setItem({...defaultSelectItem})
-            selectorStatusRef.current?.setValue('')  
-            selectorNewCategoryRef.current && (selectorNewCategoryRef.current.value = selectorCategoryRef.current?.value || '')
+            fillValues(false)
         }
     }
 
 
-    const fillData = async () => {
-        const files = await filesDownloader(
-            catalogState.category.product.images.files.map(file => (`${catalogState.category.product.images.basePath}/${catalogState.category.product.images.sizes[catalogState.category.product.images.sizes.length - 1].subFolder}/${file}`))
-        )
-        addFilesRef.current?.replaceFiles(files)
-        fiberPickerRef.current?.setSelected(catalogState.category.product.fibers)
-        setProduct({...catalogState.category.product, files})
-        selectorStatusRef.current?.setValue(catalogState.category.product.active ? statuses.active.value : statuses.suspended.value)
+    const fillValues = async (fillWithProduct: boolean): Promise<void> => {
+        if (fillWithProduct) {
+            console.log('id: ', catalogState.category.product._id);
+            _nameEn.current?.setValue(catalogState.category.product.name.en)
+            _nameRu.current?.setValue(catalogState.category.product.name.ru)
+            _descrEn.current?.setValue(catalogState.category.product.text.en)
+            _descrRu.current?.setValue(catalogState.category.product.text.ru)
+            _descrShortEn.current?.setValue(catalogState.category.product.textShort.en)
+            _descrShortRu.current?.setValue(catalogState.category.product.textShort.ru)
+            _status.current?.setItem({...defaultSelectItem})
+            _status.current?.setValue(catalogState.category.product.active ? 'active' : 'suspended')  
+            _status.current?.setChanged(true)  
+            _features.current?.setFeatures(catalogState.category.product.mods.map(mod => {
+                return {name: mod.name, value: String(mod.price), _id: mod._id}
+            }))
+            
+            fiberPickerRef.current?.setSelected(catalogState.category.product.fibers)
+            const files = await filesDownloader(
+                catalogState.category.product.images.files.map(file => (`${catalogState.category.product.images.basePath}/${catalogState.category.product.images.sizes[catalogState.category.product.images.sizes.length - 1].subFolder}/${file}`))
+            )
+            addFilesRef.current?.replaceFiles(files)
+        } else {
+            console.log('empty');
+            _nameEn.current?.setValue('')
+            _nameRu.current?.setValue('')
+            _descrEn.current?.setValue('')
+            _descrRu.current?.setValue('')
+            _descrShortEn.current?.setValue('')
+            _descrShortRu.current?.setValue('')
+            _status.current?.setItem({...defaultSelectItem})
+            _status.current?.setValue('')  
+            _status.current?.setChanged(false)  
+            _features.current?.setFeatures([])
+            fiberPickerRef.current?.setSelected([])
+            addFilesRef.current?.replaceFiles([])
+        }
     }
 
 
     useEffect(() => {
-        if (selectorCategoryRef.current?.value) {
-            fillData()
+        if (catalogState.category.loadProduct.status === 'success') {
+            fillValues(true)
         }
-    }, [catalogState.category.product])
+    }, [catalogState.category.product._id, catalogState.category.loadProduct.status])
+
+
+    useEffect(() => {
+        _category.current?.setData(catalogState.catalog.list.map(el => ({name: el.name, value: el._id})))
+        _newCategory.current?.setData(catalogState.catalog.list.map(el => ({name: el.name, value: el._id})))
+    }, [catalogState.catalog.list])
 
 
     return (
@@ -245,24 +253,19 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
             <div className="container_page">
                 <div className="container">
                     <h1>{lang === 'en' ? 'Edit products' : 'Редактирование товаров  '}</h1>
-                    <form className='form_full form_add-fiber' ref={_form}>
+                    <div className='form_full form_add-fiber'>
                         <div className="block_text">
                             <h3>{lang === 'en' ? 'Select product category' : 'Выберите категорию товара'}</h3>           
                         </div>
                         <div className="form__inputs form__inputs_sm-wide">
-                            <div className="block_input selector" data-selector="input-block">
-                                <label htmlFor="selector_category">{lang === 'en' ? 'Category' : 'Категория'}:</label>
-                                <select 
-                                    data-selector="select"
-                                    ref={selectorCategoryRef} 
-                                    id="selector_category"
-                                    defaultValue=''
-                                    onChange={onChangeCategory} 
-                                    onBlur={(e) => inputChecker({lang, notExact: '', el: e.target})}>
-                                        <option key={-1} value='' disabled hidden>{lang === 'en' ? 'Select' : 'Выберите'}</option>
-                                        {catalogState.catalog.list.map((el) => <option key={el._id} value={el._id}>{el.name[lang]}</option>)}
-                                </select>
-                            </div>
+                            <BlockSelector 
+                                lang={lang} 
+                                id='selector_category'
+                                labelText={{en: 'Category', ru: 'Категория'}}
+                                ref={_category}
+                                data={[]}
+                                saveValue={onChangeCategory} 
+                            />
                         </div>
 
                         <div className="block_text">
@@ -272,7 +275,7 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
                             <Picker 
                                 type='products'
                                 ref={productPickerRef} 
-                                items={selectorCategoryRef.current?.value ? catalogState.category.products : []} 
+                                items={_category.current?.getValue() ? catalogState.category.products : []} 
                                 lang={lang} 
                                 multiple={false}
                                 withNew={true}
@@ -286,107 +289,94 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
                             <h3>{lang === 'en' ? 'Product description' : 'Описание товара'}</h3>           
                         </div>
                         <div className="form__inputs form__inputs_sm-wide">
-                            <div className="block_input">
-                                <label htmlFor="name_en">{lang === 'en' ? 'Name en' : 'Название en'}:</label>
-                                <input 
-                                    type="text" 
-                                    data-selector="input"
-                                    id="name_en" 
-                                    onKeyDown={focuser.next} 
-                                    onChange={onChangeInputs} 
-                                    value={product.name.en}
-                                    onBlur={(e) => inputChecker({lang, min:inputsProps.product.name.min, max:inputsProps.product.name.max, el: e.target})}/>
-                            </div>
-                            <div className="block_input">
-                                <label htmlFor="name_ru">{lang === 'en' ? 'Name ru' : 'Название ru'}:</label>
-                                <input 
-                                    type="text" 
-                                    data-selector="input"
-                                    id="name_ru" 
-                                    onKeyDown={focuser.next}
-                                    onChange={onChangeInputs} 
-                                    value={product.name.ru} 
-                                    onBlur={(e) => inputChecker({lang, min:inputsProps.product.name.min, max:inputsProps.product.name.max, el: e.target})}/>
-                            </div>
+                            <BlockInput
+                                lang={lang}
+                                labelText={{en: 'Name en', ru: 'Название en'}}
+                                required
+                                id="name_en"
+                                rules={{min: inputsProps.product.name.min, max: inputsProps.product.name.max}}
+                                ref={_nameEn}
+                            />
+                            <BlockInput
+                                lang={lang}
+                                labelText={{en: 'Name ru', ru: 'Название ru'}}
+                                required
+                                id="name_ru"
+                                rules={{min: inputsProps.product.name.min, max: inputsProps.product.name.max}}
+                                ref={_nameRu}
+                            />
                         </div>
                         <div className="form__inputs form__inputs_sm-wide">
-                            <div className="block_input">
-                                <label htmlFor="text_short_en">{lang === 'en' ? 'Description short en' : 'Описание кратко en'}:</label>
-                                <textarea 
-                                    data-selector="input"
-                                    id="text_short_en"
-                                    onChange={onChangeInputs} 
-                                    value={product.text_short.en} 
-                                    onBlur={(e) => inputChecker({lang, min:inputsProps.product.textShort.min, max:inputsProps.product.textShort.max, el: e.target})}/>
-                            </div>
-                            <div className="block_input">
-                                <label htmlFor="text_short_ru">{lang === 'en' ? 'Description short ru' : 'Описание кратко ru'}:</label>
-                                <textarea 
-                                    data-selector="input"
-                                    id="text_short_ru" 
-                                    onChange={onChangeInputs} 
-                                    value={product.text_short.ru} 
-                                    onBlur={(e) => inputChecker({lang, min:inputsProps.product.textShort.min, max:inputsProps.product.textShort.max, el: e.target})}/>
-                            </div>
+                            <BlockInput
+                                lang={lang}
+                                labelText={{en: 'Description short en', ru: 'Описание кратко en'}}
+                                required
+                                typeElement='textarea'
+                                id="text_short_en"
+                                rules={{min: inputsProps.product.textShort.min, max: inputsProps.product.textShort.max}}
+                                ref={_descrShortEn}
+                            />
+                            <BlockInput
+                                lang={lang}
+                                labelText={{en: 'Description short ru', ru: 'Описание кратко ru'}}
+                                required
+                                typeElement='textarea'
+                                id="text_short_ru"
+                                rules={{min: inputsProps.product.textShort.min, max: inputsProps.product.textShort.max}}
+                                ref={_descrShortRu}
+                            />
                         </div>
                         <div className="form__inputs form__inputs_sm-wide">
-                            <div className="block_input">
-                                <label htmlFor="text_en">{lang === 'en' ? 'Description en' : 'Описание en'}:</label>
-                                <textarea 
-                                    data-selector="input"
-                                    id="text_en" 
-                                    wrap='hard'
-                                    onChange={onChangeInputs} 
-                                    value={product.text.en} 
-                                    onBlur={(e) => inputChecker({lang, min:inputsProps.product.textFull.min, max:inputsProps.product.textFull.max, el: e.target})}/>
-                            </div>
-                            <div className="block_input">
-                                <label htmlFor="text_ru">{lang === 'en' ? 'Description ru' : 'Описание ru'}:</label>
-                                <textarea 
-                                    data-selector="input"
-                                    id="text_ru"
-                                    wrap='hard'
-                                    onChange={onChangeInputs} 
-                                    value={product.text.ru} 
-                                    onBlur={(e) => inputChecker({lang, min:inputsProps.product.textFull.min, max:inputsProps.product.textFull.max, el: e.target})}/>
-                            </div>
+                            <BlockInput
+                                lang={lang}
+                                labelText={{en: 'Description en', ru: 'Описание en'}}
+                                required
+                                typeElement='textarea'
+                                id="text_en"
+                                rules={{min: inputsProps.product.textFull.min, max: inputsProps.product.textFull.max}}
+                                ref={_descrEn}
+                            />
+                            <BlockInput
+                                lang={lang}
+                                labelText={{en: 'Description ru', ru: 'Описание ru'}}
+                                required
+                                typeElement='textarea'
+                                id="text_ru"
+                                rules={{min: inputsProps.product.textFull.min, max: inputsProps.product.textFull.max}}
+                                ref={_descrRu}
+                            />
                         </div>
                         <div className="form__inputs form__inputs_sm-wide">
-                            <div className="block_input selector" data-selector="input-block">
-                            <label htmlFor="selector_new_category">{lang === 'en' ? 'Change category to' : 'Изменить категорию на'}:</label>
-                            <select 
-                                data-selector="select"
-                                ref={selectorNewCategoryRef} 
-                                id="selector_new_category"
-                                defaultValue=''
-                                //onChange={onChangeCategory} 
-                                onBlur={(e) => inputChecker({lang, notExact: '', el: e.target})}>
-                                    <option key={-1} value='' disabled hidden>{lang === 'en' ? 'Select' : 'Выберите'}</option>
-                                    {catalogState.catalog.list.map((el) => <option key={el._id} value={el._id}>{el.name[lang]}</option>)}
-                            </select>
-                            </div>
-                            <Selector 
+
+                            <BlockSelector 
                                 lang={lang} 
-                                id='selector_status' 
-                                labelText={{en: 'Product status: ', ru: 'Состояние товара: '}}
+                                id='selector_new_category'
+                                labelText={{en: 'Change category to', ru: 'Изменить категорию на'}}
+                                ref={_newCategory}
+                                data={[]}
+                            />
+
+                            <BlockSelector 
+                                lang={lang} 
+                                id='selector_status'
+                                labelText={{en: 'Product status', ru: 'Состояние товара'}}
+                                ref={_status}
                                 data={statusesList}
-                                onBlur={(e) => inputChecker({lang, notExact: '', el: e.target})}
-                                defaultData={{...defaultSelectItem}}
-                                saveValue={onChangeInputs}
-                                ref={selectorStatusRef}
                             />
                         </div>
 
                         <div className="block_text">
                             <h3>{lang === 'en' ? 'Modifications' : 'Модификации'}</h3>           
                         </div>
-                        <div className="product_mods" ref={_mods}>
-                            <Mods 
+                        <div className="product_mods">
+                            <Featurer
                                 lang={lang} 
-                                ref={modsRef}
-                                amountChanged={onChangeModsAmount}
-                                valueChanged={onChangeFeature}
-                                onEnter={focuser.next}/>
+                                ref={_features} 
+                                type='input'
+                                rules={{min: inputsProps.product.mods.min, max: inputsProps.product.mods.max}}
+                                rulesValue={{valueMin: inputsProps.product.price.min, valueMax: inputsProps.product.price.max, type: 'numbers', notEmpty: true}}
+                                withValue
+                            />
                         </div>
 
                         <div className="block_text">
@@ -412,9 +402,9 @@ const ProductCreator: FC<IProps> = ({lang, fibersState, setState, modal, catalog
 
                         
                         <button className='button_blue button_post' disabled={catalogState.category.sendProduct.status === 'fetching'} onClick={onSubmit}>
-                            {product._id ? lang === 'en' ? 'Save changes' : "Сохранить изменения" : lang === 'en' ? 'Create product' : 'Создать товар'}
+                            {lang === 'en' ? 'Save changes' : "Сохранить изменения"}
                         </button>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>

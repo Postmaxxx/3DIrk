@@ -54,7 +54,6 @@
                 padding-right: 10px;
                 align-self: self-end;
                 justify-self: end;
-
             }
         }
 
@@ -72,6 +71,23 @@
             //width: 100%;
             display: grid;
             place-items: center;
+        }
+    }
+
+
+    &.features_value {
+        & .features__list {
+            & .block_feature {
+                grid-template-columns: 1fr 1fr;
+                gap: 0px 40px;
+
+                & .button_feature_delete {
+                    margin: 0;
+                    align-self: center;
+                    justify-self: end;
+    
+                }
+            }
         }
     }
 

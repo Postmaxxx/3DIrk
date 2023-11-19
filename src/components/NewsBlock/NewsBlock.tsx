@@ -24,7 +24,7 @@ interface IProps extends IPropsState, IPropsActions {}
 
 const NewsBlock:React.FC<IProps>  = ({lang, news, setState}): JSX.Element => {
     
-    const showMoreNews = () => {   
+    const showMoreNews = (): void => {   
 		setState.news.loadSomeNews({from: news.newsList.length, amount: loadNewsPerRequest})
     }
 

@@ -1,5 +1,5 @@
 import { IFetch, TLangText, IDispatch, IAction } from '../interfaces';
-import { errorsChecker, ratingNumberToText, prevent, filesDownloader, filenameChanger, modalMessageCreator, deepCopy,resErrorFiller, checkIfNumbers, checkIfEmail, checkIfPhone, debounce, fetchError, focusMover, makeDelay, inputChecker } from '../assets/js/processors'
+import { errorsChecker, ratingNumberToText, prevent, filesDownloader, filenameChanger, modalMessageCreator, deepCopy,resErrorFiller, checkIfNumbers, checkIfEmail, checkIfPhone, debounce, fetchError, makeDelay, inputChecker } from '../assets/js/processors'
 import { exceptionTimeout } from '../assets/js/consts';
 import { AnyAction } from 'redux';
 import { render } from '@testing-library/react';
@@ -135,43 +135,63 @@ describe('Tests for fetchError', () => {
     let eNoName: any
     let controller: any
 
-    const setter = <T extends IFetch>(payload: T):IAction<T> => ({
+    const setter = jest.fn(<T extends IFetch>(payload: T): IAction<T> => ({
         type: 'setterActionType',
         payload
-    });
+    }))
+
+    const dispatch = jest.fn(<T extends AnyAction>(action: T): T => {
+        return action;
+    })
     
 
-    const dispatch: IDispatch = <T extends AnyAction>(action: T) => {
-        return action;
-    };
-
     beforeEach(() => {
+        dispatch.mockClear()
+        setter.mockClear()
+
         comp = {en: 'comp en', ru: 'comp ru'}
         e = {name: 'AbortError'} 
         eNoName = {}
         controller = {signal: {reason: {name: exceptionTimeout.name}}}
     }) 
+
     
 
-    test('should return data for e.name === AbortError', () => {
-        expect(fetchError({
-            dispatch, setter, comp, e, controller
-        })).toEqual({type: "setterActionType", payload: {status: 'error', message: {en: 'comp en: server response timeout', ru: "comp ru: таймаут ответа от сервера"}}})
+    test('e.name === AbortError', () => {
+        const payload = {status: 'error', message: {en: 'comp en: server response timeout', ru: "comp ru: таймаут ответа от сервера"}}
+        const expectedResult = {type: "setterActionType", payload}
+        fetchError({dispatch, setter, comp, e, controller})
+        expect(dispatch).toBeCalledTimes(1)
+        expect(setter).toBeCalledTimes(1)
+        expect(setter).toBeCalledWith(payload)
+        expect(dispatch).toBeCalledWith(expectedResult)
+    })
+
+
+    test('e.name === AbortError && controller.signal.reason.name = "otherReason"', () => {
+        const payload = {status: 'idle', message: {en: 'comp en: request aborted', ru: "comp ru: запрос отменен"}}
+        const expectedResult = {type: "setterActionType", payload}
         controller.signal.reason.name = 'otherReason'
-        expect(fetchError({
-            dispatch, setter, comp, e, controller
-        })).toEqual({type: "setterActionType", payload: {status: 'error', message: {en: 'comp en: request aborted', ru: "comp ru: запрос отменен"}}})
 
+        fetchError({dispatch, setter, comp, e, controller})
+        expect(dispatch).toBeCalledTimes(1)
+        expect(setter).toBeCalledTimes(1)
+        expect(setter).toBeCalledWith(payload)
+        expect(dispatch).toBeCalledWith(expectedResult)
     })
 
 
+    test('e.name !== AbortError', () => {
+        const payload = {status: 'error', message: {en: 'comp en: testError', ru: "comp ru: testError"}}
+        const expectedResult = {type: "setterActionType", payload}
+        e = {name: 'testError'} 
 
-    test('should return data for e.name !== AbortError', () => {
-        expect(fetchError({
-            dispatch, setter, comp, e: {name: 'testError'}, controller
-        })).toEqual({type: "setterActionType", payload: {status: 'error', message: {en: 'comp en: testError', ru: "comp ru: testError"}}})
+        fetchError({dispatch, setter, comp, e, controller})
+        expect(dispatch).toBeCalledTimes(1)
+        expect(setter).toBeCalledTimes(1)
+        expect(setter).toBeCalledWith(payload)
+        expect(dispatch).toBeCalledWith(expectedResult)
     })
-
 })
 
 
@@ -240,7 +260,7 @@ describe('Tests for deepcopy', () => {
 })
 
 
-
+/*
 describe('Tests for focusMover', () => {
     let focuserString: ReturnType<typeof focusMover> = focusMover()
     let focuserDOM: ReturnType<typeof focusMover> = focusMover()
@@ -364,7 +384,7 @@ describe('Tests for focusMover', () => {
     });
 
 })
-
+*/
 
 
 
@@ -429,15 +449,19 @@ describe('Tests for checkIfNumbers', () => {
 describe('Tests for checkIfPhone', () => {
     test('should return false', () => {
         expect(checkIfPhone('++1234567890')).toBe(false)
-        expect(checkIfPhone('++1234567890a')).toBe(false)
+        expect(checkIfPhone('1234567890a')).toBe(false)
         expect(checkIfPhone('1.34567890')).toBe(false)
         expect(checkIfPhone('1,34567890')).toBe(false)
+        expect(checkIfPhone('123*')).toBe(false)
+        expect(checkIfPhone('')).toBe(false)
+        expect(checkIfPhone('+')).toBe(false)
     })
     
     test('should return true', () => {
         expect(checkIfPhone('01243205403254630560124902346')).toBe(true)
         expect(checkIfPhone('+01243205403254630')).toBe(true)
-        expect(checkIfPhone('')).toBe(true)
+        expect(checkIfPhone('+1')).toBe(true)
+        expect(checkIfPhone('1')).toBe(true)
     })
 })
 
@@ -565,188 +589,125 @@ describe('Tests for makeDelay', () => {
 
 describe('Tests for inputChecker', () => {
 
-    let TestTree: () => JSX.Element
-
-
-    beforeEach(() => {
-        TestTree = () => {
-            return (
-                <div id='parent'>
-                    <input type="text" id='input' />
-                    <textarea name="textarea" id="textarea"></textarea>
-                    <select id='select' defaultValue=''>
-                        <option value="" disabled hidden></option>
-                        <option value="123">123</option>
-                        <option value="12345678910">12345678910</option>
-                    </select>
-                </div>
-            )
-        }
+    test('rules.notEmpty', () => {
+        expect(inputChecker({value: '', rules: {notEmpty: true}})).toEqual({en: `no value`, ru: `нет значения`})
+        expect(inputChecker({value: ' ', rules: {notEmpty: true}})).not.toEqual({en: `no value`, ru: `нет значения`})
+        expect(inputChecker({value: '', rules: {notEmpty: false}})).toBeNull()
+        expect(inputChecker({value: '', rules: {}})).toBeNull()
     })
 
 
-    test('should do nothing if el.parent does not exist', () => {
-        const singleInput = {parentElement: null} as HTMLInputElement
-        expect(inputChecker({el: singleInput, lang: 'en'})).toBe('Parent missing')
+    test('rules.min', () => { 
+        expect(inputChecker({value: '', rules: {min: 1}})).toEqual({en: `length < 1`, ru: `длина < 1`})
+        expect(inputChecker({value: '12345', rules: {min: 6}})).toEqual({en: `length < 6`, ru: `длина < 6`})
+        expect(inputChecker({value: '12', rules: {min: 1}})).not.toEqual({en: `length < 1`, ru: `длина < 1`})
+        expect(inputChecker({value: '', rules: {min: 0}})).not.toEqual({en: `length < 1`, ru: `длина < 1`})
+        expect(inputChecker({value: '1234567', rules: {min: 6}})).not.toEqual({en: `length < 6`, ru: `длина < 6`})
+    })
+
+    test('rules.max', () => {
+        expect(inputChecker({value: '156546', rules: {max: 0}})).toEqual({en: `length > 0`, ru: `длина > 0`})
+        expect(inputChecker({value: '1234567', rules: {max: 6}})).toEqual({en: `length > 6`, ru: `длина > 6`})
+        expect(inputChecker({value: '156546', rules: {max: 7}})).not.toEqual({en: `length > 0`, ru: `длина > 0`})
+        expect(inputChecker({value: '', rules: {max: 0}})).not.toEqual({en: `length > 6`, ru: `длина > 6`})
+    })
+    
+    test('rules.valueMin', () => {
+        expect(inputChecker({value: '-10', rules: {valueMin: -9}})).toEqual({en: `value < -9`, ru: `значение < -9`})
+        expect(inputChecker({value: '-1', rules: {valueMin: 0}})).toEqual({en: `value < 0`, ru: `значение < 0`})
+        expect(inputChecker({value: '0', rules: {valueMin: 1}})).toEqual({en: `value < 1`, ru: `значение < 1`})
+        expect(inputChecker({value: '999', rules: {valueMin: 1000}})).toEqual({en: `value < 1000`, ru: `значение < 1000`})
+        expect(inputChecker({value: '1.998', rules: {valueMin: 1.999}})).toEqual({en: `value < 1.999`, ru: `значение < 1.999`})
+        expect(inputChecker({value: '-8', rules: {valueMin: -9}})).not.toEqual({en: `value < -9`, ru: `значение < -9`})
+        expect(inputChecker({value: '.001', rules: {valueMin: 0}})).not.toEqual({en: `value < 0`, ru: `значение < 0`})
+        expect(inputChecker({value: '10', rules: {valueMin: 10}})).not.toEqual({en: `value < 10`, ru: `значение < 10`})
+        expect(inputChecker({value: 'abc', rules: {valueMin: 0}})).not.toEqual({en: `value < 0`, ru: `значение < 0`})
+    })
+
+    test('rules.valueMax', () => {
+        expect(inputChecker({value: '-10', rules: {valueMax: -11}})).toEqual({en: `value > -11`, ru: `значение > -11`})
+        expect(inputChecker({value: '1', rules: {valueMax: 0}})).toEqual({en: `value > 0`, ru: `значение > 0`})
+        expect(inputChecker({value: '0', rules: {valueMax: -1}})).toEqual({en: `value > -1`, ru: `значение > -1`})
+        expect(inputChecker({value: '1000', rules: {valueMax: 999}})).toEqual({en: `value > 999`, ru: `значение > 999`})
+        expect(inputChecker({value: '2.002', rules: {valueMax: 2.001}})).toEqual({en: `value > 2.001`, ru: `значение > 2.001`})
+        expect(inputChecker({value: '2.0001', rules: {valueMax: 2.001}})).not.toEqual({en: `value > 2.001`, ru: `значение > 2.001`})
+        expect(inputChecker({value: '-0.001', rules: {valueMax: 0}})).not.toEqual({en: `value > 0`, ru: `значение > 0`})
+        expect(inputChecker({value: 'abc', rules: {valueMax: 0}})).not.toEqual({en: `value > 0`, ru: `значение > 0`})
+        expect(inputChecker({value: '', rules: {valueMax: 0}})).not.toEqual({en: `value > 0`, ru: `значение > 0`})
+    })
+
+    test('rules.exact', () => {
+        expect(inputChecker({value: 'abcdef', rules: {exact: 'abcdefg'}})).toEqual({en: `doesn't match`, ru: `не совпадает`})
+        expect(inputChecker({value: 'abcdef', rules: {exact: 'abcdeg'}})).toEqual({en: `doesn't match`, ru: `не совпадает`})
+        expect(inputChecker({value: 'abcdef', rules: {exact: 'bcdef'}})).toEqual({en: `doesn't match`, ru: `не совпадает`})
+        expect(inputChecker({value: 'abcdef', rules: {exact: 'bcdefg'}})).toEqual({en: `doesn't match`, ru: `не совпадает`})
+        expect(inputChecker({value: '1.001', rules: {exact: '1'}})).toEqual({en: `doesn't match`, ru: `не совпадает`})
+        expect(inputChecker({value: '', rules: {exact: ''}})).not.toEqual({en: `doesn't match`, ru: `не совпадает`})
+        expect(inputChecker({value: '123', rules: {exact: '123'}})).not.toEqual({en: `doesn't match`, ru: `не совпадает`})
+        expect(inputChecker({value: 'abc', rules: {exact: 'abc'}})).not.toEqual({en: `doesn't match`, ru: `не совпадает`})
     })
 
 
+    test('rules.notExact', () => {
+        expect(inputChecker({value: '123', rules: {notExact: '123'}})).toEqual({en: `shouldn't be 123`, ru: `не должно быть 123`})
+        expect(inputChecker({value: 'abc', rules: {notExact: 'abc'}})).toEqual({en: `shouldn't be abc`, ru: `не должно быть abc`})
+        expect(inputChecker({value: '   ', rules: {notExact: '   '}})).toEqual({en: `shouldn't be    `, ru: `не должно быть    `})
+        expect(inputChecker({value: '  ', rules: {notExact: '   '}})).not.toEqual({en: `shouldn't be    `, ru: `не должно быть    `})
+        expect(inputChecker({value: 'abc', rules: {notExact: 'abc '}})).not.toEqual({en: `shouldn't be    `, ru: `не должно быть    `})
+        expect(inputChecker({value: 'abc', rules: {notExact: 'abd'}})).not.toEqual({en: `shouldn't be abd`, ru: `не должно быть abd`})
+    })
 
-    test('should do nothing if el.value.length is 0 and orEmpty is true but to remove incorrect-value class for parent ', () => {
-        const {container} = render(<TestTree />)
-        const input = container.querySelector('#input') as HTMLInputElement
-        const select = container.querySelector('#select') as HTMLSelectElement
-        const textarea = container.querySelector('#textarea') as HTMLTextAreaElement
-        const parent = container.querySelector('#parent') as HTMLElement
-        parent.classList.add('incorrect-value')
-        inputChecker({el: input, lang: 'en', orEmpty: true})
-        expect(parent.classList.contains('incorrect-value')).toBe(false)
-
-        parent.classList.add('incorrect-value')
-        inputChecker({el: select, lang: 'en', orEmpty: true})
-        expect(parent.classList.contains('incorrect-value')).toBe(false)
-
-        parent.classList.add('incorrect-value')
-        inputChecker({el: textarea, lang: 'en', orEmpty: true})
-        expect(parent.classList.contains('incorrect-value')).toBe(false)
+    test('rules.type === numbers', () => {
+        expect(inputChecker({value: '123 4', rules: {type: 'numbers'}})).toEqual({en: `numbers only`, ru: `только цифры`})       
+        expect(inputChecker({value: '123 ', rules: {type: 'numbers'}})).toEqual({en: `numbers only`, ru: `только цифры`})       
+        expect(inputChecker({value: '+123', rules: {type: 'numbers'}})).toEqual({en: `numbers only`, ru: `только цифры`})       
+        expect(inputChecker({value: '-1', rules: {type: 'numbers'}})).toEqual({en: `numbers only`, ru: `только цифры`})       
+        expect(inputChecker({value: 'a123', rules: {type: 'numbers'}})).toEqual({en: `numbers only`, ru: `только цифры`})       
+        expect(inputChecker({value: '23.2sw', rules: {type: 'numbers'}})).toEqual({en: `numbers only`, ru: `только цифры`})       
+        expect(inputChecker({value: '', rules: {type: 'numbers'}})).not.toEqual({en: `numbers only`, ru: `только цифры`})       
+        expect(inputChecker({value: '123', rules: {type: 'numbers'}})).not.toEqual({en: `numbers only`, ru: `только цифры`})       
+        expect(inputChecker({value: '0', rules: {type: 'numbers'}})).not.toEqual({en: `numbers only`, ru: `только цифры`})       
     })
 
 
-    test('should add incorrect-value class for parent in value.length <min or >max', () => {
-        const {container} = render(<TestTree />)
-        const input = container.querySelector('#input') as HTMLInputElement
-        const select = container.querySelector('#select') as HTMLSelectElement
-        const textarea = container.querySelector('#textarea') as HTMLTextAreaElement
-        const parent = container.querySelector('#parent') as HTMLElement
-        inputChecker({el: input, lang: 'en', min: 1})
-        expect(parent.classList.contains('incorrect-value')).toBe(true)
-        expect(parent.dataset.errorText).toBe('Min length: 1')
+    test('rules.type === email', () => {
+        expect(inputChecker({value: '1a@1.1', rules: {type: 'email'}})).toEqual({en: `wrong format`, ru: `неверный формат`})       
+        expect(inputChecker({value: '@sad.abc', rules: {type: 'email'}})).toEqual({en: `wrong format`, ru: `неверный формат`})       
+        expect(inputChecker({value: 'abcd@.abc', rules: {type: 'email'}})).toEqual({en: `wrong format`, ru: `неверный формат`})       
+        expect(inputChecker({value: 'abcd@abc', rules: {type: 'email'}})).toEqual({en: `wrong format`, ru: `неверный формат`})       
+        expect(inputChecker({value: 'abcd@abc.', rules: {type: 'email'}})).toEqual({en: `wrong format`, ru: `неверный формат`})       
+        expect(inputChecker({value: 'abcd@abc.abc.', rules: {type: 'email'}})).toEqual({en: `wrong format`, ru: `неверный формат`})       
+        expect(inputChecker({value: 'abcd@abc.s1', rules: {type: 'email'}})).not.toEqual({en: `wrong format`, ru: `неверный формат`})   
+        expect(inputChecker({value: 'asd@1sad.abc', rules: {type: 'email'}})).not.toEqual({en: `wrong format`, ru: `неверный формат`})       
+        expect(inputChecker({value: '1sdxf@1sad.abc', rules: {type: 'email'}})).not.toEqual({en: `wrong format`, ru: `неверный формат`})       
+    })
 
-        parent.classList.remove('incorrect-value')
-        input.value = '123456789 10'
-        inputChecker({el: input, lang: 'en', max: 10})
-        expect(parent.classList.contains('incorrect-value')).toBe(true)
-        expect(parent.dataset.errorText).toBe('Max length: 10')
+    test('rules.type === phone', () => {
+        expect(inputChecker({value: '++123', rules: {type: 'phone'}})).toEqual({en: `wrong format`, ru: `неверный формат`})       
+        expect(inputChecker({value: 'a123', rules: {type: 'phone'}})).toEqual({en: `wrong format`, ru: `неверный формат`})       
+        expect(inputChecker({value: '1a23', rules: {type: 'phone'}})).toEqual({en: `wrong format`, ru: `неверный формат`})       
+        expect(inputChecker({value: '12+3', rules: {type: 'phone'}})).toEqual({en: `wrong format`, ru: `неверный формат`})    
+        expect(inputChecker({value: '123', rules: {type: 'phone'}})).not.toEqual({en: `wrong format`, ru: `неверный формат`})       
+        expect(inputChecker({value: '+123', rules: {type: 'phone'}})).not.toEqual({en: `wrong format`, ru: `неверный формат`})       
+    })
 
 
-        inputChecker({el: textarea, lang: 'en', min: 1})
-        expect(parent.classList.contains('incorrect-value')).toBe(true)
-        expect(parent.dataset.errorText).toBe('Min length: 1')
-        parent.classList.remove('incorrect-value')
-        textarea.value = '123456789 10'
-        inputChecker({el: textarea, lang: 'en', max: 10})
-        expect(parent.classList.contains('incorrect-value')).toBe(true)
-        expect(parent.dataset.errorText).toBe('Max length: 10')
-
+    test('rules.type === date', () => {
+        console.log(new Date('2032-06-12'));
         
-        inputChecker({el: select, lang: 'en', min: 1})
-        expect(parent.classList.contains('incorrect-value')).toBe(true)
-        expect(parent.dataset.errorText).toBe('Min length: 1')
-        parent.classList.remove('incorrect-value')
-        select.selectedIndex = 2
-        inputChecker({el: select, lang: 'en', max: 10})
-        expect(parent.classList.contains('incorrect-value')).toBe(true)
-        expect(parent.dataset.errorText).toBe('Max length: 10')
-    })
-
-
-    test('should add incorrect-value class for exact and notExact', () => {
-        const {container} = render(<TestTree />)
-        const input = container.querySelector('#input') as HTMLInputElement
-        const select = container.querySelector('#select') as HTMLSelectElement
-        const parent = container.querySelector('#parent') as HTMLElement
-
-        input.value = '1234'
-        inputChecker({el: input, lang: 'en', exact:'123'})
-        expect(parent.classList.contains('incorrect-value')).toBe(true)
-        expect(parent.dataset.errorText).toBe("Doesn't match")
-        parent.classList.remove('incorrect-value')
-        input.value = '123'
-        inputChecker({el: input, lang: 'en', exact:'123'})
-        expect(parent.classList.contains('incorrect-value')).toBe(false)
-
-
-        select.selectedIndex = 1
-        inputChecker({el: select, lang: 'en', exact:'12345678910'})
-        expect(parent.classList.contains('incorrect-value')).toBe(true)
-        parent.classList.remove('incorrect-value')
-        select.selectedIndex = 2
-        inputChecker({el: select, lang: 'ru', exact:'12345678910'})
-        expect(parent.classList.contains('incorrect-value')).toBe(false)
-        expect(parent.dataset.errorText).toBe("Doesn't match")
-
-
-        input.value = '1234'
-        inputChecker({el: input, lang: 'en', notExact:'123'})
-        expect(parent.classList.contains('incorrect-value')).toBe(false)
-        parent.classList.remove('incorrect-value')
-        input.value = '123'
-        inputChecker({el: input, lang: 'en', notExact:'123'})
-        expect(parent.classList.contains('incorrect-value')).toBe(true)
-        expect(parent.dataset.errorText).toBe("Wrong value")
-    })
-
-
-
-
-
-    test('should check types', () => {
-        const {container} = render(<TestTree />)
-        const input = container.querySelector('#input') as HTMLInputElement
-        const parent = container.querySelector('#parent') as HTMLElement
-
-        input.value = '1234'
-        inputChecker({el: input, lang: 'en', type: 'numbers'})
-        expect(parent.classList.contains('incorrect-value')).toBe(false)
-        parent.classList.remove('incorrect-value')
-        input.value = '+1234'
-        inputChecker({el: input, lang: 'en', type: 'numbers'})
-        expect(parent.classList.contains('incorrect-value')).toBe(true)
-        expect(parent.dataset.errorText).toBe("Numbers only")
-
-        parent.classList.remove('incorrect-value')
-        input.value = '+1234'
-        inputChecker({el: input, lang: 'en', type: 'phone'})
-        expect(parent.classList.contains('incorrect-value')).toBe(false)
-        parent.classList.remove('incorrect-value')
-        input.value = '+1234a'
-        inputChecker({el: input, lang: 'en', type: 'phone'})
-        expect(parent.classList.contains('incorrect-value')).toBe(true)
-        expect(parent.dataset.errorText).toBe("Numbers only")
-
-        parent.classList.remove('incorrect-value')
-        input.value = '1@1.ca'
-        inputChecker({el: input, lang: 'en', type: 'email'})
-        expect(parent.classList.contains('incorrect-value')).toBe(false)
-        parent.classList.remove('incorrect-value')
-        input.value = '@.test'
-        inputChecker({el: input, lang: 'en', type: 'email'})
-        expect(parent.classList.contains('incorrect-value')).toBe(true)
-        expect(parent.dataset.errorText).toBe("Wrong format")
-
-        parent.classList.remove('incorrect-value')
-        input.value = '2022-01-31'           
-        inputChecker({el: input, lang: 'en', type: 'date'})
-        expect(parent.classList.contains('incorrect-value')).toBe(false)
-        parent.classList.remove('incorrect-value')
-        input.value = '2022-01-32'       
-        inputChecker({el: input, lang: 'en', type: 'date'})
-        expect(parent.classList.contains('incorrect-value')).toBe(true)
-        expect(parent.dataset.errorText).toBe("Wrong date")
-        parent.classList.remove('incorrect-value')
-        input.value = 'abc'       
-        inputChecker({el: input, lang: 'en', type: 'date'})
-        expect(parent.classList.contains('incorrect-value')).toBe(true)
-        expect(parent.dataset.errorText).toBe("Wrong date")
-        parent.classList.remove('incorrect-value')
-        input.value = '2009-01-01'       
-        inputChecker({el: input, lang: 'en', type: 'date'})
-        expect(parent.classList.contains('incorrect-value')).toBe(true)
-        expect(parent.dataset.errorText).toBe("Wrong date")
-        parent.classList.remove('incorrect-value')
-        input.value = '2039-01-01'       
-        inputChecker({el: input, lang: 'en', type: 'date'})
-        expect(parent.classList.contains('incorrect-value')).toBe(true)
-        expect(parent.dataset.errorText).toBe("Wrong date")
+        expect(inputChecker({value: '2022-01-32', rules: {type: 'date'}})).toEqual({en: `wrong value`, ru: `неправильное значение`})       
+        expect(inputChecker({value: '2022-02-a', rules: {type: 'date'}})).toEqual({en: `wrong value`, ru: `неправильное значение`})       
+        expect(inputChecker({value: '2030-01-02', rules: {type: 'date'}})).toEqual({en: `wrong value`, ru: `неправильное значение`})       
+        expect(inputChecker({value: '2019-12-31', rules: {type: 'date'}})).toEqual({en: `wrong value`, ru: `неправильное значение`})       
+        
+        
+        expect(inputChecker({value: '2020-01-02', rules: {type: 'date'}})).not.toEqual({en: `wrong value`, ru: `неправильное значение`})       
+        expect(inputChecker({value: '2023-12-01', rules: {type: 'date'}})).not.toEqual({en: `wrong value`, ru: `неправильное значение`})       
+        expect(inputChecker({value: '01-02-2021', rules: {type: 'date'}})).not.toEqual({en: `wrong value`, ru: `неправильное значение`})       
+        expect(inputChecker({value: '01/02/2021', rules: {type: 'date'}})).not.toEqual({en: `wrong value`, ru: `неправильное значение`})       
+        expect(inputChecker({value: '01.02.2021', rules: {type: 'date'}})).not.toEqual({en: `wrong value`, ru: `неправильное значение`})       
+        expect(inputChecker({value: '2022-01-31', rules: {type: 'date'}})).not.toEqual({en: `wrong value`, ru: `неправильное значение`})       
+        expect(inputChecker({value: '2022-feb-01', rules: {type: 'date'}})).not.toEqual({en: `wrong value`, ru: `неправильное значение`})       
+ 
     })
 })

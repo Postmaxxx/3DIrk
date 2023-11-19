@@ -1,4 +1,4 @@
-import { IAction, IFetch, IFiber, IFibersState } from "../../interfaces"
+import { IFetch, IFiber, IFibersState } from "../../interfaces"
 import initialFibersState from '../initialStates/fibers'
 import { actionsListFibers } from '../actions/actionsList'
 
@@ -30,9 +30,7 @@ const reducerFibers = (state:IFibersState = initialFibersState, action: {type: T
             }
         default: {
 			const missedSomeActions:never = action.type;
-			return {
-				...state   
-			};
+			return {...state};
         }
     }
 }

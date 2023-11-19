@@ -36,8 +36,6 @@ const Product: React.FC<IProps> = ({lang, setState, colorLoad, catalogProduct, f
     const paramProductId = useParams().productId || ''
     const [loaded, setLoaded] = useState<boolean>(false)
 
-
-
     useEffect(() => {
         if (colorLoad.status === 'success' && fibersLoad.status === 'success' && catalogLoadProduct.status === 'success' && paramProductId === catalogProduct._id) {
             setLoaded(true)

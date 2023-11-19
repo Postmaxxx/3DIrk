@@ -190,7 +190,7 @@ const ThemeSwitcher: React.FC<IProps> = ({lang, theme, setState}): JSX.Element =
 					onClick={onThemeClick}
 					aria-label={lang === 'en' ? `Switch the site theme` : `Изменить тему сайта`}
 				>
-					<div className={`content-switcher ${theme !== "dark" ? "theme_light" : ""}`} ref={_contentSwitcher} data-testid="theme-switcher-content">
+					<div className={`theme-switcher__content ${theme !== "dark" ? "theme_light" : ""}`} ref={_contentSwitcher} data-testid="theme-switcher-content">
 						<div className="dark" aria-hidden>{stars}</div>
 						<div className="light" aria-hidden>{clouds}</div>
 					</div>

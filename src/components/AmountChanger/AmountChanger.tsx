@@ -2,7 +2,7 @@ import { maxAmountToOrder } from '../../../src/assets/js/consts';
 import { prevent } from '../../../src/assets/js/processors';
 import { TLang } from '../../interfaces'
 import './amount-changer.scss'
-import { useEffect, useState } from "react";
+import { useEffect, useState, FC } from "react";
 
 interface IProps<T> {
     onChange: (idInstance: T, amount: number) => void
@@ -17,13 +17,13 @@ const AmountChanger = <T,>({idInstance, onChange, initialAmount, lang, reset}: I
     const [amount, setAmount] = useState<number>(initialAmount)
 
     
-    const changeAmount = (newAmount: number) => {
+    const changeAmount = (newAmount: number): void => {
         const amountToSet = newAmount >= 0 ? newAmount : 0
         setAmount(amountToSet)
         onChange(idInstance, amountToSet)
     }
 
-    const onFocusOut = (newAmount: number) => {
+    const onFocusOut = (newAmount: number): void => {
         const amountToSet = newAmount > 0 ? newAmount : 1
         setAmount(amountToSet)
         onChange(idInstance, amountToSet)
@@ -37,17 +37,17 @@ const AmountChanger = <T,>({idInstance, onChange, initialAmount, lang, reset}: I
     }, [reset])
 
 
-    const onDecreaseAmount = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const onDecreaseAmount = (e: React.MouseEvent<HTMLButtonElement>): void => {
         prevent(e)
         amount < maxAmountToOrder && changeAmount(amount + 1)
     }
 
-    const onIncreaseAmount = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const onIncreaseAmount = (e: React.MouseEvent<HTMLButtonElement>): void => {
         prevent(e); 
         amount > 1 && changeAmount(amount > 2 ?  amount - 1 : 1)
     }
 
-    const onCahngeAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const onCahngeAmount = (e: React.ChangeEvent<HTMLInputElement>): void => {
         e.preventDefault(); 
         Number(e.target.value) <= maxAmountToOrder && changeAmount(Number(e.target.value))
     }

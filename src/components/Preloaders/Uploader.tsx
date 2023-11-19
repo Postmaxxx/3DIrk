@@ -1,4 +1,4 @@
-import { TLang } from "src/interfaces"
+
 import "./uploader.scss"
 
 
