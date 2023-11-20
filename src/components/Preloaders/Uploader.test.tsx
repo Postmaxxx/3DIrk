@@ -2,7 +2,7 @@ import { act, screen } from '@testing-library/react';
 import { HashRouter } from "react-router-dom";
 import '@testing-library/jest-dom/extend-expect'
 import { createRoot } from 'react-dom/client';
-import Uploader from '../components/Preloaders/Uploader';
+import Uploader from './Uploader';
 
 
 describe('Uploader', () => {

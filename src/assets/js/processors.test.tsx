@@ -1,8 +1,7 @@
-import { IFetch, TLangText, IDispatch, IAction } from '../interfaces';
-import { errorsChecker, ratingNumberToText, prevent, filesDownloader, filenameChanger, modalMessageCreator, deepCopy,resErrorFiller, checkIfNumbers, checkIfEmail, checkIfPhone, debounce, fetchError, makeDelay, inputChecker } from '../assets/js/processors'
-import { exceptionTimeout } from '../assets/js/consts';
+import { IFetch, TLangText, IAction } from '../../interfaces';
+import { ratingNumberToText, prevent, filesDownloader, filenameChanger, modalMessageCreator, deepCopy,resErrorFiller, checkIfNumbers, checkIfEmail, checkIfPhone, debounce, fetchError, makeDelay, inputChecker } from './processors'
+import { exceptionTimeout } from './consts';
 import { AnyAction } from 'redux';
-import { render } from '@testing-library/react';
 import React from 'react'
 import '@testing-library/jest-dom/extend-expect'
 
@@ -29,56 +28,6 @@ describe('Tests for ratingNumberToText', () => {
         expect(ratingNumberToText('10', '10')).toEqual({en: 'exellent',ru: 'отличная'})               
         expect(ratingNumberToText('2', '10')).toEqual({en: 'extremely low', ru: 'крайне низкая'})               
 
-    })
-})
-
-
-describe('Tests for errorsChecker', () => {
-
-    let e: ReturnType<typeof errorsChecker> 
-    let r: ReturnType<typeof errorsChecker> 
-    const errorsList = ['test string 1', 'test string 2', 'test string 3',]
-    
-    beforeEach(() => {
-        e = errorsChecker({lang: 'en'})
-        r = errorsChecker({lang: 'ru'})
-        e.add(errorsList[0])
-        e.add(errorsList[1])
-        e.add(errorsList[2])
-        r.add(errorsList[0])
-        r.add(errorsList[1])
-        r.add(errorsList[2])
-    })
-
-    test('should return correct length', () => {
-        expect(e.amount()).toBe(3)
-        e.clear()
-        expect(e.amount()).toBe(0)
-    })
-
-    test('should return correct errors', () => {
-        expect(e.result()).toEqual({
-            header:'Errors was found',
-            status: 'error',
-            text: [...errorsList]
-        })
-        expect(r.result()).toEqual({
-            header:'Найдены ошибки',
-            status: 'error',
-            text: [...errorsList]
-        })
-        e.add(errorsList[1])
-        expect(e.result()).toEqual({
-            header:'Errors was found',
-            status: 'error',
-            text: [...errorsList, errorsList[1]]
-        })
-        e.clear()
-        expect(e.result()).toEqual({
-            header:'Errors was found',
-            status: 'error',
-            text: []
-        })
     })
 })
 

@@ -1,6 +1,6 @@
 import { act, screen } from '@testing-library/react';
 import { HashRouter } from "react-router-dom";
-import ImageModal from '../components/ImageModal/ImageModal';
+import ImageModal from './ImageModal';
 import '@testing-library/jest-dom/extend-expect'
 import { createRoot } from 'react-dom/client';
 

@@ -2,13 +2,13 @@ import { act, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect'
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
-import store from '../redux/store';
-import Preloader from '../components/Preloaders/Preloader';
+import store from '../../redux/store';
+import Preloader from '../../components/Preloaders/Preloader';
 import { Suspense } from "react";
-import App from '../App';
-import { setRes } from '../assets/js/testHelpers';
-import { allActions } from '../redux/actions/all';
-import { actionsListUser } from '../redux/actions/actionsList';
+import App from '../../App';
+import { setRes } from '../../assets/js/testHelpers';
+import { allActions } from '../../redux/actions/all';
+import { actionsListUser } from '../../redux/actions/actionsList';
 import { IFetch, IUserState } from 'src/interfaces';
 
 

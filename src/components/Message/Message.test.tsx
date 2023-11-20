@@ -2,7 +2,7 @@ import { act, waitFor, screen } from '@testing-library/react';
 import { HashRouter } from "react-router-dom";
 import '@testing-library/jest-dom/extend-expect'
 import { createRoot } from 'react-dom/client';
-import Message from '../components/Message/Message';
+import Message from './Message';
 
 
 describe('Message', () => {

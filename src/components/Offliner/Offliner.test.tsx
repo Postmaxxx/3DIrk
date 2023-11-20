@@ -1,7 +1,7 @@
 import { act,waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect'
 import { createRoot } from 'react-dom/client';
-import Offliner from '../components/Offliner/Offliner';
+import Offliner from './Offliner';
 import '@testing-library/jest-dom/extend-expect'
 
 

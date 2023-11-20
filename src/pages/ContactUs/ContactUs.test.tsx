@@ -2,11 +2,11 @@ import { createRoot } from 'react-dom/client';
 import { act, waitFor, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect'
 import { Provider } from 'react-redux';
-import store from '../redux/store';
+import store from '../../redux/store';
 import fetchMock from 'jest-fetch-mock';
-import App from '../App';
-import { setRes } from '../assets/js/testHelpers';
-import ContactUs from '../pages/ContactUs/ContactUs';
+import App from '../../App';
+import { setRes } from '../../assets/js/testHelpers';
+import ContactUs from './ContactUs';
 import renderer from 'react-test-renderer'
 
 

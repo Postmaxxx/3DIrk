@@ -2,9 +2,9 @@ import { act, waitFor, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect'
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
-import store from '../redux/store';
-import { setRes } from '../assets/js/testHelpers';
-import Auth from '../components/Auth/Auth';
+import store from '../../redux/store';
+import { setRes } from '../../assets/js/testHelpers';
+import Auth from './Auth';
 import configureStore from 'redux-mock-store'
 import thunk from 'redux-thunk';
 import fetchMock from 'jest-fetch-mock';

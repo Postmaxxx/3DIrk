@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import { allActions } from "../../../redux/actions/all";
 import AddFiles, { IAddFilesFunctions } from '../../../components/AddFiles/AddFiles';
 import { navList, resetFetch } from '../../../assets/js/consts';
-import { deepCopy, errorsChecker, filesDownloader, modalMessageCreator, prevent } from '../../../assets/js/processors';
+import { deepCopy, filesDownloader, modalMessageCreator, prevent } from '../../../assets/js/processors';
 import { useNavigate } from 'react-router-dom';
 import { IModalFunctions } from '../../../components/Modal/Modal';
 import Message from '../../../components/Message/Message';
@@ -35,10 +35,6 @@ const SpliderChanger: FC<IProps> = ({lang, content, modal, setState}): JSX.Eleme
     const addFilesRef = useRef<IAddFilesFunctions>(null)
     const _form = useRef<HTMLDivElement>(null)
 
-    const errChecker = useMemo(() => errorsChecker({lang}), [lang])
-
-
-
     const closeModal = useCallback(async (): Promise<void> => {
         if (await modal?.getName() === 'contentSend') {
             if (content.send.status === 'success') {
@@ -48,9 +44,8 @@ const SpliderChanger: FC<IProps> = ({lang, content, modal, setState}): JSX.Eleme
             }
             setState.content.setSendContent(deepCopy(resetFetch))// clear fetch status
         }
-        errChecker.clear()
         modal?.closeCurrent()
-	}, [content.send.status, errChecker])
+	}, [content.send.status])
 
 
 
@@ -100,15 +95,21 @@ const SpliderChanger: FC<IProps> = ({lang, content, modal, setState}): JSX.Eleme
         prevent(e)   
         if (!_form.current || !addFilesRef.current) return
 
+        const errors: string[] = []
         if (addFilesRef.current.getFiles().length < 5) {
-            errChecker.add(lang === 'en' ? 'Should be at least 5 images' : 'Требуется не менее 5 изображений')
+            errors.push(lang === 'en' ? 'Should be at least 5 images' : 'Требуется не менее 5 изображений')
         }
 
-        if (errChecker.amount() > 0) {
+        if (errors.length > 0) { //show modal with error
             return modal?.openModal({
-                name: 'errorChecker',
+                name: 'errorsInForm',
                 onClose: closeModal,
-                children: <Message {...errChecker.result()} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
+                children: <Message 
+                    header={lang === 'en' ? 'Errors was found' : 'Найдены ошибки'}
+                    status={'error'}
+                    text={errors}
+                    buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}
+                />
             })
         }
         //if no errors

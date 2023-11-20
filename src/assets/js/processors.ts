@@ -7,42 +7,6 @@ const ratingNumberToText = (value: string, scale: keyof typeof selector) : TLang
     return selector[scale].find(item => item.value === value)?.name || {en: 'Value out of range', ru: 'Значение вне диапазона'}
 }
 
-//---------------------------------------------------------------
-
-interface IErrorsChecker {
-    lang: TLang,
-    min?: number
-    max?: number
-}
-
-interface IErrorsCheckerOutput {
-    result: () => {
-        header: string;
-        status: string;
-        text: string[];
-    };
-    add: (err: string) => void;
-    clear: () => void;
-    amount: () => number;
-}
-
-const errorsChecker = ({lang = 'en'}: IErrorsChecker): IErrorsCheckerOutput => {
-    const errors: string[] = []
-    
-    const add = (err: string): void => {errors.push(err)}
-
-    const amount = () => errors.length
-
-    const result = () => ({
-        header: lang === 'en' ? 'Errors was found' : 'Найдены ошибки',
-        status: 'error',
-        text: [...errors]
-    })
-
-    const clear = () => {errors.splice(0, errors.length)}
-
-    return { result, add, clear, amount }
-}
 
 //---------------------------------------------------------------
 
@@ -397,6 +361,6 @@ const moneyRatingToText = (value: number): TLangText => {
     }
 }
 
-export { ratingNumberToText, errorsChecker, prevent, filenameChanger,  modalMessageCreator, 
+export { ratingNumberToText,  prevent, filenameChanger,  modalMessageCreator, 
     deepCopy, resErrorFiller, checkIfNumbers, checkIfEmail, checkIfPhone, fetchError, filesDownloader,
     debounce, makeDelay, inputChecker, getSelectableElements, lockFocusInside, moneyRatingToText}

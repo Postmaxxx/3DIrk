@@ -1,7 +1,7 @@
 import { waitFor, act  } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect'
 import ReactDOM from 'react-dom/client';
-import Homer from '../components/Homer/Homer';
+import Homer from './Homer';
 
 
 

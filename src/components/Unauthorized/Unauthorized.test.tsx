@@ -1,7 +1,7 @@
 import { createRoot } from 'react-dom/client';
 import { act, waitFor, screen } from '@testing-library/react';
 import { HashRouter } from "react-router-dom";
-import Unauthorized from '../components/Unauthorized/Unauthorized';
+import Unauthorized from './Unauthorized';
 
 describe('Unauthorized', () => {
     let _container: HTMLDivElement

@@ -2,10 +2,10 @@ import { act, waitFor, screen } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect'
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
-import store from '../redux/store';
-import Preloader from '../components/Preloaders/Preloader';
+import store from '../../redux/store';
+import Preloader from '../Preloaders/Preloader';
 import { Suspense } from "react";
-import App from '../App';
+import App from '../../App';
 
 
 

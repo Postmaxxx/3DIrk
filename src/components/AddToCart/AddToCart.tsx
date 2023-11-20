@@ -6,7 +6,6 @@ import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import AmountChanger from '../AmountChanger/AmountChanger';
 import { allActions } from "../../redux/actions/all";
-import { errorsChecker } from '../../../src/assets/js/processors';
 import { useMemo } from 'react'
 import { IModalFunctions } from '../Modal/Modal';
 import Message from '../Message/Message';
@@ -45,27 +44,31 @@ const AddToCart: React.FC<IProps> = ({data, lang, cart, modal, setState}): JSX.E
     const navigate = useNavigate()
     const [amount, setAmount] = useState<number>(1)
     const [amountChangerReset, setAmountChangerReset] = useState<{amount: number}>({amount: 1})
-    const errChecker = useMemo(() => errorsChecker({lang}), [lang])
 
     const closeModal = useCallback((): void => {
         modal?.closeCurrent()
-        errChecker.clear() 
 	}, [])
      
         
     const addToCart = (): void => { 
-        !data.color && errChecker.add(lang === 'en' ? 'Please choose the color' : 'Пожалуйста, выберите цвет');
-        !data.fiber && errChecker.add(lang === 'en' ? 'Please choose the fiber' : 'Пожалуйста, выберите материал');
-        (data.type?.en === '') && errChecker.add(lang === 'en' ? 'Please choose the type' : 'Пожалуйста, выберите тип');
-        !amount && errChecker.add(lang === 'en' ? 'Please set the amount' : 'Пожалуйста, укажите количество')
+        const errors: string[] = []
+        !data.color && errors.push(lang === 'en' ? 'Please choose the color' : 'Пожалуйста, выберите цвет');
+        !data.fiber && errors.push(lang === 'en' ? 'Please choose the fiber' : 'Пожалуйста, выберите материал');
+        (data.type?.en === '') && errors.push(lang === 'en' ? 'Please choose the type' : 'Пожалуйста, выберите тип');
+        !amount && errors.push(lang === 'en' ? 'Please set the amount' : 'Пожалуйста, укажите количество')
 
-        if (errChecker.amount() > 0) {
-            modal?.openModal({ //if error/success - show modal about send order
+
+        if (errors.length > 0) { //show modal with error
+            return modal?.openModal({
                 name: 'cartAddError',
                 onClose: closeModal,
-                children: <Message {...errChecker.result()} buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}/>
+                children: <Message 
+                    header={lang === 'en' ? 'Errors was found' : 'Найдены ошибки'}
+                    status={'error'}
+                    text={errors}
+                    buttonClose={{action: closeModal, text: lang === 'en' ? 'Close' : 'Закрыть'}}
+                />
             })
-            return
         }
 
         setState.user.addItem({

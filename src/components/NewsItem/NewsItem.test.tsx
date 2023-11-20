@@ -1,8 +1,8 @@
 import { createRoot } from 'react-dom/client';
-import NewsItem from '../components/NewsItem/NewsItem';
+import NewsItem from './NewsItem';
 import { act, waitFor, screen } from '@testing-library/react';
 import { HashRouter } from "react-router-dom";
-import { INewsItemShort } from '../interfaces';
+import { INewsItemShort } from '../../interfaces';
 import '@testing-library/jest-dom/extend-expect'
 
 

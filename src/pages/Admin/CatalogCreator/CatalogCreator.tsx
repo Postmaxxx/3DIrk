@@ -7,7 +7,7 @@ import { Dispatch } from "redux";
 import { useEffect,  } from "react";
 import { allActions } from "../../../redux/actions/all";
 import { inputsProps, resetFetch } from '../../../assets/js/consts';
-import { errorsChecker, modalMessageCreator, prevent } from '../../../assets/js/processors';
+import { modalMessageCreator, prevent } from '../../../assets/js/processors';
 import Featurer, { IFeaturerFunctions } from '../../../components/Featurer/Featurer';
 import { IModalFunctions } from '../../../components/Modal/Modal';
 import Message from '../../../components/Message/Message';
@@ -30,7 +30,6 @@ interface IProps extends IPropsState, IPropsActions {}
 
 
 const CategoriesChanger: FC<IProps> = ({lang, setState, modal, catalog}): JSX.Element => {
-    const errChecker = useMemo(() => errorsChecker({lang}), [lang])
     const featurerRef = useRef<IFeaturerFunctions>(null)
     const _catalog = useRef<HTMLDivElement>(null)
     
@@ -38,13 +37,11 @@ const CategoriesChanger: FC<IProps> = ({lang, setState, modal, catalog}): JSX.El
         if (await modal?.getName() === 'catalogSend') {
             if (catalog.send.status === 'success') {
                 setState.catalog.loadCatalog()
-                errChecker.clear()        
             }
             setState.catalog.setSendCatalog(resetFetch)
         }
-        errChecker.clear()
         modal?.closeCurrent()
-	}, [catalog.send.status, errChecker])
+	}, [catalog.send.status])
 
 
 

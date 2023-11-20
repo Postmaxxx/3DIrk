@@ -1,7 +1,7 @@
 import { createRoot } from 'react-dom/client';
 import { act, waitFor, screen } from '@testing-library/react';
 import { HashRouter } from "react-router-dom";
-import P404 from '../pages/P404/P404';
+import P404 from './P404';
 import '@testing-library/jest-dom/extend-expect'
 
 describe('P404', () => {
