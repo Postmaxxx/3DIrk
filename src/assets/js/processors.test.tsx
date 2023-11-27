@@ -1,9 +1,13 @@
 import { IFetch, TLangText, IAction } from '../../interfaces';
-import { ratingNumberToText, prevent, filesDownloader, filenameChanger, modalMessageCreator, deepCopy,resErrorFiller, checkIfNumbers, checkIfEmail, checkIfPhone, debounce, fetchError, makeDelay, inputChecker } from './processors'
+import { ratingNumberToText, prevent, filesDownloader, filenameChanger, modalMessageCreator, deepCopy,resErrorFiller, checkIfNumbers, checkIfEmail, checkIfPhone, debounce, fetchError, makeDelay, inputChecker, moneyRatingToText, getSelectableElements } from './processors'
 import { exceptionTimeout } from './consts';
 import { AnyAction } from 'redux';
 import React from 'react'
 import '@testing-library/jest-dom/extend-expect'
+import renderer from 'react-test-renderer';
+import { createRoot } from 'react-dom/client';
+import {cleanup, fireEvent, render} from '@testing-library/react';
+
 
 global.HTMLElement = window.HTMLElement;
 
@@ -658,5 +662,97 @@ describe('Tests for inputChecker', () => {
         expect(inputChecker({value: '2022-01-31', rules: {type: 'date'}})).not.toEqual({en: `wrong value`, ru: `неправильное значение`})       
         expect(inputChecker({value: '2022-feb-01', rules: {type: 'date'}})).not.toEqual({en: `wrong value`, ru: `неправильное значение`})       
  
+    })
+
+})
+
+describe('Tests for moneyRatingToText', () => {
+    
+    test('should return: Very cheap/Очень дешевый', () => {
+        expect(moneyRatingToText(1)).toEqual({en: 'Very cheap', ru: 'Очень дешевый'})
+    })
+    test('should return: Cheap/Дешевый', () => {
+        expect(moneyRatingToText(2)).toEqual({en: 'Cheap', ru: 'Дешевый'})
+    })
+    test('should return: Average/Средний', () => {
+        expect(moneyRatingToText(3)).toEqual({en: 'Average', ru: 'Средний'})
+    })
+    test('should return: Expensive/Дорогой', () => {
+        expect(moneyRatingToText(4)).toEqual({en: 'Expensive', ru: 'Дорогой'})
+    })
+    test('should return: Very expensive/Очень дорогой', () => {
+        expect(moneyRatingToText(5)).toEqual({en: 'Very expensive', ru: 'Очень дорогой'})
+    })
+
+    test('should return: Out of range/Вне диапазона', () => {
+        expect(moneyRatingToText(6)).toEqual({en: 'Out of range', ru: 'Вне диапазона'})
+        expect(moneyRatingToText(0)).toEqual({en: 'Out of range', ru: 'Вне диапазона'})
+        expect(moneyRatingToText(-1)).toEqual({en: 'Out of range', ru: 'Вне диапазона'})
+        expect(moneyRatingToText(1.4)).toEqual({en: 'Out of range', ru: 'Вне диапазона'})
+    })
+})
+
+
+
+describe('Tests for getSelectableElements', () => {  
+    
+    test('should find only 2 buttons', async () => {
+        const _parent = render(
+            <div>
+                <span></span>
+                <button>button 1</button>
+                <div></div>
+                <button>button 2</button>
+                <p></p>
+            </div>,
+        );
+        const result: HTMLElement[] = getSelectableElements(_parent.container)
+        expect(result.length).toBe(2)
+        result.forEach(el => {
+            expect(el.nodeName).toBe('BUTTON')
+        })
+    })
+
+
+
+    test('should find nothing', async () => {
+        const _parent = render(
+            <div>
+                <span></span>
+                <a href="" tabIndex={-1}>link 1</a>
+                <a>link 2</a>
+                <div tabIndex={-1}></div>
+                <p tabIndex={-1}></p>
+            </div>,
+        );
+        const result: HTMLElement[] = getSelectableElements(_parent.container)
+        expect(result.length).toBe(0)
+    })
+
+    test('should find all selectable elements', async () => {
+        const _parent = render(
+            <div>
+                <span></span>
+                <button>button 1</button>
+                <div></div>
+                <a href="">link</a>
+                <input />
+                <textarea ></textarea>
+                <select >
+                    <option value="1">1</option>
+                </select>
+                <details >details</details>
+                <p></p>
+                <span></span>
+            </div>,
+        );
+        const result: HTMLElement[] = getSelectableElements(_parent.container)
+        expect(result.length).toBe(6)
+        expect(result[0].nodeName).toBe('BUTTON')
+        expect(result[1].nodeName).toBe('A')
+        expect(result[2].nodeName).toBe('INPUT')
+        expect(result[3].nodeName).toBe('TEXTAREA')
+        expect(result[4].nodeName).toBe('SELECT')
+        expect(result[5].nodeName).toBe('DETAILS')
     })
 })

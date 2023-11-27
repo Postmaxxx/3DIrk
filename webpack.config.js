@@ -118,6 +118,12 @@ module.exports = (env, argv) => {
 							},
 						}, 
 						{
+							loader: "postcss-loader",
+							options: {
+								sourceMap: this.devtool === 'source-map',
+							},
+						}, 
+						{
 							loader: "sass-loader",
 							options: {
 								sourceMap: this.devtool === 'source-map',

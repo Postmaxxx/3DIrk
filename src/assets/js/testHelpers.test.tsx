@@ -39,23 +39,23 @@ describe('setRes', () => {
 
 
 describe('changeLang', () => {
-    let container: HTMLDivElement;
+    let _container: HTMLDivElement;
 
     beforeEach(() => {
-        container = document.createElement('div');
-        container.id = 'root'
-        document.body.appendChild(container);
+        _container = document.createElement('div');
+        _container.id = 'root'
+        document.body.appendChild(_container);
 		jest.restoreAllMocks();
     });
 
 
     afterEach(() => {
-        document.body.removeChild(container);
+        document.body.removeChild(_container);
     });
 
     test('should change lang for < sm', async () => {
 		await act(() => {
-			createRoot(container).render(
+			createRoot(_container).render(
 				<Provider store={store}>
 					<Suspense fallback={<Preloader />}>
 						<App />
@@ -63,10 +63,10 @@ describe('changeLang', () => {
 				</Provider>)
 		})
         await act(async () => {
-            changeLang(container, act)
+            changeLang(_container, act)
         })
 
-        const langSwitcher = container.querySelector("[data-testid='lang-switcher']")
+        const langSwitcher = _container.querySelector("[data-testid='lang-switcher']")
         await waitFor(() => {
 			expect(langSwitcher).toBeInTheDocument()
 		})
