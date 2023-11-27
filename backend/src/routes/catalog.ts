@@ -108,7 +108,6 @@ router.get('/category',
             products: products.slice(fromIndex, indexEnd).map(item => ({
                 _id: item._id,
                 name: item.name,
-                //price: item.price,
                 textShort: item.textShort,
                 images: item.images,
                 active: item.active
