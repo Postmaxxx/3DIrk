@@ -8,20 +8,20 @@ const path = require('path')
 const fse = require('fs-extra')
 const mode = process.env.NODE_ENV.trim() || 'development';
 
-/*
-if (mode !== 'deploy') {
+
+//if (mode !== 'deploy') {
     const pathToEnv = `.env.${mode}`.trim()
     require('dotenv').config({
         path: pathToEnv,
     })
     console.log('ENV mode: ', pathToEnv);
-}
-*/
-const pathToEnv = mode === 'deploy' ? `../../.env.${mode}` : `.env.${mode}`.trim()
+//}
+
+/*
+const pathToEnv = mode === 'production' ? `../../.env.${mode}` : `.env.${mode}`.trim()
 require('dotenv').config({
     path: pathToEnv,
-})
-console.log('ENV mode: ', pathToEnv);
+})*/
 console.log('Port: ', process.env.PORT);
 
 const userRoutes = require('./routes/user')
