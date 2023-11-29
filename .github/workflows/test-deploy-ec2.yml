@@ -31,18 +31,19 @@ jobs:
         run: |
           cd backend
           npm ci --force
-      - name: Build backend
-        run: |
-          cd backend
-          npm run build
-      - uses: actions/upload-artifact@v3
-        with:
-          name: built-files
-          path: backend/dist
-      - name: Get built project
-        uses: actions/download-artifact@v3
-        with:
-          name: built-files
+      #- name: Build backend
+      #  run: |
+      #    cd backend
+       #   npm run build
+      #- name: Upload built files
+      #  uses: actions/upload-artifact@v3
+      #  with:
+      #    name: built-files
+      #    path: backend/dist
+      #- name: Download built files
+      #  uses: actions/download-artifact@v3
+      #  with:
+      #    name: built-files
       - name: Deploy to Server 1
         uses: burnett01/rsync-deployments@6.0.0
         with:
