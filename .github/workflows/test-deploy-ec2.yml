@@ -34,7 +34,7 @@ jobs:
       - name: Build backend
         run: |
           cd backend
-          npm run deploy
+          npm run build
       - uses: actions/upload-artifact@v3
         with:
           name: built-files
@@ -46,7 +46,7 @@ jobs:
       - name: Deploy to Server 1
         uses: burnett01/rsync-deployments@6.0.0
         with:
-          switches: -avzr --delete
+          switches: -avzr --delete --exclude="node_modules/" --include="" --filter=".env.*"
           path: backend/dist/
           remote_path: /home/ubuntu/strezhen/app/
           remote_host: ${{ secrets.EC2_HOST }}
