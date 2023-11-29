@@ -1,31 +1,29 @@
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import './homer.scss'
 import svgs from '../additional/svgs';
-import { TLang } from 'src/interfaces';
+import { TLang } from '../../interfaces';
+import { debounce } from '../../assets/js/processors';
+import { useScrollHider } from '../../hooks/scrollHider';
 
 
 
 const Homer: React.FC<{lang: TLang}> = ({lang}): JSX.Element => {
 
     const _homer = useRef<HTMLButtonElement>(null)
+    const {add: addToHider, clear: clearHider} = useScrollHider()
 
-
-    window.onscroll = () => {
-        scrollHomer()
-    };
-
-    function scrollHomer(): void {
-        const show = document.body.scrollTop > 500 || document.documentElement.scrollTop > 500
-        _homer.current?.classList.toggle("show", show);
-    }
 
     const onHomerClicked = (): void => {
         document.body.scrollTop = 0; // For Safari
         document.documentElement.scrollTop = 0;
     }
 
+    useEffect(() => {
+        if (!_homer.current) return
+        addToHider(_homer.current, 100)
+        return () => clearHider()
+    }, [])
     
-
 
     return (
         <button 

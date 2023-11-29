@@ -6,7 +6,8 @@
     height: 40px;
     background-color: var(--main_em);
     position: fixed;
-    top: 100px;
+    bottom: clamp(100px, 20%, 200px);
+    bottom: 10%;
     right: 0;
     transform: translateX(100%) rotate(180deg);
     transition: transform $transition_fast, background-color $transition_theme;
@@ -18,7 +19,7 @@
     opacity: 0.4;
     cursor: pointer;
 
-    &.show {
+    &.scrolled {
         transform: translateX(10%) rotate(180deg);
         transition: transform $transition_fast $transition_fast, background-color $transition_theme;
     }
