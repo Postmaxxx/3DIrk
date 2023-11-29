@@ -6,9 +6,9 @@ const mongoose = require("mongoose")
 const https = require('https')
 const path = require('path')
 const fse = require('fs-extra')
-const mode = process.env.NODE_ENV.trim() || 'undefined';
+const mode = process.env.NODE_ENV.trim() || 'development';
 
-
+/*
 if (mode !== 'deploy') {
     const pathToEnv = `.env.${mode}`.trim()
     require('dotenv').config({
@@ -16,8 +16,13 @@ if (mode !== 'deploy') {
     })
     console.log('ENV mode: ', pathToEnv);
 }
-
-
+*/
+const pathToEnv = mode === 'deploy' ? `../.env.${mode}` : `.env.${mode}`.trim()
+require('dotenv').config({
+    path: pathToEnv,
+})
+console.log('ENV mode: ', pathToEnv);
+console.log('Port: ', process.env.PORT);
 
 const userRoutes = require('./routes/user')
 const fibersRoutes = require('./routes/fibers')
