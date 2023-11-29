@@ -1,4 +1,4 @@
-name: Test+Deploy
+name: Test, deploy to EC2
 on: 
   workflow_dispatch:
   pull_request:
