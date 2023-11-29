@@ -31,29 +31,32 @@ jobs:
         run: |
           cd backend
           npm ci --force
-      #- name: Build backend
-      #  run: |
-      #    cd backend
-       #   npm run build
-      #- name: Upload built files
-      #  uses: actions/upload-artifact@v3
-      #  with:
-      #    name: built-files
-      #    path: backend/dist
-      #- name: Download built files
-      #  uses: actions/download-artifact@v3
-      #  with:
-      #    name: built-files
-      - name: Deploy to Server 1
+      - name: Build backend
+        run: |
+          cd backend
+          npm run build
+      - name: Upload built files
+        uses: actions/upload-artifact@v3
+        with:
+          name: built-files
+          path: |
+            backend
+            !backend/node_modules
+            !backend/src
+      - name: Download built files
+        uses: actions/download-artifact@v3
+        with:
+          name: built-files
+      - name: Deploy to EC2
         uses: burnett01/rsync-deployments@6.0.0
         with:
-          switches: -avzr --delete --exclude="node_modules" --exclude=".env.*" --filter=""
+          switches: -avzr --delete --exclude="node_modules" --exclude=".env.*" --exclude="src" --exclude="*.pem" --filter=""
           path: backend/
           remote_path: /home/ubuntu/strezhen/app/
           remote_host: ${{ secrets.EC2_HOST }}
           remote_user: ${{ secrets.EC2_USERNAME }}
           remote_key: ${{ secrets.EC2_SSH_KEY }}
-      - name: Update on AWS
+      - name: Update on EC2
         env:
           PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
           HOSTNAME: ${{secrets.EC2_HOST}}
@@ -65,5 +68,7 @@ jobs:
               # Now we have got the access of EC2 and we will start the deploy .
               cd /home/ubuntu/strezhen/app &&
               sudo npm i --force &&
-              sudo npm run deploy
+              pm2 delete 3d_ci-cd &&
+              pm2 start --name 3d_ci-cd npm -- run serverprodjs --env-update &&
+              pm2 save
               '

@@ -9,10 +9,10 @@
     "serverdev": "set NODE_ENV=development&& nodemon ./src/app.ts",
     "serverprod": "export NODE_ENV=production&& nodemon ./src/app.ts",
     "build": "tsc",
-    "deploy": "tsc",
     "serverprodjs": "npm run build && set NODE_ENV=production&& node ./dist/app.js",
     "serverssl": "tsc && set NODE_ENV=production&& node server.js",
-    "serveraws": "npm run build && set NODE_ENV=production&& pm2 start ./dist/app.js --watch"
+    "serveraws": "npm run build && set NODE_ENV=production&& pm2 start ./dist/app.js --watch",
+    "server_ci-cd": "set NODE_ENV=production && node ./dist/app.js"
   },
   "author": "Maksim Postnikov, max@postnikov.dev",
   "license": "ISC",
