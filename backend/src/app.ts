@@ -8,12 +8,19 @@ const path = require('path')
 const fse = require('fs-extra')
 const mode = process.env.NODE_ENV.trim() || 'undefined';
 
-const pathToEnv = `.env.${mode}`.trim()
-require('dotenv').config({
-    path: pathToEnv,
-})
 
-console.log('ENV mode: ', pathToEnv);
+if (mode !== 'deploy') {
+    const pathToEnv = `.env.${mode}`.trim()
+    require('dotenv').config({
+        path: pathToEnv,
+    })
+    console.log('ENV mode: ', pathToEnv);
+}
+
+const testoparametr = `!!!!! <${process.env.dbName}>`
+console.log(testoparametr);
+
+
 
 const userRoutes = require('./routes/user')
 const fibersRoutes = require('./routes/fibers')
