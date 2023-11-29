@@ -16,7 +16,7 @@ jobs:
       - name: Install deps
         run: npm ci --force
       - name: Build backend
-        run: npm run build
+        run: npm run buildbe
       - uses: actions/upload-artifact@v3
         with:
           name: built-files
