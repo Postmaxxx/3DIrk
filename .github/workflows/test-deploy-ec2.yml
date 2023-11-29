@@ -48,7 +48,7 @@ jobs:
         with:
           switches: -avzr --delete
           path: ./*
-          remote_path: /home/3dapp2/
+          remote_path: /tmp/
           remote_host: ${{ secrets.EC2_HOST }}
           remote_user: ${{ secrets.USERNAME }}
           remote_key: ${{ secrets.EC2_SSH_KEY }}
