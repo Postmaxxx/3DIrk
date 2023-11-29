@@ -1,0 +1,27 @@
+name: Test+Deploy
+on: 
+  workflow_dispatch:
+  pull_request:
+    types: [opened, edited, reopened]
+jobs: 
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get repo code
+        uses: actions/checkout@v4
+      - name: Install Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: Install deps
+        run: npm ci
+      - name: Build backend
+        run: npm run build
+      - uses: actions/upload-artifact@v3
+        with:
+          name: built-files
+          path: dist
+      - name: Get built project
+        uses: actions/download-artifact@v3
+        with:
+          name: built-files
