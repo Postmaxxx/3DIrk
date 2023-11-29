@@ -44,9 +44,11 @@ jobs:
         with:
           name: built-files
       - name: Deploy to Server 1
-        uses: easingthemes/ssh-deploy@main
+        uses: burnett01/rsync-deployments@5.1
         with:
-          SOURCE: "dist/"
-          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-          REMOTE_HOST: ${{ secrets.HOST_DNS }}
-          REMOTE_USER: ${{ secrets.USERNAME }}
+          switches: -avzr --delete
+          path: ./*
+          remote_path: /home/3dapp/
+          remote_host: ${{ secrets.EC2_HOST }}
+          remote_user: ${{ secrets.USERNAME }}
+          remote_key: ${{ secrets.EC2_SSH_KEY }}
