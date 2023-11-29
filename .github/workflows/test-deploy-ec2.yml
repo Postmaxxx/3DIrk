@@ -44,7 +44,7 @@ jobs:
         with:
           name: built-files
       - name: Deploy to Server 1
-        uses: burnett01/rsync-deployments@v6.0.0
+        uses: burnett01/rsync-deployments@6.0.0
         with:
           switches: -avzr --delete
           path: ./dist
