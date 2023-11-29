@@ -17,7 +17,7 @@ if (mode !== 'deploy') {
     console.log('ENV mode: ', pathToEnv);
 }
 */
-const pathToEnv = mode === 'deploy' ? `../.env.${mode}` : `.env.${mode}`.trim()
+const pathToEnv = mode === 'deploy' ? `../../.env.${mode}` : `.env.${mode}`.trim()
 require('dotenv').config({
     path: pathToEnv,
 })
