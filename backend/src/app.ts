@@ -17,9 +17,6 @@ if (mode !== 'deploy') {
     console.log('ENV mode: ', pathToEnv);
 }
 
-const testoparametr = `!!!!! <${process.env.dbName}>`
-console.log(testoparametr);
-
 
 
 const userRoutes = require('./routes/user')
