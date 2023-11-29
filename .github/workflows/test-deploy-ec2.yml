@@ -14,13 +14,17 @@ jobs:
         with:
           node-version: 18
       - name: Install deps
-        run: npm ci --force
+        run: |
+          cd backend
+          npm ci --force
       - name: Build backend
-        run: npm run buildbe
+        run: |
+          cd backend
+          npm run build
       - uses: actions/upload-artifact@v3
         with:
           name: built-files
-          path: dist
+          path: backend/dist
       - name: Get built project
         uses: actions/download-artifact@v3
         with:
