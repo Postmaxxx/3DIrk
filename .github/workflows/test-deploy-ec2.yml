@@ -70,4 +70,5 @@ jobs:
               sudo chmod -R 777 ./app &&
               cd /home/ubuntu/strezhen/app &&
               sudo npm ci &&
+              echo 123
               '
