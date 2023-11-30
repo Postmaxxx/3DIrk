@@ -67,8 +67,9 @@ jobs:
 
               # Now we have got the access of EC2 and we will start the deploy .
               cd /home/ubuntu/strezhen/app &&
+              sudo chmod -R 777 ./node_modules || true &&
               sudo npm i &&
-              sudo npm audit fix --force || true &&
+              sudo npm audit fix --force &&
               pm2 delete --silent 3d_ci-cd &&
               pm2 start --name 3d_ci-cd npm -- run serverprodjs --env-update &&
               pm2 save
