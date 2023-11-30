@@ -70,8 +70,11 @@ jobs:
               sudo chmod -R 777 ./app &&
               cd /home/ubuntu/strezhen/app &&
               sudo npm ci &&
-              echo 123 &&
+              echo 1 &&
               sudo pm2 delete --silent 3d_ci-cd &&
+              echo 2 &&
               sudo pm2 start --name 3d_ci-cd npm -- run serverprodjs --env-update &&
+              echo 3 &&
               sudo pm2 save
+              echo 4
               '
