@@ -73,7 +73,7 @@ jobs:
               echo Deps installed &&
               pm2 delete --silent 3d_ci-cd --watch || true &&
               echo pm2: 3d_ci-cd removed &&
-              pm2 start --name 3d_ci-cd --watch ./dist npm -- run server_ci-cd --update-env &&
+              pm2 start --name 3d_ci-cd --watch . npm -- run server_ci-cd --update-env &&
               echo pm2: 3d_ci-cd installed &&
               pm2 save &&
               echo Finish
