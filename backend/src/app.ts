@@ -6,7 +6,7 @@ const mongoose = require("mongoose")
 const https = require('https')
 const path = require('path')
 const fse = require('fs-extra')
-const mode = process.env.NODE_ENV.trim() || 'development';
+const mode = process.env.NODE_ENV?.trim() || 'development';
 
 
 
