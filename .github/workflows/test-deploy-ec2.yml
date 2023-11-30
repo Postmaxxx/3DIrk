@@ -66,11 +66,11 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
 
               # Now we have got the access of EC2 and we will start the deploy .
+              cd /home/ubuntu/strezhen &&
+              sudo chmod -R 777 ./app || true &&
               cd /home/ubuntu/strezhen/app &&
-              sudo chmod -R 777 ./node_modules || true &&
               sudo npm i &&
-              sudo npm audit fix --force &&
-              pm2 delete --silent 3d_ci-cd &&
-              pm2 start --name 3d_ci-cd npm -- run serverprodjs --env-update &&
-              pm2 save
+              sudo pm2 delete --silent 3d_ci-cd &&
+              sudo pm2 start --name 3d_ci-cd npm -- run serverprodjs --env-update &&
+              sudo pm2 save
               '
