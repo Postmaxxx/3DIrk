@@ -73,8 +73,8 @@ jobs:
               echo 1 &&
               sudo pm2 delete --silent 3d_ci-cd &&
               echo 2 &&
-              sudo pm2 start --name 3d_ci-cd npm -- run serverprodjs --env-update &&
+              sudo pm2 start --name 3d_ci-cd --watch . npm -- run serverprod --env-update &&
               echo 3 &&
-              sudo pm2 save
+              sudo pm2 save &&
               echo 4
               '
