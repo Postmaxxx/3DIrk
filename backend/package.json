@@ -37,7 +37,7 @@
   "devDependencies": {
     "compression": "^1.7.4",
     "concurrently": "^8.1.0",
-    "nodemon": "^2.0.22",
+    "nodemon": "^3.0.1",
     "ts-node": "^10.9.1",
     "typescript": "^5.1.3"
   }
