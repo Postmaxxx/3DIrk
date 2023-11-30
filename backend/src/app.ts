@@ -78,7 +78,7 @@ const backendFolder = (path.resolve(__dirname, '..'))
 
 
 
-if (process.env.NODE_ENV === 'development') {
+if (mode === 'development') {
 	app.listen(PORT, () => console.log(`Server has been successfully started on port ${PORT}...`))
 } else {
 	https
