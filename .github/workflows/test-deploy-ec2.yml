@@ -31,26 +31,26 @@ jobs:
         run: |
           cd backend
           npm ci --force
-      - name: Build backend
-        run: |
-          cd backend
-          npm run build
-      - name: Upload built files
-        uses: actions/upload-artifact@v3
-        with:
-          name: built-files
-          path: |
-            backend
-            !backend/node_modules
-            !backend/src
-      - name: Download built files
-        uses: actions/download-artifact@v3
-        with:
-          name: built-files
+      #- name: Build backend
+      #  run: |
+      #    cd backend
+      #    npm run build
+      #- name: Upload built files
+      #  uses: actions/upload-artifact@v3
+      #  with:
+      #    name: built-files
+      #    path: |
+      #      backend
+      #      !backend/node_modules
+      #      !backend/src
+      #- name: Download built files
+      #  uses: actions/download-artifact@v3
+      #  with:
+      #    name: built-files
       - name: Deploy to EC2
         uses: burnett01/rsync-deployments@6.0.0
         with:
-          switches: -avzr --delete --exclude="node_modules" --exclude=".env.*" --exclude="src" --exclude="*.pem" --filter=""
+          switches: -avzr --delete --exclude="node_modules" --exclude=".env.*" --exclude="build" --exclude="*.pem" --filter=""
           path: backend/
           remote_path: /home/ubuntu/strezhen/app/
           remote_host: ${{ secrets.EC2_HOST }}

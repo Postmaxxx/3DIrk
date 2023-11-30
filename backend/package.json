@@ -6,13 +6,13 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "ts-node ./src/app.ts",
-    "serverdev": "set NODE_ENV=development&& nodemon ./src/app.ts",
-    "serverprod": "export NODE_ENV=production&& nodemon ./src/app.ts",
+    "serverdev": "set NODE_ENV=development&& nodemon",
+    "serverprod": "export NODE_ENV=production && nodemon",
     "build": "tsc",
     "serverprodjs": "npm run build && set NODE_ENV=production && node ./dist/app.js",
     "serverssl": "tsc && set NODE_ENV=production&& node server.js",
     "serveraws": "npm run build && set NODE_ENV=production&& pm2 start ./dist/app.js --watch",
-    "server_ci-cd": "export NODE_ENV=production && node ./dist/app.js"
+    "server_ci-cd": "export NODE_ENV=production && nodemon"
   },
   "author": "WiseUp Studio, Maksim Postnikov, max@postnikov.dev",
   "license": "ISC",
