@@ -10,6 +10,7 @@ const mode = process.env.NODE_ENV?.trim() || 'development';
 
 
 
+
 const pathToEnv = `.env.${mode}`.trim()
 require('dotenv').config({
     path: pathToEnv,
