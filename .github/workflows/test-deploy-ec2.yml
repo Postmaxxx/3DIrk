@@ -69,12 +69,12 @@ jobs:
               cd /home/ubuntu/strezhen &&
               sudo chmod -R 777 ./app &&
               cd /home/ubuntu/strezhen/app &&
-              sudo npm ci &&
-              echo 1 &&
+              npm i &&
+              echo Deps installed &&
               pm2 delete --silent 3d_ci-cd --watch &&
-              echo 2 &&
-              pm2 start --name 3d_ci-cd npm -- run serverprodjs --env-update &&
-              echo 3 &&
+              echo pm2: 3d_ci-cd removed &&
+              pm2 start --name 3d_ci-cd npm -- run serverprodjs &&
+              echo pm2: 3d_ci-cd installed &&
               pm2 save &&
-              echo 4
+              echo Finish
               '
