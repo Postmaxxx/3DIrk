@@ -6,20 +6,6 @@ on:
 jobs: 
   deploy:
     runs-on: ubuntu-latest
-    env:
-      mongoUri: ${{ secrets.MONGO_URI }}
-      jwtSecret: ${{ secrets.JWT_SECRET }}
-      admEmail: ${{ secrets.ADM_EMAIL }}
-      dbName: ${{ secrets.DB_NAME }}
-      tgToken: ${{ secrets.TG_TOKEN }}
-      chatId: ${{ secrets.CHAT_ID }}
-      chatLink: ${{ secrets.CHAT_LINK }}
-      pathToStorage: ${{ secrets.PATH_TO_STORAGE }}
-      PORT: ${{ secrets.PORT }}
-      awsAC: ${{ secrets.AWS_AC }}
-      AWS.awsSAC: ${{ secrets.SAC }}
-      awsRegion: ${{ secrets.AWS_REGION }}
-      s3BucketName: ${{ secrets.S3_BUCKET_NAME }}
     steps:
       - name: Get repo code
         uses: actions/checkout@v4

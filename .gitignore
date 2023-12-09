@@ -22,6 +22,7 @@ backend/.env.development
 backend/.env.production
 backend/cert.pem
 backend/privkey.pem
+backend/*.pem
 
 
 # misc
