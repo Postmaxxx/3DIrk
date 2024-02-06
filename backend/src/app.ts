@@ -7,8 +7,8 @@ const https = require('https')
 const path = require('path')
 const fse = require('fs-extra')
 const mode = process.env.NODE_ENV?.trim() || 'development';
-
-
+const swaggerUI = require("swagger-ui-express")
+const swaggerJsDoc = require("swagger-jsdoc")
 
 
 const pathToEnv = `.env.${mode}`.trim()
@@ -17,6 +17,38 @@ require('dotenv').config({
 })
 console.log('ENV mode: ', pathToEnv);
 console.log('Port: ', process.env.PORT);
+
+
+const options = {
+    definition: {
+        openapi: "3.0.0",
+        info: {
+            title: "Strezhen API",
+            verson: '1.0.0',
+            description: "Strezhen Company backend API"
+        },
+        servers: pathToEnv === 'production' ? 
+        [
+            {
+                url: "https://devback.net"
+            }
+        ] 
+        : 
+        [
+            {
+                url: `http://localhost:${process.env.PORT}`
+            },
+            {
+                url: "https://devback.net"
+            }
+        ],
+    },
+    apis: ["./src/routes/*.ts", './src/schemas/*.ts']
+}
+
+
+const specs = swaggerJsDoc(options)
+
 
 const userRoutes = require('./routes/user')
 const fibersRoutes = require('./routes/fibers')
@@ -28,7 +60,7 @@ const contentRoutes = require('./routes/content')
 const cors = require('cors')
 const app = express()
 
-
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(specs))
 
 foldersCleaner([allPaths.pathToTemp])
 
@@ -43,6 +75,7 @@ app.use(cors({
     optionSuccessStatus: 200,
     methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH']
 }));
+
 
 
 

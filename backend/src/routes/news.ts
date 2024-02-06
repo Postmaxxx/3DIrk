@@ -14,6 +14,60 @@ const cache: IAllCache = require('../data/cache')
 const fileSaver = require('../routes/files')
 
 
+ /**
+  * @swagger
+  * tags:
+  *   name: News
+  *   description: The news managing API
+  */
+
+
+
+
+/**
+ * @swagger
+ * /api/news:
+ *   post:
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Create new news
+ *     tags: [News]
+ *     parameters:
+ *       - in: header
+ *         name: enctype
+ *         description: Content type of the request
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum:
+ *             - multipart/form-data
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/NewsItemNew'
+ *     responses:
+ *       201:
+ *         description: The news created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/MessageSuccess'
+ *       500:
+ *         description: Error on the server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/MessageError'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UnauthorizedError'
+ */
+
 
 router.post('', 
     [authMW, isAdmin],
@@ -58,6 +112,41 @@ router.post('',
 
 
 
+/**
+ * @swagger
+ * /api/news:
+ *   put:
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Update news
+ *     tags: [News]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/NewsItemUpdate'
+ *     responses:
+ *       200:
+ *         description: The news updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/MessageSuccess'
+ *       500:
+ *         description: Error on the server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/MessageError'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UnauthorizedError'
+ */
+
 router.put('', 
     [authMW, isAdmin],
     fileSaver, 
@@ -101,30 +190,113 @@ router.put('',
 )
 
 
+/**
+ * @swagger
+ * /api/news/{id}:
+ *   get:
+ *     summary: Returns the news with provided id
+ *     tags: [News]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The news id
+ *     responses:
+ *       200:
+ *         description: The news with the provided id
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/NewsItemLoad'
+ *       401:
+ *         description: The news with provided id has not been found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/MessageError'
+ *       500:
+ *         description: Error on the server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/MessageError'
+ */
 
-router.get('', 
+
+router.get('/:id', 
     async (req, res) => {
-    const {_id} = req.query;
-    if (_id) {
+    const {id} = req.params;
+    
+    if (id) {
         try {
             const err = await cache.news.control.load()
             if (err) {
                 return res.status(500).json(err)
             }
     
-            const newsToRes =  cache.news.data.find(item => {
-                return item._id.valueOf() === _id
+            const newsItemToRes =  cache.news.data.find(item => {
+                return item._id.valueOf() === id
             })
-            
-            if (!newsToRes) {
-                return res.status(401).json({message: {en: `No news with the id: ${_id} has been found`, ru: `Новость с _id: ${_id} не найдена`}})
+             
+            if (!newsItemToRes) {
+                return res.status(401).json({message: {en: `No news with the id: ${id} has been found`, ru: `Новость с id: ${id} не найдена`}})
             }
-            return res.status(200).json({news: newsToRes, message: {en: `news loaded: ${_id}`, ru: `Новостей загружена: ${_id}`}})
+            return res.status(200).json({news: newsItemToRes, message: {en: `News id: ${id} has been loaded`, ru: `Новость id: ${id} загружена`}})
     
         } catch (e) {
-            return res.status(400).json({message: {en: `Error with server while getting news id: ${_id} : ${e}`, ru: `Ошибка при получении новости id: ${_id} с сервера: ${e}`}})
+            return res.status(500).json({message: {en: `Error on server: ${e} while getting news id: ${id}`, ru: `Ошибка при получении новости с id: ${id} с сервера: ${e}`}})
         }
     }
+})
+
+
+
+/**
+ * @swagger
+ * /api/news:
+ *   get:
+ *     summary: Returns the news list from 'from', amount = 'amount
+ *     tags: [News]
+ *     parameters:
+ *       - in: query
+ *         name: from
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: The start order for the news, from now to past, returns news from this number
+ *         minimum: 0
+ *         maximum: 9999
+ *       - in: query
+ *         name: amount
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: The end order for the news, from now to past, returns news to this number
+ *         minimum: 1
+ *         maximum: 10000
+ *     responses:
+ *       200:
+ *         description: The news list
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items: 
+ *                 $ref: '#/components/schemas/NewsItemLoad'
+ *       500:
+ *         description: Error on the server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/MessageError'
+ */
+
+
+
+router.get('', 
+    async (req, res) => {
         
     const {from, amount} = req.query;
     if (from && amount) {
@@ -162,7 +334,7 @@ router.get('',
                 message: {en: `${newsToRes.length} news loaded`, ru: `Новостей загружено: ${newsToRes.length}`}})
     
         } catch (error) {
-            return res.status(400).json({message: {en: `Error with server while getting news`, ru: `Ошибка при получении новостей с сервера`}})
+            return res.status(500).json({message: {en: `Error with server while getting news`, ru: `Ошибка при получении новостей с сервера`}})
         }
     }
 
@@ -170,6 +342,51 @@ router.get('',
 
 
  
+/**
+ * @swagger
+ * /api/news:
+ *   delete:
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Deletes news with provided id
+ *     tags: [News]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             description: id of deleting news
+ *             properties:
+ *               _id:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: News deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/MessageSuccess'
+ *       500:
+ *         description: Error on the server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/MessageError'
+ *       404:
+ *         description: News with provided id has not been found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/MessageError'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UnauthorizedError' 
+ *
+ */
 
 router.delete('', 
     [authMW, isAdmin,

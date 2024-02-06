@@ -2,7 +2,6 @@ import { useRef, useEffect } from 'react'
 import './homer.scss'
 import svgs from '../additional/svgs';
 import { TLang } from '../../interfaces';
-import { debounce } from '../../assets/js/processors';
 import { useScrollHider } from '../../hooks/scrollHider';
 
 

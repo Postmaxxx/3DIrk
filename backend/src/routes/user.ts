@@ -110,10 +110,11 @@ const orderToTg = async ({lang, user, message, files, dir, cart}: IOrderToTg) =>
 
     const textCart = cart.reduce((text: string, item, i: number) => {
         const fullProduct = cache.products.data.find(product => product._id.toString() === item.productId.toString())
+        
         return text + `${i+1}) ${fullProduct.name[lang]}
     ${lang === 'en' ? 'Options' : 'Версия'}: ${item.type[lang]} 
-    ${lang === 'en' ? 'Fiber' : 'Материал'}: ${cache.fibers.data.find(fiberItem => fiberItem._id.toString() === item.fiberId)?.short.name[lang]}
-    ${lang === 'en' ? 'Color' : 'Цвет'}: ${cache.colors.data.find(color => color._id.toString() === item.colorId)?.name[lang]}
+    ${lang === 'en' ? 'Fiber' : 'Материал'}: ${cache.fibers.data.find(fiberItem => fiberItem._id.toString() === item.fiberId.toString())?.short.name[lang]}
+    ${lang === 'en' ? 'Color' : 'Цвет'}: ${cache.colors.data.find(color => color._id.toString() === item.colorId.toString())?.name[lang]}
     ${lang === 'en' ? 'Amount' : 'Количество'}: ${item.amount}\n\n`
     }, '')
     
@@ -323,9 +324,6 @@ router.post('/login',
             } catch (error) {
                 res.status(500).json({ message:{en: `Something wrong with server (${error}), try again later`, ru: `Ошибка на сервере (${error}), попробуйте позже`}})
             }
-        
-
-
     }
 ) 
 

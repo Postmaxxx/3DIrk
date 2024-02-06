@@ -95,7 +95,7 @@ export const loadOneNews = (_id: string) => {
         const fetchTimeout = setTimeout(() => controller?.abort(DOMExceptions.byTimeout), APIList.news.getOne.timeout) //set time limit for fetch
         dispatch(setLoadOneNews({...fetchingFetch, controller}))  
         try {
-            const url = `${APIList.news.getOne.url}?` + new URLSearchParams({_id})
+            const url = `${APIList.news.getOne.url}/${_id}`
             const response: Response = await fetch(url, {
                 signal: controller.signal,
                 method: APIList.news.getOne.method,
