@@ -81,7 +81,7 @@ const Order:React.FC<IProps> = ({lang, cart, sendOrder, colorsLoad, fibersLoad, 
         }
         setState.user.sendCart() //update cart before order
         setState.user.sendOrder({
-            message: _message.current.getValue() || "Errors with message",
+            message: _message.current.getValue(),
             files: addFilesRef.current.getFiles(),
         })
     }

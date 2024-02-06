@@ -18,7 +18,7 @@ interface IBlockInput {
 }
 
 export interface IBlockInputFunctions {
-    getValue: () => string | undefined
+    getValue: () => string
     setValue: (value: string) => void
     getError: () => {
 		error: TLangText | null,
@@ -30,12 +30,12 @@ export interface IBlockInputFunctions {
 const BlockInput = forwardRef<IBlockInputFunctions, IBlockInput>(({lang, labelText, onChange, id, inputType="text", typeElement='input', required, expandable=false, initialValue, rules, children}, ref) => {
     useImperativeHandle(ref, () => ({
         getValue() {
-			let result;
+			let result = '';
 			if (typeElement === 'input') {
-				result = _input.current?.value 
+				result = _input.current?.value || ''
 			}
 			if (typeElement === 'textarea') {
-				result = _textarea.current?.value 
+				result = _textarea.current?.value || ''
 			}
             return result
         },
