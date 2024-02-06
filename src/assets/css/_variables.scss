@@ -253,7 +253,7 @@ body {
 
 
 
-@mixin  respond-to($width) {
+@mixin respond-to($width) {
     @if $width == xs { 
         @media (max-width: $xs) { @content } 
     };

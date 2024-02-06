@@ -191,7 +191,7 @@ router.delete('',
 
             return res.status(200).json({message: {en: `Fiber has been deleted`, ru: `Материал был удален`}})
         } catch (error) {
-            return res.status(404).json({message: {en: `Fiber was not found`, ru: `Материал не найден`}})
+            return res.status(500).json({message: {en: `Error on server: ${error}`, ru: `Ошибка на сервере: ${error}`}})
         }
     
 })
