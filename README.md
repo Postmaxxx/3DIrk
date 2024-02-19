@@ -1,3 +1,5 @@
+web app: https://plastprinting.net
+
 npm run serverfedev - run fe in development mode
 npm run serverfedrpod - run fe in production mode
 npm run predeploy - build the project to as preparation to deploy it to gh-pages
@@ -10,8 +12,6 @@ npm run serverbe - run server for project back
 npm run dev - start back server + front server
 
 npm run deploy_old - deploy the project to gh pages using react builder, auto starts predeploy first (need to rename predeploy_old)
-
-
 
 to start BE on aws:
 /backend/ npm run serverprodjs
